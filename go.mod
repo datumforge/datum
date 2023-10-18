@@ -3,7 +3,7 @@ module github.com/datumforge/datum
 go 1.21
 
 require (
-	entgo.io/contrib v0.4.5
+	entgo.io/contrib v0.2.0
 	entgo.io/ent v0.12.4
 	github.com/99designs/gqlgen v0.17.39
 	github.com/Yamashou/gqlgenc v0.15.1
@@ -33,7 +33,8 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/graphql-go/graphql v0.7.10-0.20210411022516-8a92e977c10b // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.15.0 // indirect
@@ -56,8 +57,6 @@ require (
 	github.com/urfave/cli/v2 v2.25.7 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	github.com/vmihailenco/msgpack/v5 v5.0.0-beta.9 // indirect
-	github.com/vmihailenco/tagparser v0.1.2 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	go.uber.org/goleak v1.2.1 // indirect

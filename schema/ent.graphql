@@ -305,6 +305,7 @@ input UpdateIntegrationInput {
   deletedAt: Time
   clearDeletedAt: Boolean
   organizationID: ID
+  clearOrganization: Boolean
 }
 """
 UpdateMembershipInput is used for update Membership object.
@@ -314,7 +315,9 @@ input UpdateMembershipInput {
   current: Boolean
   updatedAt: Time
   organizationID: ID
+  clearOrganization: Boolean
   userID: ID
+  clearUser: Boolean
 }
 """
 UpdateOrganizationInput is used for update Organization object.

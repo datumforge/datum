@@ -3,7 +3,7 @@ module github.com/datumforge/datum
 go 1.21
 
 require (
-	entgo.io/contrib v0.2.0
+	entgo.io/contrib v0.3.5
 	entgo.io/ent v0.12.4
 	github.com/99designs/gqlgen v0.17.39
 	github.com/Yamashou/gqlgenc v0.15.1
@@ -24,6 +24,7 @@ require (
 
 require (
 	ariga.io/atlas v0.14.1-0.20230918065911-83ad451a4935 // indirect
+	ariga.io/ogent v0.0.0-20230621041143-ed3e5d4da458 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -38,6 +39,7 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.15.0 // indirect
+	github.com/hedwigz/entviz v0.0.0-20221011080911-9d47f6f1d818 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
@@ -45,6 +47,7 @@ require (
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/ogen-go/ogen v0.76.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.3.0 // indirect

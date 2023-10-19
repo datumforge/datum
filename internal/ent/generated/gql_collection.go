@@ -7,10 +7,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
-	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -25,14 +21,9 @@ func (i *IntegrationQuery) CollectFields(ctx context.Context, satisfies ...strin
 	return i, nil
 }
 
-func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (i *IntegrationQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	var (
-		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(integration.Columns))
-		selectedFields = []string{integration.FieldID}
-	)
-	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
 		case "organization":
 			var (
@@ -40,43 +31,11 @@ func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: i.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
 			i.withOrganization = query
-		case "kind":
-			if _, ok := fieldSeen[integration.FieldKind]; !ok {
-				selectedFields = append(selectedFields, integration.FieldKind)
-				fieldSeen[integration.FieldKind] = struct{}{}
-			}
-		case "description":
-			if _, ok := fieldSeen[integration.FieldDescription]; !ok {
-				selectedFields = append(selectedFields, integration.FieldDescription)
-				fieldSeen[integration.FieldDescription] = struct{}{}
-			}
-		case "secretName":
-			if _, ok := fieldSeen[integration.FieldSecretName]; !ok {
-				selectedFields = append(selectedFields, integration.FieldSecretName)
-				fieldSeen[integration.FieldSecretName] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[integration.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, integration.FieldCreatedAt)
-				fieldSeen[integration.FieldCreatedAt] = struct{}{}
-			}
-		case "deletedAt":
-			if _, ok := fieldSeen[integration.FieldDeletedAt]; !ok {
-				selectedFields = append(selectedFields, integration.FieldDeletedAt)
-				fieldSeen[integration.FieldDeletedAt] = struct{}{}
-			}
-		case "id":
-		case "__typename":
-		default:
-			unknownSeen = true
 		}
-	}
-	if !unknownSeen {
-		i.Select(selectedFields...)
 	}
 	return nil
 }
@@ -87,7 +46,7 @@ type integrationPaginateArgs struct {
 	opts          []IntegrationPaginateOption
 }
 
-func newIntegrationPaginateArgs(rv map[string]any) *integrationPaginateArgs {
+func newIntegrationPaginateArgs(rv map[string]interface{}) *integrationPaginateArgs {
 	args := &integrationPaginateArgs{}
 	if rv == nil {
 		return args
@@ -122,14 +81,9 @@ func (m *MembershipQuery) CollectFields(ctx context.Context, satisfies ...string
 	return m, nil
 }
 
-func (m *MembershipQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (m *MembershipQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	var (
-		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(membership.Columns))
-		selectedFields = []string{membership.FieldID}
-	)
-	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
 		case "organization":
 			var (
@@ -137,7 +91,7 @@ func (m *MembershipQuery) collectField(ctx context.Context, opCtx *graphql.Opera
 				path  = append(path, alias)
 				query = (&OrganizationClient{config: m.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
 			m.withOrganization = query
@@ -147,33 +101,11 @@ func (m *MembershipQuery) collectField(ctx context.Context, opCtx *graphql.Opera
 				path  = append(path, alias)
 				query = (&UserClient{config: m.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
 			m.withUser = query
-		case "current":
-			if _, ok := fieldSeen[membership.FieldCurrent]; !ok {
-				selectedFields = append(selectedFields, membership.FieldCurrent)
-				fieldSeen[membership.FieldCurrent] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[membership.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, membership.FieldCreatedAt)
-				fieldSeen[membership.FieldCreatedAt] = struct{}{}
-			}
-		case "updatedAt":
-			if _, ok := fieldSeen[membership.FieldUpdatedAt]; !ok {
-				selectedFields = append(selectedFields, membership.FieldUpdatedAt)
-				fieldSeen[membership.FieldUpdatedAt] = struct{}{}
-			}
-		case "id":
-		case "__typename":
-		default:
-			unknownSeen = true
 		}
-	}
-	if !unknownSeen {
-		m.Select(selectedFields...)
 	}
 	return nil
 }
@@ -184,7 +116,7 @@ type membershipPaginateArgs struct {
 	opts          []MembershipPaginateOption
 }
 
-func newMembershipPaginateArgs(rv map[string]any) *membershipPaginateArgs {
+func newMembershipPaginateArgs(rv map[string]interface{}) *membershipPaginateArgs {
 	args := &membershipPaginateArgs{}
 	if rv == nil {
 		return args
@@ -219,14 +151,9 @@ func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...stri
 	return o, nil
 }
 
-func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (o *OrganizationQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	var (
-		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(organization.Columns))
-		selectedFields = []string{organization.FieldID}
-	)
-	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
 		case "memberships":
 			var (
@@ -234,7 +161,7 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				path  = append(path, alias)
 				query = (&MembershipClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
 			o.WithNamedMemberships(alias, func(wq *MembershipQuery) {
@@ -246,30 +173,13 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				path  = append(path, alias)
 				query = (&IntegrationClient{config: o.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
 			o.WithNamedIntegrations(alias, func(wq *IntegrationQuery) {
 				*wq = *query
 			})
-		case "name":
-			if _, ok := fieldSeen[organization.FieldName]; !ok {
-				selectedFields = append(selectedFields, organization.FieldName)
-				fieldSeen[organization.FieldName] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[organization.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, organization.FieldCreatedAt)
-				fieldSeen[organization.FieldCreatedAt] = struct{}{}
-			}
-		case "id":
-		case "__typename":
-		default:
-			unknownSeen = true
 		}
-	}
-	if !unknownSeen {
-		o.Select(selectedFields...)
 	}
 	return nil
 }
@@ -280,7 +190,7 @@ type organizationPaginateArgs struct {
 	opts          []OrganizationPaginateOption
 }
 
-func newOrganizationPaginateArgs(rv map[string]any) *organizationPaginateArgs {
+func newOrganizationPaginateArgs(rv map[string]interface{}) *organizationPaginateArgs {
 	args := &organizationPaginateArgs{}
 	if rv == nil {
 		return args
@@ -315,14 +225,9 @@ func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*Us
 	return u, nil
 }
 
-func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+func (u *UserQuery) collectField(ctx context.Context, op *graphql.OperationContext, field graphql.CollectedField, path []string, satisfies ...string) error {
 	path = append([]string(nil), path...)
-	var (
-		unknownSeen    bool
-		fieldSeen      = make(map[string]struct{}, len(user.Columns))
-		selectedFields = []string{user.FieldID}
-	)
-	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+	for _, field := range graphql.CollectFields(op, field.Selections, satisfies) {
 		switch field.Name {
 		case "memberships":
 			var (
@@ -330,30 +235,13 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				path  = append(path, alias)
 				query = (&MembershipClient{config: u.config}).Query()
 			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+			if err := query.collectField(ctx, op, field, path, satisfies...); err != nil {
 				return err
 			}
 			u.WithNamedMemberships(alias, func(wq *MembershipQuery) {
 				*wq = *query
 			})
-		case "email":
-			if _, ok := fieldSeen[user.FieldEmail]; !ok {
-				selectedFields = append(selectedFields, user.FieldEmail)
-				fieldSeen[user.FieldEmail] = struct{}{}
-			}
-		case "createdAt":
-			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
-				selectedFields = append(selectedFields, user.FieldCreatedAt)
-				fieldSeen[user.FieldCreatedAt] = struct{}{}
-			}
-		case "id":
-		case "__typename":
-		default:
-			unknownSeen = true
 		}
-	}
-	if !unknownSeen {
-		u.Select(selectedFields...)
 	}
 	return nil
 }
@@ -364,7 +252,7 @@ type userPaginateArgs struct {
 	opts          []UserPaginateOption
 }
 
-func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
+func newUserPaginateArgs(rv map[string]interface{}) *userPaginateArgs {
 	args := &userPaginateArgs{}
 	if rv == nil {
 		return args
@@ -398,18 +286,35 @@ const (
 	whereField     = "where"
 )
 
-func fieldArgs(ctx context.Context, whereInput any, path ...string) map[string]any {
-	field := collectedField(ctx, path...)
-	if field == nil || field.Arguments == nil {
+func fieldArgs(ctx context.Context, whereInput interface{}, path ...string) map[string]interface{} {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
 		return nil
 	}
 	oc := graphql.GetOperationContext(ctx)
-	args := field.ArgumentMap(oc.Variables)
-	return unmarshalArgs(ctx, whereInput, args)
+	for _, name := range path {
+		var field *graphql.CollectedField
+		for _, f := range graphql.CollectFields(oc, fc.Field.Selections, nil) {
+			if f.Alias == name {
+				field = &f
+				break
+			}
+		}
+		if field == nil {
+			return nil
+		}
+		cf, err := fc.Child(ctx, *field)
+		if err != nil {
+			args := field.ArgumentMap(oc.Variables)
+			return unmarshalArgs(ctx, whereInput, args)
+		}
+		fc = cf
+	}
+	return fc.Args
 }
 
 // unmarshalArgs allows extracting the field arguments from their raw representation.
-func unmarshalArgs(ctx context.Context, whereInput any, args map[string]any) map[string]any {
+func unmarshalArgs(ctx context.Context, whereInput interface{}, args map[string]interface{}) map[string]interface{} {
 	for _, k := range []string{firstField, lastField} {
 		v, ok := args[k]
 		if !ok {
@@ -460,18 +365,4 @@ func limitRows(partitionBy string, limit int, orderBy ...sql.Querier) func(s *sq
 			Where(sql.LTE(t.C("row_number"), limit)).
 			Prefix(with)
 	}
-}
-
-// mayAddCondition appends another type condition to the satisfies list
-// if condition is enabled (Node/Nodes) and it does not exist in the list.
-func mayAddCondition(satisfies []string, typeCond string) []string {
-	if len(satisfies) == 0 {
-		return satisfies
-	}
-	for _, s := range satisfies {
-		if typeCond == s {
-			return satisfies
-		}
-	}
-	return append(satisfies, typeCond)
 }

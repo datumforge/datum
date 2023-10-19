@@ -69,7 +69,7 @@ func serve(ctx context.Context) error {
 		enablePlayground = true
 	}
 
-	// setup db connection
+	// setup db connection for server
 	db, err := newDB()
 	if err != nil {
 		return err
@@ -177,15 +177,17 @@ func serve(ctx context.Context) error {
 	return nil
 }
 
+// newDB creates returns new sql db connection
 func newDB() (*sql.DB, error) {
 	dbDriverName := "sqlite3"
 
-	// setup db
+	// setup db connection
 	db, err := sql.Open(dbDriverName, viper.GetString("server.db"))
 	if err != nil {
 		return nil, fmt.Errorf("failed connecting to database: %w", err)
 	}
 
+	// verify db connection using ping
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("failed verifying database connection: %w", err)
 	}

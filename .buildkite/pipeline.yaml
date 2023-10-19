@@ -9,7 +9,7 @@ steps:
   plugins:
     - docker#v5.9.0:
         image: "registry.hub.docker.com/golangci/golangci-lint:v1.53-alpine"
-        command: ["golangci-lint", "run", "-v", "--timeout", "5m"]
+        command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
 
 - label: ":test_tube: test"
   key: "test"

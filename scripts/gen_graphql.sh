@@ -9,24 +9,27 @@ for file in $schemas
 do
     file=${file##*/}
     schema=${file%.*}
-    # Check if file already exists
     if [ -f "$graphSchemaDir/$schema.graphql" ]
     then
-        echo "$graphSchemaDir/$schema.graphql already exists, not regenerating."
-    else
+        # Check if file already exists
+        if [ -f "$graphSchemaDir/$schema.graphql" ]
+        then
+            echo "$graphSchemaDir/$schema.graphql already exists, not regenerating."
+        else
 
-        touch $graphSchemaDir/$schema.graphql
+            touch $graphSchemaDir/$schema.graphql
 
-        export name="${schema}"
+            export name="${schema}"
 
-        # Object is capitilized
-        first=`echo $name|cut -c1|tr [a-z] [A-Z]`
-        second=`echo $name|cut -c2-`
-        export object="${first}${second}"
+            # Object is capitilized
+            first=`echo $name|cut -c1|tr [a-z] [A-Z]`
+            second=`echo $name|cut -c2-`
+            export object="${first}${second}"
 
-        # Generate a base graphql schema
-        gomplate -f scripts/templates/graph.tpl > $graphSchemaDir/$schema.graphql
+            # Generate a base graphql schema
+            gomplate -f scripts/templates/graph.tpl > $graphSchemaDir/$schema.graphql
 
-        echo +++ file created $graphSchemaDir/$schema.graphql
+            echo +++ file created $graphSchemaDir/$schema.graphql
+        fi
     fi
 done

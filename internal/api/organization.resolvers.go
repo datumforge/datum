@@ -13,7 +13,12 @@ import (
 
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateOrganization - createOrganization"))
+	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OrganizationCreatePayload{Organization: org}, nil
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.

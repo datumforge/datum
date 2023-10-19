@@ -60,20 +60,20 @@ type OrganizationUpdatePayload struct {
 	Organization *generated.Organization `json:"organization"`
 }
 
-// Return response from userCreate
+// Return response for createUser mutation
 type UserCreatePayload struct {
-	// The created user.
+	// Created user
 	User *generated.User `json:"user"`
 }
 
-// Return response from userDelete
+// Return response for deleteUser mutation
 type UserDeletePayload struct {
-	// The deleted user.
+	// Deleted user ID
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response from userUpdate
+// Return response for updateUser mutation
 type UserUpdatePayload struct {
-	// The updated user.
+	// Updated user
 	User *generated.User `json:"user"`
 }

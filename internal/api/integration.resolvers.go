@@ -30,3 +30,8 @@ func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*I
 func (r *queryResolver) Integration(ctx context.Context, id string) (*generated.Integration, error) {
 	panic(fmt.Errorf("not implemented: Integration - integration"))
 }
+
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
+type mutationResolver struct{ *Resolver }

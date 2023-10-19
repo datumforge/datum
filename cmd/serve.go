@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 	"syscall"
 	"time"
 
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
 	"github.com/brpaz/echozap"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -25,6 +28,7 @@ import (
 const (
 	defaultListenAddr          = ":17608"
 	defaultShutdownGracePeriod = 5 * time.Second
+	defaultDBURI               = "datum.db?mode=memory&_fk=1"
 )
 
 var (
@@ -49,6 +53,9 @@ func init() {
 	serveCmd.Flags().String("listen", defaultListenAddr, "address to listen on")
 	viperBindFlag("server.listen", serveCmd.Flags().Lookup("listen"))
 
+	serveCmd.Flags().String("dbURI", defaultDBURI, "db uri")
+	viperBindFlag("server.db", serveCmd.Flags().Lookup("dbURI"))
+
 	serveCmd.Flags().Duration("shutdown-grace-period", defaultShutdownGracePeriod, "server shutdown grace period")
 	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
 
@@ -62,9 +69,17 @@ func serve(ctx context.Context) error {
 		enablePlayground = true
 	}
 
-	// TODO add db connection
+	// setup db connection
+	db, err := newDB()
+	if err != nil {
+		return err
+	}
 
-	cOpts := []ent.Option{}
+	defer db.Close()
+
+	entDB := entsql.OpenDB(dialect.SQLite, db)
+
+	cOpts := []ent.Option{ent.Driver(entDB)}
 
 	if viper.GetBool(("debug")) {
 		cOpts = append(cOpts,
@@ -76,12 +91,11 @@ func serve(ctx context.Context) error {
 	client := ent.NewClient(cOpts...)
 	defer client.Close()
 
-	// TODO uncomment after db setup
-	// // Run the automatic migration tool to create all schema resources.
-	// if err := client.Schema.Create(ctx); err != nil {
-	// 	logger.Errorf("failed creating schema resources", zap.Error(err))
-	// 	return err
-	// }
+	// Run the automatic migration tool to create all schema resources.
+	if err := client.Schema.Create(ctx); err != nil {
+		logger.Errorf("failed creating schema resources", zap.Error(err))
+		return err
+	}
 
 	// TODO jwt auth middleware
 
@@ -161,4 +175,20 @@ func serve(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func newDB() (*sql.DB, error) {
+	dbDriverName := "sqlite3"
+
+	// setup db
+	db, err := sql.Open(dbDriverName, viper.GetString("server.db"))
+	if err != nil {
+		return nil, fmt.Errorf("failed connecting to database: %w", err)
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("failed verifying database connection: %w", err)
+	}
+
+	return db, nil
 }

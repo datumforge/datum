@@ -225,12 +225,6 @@ input MembershipWhereInput {
 	hasUserWith: [UserWhereInput!]
 }
 type Mutation {
-	"""Create a user"""
-	userCreate(input: CreateUserInput!): UserCreatePayload!
-	"""Update a user"""
-	userUpdate(id: ID!, input: UpdateUserInput!): UserUpdatePayload!
-	"""Delete a user"""
-	userDelete(id: ID!): UserDeletePayload!
 	"""Create a new integration"""
 	createIntegration(
 		"""values of the integration"""
@@ -285,6 +279,24 @@ type Mutation {
 		"""ID of the organization"""
 		id: ID!
 	): OrganizationDeletePayload!
+	"""Create a new user"""
+	createUser(
+		"""values of the user"""
+		input: CreateUserInput!
+	): UserCreatePayload!
+	"""Update an existing user"""
+	updateUser(
+		"""ID of the user"""
+		id: ID!
+
+		"""New values for the user"""
+		input: UpdateUserInput!
+	): UserUpdatePayload!
+	"""Delete an existing user"""
+	deleteUser(
+		"""ID of the user"""
+		id: ID!
+	): UserDeletePayload!
 }
 """
 An object with an ID.
@@ -414,9 +426,9 @@ type Query {
 		"""ID of the organization"""
 		id: ID!
 	): Organization!
-	"""Lookup a user by ID."""
+	"""Look up user by ID"""
 	user(
-		"""The user ID."""
+		"""ID of the user"""
 		id: ID!
 	): User!
 	_service: _Service!
@@ -473,19 +485,19 @@ type User implements Node {
 	createdAt: Time!
 	memberships: [Membership!]
 }
-"""Return response from userCreate"""
+"""Return response for createUser mutation"""
 type UserCreatePayload {
-	"""The created user."""
+	"""Created user"""
 	user: User!
 }
-"""Return response from userDelete"""
+"""Return response for deleteUser mutation"""
 type UserDeletePayload {
-	"""The deleted user."""
+	"""Deleted user ID"""
 	deletedID: ID!
 }
-"""Return response from userUpdate"""
+"""Return response for updateUser mutation"""
 type UserUpdatePayload {
-	"""The updated user."""
+	"""Updated user"""
 	user: User!
 }
 """

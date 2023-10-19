@@ -1,57 +1,75 @@
 extend type Query {
-  """
-  Lookup a user by ID.
-  """
-  user(
     """
-    The user ID.
+    Look up user by ID
     """
-    id: ID!): User!
+     user(
+        """
+        ID of the user
+        """
+        id: ID!
+    ):  User!
 }
 
-type Mutation {
-  """
-  Create a user
-  """
-  userCreate(input: CreateUserInput!): UserCreatePayload!
-
-  """
-  Update a user
-  """
-  userUpdate(id: ID! input: UpdateUserInput!): UserUpdatePayload!
-
-  """
-  Delete a user
-  """
-  userDelete(id: ID!): UserDeletePayload!
+extend type Mutation{
+    """
+    Create a new user
+    """
+    createUser(
+        """
+        values of the user
+        """
+        input: CreateUserInput!
+    ): UserCreatePayload!
+    """
+    Update an existing user
+    """
+    updateUser(
+        """
+        ID of the user
+        """
+        id: ID!
+        """
+        New values for the user
+        """
+        input: UpdateUserInput!
+    ): UserUpdatePayload!
+    """
+    Delete an existing user
+    """
+    deleteUser(
+        """
+        ID of the user
+        """
+        id: ID!
+    ): UserDeletePayload!
 }
 
 """
-Return response from userCreate
+Return response for createUser mutation
 """
 type UserCreatePayload {
-  """
-  The created user.
-  """
-  user: User!
+    """
+    Created user
+    """
+    user: User!
 }
 
 """
-Return response from userUpdate
+Return response for updateUser mutation
 """
 type UserUpdatePayload {
-  """
-  The updated user.
-  """
-  user: User!
+    """
+    Updated user
+    """
+    user: User!
 }
 
 """
-Return response from userDelete
+Return response for deleteUser mutation
 """
 type UserDeletePayload {
-  """
-  The deleted user.
-  """
-  deletedID: ID!
+    """
+    Deleted user ID
+    """
+    deletedID: ID!
 }

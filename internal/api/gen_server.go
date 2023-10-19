@@ -113,15 +113,15 @@ type ComplexityRoot struct {
 		CreateIntegration  func(childComplexity int, input generated.CreateIntegrationInput) int
 		CreateMembership   func(childComplexity int, input generated.CreateMembershipInput) int
 		CreateOrganization func(childComplexity int, input generated.CreateOrganizationInput) int
+		CreateUser         func(childComplexity int, input generated.CreateUserInput) int
 		DeleteIntegration  func(childComplexity int, id string) int
 		DeleteMembership   func(childComplexity int, id string) int
 		DeleteOrganization func(childComplexity int, id string) int
+		DeleteUser         func(childComplexity int, id string) int
 		UpdateIntegration  func(childComplexity int, id string, input generated.UpdateIntegrationInput) int
 		UpdateMembership   func(childComplexity int, id string, input generated.UpdateMembershipInput) int
 		UpdateOrganization func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
-		UserCreate         func(childComplexity int, input generated.CreateUserInput) int
-		UserDelete         func(childComplexity int, id string) int
-		UserUpdate         func(childComplexity int, id string, input generated.UpdateUserInput) int
+		UpdateUser         func(childComplexity int, id string, input generated.UpdateUserInput) int
 	}
 
 	Organization struct {
@@ -196,9 +196,6 @@ type MembershipResolver interface {
 	ID(ctx context.Context, obj *generated.Membership) (string, error)
 }
 type MutationResolver interface {
-	UserCreate(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
-	UserUpdate(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
-	UserDelete(ctx context.Context, id string) (*UserDeletePayload, error)
 	CreateIntegration(ctx context.Context, input generated.CreateIntegrationInput) (*IntegrationCreatePayload, error)
 	UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error)
 	DeleteIntegration(ctx context.Context, id string) (*IntegrationDeletePayload, error)
@@ -208,6 +205,9 @@ type MutationResolver interface {
 	CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error)
 	UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error)
 	DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error)
+	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
+	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
+	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
 }
 type OrganizationResolver interface {
 	ID(ctx context.Context, obj *generated.Organization) (string, error)
@@ -489,6 +489,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateOrganization(childComplexity, args["input"].(generated.CreateOrganizationInput)), true
 
+	case "Mutation.createUser":
+		if e.complexity.Mutation.CreateUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(generated.CreateUserInput)), true
+
 	case "Mutation.deleteIntegration":
 		if e.complexity.Mutation.DeleteIntegration == nil {
 			break
@@ -524,6 +536,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteOrganization(childComplexity, args["id"].(string)), true
+
+	case "Mutation.deleteUser":
+		if e.complexity.Mutation.DeleteUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateIntegration":
 		if e.complexity.Mutation.UpdateIntegration == nil {
@@ -561,41 +585,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateOrganization(childComplexity, args["id"].(string), args["input"].(generated.UpdateOrganizationInput)), true
 
-	case "Mutation.userCreate":
-		if e.complexity.Mutation.UserCreate == nil {
+	case "Mutation.updateUser":
+		if e.complexity.Mutation.UpdateUser == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_userCreate_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateUser_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UserCreate(childComplexity, args["input"].(generated.CreateUserInput)), true
-
-	case "Mutation.userDelete":
-		if e.complexity.Mutation.UserDelete == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_userDelete_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UserDelete(childComplexity, args["id"].(string)), true
-
-	case "Mutation.userUpdate":
-		if e.complexity.Mutation.UserUpdate == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_userUpdate_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UserUpdate(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserInput)), true
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserInput)), true
 
 	case "Organization.createdAt":
 		if e.complexity.Organization.CreatedAt == nil {
@@ -1579,61 +1579,79 @@ type OrganizationDeletePayload {
     deletedID: ID!
 }`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `extend type Query {
-  """
-  Lookup a user by ID.
-  """
-  user(
     """
-    The user ID.
+    Look up user by ID
     """
-    id: ID!): User!
+     user(
+        """
+        ID of the user
+        """
+        id: ID!
+    ):  User!
 }
 
-type Mutation {
-  """
-  Create a user
-  """
-  userCreate(input: CreateUserInput!): UserCreatePayload!
-
-  """
-  Update a user
-  """
-  userUpdate(id: ID! input: UpdateUserInput!): UserUpdatePayload!
-
-  """
-  Delete a user
-  """
-  userDelete(id: ID!): UserDeletePayload!
+extend type Mutation{
+    """
+    Create a new user
+    """
+    createUser(
+        """
+        values of the user
+        """
+        input: CreateUserInput!
+    ): UserCreatePayload!
+    """
+    Update an existing user
+    """
+    updateUser(
+        """
+        ID of the user
+        """
+        id: ID!
+        """
+        New values for the user
+        """
+        input: UpdateUserInput!
+    ): UserUpdatePayload!
+    """
+    Delete an existing user
+    """
+    deleteUser(
+        """
+        ID of the user
+        """
+        id: ID!
+    ): UserDeletePayload!
 }
 
 """
-Return response from userCreate
+Return response for createUser mutation
 """
 type UserCreatePayload {
-  """
-  The created user.
-  """
-  user: User!
+    """
+    Created user
+    """
+    user: User!
 }
 
 """
-Return response from userUpdate
+Return response for updateUser mutation
 """
 type UserUpdatePayload {
-  """
-  The updated user.
-  """
-  user: User!
+    """
+    Updated user
+    """
+    user: User!
 }
 
 """
-Return response from userDelete
+Return response for deleteUser mutation
 """
 type UserDeletePayload {
-  """
-  The deleted user.
-  """
-  deletedID: ID!
+    """
+    Deleted user ID
+    """
+    deletedID: ID!
 }`, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
 	directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE
@@ -1705,6 +1723,21 @@ func (ec *executionContext) field_Mutation_createOrganization_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateUserInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateUserInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteIntegration_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1736,6 +1769,21 @@ func (ec *executionContext) field_Mutation_deleteMembership_args(ctx context.Con
 }
 
 func (ec *executionContext) field_Mutation_deleteOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1822,37 +1870,7 @@ func (ec *executionContext) field_Mutation_updateOrganization_args(ctx context.C
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_userCreate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 generated.CreateUserInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateUserInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_userDelete_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_userUpdate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -2943,183 +2961,6 @@ func (ec *executionContext) fieldContext_MembershipUpdatePayload_membership(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_userCreate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_userCreate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UserCreate(rctx, fc.Args["input"].(generated.CreateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*UserCreatePayload)
-	fc.Result = res
-	return ec.marshalNUserCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserCreatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_userCreate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "user":
-				return ec.fieldContext_UserCreatePayload_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserCreatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_userCreate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_userUpdate(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_userUpdate(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UserUpdate(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*UserUpdatePayload)
-	fc.Result = res
-	return ec.marshalNUserUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserUpdatePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_userUpdate(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "user":
-				return ec.fieldContext_UserUpdatePayload_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserUpdatePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_userUpdate_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_userDelete(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_userDelete(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UserDelete(rctx, fc.Args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*UserDeletePayload)
-	fc.Result = res
-	return ec.marshalNUserDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserDeletePayload(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_userDelete(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "deletedID":
-				return ec.fieldContext_UserDeletePayload_deletedID(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type UserDeletePayload", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_userDelete_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_createIntegration(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createIntegration(ctx, field)
 	if err != nil {
@@ -3645,6 +3486,183 @@ func (ec *executionContext) fieldContext_Mutation_deleteOrganization(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteOrganization_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(generated.CreateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*UserCreatePayload)
+	fc.Result = res
+	return ec.marshalNUserCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user":
+				return ec.fieldContext_UserCreatePayload_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*UserUpdatePayload)
+	fc.Result = res
+	return ec.marshalNUserUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "user":
+				return ec.fieldContext_UserUpdatePayload_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*UserDeletePayload)
+	fc.Result = res
+	return ec.marshalNUserDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_UserDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -9981,27 +9999,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "userCreate":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_userCreate(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "userUpdate":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_userUpdate(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "userDelete":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_userDelete(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "createIntegration":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createIntegration(ctx, field)
@@ -10061,6 +10058,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteOrganization":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteOrganization(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createUser(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateUser(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteUser(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

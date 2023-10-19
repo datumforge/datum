@@ -1,7 +1,3 @@
-"""
- This file was originally generated, update to include required Queries and Mutations
-"""
-
 extend type Query {
     """
     Look up {{.Env.name}} by ID

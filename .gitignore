@@ -16,3 +16,5 @@
 
 # Go workspace file
 go.work
+
+datum.db

@@ -370,21 +370,21 @@ type User struct {
 
 func (User) IsNode() {}
 
-// Return response from userCreate
+// Return response for createUser mutation
 type UserCreatePayload struct {
-	// The created user.
+	// Created user
 	User User `json:"user"`
 }
 
-// Return response from userDelete
+// Return response for deleteUser mutation
 type UserDeletePayload struct {
-	// The deleted user.
+	// Deleted user ID
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response from userUpdate
+// Return response for updateUser mutation
 type UserUpdatePayload struct {
-	// The updated user.
+	// Updated user
 	User User `json:"user"`
 }
 

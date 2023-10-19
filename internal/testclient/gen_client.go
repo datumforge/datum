@@ -34,9 +34,6 @@ type Query struct {
 	Service       Service           "json:\"_service\" graphql:\"_service\""
 }
 type Mutation struct {
-	UserCreate         UserCreatePayload         "json:\"userCreate\" graphql:\"userCreate\""
-	UserUpdate         UserUpdatePayload         "json:\"userUpdate\" graphql:\"userUpdate\""
-	UserDelete         UserDeletePayload         "json:\"userDelete\" graphql:\"userDelete\""
 	CreateIntegration  IntegrationCreatePayload  "json:\"createIntegration\" graphql:\"createIntegration\""
 	UpdateIntegration  IntegrationUpdatePayload  "json:\"updateIntegration\" graphql:\"updateIntegration\""
 	DeleteIntegration  IntegrationDeletePayload  "json:\"deleteIntegration\" graphql:\"deleteIntegration\""
@@ -46,4 +43,7 @@ type Mutation struct {
 	CreateOrganization OrganizationCreatePayload "json:\"createOrganization\" graphql:\"createOrganization\""
 	UpdateOrganization OrganizationUpdatePayload "json:\"updateOrganization\" graphql:\"updateOrganization\""
 	DeleteOrganization OrganizationDeletePayload "json:\"deleteOrganization\" graphql:\"deleteOrganization\""
+	CreateUser         UserCreatePayload         "json:\"createUser\" graphql:\"createUser\""
+	UpdateUser         UserUpdatePayload         "json:\"updateUser\" graphql:\"updateUser\""
+	DeleteUser         UserDeletePayload         "json:\"deleteUser\" graphql:\"deleteUser\""
 }

@@ -40,6 +40,7 @@ func (Organization) Edges() []ent.Edge {
 	}
 }
 
+// Annotations of the Organization
 func (Organization) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),

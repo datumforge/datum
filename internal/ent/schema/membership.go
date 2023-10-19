@@ -18,6 +18,7 @@ type Membership struct {
 	ent.Schema
 }
 
+// Fields of the Membership
 func (Membership) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
@@ -36,6 +37,7 @@ func (Membership) Fields() []ent.Field {
 	}
 }
 
+// Edges of the Membership
 func (Membership) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("organization", Organization.Type).Ref("memberships").Unique().Required(),
@@ -43,12 +45,14 @@ func (Membership) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the Membership
 func (Membership) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Edges("organization", "user").Unique(),
 	}
 }
 
+// Annotations of the Membership
 func (Membership) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),

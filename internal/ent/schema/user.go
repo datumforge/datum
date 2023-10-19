@@ -37,13 +37,14 @@ func (User) Fields() []ent.Field {
 	}
 }
 
-// Edges of the User.
+// Edges of the User
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("memberships", Membership.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }
 
+// Annotations of the User
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),

@@ -23,13 +23,13 @@ import (
 )
 
 const (
-	defaultListenAddr = ":17608"
+	defaultListenAddr          = ":17608"
+	defaultShutdownGracePeriod = 5 * time.Second
 )
 
 var (
 	enablePlayground bool
 	serveDevMode     bool
-	mw               string
 )
 
 var serveCmd = &cobra.Command{
@@ -49,7 +49,7 @@ func init() {
 	serveCmd.Flags().String("listen", defaultListenAddr, "address to listen on")
 	viperBindFlag("server.listen", serveCmd.Flags().Lookup("listen"))
 
-	serveCmd.Flags().Duration("shutdown-grace-period", 5*time.Second, "server shutdown grace period")
+	serveCmd.Flags().Duration("shutdown-grace-period", defaultShutdownGracePeriod, "server shutdown grace period")
 	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
 
 	// only available as a CLI arg because these should only be used in dev environments

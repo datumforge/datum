@@ -17,6 +17,7 @@ type Integration struct {
 	ent.Schema
 }
 
+// Fields of the Integration
 func (Integration) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
@@ -31,12 +32,14 @@ func (Integration) Fields() []ent.Field {
 	}
 }
 
+// Edges of the Integration
 func (Integration) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("organization", Organization.Type).Ref("integrations").Unique().Required(),
 	}
 }
 
+// Annotations of the Integration
 func (Integration) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),

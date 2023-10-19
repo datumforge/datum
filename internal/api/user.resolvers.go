@@ -30,19 +30,3 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
 	panic(fmt.Errorf("not implemented: User - user"))
 }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) UserCreate(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: UserCreate - userCreate"))
-}
-func (r *mutationResolver) UserUpdate(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UserUpdate - userUpdate"))
-}
-func (r *mutationResolver) UserDelete(ctx context.Context, id string) (*UserDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: UserDelete - userDelete"))
-}

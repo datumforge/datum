@@ -76,11 +76,12 @@ func serve(ctx context.Context) error {
 	client := ent.NewClient(cOpts...)
 	defer client.Close()
 
-	// Run the automatic migration tool to create all schema resources.
-	if err := client.Schema.Create(ctx); err != nil {
-		logger.Errorf("failed creating schema resources", zap.Error(err))
-		return err
-	}
+	// TODO uncomment after db setup
+	// // Run the automatic migration tool to create all schema resources.
+	// if err := client.Schema.Create(ctx); err != nil {
+	// 	logger.Errorf("failed creating schema resources", zap.Error(err))
+	// 	return err
+	// }
 
 	// TODO jwt auth middleware
 

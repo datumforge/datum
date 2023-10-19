@@ -42,12 +42,11 @@ func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreat
 
 // UpdateIntegrationInput represents a mutation input for updating integrations.
 type UpdateIntegrationInput struct {
-	ClearDescription  bool
-	Description       *string
-	ClearDeletedAt    bool
-	DeletedAt         *time.Time
-	ClearOrganization bool
-	OrganizationID    *uuid.UUID
+	ClearDescription bool
+	Description      *string
+	ClearDeletedAt   bool
+	DeletedAt        *time.Time
+	OrganizationID   *uuid.UUID
 }
 
 // Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
@@ -63,9 +62,6 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.DeletedAt; v != nil {
 		m.SetDeletedAt(*v)
-	}
-	if i.ClearOrganization {
-		m.ClearOrganization()
 	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)
@@ -116,12 +112,10 @@ func (c *MembershipCreate) SetInput(i CreateMembershipInput) *MembershipCreate {
 
 // UpdateMembershipInput represents a mutation input for updating memberships.
 type UpdateMembershipInput struct {
-	Current           *bool
-	UpdatedAt         *time.Time
-	ClearOrganization bool
-	OrganizationID    *uuid.UUID
-	ClearUser         bool
-	UserID            *uuid.UUID
+	Current        *bool
+	UpdatedAt      *time.Time
+	OrganizationID *uuid.UUID
+	UserID         *uuid.UUID
 }
 
 // Mutate applies the UpdateMembershipInput on the MembershipMutation builder.
@@ -132,14 +126,8 @@ func (i *UpdateMembershipInput) Mutate(m *MembershipMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
-	if i.ClearOrganization {
-		m.ClearOrganization()
-	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)
-	}
-	if i.ClearUser {
-		m.ClearUser()
 	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)

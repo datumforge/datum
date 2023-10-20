@@ -1,7 +1,8 @@
 #!/bin/bash
-
+set -ueo pipefail
 # Get all generated schema files from ent
-entSchemaDir=internal/ent/schema
+repoRoot=$(git rev-parse --show-toplevel)
+entSchemaDir=$repoRoot/internal/ent/schema
 graphSchemaDir=schema
 schemas=$(find $entSchemaDir -name '*.go')
 
@@ -9,27 +10,26 @@ for file in $schemas
 do
     file=${file##*/}
     schema=${file%.*}
+    # Check if file already exists
     if [ -f "$graphSchemaDir/$schema.graphql" ]
     then
-        # Check if file already exists
-        if [ -f "$graphSchemaDir/$schema.graphql" ]
-        then
-            echo "$graphSchemaDir/$schema.graphql already exists, not regenerating."
-        else
+        echo "$graphSchemaDir/$schema.graphql already exists, not regenerating."
+    else
 
-            touch $graphSchemaDir/$schema.graphql
+        touch $graphSchemaDir/$schema.graphql
 
-            export name="${schema}"
+        echo creating $graphSchemaDir/$schema.graphql
 
-            # Object is capitilized
-            first=`echo $name|cut -c1|tr [a-z] [A-Z]`
-            second=`echo $name|cut -c2-`
-            export object="${first}${second}"
+        export name="${schema}"
 
-            # Generate a base graphql schema
-            gomplate -f scripts/templates/graph.tpl > $graphSchemaDir/$schema.graphql
+        # Object is capitilized
+        first=`echo $name|cut -c1|tr [a-z] [A-Z]`
+        second=`echo $name|cut -c2-`
+        export object="${first}${second}"
 
-            echo +++ file created $graphSchemaDir/$schema.graphql
-        fi
+        # Generate a base graphql schema
+        gomplate -f scripts/templates/graph.tpl > $graphSchemaDir/$schema.graphql
+
+        echo +++ file created $graphSchemaDir/$schema.graphql
     fi
 done

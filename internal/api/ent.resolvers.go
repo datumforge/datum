@@ -51,6 +51,11 @@ func (r *queryResolver) Organizations(ctx context.Context) ([]*generated.Organiz
 	panic(fmt.Errorf("not implemented: Organizations - organizations"))
 }
 
+// Sessions is the resolver for the sessions field.
+func (r *queryResolver) Sessions(ctx context.Context) ([]*generated.Session, error) {
+	panic(fmt.Errorf("not implemented: Sessions - sessions"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*generated.User, error) {
 	panic(fmt.Errorf("not implemented: Users - users"))
@@ -89,6 +94,11 @@ func (r *createOrganizationInputResolver) MembershipIDs(ctx context.Context, obj
 // IntegrationIDs is the resolver for the integrationIDs field.
 func (r *createOrganizationInputResolver) IntegrationIDs(ctx context.Context, obj *generated.CreateOrganizationInput, data []string) error {
 	panic(fmt.Errorf("not implemented: IntegrationIDs - integrationIDs"))
+}
+
+// UsersID is the resolver for the usersID field.
+func (r *createSessionInputResolver) UsersID(ctx context.Context, obj *generated.CreateSessionInput, data *string) error {
+	panic(fmt.Errorf("not implemented: UsersID - usersID"))
 }
 
 // MembershipIDs is the resolver for the membershipIDs field.
@@ -296,6 +306,11 @@ func (r *updateOrganizationInputResolver) RemoveIntegrationIDs(ctx context.Conte
 	panic(fmt.Errorf("not implemented: RemoveIntegrationIDs - removeIntegrationIDs"))
 }
 
+// UsersID is the resolver for the usersID field.
+func (r *updateSessionInputResolver) UsersID(ctx context.Context, obj *generated.UpdateSessionInput, data *string) error {
+	panic(fmt.Errorf("not implemented: UsersID - usersID"))
+}
+
 // AddMembershipIDs is the resolver for the addMembershipIDs field.
 func (r *updateUserInputResolver) AddMembershipIDs(ctx context.Context, obj *generated.UpdateUserInput, data []string) error {
 	panic(fmt.Errorf("not implemented: AddMembershipIDs - addMembershipIDs"))
@@ -389,6 +404,11 @@ func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
 	return &createOrganizationInputResolver{r}
 }
 
+// CreateSessionInput returns CreateSessionInputResolver implementation.
+func (r *Resolver) CreateSessionInput() CreateSessionInputResolver {
+	return &createSessionInputResolver{r}
+}
+
 // CreateUserInput returns CreateUserInputResolver implementation.
 func (r *Resolver) CreateUserInput() CreateUserInputResolver { return &createUserInputResolver{r} }
 
@@ -427,6 +447,11 @@ func (r *Resolver) UpdateOrganizationInput() UpdateOrganizationInputResolver {
 	return &updateOrganizationInputResolver{r}
 }
 
+// UpdateSessionInput returns UpdateSessionInputResolver implementation.
+func (r *Resolver) UpdateSessionInput() UpdateSessionInputResolver {
+	return &updateSessionInputResolver{r}
+}
+
 // UpdateUserInput returns UpdateUserInputResolver implementation.
 func (r *Resolver) UpdateUserInput() UpdateUserInputResolver { return &updateUserInputResolver{r} }
 
@@ -442,6 +467,7 @@ type userResolver struct{ *Resolver }
 type createIntegrationInputResolver struct{ *Resolver }
 type createMembershipInputResolver struct{ *Resolver }
 type createOrganizationInputResolver struct{ *Resolver }
+type createSessionInputResolver struct{ *Resolver }
 type createUserInputResolver struct{ *Resolver }
 type integrationWhereInputResolver struct{ *Resolver }
 type membershipWhereInputResolver struct{ *Resolver }
@@ -450,5 +476,6 @@ type sessionWhereInputResolver struct{ *Resolver }
 type updateIntegrationInputResolver struct{ *Resolver }
 type updateMembershipInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }
+type updateSessionInputResolver struct{ *Resolver }
 type updateUserInputResolver struct{ *Resolver }
 type userWhereInputResolver struct{ *Resolver }

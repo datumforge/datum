@@ -3,7 +3,9 @@ package schema
 import (
 	"encoding/base64"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -83,6 +85,14 @@ func (Session) Edges() []ent.Edge {
 		edge.To("users", User.Type).
 			Unique().
 			Comment("Sessions belong to users"),
+	}
+}
+
+// Annotations of the Session
+func (Session) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }
 

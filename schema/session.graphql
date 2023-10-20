@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up session by ID
+    """
+     session(
+        """
+        ID of the session
+        """
+        id: ID!
+    ):  Session!
+}
+
+extend type Mutation{
+    """
+    Create a new session
+    """
+    createSession(
+        """
+        values of the session
+        """
+        input: CreateSessionInput!
+    ): SessionCreatePayload!
+    """
+    Update an existing session
+    """
+    updateSession(
+        """
+        ID of the session
+        """
+        id: ID!
+        """
+        New values for the session
+        """
+        input: UpdateSessionInput!
+    ): SessionUpdatePayload!
+    """
+    Delete an existing session
+    """
+    deleteSession(
+        """
+        ID of the session
+        """
+        id: ID!
+    ): SessionDeletePayload!
+}
+
+"""
+Return response for createSession mutation
+"""
+type SessionCreatePayload {
+    """
+    Created session
+    """
+    session: Session!
+}
+
+"""
+Return response for updateSession mutation
+"""
+type SessionUpdatePayload {
+    """
+    Updated session
+    """
+    session: Session!
+}
+
+"""
+Return response for deleteSession mutation
+"""
+type SessionDeletePayload {
+    """
+    Deleted session ID
+    """
+    deletedID: ID!
+}

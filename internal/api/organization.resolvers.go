@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/google/uuid"
 )
 

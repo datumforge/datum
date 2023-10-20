@@ -1,3 +1,4 @@
+// Package schema is the database schema
 package schema
 
 import (
@@ -47,7 +48,7 @@ func (Membership) Annotations() []schema.Annotation {
 	}
 }
 
-// Mixins of the Membership
+// Mixin of the Membership
 func (Membership) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		AuditMixin{},

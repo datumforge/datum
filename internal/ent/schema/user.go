@@ -1,3 +1,4 @@
+// Package schema is the database schema
 package schema
 
 import (
@@ -12,6 +13,11 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"github.com/google/uuid"
+)
+
+const (
+	urlMaxLen  = 255
+	nameMaxLen = 64
 )
 
 // User holds the schema definition for the User entity.
@@ -30,9 +36,11 @@ func (User) Fields() []ent.Field {
 				return err
 			}),
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
+		field.String("first_name").NotEmpty().MaxLen(nameMaxLen),
+		field.String("last_name").NotEmpty().MaxLen(nameMaxLen),
 		field.String("display_name").
 			Comment("The user's displayed 'friendly' name").
-			MaxLen(64).
+			MaxLen(nameMaxLen).
 			NotEmpty().
 			Default("unknown"),
 		field.Bool("locked").
@@ -50,7 +58,7 @@ func (User) Fields() []ent.Field {
 		//			Nillable(),
 		field.String("avatar_remote_url").
 			Comment("URL of the user's remote avatar").
-			MaxLen(255).
+			MaxLen(urlMaxLen).
 			Validate(func(s string) error {
 				_, err := url.Parse(s)
 				return err
@@ -59,7 +67,7 @@ func (User) Fields() []ent.Field {
 			Nillable(),
 		field.String("avatar_local_file").
 			Comment("The user's local avatar file").
-			MaxLen(255).
+			MaxLen(urlMaxLen).
 			Optional().
 			Nillable(),
 		field.Time("avatar_updated_at").
@@ -106,6 +114,7 @@ func (User) Fields() []ent.Field {
 	}
 }
 
+// Indexes of the User
 func (User) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("id").
@@ -135,6 +144,7 @@ func (User) Annotations() []schema.Annotation {
 	}
 }
 
+// Mixin of the User
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		AuditMixin{},

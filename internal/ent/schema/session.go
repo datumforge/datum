@@ -1,3 +1,4 @@
+// Package schema is the database schema
 package schema
 
 import (
@@ -12,12 +13,12 @@ import (
 	"lukechampine.com/frand"
 )
 
-// Sessions are authentication sessions. They can either be first-party web auth sessions or OAuth sessions.
-// Sessions should persist in the database for some time duration after expiration, but with the "disabled" boolean set to true.
+// Session holds authentication sessions. They can either be first-party web auth sessions or OAuth sessions. Sessions should persist in the database for some time duration after expiration, but with the "disabled" boolean set to true.
 type Session struct {
 	ent.Schema
 }
 
+// Fields of the Session
 func (Session) Fields() []ent.Field {
 	return []ent.Field{
 		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
@@ -64,7 +65,7 @@ func (Session) Fields() []ent.Field {
 			Optional(),
 
 		field.String("ips").
-			Comment("All IPs that have been associated with this session. Reverse-chornological order. The current IP is the first item in the slice"),
+			Comment("All IPs that have been associated with this session. Reverse-chronological order. The current IP is the first item in the slice"),
 	}
 }
 
@@ -85,7 +86,7 @@ func (Session) Edges() []ent.Edge {
 	}
 }
 
-// Mixins of the Session
+// Mixin of the Session
 func (Session) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		AuditMixin{},

@@ -1,3 +1,4 @@
+// Package schema is the database schema
 package schema
 
 import (
@@ -10,13 +11,12 @@ import (
 	"entgo.io/ent/schema/mixin"
 )
 
-// AuditMixin provides auditing for all records where enabled.
-// The created_at, created_by, updated_at, and updated_by records
-// are automatically populated when this mixin is enabled.
+// AuditMixin provides auditing for all records where enabled. The created_at, created_by, updated_at, and updated_by records are automatically populated when this mixin is enabled.
 type AuditMixin struct {
 	mixin.Schema
 }
 
+// Fields of the AuditMixin
 func (AuditMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.Time("created_at").
@@ -32,12 +32,14 @@ func (AuditMixin) Fields() []ent.Field {
 	}
 }
 
+// Hooks of the AuditMixin
 func (AuditMixin) Hooks() []ent.Hook {
 	return []ent.Hook{
 		AuditHook,
 	}
 }
 
+// AuditHook sets and returns the created_at, updated_at, etc., fields
 func AuditHook(next ent.Mutator) ent.Mutator {
 	type AuditLogger interface {
 		SetCreatedAt(time.Time)

@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/google/uuid"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
@@ -22,16 +23,16 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.
-func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
+func (r *mutationResolver) UpdateOrganization(ctx context.Context, id uuid.UUID, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateOrganization - updateOrganization"))
 }
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
-func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
+func (r *mutationResolver) DeleteOrganization(ctx context.Context, id uuid.UUID) (*OrganizationDeletePayload, error) {
 	panic(fmt.Errorf("not implemented: DeleteOrganization - deleteOrganization"))
 }
 
 // Organization is the resolver for the organization field.
-func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
+func (r *queryResolver) Organization(ctx context.Context, id uuid.UUID) (*generated.Organization, error) {
 	panic(fmt.Errorf("not implemented: Organization - organization"))
 }

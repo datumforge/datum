@@ -4,6 +4,7 @@ package api
 
 import (
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/google/uuid"
 )
 
 // Return response for createIntegration mutation
@@ -15,7 +16,7 @@ type IntegrationCreatePayload struct {
 // Return response for deleteIntegration mutation
 type IntegrationDeletePayload struct {
 	// Deleted integration ID
-	DeletedID string `json:"deletedID"`
+	DeletedID uuid.UUID `json:"deletedID"`
 }
 
 // Return response for updateIntegration mutation
@@ -33,7 +34,7 @@ type MembershipCreatePayload struct {
 // Return response for deleteMembership mutation
 type MembershipDeletePayload struct {
 	// Deleted membership ID
-	DeletedID string `json:"deletedID"`
+	DeletedID uuid.UUID `json:"deletedID"`
 }
 
 // Return response for updateMembership mutation
@@ -51,7 +52,7 @@ type OrganizationCreatePayload struct {
 // Return response for deleteOrganization mutation
 type OrganizationDeletePayload struct {
 	// Deleted organization ID
-	DeletedID string `json:"deletedID"`
+	DeletedID uuid.UUID `json:"deletedID"`
 }
 
 // Return response for updateOrganization mutation
@@ -69,7 +70,7 @@ type SessionCreatePayload struct {
 // Return response for deleteSession mutation
 type SessionDeletePayload struct {
 	// Deleted session ID
-	DeletedID string `json:"deletedID"`
+	DeletedID uuid.UUID `json:"deletedID"`
 }
 
 // Return response for updateSession mutation
@@ -87,7 +88,7 @@ type UserCreatePayload struct {
 // Return response for deleteUser mutation
 type UserDeletePayload struct {
 	// Deleted user ID
-	DeletedID string `json:"deletedID"`
+	DeletedID uuid.UUID `json:"deletedID"`
 }
 
 // Return response for updateUser mutation

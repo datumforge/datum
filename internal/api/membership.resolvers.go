@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/google/uuid"
 )
 
 // CreateMembership is the resolver for the createMembership field.
@@ -17,16 +18,16 @@ func (r *mutationResolver) CreateMembership(ctx context.Context, input generated
 }
 
 // UpdateMembership is the resolver for the updateMembership field.
-func (r *mutationResolver) UpdateMembership(ctx context.Context, id string, input generated.UpdateMembershipInput) (*MembershipUpdatePayload, error) {
+func (r *mutationResolver) UpdateMembership(ctx context.Context, id uuid.UUID, input generated.UpdateMembershipInput) (*MembershipUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateMembership - updateMembership"))
 }
 
 // DeleteMembership is the resolver for the deleteMembership field.
-func (r *mutationResolver) DeleteMembership(ctx context.Context, id string) (*MembershipDeletePayload, error) {
+func (r *mutationResolver) DeleteMembership(ctx context.Context, id uuid.UUID) (*MembershipDeletePayload, error) {
 	panic(fmt.Errorf("not implemented: DeleteMembership - deleteMembership"))
 }
 
 // Membership is the resolver for the membership field.
-func (r *queryResolver) Membership(ctx context.Context, id string) (*generated.Membership, error) {
+func (r *queryResolver) Membership(ctx context.Context, id uuid.UUID) (*generated.Membership, error) {
 	panic(fmt.Errorf("not implemented: Membership - membership"))
 }

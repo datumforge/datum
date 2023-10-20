@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/google/uuid"
 )
 
 // CreateIntegration is the resolver for the createIntegration field.
@@ -17,17 +18,17 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 }
 
 // UpdateIntegration is the resolver for the updateIntegration field.
-func (r *mutationResolver) UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
+func (r *mutationResolver) UpdateIntegration(ctx context.Context, id uuid.UUID, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateIntegration - updateIntegration"))
 }
 
 // DeleteIntegration is the resolver for the deleteIntegration field.
-func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*IntegrationDeletePayload, error) {
+func (r *mutationResolver) DeleteIntegration(ctx context.Context, id uuid.UUID) (*IntegrationDeletePayload, error) {
 	panic(fmt.Errorf("not implemented: DeleteIntegration - deleteIntegration"))
 }
 
 // Integration is the resolver for the integration field.
-func (r *queryResolver) Integration(ctx context.Context, id string) (*generated.Integration, error) {
+func (r *queryResolver) Integration(ctx context.Context, id uuid.UUID) (*generated.Integration, error) {
 	panic(fmt.Errorf("not implemented: Integration - integration"))
 }
 

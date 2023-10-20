@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/google/uuid"
 )
 
 // CreateSession is the resolver for the createSession field.
@@ -17,16 +18,16 @@ func (r *mutationResolver) CreateSession(ctx context.Context, input generated.Cr
 }
 
 // UpdateSession is the resolver for the updateSession field.
-func (r *mutationResolver) UpdateSession(ctx context.Context, id string, input generated.UpdateSessionInput) (*SessionUpdatePayload, error) {
+func (r *mutationResolver) UpdateSession(ctx context.Context, id uuid.UUID, input generated.UpdateSessionInput) (*SessionUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateSession - updateSession"))
 }
 
 // DeleteSession is the resolver for the deleteSession field.
-func (r *mutationResolver) DeleteSession(ctx context.Context, id string) (*SessionDeletePayload, error) {
+func (r *mutationResolver) DeleteSession(ctx context.Context, id uuid.UUID) (*SessionDeletePayload, error) {
 	panic(fmt.Errorf("not implemented: DeleteSession - deleteSession"))
 }
 
 // Session is the resolver for the session field.
-func (r *queryResolver) Session(ctx context.Context, id string) (*generated.Session, error) {
+func (r *queryResolver) Session(ctx context.Context, id uuid.UUID) (*generated.Session, error) {
 	panic(fmt.Errorf("not implemented: Session - session"))
 }

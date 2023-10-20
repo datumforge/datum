@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/google/uuid"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -17,16 +18,16 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, id uuid.UUID, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
 }
 
 // DeleteUser is the resolver for the deleteUser field.
-func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
+func (r *mutationResolver) DeleteUser(ctx context.Context, id uuid.UUID) (*UserDeletePayload, error) {
 	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
 }
 
 // User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
+func (r *queryResolver) User(ctx context.Context, id uuid.UUID) (*generated.User, error) {
 	panic(fmt.Errorf("not implemented: User - user"))
 }

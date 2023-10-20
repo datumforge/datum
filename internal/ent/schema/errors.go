@@ -17,7 +17,7 @@ type UnexpectedAuditError struct {
 	MutationType ent.Mutation
 }
 
-// Error returns the ArgumentError in string format
+// Error returns the UnexpectedAuditError in string format
 func (e *UnexpectedAuditError) Error() string {
 	return fmt.Sprintf("unexpected audit log call from mutation type: %T", e.MutationType)
 }

@@ -6,7 +6,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/google/uuid"
@@ -14,22 +13,78 @@ import (
 
 // CreateIntegration is the resolver for the createIntegration field.
 func (r *mutationResolver) CreateIntegration(ctx context.Context, input generated.CreateIntegrationInput) (*IntegrationCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateIntegration - createIntegration"))
+	// TODO - add permissions checks
+	i, err := r.client.Integration.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to create integration", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &IntegrationCreatePayload{Integration: i}, nil
 }
 
 // UpdateIntegration is the resolver for the updateIntegration field.
 func (r *mutationResolver) UpdateIntegration(ctx context.Context, id uuid.UUID, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateIntegration - updateIntegration"))
+	// TODO - add permissions checks
+
+	i, err := r.client.Integration.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get integration", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	i, err = i.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to update integration", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &IntegrationUpdatePayload{Integration: i}, nil
 }
 
 // DeleteIntegration is the resolver for the deleteIntegration field.
 func (r *mutationResolver) DeleteIntegration(ctx context.Context, id uuid.UUID) (*IntegrationDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteIntegration - deleteIntegration"))
+	// TODO - add permissions checks
+
+	if err := r.client.Integration.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to delete integration", "error", err)
+		return nil, err
+	}
+
+	return &IntegrationDeletePayload{DeletedID: id}, nil
 }
 
 // Integration is the resolver for the integration field.
 func (r *queryResolver) Integration(ctx context.Context, id uuid.UUID) (*generated.Integration, error) {
-	panic(fmt.Errorf("not implemented: Integration - integration"))
+	// TODO - add permissions checks
+
+	i, err := r.client.Integration.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get integration", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return i, nil
 }
 
 // Mutation returns MutationResolver implementation.

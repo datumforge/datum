@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -12,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Organization holds the schema definition for the Organization entity
+// Organization holds the schema definition for the Organization entity - organizations are the top level tenancy construct in the system
 type Organization struct {
 	ent.Schema
 }
@@ -20,14 +18,9 @@ type Organization struct {
 // Fields of the Organization
 func (Organization) Fields() []ent.Field {
 	return []ent.Field{
+		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
 		field.String("name").Default("default"),
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable().
-			Annotations(&entsql.Annotation{
-				Default: "CURRENT_TIMESTAMP",
-			}),
 	}
 }
 
@@ -45,5 +38,12 @@ func (Organization) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Mixins of the Organization
+func (Organization) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		AuditMixin{},
 	}
 }

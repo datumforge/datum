@@ -20,12 +20,16 @@ type Membership struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// Current holds the value of the "current" field.
-	Current bool `json:"current,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy int `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy int `json:"updated_by,omitempty"`
+	// Current holds the value of the "current" field.
+	Current bool `json:"current,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MembershipQuery when eager-loading is set.
 	Edges                    MembershipEdges `json:"edges"`
@@ -80,6 +84,8 @@ func (*Membership) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case membership.FieldCurrent:
 			values[i] = new(sql.NullBool)
+		case membership.FieldCreatedBy, membership.FieldUpdatedBy:
+			values[i] = new(sql.NullInt64)
 		case membership.FieldCreatedAt, membership.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case membership.FieldID:
@@ -109,12 +115,6 @@ func (m *Membership) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				m.ID = *value
 			}
-		case membership.FieldCurrent:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field current", values[i])
-			} else if value.Valid {
-				m.Current = value.Bool
-			}
 		case membership.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -126,6 +126,24 @@ func (m *Membership) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				m.UpdatedAt = value.Time
+			}
+		case membership.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				m.CreatedBy = int(value.Int64)
+			}
+		case membership.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				m.UpdatedBy = int(value.Int64)
+			}
+		case membership.FieldCurrent:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field current", values[i])
+			} else if value.Valid {
+				m.Current = value.Bool
 			}
 		case membership.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -187,14 +205,20 @@ func (m *Membership) String() string {
 	var builder strings.Builder
 	builder.WriteString("Membership(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", m.ID))
-	builder.WriteString("current=")
-	builder.WriteString(fmt.Sprintf("%v", m.Current))
-	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(fmt.Sprintf("%v", m.CreatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", m.UpdatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("current=")
+	builder.WriteString(fmt.Sprintf("%v", m.Current))
 	builder.WriteByte(')')
 	return builder.String()
 }

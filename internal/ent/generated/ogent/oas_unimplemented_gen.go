@@ -40,6 +40,15 @@ func (UnimplementedHandler) CreateOrganization(ctx context.Context, req *CreateO
 	return r, ht.ErrNotImplemented
 }
 
+// CreateSession implements createSession operation.
+//
+// Creates a new Session and persists it to storage.
+//
+// POST /sessions
+func (UnimplementedHandler) CreateSession(ctx context.Context, req *CreateSessionReq) (r CreateSessionRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // CreateUser implements createUser operation.
 //
 // Creates a new User and persists it to storage.
@@ -73,6 +82,15 @@ func (UnimplementedHandler) DeleteMembership(ctx context.Context, params DeleteM
 //
 // DELETE /organizations/{id}
 func (UnimplementedHandler) DeleteOrganization(ctx context.Context, params DeleteOrganizationParams) (r DeleteOrganizationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// DeleteSession implements deleteSession operation.
+//
+// Deletes the Session with the requested ID.
+//
+// DELETE /sessions/{id}
+func (UnimplementedHandler) DeleteSession(ctx context.Context, params DeleteSessionParams) (r DeleteSessionRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -130,6 +148,15 @@ func (UnimplementedHandler) ListOrganizationMemberships(ctx context.Context, par
 	return r, ht.ErrNotImplemented
 }
 
+// ListSession implements listSession operation.
+//
+// List Sessions.
+//
+// GET /sessions
+func (UnimplementedHandler) ListSession(ctx context.Context, params ListSessionParams) (r ListSessionRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ListUser implements listUser operation.
 //
 // List Users.
@@ -145,6 +172,15 @@ func (UnimplementedHandler) ListUser(ctx context.Context, params ListUserParams)
 //
 // GET /users/{id}/memberships
 func (UnimplementedHandler) ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (r ListUserMembershipsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListUserSessions implements listUserSessions operation.
+//
+// List attached Sessions.
+//
+// GET /users/{id}/sessions
+func (UnimplementedHandler) ListUserSessions(ctx context.Context, params ListUserSessionsParams) (r ListUserSessionsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -202,6 +238,24 @@ func (UnimplementedHandler) ReadOrganization(ctx context.Context, params ReadOrg
 	return r, ht.ErrNotImplemented
 }
 
+// ReadSession implements readSession operation.
+//
+// Finds the Session with the requested ID and returns it.
+//
+// GET /sessions/{id}
+func (UnimplementedHandler) ReadSession(ctx context.Context, params ReadSessionParams) (r ReadSessionRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadSessionUsers implements readSessionUsers operation.
+//
+// Find the attached User of the Session with the given ID.
+//
+// GET /sessions/{id}/users
+func (UnimplementedHandler) ReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (r ReadSessionUsersRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ReadUser implements readUser operation.
 //
 // Finds the User with the requested ID and returns it.
@@ -235,6 +289,15 @@ func (UnimplementedHandler) UpdateMembership(ctx context.Context, req *UpdateMem
 //
 // PATCH /organizations/{id}
 func (UnimplementedHandler) UpdateOrganization(ctx context.Context, req *UpdateOrganizationReq, params UpdateOrganizationParams) (r UpdateOrganizationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdateSession implements updateSession operation.
+//
+// Updates a Session and persists changes to storage.
+//
+// PATCH /sessions/{id}
+func (UnimplementedHandler) UpdateSession(ctx context.Context, req *UpdateSessionReq, params UpdateSessionParams) (r UpdateSessionRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

@@ -26,6 +26,12 @@ type Handler interface {
 	//
 	// POST /organizations
 	CreateOrganization(ctx context.Context, req *CreateOrganizationReq) (CreateOrganizationRes, error)
+	// CreateSession implements createSession operation.
+	//
+	// Creates a new Session and persists it to storage.
+	//
+	// POST /sessions
+	CreateSession(ctx context.Context, req *CreateSessionReq) (CreateSessionRes, error)
 	// CreateUser implements createUser operation.
 	//
 	// Creates a new User and persists it to storage.
@@ -50,6 +56,12 @@ type Handler interface {
 	//
 	// DELETE /organizations/{id}
 	DeleteOrganization(ctx context.Context, params DeleteOrganizationParams) (DeleteOrganizationRes, error)
+	// DeleteSession implements deleteSession operation.
+	//
+	// Deletes the Session with the requested ID.
+	//
+	// DELETE /sessions/{id}
+	DeleteSession(ctx context.Context, params DeleteSessionParams) (DeleteSessionRes, error)
 	// DeleteUser implements deleteUser operation.
 	//
 	// Deletes the User with the requested ID.
@@ -86,6 +98,12 @@ type Handler interface {
 	//
 	// GET /organizations/{id}/memberships
 	ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (ListOrganizationMembershipsRes, error)
+	// ListSession implements listSession operation.
+	//
+	// List Sessions.
+	//
+	// GET /sessions
+	ListSession(ctx context.Context, params ListSessionParams) (ListSessionRes, error)
 	// ListUser implements listUser operation.
 	//
 	// List Users.
@@ -98,6 +116,12 @@ type Handler interface {
 	//
 	// GET /users/{id}/memberships
 	ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (ListUserMembershipsRes, error)
+	// ListUserSessions implements listUserSessions operation.
+	//
+	// List attached Sessions.
+	//
+	// GET /users/{id}/sessions
+	ListUserSessions(ctx context.Context, params ListUserSessionsParams) (ListUserSessionsRes, error)
 	// ReadIntegration implements readIntegration operation.
 	//
 	// Finds the Integration with the requested ID and returns it.
@@ -134,6 +158,18 @@ type Handler interface {
 	//
 	// GET /organizations/{id}
 	ReadOrganization(ctx context.Context, params ReadOrganizationParams) (ReadOrganizationRes, error)
+	// ReadSession implements readSession operation.
+	//
+	// Finds the Session with the requested ID and returns it.
+	//
+	// GET /sessions/{id}
+	ReadSession(ctx context.Context, params ReadSessionParams) (ReadSessionRes, error)
+	// ReadSessionUsers implements readSessionUsers operation.
+	//
+	// Find the attached User of the Session with the given ID.
+	//
+	// GET /sessions/{id}/users
+	ReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (ReadSessionUsersRes, error)
 	// ReadUser implements readUser operation.
 	//
 	// Finds the User with the requested ID and returns it.
@@ -158,6 +194,12 @@ type Handler interface {
 	//
 	// PATCH /organizations/{id}
 	UpdateOrganization(ctx context.Context, req *UpdateOrganizationReq, params UpdateOrganizationParams) (UpdateOrganizationRes, error)
+	// UpdateSession implements updateSession operation.
+	//
+	// Updates a Session and persists changes to storage.
+	//
+	// PATCH /sessions/{id}
+	UpdateSession(ctx context.Context, req *UpdateSessionReq, params UpdateSessionParams) (UpdateSessionRes, error)
 	// UpdateUser implements updateUser operation.
 	//
 	// Updates a User and persists changes to storage.

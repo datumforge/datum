@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 	"github.com/vektah/gqlparser/v2/gqlerror"
@@ -834,6 +835,252 @@ func (o *Organization) ToEdge(order *OrganizationOrder) *OrganizationEdge {
 	return &OrganizationEdge{
 		Node:   o,
 		Cursor: order.Field.toCursor(o),
+	}
+}
+
+// SessionEdge is the edge representation of Session.
+type SessionEdge struct {
+	Node   *Session `json:"node"`
+	Cursor Cursor   `json:"cursor"`
+}
+
+// SessionConnection is the connection containing edges to Session.
+type SessionConnection struct {
+	Edges      []*SessionEdge `json:"edges"`
+	PageInfo   PageInfo       `json:"pageInfo"`
+	TotalCount int            `json:"totalCount"`
+}
+
+func (c *SessionConnection) build(nodes []*Session, pager *sessionPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Session
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Session {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Session {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*SessionEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &SessionEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// SessionPaginateOption enables pagination customization.
+type SessionPaginateOption func(*sessionPager) error
+
+// WithSessionOrder configures pagination ordering.
+func WithSessionOrder(order *SessionOrder) SessionPaginateOption {
+	if order == nil {
+		order = DefaultSessionOrder
+	}
+	o := *order
+	return func(pager *sessionPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultSessionOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithSessionFilter configures pagination filter.
+func WithSessionFilter(filter func(*SessionQuery) (*SessionQuery, error)) SessionPaginateOption {
+	return func(pager *sessionPager) error {
+		if filter == nil {
+			return errors.New("SessionQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type sessionPager struct {
+	reverse bool
+	order   *SessionOrder
+	filter  func(*SessionQuery) (*SessionQuery, error)
+}
+
+func newSessionPager(opts []SessionPaginateOption, reverse bool) (*sessionPager, error) {
+	pager := &sessionPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultSessionOrder
+	}
+	return pager, nil
+}
+
+func (p *sessionPager) applyFilter(query *SessionQuery) (*SessionQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *sessionPager) toCursor(s *Session) Cursor {
+	return p.order.Field.toCursor(s)
+}
+
+func (p *sessionPager) applyCursors(query *SessionQuery, after, before *Cursor) (*SessionQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultSessionOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *sessionPager) applyOrder(query *SessionQuery) *SessionQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultSessionOrder.Field {
+		query = query.Order(DefaultSessionOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *sessionPager) orderExpr(query *SessionQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultSessionOrder.Field {
+			b.Comma().Ident(DefaultSessionOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Session.
+func (s *SessionQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...SessionPaginateOption,
+) (*SessionConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newSessionPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if s, err = pager.applyFilter(s); err != nil {
+		return nil, err
+	}
+	conn := &SessionConnection{Edges: []*SessionEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = s.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if s, err = pager.applyCursors(s, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		s.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := s.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	s = pager.applyOrder(s)
+	nodes, err := s.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// SessionOrderField defines the ordering field of Session.
+type SessionOrderField struct {
+	// Value extracts the ordering value from the given Session.
+	Value    func(*Session) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) session.OrderOption
+	toCursor func(*Session) Cursor
+}
+
+// SessionOrder defines the ordering of Session.
+type SessionOrder struct {
+	Direction OrderDirection     `json:"direction"`
+	Field     *SessionOrderField `json:"field"`
+}
+
+// DefaultSessionOrder is the default ordering of Session.
+var DefaultSessionOrder = &SessionOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &SessionOrderField{
+		Value: func(s *Session) (ent.Value, error) {
+			return s.ID, nil
+		},
+		column: session.FieldID,
+		toTerm: session.ByID,
+		toCursor: func(s *Session) Cursor {
+			return Cursor{ID: s.ID}
+		},
+	},
+}
+
+// ToEdge converts Session into SessionEdge.
+func (s *Session) ToEdge(order *SessionOrder) *SessionEdge {
+	if order == nil {
+		order = DefaultSessionOrder
+	}
+	return &SessionEdge{
+		Node:   s,
+		Cursor: order.Field.toCursor(s),
 	}
 }
 

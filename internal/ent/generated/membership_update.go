@@ -31,6 +31,66 @@ func (mu *MembershipUpdate) Where(ps ...predicate.Membership) *MembershipUpdate 
 	return mu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (mu *MembershipUpdate) SetUpdatedAt(t time.Time) *MembershipUpdate {
+	mu.mutation.SetUpdatedAt(t)
+	return mu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (mu *MembershipUpdate) SetCreatedBy(i int) *MembershipUpdate {
+	mu.mutation.ResetCreatedBy()
+	mu.mutation.SetCreatedBy(i)
+	return mu
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (mu *MembershipUpdate) SetNillableCreatedBy(i *int) *MembershipUpdate {
+	if i != nil {
+		mu.SetCreatedBy(*i)
+	}
+	return mu
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (mu *MembershipUpdate) AddCreatedBy(i int) *MembershipUpdate {
+	mu.mutation.AddCreatedBy(i)
+	return mu
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (mu *MembershipUpdate) ClearCreatedBy() *MembershipUpdate {
+	mu.mutation.ClearCreatedBy()
+	return mu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (mu *MembershipUpdate) SetUpdatedBy(i int) *MembershipUpdate {
+	mu.mutation.ResetUpdatedBy()
+	mu.mutation.SetUpdatedBy(i)
+	return mu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (mu *MembershipUpdate) SetNillableUpdatedBy(i *int) *MembershipUpdate {
+	if i != nil {
+		mu.SetUpdatedBy(*i)
+	}
+	return mu
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (mu *MembershipUpdate) AddUpdatedBy(i int) *MembershipUpdate {
+	mu.mutation.AddUpdatedBy(i)
+	return mu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (mu *MembershipUpdate) ClearUpdatedBy() *MembershipUpdate {
+	mu.mutation.ClearUpdatedBy()
+	return mu
+}
+
 // SetCurrent sets the "current" field.
 func (mu *MembershipUpdate) SetCurrent(b bool) *MembershipUpdate {
 	mu.mutation.SetCurrent(b)
@@ -41,20 +101,6 @@ func (mu *MembershipUpdate) SetCurrent(b bool) *MembershipUpdate {
 func (mu *MembershipUpdate) SetNillableCurrent(b *bool) *MembershipUpdate {
 	if b != nil {
 		mu.SetCurrent(*b)
-	}
-	return mu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (mu *MembershipUpdate) SetUpdatedAt(t time.Time) *MembershipUpdate {
-	mu.mutation.SetUpdatedAt(t)
-	return mu
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (mu *MembershipUpdate) SetNillableUpdatedAt(t *time.Time) *MembershipUpdate {
-	if t != nil {
-		mu.SetUpdatedAt(*t)
 	}
 	return mu
 }
@@ -100,6 +146,9 @@ func (mu *MembershipUpdate) ClearUser() *MembershipUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (mu *MembershipUpdate) Save(ctx context.Context) (int, error) {
+	if err := mu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, mu.sqlSave, mu.mutation, mu.hooks)
 }
 
@@ -125,6 +174,18 @@ func (mu *MembershipUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (mu *MembershipUpdate) defaults() error {
+	if _, ok := mu.mutation.UpdatedAt(); !ok {
+		if membership.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized membership.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := membership.UpdateDefaultUpdatedAt()
+		mu.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (mu *MembershipUpdate) check() error {
 	if _, ok := mu.mutation.OrganizationID(); mu.mutation.OrganizationCleared() && !ok {
@@ -148,11 +209,29 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := mu.mutation.Current(); ok {
-		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
-	}
 	if value, ok := mu.mutation.UpdatedAt(); ok {
 		_spec.SetField(membership.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := mu.mutation.CreatedBy(); ok {
+		_spec.SetField(membership.FieldCreatedBy, field.TypeInt, value)
+	}
+	if value, ok := mu.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(membership.FieldCreatedBy, field.TypeInt, value)
+	}
+	if mu.mutation.CreatedByCleared() {
+		_spec.ClearField(membership.FieldCreatedBy, field.TypeInt)
+	}
+	if value, ok := mu.mutation.UpdatedBy(); ok {
+		_spec.SetField(membership.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if value, ok := mu.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(membership.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if mu.mutation.UpdatedByCleared() {
+		_spec.ClearField(membership.FieldUpdatedBy, field.TypeInt)
+	}
+	if value, ok := mu.mutation.Current(); ok {
+		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
 	}
 	if mu.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -232,6 +311,66 @@ type MembershipUpdateOne struct {
 	mutation *MembershipMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (muo *MembershipUpdateOne) SetUpdatedAt(t time.Time) *MembershipUpdateOne {
+	muo.mutation.SetUpdatedAt(t)
+	return muo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (muo *MembershipUpdateOne) SetCreatedBy(i int) *MembershipUpdateOne {
+	muo.mutation.ResetCreatedBy()
+	muo.mutation.SetCreatedBy(i)
+	return muo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (muo *MembershipUpdateOne) SetNillableCreatedBy(i *int) *MembershipUpdateOne {
+	if i != nil {
+		muo.SetCreatedBy(*i)
+	}
+	return muo
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (muo *MembershipUpdateOne) AddCreatedBy(i int) *MembershipUpdateOne {
+	muo.mutation.AddCreatedBy(i)
+	return muo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (muo *MembershipUpdateOne) ClearCreatedBy() *MembershipUpdateOne {
+	muo.mutation.ClearCreatedBy()
+	return muo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (muo *MembershipUpdateOne) SetUpdatedBy(i int) *MembershipUpdateOne {
+	muo.mutation.ResetUpdatedBy()
+	muo.mutation.SetUpdatedBy(i)
+	return muo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (muo *MembershipUpdateOne) SetNillableUpdatedBy(i *int) *MembershipUpdateOne {
+	if i != nil {
+		muo.SetUpdatedBy(*i)
+	}
+	return muo
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (muo *MembershipUpdateOne) AddUpdatedBy(i int) *MembershipUpdateOne {
+	muo.mutation.AddUpdatedBy(i)
+	return muo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (muo *MembershipUpdateOne) ClearUpdatedBy() *MembershipUpdateOne {
+	muo.mutation.ClearUpdatedBy()
+	return muo
+}
+
 // SetCurrent sets the "current" field.
 func (muo *MembershipUpdateOne) SetCurrent(b bool) *MembershipUpdateOne {
 	muo.mutation.SetCurrent(b)
@@ -242,20 +381,6 @@ func (muo *MembershipUpdateOne) SetCurrent(b bool) *MembershipUpdateOne {
 func (muo *MembershipUpdateOne) SetNillableCurrent(b *bool) *MembershipUpdateOne {
 	if b != nil {
 		muo.SetCurrent(*b)
-	}
-	return muo
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (muo *MembershipUpdateOne) SetUpdatedAt(t time.Time) *MembershipUpdateOne {
-	muo.mutation.SetUpdatedAt(t)
-	return muo
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (muo *MembershipUpdateOne) SetNillableUpdatedAt(t *time.Time) *MembershipUpdateOne {
-	if t != nil {
-		muo.SetUpdatedAt(*t)
 	}
 	return muo
 }
@@ -314,6 +439,9 @@ func (muo *MembershipUpdateOne) Select(field string, fields ...string) *Membersh
 
 // Save executes the query and returns the updated Membership entity.
 func (muo *MembershipUpdateOne) Save(ctx context.Context) (*Membership, error) {
+	if err := muo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, muo.sqlSave, muo.mutation, muo.hooks)
 }
 
@@ -337,6 +465,18 @@ func (muo *MembershipUpdateOne) ExecX(ctx context.Context) {
 	if err := muo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (muo *MembershipUpdateOne) defaults() error {
+	if _, ok := muo.mutation.UpdatedAt(); !ok {
+		if membership.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized membership.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := membership.UpdateDefaultUpdatedAt()
+		muo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -379,11 +519,29 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 			}
 		}
 	}
-	if value, ok := muo.mutation.Current(); ok {
-		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
-	}
 	if value, ok := muo.mutation.UpdatedAt(); ok {
 		_spec.SetField(membership.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := muo.mutation.CreatedBy(); ok {
+		_spec.SetField(membership.FieldCreatedBy, field.TypeInt, value)
+	}
+	if value, ok := muo.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(membership.FieldCreatedBy, field.TypeInt, value)
+	}
+	if muo.mutation.CreatedByCleared() {
+		_spec.ClearField(membership.FieldCreatedBy, field.TypeInt)
+	}
+	if value, ok := muo.mutation.UpdatedBy(); ok {
+		_spec.SetField(membership.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if value, ok := muo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(membership.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if muo.mutation.UpdatedByCleared() {
+		_spec.ClearField(membership.FieldUpdatedBy, field.TypeInt)
+	}
+	if value, ok := muo.mutation.Current(); ok {
+		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
 	}
 	if muo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{

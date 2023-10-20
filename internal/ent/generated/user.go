@@ -18,10 +18,32 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
-	// Email holds the value of the "email" field.
-	Email string `json:"email,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy int `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy int `json:"updated_by,omitempty"`
+	// Email holds the value of the "email" field.
+	Email string `json:"email,omitempty"`
+	// The user's displayed 'friendly' name
+	DisplayName string `json:"display_name,omitempty"`
+	// user account is locked if unconfirmed or explicitly locked
+	Locked bool `json:"locked,omitempty"`
+	// URL of the user's remote avatar
+	AvatarRemoteURL *string `json:"avatar_remote_url,omitempty"`
+	// The user's local avatar file
+	AvatarLocalFile *string `json:"avatar_local_file,omitempty"`
+	// The time the user's (local) avatar was last updated
+	AvatarUpdatedAt *time.Time `json:"avatar_updated_at,omitempty"`
+	// The time the user was silenced
+	SilencedAt *time.Time `json:"silenced_at,omitempty"`
+	// The time the user was silenced
+	SuspendedAt *time.Time `json:"suspended_at,omitempty"`
+	// local Actor password recovery code generated during account creation
+	RecoveryCode *string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -32,13 +54,16 @@ type User struct {
 type UserEdges struct {
 	// Memberships holds the value of the memberships edge.
 	Memberships []*Membership `json:"memberships,omitempty"`
+	// Sessions holds the value of the sessions edge.
+	Sessions []*Session `json:"sessions,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [2]map[string]int
 
 	namedMemberships map[string][]*Membership
+	namedSessions    map[string][]*Session
 }
 
 // MembershipsOrErr returns the Memberships value or an error if the edge
@@ -50,14 +75,27 @@ func (e UserEdges) MembershipsOrErr() ([]*Membership, error) {
 	return nil, &NotLoadedError{edge: "memberships"}
 }
 
+// SessionsOrErr returns the Sessions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) SessionsOrErr() ([]*Session, error) {
+	if e.loadedTypes[1] {
+		return e.Sessions, nil
+	}
+	return nil, &NotLoadedError{edge: "sessions"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldEmail:
+		case user.FieldLocked:
+			values[i] = new(sql.NullBool)
+		case user.FieldCreatedBy, user.FieldUpdatedBy:
+			values[i] = new(sql.NullInt64)
+		case user.FieldEmail, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldRecoveryCode:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldAvatarUpdatedAt, user.FieldSilencedAt, user.FieldSuspendedAt:
 			values[i] = new(sql.NullTime)
 		case user.FieldID:
 			values[i] = new(uuid.UUID)
@@ -82,17 +120,89 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				u.ID = *value
 			}
+		case user.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				u.CreatedAt = value.Time
+			}
+		case user.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				u.UpdatedAt = value.Time
+			}
+		case user.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				u.CreatedBy = int(value.Int64)
+			}
+		case user.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				u.UpdatedBy = int(value.Int64)
+			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
 				u.Email = value.String
 			}
-		case user.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+		case user.FieldDisplayName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field display_name", values[i])
 			} else if value.Valid {
-				u.CreatedAt = value.Time
+				u.DisplayName = value.String
+			}
+		case user.FieldLocked:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field locked", values[i])
+			} else if value.Valid {
+				u.Locked = value.Bool
+			}
+		case user.FieldAvatarRemoteURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar_remote_url", values[i])
+			} else if value.Valid {
+				u.AvatarRemoteURL = new(string)
+				*u.AvatarRemoteURL = value.String
+			}
+		case user.FieldAvatarLocalFile:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar_local_file", values[i])
+			} else if value.Valid {
+				u.AvatarLocalFile = new(string)
+				*u.AvatarLocalFile = value.String
+			}
+		case user.FieldAvatarUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field avatar_updated_at", values[i])
+			} else if value.Valid {
+				u.AvatarUpdatedAt = new(time.Time)
+				*u.AvatarUpdatedAt = value.Time
+			}
+		case user.FieldSilencedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field silenced_at", values[i])
+			} else if value.Valid {
+				u.SilencedAt = new(time.Time)
+				*u.SilencedAt = value.Time
+			}
+		case user.FieldSuspendedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field suspended_at", values[i])
+			} else if value.Valid {
+				u.SuspendedAt = new(time.Time)
+				*u.SuspendedAt = value.Time
+			}
+		case user.FieldRecoveryCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field recovery_code", values[i])
+			} else if value.Valid {
+				u.RecoveryCode = new(string)
+				*u.RecoveryCode = value.String
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -110,6 +220,11 @@ func (u *User) Value(name string) (ent.Value, error) {
 // QueryMemberships queries the "memberships" edge of the User entity.
 func (u *User) QueryMemberships() *MembershipQuery {
 	return NewUserClient(u.config).QueryMemberships(u)
+}
+
+// QuerySessions queries the "sessions" edge of the User entity.
+func (u *User) QuerySessions() *SessionQuery {
+	return NewUserClient(u.config).QuerySessions(u)
 }
 
 // Update returns a builder for updating this User.
@@ -135,11 +250,53 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(fmt.Sprintf("%v", u.CreatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", u.UpdatedBy))
+	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
 	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString("display_name=")
+	builder.WriteString(u.DisplayName)
+	builder.WriteString(", ")
+	builder.WriteString("locked=")
+	builder.WriteString(fmt.Sprintf("%v", u.Locked))
+	builder.WriteString(", ")
+	if v := u.AvatarRemoteURL; v != nil {
+		builder.WriteString("avatar_remote_url=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := u.AvatarLocalFile; v != nil {
+		builder.WriteString("avatar_local_file=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := u.AvatarUpdatedAt; v != nil {
+		builder.WriteString("avatar_updated_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := u.SilencedAt; v != nil {
+		builder.WriteString("silenced_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	if v := u.SuspendedAt; v != nil {
+		builder.WriteString("suspended_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
+	builder.WriteString(", ")
+	builder.WriteString("recovery_code=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }
@@ -165,6 +322,30 @@ func (u *User) appendNamedMemberships(name string, edges ...*Membership) {
 		u.Edges.namedMemberships[name] = []*Membership{}
 	} else {
 		u.Edges.namedMemberships[name] = append(u.Edges.namedMemberships[name], edges...)
+	}
+}
+
+// NamedSessions returns the Sessions named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedSessions(name string) ([]*Session, error) {
+	if u.Edges.namedSessions == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedSessions[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedSessions(name string, edges ...*Session) {
+	if u.Edges.namedSessions == nil {
+		u.Edges.namedSessions = make(map[string][]*Session)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedSessions[name] = []*Session{}
+	} else {
+		u.Edges.namedSessions[name] = append(u.Edges.namedSessions[name], edges...)
 	}
 }
 

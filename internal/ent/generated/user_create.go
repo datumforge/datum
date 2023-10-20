@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
+	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 )
@@ -20,12 +21,6 @@ type UserCreate struct {
 	config
 	mutation *UserMutation
 	hooks    []Hook
-}
-
-// SetEmail sets the "email" field.
-func (uc *UserCreate) SetEmail(s string) *UserCreate {
-	uc.mutation.SetEmail(s)
-	return uc
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -38,6 +33,166 @@ func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 	if t != nil {
 		uc.SetCreatedAt(*t)
+	}
+	return uc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (uc *UserCreate) SetUpdatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetUpdatedAt(t)
+	return uc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetUpdatedAt(*t)
+	}
+	return uc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (uc *UserCreate) SetCreatedBy(i int) *UserCreate {
+	uc.mutation.SetCreatedBy(i)
+	return uc
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCreatedBy(i *int) *UserCreate {
+	if i != nil {
+		uc.SetCreatedBy(*i)
+	}
+	return uc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (uc *UserCreate) SetUpdatedBy(i int) *UserCreate {
+	uc.mutation.SetUpdatedBy(i)
+	return uc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (uc *UserCreate) SetNillableUpdatedBy(i *int) *UserCreate {
+	if i != nil {
+		uc.SetUpdatedBy(*i)
+	}
+	return uc
+}
+
+// SetEmail sets the "email" field.
+func (uc *UserCreate) SetEmail(s string) *UserCreate {
+	uc.mutation.SetEmail(s)
+	return uc
+}
+
+// SetDisplayName sets the "display_name" field.
+func (uc *UserCreate) SetDisplayName(s string) *UserCreate {
+	uc.mutation.SetDisplayName(s)
+	return uc
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (uc *UserCreate) SetNillableDisplayName(s *string) *UserCreate {
+	if s != nil {
+		uc.SetDisplayName(*s)
+	}
+	return uc
+}
+
+// SetLocked sets the "locked" field.
+func (uc *UserCreate) SetLocked(b bool) *UserCreate {
+	uc.mutation.SetLocked(b)
+	return uc
+}
+
+// SetNillableLocked sets the "locked" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLocked(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetLocked(*b)
+	}
+	return uc
+}
+
+// SetAvatarRemoteURL sets the "avatar_remote_url" field.
+func (uc *UserCreate) SetAvatarRemoteURL(s string) *UserCreate {
+	uc.mutation.SetAvatarRemoteURL(s)
+	return uc
+}
+
+// SetNillableAvatarRemoteURL sets the "avatar_remote_url" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAvatarRemoteURL(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAvatarRemoteURL(*s)
+	}
+	return uc
+}
+
+// SetAvatarLocalFile sets the "avatar_local_file" field.
+func (uc *UserCreate) SetAvatarLocalFile(s string) *UserCreate {
+	uc.mutation.SetAvatarLocalFile(s)
+	return uc
+}
+
+// SetNillableAvatarLocalFile sets the "avatar_local_file" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAvatarLocalFile(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAvatarLocalFile(*s)
+	}
+	return uc
+}
+
+// SetAvatarUpdatedAt sets the "avatar_updated_at" field.
+func (uc *UserCreate) SetAvatarUpdatedAt(t time.Time) *UserCreate {
+	uc.mutation.SetAvatarUpdatedAt(t)
+	return uc
+}
+
+// SetNillableAvatarUpdatedAt sets the "avatar_updated_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAvatarUpdatedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetAvatarUpdatedAt(*t)
+	}
+	return uc
+}
+
+// SetSilencedAt sets the "silenced_at" field.
+func (uc *UserCreate) SetSilencedAt(t time.Time) *UserCreate {
+	uc.mutation.SetSilencedAt(t)
+	return uc
+}
+
+// SetNillableSilencedAt sets the "silenced_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableSilencedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetSilencedAt(*t)
+	}
+	return uc
+}
+
+// SetSuspendedAt sets the "suspended_at" field.
+func (uc *UserCreate) SetSuspendedAt(t time.Time) *UserCreate {
+	uc.mutation.SetSuspendedAt(t)
+	return uc
+}
+
+// SetNillableSuspendedAt sets the "suspended_at" field if the given value is not nil.
+func (uc *UserCreate) SetNillableSuspendedAt(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetSuspendedAt(*t)
+	}
+	return uc
+}
+
+// SetRecoveryCode sets the "recovery_code" field.
+func (uc *UserCreate) SetRecoveryCode(s string) *UserCreate {
+	uc.mutation.SetRecoveryCode(s)
+	return uc
+}
+
+// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
+func (uc *UserCreate) SetNillableRecoveryCode(s *string) *UserCreate {
+	if s != nil {
+		uc.SetRecoveryCode(*s)
 	}
 	return uc
 }
@@ -71,6 +226,21 @@ func (uc *UserCreate) AddMemberships(m ...*Membership) *UserCreate {
 	return uc.AddMembershipIDs(ids...)
 }
 
+// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
+func (uc *UserCreate) AddSessionIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddSessionIDs(ids...)
+	return uc
+}
+
+// AddSessions adds the "sessions" edges to the Session entity.
+func (uc *UserCreate) AddSessions(s ...*Session) *UserCreate {
+	ids := make([]uuid.UUID, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddSessionIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -78,7 +248,9 @@ func (uc *UserCreate) Mutation() *UserMutation {
 
 // Save creates the User in the database.
 func (uc *UserCreate) Save(ctx context.Context) (*User, error) {
-	uc.defaults()
+	if err := uc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, uc.sqlSave, uc.mutation, uc.hooks)
 }
 
@@ -105,19 +277,47 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (uc *UserCreate) defaults() {
+func (uc *UserCreate) defaults() error {
 	if _, ok := uc.mutation.CreatedAt(); !ok {
+		if user.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized user.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := user.DefaultCreatedAt()
 		uc.mutation.SetCreatedAt(v)
 	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		if user.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized user.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := user.DefaultUpdatedAt()
+		uc.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := uc.mutation.DisplayName(); !ok {
+		v := user.DefaultDisplayName
+		uc.mutation.SetDisplayName(v)
+	}
+	if _, ok := uc.mutation.Locked(); !ok {
+		v := user.DefaultLocked
+		uc.mutation.SetLocked(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
+		if user.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
+	if _, ok := uc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "User.created_at"`)}
+	}
+	if _, ok := uc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "User.updated_at"`)}
+	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "User.email"`)}
 	}
@@ -126,8 +326,26 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`generated: validator failed for field "User.email": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "User.created_at"`)}
+	if _, ok := uc.mutation.DisplayName(); !ok {
+		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "User.display_name"`)}
+	}
+	if v, ok := uc.mutation.DisplayName(); ok {
+		if err := user.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "User.display_name": %w`, err)}
+		}
+	}
+	if _, ok := uc.mutation.Locked(); !ok {
+		return &ValidationError{Name: "locked", err: errors.New(`generated: missing required field "User.locked"`)}
+	}
+	if v, ok := uc.mutation.AvatarRemoteURL(); ok {
+		if err := user.AvatarRemoteURLValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_url": %w`, err)}
+		}
+	}
+	if v, ok := uc.mutation.AvatarLocalFile(); ok {
+		if err := user.AvatarLocalFileValidator(v); err != nil {
+			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -164,13 +382,57 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := uc.mutation.CreatedAt(); ok {
+		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := uc.mutation.UpdatedAt(); ok {
+		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := uc.mutation.CreatedBy(); ok {
+		_spec.SetField(user.FieldCreatedBy, field.TypeInt, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := uc.mutation.UpdatedBy(); ok {
+		_spec.SetField(user.FieldUpdatedBy, field.TypeInt, value)
+		_node.UpdatedBy = value
+	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
 	}
-	if value, ok := uc.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
+	if value, ok := uc.mutation.DisplayName(); ok {
+		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
+		_node.DisplayName = value
+	}
+	if value, ok := uc.mutation.Locked(); ok {
+		_spec.SetField(user.FieldLocked, field.TypeBool, value)
+		_node.Locked = value
+	}
+	if value, ok := uc.mutation.AvatarRemoteURL(); ok {
+		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
+		_node.AvatarRemoteURL = &value
+	}
+	if value, ok := uc.mutation.AvatarLocalFile(); ok {
+		_spec.SetField(user.FieldAvatarLocalFile, field.TypeString, value)
+		_node.AvatarLocalFile = &value
+	}
+	if value, ok := uc.mutation.AvatarUpdatedAt(); ok {
+		_spec.SetField(user.FieldAvatarUpdatedAt, field.TypeTime, value)
+		_node.AvatarUpdatedAt = &value
+	}
+	if value, ok := uc.mutation.SilencedAt(); ok {
+		_spec.SetField(user.FieldSilencedAt, field.TypeTime, value)
+		_node.SilencedAt = &value
+	}
+	if value, ok := uc.mutation.SuspendedAt(); ok {
+		_spec.SetField(user.FieldSuspendedAt, field.TypeTime, value)
+		_node.SuspendedAt = &value
+	}
+	if value, ok := uc.mutation.RecoveryCode(); ok {
+		_spec.SetField(user.FieldRecoveryCode, field.TypeString, value)
+		_node.RecoveryCode = &value
 	}
 	if nodes := uc.mutation.MembershipsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -181,6 +443,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -53,6 +53,20 @@ func encodeCreateOrganizationRequest(
 	return nil
 }
 
+func encodeCreateSessionRequest(
+	req *CreateSessionReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := jx.GetEncoder()
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeCreateUserRequest(
 	req *CreateUserReq,
 	r *http.Request,
@@ -97,6 +111,20 @@ func encodeUpdateMembershipRequest(
 
 func encodeUpdateOrganizationRequest(
 	req *UpdateOrganizationReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := jx.GetEncoder()
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeUpdateSessionRequest(
+	req *UpdateSessionReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

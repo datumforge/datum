@@ -10,11 +10,13 @@ func NewIntegrationCreate(e *generated.Integration) *IntegrationCreate {
 	}
 	var ret IntegrationCreate
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
-	ret.CreatedAt = e.CreatedAt
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
 	return &ret
 }
 
@@ -42,11 +44,13 @@ func NewIntegrationList(e *generated.Integration) *IntegrationList {
 	}
 	var ret IntegrationList
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
-	ret.CreatedAt = e.CreatedAt
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
 	return &ret
 }
 
@@ -74,11 +78,13 @@ func NewIntegrationRead(e *generated.Integration) *IntegrationRead {
 	}
 	var ret IntegrationRead
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
-	ret.CreatedAt = e.CreatedAt
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
 	return &ret
 }
 
@@ -106,11 +112,13 @@ func NewIntegrationUpdate(e *generated.Integration) *IntegrationUpdate {
 	}
 	var ret IntegrationUpdate
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
-	ret.CreatedAt = e.CreatedAt
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
 	return &ret
 }
 
@@ -138,8 +146,11 @@ func NewIntegrationOrganizationRead(e *generated.Organization) *IntegrationOrgan
 	}
 	var ret IntegrationOrganizationRead
 	ret.ID = e.ID
-	ret.Name = e.Name
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Name = e.Name
 	return &ret
 }
 
@@ -167,9 +178,11 @@ func NewMembershipCreate(e *generated.Membership) *MembershipCreate {
 	}
 	var ret MembershipCreate
 	ret.ID = e.ID
-	ret.Current = e.Current
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
 	return &ret
 }
 
@@ -197,9 +210,11 @@ func NewMembershipList(e *generated.Membership) *MembershipList {
 	}
 	var ret MembershipList
 	ret.ID = e.ID
-	ret.Current = e.Current
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
 	return &ret
 }
 
@@ -227,9 +242,11 @@ func NewMembershipRead(e *generated.Membership) *MembershipRead {
 	}
 	var ret MembershipRead
 	ret.ID = e.ID
-	ret.Current = e.Current
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
 	return &ret
 }
 
@@ -257,9 +274,11 @@ func NewMembershipUpdate(e *generated.Membership) *MembershipUpdate {
 	}
 	var ret MembershipUpdate
 	ret.ID = e.ID
-	ret.Current = e.Current
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
 	return &ret
 }
 
@@ -287,8 +306,11 @@ func NewMembershipOrganizationRead(e *generated.Organization) *MembershipOrganiz
 	}
 	var ret MembershipOrganizationRead
 	ret.ID = e.ID
-	ret.Name = e.Name
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Name = e.Name
 	return &ret
 }
 
@@ -316,8 +338,33 @@ func NewMembershipUserRead(e *generated.User) *MembershipUserRead {
 	}
 	var ret MembershipUserRead
 	ret.ID = e.ID
-	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Email = e.Email
+	ret.DisplayName = e.DisplayName
+	ret.Locked = e.Locked
+	ret.AvatarRemoteURL = OptString{}
+	if e.AvatarRemoteURL != nil {
+		ret.AvatarRemoteURL.SetTo(*e.AvatarRemoteURL)
+	}
+	ret.AvatarLocalFile = OptString{}
+	if e.AvatarLocalFile != nil {
+		ret.AvatarLocalFile.SetTo(*e.AvatarLocalFile)
+	}
+	ret.AvatarUpdatedAt = OptDateTime{}
+	if e.AvatarUpdatedAt != nil {
+		ret.AvatarUpdatedAt.SetTo(*e.AvatarUpdatedAt)
+	}
+	ret.SilencedAt = OptDateTime{}
+	if e.SilencedAt != nil {
+		ret.SilencedAt.SetTo(*e.SilencedAt)
+	}
+	ret.SuspendedAt = OptDateTime{}
+	if e.SuspendedAt != nil {
+		ret.SuspendedAt.SetTo(*e.SuspendedAt)
+	}
 	return &ret
 }
 
@@ -345,8 +392,11 @@ func NewOrganizationCreate(e *generated.Organization) *OrganizationCreate {
 	}
 	var ret OrganizationCreate
 	ret.ID = e.ID
-	ret.Name = e.Name
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Name = e.Name
 	return &ret
 }
 
@@ -374,8 +424,11 @@ func NewOrganizationList(e *generated.Organization) *OrganizationList {
 	}
 	var ret OrganizationList
 	ret.ID = e.ID
-	ret.Name = e.Name
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Name = e.Name
 	return &ret
 }
 
@@ -403,8 +456,11 @@ func NewOrganizationRead(e *generated.Organization) *OrganizationRead {
 	}
 	var ret OrganizationRead
 	ret.ID = e.ID
-	ret.Name = e.Name
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Name = e.Name
 	return &ret
 }
 
@@ -432,8 +488,11 @@ func NewOrganizationUpdate(e *generated.Organization) *OrganizationUpdate {
 	}
 	var ret OrganizationUpdate
 	ret.ID = e.ID
-	ret.Name = e.Name
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Name = e.Name
 	return &ret
 }
 
@@ -461,11 +520,13 @@ func NewOrganizationIntegrationsList(e *generated.Integration) *OrganizationInte
 	}
 	var ret OrganizationIntegrationsList
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
-	ret.CreatedAt = e.CreatedAt
-	ret.DeletedAt = NewOptDateTime(e.DeletedAt)
 	return &ret
 }
 
@@ -493,9 +554,11 @@ func NewOrganizationMembershipsList(e *generated.Membership) *OrganizationMember
 	}
 	var ret OrganizationMembershipsList
 	ret.ID = e.ID
-	ret.Current = e.Current
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
 	return &ret
 }
 
@@ -517,14 +580,237 @@ func (m *OrganizationMembershipsList) Elem() OrganizationMembershipsList {
 	return *m
 }
 
+func NewSessionCreate(e *generated.Session) *SessionCreate {
+	if e == nil {
+		return nil
+	}
+	var ret SessionCreate
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Type = SessionCreateType(e.Type)
+	ret.Disabled = e.Disabled
+	ret.Token = e.Token
+	ret.UserAgent = NewOptString(e.UserAgent)
+	ret.Ips = e.Ips
+	return &ret
+}
+
+func NewSessionCreates(es []*generated.Session) []SessionCreate {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]SessionCreate, len(es))
+	for i, e := range es {
+		r[i] = NewSessionCreate(e).Elem()
+	}
+	return r
+}
+
+func (s *SessionCreate) Elem() SessionCreate {
+	if s == nil {
+		return SessionCreate{}
+	}
+	return *s
+}
+
+func NewSessionList(e *generated.Session) *SessionList {
+	if e == nil {
+		return nil
+	}
+	var ret SessionList
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Type = SessionListType(e.Type)
+	ret.Disabled = e.Disabled
+	ret.Token = e.Token
+	ret.UserAgent = NewOptString(e.UserAgent)
+	ret.Ips = e.Ips
+	return &ret
+}
+
+func NewSessionLists(es []*generated.Session) []SessionList {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]SessionList, len(es))
+	for i, e := range es {
+		r[i] = NewSessionList(e).Elem()
+	}
+	return r
+}
+
+func (s *SessionList) Elem() SessionList {
+	if s == nil {
+		return SessionList{}
+	}
+	return *s
+}
+
+func NewSessionRead(e *generated.Session) *SessionRead {
+	if e == nil {
+		return nil
+	}
+	var ret SessionRead
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Type = SessionReadType(e.Type)
+	ret.Disabled = e.Disabled
+	ret.Token = e.Token
+	ret.UserAgent = NewOptString(e.UserAgent)
+	ret.Ips = e.Ips
+	return &ret
+}
+
+func NewSessionReads(es []*generated.Session) []SessionRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]SessionRead, len(es))
+	for i, e := range es {
+		r[i] = NewSessionRead(e).Elem()
+	}
+	return r
+}
+
+func (s *SessionRead) Elem() SessionRead {
+	if s == nil {
+		return SessionRead{}
+	}
+	return *s
+}
+
+func NewSessionUpdate(e *generated.Session) *SessionUpdate {
+	if e == nil {
+		return nil
+	}
+	var ret SessionUpdate
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Type = SessionUpdateType(e.Type)
+	ret.Disabled = e.Disabled
+	ret.Token = e.Token
+	ret.UserAgent = NewOptString(e.UserAgent)
+	ret.Ips = e.Ips
+	return &ret
+}
+
+func NewSessionUpdates(es []*generated.Session) []SessionUpdate {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]SessionUpdate, len(es))
+	for i, e := range es {
+		r[i] = NewSessionUpdate(e).Elem()
+	}
+	return r
+}
+
+func (s *SessionUpdate) Elem() SessionUpdate {
+	if s == nil {
+		return SessionUpdate{}
+	}
+	return *s
+}
+
+func NewSessionUsersRead(e *generated.User) *SessionUsersRead {
+	if e == nil {
+		return nil
+	}
+	var ret SessionUsersRead
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Email = e.Email
+	ret.DisplayName = e.DisplayName
+	ret.Locked = e.Locked
+	ret.AvatarRemoteURL = OptString{}
+	if e.AvatarRemoteURL != nil {
+		ret.AvatarRemoteURL.SetTo(*e.AvatarRemoteURL)
+	}
+	ret.AvatarLocalFile = OptString{}
+	if e.AvatarLocalFile != nil {
+		ret.AvatarLocalFile.SetTo(*e.AvatarLocalFile)
+	}
+	ret.AvatarUpdatedAt = OptDateTime{}
+	if e.AvatarUpdatedAt != nil {
+		ret.AvatarUpdatedAt.SetTo(*e.AvatarUpdatedAt)
+	}
+	ret.SilencedAt = OptDateTime{}
+	if e.SilencedAt != nil {
+		ret.SilencedAt.SetTo(*e.SilencedAt)
+	}
+	ret.SuspendedAt = OptDateTime{}
+	if e.SuspendedAt != nil {
+		ret.SuspendedAt.SetTo(*e.SuspendedAt)
+	}
+	return &ret
+}
+
+func NewSessionUsersReads(es []*generated.User) []SessionUsersRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]SessionUsersRead, len(es))
+	for i, e := range es {
+		r[i] = NewSessionUsersRead(e).Elem()
+	}
+	return r
+}
+
+func (u *SessionUsersRead) Elem() SessionUsersRead {
+	if u == nil {
+		return SessionUsersRead{}
+	}
+	return *u
+}
+
 func NewUserCreate(e *generated.User) *UserCreate {
 	if e == nil {
 		return nil
 	}
 	var ret UserCreate
 	ret.ID = e.ID
-	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Email = e.Email
+	ret.DisplayName = e.DisplayName
+	ret.Locked = e.Locked
+	ret.AvatarRemoteURL = OptString{}
+	if e.AvatarRemoteURL != nil {
+		ret.AvatarRemoteURL.SetTo(*e.AvatarRemoteURL)
+	}
+	ret.AvatarLocalFile = OptString{}
+	if e.AvatarLocalFile != nil {
+		ret.AvatarLocalFile.SetTo(*e.AvatarLocalFile)
+	}
+	ret.AvatarUpdatedAt = OptDateTime{}
+	if e.AvatarUpdatedAt != nil {
+		ret.AvatarUpdatedAt.SetTo(*e.AvatarUpdatedAt)
+	}
+	ret.SilencedAt = OptDateTime{}
+	if e.SilencedAt != nil {
+		ret.SilencedAt.SetTo(*e.SilencedAt)
+	}
+	ret.SuspendedAt = OptDateTime{}
+	if e.SuspendedAt != nil {
+		ret.SuspendedAt.SetTo(*e.SuspendedAt)
+	}
 	return &ret
 }
 
@@ -552,8 +838,33 @@ func NewUserList(e *generated.User) *UserList {
 	}
 	var ret UserList
 	ret.ID = e.ID
-	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Email = e.Email
+	ret.DisplayName = e.DisplayName
+	ret.Locked = e.Locked
+	ret.AvatarRemoteURL = OptString{}
+	if e.AvatarRemoteURL != nil {
+		ret.AvatarRemoteURL.SetTo(*e.AvatarRemoteURL)
+	}
+	ret.AvatarLocalFile = OptString{}
+	if e.AvatarLocalFile != nil {
+		ret.AvatarLocalFile.SetTo(*e.AvatarLocalFile)
+	}
+	ret.AvatarUpdatedAt = OptDateTime{}
+	if e.AvatarUpdatedAt != nil {
+		ret.AvatarUpdatedAt.SetTo(*e.AvatarUpdatedAt)
+	}
+	ret.SilencedAt = OptDateTime{}
+	if e.SilencedAt != nil {
+		ret.SilencedAt.SetTo(*e.SilencedAt)
+	}
+	ret.SuspendedAt = OptDateTime{}
+	if e.SuspendedAt != nil {
+		ret.SuspendedAt.SetTo(*e.SuspendedAt)
+	}
 	return &ret
 }
 
@@ -581,8 +892,33 @@ func NewUserRead(e *generated.User) *UserRead {
 	}
 	var ret UserRead
 	ret.ID = e.ID
-	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Email = e.Email
+	ret.DisplayName = e.DisplayName
+	ret.Locked = e.Locked
+	ret.AvatarRemoteURL = OptString{}
+	if e.AvatarRemoteURL != nil {
+		ret.AvatarRemoteURL.SetTo(*e.AvatarRemoteURL)
+	}
+	ret.AvatarLocalFile = OptString{}
+	if e.AvatarLocalFile != nil {
+		ret.AvatarLocalFile.SetTo(*e.AvatarLocalFile)
+	}
+	ret.AvatarUpdatedAt = OptDateTime{}
+	if e.AvatarUpdatedAt != nil {
+		ret.AvatarUpdatedAt.SetTo(*e.AvatarUpdatedAt)
+	}
+	ret.SilencedAt = OptDateTime{}
+	if e.SilencedAt != nil {
+		ret.SilencedAt.SetTo(*e.SilencedAt)
+	}
+	ret.SuspendedAt = OptDateTime{}
+	if e.SuspendedAt != nil {
+		ret.SuspendedAt.SetTo(*e.SuspendedAt)
+	}
 	return &ret
 }
 
@@ -610,8 +946,33 @@ func NewUserUpdate(e *generated.User) *UserUpdate {
 	}
 	var ret UserUpdate
 	ret.ID = e.ID
-	ret.Email = e.Email
 	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Email = e.Email
+	ret.DisplayName = e.DisplayName
+	ret.Locked = e.Locked
+	ret.AvatarRemoteURL = OptString{}
+	if e.AvatarRemoteURL != nil {
+		ret.AvatarRemoteURL.SetTo(*e.AvatarRemoteURL)
+	}
+	ret.AvatarLocalFile = OptString{}
+	if e.AvatarLocalFile != nil {
+		ret.AvatarLocalFile.SetTo(*e.AvatarLocalFile)
+	}
+	ret.AvatarUpdatedAt = OptDateTime{}
+	if e.AvatarUpdatedAt != nil {
+		ret.AvatarUpdatedAt.SetTo(*e.AvatarUpdatedAt)
+	}
+	ret.SilencedAt = OptDateTime{}
+	if e.SilencedAt != nil {
+		ret.SilencedAt.SetTo(*e.SilencedAt)
+	}
+	ret.SuspendedAt = OptDateTime{}
+	if e.SuspendedAt != nil {
+		ret.SuspendedAt.SetTo(*e.SuspendedAt)
+	}
 	return &ret
 }
 
@@ -639,9 +1000,11 @@ func NewUserMembershipsList(e *generated.Membership) *UserMembershipsList {
 	}
 	var ret UserMembershipsList
 	ret.ID = e.ID
-	ret.Current = e.Current
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
 	return &ret
 }
 
@@ -661,4 +1024,40 @@ func (m *UserMembershipsList) Elem() UserMembershipsList {
 		return UserMembershipsList{}
 	}
 	return *m
+}
+
+func NewUserSessionsList(e *generated.Session) *UserSessionsList {
+	if e == nil {
+		return nil
+	}
+	var ret UserSessionsList
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Type = UserSessionsListType(e.Type)
+	ret.Disabled = e.Disabled
+	ret.Token = e.Token
+	ret.UserAgent = NewOptString(e.UserAgent)
+	ret.Ips = e.Ips
+	return &ret
+}
+
+func NewUserSessionsLists(es []*generated.Session) []UserSessionsList {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]UserSessionsList, len(es))
+	for i, e := range es {
+		r[i] = NewUserSessionsList(e).Elem()
+	}
+	return r
+}
+
+func (s *UserSessionsList) Elem() UserSessionsList {
+	if s == nil {
+		return UserSessionsList{}
+	}
+	return *s
 }

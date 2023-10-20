@@ -361,6 +361,85 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 				}
+			case 's': // Prefix: "sessions"
+				if l := len("sessions"); len(elem) >= l && elem[0:l] == "sessions" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch r.Method {
+					case "GET":
+						s.handleListSessionRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleCreateSessionRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET,POST")
+					}
+
+					return
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
+					if len(elem) == 0 {
+						switch r.Method {
+						case "DELETE":
+							s.handleDeleteSessionRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "GET":
+							s.handleReadSessionRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "PATCH":
+							s.handleUpdateSessionRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "DELETE,GET,PATCH")
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/users"
+						if l := len("/users"); len(elem) >= l && elem[0:l] == "/users" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleReadSessionUsersRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+					}
+				}
 			case 'u': // Prefix: "users"
 				if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
 					elem = elem[l:]
@@ -418,25 +497,57 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/memberships"
-						if l := len("/memberships"); len(elem) >= l && elem[0:l] == "/memberships" {
+					case '/': // Prefix: "/"
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "GET":
-								s.handleListUserMembershipsRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET")
+							break
+						}
+						switch elem[0] {
+						case 'm': // Prefix: "memberships"
+							if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+								elem = elem[l:]
+							} else {
+								break
 							}
 
-							return
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleListUserMembershipsRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+						case 's': // Prefix: "sessions"
+							if l := len("sessions"); len(elem) >= l && elem[0:l] == "sessions" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleListUserSessionsRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
 						}
 					}
 				}
@@ -903,6 +1014,107 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 				}
+			case 's': // Prefix: "sessions"
+				if l := len("sessions"); len(elem) >= l && elem[0:l] == "sessions" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						r.name = "ListSession"
+						r.summary = "List Sessions"
+						r.operationID = "listSession"
+						r.pathPattern = "/sessions"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = "CreateSession"
+						r.summary = "Create a new Session"
+						r.operationID = "createSession"
+						r.pathPattern = "/sessions"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
+					if len(elem) == 0 {
+						switch method {
+						case "DELETE":
+							r.name = "DeleteSession"
+							r.summary = "Deletes a Session by ID"
+							r.operationID = "deleteSession"
+							r.pathPattern = "/sessions/{id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "GET":
+							r.name = "ReadSession"
+							r.summary = "Find a Session by ID"
+							r.operationID = "readSession"
+							r.pathPattern = "/sessions/{id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "PATCH":
+							r.name = "UpdateSession"
+							r.summary = "Updates a Session"
+							r.operationID = "updateSession"
+							r.pathPattern = "/sessions/{id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/users"
+						if l := len("/users"); len(elem) >= l && elem[0:l] == "/users" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							switch method {
+							case "GET":
+								// Leaf: ReadSessionUsers
+								r.name = "ReadSessionUsers"
+								r.summary = "Find the attached User"
+								r.operationID = "readSessionUsers"
+								r.pathPattern = "/sessions/{id}/users"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+					}
+				}
 			case 'u': // Prefix: "users"
 				if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
 					elem = elem[l:]
@@ -980,26 +1192,60 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/memberships"
-						if l := len("/memberships"); len(elem) >= l && elem[0:l] == "/memberships" {
+					case '/': // Prefix: "/"
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							switch method {
-							case "GET":
-								// Leaf: ListUserMemberships
-								r.name = "ListUserMemberships"
-								r.summary = "List attached Memberships"
-								r.operationID = "listUserMemberships"
-								r.pathPattern = "/users/{id}/memberships"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
+							break
+						}
+						switch elem[0] {
+						case 'm': // Prefix: "memberships"
+							if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ListUserMemberships
+									r.name = "ListUserMemberships"
+									r.summary = "List attached Memberships"
+									r.operationID = "listUserMemberships"
+									r.pathPattern = "/users/{id}/memberships"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+						case 's': // Prefix: "sessions"
+							if l := len("sessions"); len(elem) >= l && elem[0:l] == "sessions" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ListUserSessions
+									r.name = "ListUserSessions"
+									r.summary = "List attached Sessions"
+									r.operationID = "listUserSessions"
+									r.pathPattern = "/users/{id}/sessions"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
 							}
 						}
 					}

@@ -19,16 +19,20 @@ type Integration struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy int `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy int `json:"updated_by,omitempty"`
 	// Kind holds the value of the "kind" field.
 	Kind string `json:"kind,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// SecretName holds the value of the "secret_name" field.
 	SecretName string `json:"secret_name,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// DeletedAt holds the value of the "deleted_at" field.
-	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IntegrationQuery when eager-loading is set.
 	Edges                     IntegrationEdges `json:"edges"`
@@ -65,9 +69,11 @@ func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case integration.FieldCreatedBy, integration.FieldUpdatedBy:
+			values[i] = new(sql.NullInt64)
 		case integration.FieldKind, integration.FieldDescription, integration.FieldSecretName:
 			values[i] = new(sql.NullString)
-		case integration.FieldCreatedAt, integration.FieldDeletedAt:
+		case integration.FieldCreatedAt, integration.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case integration.FieldID:
 			values[i] = new(uuid.UUID)
@@ -94,6 +100,30 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				i.ID = *value
 			}
+		case integration.FieldCreatedAt:
+			if value, ok := values[j].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[j])
+			} else if value.Valid {
+				i.CreatedAt = value.Time
+			}
+		case integration.FieldUpdatedAt:
+			if value, ok := values[j].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[j])
+			} else if value.Valid {
+				i.UpdatedAt = value.Time
+			}
+		case integration.FieldCreatedBy:
+			if value, ok := values[j].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[j])
+			} else if value.Valid {
+				i.CreatedBy = int(value.Int64)
+			}
+		case integration.FieldUpdatedBy:
+			if value, ok := values[j].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[j])
+			} else if value.Valid {
+				i.UpdatedBy = int(value.Int64)
+			}
 		case integration.FieldKind:
 			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field kind", values[j])
@@ -111,18 +141,6 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field secret_name", values[j])
 			} else if value.Valid {
 				i.SecretName = value.String
-			}
-		case integration.FieldCreatedAt:
-			if value, ok := values[j].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[j])
-			} else if value.Valid {
-				i.CreatedAt = value.Time
-			}
-		case integration.FieldDeletedAt:
-			if value, ok := values[j].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted_at", values[j])
-			} else if value.Valid {
-				i.DeletedAt = value.Time
 			}
 		case integration.ForeignKeys[0]:
 			if value, ok := values[j].(*sql.NullScanner); !ok {
@@ -172,6 +190,18 @@ func (i *Integration) String() string {
 	var builder strings.Builder
 	builder.WriteString("Integration(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", i.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(i.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(i.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(fmt.Sprintf("%v", i.CreatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", i.UpdatedBy))
+	builder.WriteString(", ")
 	builder.WriteString("kind=")
 	builder.WriteString(i.Kind)
 	builder.WriteString(", ")
@@ -180,12 +210,6 @@ func (i *Integration) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("secret_name=")
 	builder.WriteString(i.SecretName)
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(i.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("deleted_at=")
-	builder.WriteString(i.DeletedAt.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

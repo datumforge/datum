@@ -57,6 +57,11 @@ func (r *queryResolver) Users(ctx context.Context) ([]*generated.User, error) {
 }
 
 // ID is the resolver for the id field.
+func (r *sessionResolver) ID(ctx context.Context, obj *generated.Session) (string, error) {
+	panic(fmt.Errorf("not implemented: ID - id"))
+}
+
+// ID is the resolver for the id field.
 func (r *userResolver) ID(ctx context.Context, obj *generated.User) (string, error) {
 	panic(fmt.Errorf("not implemented: ID - id"))
 }
@@ -89,6 +94,11 @@ func (r *createOrganizationInputResolver) IntegrationIDs(ctx context.Context, ob
 // MembershipIDs is the resolver for the membershipIDs field.
 func (r *createUserInputResolver) MembershipIDs(ctx context.Context, obj *generated.CreateUserInput, data []string) error {
 	panic(fmt.Errorf("not implemented: MembershipIDs - membershipIDs"))
+}
+
+// SessionIDs is the resolver for the sessionIDs field.
+func (r *createUserInputResolver) SessionIDs(ctx context.Context, obj *generated.CreateUserInput, data []string) error {
+	panic(fmt.Errorf("not implemented: SessionIDs - sessionIDs"))
 }
 
 // ID is the resolver for the id field.
@@ -211,6 +221,46 @@ func (r *organizationWhereInputResolver) IDLte(ctx context.Context, obj *generat
 	panic(fmt.Errorf("not implemented: IDLte - idLTE"))
 }
 
+// ID is the resolver for the id field.
+func (r *sessionWhereInputResolver) ID(ctx context.Context, obj *generated.SessionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: ID - id"))
+}
+
+// IDNeq is the resolver for the idNEQ field.
+func (r *sessionWhereInputResolver) IDNeq(ctx context.Context, obj *generated.SessionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: IDNeq - idNEQ"))
+}
+
+// IDIn is the resolver for the idIn field.
+func (r *sessionWhereInputResolver) IDIn(ctx context.Context, obj *generated.SessionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: IDIn - idIn"))
+}
+
+// IDNotIn is the resolver for the idNotIn field.
+func (r *sessionWhereInputResolver) IDNotIn(ctx context.Context, obj *generated.SessionWhereInput, data []string) error {
+	panic(fmt.Errorf("not implemented: IDNotIn - idNotIn"))
+}
+
+// IDGt is the resolver for the idGT field.
+func (r *sessionWhereInputResolver) IDGt(ctx context.Context, obj *generated.SessionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: IDGt - idGT"))
+}
+
+// IDGte is the resolver for the idGTE field.
+func (r *sessionWhereInputResolver) IDGte(ctx context.Context, obj *generated.SessionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: IDGte - idGTE"))
+}
+
+// IDLt is the resolver for the idLT field.
+func (r *sessionWhereInputResolver) IDLt(ctx context.Context, obj *generated.SessionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: IDLt - idLT"))
+}
+
+// IDLte is the resolver for the idLTE field.
+func (r *sessionWhereInputResolver) IDLte(ctx context.Context, obj *generated.SessionWhereInput, data *string) error {
+	panic(fmt.Errorf("not implemented: IDLte - idLTE"))
+}
+
 // OrganizationID is the resolver for the organizationID field.
 func (r *updateIntegrationInputResolver) OrganizationID(ctx context.Context, obj *generated.UpdateIntegrationInput, data *string) error {
 	panic(fmt.Errorf("not implemented: OrganizationID - organizationID"))
@@ -254,6 +304,16 @@ func (r *updateUserInputResolver) AddMembershipIDs(ctx context.Context, obj *gen
 // RemoveMembershipIDs is the resolver for the removeMembershipIDs field.
 func (r *updateUserInputResolver) RemoveMembershipIDs(ctx context.Context, obj *generated.UpdateUserInput, data []string) error {
 	panic(fmt.Errorf("not implemented: RemoveMembershipIDs - removeMembershipIDs"))
+}
+
+// AddSessionIDs is the resolver for the addSessionIDs field.
+func (r *updateUserInputResolver) AddSessionIDs(ctx context.Context, obj *generated.UpdateUserInput, data []string) error {
+	panic(fmt.Errorf("not implemented: AddSessionIDs - addSessionIDs"))
+}
+
+// RemoveSessionIDs is the resolver for the removeSessionIDs field.
+func (r *updateUserInputResolver) RemoveSessionIDs(ctx context.Context, obj *generated.UpdateUserInput, data []string) error {
+	panic(fmt.Errorf("not implemented: RemoveSessionIDs - removeSessionIDs"))
 }
 
 // ID is the resolver for the id field.
@@ -308,6 +368,9 @@ func (r *Resolver) Organization() OrganizationResolver { return &organizationRes
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Session returns SessionResolver implementation.
+func (r *Resolver) Session() SessionResolver { return &sessionResolver{r} }
+
 // User returns UserResolver implementation.
 func (r *Resolver) User() UserResolver { return &userResolver{r} }
 
@@ -344,6 +407,11 @@ func (r *Resolver) OrganizationWhereInput() OrganizationWhereInputResolver {
 	return &organizationWhereInputResolver{r}
 }
 
+// SessionWhereInput returns SessionWhereInputResolver implementation.
+func (r *Resolver) SessionWhereInput() SessionWhereInputResolver {
+	return &sessionWhereInputResolver{r}
+}
+
 // UpdateIntegrationInput returns UpdateIntegrationInputResolver implementation.
 func (r *Resolver) UpdateIntegrationInput() UpdateIntegrationInputResolver {
 	return &updateIntegrationInputResolver{r}
@@ -369,6 +437,7 @@ type integrationResolver struct{ *Resolver }
 type membershipResolver struct{ *Resolver }
 type organizationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type sessionResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
 type createIntegrationInputResolver struct{ *Resolver }
 type createMembershipInputResolver struct{ *Resolver }
@@ -377,6 +446,7 @@ type createUserInputResolver struct{ *Resolver }
 type integrationWhereInputResolver struct{ *Resolver }
 type membershipWhereInputResolver struct{ *Resolver }
 type organizationWhereInputResolver struct{ *Resolver }
+type sessionWhereInputResolver struct{ *Resolver }
 type updateIntegrationInputResolver struct{ *Resolver }
 type updateMembershipInputResolver struct{ *Resolver }
 type updateOrganizationInputResolver struct{ *Resolver }

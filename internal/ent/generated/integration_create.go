@@ -22,6 +22,62 @@ type IntegrationCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (ic *IntegrationCreate) SetCreatedAt(t time.Time) *IntegrationCreate {
+	ic.mutation.SetCreatedAt(t)
+	return ic
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableCreatedAt(t *time.Time) *IntegrationCreate {
+	if t != nil {
+		ic.SetCreatedAt(*t)
+	}
+	return ic
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (ic *IntegrationCreate) SetUpdatedAt(t time.Time) *IntegrationCreate {
+	ic.mutation.SetUpdatedAt(t)
+	return ic
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableUpdatedAt(t *time.Time) *IntegrationCreate {
+	if t != nil {
+		ic.SetUpdatedAt(*t)
+	}
+	return ic
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (ic *IntegrationCreate) SetCreatedBy(i int) *IntegrationCreate {
+	ic.mutation.SetCreatedBy(i)
+	return ic
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableCreatedBy(i *int) *IntegrationCreate {
+	if i != nil {
+		ic.SetCreatedBy(*i)
+	}
+	return ic
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (ic *IntegrationCreate) SetUpdatedBy(i int) *IntegrationCreate {
+	ic.mutation.SetUpdatedBy(i)
+	return ic
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableUpdatedBy(i *int) *IntegrationCreate {
+	if i != nil {
+		ic.SetUpdatedBy(*i)
+	}
+	return ic
+}
+
 // SetKind sets the "kind" field.
 func (ic *IntegrationCreate) SetKind(s string) *IntegrationCreate {
 	ic.mutation.SetKind(s)
@@ -45,34 +101,6 @@ func (ic *IntegrationCreate) SetNillableDescription(s *string) *IntegrationCreat
 // SetSecretName sets the "secret_name" field.
 func (ic *IntegrationCreate) SetSecretName(s string) *IntegrationCreate {
 	ic.mutation.SetSecretName(s)
-	return ic
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (ic *IntegrationCreate) SetCreatedAt(t time.Time) *IntegrationCreate {
-	ic.mutation.SetCreatedAt(t)
-	return ic
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableCreatedAt(t *time.Time) *IntegrationCreate {
-	if t != nil {
-		ic.SetCreatedAt(*t)
-	}
-	return ic
-}
-
-// SetDeletedAt sets the "deleted_at" field.
-func (ic *IntegrationCreate) SetDeletedAt(t time.Time) *IntegrationCreate {
-	ic.mutation.SetDeletedAt(t)
-	return ic
-}
-
-// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableDeletedAt(t *time.Time) *IntegrationCreate {
-	if t != nil {
-		ic.SetDeletedAt(*t)
-	}
 	return ic
 }
 
@@ -108,7 +136,9 @@ func (ic *IntegrationCreate) Mutation() *IntegrationMutation {
 
 // Save creates the Integration in the database.
 func (ic *IntegrationCreate) Save(ctx context.Context) (*Integration, error) {
-	ic.defaults()
+	if err := ic.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ic.sqlSave, ic.mutation, ic.hooks)
 }
 
@@ -135,27 +165,44 @@ func (ic *IntegrationCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ic *IntegrationCreate) defaults() {
+func (ic *IntegrationCreate) defaults() error {
 	if _, ok := ic.mutation.CreatedAt(); !ok {
+		if integration.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized integration.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := integration.DefaultCreatedAt()
 		ic.mutation.SetCreatedAt(v)
 	}
+	if _, ok := ic.mutation.UpdatedAt(); !ok {
+		if integration.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized integration.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := integration.DefaultUpdatedAt()
+		ic.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := ic.mutation.ID(); !ok {
+		if integration.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized integration.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := integration.DefaultID()
 		ic.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (ic *IntegrationCreate) check() error {
+	if _, ok := ic.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Integration.created_at"`)}
+	}
+	if _, ok := ic.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Integration.updated_at"`)}
+	}
 	if _, ok := ic.mutation.Kind(); !ok {
 		return &ValidationError{Name: "kind", err: errors.New(`generated: missing required field "Integration.kind"`)}
 	}
 	if _, ok := ic.mutation.SecretName(); !ok {
 		return &ValidationError{Name: "secret_name", err: errors.New(`generated: missing required field "Integration.secret_name"`)}
-	}
-	if _, ok := ic.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Integration.created_at"`)}
 	}
 	if _, ok := ic.mutation.OrganizationID(); !ok {
 		return &ValidationError{Name: "organization", err: errors.New(`generated: missing required edge "Integration.organization"`)}
@@ -195,6 +242,22 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
+	if value, ok := ic.mutation.CreatedAt(); ok {
+		_spec.SetField(integration.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := ic.mutation.UpdatedAt(); ok {
+		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := ic.mutation.CreatedBy(); ok {
+		_spec.SetField(integration.FieldCreatedBy, field.TypeInt, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := ic.mutation.UpdatedBy(); ok {
+		_spec.SetField(integration.FieldUpdatedBy, field.TypeInt, value)
+		_node.UpdatedBy = value
+	}
 	if value, ok := ic.mutation.Kind(); ok {
 		_spec.SetField(integration.FieldKind, field.TypeString, value)
 		_node.Kind = value
@@ -206,14 +269,6 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.SecretName(); ok {
 		_spec.SetField(integration.FieldSecretName, field.TypeString, value)
 		_node.SecretName = value
-	}
-	if value, ok := ic.mutation.CreatedAt(); ok {
-		_spec.SetField(integration.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := ic.mutation.DeletedAt(); ok {
-		_spec.SetField(integration.FieldDeletedAt, field.TypeTime, value)
-		_node.DeletedAt = value
 	}
 	if nodes := ic.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

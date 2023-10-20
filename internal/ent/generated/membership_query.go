@@ -337,12 +337,12 @@ func (mq *MembershipQuery) WithUser(opts ...func(*UserQuery)) *MembershipQuery {
 // Example:
 //
 //	var v []struct {
-//		Current bool `json:"current,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Membership.Query().
-//		GroupBy(membership.FieldCurrent).
+//		GroupBy(membership.FieldCreatedAt).
 //		Aggregate(generated.Count()).
 //		Scan(ctx, &v)
 func (mq *MembershipQuery) GroupBy(field string, fields ...string) *MembershipGroupBy {
@@ -360,11 +360,11 @@ func (mq *MembershipQuery) GroupBy(field string, fields ...string) *MembershipGr
 // Example:
 //
 //	var v []struct {
-//		Current bool `json:"current,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Membership.Query().
-//		Select(membership.FieldCurrent).
+//		Select(membership.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (mq *MembershipQuery) Select(fields ...string) *MembershipSelect {
 	mq.ctx.Fields = append(mq.ctx.Fields, fields...)

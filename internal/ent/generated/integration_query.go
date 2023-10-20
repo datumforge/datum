@@ -301,12 +301,12 @@ func (iq *IntegrationQuery) WithOrganization(opts ...func(*OrganizationQuery)) *
 // Example:
 //
 //	var v []struct {
-//		Kind string `json:"kind,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Integration.Query().
-//		GroupBy(integration.FieldKind).
+//		GroupBy(integration.FieldCreatedAt).
 //		Aggregate(generated.Count()).
 //		Scan(ctx, &v)
 func (iq *IntegrationQuery) GroupBy(field string, fields ...string) *IntegrationGroupBy {
@@ -324,11 +324,11 @@ func (iq *IntegrationQuery) GroupBy(field string, fields ...string) *Integration
 // Example:
 //
 //	var v []struct {
-//		Kind string `json:"kind,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Integration.Query().
-//		Select(integration.FieldKind).
+//		Select(integration.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (iq *IntegrationQuery) Select(fields ...string) *IntegrationSelect {
 	iq.ctx.Fields = append(iq.ctx.Fields, fields...)

@@ -3,8 +3,44 @@
 package ogent
 
 import (
+	"fmt"
+
 	"github.com/go-faster/errors"
+
+	"github.com/ogen-go/ogen/validate"
 )
+
+func (s *CreateSessionReq) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s CreateSessionReqType) Validate() error {
+	switch s {
+	case "local":
+		return nil
+	case "oauth":
+		return nil
+	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
 
 func (s ListIntegrationOKApplicationJSON) Validate() error {
 	alias := ([]IntegrationList)(s)
@@ -46,6 +82,31 @@ func (s ListOrganizationOKApplicationJSON) Validate() error {
 	return nil
 }
 
+func (s ListSessionOKApplicationJSON) Validate() error {
+	alias := ([]SessionList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	var failures []validate.FieldError
+	for i, elem := range alias {
+		if err := func() error {
+			if err := elem.Validate(); err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			failures = append(failures, validate.FieldError{
+				Name:  fmt.Sprintf("[%d]", i),
+				Error: err,
+			})
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s ListUserMembershipsOKApplicationJSON) Validate() error {
 	alias := ([]UserMembershipsList)(s)
 	if alias == nil {
@@ -60,4 +121,189 @@ func (s ListUserOKApplicationJSON) Validate() error {
 		return errors.New("nil is invalid value")
 	}
 	return nil
+}
+
+func (s ListUserSessionsOKApplicationJSON) Validate() error {
+	alias := ([]UserSessionsList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	var failures []validate.FieldError
+	for i, elem := range alias {
+		if err := func() error {
+			if err := elem.Validate(); err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			failures = append(failures, validate.FieldError{
+				Name:  fmt.Sprintf("[%d]", i),
+				Error: err,
+			})
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *SessionCreate) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SessionCreateType) Validate() error {
+	switch s {
+	case "local":
+		return nil
+	case "oauth":
+		return nil
+	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SessionList) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SessionListType) Validate() error {
+	switch s {
+	case "local":
+		return nil
+	case "oauth":
+		return nil
+	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SessionRead) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SessionReadType) Validate() error {
+	switch s {
+	case "local":
+		return nil
+	case "oauth":
+		return nil
+	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *SessionUpdate) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s SessionUpdateType) Validate() error {
+	switch s {
+	case "local":
+		return nil
+	case "oauth":
+		return nil
+	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *UserSessionsList) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Type.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "type",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s UserSessionsListType) Validate() error {
+	switch s {
+	case "local":
+		return nil
+	case "oauth":
+		return nil
+	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }

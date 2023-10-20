@@ -56,6 +56,14 @@ func (o *Organization) Integrations(ctx context.Context) (result []*Integration,
 	return result, err
 }
 
+func (s *Session) Users(ctx context.Context) (*User, error) {
+	result, err := s.Edges.UsersOrErr()
+	if IsNotLoaded(err) {
+		result, err = s.QueryUsers().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (u *User) Memberships(ctx context.Context) (result []*Membership, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = u.NamedMemberships(graphql.GetFieldContext(ctx).Field.Alias)
@@ -64,6 +72,18 @@ func (u *User) Memberships(ctx context.Context) (result []*Membership, err error
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryMemberships().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) Sessions(ctx context.Context) (result []*Session, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedSessions(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.SessionsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QuerySessions().All(ctx)
 	}
 	return result, err
 }

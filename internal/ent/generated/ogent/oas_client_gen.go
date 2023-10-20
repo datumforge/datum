@@ -41,6 +41,12 @@ type Invoker interface {
 	//
 	// POST /organizations
 	CreateOrganization(ctx context.Context, request *CreateOrganizationReq) (CreateOrganizationRes, error)
+	// CreateSession invokes createSession operation.
+	//
+	// Creates a new Session and persists it to storage.
+	//
+	// POST /sessions
+	CreateSession(ctx context.Context, request *CreateSessionReq) (CreateSessionRes, error)
 	// CreateUser invokes createUser operation.
 	//
 	// Creates a new User and persists it to storage.
@@ -65,6 +71,12 @@ type Invoker interface {
 	//
 	// DELETE /organizations/{id}
 	DeleteOrganization(ctx context.Context, params DeleteOrganizationParams) (DeleteOrganizationRes, error)
+	// DeleteSession invokes deleteSession operation.
+	//
+	// Deletes the Session with the requested ID.
+	//
+	// DELETE /sessions/{id}
+	DeleteSession(ctx context.Context, params DeleteSessionParams) (DeleteSessionRes, error)
 	// DeleteUser invokes deleteUser operation.
 	//
 	// Deletes the User with the requested ID.
@@ -101,6 +113,12 @@ type Invoker interface {
 	//
 	// GET /organizations/{id}/memberships
 	ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (ListOrganizationMembershipsRes, error)
+	// ListSession invokes listSession operation.
+	//
+	// List Sessions.
+	//
+	// GET /sessions
+	ListSession(ctx context.Context, params ListSessionParams) (ListSessionRes, error)
 	// ListUser invokes listUser operation.
 	//
 	// List Users.
@@ -113,6 +131,12 @@ type Invoker interface {
 	//
 	// GET /users/{id}/memberships
 	ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (ListUserMembershipsRes, error)
+	// ListUserSessions invokes listUserSessions operation.
+	//
+	// List attached Sessions.
+	//
+	// GET /users/{id}/sessions
+	ListUserSessions(ctx context.Context, params ListUserSessionsParams) (ListUserSessionsRes, error)
 	// ReadIntegration invokes readIntegration operation.
 	//
 	// Finds the Integration with the requested ID and returns it.
@@ -149,6 +173,18 @@ type Invoker interface {
 	//
 	// GET /organizations/{id}
 	ReadOrganization(ctx context.Context, params ReadOrganizationParams) (ReadOrganizationRes, error)
+	// ReadSession invokes readSession operation.
+	//
+	// Finds the Session with the requested ID and returns it.
+	//
+	// GET /sessions/{id}
+	ReadSession(ctx context.Context, params ReadSessionParams) (ReadSessionRes, error)
+	// ReadSessionUsers invokes readSessionUsers operation.
+	//
+	// Find the attached User of the Session with the given ID.
+	//
+	// GET /sessions/{id}/users
+	ReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (ReadSessionUsersRes, error)
 	// ReadUser invokes readUser operation.
 	//
 	// Finds the User with the requested ID and returns it.
@@ -173,6 +209,12 @@ type Invoker interface {
 	//
 	// PATCH /organizations/{id}
 	UpdateOrganization(ctx context.Context, request *UpdateOrganizationReq, params UpdateOrganizationParams) (UpdateOrganizationRes, error)
+	// UpdateSession invokes updateSession operation.
+	//
+	// Updates a Session and persists changes to storage.
+	//
+	// PATCH /sessions/{id}
+	UpdateSession(ctx context.Context, request *UpdateSessionReq, params UpdateSessionParams) (UpdateSessionRes, error)
 	// UpdateUser invokes updateUser operation.
 	//
 	// Updates a User and persists changes to storage.
@@ -447,6 +489,90 @@ func (c *Client) sendCreateOrganization(ctx context.Context, request *CreateOrga
 
 	stage = "DecodeResponse"
 	result, err := decodeCreateOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// CreateSession invokes createSession operation.
+//
+// Creates a new Session and persists it to storage.
+//
+// POST /sessions
+func (c *Client) CreateSession(ctx context.Context, request *CreateSessionReq) (CreateSessionRes, error) {
+	res, err := c.sendCreateSession(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendCreateSession(ctx context.Context, request *CreateSessionReq) (res CreateSessionRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("createSession"),
+		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/sessions"),
+	}
+	// Validate request before sending.
+	if err := func() error {
+		if err := request.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return res, errors.Wrap(err, "validate")
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "CreateSession",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/sessions"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeCreateSessionRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeCreateSessionResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -792,6 +918,96 @@ func (c *Client) sendDeleteOrganization(ctx context.Context, params DeleteOrgani
 
 	stage = "DecodeResponse"
 	result, err := decodeDeleteOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// DeleteSession invokes deleteSession operation.
+//
+// Deletes the Session with the requested ID.
+//
+// DELETE /sessions/{id}
+func (c *Client) DeleteSession(ctx context.Context, params DeleteSessionParams) (DeleteSessionRes, error) {
+	res, err := c.sendDeleteSession(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendDeleteSession(ctx context.Context, params DeleteSessionParams) (res DeleteSessionRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("deleteSession"),
+		semconv.HTTPMethodKey.String("DELETE"),
+		semconv.HTTPRouteKey.String("/sessions/{id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "DeleteSession",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/sessions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeDeleteSessionResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1477,6 +1693,116 @@ func (c *Client) sendListOrganizationMemberships(ctx context.Context, params Lis
 	return result, nil
 }
 
+// ListSession invokes listSession operation.
+//
+// List Sessions.
+//
+// GET /sessions
+func (c *Client) ListSession(ctx context.Context, params ListSessionParams) (ListSessionRes, error) {
+	res, err := c.sendListSession(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendListSession(ctx context.Context, params ListSessionParams) (res ListSessionRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listSession"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/sessions"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListSession",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/sessions"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "itemsPerPage" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ItemsPerPage.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeListSessionResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // ListUser invokes listUser operation.
 //
 // List Users.
@@ -1709,6 +2035,135 @@ func (c *Client) sendListUserMemberships(ctx context.Context, params ListUserMem
 
 	stage = "DecodeResponse"
 	result, err := decodeListUserMembershipsResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ListUserSessions invokes listUserSessions operation.
+//
+// List attached Sessions.
+//
+// GET /users/{id}/sessions
+func (c *Client) ListUserSessions(ctx context.Context, params ListUserSessionsParams) (ListUserSessionsRes, error) {
+	res, err := c.sendListUserSessions(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendListUserSessions(ctx context.Context, params ListUserSessionsParams) (res ListUserSessionsRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listUserSessions"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/users/{id}/sessions"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListUserSessions",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/users/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/sessions"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "itemsPerPage" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ItemsPerPage.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeListUserSessionsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2259,6 +2714,187 @@ func (c *Client) sendReadOrganization(ctx context.Context, params ReadOrganizati
 	return result, nil
 }
 
+// ReadSession invokes readSession operation.
+//
+// Finds the Session with the requested ID and returns it.
+//
+// GET /sessions/{id}
+func (c *Client) ReadSession(ctx context.Context, params ReadSessionParams) (ReadSessionRes, error) {
+	res, err := c.sendReadSession(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadSession(ctx context.Context, params ReadSessionParams) (res ReadSessionRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readSession"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/sessions/{id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadSession",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/sessions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadSessionResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadSessionUsers invokes readSessionUsers operation.
+//
+// Find the attached User of the Session with the given ID.
+//
+// GET /sessions/{id}/users
+func (c *Client) ReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (ReadSessionUsersRes, error) {
+	res, err := c.sendReadSessionUsers(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (res ReadSessionUsersRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readSessionUsers"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/sessions/{id}/users"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadSessionUsers",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/sessions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/users"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadSessionUsersResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // ReadUser invokes readUser operation.
 //
 // Finds the User with the requested ID and returns it.
@@ -2621,6 +3257,99 @@ func (c *Client) sendUpdateOrganization(ctx context.Context, request *UpdateOrga
 
 	stage = "DecodeResponse"
 	result, err := decodeUpdateOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UpdateSession invokes updateSession operation.
+//
+// Updates a Session and persists changes to storage.
+//
+// PATCH /sessions/{id}
+func (c *Client) UpdateSession(ctx context.Context, request *UpdateSessionReq, params UpdateSessionParams) (UpdateSessionRes, error) {
+	res, err := c.sendUpdateSession(ctx, request, params)
+	return res, err
+}
+
+func (c *Client) sendUpdateSession(ctx context.Context, request *UpdateSessionReq, params UpdateSessionParams) (res UpdateSessionRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("updateSession"),
+		semconv.HTTPMethodKey.String("PATCH"),
+		semconv.HTTPRouteKey.String("/sessions/{id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "UpdateSession",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/sessions/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "PATCH", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeUpdateSessionRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeUpdateSessionResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

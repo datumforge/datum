@@ -13,6 +13,10 @@ type CreateOrganizationRes interface {
 	createOrganizationRes()
 }
 
+type CreateSessionRes interface {
+	createSessionRes()
+}
+
 type CreateUserRes interface {
 	createUserRes()
 }
@@ -27,6 +31,10 @@ type DeleteMembershipRes interface {
 
 type DeleteOrganizationRes interface {
 	deleteOrganizationRes()
+}
+
+type DeleteSessionRes interface {
+	deleteSessionRes()
 }
 
 type DeleteUserRes interface {
@@ -53,12 +61,20 @@ type ListOrganizationRes interface {
 	listOrganizationRes()
 }
 
+type ListSessionRes interface {
+	listSessionRes()
+}
+
 type ListUserMembershipsRes interface {
 	listUserMembershipsRes()
 }
 
 type ListUserRes interface {
 	listUserRes()
+}
+
+type ListUserSessionsRes interface {
+	listUserSessionsRes()
 }
 
 type ReadIntegrationOrganizationRes interface {
@@ -85,6 +101,14 @@ type ReadOrganizationRes interface {
 	readOrganizationRes()
 }
 
+type ReadSessionRes interface {
+	readSessionRes()
+}
+
+type ReadSessionUsersRes interface {
+	readSessionUsersRes()
+}
+
 type ReadUserRes interface {
 	readUserRes()
 }
@@ -99,6 +123,10 @@ type UpdateMembershipRes interface {
 
 type UpdateOrganizationRes interface {
 	updateOrganizationRes()
+}
+
+type UpdateSessionRes interface {
+	updateSessionRes()
 }
 
 type UpdateUserRes interface {

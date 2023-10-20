@@ -10,27 +10,35 @@ import (
 
 // CreateIntegrationInput represents a mutation input for creating integrations.
 type CreateIntegrationInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *int
+	UpdatedBy      *int
 	Kind           string
 	Description    *string
 	SecretName     string
-	CreatedAt      *time.Time
-	DeletedAt      *time.Time
 	OrganizationID uuid.UUID
 }
 
 // Mutate applies the CreateIntegrationInput on the IntegrationMutation builder.
 func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
 	m.SetKind(i.Kind)
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
 	m.SetSecretName(i.SecretName)
-	if v := i.CreatedAt; v != nil {
-		m.SetCreatedAt(*v)
-	}
-	if v := i.DeletedAt; v != nil {
-		m.SetDeletedAt(*v)
-	}
 	m.SetOrganizationID(i.OrganizationID)
 }
 
@@ -42,26 +50,38 @@ func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreat
 
 // UpdateIntegrationInput represents a mutation input for updating integrations.
 type UpdateIntegrationInput struct {
+	UpdatedAt        *time.Time
+	ClearCreatedBy   bool
+	CreatedBy        *int
+	ClearUpdatedBy   bool
+	UpdatedBy        *int
 	ClearDescription bool
 	Description      *string
-	ClearDeletedAt   bool
-	DeletedAt        *time.Time
 	OrganizationID   *uuid.UUID
 }
 
 // Mutate applies the UpdateIntegrationInput on the IntegrationMutation builder.
 func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
 	if i.ClearDescription {
 		m.ClearDescription()
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
-	}
-	if i.ClearDeletedAt {
-		m.ClearDeletedAt()
-	}
-	if v := i.DeletedAt; v != nil {
-		m.SetDeletedAt(*v)
 	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)
@@ -82,23 +102,31 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 
 // CreateMembershipInput represents a mutation input for creating memberships.
 type CreateMembershipInput struct {
-	Current        *bool
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
+	CreatedBy      *int
+	UpdatedBy      *int
+	Current        *bool
 	OrganizationID uuid.UUID
 	UserID         uuid.UUID
 }
 
 // Mutate applies the CreateMembershipInput on the MembershipMutation builder.
 func (i *CreateMembershipInput) Mutate(m *MembershipMutation) {
-	if v := i.Current; v != nil {
-		m.SetCurrent(*v)
-	}
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Current; v != nil {
+		m.SetCurrent(*v)
 	}
 	m.SetOrganizationID(i.OrganizationID)
 	m.SetUserID(i.UserID)
@@ -112,19 +140,35 @@ func (c *MembershipCreate) SetInput(i CreateMembershipInput) *MembershipCreate {
 
 // UpdateMembershipInput represents a mutation input for updating memberships.
 type UpdateMembershipInput struct {
-	Current        *bool
 	UpdatedAt      *time.Time
+	ClearCreatedBy bool
+	CreatedBy      *int
+	ClearUpdatedBy bool
+	UpdatedBy      *int
+	Current        *bool
 	OrganizationID *uuid.UUID
 	UserID         *uuid.UUID
 }
 
 // Mutate applies the UpdateMembershipInput on the MembershipMutation builder.
 func (i *UpdateMembershipInput) Mutate(m *MembershipMutation) {
-	if v := i.Current; v != nil {
-		m.SetCurrent(*v)
-	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Current; v != nil {
+		m.SetCurrent(*v)
 	}
 	if v := i.OrganizationID; v != nil {
 		m.SetOrganizationID(*v)
@@ -148,19 +192,31 @@ func (c *MembershipUpdateOne) SetInput(i UpdateMembershipInput) *MembershipUpdat
 
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
-	Name           *string
 	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *int
+	UpdatedBy      *int
+	Name           *string
 	MembershipIDs  []uuid.UUID
 	IntegrationIDs []uuid.UUID
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
 func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
 	}
 	if v := i.MembershipIDs; len(v) > 0 {
 		m.AddMembershipIDs(v...)
@@ -178,6 +234,11 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
+	UpdatedAt            *time.Time
+	ClearCreatedBy       bool
+	CreatedBy            *int
+	ClearUpdatedBy       bool
+	UpdatedBy            *int
 	Name                 *string
 	ClearMemberships     bool
 	AddMembershipIDs     []uuid.UUID
@@ -189,6 +250,21 @@ type UpdateOrganizationInput struct {
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
 func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
@@ -226,19 +302,67 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
-	Email         string
-	CreatedAt     *time.Time
-	MembershipIDs []uuid.UUID
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *int
+	UpdatedBy       *int
+	Email           string
+	DisplayName     *string
+	Locked          *bool
+	AvatarRemoteURL *string
+	AvatarLocalFile *string
+	AvatarUpdatedAt *time.Time
+	SilencedAt      *time.Time
+	SuspendedAt     *time.Time
+	RecoveryCode    *string
+	MembershipIDs   []uuid.UUID
+	SessionIDs      []uuid.UUID
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
 func (i *CreateUserInput) Mutate(m *UserMutation) {
-	m.SetEmail(i.Email)
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetEmail(i.Email)
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
+	}
+	if v := i.Locked; v != nil {
+		m.SetLocked(*v)
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
+	}
+	if v := i.AvatarLocalFile; v != nil {
+		m.SetAvatarLocalFile(*v)
+	}
+	if v := i.AvatarUpdatedAt; v != nil {
+		m.SetAvatarUpdatedAt(*v)
+	}
+	if v := i.SilencedAt; v != nil {
+		m.SetSilencedAt(*v)
+	}
+	if v := i.SuspendedAt; v != nil {
+		m.SetSuspendedAt(*v)
+	}
+	if v := i.RecoveryCode; v != nil {
+		m.SetRecoveryCode(*v)
+	}
 	if v := i.MembershipIDs; len(v) > 0 {
 		m.AddMembershipIDs(v...)
+	}
+	if v := i.SessionIDs; len(v) > 0 {
+		m.AddSessionIDs(v...)
 	}
 }
 
@@ -250,16 +374,95 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 
 // UpdateUserInput represents a mutation input for updating users.
 type UpdateUserInput struct {
-	Email               *string
-	ClearMemberships    bool
-	AddMembershipIDs    []uuid.UUID
-	RemoveMembershipIDs []uuid.UUID
+	UpdatedAt            *time.Time
+	ClearCreatedBy       bool
+	CreatedBy            *int
+	ClearUpdatedBy       bool
+	UpdatedBy            *int
+	Email                *string
+	DisplayName          *string
+	Locked               *bool
+	ClearAvatarRemoteURL bool
+	AvatarRemoteURL      *string
+	ClearAvatarLocalFile bool
+	AvatarLocalFile      *string
+	ClearAvatarUpdatedAt bool
+	AvatarUpdatedAt      *time.Time
+	ClearSilencedAt      bool
+	SilencedAt           *time.Time
+	ClearSuspendedAt     bool
+	SuspendedAt          *time.Time
+	ClearRecoveryCode    bool
+	RecoveryCode         *string
+	ClearMemberships     bool
+	AddMembershipIDs     []uuid.UUID
+	RemoveMembershipIDs  []uuid.UUID
+	ClearSessions        bool
+	AddSessionIDs        []uuid.UUID
+	RemoveSessionIDs     []uuid.UUID
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
 func (i *UpdateUserInput) Mutate(m *UserMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
 	if v := i.Email; v != nil {
 		m.SetEmail(*v)
+	}
+	if v := i.DisplayName; v != nil {
+		m.SetDisplayName(*v)
+	}
+	if v := i.Locked; v != nil {
+		m.SetLocked(*v)
+	}
+	if i.ClearAvatarRemoteURL {
+		m.ClearAvatarRemoteURL()
+	}
+	if v := i.AvatarRemoteURL; v != nil {
+		m.SetAvatarRemoteURL(*v)
+	}
+	if i.ClearAvatarLocalFile {
+		m.ClearAvatarLocalFile()
+	}
+	if v := i.AvatarLocalFile; v != nil {
+		m.SetAvatarLocalFile(*v)
+	}
+	if i.ClearAvatarUpdatedAt {
+		m.ClearAvatarUpdatedAt()
+	}
+	if v := i.AvatarUpdatedAt; v != nil {
+		m.SetAvatarUpdatedAt(*v)
+	}
+	if i.ClearSilencedAt {
+		m.ClearSilencedAt()
+	}
+	if v := i.SilencedAt; v != nil {
+		m.SetSilencedAt(*v)
+	}
+	if i.ClearSuspendedAt {
+		m.ClearSuspendedAt()
+	}
+	if v := i.SuspendedAt; v != nil {
+		m.SetSuspendedAt(*v)
+	}
+	if i.ClearRecoveryCode {
+		m.ClearRecoveryCode()
+	}
+	if v := i.RecoveryCode; v != nil {
+		m.SetRecoveryCode(*v)
 	}
 	if i.ClearMemberships {
 		m.ClearMemberships()
@@ -269,6 +472,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveMembershipIDs; len(v) > 0 {
 		m.RemoveMembershipIDs(v...)
+	}
+	if i.ClearSessions {
+		m.ClearSessions()
+	}
+	if v := i.AddSessionIDs; len(v) > 0 {
+		m.AddSessionIDs(v...)
+	}
+	if v := i.RemoveSessionIDs; len(v) > 0 {
+		m.RemoveSessionIDs(v...)
 	}
 }
 

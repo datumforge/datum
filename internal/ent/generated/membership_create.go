@@ -23,20 +23,6 @@ type MembershipCreate struct {
 	hooks    []Hook
 }
 
-// SetCurrent sets the "current" field.
-func (mc *MembershipCreate) SetCurrent(b bool) *MembershipCreate {
-	mc.mutation.SetCurrent(b)
-	return mc
-}
-
-// SetNillableCurrent sets the "current" field if the given value is not nil.
-func (mc *MembershipCreate) SetNillableCurrent(b *bool) *MembershipCreate {
-	if b != nil {
-		mc.SetCurrent(*b)
-	}
-	return mc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (mc *MembershipCreate) SetCreatedAt(t time.Time) *MembershipCreate {
 	mc.mutation.SetCreatedAt(t)
@@ -61,6 +47,48 @@ func (mc *MembershipCreate) SetUpdatedAt(t time.Time) *MembershipCreate {
 func (mc *MembershipCreate) SetNillableUpdatedAt(t *time.Time) *MembershipCreate {
 	if t != nil {
 		mc.SetUpdatedAt(*t)
+	}
+	return mc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (mc *MembershipCreate) SetCreatedBy(i int) *MembershipCreate {
+	mc.mutation.SetCreatedBy(i)
+	return mc
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (mc *MembershipCreate) SetNillableCreatedBy(i *int) *MembershipCreate {
+	if i != nil {
+		mc.SetCreatedBy(*i)
+	}
+	return mc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (mc *MembershipCreate) SetUpdatedBy(i int) *MembershipCreate {
+	mc.mutation.SetUpdatedBy(i)
+	return mc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (mc *MembershipCreate) SetNillableUpdatedBy(i *int) *MembershipCreate {
+	if i != nil {
+		mc.SetUpdatedBy(*i)
+	}
+	return mc
+}
+
+// SetCurrent sets the "current" field.
+func (mc *MembershipCreate) SetCurrent(b bool) *MembershipCreate {
+	mc.mutation.SetCurrent(b)
+	return mc
+}
+
+// SetNillableCurrent sets the "current" field if the given value is not nil.
+func (mc *MembershipCreate) SetNillableCurrent(b *bool) *MembershipCreate {
+	if b != nil {
+		mc.SetCurrent(*b)
 	}
 	return mc
 }
@@ -108,7 +136,9 @@ func (mc *MembershipCreate) Mutation() *MembershipMutation {
 
 // Save creates the Membership in the database.
 func (mc *MembershipCreate) Save(ctx context.Context) (*Membership, error) {
-	mc.defaults()
+	if err := mc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, mc.sqlSave, mc.mutation, mc.hooks)
 }
 
@@ -135,35 +165,45 @@ func (mc *MembershipCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (mc *MembershipCreate) defaults() {
-	if _, ok := mc.mutation.Current(); !ok {
-		v := membership.DefaultCurrent
-		mc.mutation.SetCurrent(v)
-	}
+func (mc *MembershipCreate) defaults() error {
 	if _, ok := mc.mutation.CreatedAt(); !ok {
+		if membership.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized membership.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
 		v := membership.DefaultCreatedAt()
 		mc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := mc.mutation.UpdatedAt(); !ok {
+		if membership.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized membership.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
 		v := membership.DefaultUpdatedAt()
 		mc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := mc.mutation.Current(); !ok {
+		v := membership.DefaultCurrent
+		mc.mutation.SetCurrent(v)
+	}
 	if _, ok := mc.mutation.ID(); !ok {
+		if membership.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized membership.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := membership.DefaultID()
 		mc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (mc *MembershipCreate) check() error {
-	if _, ok := mc.mutation.Current(); !ok {
-		return &ValidationError{Name: "current", err: errors.New(`generated: missing required field "Membership.current"`)}
-	}
 	if _, ok := mc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Membership.created_at"`)}
 	}
 	if _, ok := mc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Membership.updated_at"`)}
+	}
+	if _, ok := mc.mutation.Current(); !ok {
+		return &ValidationError{Name: "current", err: errors.New(`generated: missing required field "Membership.current"`)}
 	}
 	if _, ok := mc.mutation.OrganizationID(); !ok {
 		return &ValidationError{Name: "organization", err: errors.New(`generated: missing required edge "Membership.organization"`)}
@@ -206,10 +246,6 @@ func (mc *MembershipCreate) createSpec() (*Membership, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := mc.mutation.Current(); ok {
-		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
-		_node.Current = value
-	}
 	if value, ok := mc.mutation.CreatedAt(); ok {
 		_spec.SetField(membership.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
@@ -217,6 +253,18 @@ func (mc *MembershipCreate) createSpec() (*Membership, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.UpdatedAt(); ok {
 		_spec.SetField(membership.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
+	}
+	if value, ok := mc.mutation.CreatedBy(); ok {
+		_spec.SetField(membership.FieldCreatedBy, field.TypeInt, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := mc.mutation.UpdatedBy(); ok {
+		_spec.SetField(membership.FieldUpdatedBy, field.TypeInt, value)
+		_node.UpdatedBy = value
+	}
+	if value, ok := mc.mutation.Current(); ok {
+		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
+		_node.Current = value
 	}
 	if nodes := mc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

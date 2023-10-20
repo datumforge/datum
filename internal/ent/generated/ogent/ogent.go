@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/go-faster/jx"
 )
@@ -33,15 +34,19 @@ func rawError(err error) jx.Raw {
 func (h *OgentHandler) CreateIntegration(ctx context.Context, req *CreateIntegrationReq) (CreateIntegrationRes, error) {
 	b := h.client.Integration.Create()
 	// Add all fields.
+	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
 	b.SetKind(req.Kind)
 	if v, ok := req.Description.Get(); ok {
 		b.SetDescription(v)
 	}
 	b.SetSecretName(req.SecretName)
-	b.SetCreatedAt(req.CreatedAt)
-	if v, ok := req.DeletedAt.Get(); ok {
-		b.SetDeletedAt(v)
-	}
 	// Add all edges.
 	b.SetOrganizationID(req.Organization)
 	// Persist to storage.
@@ -105,11 +110,17 @@ func (h *OgentHandler) ReadIntegration(ctx context.Context, params ReadIntegrati
 func (h *OgentHandler) UpdateIntegration(ctx context.Context, req *UpdateIntegrationReq, params UpdateIntegrationParams) (UpdateIntegrationRes, error) {
 	b := h.client.Integration.UpdateOneID(params.ID)
 	// Add all fields.
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
 	if v, ok := req.Description.Get(); ok {
 		b.SetDescription(v)
-	}
-	if v, ok := req.DeletedAt.Get(); ok {
-		b.SetDeletedAt(v)
 	}
 	// Add all edges.
 	if v, ok := req.Organization.Get(); ok {
@@ -239,9 +250,15 @@ func (h *OgentHandler) ReadIntegrationOrganization(ctx context.Context, params R
 func (h *OgentHandler) CreateMembership(ctx context.Context, req *CreateMembershipReq) (CreateMembershipRes, error) {
 	b := h.client.Membership.Create()
 	// Add all fields.
-	b.SetCurrent(req.Current)
 	b.SetCreatedAt(req.CreatedAt)
 	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	b.SetCurrent(req.Current)
 	// Add all edges.
 	b.SetOrganizationID(req.Organization)
 	b.SetUserID(req.User)
@@ -306,11 +323,17 @@ func (h *OgentHandler) ReadMembership(ctx context.Context, params ReadMembership
 func (h *OgentHandler) UpdateMembership(ctx context.Context, req *UpdateMembershipReq, params UpdateMembershipParams) (UpdateMembershipRes, error) {
 	b := h.client.Membership.UpdateOneID(params.ID)
 	// Add all fields.
-	if v, ok := req.Current.Get(); ok {
-		b.SetCurrent(v)
-	}
 	if v, ok := req.UpdatedAt.Get(); ok {
 		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	if v, ok := req.Current.Get(); ok {
+		b.SetCurrent(v)
 	}
 	// Add all edges.
 	if v, ok := req.Organization.Get(); ok {
@@ -469,8 +492,15 @@ func (h *OgentHandler) ReadMembershipUser(ctx context.Context, params ReadMember
 func (h *OgentHandler) CreateOrganization(ctx context.Context, req *CreateOrganizationReq) (CreateOrganizationRes, error) {
 	b := h.client.Organization.Create()
 	// Add all fields.
-	b.SetName(req.Name)
 	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	b.SetName(req.Name)
 	// Add all edges.
 	b.AddMembershipIDs(req.Memberships...)
 	b.AddIntegrationIDs(req.Integrations...)
@@ -535,6 +565,15 @@ func (h *OgentHandler) ReadOrganization(ctx context.Context, params ReadOrganiza
 func (h *OgentHandler) UpdateOrganization(ctx context.Context, req *UpdateOrganizationReq, params UpdateOrganizationParams) (UpdateOrganizationRes, error) {
 	b := h.client.Organization.UpdateOneID(params.ID)
 	// Add all fields.
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
 	if v, ok := req.Name.Get(); ok {
 		b.SetName(v)
 	}
@@ -711,14 +750,268 @@ func (h *OgentHandler) ListOrganizationIntegrations(ctx context.Context, params 
 	return (*ListOrganizationIntegrationsOKApplicationJSON)(&r), nil
 }
 
+// CreateSession handles POST /sessions requests.
+func (h *OgentHandler) CreateSession(ctx context.Context, req *CreateSessionReq) (CreateSessionRes, error) {
+	b := h.client.Session.Create()
+	// Add all fields.
+	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	b.SetType(session.Type(req.Type))
+	b.SetDisabled(req.Disabled)
+	b.SetToken(req.Token)
+	if v, ok := req.UserAgent.Get(); ok {
+		b.SetUserAgent(v)
+	}
+	b.SetIps(req.Ips)
+	// Add all edges.
+	if v, ok := req.Users.Get(); ok {
+		b.SetUsersID(v)
+	}
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.Session.Query().Where(session.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewSessionCreate(e), nil
+}
+
+// ReadSession handles GET /sessions/{id} requests.
+func (h *OgentHandler) ReadSession(ctx context.Context, params ReadSessionParams) (ReadSessionRes, error) {
+	q := h.client.Session.Query().Where(session.IDEQ(params.ID))
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewSessionRead(e), nil
+}
+
+// UpdateSession handles PATCH /sessions/{id} requests.
+func (h *OgentHandler) UpdateSession(ctx context.Context, req *UpdateSessionReq, params UpdateSessionParams) (UpdateSessionRes, error) {
+	b := h.client.Session.UpdateOneID(params.ID)
+	// Add all fields.
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	if v, ok := req.Disabled.Get(); ok {
+		b.SetDisabled(v)
+	}
+	if v, ok := req.UserAgent.Get(); ok {
+		b.SetUserAgent(v)
+	}
+	if v, ok := req.Ips.Get(); ok {
+		b.SetIps(v)
+	}
+	// Add all edges.
+	if v, ok := req.Users.Get(); ok {
+		b.SetUsersID(v)
+	}
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.Session.Query().Where(session.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewSessionUpdate(e), nil
+}
+
+// DeleteSession handles DELETE /sessions/{id} requests.
+func (h *OgentHandler) DeleteSession(ctx context.Context, params DeleteSessionParams) (DeleteSessionRes, error) {
+	err := h.client.Session.DeleteOneID(params.ID).Exec(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return new(DeleteSessionNoContent), nil
+
+}
+
+// ListSession handles GET /sessions requests.
+func (h *OgentHandler) ListSession(ctx context.Context, params ListSessionParams) (ListSessionRes, error) {
+	q := h.client.Session.Query()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewSessionLists(es)
+	return (*ListSessionOKApplicationJSON)(&r), nil
+}
+
+// ReadSessionUsers handles GET /sessions/{id}/users requests.
+func (h *OgentHandler) ReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (ReadSessionUsersRes, error) {
+	q := h.client.Session.Query().Where(session.IDEQ(params.ID)).QueryUsers()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewSessionUsersRead(e), nil
+}
+
 // CreateUser handles POST /users requests.
 func (h *OgentHandler) CreateUser(ctx context.Context, req *CreateUserReq) (CreateUserRes, error) {
 	b := h.client.User.Create()
 	// Add all fields.
-	b.SetEmail(req.Email)
 	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	b.SetEmail(req.Email)
+	b.SetDisplayName(req.DisplayName)
+	b.SetLocked(req.Locked)
+	if v, ok := req.AvatarRemoteURL.Get(); ok {
+		b.SetAvatarRemoteURL(v)
+	}
+	if v, ok := req.AvatarLocalFile.Get(); ok {
+		b.SetAvatarLocalFile(v)
+	}
+	if v, ok := req.AvatarUpdatedAt.Get(); ok {
+		b.SetAvatarUpdatedAt(v)
+	}
+	if v, ok := req.SilencedAt.Get(); ok {
+		b.SetSilencedAt(v)
+	}
+	if v, ok := req.SuspendedAt.Get(); ok {
+		b.SetSuspendedAt(v)
+	}
+	if v, ok := req.RecoveryCode.Get(); ok {
+		b.SetRecoveryCode(v)
+	}
 	// Add all edges.
 	b.AddMembershipIDs(req.Memberships...)
+	b.AddSessionIDs(req.Sessions...)
 	// Persist to storage.
 	e, err := b.Save(ctx)
 	if err != nil {
@@ -780,12 +1073,48 @@ func (h *OgentHandler) ReadUser(ctx context.Context, params ReadUserParams) (Rea
 func (h *OgentHandler) UpdateUser(ctx context.Context, req *UpdateUserReq, params UpdateUserParams) (UpdateUserRes, error) {
 	b := h.client.User.UpdateOneID(params.ID)
 	// Add all fields.
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
 	if v, ok := req.Email.Get(); ok {
 		b.SetEmail(v)
+	}
+	if v, ok := req.DisplayName.Get(); ok {
+		b.SetDisplayName(v)
+	}
+	if v, ok := req.Locked.Get(); ok {
+		b.SetLocked(v)
+	}
+	if v, ok := req.AvatarRemoteURL.Get(); ok {
+		b.SetAvatarRemoteURL(v)
+	}
+	if v, ok := req.AvatarLocalFile.Get(); ok {
+		b.SetAvatarLocalFile(v)
+	}
+	if v, ok := req.AvatarUpdatedAt.Get(); ok {
+		b.SetAvatarUpdatedAt(v)
+	}
+	if v, ok := req.SilencedAt.Get(); ok {
+		b.SetSilencedAt(v)
+	}
+	if v, ok := req.SuspendedAt.Get(); ok {
+		b.SetSuspendedAt(v)
+	}
+	if v, ok := req.RecoveryCode.Get(); ok {
+		b.SetRecoveryCode(v)
 	}
 	// Add all edges.
 	if req.Memberships != nil {
 		b.ClearMemberships().AddMembershipIDs(req.Memberships...)
+	}
+	if req.Sessions != nil {
+		b.ClearSessions().AddSessionIDs(req.Sessions...)
 	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -915,4 +1244,40 @@ func (h *OgentHandler) ListUserMemberships(ctx context.Context, params ListUserM
 	}
 	r := NewUserMembershipsLists(es)
 	return (*ListUserMembershipsOKApplicationJSON)(&r), nil
+}
+
+// ListUserSessions handles GET /users/{id}/sessions requests.
+func (h *OgentHandler) ListUserSessions(ctx context.Context, params ListUserSessionsParams) (ListUserSessionsRes, error) {
+	q := h.client.User.Query().Where(user.IDEQ(params.ID)).QuerySessions()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewUserSessionsLists(es)
+	return (*ListUserSessionsOKApplicationJSON)(&r), nil
 }

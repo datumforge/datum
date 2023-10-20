@@ -1,11 +1,8 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -13,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Membership maps users belonging to organizations
+// Membership maps users belonging to logical structures, firstly to organizations but in the future to projects, groups, etc.
 type Membership struct {
 	ent.Schema
 }
@@ -21,19 +18,9 @@ type Membership struct {
 // Fields of the Membership
 func (Membership) Fields() []ent.Field {
 	return []ent.Field{
+		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
 		field.Bool("current").Default(false),
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable().
-			Annotations(&entsql.Annotation{
-				Default: "CURRENT_TIMESTAMP",
-			}),
-		field.Time("updated_at").
-			Default(time.Now).
-			Annotations(&entsql.Annotation{
-				Default: "CURRENT_TIMESTAMP",
-			}),
 	}
 }
 
@@ -57,5 +44,12 @@ func (Membership) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Mixins of the Membership
+func (Membership) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		AuditMixin{},
 	}
 }

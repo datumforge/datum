@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,66 @@ type OrganizationUpdate struct {
 // Where appends a list predicates to the OrganizationUpdate builder.
 func (ou *OrganizationUpdate) Where(ps ...predicate.Organization) *OrganizationUpdate {
 	ou.mutation.Where(ps...)
+	return ou
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (ou *OrganizationUpdate) SetUpdatedAt(t time.Time) *OrganizationUpdate {
+	ou.mutation.SetUpdatedAt(t)
+	return ou
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (ou *OrganizationUpdate) SetCreatedBy(i int) *OrganizationUpdate {
+	ou.mutation.ResetCreatedBy()
+	ou.mutation.SetCreatedBy(i)
+	return ou
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableCreatedBy(i *int) *OrganizationUpdate {
+	if i != nil {
+		ou.SetCreatedBy(*i)
+	}
+	return ou
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (ou *OrganizationUpdate) AddCreatedBy(i int) *OrganizationUpdate {
+	ou.mutation.AddCreatedBy(i)
+	return ou
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (ou *OrganizationUpdate) ClearCreatedBy() *OrganizationUpdate {
+	ou.mutation.ClearCreatedBy()
+	return ou
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (ou *OrganizationUpdate) SetUpdatedBy(i int) *OrganizationUpdate {
+	ou.mutation.ResetUpdatedBy()
+	ou.mutation.SetUpdatedBy(i)
+	return ou
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableUpdatedBy(i *int) *OrganizationUpdate {
+	if i != nil {
+		ou.SetUpdatedBy(*i)
+	}
+	return ou
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (ou *OrganizationUpdate) AddUpdatedBy(i int) *OrganizationUpdate {
+	ou.mutation.AddUpdatedBy(i)
+	return ou
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (ou *OrganizationUpdate) ClearUpdatedBy() *OrganizationUpdate {
+	ou.mutation.ClearUpdatedBy()
 	return ou
 }
 
@@ -123,6 +184,9 @@ func (ou *OrganizationUpdate) RemoveIntegrations(i ...*Integration) *Organizatio
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ou *OrganizationUpdate) Save(ctx context.Context) (int, error) {
+	if err := ou.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ou.sqlSave, ou.mutation, ou.hooks)
 }
 
@@ -148,6 +212,18 @@ func (ou *OrganizationUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (ou *OrganizationUpdate) defaults() error {
+	if _, ok := ou.mutation.UpdatedAt(); !ok {
+		if organization.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organization.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := organization.UpdateDefaultUpdatedAt()
+		ou.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
 func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
 	if ps := ou.mutation.predicates; len(ps) > 0 {
@@ -156,6 +232,27 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ou.mutation.UpdatedAt(); ok {
+		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := ou.mutation.CreatedBy(); ok {
+		_spec.SetField(organization.FieldCreatedBy, field.TypeInt, value)
+	}
+	if value, ok := ou.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(organization.FieldCreatedBy, field.TypeInt, value)
+	}
+	if ou.mutation.CreatedByCleared() {
+		_spec.ClearField(organization.FieldCreatedBy, field.TypeInt)
+	}
+	if value, ok := ou.mutation.UpdatedBy(); ok {
+		_spec.SetField(organization.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if value, ok := ou.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(organization.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if ou.mutation.UpdatedByCleared() {
+		_spec.ClearField(organization.FieldUpdatedBy, field.TypeInt)
 	}
 	if value, ok := ou.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
@@ -270,6 +367,66 @@ type OrganizationUpdateOne struct {
 	mutation *OrganizationMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (ouo *OrganizationUpdateOne) SetUpdatedAt(t time.Time) *OrganizationUpdateOne {
+	ouo.mutation.SetUpdatedAt(t)
+	return ouo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (ouo *OrganizationUpdateOne) SetCreatedBy(i int) *OrganizationUpdateOne {
+	ouo.mutation.ResetCreatedBy()
+	ouo.mutation.SetCreatedBy(i)
+	return ouo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableCreatedBy(i *int) *OrganizationUpdateOne {
+	if i != nil {
+		ouo.SetCreatedBy(*i)
+	}
+	return ouo
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (ouo *OrganizationUpdateOne) AddCreatedBy(i int) *OrganizationUpdateOne {
+	ouo.mutation.AddCreatedBy(i)
+	return ouo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (ouo *OrganizationUpdateOne) ClearCreatedBy() *OrganizationUpdateOne {
+	ouo.mutation.ClearCreatedBy()
+	return ouo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (ouo *OrganizationUpdateOne) SetUpdatedBy(i int) *OrganizationUpdateOne {
+	ouo.mutation.ResetUpdatedBy()
+	ouo.mutation.SetUpdatedBy(i)
+	return ouo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableUpdatedBy(i *int) *OrganizationUpdateOne {
+	if i != nil {
+		ouo.SetUpdatedBy(*i)
+	}
+	return ouo
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (ouo *OrganizationUpdateOne) AddUpdatedBy(i int) *OrganizationUpdateOne {
+	ouo.mutation.AddUpdatedBy(i)
+	return ouo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (ouo *OrganizationUpdateOne) ClearUpdatedBy() *OrganizationUpdateOne {
+	ouo.mutation.ClearUpdatedBy()
+	return ouo
+}
+
 // SetName sets the "name" field.
 func (ouo *OrganizationUpdateOne) SetName(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetName(s)
@@ -376,6 +533,9 @@ func (ouo *OrganizationUpdateOne) Select(field string, fields ...string) *Organi
 
 // Save executes the query and returns the updated Organization entity.
 func (ouo *OrganizationUpdateOne) Save(ctx context.Context) (*Organization, error) {
+	if err := ouo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ouo.sqlSave, ouo.mutation, ouo.hooks)
 }
 
@@ -399,6 +559,18 @@ func (ouo *OrganizationUpdateOne) ExecX(ctx context.Context) {
 	if err := ouo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (ouo *OrganizationUpdateOne) defaults() error {
+	if _, ok := ouo.mutation.UpdatedAt(); !ok {
+		if organization.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized organization.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := organization.UpdateDefaultUpdatedAt()
+		ouo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organization, err error) {
@@ -426,6 +598,27 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := ouo.mutation.UpdatedAt(); ok {
+		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := ouo.mutation.CreatedBy(); ok {
+		_spec.SetField(organization.FieldCreatedBy, field.TypeInt, value)
+	}
+	if value, ok := ouo.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(organization.FieldCreatedBy, field.TypeInt, value)
+	}
+	if ouo.mutation.CreatedByCleared() {
+		_spec.ClearField(organization.FieldCreatedBy, field.TypeInt)
+	}
+	if value, ok := ouo.mutation.UpdatedBy(); ok {
+		_spec.SetField(organization.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if value, ok := ouo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(organization.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if ouo.mutation.UpdatedByCleared() {
+		_spec.ClearField(organization.FieldUpdatedBy, field.TypeInt)
 	}
 	if value, ok := ouo.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)

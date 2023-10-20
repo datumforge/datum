@@ -6,7 +6,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/google/uuid"
@@ -14,20 +13,76 @@ import (
 
 // CreateSession is the resolver for the createSession field.
 func (r *mutationResolver) CreateSession(ctx context.Context, input generated.CreateSessionInput) (*SessionCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateSession - createSession"))
+	// TODO - add permissions checks
+	sess, err := r.client.Session.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to create session", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &SessionCreatePayload{Session: sess}, nil
 }
 
 // UpdateSession is the resolver for the updateSession field.
 func (r *mutationResolver) UpdateSession(ctx context.Context, id uuid.UUID, input generated.UpdateSessionInput) (*SessionUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateSession - updateSession"))
+	// TODO - add permissions checks
+
+	sess, err := r.client.Session.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get session", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	sess, err = sess.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to update session", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &SessionUpdatePayload{Session: sess}, nil
 }
 
 // DeleteSession is the resolver for the deleteSession field.
 func (r *mutationResolver) DeleteSession(ctx context.Context, id uuid.UUID) (*SessionDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteSession - deleteSession"))
+	// TODO - add permissions checks
+
+	if err := r.client.Session.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to delete session", "error", err)
+		return nil, err
+	}
+
+	return &SessionDeletePayload{DeletedID: id}, nil
 }
 
 // Session is the resolver for the session field.
 func (r *queryResolver) Session(ctx context.Context, id uuid.UUID) (*generated.Session, error) {
-	panic(fmt.Errorf("not implemented: Session - session"))
+	// TODO - add permissions checks
+
+	sess, err := r.client.Session.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get session", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return sess, nil
 }

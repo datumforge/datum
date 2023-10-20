@@ -137,8 +137,44 @@ func init() {
 	userDescEmail := userFields[0].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescFirstName is the schema descriptor for first_name field.
+	userDescFirstName := userFields[2].Descriptor()
+	// user.FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
+	user.FirstNameValidator = func() func(string) error {
+		validators := userDescFirstName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(first_name string) error {
+			for _, fn := range fns {
+				if err := fn(first_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// userDescLastName is the schema descriptor for last_name field.
+	userDescLastName := userFields[3].Descriptor()
+	// user.LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
+	user.LastNameValidator = func() func(string) error {
+		validators := userDescLastName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(last_name string) error {
+			for _, fn := range fns {
+				if err := fn(last_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// userDescDisplayName is the schema descriptor for display_name field.
-	userDescDisplayName := userFields[2].Descriptor()
+	userDescDisplayName := userFields[4].Descriptor()
 	// user.DefaultDisplayName holds the default value on creation for the display_name field.
 	user.DefaultDisplayName = userDescDisplayName.Default.(string)
 	// user.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
@@ -158,11 +194,11 @@ func init() {
 		}
 	}()
 	// userDescLocked is the schema descriptor for locked field.
-	userDescLocked := userFields[3].Descriptor()
+	userDescLocked := userFields[5].Descriptor()
 	// user.DefaultLocked holds the default value on creation for the locked field.
 	user.DefaultLocked = userDescLocked.Default.(bool)
 	// userDescAvatarRemoteURL is the schema descriptor for avatar_remote_url field.
-	userDescAvatarRemoteURL := userFields[4].Descriptor()
+	userDescAvatarRemoteURL := userFields[6].Descriptor()
 	// user.AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
 	user.AvatarRemoteURLValidator = func() func(string) error {
 		validators := userDescAvatarRemoteURL.Validators
@@ -180,7 +216,7 @@ func init() {
 		}
 	}()
 	// userDescAvatarLocalFile is the schema descriptor for avatar_local_file field.
-	userDescAvatarLocalFile := userFields[5].Descriptor()
+	userDescAvatarLocalFile := userFields[7].Descriptor()
 	// user.AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
 	user.AvatarLocalFileValidator = userDescAvatarLocalFile.Validators[0].(func(string) error)
 	// userDescID is the schema descriptor for id field.

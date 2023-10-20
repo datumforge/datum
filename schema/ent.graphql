@@ -50,6 +50,8 @@ input CreateUserInput {
   createdBy: Int
   updatedBy: Int
   email: String!
+  firstName: String!
+  lastName: String!
   """The user's displayed 'friendly' name"""
   displayName: String
   """user account is locked if unconfirmed or explicitly locked"""
@@ -62,7 +64,7 @@ input CreateUserInput {
   avatarUpdatedAt: Time
   """The time the user was silenced"""
   silencedAt: Time
-  """The time the user was silenced"""
+  """The time the user was suspended"""
   suspendedAt: Time
   """local Actor password recovery code generated during account creation"""
   recoveryCode: String
@@ -414,7 +416,7 @@ type Session implements Node {
   token: String!
   """The last known user-agent"""
   userAgent: String
-  """All IPs that have been associated with this session. Reverse-chornological order. The current IP is the first item in the slice"""
+  """All IPs that have been associated with this session. Reverse-chronological order. The current IP is the first item in the slice"""
   ips: String!
   """Sessions belong to users"""
   users: User
@@ -597,6 +599,8 @@ input UpdateUserInput {
   updatedBy: Int
   clearUpdatedBy: Boolean
   email: String
+  firstName: String
+  lastName: String
   """The user's displayed 'friendly' name"""
   displayName: String
   """user account is locked if unconfirmed or explicitly locked"""
@@ -613,7 +617,7 @@ input UpdateUserInput {
   """The time the user was silenced"""
   silencedAt: Time
   clearSilencedAt: Boolean
-  """The time the user was silenced"""
+  """The time the user was suspended"""
   suspendedAt: Time
   clearSuspendedAt: Boolean
   """local Actor password recovery code generated during account creation"""
@@ -633,6 +637,8 @@ type User implements Node {
   createdBy: Int
   updatedBy: Int
   email: String!
+  firstName: String!
+  lastName: String!
   """The user's displayed 'friendly' name"""
   displayName: String!
   """user account is locked if unconfirmed or explicitly locked"""
@@ -645,7 +651,7 @@ type User implements Node {
   avatarUpdatedAt: Time
   """The time the user was silenced"""
   silencedAt: Time
-  """The time the user was silenced"""
+  """The time the user was suspended"""
   suspendedAt: Time
   memberships: [Membership!]
   sessions: [Session!]
@@ -721,6 +727,34 @@ input UserWhereInput {
   emailHasSuffix: String
   emailEqualFold: String
   emailContainsFold: String
+  """first_name field predicates"""
+  firstName: String
+  firstNameNEQ: String
+  firstNameIn: [String!]
+  firstNameNotIn: [String!]
+  firstNameGT: String
+  firstNameGTE: String
+  firstNameLT: String
+  firstNameLTE: String
+  firstNameContains: String
+  firstNameHasPrefix: String
+  firstNameHasSuffix: String
+  firstNameEqualFold: String
+  firstNameContainsFold: String
+  """last_name field predicates"""
+  lastName: String
+  lastNameNEQ: String
+  lastNameIn: [String!]
+  lastNameNotIn: [String!]
+  lastNameGT: String
+  lastNameGTE: String
+  lastNameLT: String
+  lastNameLTE: String
+  lastNameContains: String
+  lastNameHasPrefix: String
+  lastNameHasSuffix: String
+  lastNameEqualFold: String
+  lastNameContainsFold: String
   """display_name field predicates"""
   displayName: String
   displayNameNEQ: String

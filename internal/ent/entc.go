@@ -47,8 +47,9 @@ func main() {
 	}
 
 	if err := entc.Generate("./internal/ent/schema", &gen.Config{
-		Target:  "./internal/ent/generated",
-		Package: "github.com/datumforge/datum/internal/ent/generated",
+		Target:   "./internal/ent/generated",
+		Package:  "github.com/datumforge/datum/internal/ent/generated",
+		Features: []gen.Feature{gen.FeatureVersionedMigration},
 	},
 		entc.Extensions(
 			ogent,

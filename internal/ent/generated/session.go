@@ -35,7 +35,7 @@ type Session struct {
 	Token string `json:"token,omitempty"`
 	// The last known user-agent
 	UserAgent string `json:"user_agent,omitempty"`
-	// All IPs that have been associated with this session. Reverse-chornological order. The current IP is the first item in the slice
+	// All IPs that have been associated with this session. Reverse-chronological order. The current IP is the first item in the slice
 	Ips string `json:"ips,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SessionQuery when eager-loading is set.

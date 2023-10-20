@@ -1604,6 +1604,12 @@
                   "email": {
                     "type": "string"
                   },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
                   "display_name": {
                     "type": "string"
                   },
@@ -1650,6 +1656,8 @@
                   "created_at",
                   "updated_at",
                   "email",
+                  "first_name",
+                  "last_name",
                   "display_name",
                   "locked"
                 ]
@@ -1800,6 +1808,12 @@
                     "type": "integer"
                   },
                   "email": {
+                    "type": "string"
+                  },
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
                     "type": "string"
                   },
                   "display_name": {
@@ -2463,6 +2477,12 @@
           "email": {
             "type": "string"
           },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
           "display_name": {
             "type": "string"
           },
@@ -2493,6 +2513,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]
@@ -3027,6 +3049,12 @@
           "email": {
             "type": "string"
           },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
           "display_name": {
             "type": "string"
           },
@@ -3057,6 +3085,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]
@@ -3083,6 +3113,12 @@
             "type": "integer"
           },
           "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
             "type": "string"
           },
           "display_name": {
@@ -3130,6 +3166,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]
@@ -3158,6 +3196,12 @@
           "email": {
             "type": "string"
           },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
           "display_name": {
             "type": "string"
           },
@@ -3188,6 +3232,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]
@@ -3216,6 +3262,12 @@
           "email": {
             "type": "string"
           },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
           "display_name": {
             "type": "string"
           },
@@ -3246,6 +3298,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]
@@ -3274,6 +3328,12 @@
           "email": {
             "type": "string"
           },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
           "display_name": {
             "type": "string"
           },
@@ -3304,6 +3364,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]
@@ -3332,6 +3394,12 @@
           "email": {
             "type": "string"
           },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
           "display_name": {
             "type": "string"
           },
@@ -3362,6 +3430,8 @@
           "created_at",
           "updated_at",
           "email",
+          "first_name",
+          "last_name",
           "display_name",
           "locked"
         ]

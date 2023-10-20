@@ -428,6 +428,8 @@ type CreateUserReq struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -463,6 +465,16 @@ func (s *CreateUserReq) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *CreateUserReq) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *CreateUserReq) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *CreateUserReq) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -538,6 +550,16 @@ func (s *CreateUserReq) SetUpdatedBy(val OptInt) {
 // SetEmail sets the value of Email.
 func (s *CreateUserReq) SetEmail(val string) {
 	s.Email = val
+}
+
+// SetFirstName sets the value of FirstName.
+func (s *CreateUserReq) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *CreateUserReq) SetLastName(val string) {
+	s.LastName = val
 }
 
 // SetDisplayName sets the value of DisplayName.
@@ -1463,6 +1485,8 @@ type MembershipUserRead struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -1500,6 +1524,16 @@ func (s *MembershipUserRead) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *MembershipUserRead) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *MembershipUserRead) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *MembershipUserRead) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -1565,6 +1599,16 @@ func (s *MembershipUserRead) SetUpdatedBy(val OptInt) {
 // SetEmail sets the value of Email.
 func (s *MembershipUserRead) SetEmail(val string) {
 	s.Email = val
+}
+
+// SetFirstName sets the value of FirstName.
+func (s *MembershipUserRead) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *MembershipUserRead) SetLastName(val string) {
+	s.LastName = val
 }
 
 // SetDisplayName sets the value of DisplayName.
@@ -3219,6 +3263,8 @@ type SessionUsersRead struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -3256,6 +3302,16 @@ func (s *SessionUsersRead) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *SessionUsersRead) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *SessionUsersRead) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *SessionUsersRead) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -3321,6 +3377,16 @@ func (s *SessionUsersRead) SetUpdatedBy(val OptInt) {
 // SetEmail sets the value of Email.
 func (s *SessionUsersRead) SetEmail(val string) {
 	s.Email = val
+}
+
+// SetFirstName sets the value of FirstName.
+func (s *SessionUsersRead) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *SessionUsersRead) SetLastName(val string) {
+	s.LastName = val
 }
 
 // SetDisplayName sets the value of DisplayName.
@@ -3641,6 +3707,8 @@ type UpdateUserReq struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           OptString   `json:"email"`
+	FirstName       OptString   `json:"first_name"`
+	LastName        OptString   `json:"last_name"`
 	DisplayName     OptString   `json:"display_name"`
 	Locked          OptBool     `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -3671,6 +3739,16 @@ func (s *UpdateUserReq) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *UpdateUserReq) GetEmail() OptString {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *UpdateUserReq) GetFirstName() OptString {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *UpdateUserReq) GetLastName() OptString {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -3743,6 +3821,16 @@ func (s *UpdateUserReq) SetEmail(val OptString) {
 	s.Email = val
 }
 
+// SetFirstName sets the value of FirstName.
+func (s *UpdateUserReq) SetFirstName(val OptString) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *UpdateUserReq) SetLastName(val OptString) {
+	s.LastName = val
+}
+
 // SetDisplayName sets the value of DisplayName.
 func (s *UpdateUserReq) SetDisplayName(val OptString) {
 	s.DisplayName = val
@@ -3801,6 +3889,8 @@ type UserCreate struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -3838,6 +3928,16 @@ func (s *UserCreate) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *UserCreate) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *UserCreate) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *UserCreate) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -3905,6 +4005,16 @@ func (s *UserCreate) SetEmail(val string) {
 	s.Email = val
 }
 
+// SetFirstName sets the value of FirstName.
+func (s *UserCreate) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *UserCreate) SetLastName(val string) {
+	s.LastName = val
+}
+
 // SetDisplayName sets the value of DisplayName.
 func (s *UserCreate) SetDisplayName(val string) {
 	s.DisplayName = val
@@ -3950,6 +4060,8 @@ type UserList struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -3987,6 +4099,16 @@ func (s *UserList) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *UserList) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *UserList) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *UserList) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -4052,6 +4174,16 @@ func (s *UserList) SetUpdatedBy(val OptInt) {
 // SetEmail sets the value of Email.
 func (s *UserList) SetEmail(val string) {
 	s.Email = val
+}
+
+// SetFirstName sets the value of FirstName.
+func (s *UserList) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *UserList) SetLastName(val string) {
+	s.LastName = val
 }
 
 // SetDisplayName sets the value of DisplayName.
@@ -4167,6 +4299,8 @@ type UserRead struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -4204,6 +4338,16 @@ func (s *UserRead) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *UserRead) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *UserRead) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *UserRead) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -4269,6 +4413,16 @@ func (s *UserRead) SetUpdatedBy(val OptInt) {
 // SetEmail sets the value of Email.
 func (s *UserRead) SetEmail(val string) {
 	s.Email = val
+}
+
+// SetFirstName sets the value of FirstName.
+func (s *UserRead) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *UserRead) SetLastName(val string) {
+	s.LastName = val
 }
 
 // SetDisplayName sets the value of DisplayName.
@@ -4478,6 +4632,8 @@ type UserUpdate struct {
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
 	Email           string      `json:"email"`
+	FirstName       string      `json:"first_name"`
+	LastName        string      `json:"last_name"`
 	DisplayName     string      `json:"display_name"`
 	Locked          bool        `json:"locked"`
 	AvatarRemoteURL OptString   `json:"avatar_remote_url"`
@@ -4515,6 +4671,16 @@ func (s *UserUpdate) GetUpdatedBy() OptInt {
 // GetEmail returns the value of Email.
 func (s *UserUpdate) GetEmail() string {
 	return s.Email
+}
+
+// GetFirstName returns the value of FirstName.
+func (s *UserUpdate) GetFirstName() string {
+	return s.FirstName
+}
+
+// GetLastName returns the value of LastName.
+func (s *UserUpdate) GetLastName() string {
+	return s.LastName
 }
 
 // GetDisplayName returns the value of DisplayName.
@@ -4580,6 +4746,16 @@ func (s *UserUpdate) SetUpdatedBy(val OptInt) {
 // SetEmail sets the value of Email.
 func (s *UserUpdate) SetEmail(val string) {
 	s.Email = val
+}
+
+// SetFirstName sets the value of FirstName.
+func (s *UserUpdate) SetFirstName(val string) {
+	s.FirstName = val
+}
+
+// SetLastName sets the value of LastName.
+func (s *UserUpdate) SetLastName(val string) {
+	s.LastName = val
 }
 
 // SetDisplayName sets the value of DisplayName.

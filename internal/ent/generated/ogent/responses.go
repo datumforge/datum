@@ -343,6 +343,8 @@ func NewMembershipUserRead(e *generated.User) *MembershipUserRead {
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Email = e.Email
+	ret.FirstName = e.FirstName
+	ret.LastName = e.LastName
 	ret.DisplayName = e.DisplayName
 	ret.Locked = e.Locked
 	ret.AvatarRemoteURL = OptString{}
@@ -735,6 +737,8 @@ func NewSessionUsersRead(e *generated.User) *SessionUsersRead {
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Email = e.Email
+	ret.FirstName = e.FirstName
+	ret.LastName = e.LastName
 	ret.DisplayName = e.DisplayName
 	ret.Locked = e.Locked
 	ret.AvatarRemoteURL = OptString{}
@@ -789,6 +793,8 @@ func NewUserCreate(e *generated.User) *UserCreate {
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Email = e.Email
+	ret.FirstName = e.FirstName
+	ret.LastName = e.LastName
 	ret.DisplayName = e.DisplayName
 	ret.Locked = e.Locked
 	ret.AvatarRemoteURL = OptString{}
@@ -843,6 +849,8 @@ func NewUserList(e *generated.User) *UserList {
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Email = e.Email
+	ret.FirstName = e.FirstName
+	ret.LastName = e.LastName
 	ret.DisplayName = e.DisplayName
 	ret.Locked = e.Locked
 	ret.AvatarRemoteURL = OptString{}
@@ -897,6 +905,8 @@ func NewUserRead(e *generated.User) *UserRead {
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Email = e.Email
+	ret.FirstName = e.FirstName
+	ret.LastName = e.LastName
 	ret.DisplayName = e.DisplayName
 	ret.Locked = e.Locked
 	ret.AvatarRemoteURL = OptString{}
@@ -951,6 +961,8 @@ func NewUserUpdate(e *generated.User) *UserUpdate {
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Email = e.Email
+	ret.FirstName = e.FirstName
+	ret.LastName = e.LastName
 	ret.DisplayName = e.DisplayName
 	ret.Locked = e.Locked
 	ret.AvatarRemoteURL = OptString{}

@@ -307,6 +307,8 @@ type CreateUserInput struct {
 	CreatedBy       *int
 	UpdatedBy       *int
 	Email           string
+	FirstName       string
+	LastName        string
 	DisplayName     *string
 	Locked          *bool
 	AvatarRemoteURL *string
@@ -334,6 +336,8 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 		m.SetUpdatedBy(*v)
 	}
 	m.SetEmail(i.Email)
+	m.SetFirstName(i.FirstName)
+	m.SetLastName(i.LastName)
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
@@ -380,6 +384,8 @@ type UpdateUserInput struct {
 	ClearUpdatedBy       bool
 	UpdatedBy            *int
 	Email                *string
+	FirstName            *string
+	LastName             *string
 	DisplayName          *string
 	Locked               *bool
 	ClearAvatarRemoteURL bool
@@ -421,6 +427,12 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.Email; v != nil {
 		m.SetEmail(*v)
+	}
+	if v := i.FirstName; v != nil {
+		m.SetFirstName(*v)
+	}
+	if v := i.LastName; v != nil {
+		m.SetLastName(*v)
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)

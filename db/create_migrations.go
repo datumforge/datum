@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/datumforge/go-template/internal/ent/generated/migrate"
+	"github.com/datumforge/datum/internal/ent/generated/migrate"
 
 	"ariga.io/atlas/sql/sqltool"
 	"entgo.io/ent/dialect"

@@ -137,6 +137,8 @@ var (
 		{Name: "created_by", Type: field.TypeInt, Nullable: true},
 		{Name: "updated_by", Type: field.TypeInt, Nullable: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "first_name", Type: field.TypeString, Size: 64},
+		{Name: "last_name", Type: field.TypeString, Size: 64},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},

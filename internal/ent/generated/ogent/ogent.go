@@ -989,6 +989,8 @@ func (h *OgentHandler) CreateUser(ctx context.Context, req *CreateUserReq) (Crea
 		b.SetUpdatedBy(v)
 	}
 	b.SetEmail(req.Email)
+	b.SetFirstName(req.FirstName)
+	b.SetLastName(req.LastName)
 	b.SetDisplayName(req.DisplayName)
 	b.SetLocked(req.Locked)
 	if v, ok := req.AvatarRemoteURL.Get(); ok {
@@ -1084,6 +1086,12 @@ func (h *OgentHandler) UpdateUser(ctx context.Context, req *UpdateUserReq, param
 	}
 	if v, ok := req.Email.Get(); ok {
 		b.SetEmail(v)
+	}
+	if v, ok := req.FirstName.Get(); ok {
+		b.SetFirstName(v)
+	}
+	if v, ok := req.LastName.Get(); ok {
+		b.SetLastName(v)
 	}
 	if v, ok := req.DisplayName.Get(); ok {
 		b.SetDisplayName(v)

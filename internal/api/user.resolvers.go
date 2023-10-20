@@ -6,7 +6,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/google/uuid"
@@ -14,20 +13,74 @@ import (
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateUser - createUser"))
+	// TODO - add permissions checks
+	user, err := r.client.User.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to create user", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &UserCreatePayload{User: user}, nil
 }
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, id uuid.UUID, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateUser - updateUser"))
+	// TODO - add permissions checks
+
+	user, err := r.client.User.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get user", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	user, err = user.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to update user", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &UserUpdatePayload{User: user}, nil
 }
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id uuid.UUID) (*UserDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteUser - deleteUser"))
+	// TODO - add permissions checks
+
+	if err := r.client.User.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to delete user", "error", err)
+		return nil, err
+	}
+
+	return &UserDeletePayload{DeletedID: id}, nil
 }
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id uuid.UUID) (*generated.User, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
+	user, err := r.client.User.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get user", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return user, nil
 }

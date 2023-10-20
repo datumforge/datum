@@ -1,9 +1,7 @@
-// Package schema is the database schema
 package schema
 
 import (
 	"encoding/base64"
-	"fmt"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -36,16 +34,16 @@ func (Session) Fields() []ent.Field {
 			Comment("The session may be disabled by the user or by automatic security policy"),
 
 		// Session expiry can be determined by the application at runtime based on the created_at field.
-
 		field.String("token").
 			Comment("random 32 bytes encoded as base64").
 			Unique().
 			Immutable().
 			DefaultFunc(func() string {
-				b := make([]byte, 20)
+				b := make([]byte, 20) //nolint:gomnd
 				_, _ = frand.Read(b)
-				out := make([]byte, 27)
+				out := make([]byte, 27) //nolint:gomnd
 				base64.RawStdEncoding.Encode(out, b)
+
 				return string(out)
 			}).
 			Validate(func(s string) error {
@@ -53,9 +51,11 @@ func (Session) Fields() []ent.Field {
 				if err != nil {
 					return err
 				}
-				if len(v) != 32 {
-					return fmt.Errorf("invalid token size")
+
+				if len(v) != 32 { //nolint:gomnd
+					return ErrInvalidTokenSize
 				}
+
 				return nil
 			}),
 

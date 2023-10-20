@@ -1,9 +1,7 @@
-// Package schema is the database schema
 package schema
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"entgo.io/ent"
@@ -51,17 +49,20 @@ func AuditHook(next ent.Mutator) ent.Mutator {
 		SetUpdatedBy(int)
 		UpdatedBy() (id int, exists bool)
 	}
+
 	return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 		ml, ok := m.(AuditLogger)
 		if !ok {
-			return nil, fmt.Errorf("unexpected audit log call from mutation type %T", m)
+			return nil, newUnexpectedAuditError(m)
 		}
+
 		switch op := m.Op(); {
 		case op.Is(ent.OpCreate):
 			ml.SetCreatedAt(time.Now())
 		case op.Is(ent.OpUpdateOne | ent.OpUpdate):
 			ml.SetUpdatedAt(time.Now())
 		}
+
 		return next.Mutate(ctx, m)
 	})
 }

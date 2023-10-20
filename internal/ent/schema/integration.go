@@ -1,4 +1,3 @@
-// Package schema is the database schema
 package schema
 
 import (

@@ -24,27 +24,27 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []uuid.UUID) ([]generated
 
 // Integrations is the resolver for the integrations field.
 func (r *queryResolver) Integrations(ctx context.Context) ([]*generated.Integration, error) {
-	panic(fmt.Errorf("not implemented: Integrations - integrations"))
+	return r.client.Integration.Query().AllX(ctx), nil
 }
 
 // Memberships is the resolver for the memberships field.
 func (r *queryResolver) Memberships(ctx context.Context) ([]*generated.Membership, error) {
-	panic(fmt.Errorf("not implemented: Memberships - memberships"))
+	return r.client.Membership.Query().AllX(ctx), nil
 }
 
 // Organizations is the resolver for the organizations field.
 func (r *queryResolver) Organizations(ctx context.Context) ([]*generated.Organization, error) {
-	panic(fmt.Errorf("not implemented: Organizations - organizations"))
+	return r.client.Organization.Query().AllX(ctx), nil
 }
 
 // Sessions is the resolver for the sessions field.
 func (r *queryResolver) Sessions(ctx context.Context) ([]*generated.Session, error) {
-	panic(fmt.Errorf("not implemented: Sessions - sessions"))
+	return r.client.Session.Query().AllX(ctx), nil
 }
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*generated.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
+	return r.client.User.Query().AllX(ctx), nil
 }
 
 // Query returns QueryResolver implementation.

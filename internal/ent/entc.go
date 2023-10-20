@@ -39,7 +39,6 @@ func main() {
 		entgql.WithSchemaGenerator(),
 		entgql.WithSchemaPath("schema/ent.graphql"),
 		entgql.WithConfigPath("gqlgen.yml"),
-		entgql.WithRelaySpec(true),
 		entgql.WithWhereInputs(true),
 	)
 	if err != nil {

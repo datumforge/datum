@@ -71,7 +71,7 @@ func (User) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 		field.Time("suspended_at").
-			Comment("The time the user was silenced").
+			Comment("The time the user was suspended").
 			Optional().
 			Nillable(),
 		//

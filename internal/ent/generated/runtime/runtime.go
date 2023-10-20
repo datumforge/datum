@@ -81,10 +81,6 @@ func init() {
 	organization.DefaultUpdatedAt = organizationDescUpdatedAt.Default.(func() time.Time)
 	// organization.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	organization.UpdateDefaultUpdatedAt = organizationDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// organizationDescName is the schema descriptor for name field.
-	organizationDescName := organizationFields[1].Descriptor()
-	// organization.DefaultName holds the default value on creation for the name field.
-	organization.DefaultName = organizationDescName.Default.(string)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationFields[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

@@ -1251,7 +1251,7 @@ input CreateOrganizationInput {
   updatedAt: Time
   createdBy: Int
   updatedBy: Int
-  name: String
+  name: String!
   membershipIDs: [ID!]
   integrationIDs: [ID!]
 }
@@ -10385,7 +10385,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

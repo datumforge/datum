@@ -85,14 +85,6 @@ func (oc *OrganizationCreate) SetName(s string) *OrganizationCreate {
 	return oc
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableName(s *string) *OrganizationCreate {
-	if s != nil {
-		oc.SetName(*s)
-	}
-	return oc
-}
-
 // SetID sets the "id" field.
 func (oc *OrganizationCreate) SetID(u uuid.UUID) *OrganizationCreate {
 	oc.mutation.SetID(u)
@@ -187,10 +179,6 @@ func (oc *OrganizationCreate) defaults() error {
 		}
 		v := organization.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
-	}
-	if _, ok := oc.mutation.Name(); !ok {
-		v := organization.DefaultName
-		oc.mutation.SetName(v)
 	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {

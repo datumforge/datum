@@ -43,7 +43,7 @@ type CreateOrganizationInput struct {
 	UpdatedAt      *time.Time `json:"updatedAt,omitempty"`
 	CreatedBy      *int64     `json:"createdBy,omitempty"`
 	UpdatedBy      *int64     `json:"updatedBy,omitempty"`
-	Name           *string    `json:"name,omitempty"`
+	Name           string     `json:"name"`
 	MembershipIDs  []string   `json:"membershipIDs,omitempty"`
 	IntegrationIDs []string   `json:"integrationIDs,omitempty"`
 }

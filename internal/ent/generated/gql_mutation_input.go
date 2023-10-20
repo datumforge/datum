@@ -197,7 +197,7 @@ type CreateOrganizationInput struct {
 	UpdatedAt      *time.Time
 	CreatedBy      *int
 	UpdatedBy      *int
-	Name           *string
+	Name           string
 	MembershipIDs  []uuid.UUID
 	IntegrationIDs []uuid.UUID
 }
@@ -216,9 +216,7 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
 	}
-	if v := i.Name; v != nil {
-		m.SetName(*v)
-	}
+	m.SetName(i.Name)
 	if v := i.MembershipIDs; len(v) > 0 {
 		m.AddMembershipIDs(v...)
 	}

@@ -36,7 +36,7 @@ input CreateOrganizationInput {
   updatedAt: Time
   createdBy: Int
   updatedBy: Int
-  name: String
+  name: String!
   membershipIDs: [ID!]
   integrationIDs: [ID!]
 }

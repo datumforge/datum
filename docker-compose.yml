@@ -1,24 +1,16 @@
 version: "3.9"
-
 services:
-    app:
-      image: imega/graphql-playground:latest
-      volumes:
-          - ./resolvers:/app/resolvers
-          - ./schema:/app/schema
-      ports:
-          - 4000:4000
-    api:
-      platform: linux/arm64/v8
-      build:
-        context: .
-        dockerfile: Dockerfile
-      command:
-        - serve
-        - debug
-        - pretty
-        - dev
-      ports:
-        - "17608:17608"
-      restart: unless-stopped
-
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - serve
+      - --debug
+      - --pretty
+      - --dev
+    ports:
+      - "17608:17608"
+    restart: unless-stopped
+    networks:
+      - default

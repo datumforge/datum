@@ -34,8 +34,12 @@ gqlgen:
 
 generate: ent graph gqlgen
 
+rover:
+	rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+
 run-dev:
 	go run main.go serve  --debug --pretty --dev
+
 
 setup-template:
 	@echo "******************** removing template name occurances ********************"

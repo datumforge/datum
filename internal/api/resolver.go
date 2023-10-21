@@ -63,7 +63,6 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 	}
 
 	if withPlayground {
-		r.logger.Debug("enabling playground endpoint")
 		h.playground = playground.New(playground.Config{
 			PathPrefix:          "/",
 			PlaygroundPath:      playgroundPath,

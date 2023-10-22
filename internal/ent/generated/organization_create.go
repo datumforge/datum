@@ -201,6 +201,11 @@ func (oc *OrganizationCreate) check() error {
 	if _, ok := oc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Organization.name"`)}
 	}
+	if v, ok := oc.mutation.Name(); ok {
+		if err := organization.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Organization.name": %w`, err)}
+		}
+	}
 	return nil
 }
 

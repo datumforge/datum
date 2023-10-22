@@ -18,7 +18,19 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
-			return nil, err
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
+		}
+
+		if generated.IsConstraintError(err) {
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
 		}
 
 		r.logger.Errorw("failed to create organization", "error", err)

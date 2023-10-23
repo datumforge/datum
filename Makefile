@@ -2,17 +2,9 @@ default: all
 
 all: fmt test build
 
-fmt:
-	$(info ******************** checking formatting ********************)
-	@test -z $(shell gofmt -l $(SRC)) || (gofmt -d $(SRC); exit 1)
 
-lint:
-	$(info ******************** running lint tools ********************)
-	golangci-lint run -v
 
-test: 
-	$(info ******************** running tests ********************)
-	go test -v ./...
+################################# Generate Functions ########################################
 
 ent:
 	@echo "******************** generating ent schema ********************"
@@ -34,13 +26,35 @@ gqlgen:
 
 generate: ent graph gqlgen
 
+################################# Database Functions ########################################
+atlas: atlas-lint atlas-push
+
+atlas-push:
+	atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations" 
+
+atlas-lint: 
+	atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
+
+################################# Build Functions ########################################
+fmt:
+	$(info ******************** checking formatting ********************)
+	@test -z $(shell gofmt -l $(SRC)) || (gofmt -d $(SRC); exit 1)
+
+lint:
+	$(info ******************** running lint tools ********************)
+	golangci-lint run -v
+
+test: 
+	$(info ******************** running tests ********************)
+	go test -v ./...
+	
 rover:
 	rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
 
 run-dev:
 	go run main.go serve  --debug --pretty --dev
 
-
+################################# Template Functions ########################################
 setup-template:
 	@echo "******************** removing template name occurances ********************"
 	bash scripts/clean.sh

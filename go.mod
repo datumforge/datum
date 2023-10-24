@@ -5,7 +5,7 @@ go 1.21
 require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.12.4
-	github.com/99designs/gqlgen v0.17.39
+	github.com/99designs/gqlgen v0.17.40
 	github.com/Yamashou/gqlgenc v0.15.1
 	github.com/brpaz/echozap v1.1.3
 	github.com/go-faster/errors v0.6.1

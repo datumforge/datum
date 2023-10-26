@@ -37,7 +37,7 @@ func (GroupSettings) Edges() []ent.Edge {
 	}
 }
 
-// Annotations of the Organization
+// Annotations of the GroupSettings
 func (GroupSettings) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
@@ -45,7 +45,7 @@ func (GroupSettings) Annotations() []schema.Annotation {
 	}
 }
 
-// Mixin of the Organization
+// Mixin of the GroupSettings
 func (GroupSettings) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		AuditMixin{},

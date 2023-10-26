@@ -11,11 +11,35 @@ import (
 )
 
 type CreateGroupReq struct {
+	CreatedAt   time.Time   `json:"created_at"`
+	UpdatedAt   time.Time   `json:"updated_at"`
+	CreatedBy   OptInt      `json:"created_by"`
+	UpdatedBy   OptInt      `json:"updated_by"`
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
 	LogoURL     string      `json:"logo_url"`
 	Setting     uuid.UUID   `json:"setting"`
 	Memberships []uuid.UUID `json:"memberships"`
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *CreateGroupReq) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *CreateGroupReq) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *CreateGroupReq) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *CreateGroupReq) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -41,6 +65,26 @@ func (s *CreateGroupReq) GetSetting() uuid.UUID {
 // GetMemberships returns the value of Memberships.
 func (s *CreateGroupReq) GetMemberships() []uuid.UUID {
 	return s.Memberships
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *CreateGroupReq) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *CreateGroupReq) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *CreateGroupReq) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *CreateGroupReq) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.
@@ -895,6 +939,10 @@ func (*DeleteUserNoContent) deleteUserRes() {}
 // Ref: #/components/schemas/GroupCreate
 type GroupCreate struct {
 	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedBy   OptInt    `json:"created_by"`
+	UpdatedBy   OptInt    `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -903,6 +951,26 @@ type GroupCreate struct {
 // GetID returns the value of ID.
 func (s *GroupCreate) GetID() uuid.UUID {
 	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupCreate) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupCreate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupCreate) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupCreate) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -925,6 +993,26 @@ func (s *GroupCreate) SetID(val uuid.UUID) {
 	s.ID = val
 }
 
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupCreate) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupCreate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupCreate) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupCreate) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
 // SetName sets the value of Name.
 func (s *GroupCreate) SetName(val string) {
 	s.Name = val
@@ -945,6 +1033,10 @@ func (*GroupCreate) createGroupRes() {}
 // Ref: #/components/schemas/GroupList
 type GroupList struct {
 	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedBy   OptInt    `json:"created_by"`
+	UpdatedBy   OptInt    `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -953,6 +1045,26 @@ type GroupList struct {
 // GetID returns the value of ID.
 func (s *GroupList) GetID() uuid.UUID {
 	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupList) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupList) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupList) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -973,6 +1085,26 @@ func (s *GroupList) GetLogoURL() string {
 // SetID sets the value of ID.
 func (s *GroupList) SetID(val uuid.UUID) {
 	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupList) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupList) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupList) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.
@@ -1063,6 +1195,10 @@ func (s *GroupMembershipsList) SetCurrent(val bool) {
 // Ref: #/components/schemas/GroupRead
 type GroupRead struct {
 	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedBy   OptInt    `json:"created_by"`
+	UpdatedBy   OptInt    `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1071,6 +1207,26 @@ type GroupRead struct {
 // GetID returns the value of ID.
 func (s *GroupRead) GetID() uuid.UUID {
 	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupRead) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupRead) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupRead) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -1091,6 +1247,26 @@ func (s *GroupRead) GetLogoURL() string {
 // SetID sets the value of ID.
 func (s *GroupRead) SetID(val uuid.UUID) {
 	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupRead) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupRead) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupRead) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.
@@ -1471,6 +1647,10 @@ func (s *GroupSettingsCreateVisibility) UnmarshalText(data []byte) error {
 // Ref: #/components/schemas/GroupSettings_GroupRead
 type GroupSettingsGroupRead struct {
 	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedBy   OptInt    `json:"created_by"`
+	UpdatedBy   OptInt    `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1479,6 +1659,26 @@ type GroupSettingsGroupRead struct {
 // GetID returns the value of ID.
 func (s *GroupSettingsGroupRead) GetID() uuid.UUID {
 	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupSettingsGroupRead) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupSettingsGroupRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupSettingsGroupRead) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupSettingsGroupRead) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -1499,6 +1699,26 @@ func (s *GroupSettingsGroupRead) GetLogoURL() string {
 // SetID sets the value of ID.
 func (s *GroupSettingsGroupRead) SetID(val uuid.UUID) {
 	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupSettingsGroupRead) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupSettingsGroupRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupSettingsGroupRead) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupSettingsGroupRead) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.
@@ -2056,6 +2276,10 @@ func (s *GroupSettingsUpdateVisibility) UnmarshalText(data []byte) error {
 // Ref: #/components/schemas/GroupUpdate
 type GroupUpdate struct {
 	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedBy   OptInt    `json:"created_by"`
+	UpdatedBy   OptInt    `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -2064,6 +2288,26 @@ type GroupUpdate struct {
 // GetID returns the value of ID.
 func (s *GroupUpdate) GetID() uuid.UUID {
 	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupUpdate) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupUpdate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupUpdate) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupUpdate) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -2084,6 +2328,26 @@ func (s *GroupUpdate) GetLogoURL() string {
 // SetID sets the value of ID.
 func (s *GroupUpdate) SetID(val uuid.UUID) {
 	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupUpdate) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupUpdate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupUpdate) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupUpdate) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.
@@ -2672,6 +2936,10 @@ func (*MembershipCreate) createMembershipRes() {}
 // Ref: #/components/schemas/Membership_GroupRead
 type MembershipGroupRead struct {
 	ID          uuid.UUID `json:"id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	CreatedBy   OptInt    `json:"created_by"`
+	UpdatedBy   OptInt    `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -2680,6 +2948,26 @@ type MembershipGroupRead struct {
 // GetID returns the value of ID.
 func (s *MembershipGroupRead) GetID() uuid.UUID {
 	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *MembershipGroupRead) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *MembershipGroupRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *MembershipGroupRead) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *MembershipGroupRead) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -2700,6 +2988,26 @@ func (s *MembershipGroupRead) GetLogoURL() string {
 // SetID sets the value of ID.
 func (s *MembershipGroupRead) SetID(val uuid.UUID) {
 	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *MembershipGroupRead) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *MembershipGroupRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *MembershipGroupRead) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *MembershipGroupRead) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.
@@ -5101,11 +5409,29 @@ func (s *SessionUsersRead) SetSuspendedAt(val OptDateTime) {
 func (*SessionUsersRead) readSessionUsersRes() {}
 
 type UpdateGroupReq struct {
+	UpdatedAt   OptDateTime `json:"updated_at"`
+	CreatedBy   OptInt      `json:"created_by"`
+	UpdatedBy   OptInt      `json:"updated_by"`
 	Name        OptString   `json:"name"`
 	Description OptString   `json:"description"`
 	LogoURL     OptString   `json:"logo_url"`
 	Setting     OptUUID     `json:"setting"`
 	Memberships []uuid.UUID `json:"memberships"`
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *UpdateGroupReq) GetUpdatedAt() OptDateTime {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *UpdateGroupReq) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *UpdateGroupReq) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
 }
 
 // GetName returns the value of Name.
@@ -5131,6 +5457,21 @@ func (s *UpdateGroupReq) GetSetting() OptUUID {
 // GetMemberships returns the value of Memberships.
 func (s *UpdateGroupReq) GetMemberships() []uuid.UUID {
 	return s.Memberships
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *UpdateGroupReq) SetUpdatedAt(val OptDateTime) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *UpdateGroupReq) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *UpdateGroupReq) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
 }
 
 // SetName sets the value of Name.

@@ -5,6 +5,7 @@ package generated
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -18,6 +19,14 @@ type Group struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy int `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy int `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -72,8 +81,12 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case group.FieldCreatedBy, group.FieldUpdatedBy:
+			values[i] = new(sql.NullInt64)
 		case group.FieldName, group.FieldDescription, group.FieldLogoURL:
 			values[i] = new(sql.NullString)
+		case group.FieldCreatedAt, group.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		case group.FieldID:
 			values[i] = new(uuid.UUID)
 		default:
@@ -96,6 +109,30 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				gr.ID = *value
+			}
+		case group.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				gr.CreatedAt = value.Time
+			}
+		case group.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				gr.UpdatedAt = value.Time
+			}
+		case group.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				gr.CreatedBy = int(value.Int64)
+			}
+		case group.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				gr.UpdatedBy = int(value.Int64)
 			}
 		case group.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -161,6 +198,18 @@ func (gr *Group) String() string {
 	var builder strings.Builder
 	builder.WriteString("Group(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", gr.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(gr.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(gr.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(fmt.Sprintf("%v", gr.CreatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(fmt.Sprintf("%v", gr.UpdatedBy))
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(gr.Name)
 	builder.WriteString(", ")

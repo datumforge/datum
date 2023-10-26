@@ -12,6 +12,10 @@ import (
 
 // CreateGroupInput represents a mutation input for creating groups.
 type CreateGroupInput struct {
+	CreatedAt     *time.Time
+	UpdatedAt     *time.Time
+	CreatedBy     *int
+	UpdatedBy     *int
 	Name          string
 	Description   *string
 	LogoURL       string
@@ -21,6 +25,18 @@ type CreateGroupInput struct {
 
 // Mutate applies the CreateGroupInput on the GroupMutation builder.
 func (i *CreateGroupInput) Mutate(m *GroupMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
 	m.SetName(i.Name)
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
@@ -40,6 +56,11 @@ func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
 
 // UpdateGroupInput represents a mutation input for updating groups.
 type UpdateGroupInput struct {
+	UpdatedAt           *time.Time
+	ClearCreatedBy      bool
+	CreatedBy           *int
+	ClearUpdatedBy      bool
+	UpdatedBy           *int
 	Name                *string
 	Description         *string
 	LogoURL             *string
@@ -51,6 +72,21 @@ type UpdateGroupInput struct {
 
 // Mutate applies the UpdateGroupInput on the GroupMutation builder.
 func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}

@@ -59,6 +59,26 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			gr.WithNamedMemberships(alias, func(wq *MembershipQuery) {
 				*wq = *query
 			})
+		case "createdAt":
+			if _, ok := fieldSeen[group.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, group.FieldCreatedAt)
+				fieldSeen[group.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[group.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, group.FieldUpdatedAt)
+				fieldSeen[group.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[group.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, group.FieldCreatedBy)
+				fieldSeen[group.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[group.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, group.FieldUpdatedBy)
+				fieldSeen[group.FieldUpdatedBy] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[group.FieldName]; !ok {
 				selectedFields = append(selectedFields, group.FieldName)

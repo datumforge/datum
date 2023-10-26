@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,66 @@ type GroupUpdate struct {
 // Where appends a list predicates to the GroupUpdate builder.
 func (gu *GroupUpdate) Where(ps ...predicate.Group) *GroupUpdate {
 	gu.mutation.Where(ps...)
+	return gu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (gu *GroupUpdate) SetUpdatedAt(t time.Time) *GroupUpdate {
+	gu.mutation.SetUpdatedAt(t)
+	return gu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (gu *GroupUpdate) SetCreatedBy(i int) *GroupUpdate {
+	gu.mutation.ResetCreatedBy()
+	gu.mutation.SetCreatedBy(i)
+	return gu
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableCreatedBy(i *int) *GroupUpdate {
+	if i != nil {
+		gu.SetCreatedBy(*i)
+	}
+	return gu
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (gu *GroupUpdate) AddCreatedBy(i int) *GroupUpdate {
+	gu.mutation.AddCreatedBy(i)
+	return gu
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (gu *GroupUpdate) ClearCreatedBy() *GroupUpdate {
+	gu.mutation.ClearCreatedBy()
+	return gu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (gu *GroupUpdate) SetUpdatedBy(i int) *GroupUpdate {
+	gu.mutation.ResetUpdatedBy()
+	gu.mutation.SetUpdatedBy(i)
+	return gu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableUpdatedBy(i *int) *GroupUpdate {
+	if i != nil {
+		gu.SetUpdatedBy(*i)
+	}
+	return gu
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (gu *GroupUpdate) AddUpdatedBy(i int) *GroupUpdate {
+	gu.mutation.AddUpdatedBy(i)
+	return gu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (gu *GroupUpdate) ClearUpdatedBy() *GroupUpdate {
+	gu.mutation.ClearUpdatedBy()
 	return gu
 }
 
@@ -116,6 +177,9 @@ func (gu *GroupUpdate) RemoveMemberships(m ...*Membership) *GroupUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (gu *GroupUpdate) Save(ctx context.Context) (int, error) {
+	if err := gu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, gu.sqlSave, gu.mutation, gu.hooks)
 }
 
@@ -139,6 +203,18 @@ func (gu *GroupUpdate) ExecX(ctx context.Context) {
 	if err := gu.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (gu *GroupUpdate) defaults() error {
+	if _, ok := gu.mutation.UpdatedAt(); !ok {
+		if group.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized group.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := group.UpdateDefaultUpdatedAt()
+		gu.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -170,6 +246,27 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := gu.mutation.UpdatedAt(); ok {
+		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := gu.mutation.CreatedBy(); ok {
+		_spec.SetField(group.FieldCreatedBy, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(group.FieldCreatedBy, field.TypeInt, value)
+	}
+	if gu.mutation.CreatedByCleared() {
+		_spec.ClearField(group.FieldCreatedBy, field.TypeInt)
+	}
+	if value, ok := gu.mutation.UpdatedBy(); ok {
+		_spec.SetField(group.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if value, ok := gu.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(group.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if gu.mutation.UpdatedByCleared() {
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeInt)
 	}
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
@@ -274,6 +371,66 @@ type GroupUpdateOne struct {
 	mutation *GroupMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (guo *GroupUpdateOne) SetUpdatedAt(t time.Time) *GroupUpdateOne {
+	guo.mutation.SetUpdatedAt(t)
+	return guo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (guo *GroupUpdateOne) SetCreatedBy(i int) *GroupUpdateOne {
+	guo.mutation.ResetCreatedBy()
+	guo.mutation.SetCreatedBy(i)
+	return guo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableCreatedBy(i *int) *GroupUpdateOne {
+	if i != nil {
+		guo.SetCreatedBy(*i)
+	}
+	return guo
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (guo *GroupUpdateOne) AddCreatedBy(i int) *GroupUpdateOne {
+	guo.mutation.AddCreatedBy(i)
+	return guo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (guo *GroupUpdateOne) ClearCreatedBy() *GroupUpdateOne {
+	guo.mutation.ClearCreatedBy()
+	return guo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (guo *GroupUpdateOne) SetUpdatedBy(i int) *GroupUpdateOne {
+	guo.mutation.ResetUpdatedBy()
+	guo.mutation.SetUpdatedBy(i)
+	return guo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableUpdatedBy(i *int) *GroupUpdateOne {
+	if i != nil {
+		guo.SetUpdatedBy(*i)
+	}
+	return guo
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (guo *GroupUpdateOne) AddUpdatedBy(i int) *GroupUpdateOne {
+	guo.mutation.AddUpdatedBy(i)
+	return guo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (guo *GroupUpdateOne) ClearUpdatedBy() *GroupUpdateOne {
+	guo.mutation.ClearUpdatedBy()
+	return guo
+}
+
 // SetName sets the "name" field.
 func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	guo.mutation.SetName(s)
@@ -373,6 +530,9 @@ func (guo *GroupUpdateOne) Select(field string, fields ...string) *GroupUpdateOn
 
 // Save executes the query and returns the updated Group entity.
 func (guo *GroupUpdateOne) Save(ctx context.Context) (*Group, error) {
+	if err := guo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, guo.sqlSave, guo.mutation, guo.hooks)
 }
 
@@ -396,6 +556,18 @@ func (guo *GroupUpdateOne) ExecX(ctx context.Context) {
 	if err := guo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (guo *GroupUpdateOne) defaults() error {
+	if _, ok := guo.mutation.UpdatedAt(); !ok {
+		if group.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized group.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := group.UpdateDefaultUpdatedAt()
+		guo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -444,6 +616,27 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := guo.mutation.UpdatedAt(); ok {
+		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := guo.mutation.CreatedBy(); ok {
+		_spec.SetField(group.FieldCreatedBy, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedCreatedBy(); ok {
+		_spec.AddField(group.FieldCreatedBy, field.TypeInt, value)
+	}
+	if guo.mutation.CreatedByCleared() {
+		_spec.ClearField(group.FieldCreatedBy, field.TypeInt)
+	}
+	if value, ok := guo.mutation.UpdatedBy(); ok {
+		_spec.SetField(group.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if value, ok := guo.mutation.AddedUpdatedBy(); ok {
+		_spec.AddField(group.FieldUpdatedBy, field.TypeInt, value)
+	}
+	if guo.mutation.UpdatedByCleared() {
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeInt)
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

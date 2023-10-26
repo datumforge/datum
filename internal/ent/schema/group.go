@@ -37,11 +37,18 @@ func (Group) Edges() []ent.Edge {
 	}
 }
 
-// Annotations of the Group.
+// Annotations of the Group
 func (Group) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Mixin of the Group
+func (Group) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		AuditMixin{},
 	}
 }

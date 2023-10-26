@@ -7,6 +7,24 @@ import (
 	"github.com/google/uuid"
 )
 
+// Return response for createGroup mutation
+type GroupCreatePayload struct {
+	// Created group
+	Group *generated.Group `json:"group"`
+}
+
+// Return response for deleteGroup mutation
+type GroupDeletePayload struct {
+	// Deleted group ID
+	DeletedID uuid.UUID `json:"deletedID"`
+}
+
+// Return response for updateGroup mutation
+type GroupUpdatePayload struct {
+	// Updated group
+	Group *generated.Group `json:"group"`
+}
+
 // Return response for createIntegration mutation
 type IntegrationCreatePayload struct {
 	// Created integration

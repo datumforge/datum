@@ -46,6 +46,12 @@ type GroupMutation struct {
 	op                 Op
 	typ                string
 	id                 *uuid.UUID
+	created_at         *time.Time
+	updated_at         *time.Time
+	created_by         *int
+	addcreated_by      *int
+	updated_by         *int
+	addupdated_by      *int
 	name               *string
 	description        *string
 	logo_url           *string
@@ -162,6 +168,218 @@ func (m *GroupMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *GroupMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *GroupMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *GroupMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *GroupMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *GroupMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *GroupMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *GroupMutation) SetCreatedBy(i int) {
+	m.created_by = &i
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *GroupMutation) CreatedBy() (r int, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldCreatedBy(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds i to the "created_by" field.
+func (m *GroupMutation) AddCreatedBy(i int) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += i
+	} else {
+		m.addcreated_by = &i
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *GroupMutation) AddedCreatedBy() (r int, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *GroupMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[group.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *GroupMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[group.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *GroupMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, group.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *GroupMutation) SetUpdatedBy(i int) {
+	m.updated_by = &i
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *GroupMutation) UpdatedBy() (r int, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldUpdatedBy(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds i to the "updated_by" field.
+func (m *GroupMutation) AddUpdatedBy(i int) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += i
+	} else {
+		m.addupdated_by = &i
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *GroupMutation) AddedUpdatedBy() (r int, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *GroupMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[group.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *GroupMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[group.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *GroupMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, group.FieldUpdatedBy)
 }
 
 // SetName sets the "name" field.
@@ -399,7 +617,19 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 3)
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, group.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, group.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, group.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, group.FieldUpdatedBy)
+	}
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
 	}
@@ -417,6 +647,14 @@ func (m *GroupMutation) Fields() []string {
 // schema.
 func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case group.FieldCreatedAt:
+		return m.CreatedAt()
+	case group.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case group.FieldCreatedBy:
+		return m.CreatedBy()
+	case group.FieldUpdatedBy:
+		return m.UpdatedBy()
 	case group.FieldName:
 		return m.Name()
 	case group.FieldDescription:
@@ -432,6 +670,14 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case group.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case group.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case group.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case group.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
 	case group.FieldName:
 		return m.OldName(ctx)
 	case group.FieldDescription:
@@ -447,6 +693,34 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 // type.
 func (m *GroupMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case group.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case group.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case group.FieldCreatedBy:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case group.FieldUpdatedBy:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
 	case group.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -475,13 +749,26 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *GroupMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, group.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, group.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *GroupMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case group.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case group.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	}
 	return nil, false
 }
 
@@ -490,6 +777,20 @@ func (m *GroupMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *GroupMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case group.FieldCreatedBy:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case group.FieldUpdatedBy:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Group numeric field %s", name)
 }
@@ -497,7 +798,14 @@ func (m *GroupMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *GroupMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(group.FieldCreatedBy) {
+		fields = append(fields, group.FieldCreatedBy)
+	}
+	if m.FieldCleared(group.FieldUpdatedBy) {
+		fields = append(fields, group.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -510,6 +818,14 @@ func (m *GroupMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *GroupMutation) ClearField(name string) error {
+	switch name {
+	case group.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case group.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	}
 	return fmt.Errorf("unknown Group nullable field %s", name)
 }
 
@@ -517,6 +833,18 @@ func (m *GroupMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *GroupMutation) ResetField(name string) error {
 	switch name {
+	case group.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case group.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case group.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case group.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
 	case group.FieldName:
 		m.ResetName()
 		return nil

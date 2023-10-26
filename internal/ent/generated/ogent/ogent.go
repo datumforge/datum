@@ -36,6 +36,14 @@ func rawError(err error) jx.Raw {
 func (h *OgentHandler) CreateGroup(ctx context.Context, req *CreateGroupReq) (CreateGroupRes, error) {
 	b := h.client.Group.Create()
 	// Add all fields.
+	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
 	b.SetName(req.Name)
 	b.SetDescription(req.Description)
 	b.SetLogoURL(req.LogoURL)
@@ -103,6 +111,15 @@ func (h *OgentHandler) ReadGroup(ctx context.Context, params ReadGroupParams) (R
 func (h *OgentHandler) UpdateGroup(ctx context.Context, req *UpdateGroupReq, params UpdateGroupParams) (UpdateGroupRes, error) {
 	b := h.client.Group.UpdateOneID(params.ID)
 	// Add all fields.
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
 	if v, ok := req.Name.Get(); ok {
 		b.SetName(v)
 	}

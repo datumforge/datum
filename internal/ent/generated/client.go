@@ -393,7 +393,8 @@ func (c *GroupClient) QueryMemberships(gr *Group) *MembershipQuery {
 
 // Hooks returns the client hooks.
 func (c *GroupClient) Hooks() []Hook {
-	return c.hooks.Group
+	hooks := c.hooks.Group
+	return append(hooks[:len(hooks):len(hooks)], group.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

@@ -10,6 +10,10 @@ func NewGroupCreate(e *generated.Group) *GroupCreate {
 	}
 	var ret GroupCreate
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -40,6 +44,10 @@ func NewGroupList(e *generated.Group) *GroupList {
 	}
 	var ret GroupList
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -70,6 +78,10 @@ func NewGroupRead(e *generated.Group) *GroupRead {
 	}
 	var ret GroupRead
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -232,6 +244,10 @@ func NewGroupSettingsGroupRead(e *generated.Group) *GroupSettingsGroupRead {
 	}
 	var ret GroupSettingsGroupRead
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -262,6 +278,10 @@ func NewGroupUpdate(e *generated.Group) *GroupUpdate {
 	}
 	var ret GroupUpdate
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -653,6 +673,10 @@ func NewMembershipGroupRead(e *generated.Group) *MembershipGroupRead {
 	}
 	var ret MembershipGroupRead
 	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL

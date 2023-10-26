@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up group by ID
+    """
+     group(
+        """
+        ID of the group
+        """
+        id: ID!
+    ):  Group!
+}
+
+extend type Mutation{
+    """
+    Create a new group
+    """
+    createGroup(
+        """
+        values of the group
+        """
+        input: CreateGroupInput!
+    ): GroupCreatePayload!
+    """
+    Update an existing group
+    """
+    updateGroup(
+        """
+        ID of the group
+        """
+        id: ID!
+        """
+        New values for the group
+        """
+        input: UpdateGroupInput!
+    ): GroupUpdatePayload!
+    """
+    Delete an existing group
+    """
+    deleteGroup(
+        """
+        ID of the group
+        """
+        id: ID!
+    ): GroupDeletePayload!
+}
+
+"""
+Return response for createGroup mutation
+"""
+type GroupCreatePayload {
+    """
+    Created group
+    """
+    group: Group!
+}
+
+"""
+Return response for updateGroup mutation
+"""
+type GroupUpdatePayload {
+    """
+    Updated group
+    """
+    group: Group!
+}
+
+"""
+Return response for deleteGroup mutation
+"""
+type GroupDeletePayload {
+    """
+    Deleted group ID
+    """
+    deletedID: ID!
+}

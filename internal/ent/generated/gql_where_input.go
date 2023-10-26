@@ -35,6 +35,50 @@ type GroupWhereInput struct {
 	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
 	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
 
+	// "created_at" field predicates.
+	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ   *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn    []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT    *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE   *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT    *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE   *time.Time  `json:"createdAtLTE,omitempty"`
+
+	// "updated_at" field predicates.
+	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	UpdatedAtNEQ   *time.Time  `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn    []time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn []time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGT    *time.Time  `json:"updatedAtGT,omitempty"`
+	UpdatedAtGTE   *time.Time  `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLT    *time.Time  `json:"updatedAtLT,omitempty"`
+	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
+
+	// "created_by" field predicates.
+	CreatedBy       *int  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []int `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *int  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *int  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+
+	// "updated_by" field predicates.
+	UpdatedBy       *int  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -153,6 +197,114 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	}
 	if i.IDLTE != nil {
 		predicates = append(predicates, group.IDLTE(*i.IDLTE))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, group.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, group.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, group.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, group.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, group.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, group.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, group.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, group.CreatedAtLTE(*i.CreatedAtLTE))
+	}
+	if i.UpdatedAt != nil {
+		predicates = append(predicates, group.UpdatedAtEQ(*i.UpdatedAt))
+	}
+	if i.UpdatedAtNEQ != nil {
+		predicates = append(predicates, group.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+	}
+	if len(i.UpdatedAtIn) > 0 {
+		predicates = append(predicates, group.UpdatedAtIn(i.UpdatedAtIn...))
+	}
+	if len(i.UpdatedAtNotIn) > 0 {
+		predicates = append(predicates, group.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+	}
+	if i.UpdatedAtGT != nil {
+		predicates = append(predicates, group.UpdatedAtGT(*i.UpdatedAtGT))
+	}
+	if i.UpdatedAtGTE != nil {
+		predicates = append(predicates, group.UpdatedAtGTE(*i.UpdatedAtGTE))
+	}
+	if i.UpdatedAtLT != nil {
+		predicates = append(predicates, group.UpdatedAtLT(*i.UpdatedAtLT))
+	}
+	if i.UpdatedAtLTE != nil {
+		predicates = append(predicates, group.UpdatedAtLTE(*i.UpdatedAtLTE))
+	}
+	if i.CreatedBy != nil {
+		predicates = append(predicates, group.CreatedByEQ(*i.CreatedBy))
+	}
+	if i.CreatedByNEQ != nil {
+		predicates = append(predicates, group.CreatedByNEQ(*i.CreatedByNEQ))
+	}
+	if len(i.CreatedByIn) > 0 {
+		predicates = append(predicates, group.CreatedByIn(i.CreatedByIn...))
+	}
+	if len(i.CreatedByNotIn) > 0 {
+		predicates = append(predicates, group.CreatedByNotIn(i.CreatedByNotIn...))
+	}
+	if i.CreatedByGT != nil {
+		predicates = append(predicates, group.CreatedByGT(*i.CreatedByGT))
+	}
+	if i.CreatedByGTE != nil {
+		predicates = append(predicates, group.CreatedByGTE(*i.CreatedByGTE))
+	}
+	if i.CreatedByLT != nil {
+		predicates = append(predicates, group.CreatedByLT(*i.CreatedByLT))
+	}
+	if i.CreatedByLTE != nil {
+		predicates = append(predicates, group.CreatedByLTE(*i.CreatedByLTE))
+	}
+	if i.CreatedByIsNil {
+		predicates = append(predicates, group.CreatedByIsNil())
+	}
+	if i.CreatedByNotNil {
+		predicates = append(predicates, group.CreatedByNotNil())
+	}
+	if i.UpdatedBy != nil {
+		predicates = append(predicates, group.UpdatedByEQ(*i.UpdatedBy))
+	}
+	if i.UpdatedByNEQ != nil {
+		predicates = append(predicates, group.UpdatedByNEQ(*i.UpdatedByNEQ))
+	}
+	if len(i.UpdatedByIn) > 0 {
+		predicates = append(predicates, group.UpdatedByIn(i.UpdatedByIn...))
+	}
+	if len(i.UpdatedByNotIn) > 0 {
+		predicates = append(predicates, group.UpdatedByNotIn(i.UpdatedByNotIn...))
+	}
+	if i.UpdatedByGT != nil {
+		predicates = append(predicates, group.UpdatedByGT(*i.UpdatedByGT))
+	}
+	if i.UpdatedByGTE != nil {
+		predicates = append(predicates, group.UpdatedByGTE(*i.UpdatedByGTE))
+	}
+	if i.UpdatedByLT != nil {
+		predicates = append(predicates, group.UpdatedByLT(*i.UpdatedByLT))
+	}
+	if i.UpdatedByLTE != nil {
+		predicates = append(predicates, group.UpdatedByLTE(*i.UpdatedByLTE))
+	}
+	if i.UpdatedByIsNil {
+		predicates = append(predicates, group.UpdatedByIsNil())
+	}
+	if i.UpdatedByNotNil {
+		predicates = append(predicates, group.UpdatedByNotNil())
 	}
 	if i.Name != nil {
 		predicates = append(predicates, group.NameEQ(*i.Name))

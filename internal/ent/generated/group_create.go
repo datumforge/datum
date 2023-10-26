@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -20,6 +21,62 @@ type GroupCreate struct {
 	config
 	mutation *GroupMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (gc *GroupCreate) SetCreatedAt(t time.Time) *GroupCreate {
+	gc.mutation.SetCreatedAt(t)
+	return gc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableCreatedAt(t *time.Time) *GroupCreate {
+	if t != nil {
+		gc.SetCreatedAt(*t)
+	}
+	return gc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (gc *GroupCreate) SetUpdatedAt(t time.Time) *GroupCreate {
+	gc.mutation.SetUpdatedAt(t)
+	return gc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableUpdatedAt(t *time.Time) *GroupCreate {
+	if t != nil {
+		gc.SetUpdatedAt(*t)
+	}
+	return gc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (gc *GroupCreate) SetCreatedBy(i int) *GroupCreate {
+	gc.mutation.SetCreatedBy(i)
+	return gc
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableCreatedBy(i *int) *GroupCreate {
+	if i != nil {
+		gc.SetCreatedBy(*i)
+	}
+	return gc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (gc *GroupCreate) SetUpdatedBy(i int) *GroupCreate {
+	gc.mutation.SetUpdatedBy(i)
+	return gc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableUpdatedBy(i *int) *GroupCreate {
+	if i != nil {
+		gc.SetUpdatedBy(*i)
+	}
+	return gc
 }
 
 // SetName sets the "name" field.
@@ -95,7 +152,9 @@ func (gc *GroupCreate) Mutation() *GroupMutation {
 
 // Save creates the Group in the database.
 func (gc *GroupCreate) Save(ctx context.Context) (*Group, error) {
-	gc.defaults()
+	if err := gc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, gc.sqlSave, gc.mutation, gc.hooks)
 }
 
@@ -122,19 +181,43 @@ func (gc *GroupCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (gc *GroupCreate) defaults() {
+func (gc *GroupCreate) defaults() error {
+	if _, ok := gc.mutation.CreatedAt(); !ok {
+		if group.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized group.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
+		v := group.DefaultCreatedAt()
+		gc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := gc.mutation.UpdatedAt(); !ok {
+		if group.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized group.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := group.DefaultUpdatedAt()
+		gc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := gc.mutation.Description(); !ok {
 		v := group.DefaultDescription
 		gc.mutation.SetDescription(v)
 	}
 	if _, ok := gc.mutation.ID(); !ok {
+		if group.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized group.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := group.DefaultID()
 		gc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (gc *GroupCreate) check() error {
+	if _, ok := gc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Group.created_at"`)}
+	}
+	if _, ok := gc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Group.updated_at"`)}
+	}
 	if _, ok := gc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Group.name"`)}
 	}
@@ -191,6 +274,22 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if id, ok := gc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
+	}
+	if value, ok := gc.mutation.CreatedAt(); ok {
+		_spec.SetField(group.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := gc.mutation.UpdatedAt(); ok {
+		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := gc.mutation.CreatedBy(); ok {
+		_spec.SetField(group.FieldCreatedBy, field.TypeInt, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := gc.mutation.UpdatedBy(); ok {
+		_spec.SetField(group.FieldUpdatedBy, field.TypeInt, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := gc.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

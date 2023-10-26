@@ -11,6 +11,10 @@ var (
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeInt, Nullable: true},
+		{Name: "updated_by", Type: field.TypeInt, Nullable: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "logo_url", Type: field.TypeString},

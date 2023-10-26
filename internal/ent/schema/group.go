@@ -19,7 +19,7 @@ type Group struct {
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
-		field.String("name").NotEmpty().Unique(),
+		field.String("name").NotEmpty(),
 		field.String("description").Default("").Annotations(
 			entgql.Skip(entgql.SkipWhereInput),
 		),

@@ -5,6 +5,8 @@ package runtime
 import (
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -18,6 +20,45 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	groupFields := schema.Group{}.Fields()
+	_ = groupFields
+	// groupDescName is the schema descriptor for name field.
+	groupDescName := groupFields[1].Descriptor()
+	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	group.NameValidator = groupDescName.Validators[0].(func(string) error)
+	// groupDescDescription is the schema descriptor for description field.
+	groupDescDescription := groupFields[2].Descriptor()
+	// group.DefaultDescription holds the default value on creation for the description field.
+	group.DefaultDescription = groupDescDescription.Default.(string)
+	// groupDescLogoURL is the schema descriptor for logo_url field.
+	groupDescLogoURL := groupFields[3].Descriptor()
+	// group.LogoURLValidator is a validator for the "logo_url" field. It is called by the builders before save.
+	group.LogoURLValidator = groupDescLogoURL.Validators[0].(func(string) error)
+	// groupDescID is the schema descriptor for id field.
+	groupDescID := groupFields[0].Descriptor()
+	// group.DefaultID holds the default value on creation for the id field.
+	group.DefaultID = groupDescID.Default.(func() uuid.UUID)
+	groupsettingsMixin := schema.GroupSettings{}.Mixin()
+	groupsettingsMixinHooks0 := groupsettingsMixin[0].Hooks()
+	groupsettings.Hooks[0] = groupsettingsMixinHooks0[0]
+	groupsettingsMixinFields0 := groupsettingsMixin[0].Fields()
+	_ = groupsettingsMixinFields0
+	groupsettingsFields := schema.GroupSettings{}.Fields()
+	_ = groupsettingsFields
+	// groupsettingsDescCreatedAt is the schema descriptor for created_at field.
+	groupsettingsDescCreatedAt := groupsettingsMixinFields0[0].Descriptor()
+	// groupsettings.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupsettings.DefaultCreatedAt = groupsettingsDescCreatedAt.Default.(func() time.Time)
+	// groupsettingsDescUpdatedAt is the schema descriptor for updated_at field.
+	groupsettingsDescUpdatedAt := groupsettingsMixinFields0[1].Descriptor()
+	// groupsettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	groupsettings.DefaultUpdatedAt = groupsettingsDescUpdatedAt.Default.(func() time.Time)
+	// groupsettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	groupsettings.UpdateDefaultUpdatedAt = groupsettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupsettingsDescID is the schema descriptor for id field.
+	groupsettingsDescID := groupsettingsFields[0].Descriptor()
+	// groupsettings.DefaultID holds the default value on creation for the id field.
+	groupsettings.DefaultID = groupsettingsDescID.Default.(func() uuid.UUID)
 	integrationMixin := schema.Integration{}.Mixin()
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
 	integration.Hooks[0] = integrationMixinHooks0[0]

@@ -317,6 +317,29 @@ func HasUserWith(preds ...predicate.User) predicate.Membership {
 	})
 }
 
+// HasGroup applies the HasEdge predicate on the "group" edge.
+func HasGroup() predicate.Membership {
+	return predicate.Membership(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGroupWith applies the HasEdge predicate on the "group" edge with a given conditions (other predicates).
+func HasGroupWith(preds ...predicate.Group) predicate.Membership {
+	return predicate.Membership(func(s *sql.Selector) {
+		step := newGroupStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Membership) predicate.Membership {
 	return predicate.Membership(sql.AndPredicates(predicates...))

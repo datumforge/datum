@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
@@ -30,8 +31,23 @@ func (GroupSettings) Fields() []ent.Field {
 // Edges of the GroupSettings.
 func (GroupSettings) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("group", Group.Type).Ref("settings").Unique().Annotations(
+		edge.From("group", Group.Type).Ref("setting").Unique().Annotations(
 			entgql.Skip(entgql.SkipAll),
 		),
+	}
+}
+
+// Annotations of the Organization
+func (GroupSettings) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Mixin of the Organization
+func (GroupSettings) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		AuditMixin{},
 	}
 }

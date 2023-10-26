@@ -5,9 +5,172 @@ package generated
 import (
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/google/uuid"
 )
+
+// CreateGroupInput represents a mutation input for creating groups.
+type CreateGroupInput struct {
+	Name          string
+	Description   *string
+	LogoURL       string
+	SettingID     uuid.UUID
+	MembershipIDs []uuid.UUID
+}
+
+// Mutate applies the CreateGroupInput on the GroupMutation builder.
+func (i *CreateGroupInput) Mutate(m *GroupMutation) {
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	m.SetLogoURL(i.LogoURL)
+	m.SetSettingID(i.SettingID)
+	if v := i.MembershipIDs; len(v) > 0 {
+		m.AddMembershipIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateGroupInput on the GroupCreate builder.
+func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateGroupInput represents a mutation input for updating groups.
+type UpdateGroupInput struct {
+	Name                *string
+	Description         *string
+	LogoURL             *string
+	SettingID           *uuid.UUID
+	ClearMemberships    bool
+	AddMembershipIDs    []uuid.UUID
+	RemoveMembershipIDs []uuid.UUID
+}
+
+// Mutate applies the UpdateGroupInput on the GroupMutation builder.
+func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.LogoURL; v != nil {
+		m.SetLogoURL(*v)
+	}
+	if v := i.SettingID; v != nil {
+		m.SetSettingID(*v)
+	}
+	if i.ClearMemberships {
+		m.ClearMemberships()
+	}
+	if v := i.AddMembershipIDs; len(v) > 0 {
+		m.AddMembershipIDs(v...)
+	}
+	if v := i.RemoveMembershipIDs; len(v) > 0 {
+		m.RemoveMembershipIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateGroupInput on the GroupUpdate builder.
+func (c *GroupUpdate) SetInput(i UpdateGroupInput) *GroupUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateGroupInput on the GroupUpdateOne builder.
+func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateGroupSettingsInput represents a mutation input for creating groupsettingsslice.
+type CreateGroupSettingsInput struct {
+	CreatedAt  *time.Time
+	UpdatedAt  *time.Time
+	CreatedBy  *int
+	UpdatedBy  *int
+	Visibility *groupsettings.Visibility
+	JoinPolicy *groupsettings.JoinPolicy
+}
+
+// Mutate applies the CreateGroupSettingsInput on the GroupSettingsMutation builder.
+func (i *CreateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Visibility; v != nil {
+		m.SetVisibility(*v)
+	}
+	if v := i.JoinPolicy; v != nil {
+		m.SetJoinPolicy(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateGroupSettingsInput on the GroupSettingsCreate builder.
+func (c *GroupSettingsCreate) SetInput(i CreateGroupSettingsInput) *GroupSettingsCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateGroupSettingsInput represents a mutation input for updating groupsettingsslice.
+type UpdateGroupSettingsInput struct {
+	UpdatedAt      *time.Time
+	ClearCreatedBy bool
+	CreatedBy      *int
+	ClearUpdatedBy bool
+	UpdatedBy      *int
+	Visibility     *groupsettings.Visibility
+	JoinPolicy     *groupsettings.JoinPolicy
+}
+
+// Mutate applies the UpdateGroupSettingsInput on the GroupSettingsMutation builder.
+func (i *UpdateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Visibility; v != nil {
+		m.SetVisibility(*v)
+	}
+	if v := i.JoinPolicy; v != nil {
+		m.SetJoinPolicy(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateGroupSettingsInput on the GroupSettingsUpdate builder.
+func (c *GroupSettingsUpdate) SetInput(i UpdateGroupSettingsInput) *GroupSettingsUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateGroupSettingsInput on the GroupSettingsUpdateOne builder.
+func (c *GroupSettingsUpdateOne) SetInput(i UpdateGroupSettingsInput) *GroupSettingsUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
 
 // CreateIntegrationInput represents a mutation input for creating integrations.
 type CreateIntegrationInput struct {
@@ -110,6 +273,7 @@ type CreateMembershipInput struct {
 	Current        *bool
 	OrganizationID uuid.UUID
 	UserID         uuid.UUID
+	GroupID        uuid.UUID
 }
 
 // Mutate applies the CreateMembershipInput on the MembershipMutation builder.
@@ -131,6 +295,7 @@ func (i *CreateMembershipInput) Mutate(m *MembershipMutation) {
 	}
 	m.SetOrganizationID(i.OrganizationID)
 	m.SetUserID(i.UserID)
+	m.SetGroupID(i.GroupID)
 }
 
 // SetInput applies the change-set in the CreateMembershipInput on the MembershipCreate builder.
@@ -149,6 +314,7 @@ type UpdateMembershipInput struct {
 	Current        *bool
 	OrganizationID *uuid.UUID
 	UserID         *uuid.UUID
+	GroupID        *uuid.UUID
 }
 
 // Mutate applies the UpdateMembershipInput on the MembershipMutation builder.
@@ -176,6 +342,9 @@ func (i *UpdateMembershipInput) Mutate(m *MembershipMutation) {
 	}
 	if v := i.UserID; v != nil {
 		m.SetUserID(*v)
+	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
 	}
 }
 

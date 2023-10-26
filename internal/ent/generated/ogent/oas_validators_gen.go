@@ -10,6 +10,62 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
+func (s *CreateGroupSettingsReq) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Visibility.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.JoinPolicy.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s CreateGroupSettingsReqJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s CreateGroupSettingsReqVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *CreateSessionReq) Validate() error {
 	var failures []validate.FieldError
 	if err := func() error {
@@ -40,6 +96,327 @@ func (s CreateSessionReqType) Validate() error {
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
+}
+
+func (s *GroupSettingRead) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Visibility.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.JoinPolicy.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s GroupSettingReadJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s GroupSettingReadVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *GroupSettingsCreate) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Visibility.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.JoinPolicy.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s GroupSettingsCreateJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s GroupSettingsCreateVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *GroupSettingsList) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Visibility.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.JoinPolicy.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s GroupSettingsListJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s GroupSettingsListVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *GroupSettingsRead) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Visibility.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.JoinPolicy.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s GroupSettingsReadJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s GroupSettingsReadVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *GroupSettingsUpdate) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Visibility.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.JoinPolicy.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s GroupSettingsUpdateJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s GroupSettingsUpdateVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s ListGroupMembershipsOKApplicationJSON) Validate() error {
+	alias := ([]GroupMembershipsList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
+func (s ListGroupOKApplicationJSON) Validate() error {
+	alias := ([]GroupList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
+func (s ListGroupSettingsOKApplicationJSON) Validate() error {
+	alias := ([]GroupSettingsList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	var failures []validate.FieldError
+	for i, elem := range alias {
+		if err := func() error {
+			if err := elem.Validate(); err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			failures = append(failures, validate.FieldError{
+				Name:  fmt.Sprintf("[%d]", i),
+				Error: err,
+			})
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
 }
 
 func (s ListIntegrationOKApplicationJSON) Validate() error {
@@ -270,6 +647,76 @@ func (s SessionUpdateType) Validate() error {
 	case "oauth":
 		return nil
 	case "app_password":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *UpdateGroupSettingsReq) Validate() error {
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.Visibility.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "visibility",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.JoinPolicy.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "join_policy",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s UpdateGroupSettingsReqJoinPolicy) Validate() error {
+	switch s {
+	case "OPEN":
+		return nil
+	case "INVITE_ONLY":
+		return nil
+	case "APPLICATION_ONLY":
+		return nil
+	case "INVITE_OR_APPLICATION":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s UpdateGroupSettingsReqVisibility) Validate() error {
+	switch s {
+	case "PUBLIC":
+		return nil
+	case "PRIVATE":
 		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)

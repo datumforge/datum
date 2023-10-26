@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -127,6 +128,17 @@ func (mu *MembershipUpdate) SetUser(u *User) *MembershipUpdate {
 	return mu.SetUserID(u.ID)
 }
 
+// SetGroupID sets the "group" edge to the Group entity by ID.
+func (mu *MembershipUpdate) SetGroupID(id uuid.UUID) *MembershipUpdate {
+	mu.mutation.SetGroupID(id)
+	return mu
+}
+
+// SetGroup sets the "group" edge to the Group entity.
+func (mu *MembershipUpdate) SetGroup(g *Group) *MembershipUpdate {
+	return mu.SetGroupID(g.ID)
+}
+
 // Mutation returns the MembershipMutation object of the builder.
 func (mu *MembershipUpdate) Mutation() *MembershipMutation {
 	return mu.mutation
@@ -141,6 +153,12 @@ func (mu *MembershipUpdate) ClearOrganization() *MembershipUpdate {
 // ClearUser clears the "user" edge to the User entity.
 func (mu *MembershipUpdate) ClearUser() *MembershipUpdate {
 	mu.mutation.ClearUser()
+	return mu
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (mu *MembershipUpdate) ClearGroup() *MembershipUpdate {
+	mu.mutation.ClearGroup()
 	return mu
 }
 
@@ -193,6 +211,9 @@ func (mu *MembershipUpdate) check() error {
 	}
 	if _, ok := mu.mutation.UserID(); mu.mutation.UserCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Membership.user"`)
+	}
+	if _, ok := mu.mutation.GroupID(); mu.mutation.GroupCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Membership.group"`)
 	}
 	return nil
 }
@@ -284,6 +305,35 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.GroupCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   membership.GroupTable,
+			Columns: []string{membership.GroupColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.GroupIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   membership.GroupTable,
+			Columns: []string{membership.GroupColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -407,6 +457,17 @@ func (muo *MembershipUpdateOne) SetUser(u *User) *MembershipUpdateOne {
 	return muo.SetUserID(u.ID)
 }
 
+// SetGroupID sets the "group" edge to the Group entity by ID.
+func (muo *MembershipUpdateOne) SetGroupID(id uuid.UUID) *MembershipUpdateOne {
+	muo.mutation.SetGroupID(id)
+	return muo
+}
+
+// SetGroup sets the "group" edge to the Group entity.
+func (muo *MembershipUpdateOne) SetGroup(g *Group) *MembershipUpdateOne {
+	return muo.SetGroupID(g.ID)
+}
+
 // Mutation returns the MembershipMutation object of the builder.
 func (muo *MembershipUpdateOne) Mutation() *MembershipMutation {
 	return muo.mutation
@@ -421,6 +482,12 @@ func (muo *MembershipUpdateOne) ClearOrganization() *MembershipUpdateOne {
 // ClearUser clears the "user" edge to the User entity.
 func (muo *MembershipUpdateOne) ClearUser() *MembershipUpdateOne {
 	muo.mutation.ClearUser()
+	return muo
+}
+
+// ClearGroup clears the "group" edge to the Group entity.
+func (muo *MembershipUpdateOne) ClearGroup() *MembershipUpdateOne {
+	muo.mutation.ClearGroup()
 	return muo
 }
 
@@ -486,6 +553,9 @@ func (muo *MembershipUpdateOne) check() error {
 	}
 	if _, ok := muo.mutation.UserID(); muo.mutation.UserCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Membership.user"`)
+	}
+	if _, ok := muo.mutation.GroupID(); muo.mutation.GroupCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Membership.group"`)
 	}
 	return nil
 }
@@ -594,6 +664,35 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.GroupCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   membership.GroupTable,
+			Columns: []string{membership.GroupColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.GroupIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   membership.GroupTable,
+			Columns: []string{membership.GroupColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

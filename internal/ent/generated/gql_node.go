@@ -8,6 +8,8 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -21,6 +23,12 @@ import (
 type Noder interface {
 	IsNode()
 }
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Group) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *GroupSettings) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Integration) IsNode() {}
@@ -95,6 +103,30 @@ func (c *Client) Noder(ctx context.Context, id uuid.UUID, opts ...NodeOption) (_
 
 func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, error) {
 	switch table {
+	case group.Table:
+		query := c.Group.Query().
+			Where(group.ID(id))
+		query, err := query.CollectFields(ctx, "Group")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case groupsettings.Table:
+		query := c.GroupSettings.Query().
+			Where(groupsettings.ID(id))
+		query, err := query.CollectFields(ctx, "GroupSettings")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case integration.Table:
 		query := c.Integration.Query().
 			Where(integration.ID(id))
@@ -228,6 +260,38 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
+	case group.Table:
+		query := c.Group.Query().
+			Where(group.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Group")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case groupsettings.Table:
+		query := c.GroupSettings.Query().
+			Where(groupsettings.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "GroupSettings")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case integration.Table:
 		query := c.Integration.Query().
 			Where(integration.IDIn(ids...))

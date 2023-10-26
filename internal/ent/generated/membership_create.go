@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -129,6 +130,17 @@ func (mc *MembershipCreate) SetUser(u *User) *MembershipCreate {
 	return mc.SetUserID(u.ID)
 }
 
+// SetGroupID sets the "group" edge to the Group entity by ID.
+func (mc *MembershipCreate) SetGroupID(id uuid.UUID) *MembershipCreate {
+	mc.mutation.SetGroupID(id)
+	return mc
+}
+
+// SetGroup sets the "group" edge to the Group entity.
+func (mc *MembershipCreate) SetGroup(g *Group) *MembershipCreate {
+	return mc.SetGroupID(g.ID)
+}
+
 // Mutation returns the MembershipMutation object of the builder.
 func (mc *MembershipCreate) Mutation() *MembershipMutation {
 	return mc.mutation
@@ -210,6 +222,9 @@ func (mc *MembershipCreate) check() error {
 	}
 	if _, ok := mc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user", err: errors.New(`generated: missing required edge "Membership.user"`)}
+	}
+	if _, ok := mc.mutation.GroupID(); !ok {
+		return &ValidationError{Name: "group", err: errors.New(`generated: missing required edge "Membership.group"`)}
 	}
 	return nil
 }
@@ -298,6 +313,23 @@ func (mc *MembershipCreate) createSpec() (*Membership, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_memberships = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.GroupIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   membership.GroupTable,
+			Columns: []string{membership.GroupColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.group_memberships = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

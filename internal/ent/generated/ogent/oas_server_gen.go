@@ -8,6 +8,18 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// CreateGroup implements createGroup operation.
+	//
+	// Creates a new Group and persists it to storage.
+	//
+	// POST /groups
+	CreateGroup(ctx context.Context, req *CreateGroupReq) (CreateGroupRes, error)
+	// CreateGroupSettings implements createGroupSettings operation.
+	//
+	// Creates a new GroupSettings and persists it to storage.
+	//
+	// POST /group-settings
+	CreateGroupSettings(ctx context.Context, req *CreateGroupSettingsReq) (CreateGroupSettingsRes, error)
 	// CreateIntegration implements createIntegration operation.
 	//
 	// Creates a new Integration and persists it to storage.
@@ -38,6 +50,18 @@ type Handler interface {
 	//
 	// POST /users
 	CreateUser(ctx context.Context, req *CreateUserReq) (CreateUserRes, error)
+	// DeleteGroup implements deleteGroup operation.
+	//
+	// Deletes the Group with the requested ID.
+	//
+	// DELETE /groups/{id}
+	DeleteGroup(ctx context.Context, params DeleteGroupParams) (DeleteGroupRes, error)
+	// DeleteGroupSettings implements deleteGroupSettings operation.
+	//
+	// Deletes the GroupSettings with the requested ID.
+	//
+	// DELETE /group-settings/{id}
+	DeleteGroupSettings(ctx context.Context, params DeleteGroupSettingsParams) (DeleteGroupSettingsRes, error)
 	// DeleteIntegration implements deleteIntegration operation.
 	//
 	// Deletes the Integration with the requested ID.
@@ -68,6 +92,24 @@ type Handler interface {
 	//
 	// DELETE /users/{id}
 	DeleteUser(ctx context.Context, params DeleteUserParams) (DeleteUserRes, error)
+	// ListGroup implements listGroup operation.
+	//
+	// List Groups.
+	//
+	// GET /groups
+	ListGroup(ctx context.Context, params ListGroupParams) (ListGroupRes, error)
+	// ListGroupMemberships implements listGroupMemberships operation.
+	//
+	// List attached Memberships.
+	//
+	// GET /groups/{id}/memberships
+	ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (ListGroupMembershipsRes, error)
+	// ListGroupSettings implements listGroupSettings operation.
+	//
+	// List GroupSettings.
+	//
+	// GET /group-settings
+	ListGroupSettings(ctx context.Context, params ListGroupSettingsParams) (ListGroupSettingsRes, error)
 	// ListIntegration implements listIntegration operation.
 	//
 	// List Integrations.
@@ -122,6 +164,30 @@ type Handler interface {
 	//
 	// GET /users/{id}/sessions
 	ListUserSessions(ctx context.Context, params ListUserSessionsParams) (ListUserSessionsRes, error)
+	// ReadGroup implements readGroup operation.
+	//
+	// Finds the Group with the requested ID and returns it.
+	//
+	// GET /groups/{id}
+	ReadGroup(ctx context.Context, params ReadGroupParams) (ReadGroupRes, error)
+	// ReadGroupSetting implements readGroupSetting operation.
+	//
+	// Find the attached GroupSettings of the Group with the given ID.
+	//
+	// GET /groups/{id}/setting
+	ReadGroupSetting(ctx context.Context, params ReadGroupSettingParams) (ReadGroupSettingRes, error)
+	// ReadGroupSettings implements readGroupSettings operation.
+	//
+	// Finds the GroupSettings with the requested ID and returns it.
+	//
+	// GET /group-settings/{id}
+	ReadGroupSettings(ctx context.Context, params ReadGroupSettingsParams) (ReadGroupSettingsRes, error)
+	// ReadGroupSettingsGroup implements readGroupSettingsGroup operation.
+	//
+	// Find the attached Group of the GroupSettings with the given ID.
+	//
+	// GET /group-settings/{id}/group
+	ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (ReadGroupSettingsGroupRes, error)
 	// ReadIntegration implements readIntegration operation.
 	//
 	// Finds the Integration with the requested ID and returns it.
@@ -140,6 +206,12 @@ type Handler interface {
 	//
 	// GET /memberships/{id}
 	ReadMembership(ctx context.Context, params ReadMembershipParams) (ReadMembershipRes, error)
+	// ReadMembershipGroup implements readMembershipGroup operation.
+	//
+	// Find the attached Group of the Membership with the given ID.
+	//
+	// GET /memberships/{id}/group
+	ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (ReadMembershipGroupRes, error)
 	// ReadMembershipOrganization implements readMembershipOrganization operation.
 	//
 	// Find the attached Organization of the Membership with the given ID.
@@ -176,6 +248,18 @@ type Handler interface {
 	//
 	// GET /users/{id}
 	ReadUser(ctx context.Context, params ReadUserParams) (ReadUserRes, error)
+	// UpdateGroup implements updateGroup operation.
+	//
+	// Updates a Group and persists changes to storage.
+	//
+	// PATCH /groups/{id}
+	UpdateGroup(ctx context.Context, req *UpdateGroupReq, params UpdateGroupParams) (UpdateGroupRes, error)
+	// UpdateGroupSettings implements updateGroupSettings operation.
+	//
+	// Updates a GroupSettings and persists changes to storage.
+	//
+	// PATCH /group-settings/{id}
+	UpdateGroupSettings(ctx context.Context, req *UpdateGroupSettingsReq, params UpdateGroupSettingsParams) (UpdateGroupSettingsRes, error)
 	// UpdateIntegration implements updateIntegration operation.
 	//
 	// Updates a Integration and persists changes to storage.

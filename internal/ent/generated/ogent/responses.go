@@ -4,6 +4,353 @@ package ogent
 
 import "github.com/datumforge/datum/internal/ent/generated"
 
+func NewGroupCreate(e *generated.Group) *GroupCreate {
+	if e == nil {
+		return nil
+	}
+	var ret GroupCreate
+	ret.ID = e.ID
+	ret.Name = e.Name
+	ret.Description = e.Description
+	ret.LogoURL = e.LogoURL
+	return &ret
+}
+
+func NewGroupCreates(es []*generated.Group) []GroupCreate {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupCreate, len(es))
+	for i, e := range es {
+		r[i] = NewGroupCreate(e).Elem()
+	}
+	return r
+}
+
+func (gr *GroupCreate) Elem() GroupCreate {
+	if gr == nil {
+		return GroupCreate{}
+	}
+	return *gr
+}
+
+func NewGroupList(e *generated.Group) *GroupList {
+	if e == nil {
+		return nil
+	}
+	var ret GroupList
+	ret.ID = e.ID
+	ret.Name = e.Name
+	ret.Description = e.Description
+	ret.LogoURL = e.LogoURL
+	return &ret
+}
+
+func NewGroupLists(es []*generated.Group) []GroupList {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupList, len(es))
+	for i, e := range es {
+		r[i] = NewGroupList(e).Elem()
+	}
+	return r
+}
+
+func (gr *GroupList) Elem() GroupList {
+	if gr == nil {
+		return GroupList{}
+	}
+	return *gr
+}
+
+func NewGroupRead(e *generated.Group) *GroupRead {
+	if e == nil {
+		return nil
+	}
+	var ret GroupRead
+	ret.ID = e.ID
+	ret.Name = e.Name
+	ret.Description = e.Description
+	ret.LogoURL = e.LogoURL
+	return &ret
+}
+
+func NewGroupReads(es []*generated.Group) []GroupRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupRead, len(es))
+	for i, e := range es {
+		r[i] = NewGroupRead(e).Elem()
+	}
+	return r
+}
+
+func (gr *GroupRead) Elem() GroupRead {
+	if gr == nil {
+		return GroupRead{}
+	}
+	return *gr
+}
+
+func NewGroupSettingsCreate(e *generated.GroupSettings) *GroupSettingsCreate {
+	if e == nil {
+		return nil
+	}
+	var ret GroupSettingsCreate
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Visibility = GroupSettingsCreateVisibility(e.Visibility)
+	ret.JoinPolicy = GroupSettingsCreateJoinPolicy(e.JoinPolicy)
+	return &ret
+}
+
+func NewGroupSettingsCreates(es []*generated.GroupSettings) []GroupSettingsCreate {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupSettingsCreate, len(es))
+	for i, e := range es {
+		r[i] = NewGroupSettingsCreate(e).Elem()
+	}
+	return r
+}
+
+func (gs *GroupSettingsCreate) Elem() GroupSettingsCreate {
+	if gs == nil {
+		return GroupSettingsCreate{}
+	}
+	return *gs
+}
+
+func NewGroupSettingsList(e *generated.GroupSettings) *GroupSettingsList {
+	if e == nil {
+		return nil
+	}
+	var ret GroupSettingsList
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Visibility = GroupSettingsListVisibility(e.Visibility)
+	ret.JoinPolicy = GroupSettingsListJoinPolicy(e.JoinPolicy)
+	return &ret
+}
+
+func NewGroupSettingsLists(es []*generated.GroupSettings) []GroupSettingsList {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupSettingsList, len(es))
+	for i, e := range es {
+		r[i] = NewGroupSettingsList(e).Elem()
+	}
+	return r
+}
+
+func (gs *GroupSettingsList) Elem() GroupSettingsList {
+	if gs == nil {
+		return GroupSettingsList{}
+	}
+	return *gs
+}
+
+func NewGroupSettingsRead(e *generated.GroupSettings) *GroupSettingsRead {
+	if e == nil {
+		return nil
+	}
+	var ret GroupSettingsRead
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Visibility = GroupSettingsReadVisibility(e.Visibility)
+	ret.JoinPolicy = GroupSettingsReadJoinPolicy(e.JoinPolicy)
+	return &ret
+}
+
+func NewGroupSettingsReads(es []*generated.GroupSettings) []GroupSettingsRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupSettingsRead, len(es))
+	for i, e := range es {
+		r[i] = NewGroupSettingsRead(e).Elem()
+	}
+	return r
+}
+
+func (gs *GroupSettingsRead) Elem() GroupSettingsRead {
+	if gs == nil {
+		return GroupSettingsRead{}
+	}
+	return *gs
+}
+
+func NewGroupSettingsUpdate(e *generated.GroupSettings) *GroupSettingsUpdate {
+	if e == nil {
+		return nil
+	}
+	var ret GroupSettingsUpdate
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Visibility = GroupSettingsUpdateVisibility(e.Visibility)
+	ret.JoinPolicy = GroupSettingsUpdateJoinPolicy(e.JoinPolicy)
+	return &ret
+}
+
+func NewGroupSettingsUpdates(es []*generated.GroupSettings) []GroupSettingsUpdate {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupSettingsUpdate, len(es))
+	for i, e := range es {
+		r[i] = NewGroupSettingsUpdate(e).Elem()
+	}
+	return r
+}
+
+func (gs *GroupSettingsUpdate) Elem() GroupSettingsUpdate {
+	if gs == nil {
+		return GroupSettingsUpdate{}
+	}
+	return *gs
+}
+
+func NewGroupSettingsGroupRead(e *generated.Group) *GroupSettingsGroupRead {
+	if e == nil {
+		return nil
+	}
+	var ret GroupSettingsGroupRead
+	ret.ID = e.ID
+	ret.Name = e.Name
+	ret.Description = e.Description
+	ret.LogoURL = e.LogoURL
+	return &ret
+}
+
+func NewGroupSettingsGroupReads(es []*generated.Group) []GroupSettingsGroupRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupSettingsGroupRead, len(es))
+	for i, e := range es {
+		r[i] = NewGroupSettingsGroupRead(e).Elem()
+	}
+	return r
+}
+
+func (gr *GroupSettingsGroupRead) Elem() GroupSettingsGroupRead {
+	if gr == nil {
+		return GroupSettingsGroupRead{}
+	}
+	return *gr
+}
+
+func NewGroupUpdate(e *generated.Group) *GroupUpdate {
+	if e == nil {
+		return nil
+	}
+	var ret GroupUpdate
+	ret.ID = e.ID
+	ret.Name = e.Name
+	ret.Description = e.Description
+	ret.LogoURL = e.LogoURL
+	return &ret
+}
+
+func NewGroupUpdates(es []*generated.Group) []GroupUpdate {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupUpdate, len(es))
+	for i, e := range es {
+		r[i] = NewGroupUpdate(e).Elem()
+	}
+	return r
+}
+
+func (gr *GroupUpdate) Elem() GroupUpdate {
+	if gr == nil {
+		return GroupUpdate{}
+	}
+	return *gr
+}
+
+func NewGroupMembershipsList(e *generated.Membership) *GroupMembershipsList {
+	if e == nil {
+		return nil
+	}
+	var ret GroupMembershipsList
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Current = e.Current
+	return &ret
+}
+
+func NewGroupMembershipsLists(es []*generated.Membership) []GroupMembershipsList {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupMembershipsList, len(es))
+	for i, e := range es {
+		r[i] = NewGroupMembershipsList(e).Elem()
+	}
+	return r
+}
+
+func (m *GroupMembershipsList) Elem() GroupMembershipsList {
+	if m == nil {
+		return GroupMembershipsList{}
+	}
+	return *m
+}
+
+func NewGroupSettingRead(e *generated.GroupSettings) *GroupSettingRead {
+	if e == nil {
+		return nil
+	}
+	var ret GroupSettingRead
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptInt(e.CreatedBy)
+	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
+	ret.Visibility = GroupSettingReadVisibility(e.Visibility)
+	ret.JoinPolicy = GroupSettingReadJoinPolicy(e.JoinPolicy)
+	return &ret
+}
+
+func NewGroupSettingReads(es []*generated.GroupSettings) []GroupSettingRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]GroupSettingRead, len(es))
+	for i, e := range es {
+		r[i] = NewGroupSettingRead(e).Elem()
+	}
+	return r
+}
+
+func (gs *GroupSettingRead) Elem() GroupSettingRead {
+	if gs == nil {
+		return GroupSettingRead{}
+	}
+	return *gs
+}
+
 func NewIntegrationCreate(e *generated.Integration) *IntegrationCreate {
 	if e == nil {
 		return nil
@@ -298,6 +645,36 @@ func (m *MembershipUpdate) Elem() MembershipUpdate {
 		return MembershipUpdate{}
 	}
 	return *m
+}
+
+func NewMembershipGroupRead(e *generated.Group) *MembershipGroupRead {
+	if e == nil {
+		return nil
+	}
+	var ret MembershipGroupRead
+	ret.ID = e.ID
+	ret.Name = e.Name
+	ret.Description = e.Description
+	ret.LogoURL = e.LogoURL
+	return &ret
+}
+
+func NewMembershipGroupReads(es []*generated.Group) []MembershipGroupRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]MembershipGroupRead, len(es))
+	for i, e := range es {
+		r[i] = NewMembershipGroupRead(e).Elem()
+	}
+	return r
+}
+
+func (gr *MembershipGroupRead) Elem() MembershipGroupRead {
+	if gr == nil {
+		return MembershipGroupRead{}
+	}
+	return *gr
 }
 
 func NewMembershipOrganizationRead(e *generated.Organization) *MembershipOrganizationRead {

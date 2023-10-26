@@ -32,7 +32,7 @@ func (Group) Fields() []ent.Field {
 // Edges of the Group.
 func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("settings", GroupSettings.Type).Required().Unique(),
+		edge.To("setting", GroupSettings.Type).Required().Unique(),
 		edge.To("memberships", Membership.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }

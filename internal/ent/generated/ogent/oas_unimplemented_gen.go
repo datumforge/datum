@@ -13,6 +13,24 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// CreateGroup implements createGroup operation.
+//
+// Creates a new Group and persists it to storage.
+//
+// POST /groups
+func (UnimplementedHandler) CreateGroup(ctx context.Context, req *CreateGroupReq) (r CreateGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// CreateGroupSettings implements createGroupSettings operation.
+//
+// Creates a new GroupSettings and persists it to storage.
+//
+// POST /group-settings
+func (UnimplementedHandler) CreateGroupSettings(ctx context.Context, req *CreateGroupSettingsReq) (r CreateGroupSettingsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // CreateIntegration implements createIntegration operation.
 //
 // Creates a new Integration and persists it to storage.
@@ -58,6 +76,24 @@ func (UnimplementedHandler) CreateUser(ctx context.Context, req *CreateUserReq) 
 	return r, ht.ErrNotImplemented
 }
 
+// DeleteGroup implements deleteGroup operation.
+//
+// Deletes the Group with the requested ID.
+//
+// DELETE /groups/{id}
+func (UnimplementedHandler) DeleteGroup(ctx context.Context, params DeleteGroupParams) (r DeleteGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// DeleteGroupSettings implements deleteGroupSettings operation.
+//
+// Deletes the GroupSettings with the requested ID.
+//
+// DELETE /group-settings/{id}
+func (UnimplementedHandler) DeleteGroupSettings(ctx context.Context, params DeleteGroupSettingsParams) (r DeleteGroupSettingsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // DeleteIntegration implements deleteIntegration operation.
 //
 // Deletes the Integration with the requested ID.
@@ -100,6 +136,33 @@ func (UnimplementedHandler) DeleteSession(ctx context.Context, params DeleteSess
 //
 // DELETE /users/{id}
 func (UnimplementedHandler) DeleteUser(ctx context.Context, params DeleteUserParams) (r DeleteUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListGroup implements listGroup operation.
+//
+// List Groups.
+//
+// GET /groups
+func (UnimplementedHandler) ListGroup(ctx context.Context, params ListGroupParams) (r ListGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListGroupMemberships implements listGroupMemberships operation.
+//
+// List attached Memberships.
+//
+// GET /groups/{id}/memberships
+func (UnimplementedHandler) ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (r ListGroupMembershipsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListGroupSettings implements listGroupSettings operation.
+//
+// List GroupSettings.
+//
+// GET /group-settings
+func (UnimplementedHandler) ListGroupSettings(ctx context.Context, params ListGroupSettingsParams) (r ListGroupSettingsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -184,6 +247,42 @@ func (UnimplementedHandler) ListUserSessions(ctx context.Context, params ListUse
 	return r, ht.ErrNotImplemented
 }
 
+// ReadGroup implements readGroup operation.
+//
+// Finds the Group with the requested ID and returns it.
+//
+// GET /groups/{id}
+func (UnimplementedHandler) ReadGroup(ctx context.Context, params ReadGroupParams) (r ReadGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadGroupSetting implements readGroupSetting operation.
+//
+// Find the attached GroupSettings of the Group with the given ID.
+//
+// GET /groups/{id}/setting
+func (UnimplementedHandler) ReadGroupSetting(ctx context.Context, params ReadGroupSettingParams) (r ReadGroupSettingRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadGroupSettings implements readGroupSettings operation.
+//
+// Finds the GroupSettings with the requested ID and returns it.
+//
+// GET /group-settings/{id}
+func (UnimplementedHandler) ReadGroupSettings(ctx context.Context, params ReadGroupSettingsParams) (r ReadGroupSettingsRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadGroupSettingsGroup implements readGroupSettingsGroup operation.
+//
+// Find the attached Group of the GroupSettings with the given ID.
+//
+// GET /group-settings/{id}/group
+func (UnimplementedHandler) ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (r ReadGroupSettingsGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ReadIntegration implements readIntegration operation.
 //
 // Finds the Integration with the requested ID and returns it.
@@ -208,6 +307,15 @@ func (UnimplementedHandler) ReadIntegrationOrganization(ctx context.Context, par
 //
 // GET /memberships/{id}
 func (UnimplementedHandler) ReadMembership(ctx context.Context, params ReadMembershipParams) (r ReadMembershipRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadMembershipGroup implements readMembershipGroup operation.
+//
+// Find the attached Group of the Membership with the given ID.
+//
+// GET /memberships/{id}/group
+func (UnimplementedHandler) ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (r ReadMembershipGroupRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -262,6 +370,24 @@ func (UnimplementedHandler) ReadSessionUsers(ctx context.Context, params ReadSes
 //
 // GET /users/{id}
 func (UnimplementedHandler) ReadUser(ctx context.Context, params ReadUserParams) (r ReadUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdateGroup implements updateGroup operation.
+//
+// Updates a Group and persists changes to storage.
+//
+// PATCH /groups/{id}
+func (UnimplementedHandler) UpdateGroup(ctx context.Context, req *UpdateGroupReq, params UpdateGroupParams) (r UpdateGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdateGroupSettings implements updateGroupSettings operation.
+//
+// Updates a GroupSettings and persists changes to storage.
+//
+// PATCH /group-settings/{id}
+func (UnimplementedHandler) UpdateGroupSettings(ctx context.Context, req *UpdateGroupSettingsReq, params UpdateGroupSettingsParams) (r UpdateGroupSettingsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

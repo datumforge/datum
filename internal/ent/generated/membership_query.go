@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -26,6 +27,7 @@ type MembershipQuery struct {
 	predicates       []predicate.Membership
 	withOrganization *OrganizationQuery
 	withUser         *UserQuery
+	withGroup        *GroupQuery
 	withFKs          bool
 	modifiers        []func(*sql.Selector)
 	loadTotal        []func(context.Context, []*Membership) error
@@ -102,6 +104,28 @@ func (mq *MembershipQuery) QueryUser() *UserQuery {
 			sqlgraph.From(membership.Table, membership.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.UserTable, membership.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryGroup chains the current query on the "group" edge.
+func (mq *MembershipQuery) QueryGroup() *GroupQuery {
+	query := (&GroupClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(membership.Table, membership.FieldID, selector),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, membership.GroupTable, membership.GroupColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -303,6 +327,7 @@ func (mq *MembershipQuery) Clone() *MembershipQuery {
 		predicates:       append([]predicate.Membership{}, mq.predicates...),
 		withOrganization: mq.withOrganization.Clone(),
 		withUser:         mq.withUser.Clone(),
+		withGroup:        mq.withGroup.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -328,6 +353,17 @@ func (mq *MembershipQuery) WithUser(opts ...func(*UserQuery)) *MembershipQuery {
 		opt(query)
 	}
 	mq.withUser = query
+	return mq
+}
+
+// WithGroup tells the query-builder to eager-load the nodes that are connected to
+// the "group" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MembershipQuery) WithGroup(opts ...func(*GroupQuery)) *MembershipQuery {
+	query := (&GroupClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withGroup = query
 	return mq
 }
 
@@ -410,12 +446,13 @@ func (mq *MembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*M
 		nodes       = []*Membership{}
 		withFKs     = mq.withFKs
 		_spec       = mq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			mq.withOrganization != nil,
 			mq.withUser != nil,
+			mq.withGroup != nil,
 		}
 	)
-	if mq.withOrganization != nil || mq.withUser != nil {
+	if mq.withOrganization != nil || mq.withUser != nil || mq.withGroup != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -451,6 +488,12 @@ func (mq *MembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*M
 	if query := mq.withUser; query != nil {
 		if err := mq.loadUser(ctx, query, nodes, nil,
 			func(n *Membership, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withGroup; query != nil {
+		if err := mq.loadGroup(ctx, query, nodes, nil,
+			func(n *Membership, e *Group) { n.Edges.Group = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -519,6 +562,38 @@ func (mq *MembershipQuery) loadUser(ctx context.Context, query *UserQuery, nodes
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "user_memberships" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (mq *MembershipQuery) loadGroup(ctx context.Context, query *GroupQuery, nodes []*Membership, init func(*Membership), assign func(*Membership, *Group)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Membership)
+	for i := range nodes {
+		if nodes[i].group_memberships == nil {
+			continue
+		}
+		fk := *nodes[i].group_memberships
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(group.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "group_memberships" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

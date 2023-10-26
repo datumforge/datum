@@ -9,6 +9,30 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// The GroupFunc type is an adapter to allow the use of ordinary
+// function as Group mutator.
+type GroupFunc func(context.Context, *generated.GroupMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.GroupMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupMutation", m)
+}
+
+// The GroupSettingsFunc type is an adapter to allow the use of ordinary
+// function as GroupSettings mutator.
+type GroupSettingsFunc func(context.Context, *generated.GroupSettingsMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupSettingsFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.GroupSettingsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupSettingsMutation", m)
+}
+
 // The IntegrationFunc type is an adapter to allow the use of ordinary
 // function as Integration mutator.
 type IntegrationFunc func(context.Context, *generated.IntegrationMutation) (generated.Value, error)

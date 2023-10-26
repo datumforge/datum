@@ -7,12 +7,205 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (gr *GroupQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return gr, nil
+	}
+	if err := gr.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return gr, nil
+}
+
+func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(group.Columns))
+		selectedFields = []string{group.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "setting":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&GroupSettingsClient{config: gr.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			gr.withSetting = query
+		case "memberships":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&MembershipClient{config: gr.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			gr.WithNamedMemberships(alias, func(wq *MembershipQuery) {
+				*wq = *query
+			})
+		case "name":
+			if _, ok := fieldSeen[group.FieldName]; !ok {
+				selectedFields = append(selectedFields, group.FieldName)
+				fieldSeen[group.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[group.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, group.FieldDescription)
+				fieldSeen[group.FieldDescription] = struct{}{}
+			}
+		case "logoURL":
+			if _, ok := fieldSeen[group.FieldLogoURL]; !ok {
+				selectedFields = append(selectedFields, group.FieldLogoURL)
+				fieldSeen[group.FieldLogoURL] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		gr.Select(selectedFields...)
+	}
+	return nil
+}
+
+type groupPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []GroupPaginateOption
+}
+
+func newGroupPaginateArgs(rv map[string]any) *groupPaginateArgs {
+	args := &groupPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*GroupWhereInput); ok {
+		args.opts = append(args.opts, WithGroupFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (gs *GroupSettingsQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupSettingsQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return gs, nil
+	}
+	if err := gs.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return gs, nil
+}
+
+func (gs *GroupSettingsQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(groupsettings.Columns))
+		selectedFields = []string{groupsettings.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[groupsettings.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldCreatedAt)
+				fieldSeen[groupsettings.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[groupsettings.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldUpdatedAt)
+				fieldSeen[groupsettings.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[groupsettings.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldCreatedBy)
+				fieldSeen[groupsettings.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[groupsettings.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldUpdatedBy)
+				fieldSeen[groupsettings.FieldUpdatedBy] = struct{}{}
+			}
+		case "visibility":
+			if _, ok := fieldSeen[groupsettings.FieldVisibility]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldVisibility)
+				fieldSeen[groupsettings.FieldVisibility] = struct{}{}
+			}
+		case "joinPolicy":
+			if _, ok := fieldSeen[groupsettings.FieldJoinPolicy]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldJoinPolicy)
+				fieldSeen[groupsettings.FieldJoinPolicy] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		gs.Select(selectedFields...)
+	}
+	return nil
+}
+
+type groupsettingsPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []GroupSettingsPaginateOption
+}
+
+func newGroupSettingsPaginateArgs(rv map[string]any) *groupsettingsPaginateArgs {
+	args := &groupsettingsPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*GroupSettingsWhereInput); ok {
+		args.opts = append(args.opts, WithGroupSettingsFilter(v.Filter))
+	}
+	return args
+}
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (i *IntegrationQuery) CollectFields(ctx context.Context, satisfies ...string) (*IntegrationQuery, error) {
@@ -162,6 +355,16 @@ func (m *MembershipQuery) collectField(ctx context.Context, opCtx *graphql.Opera
 				return err
 			}
 			m.withUser = query
+		case "group":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&GroupClient{config: m.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			m.withGroup = query
 		case "createdAt":
 			if _, ok := fieldSeen[membership.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, membership.FieldCreatedAt)

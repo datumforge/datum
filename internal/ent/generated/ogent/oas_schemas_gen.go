@@ -10,6 +10,240 @@ import (
 	"github.com/google/uuid"
 )
 
+type CreateGroupReq struct {
+	Name        string      `json:"name"`
+	Description string      `json:"description"`
+	LogoURL     string      `json:"logo_url"`
+	Setting     uuid.UUID   `json:"setting"`
+	Memberships []uuid.UUID `json:"memberships"`
+}
+
+// GetName returns the value of Name.
+func (s *CreateGroupReq) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *CreateGroupReq) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *CreateGroupReq) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// GetSetting returns the value of Setting.
+func (s *CreateGroupReq) GetSetting() uuid.UUID {
+	return s.Setting
+}
+
+// GetMemberships returns the value of Memberships.
+func (s *CreateGroupReq) GetMemberships() []uuid.UUID {
+	return s.Memberships
+}
+
+// SetName sets the value of Name.
+func (s *CreateGroupReq) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *CreateGroupReq) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *CreateGroupReq) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+// SetSetting sets the value of Setting.
+func (s *CreateGroupReq) SetSetting(val uuid.UUID) {
+	s.Setting = val
+}
+
+// SetMemberships sets the value of Memberships.
+func (s *CreateGroupReq) SetMemberships(val []uuid.UUID) {
+	s.Memberships = val
+}
+
+type CreateGroupSettingsReq struct {
+	CreatedAt  time.Time                        `json:"created_at"`
+	UpdatedAt  time.Time                        `json:"updated_at"`
+	CreatedBy  OptInt                           `json:"created_by"`
+	UpdatedBy  OptInt                           `json:"updated_by"`
+	Visibility CreateGroupSettingsReqVisibility `json:"visibility"`
+	JoinPolicy CreateGroupSettingsReqJoinPolicy `json:"join_policy"`
+	Group      OptUUID                          `json:"group"`
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *CreateGroupSettingsReq) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *CreateGroupSettingsReq) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *CreateGroupSettingsReq) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *CreateGroupSettingsReq) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *CreateGroupSettingsReq) GetVisibility() CreateGroupSettingsReqVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *CreateGroupSettingsReq) GetJoinPolicy() CreateGroupSettingsReqJoinPolicy {
+	return s.JoinPolicy
+}
+
+// GetGroup returns the value of Group.
+func (s *CreateGroupSettingsReq) GetGroup() OptUUID {
+	return s.Group
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *CreateGroupSettingsReq) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *CreateGroupSettingsReq) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *CreateGroupSettingsReq) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *CreateGroupSettingsReq) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *CreateGroupSettingsReq) SetVisibility(val CreateGroupSettingsReqVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *CreateGroupSettingsReq) SetJoinPolicy(val CreateGroupSettingsReqJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+// SetGroup sets the value of Group.
+func (s *CreateGroupSettingsReq) SetGroup(val OptUUID) {
+	s.Group = val
+}
+
+type CreateGroupSettingsReqJoinPolicy string
+
+const (
+	CreateGroupSettingsReqJoinPolicyOPEN                CreateGroupSettingsReqJoinPolicy = "OPEN"
+	CreateGroupSettingsReqJoinPolicyINVITEONLY          CreateGroupSettingsReqJoinPolicy = "INVITE_ONLY"
+	CreateGroupSettingsReqJoinPolicyAPPLICATIONONLY     CreateGroupSettingsReqJoinPolicy = "APPLICATION_ONLY"
+	CreateGroupSettingsReqJoinPolicyINVITEORAPPLICATION CreateGroupSettingsReqJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all CreateGroupSettingsReqJoinPolicy values.
+func (CreateGroupSettingsReqJoinPolicy) AllValues() []CreateGroupSettingsReqJoinPolicy {
+	return []CreateGroupSettingsReqJoinPolicy{
+		CreateGroupSettingsReqJoinPolicyOPEN,
+		CreateGroupSettingsReqJoinPolicyINVITEONLY,
+		CreateGroupSettingsReqJoinPolicyAPPLICATIONONLY,
+		CreateGroupSettingsReqJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CreateGroupSettingsReqJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case CreateGroupSettingsReqJoinPolicyOPEN:
+		return []byte(s), nil
+	case CreateGroupSettingsReqJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case CreateGroupSettingsReqJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case CreateGroupSettingsReqJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CreateGroupSettingsReqJoinPolicy) UnmarshalText(data []byte) error {
+	switch CreateGroupSettingsReqJoinPolicy(data) {
+	case CreateGroupSettingsReqJoinPolicyOPEN:
+		*s = CreateGroupSettingsReqJoinPolicyOPEN
+		return nil
+	case CreateGroupSettingsReqJoinPolicyINVITEONLY:
+		*s = CreateGroupSettingsReqJoinPolicyINVITEONLY
+		return nil
+	case CreateGroupSettingsReqJoinPolicyAPPLICATIONONLY:
+		*s = CreateGroupSettingsReqJoinPolicyAPPLICATIONONLY
+		return nil
+	case CreateGroupSettingsReqJoinPolicyINVITEORAPPLICATION:
+		*s = CreateGroupSettingsReqJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type CreateGroupSettingsReqVisibility string
+
+const (
+	CreateGroupSettingsReqVisibilityPUBLIC  CreateGroupSettingsReqVisibility = "PUBLIC"
+	CreateGroupSettingsReqVisibilityPRIVATE CreateGroupSettingsReqVisibility = "PRIVATE"
+)
+
+// AllValues returns all CreateGroupSettingsReqVisibility values.
+func (CreateGroupSettingsReqVisibility) AllValues() []CreateGroupSettingsReqVisibility {
+	return []CreateGroupSettingsReqVisibility{
+		CreateGroupSettingsReqVisibilityPUBLIC,
+		CreateGroupSettingsReqVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s CreateGroupSettingsReqVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case CreateGroupSettingsReqVisibilityPUBLIC:
+		return []byte(s), nil
+	case CreateGroupSettingsReqVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *CreateGroupSettingsReqVisibility) UnmarshalText(data []byte) error {
+	switch CreateGroupSettingsReqVisibility(data) {
+	case CreateGroupSettingsReqVisibilityPUBLIC:
+		*s = CreateGroupSettingsReqVisibilityPUBLIC
+		return nil
+	case CreateGroupSettingsReqVisibilityPRIVATE:
+		*s = CreateGroupSettingsReqVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 type CreateIntegrationReq struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
@@ -109,6 +343,7 @@ type CreateMembershipReq struct {
 	Current      bool      `json:"current"`
 	Organization uuid.UUID `json:"organization"`
 	User         uuid.UUID `json:"user"`
+	Group        uuid.UUID `json:"group"`
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -146,6 +381,11 @@ func (s *CreateMembershipReq) GetUser() uuid.UUID {
 	return s.User
 }
 
+// GetGroup returns the value of Group.
+func (s *CreateMembershipReq) GetGroup() uuid.UUID {
+	return s.Group
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *CreateMembershipReq) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
@@ -179,6 +419,11 @@ func (s *CreateMembershipReq) SetOrganization(val uuid.UUID) {
 // SetUser sets the value of User.
 func (s *CreateMembershipReq) SetUser(val uuid.UUID) {
 	s.User = val
+}
+
+// SetGroup sets the value of Group.
+func (s *CreateMembershipReq) SetGroup(val uuid.UUID) {
+	s.Group = val
 }
 
 type CreateOrganizationReq struct {
@@ -612,6 +857,16 @@ func (s *CreateUserReq) SetSessions(val []uuid.UUID) {
 	s.Sessions = val
 }
 
+// DeleteGroupNoContent is response for DeleteGroup operation.
+type DeleteGroupNoContent struct{}
+
+func (*DeleteGroupNoContent) deleteGroupRes() {}
+
+// DeleteGroupSettingsNoContent is response for DeleteGroupSettings operation.
+type DeleteGroupSettingsNoContent struct{}
+
+func (*DeleteGroupSettingsNoContent) deleteGroupSettingsRes() {}
+
 // DeleteIntegrationNoContent is response for DeleteIntegration operation.
 type DeleteIntegrationNoContent struct{}
 
@@ -636,6 +891,1217 @@ func (*DeleteSessionNoContent) deleteSessionRes() {}
 type DeleteUserNoContent struct{}
 
 func (*DeleteUserNoContent) deleteUserRes() {}
+
+// Ref: #/components/schemas/GroupCreate
+type GroupCreate struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	LogoURL     string    `json:"logo_url"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupCreate) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *GroupCreate) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *GroupCreate) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *GroupCreate) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// SetID sets the value of ID.
+func (s *GroupCreate) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *GroupCreate) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *GroupCreate) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *GroupCreate) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+func (*GroupCreate) createGroupRes() {}
+
+// Ref: #/components/schemas/GroupList
+type GroupList struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	LogoURL     string    `json:"logo_url"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupList) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *GroupList) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *GroupList) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *GroupList) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// SetID sets the value of ID.
+func (s *GroupList) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *GroupList) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *GroupList) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *GroupList) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+// Ref: #/components/schemas/Group_MembershipsList
+type GroupMembershipsList struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	CreatedBy OptInt    `json:"created_by"`
+	UpdatedBy OptInt    `json:"updated_by"`
+	Current   bool      `json:"current"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupMembershipsList) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupMembershipsList) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupMembershipsList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupMembershipsList) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupMembershipsList) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetCurrent returns the value of Current.
+func (s *GroupMembershipsList) GetCurrent() bool {
+	return s.Current
+}
+
+// SetID sets the value of ID.
+func (s *GroupMembershipsList) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupMembershipsList) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupMembershipsList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupMembershipsList) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupMembershipsList) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetCurrent sets the value of Current.
+func (s *GroupMembershipsList) SetCurrent(val bool) {
+	s.Current = val
+}
+
+// Ref: #/components/schemas/GroupRead
+type GroupRead struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	LogoURL     string    `json:"logo_url"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *GroupRead) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *GroupRead) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *GroupRead) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// SetID sets the value of ID.
+func (s *GroupRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *GroupRead) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *GroupRead) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *GroupRead) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+func (*GroupRead) readGroupRes() {}
+
+// Ref: #/components/schemas/Group_SettingRead
+type GroupSettingRead struct {
+	ID         uuid.UUID                  `json:"id"`
+	CreatedAt  time.Time                  `json:"created_at"`
+	UpdatedAt  time.Time                  `json:"updated_at"`
+	CreatedBy  OptInt                     `json:"created_by"`
+	UpdatedBy  OptInt                     `json:"updated_by"`
+	Visibility GroupSettingReadVisibility `json:"visibility"`
+	JoinPolicy GroupSettingReadJoinPolicy `json:"join_policy"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupSettingRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupSettingRead) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupSettingRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupSettingRead) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupSettingRead) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *GroupSettingRead) GetVisibility() GroupSettingReadVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *GroupSettingRead) GetJoinPolicy() GroupSettingReadJoinPolicy {
+	return s.JoinPolicy
+}
+
+// SetID sets the value of ID.
+func (s *GroupSettingRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupSettingRead) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupSettingRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupSettingRead) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupSettingRead) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *GroupSettingRead) SetVisibility(val GroupSettingReadVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *GroupSettingRead) SetJoinPolicy(val GroupSettingReadJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+func (*GroupSettingRead) readGroupSettingRes() {}
+
+type GroupSettingReadJoinPolicy string
+
+const (
+	GroupSettingReadJoinPolicyOPEN                GroupSettingReadJoinPolicy = "OPEN"
+	GroupSettingReadJoinPolicyINVITEONLY          GroupSettingReadJoinPolicy = "INVITE_ONLY"
+	GroupSettingReadJoinPolicyAPPLICATIONONLY     GroupSettingReadJoinPolicy = "APPLICATION_ONLY"
+	GroupSettingReadJoinPolicyINVITEORAPPLICATION GroupSettingReadJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all GroupSettingReadJoinPolicy values.
+func (GroupSettingReadJoinPolicy) AllValues() []GroupSettingReadJoinPolicy {
+	return []GroupSettingReadJoinPolicy{
+		GroupSettingReadJoinPolicyOPEN,
+		GroupSettingReadJoinPolicyINVITEONLY,
+		GroupSettingReadJoinPolicyAPPLICATIONONLY,
+		GroupSettingReadJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingReadJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingReadJoinPolicyOPEN:
+		return []byte(s), nil
+	case GroupSettingReadJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case GroupSettingReadJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case GroupSettingReadJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingReadJoinPolicy) UnmarshalText(data []byte) error {
+	switch GroupSettingReadJoinPolicy(data) {
+	case GroupSettingReadJoinPolicyOPEN:
+		*s = GroupSettingReadJoinPolicyOPEN
+		return nil
+	case GroupSettingReadJoinPolicyINVITEONLY:
+		*s = GroupSettingReadJoinPolicyINVITEONLY
+		return nil
+	case GroupSettingReadJoinPolicyAPPLICATIONONLY:
+		*s = GroupSettingReadJoinPolicyAPPLICATIONONLY
+		return nil
+	case GroupSettingReadJoinPolicyINVITEORAPPLICATION:
+		*s = GroupSettingReadJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type GroupSettingReadVisibility string
+
+const (
+	GroupSettingReadVisibilityPUBLIC  GroupSettingReadVisibility = "PUBLIC"
+	GroupSettingReadVisibilityPRIVATE GroupSettingReadVisibility = "PRIVATE"
+)
+
+// AllValues returns all GroupSettingReadVisibility values.
+func (GroupSettingReadVisibility) AllValues() []GroupSettingReadVisibility {
+	return []GroupSettingReadVisibility{
+		GroupSettingReadVisibilityPUBLIC,
+		GroupSettingReadVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingReadVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingReadVisibilityPUBLIC:
+		return []byte(s), nil
+	case GroupSettingReadVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingReadVisibility) UnmarshalText(data []byte) error {
+	switch GroupSettingReadVisibility(data) {
+	case GroupSettingReadVisibilityPUBLIC:
+		*s = GroupSettingReadVisibilityPUBLIC
+		return nil
+	case GroupSettingReadVisibilityPRIVATE:
+		*s = GroupSettingReadVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/GroupSettingsCreate
+type GroupSettingsCreate struct {
+	ID         uuid.UUID                     `json:"id"`
+	CreatedAt  time.Time                     `json:"created_at"`
+	UpdatedAt  time.Time                     `json:"updated_at"`
+	CreatedBy  OptInt                        `json:"created_by"`
+	UpdatedBy  OptInt                        `json:"updated_by"`
+	Visibility GroupSettingsCreateVisibility `json:"visibility"`
+	JoinPolicy GroupSettingsCreateJoinPolicy `json:"join_policy"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupSettingsCreate) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupSettingsCreate) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupSettingsCreate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupSettingsCreate) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupSettingsCreate) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *GroupSettingsCreate) GetVisibility() GroupSettingsCreateVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *GroupSettingsCreate) GetJoinPolicy() GroupSettingsCreateJoinPolicy {
+	return s.JoinPolicy
+}
+
+// SetID sets the value of ID.
+func (s *GroupSettingsCreate) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupSettingsCreate) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupSettingsCreate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupSettingsCreate) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupSettingsCreate) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *GroupSettingsCreate) SetVisibility(val GroupSettingsCreateVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *GroupSettingsCreate) SetJoinPolicy(val GroupSettingsCreateJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+func (*GroupSettingsCreate) createGroupSettingsRes() {}
+
+type GroupSettingsCreateJoinPolicy string
+
+const (
+	GroupSettingsCreateJoinPolicyOPEN                GroupSettingsCreateJoinPolicy = "OPEN"
+	GroupSettingsCreateJoinPolicyINVITEONLY          GroupSettingsCreateJoinPolicy = "INVITE_ONLY"
+	GroupSettingsCreateJoinPolicyAPPLICATIONONLY     GroupSettingsCreateJoinPolicy = "APPLICATION_ONLY"
+	GroupSettingsCreateJoinPolicyINVITEORAPPLICATION GroupSettingsCreateJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all GroupSettingsCreateJoinPolicy values.
+func (GroupSettingsCreateJoinPolicy) AllValues() []GroupSettingsCreateJoinPolicy {
+	return []GroupSettingsCreateJoinPolicy{
+		GroupSettingsCreateJoinPolicyOPEN,
+		GroupSettingsCreateJoinPolicyINVITEONLY,
+		GroupSettingsCreateJoinPolicyAPPLICATIONONLY,
+		GroupSettingsCreateJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsCreateJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsCreateJoinPolicyOPEN:
+		return []byte(s), nil
+	case GroupSettingsCreateJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case GroupSettingsCreateJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case GroupSettingsCreateJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsCreateJoinPolicy) UnmarshalText(data []byte) error {
+	switch GroupSettingsCreateJoinPolicy(data) {
+	case GroupSettingsCreateJoinPolicyOPEN:
+		*s = GroupSettingsCreateJoinPolicyOPEN
+		return nil
+	case GroupSettingsCreateJoinPolicyINVITEONLY:
+		*s = GroupSettingsCreateJoinPolicyINVITEONLY
+		return nil
+	case GroupSettingsCreateJoinPolicyAPPLICATIONONLY:
+		*s = GroupSettingsCreateJoinPolicyAPPLICATIONONLY
+		return nil
+	case GroupSettingsCreateJoinPolicyINVITEORAPPLICATION:
+		*s = GroupSettingsCreateJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type GroupSettingsCreateVisibility string
+
+const (
+	GroupSettingsCreateVisibilityPUBLIC  GroupSettingsCreateVisibility = "PUBLIC"
+	GroupSettingsCreateVisibilityPRIVATE GroupSettingsCreateVisibility = "PRIVATE"
+)
+
+// AllValues returns all GroupSettingsCreateVisibility values.
+func (GroupSettingsCreateVisibility) AllValues() []GroupSettingsCreateVisibility {
+	return []GroupSettingsCreateVisibility{
+		GroupSettingsCreateVisibilityPUBLIC,
+		GroupSettingsCreateVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsCreateVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsCreateVisibilityPUBLIC:
+		return []byte(s), nil
+	case GroupSettingsCreateVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsCreateVisibility) UnmarshalText(data []byte) error {
+	switch GroupSettingsCreateVisibility(data) {
+	case GroupSettingsCreateVisibilityPUBLIC:
+		*s = GroupSettingsCreateVisibilityPUBLIC
+		return nil
+	case GroupSettingsCreateVisibilityPRIVATE:
+		*s = GroupSettingsCreateVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/GroupSettings_GroupRead
+type GroupSettingsGroupRead struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	LogoURL     string    `json:"logo_url"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupSettingsGroupRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *GroupSettingsGroupRead) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *GroupSettingsGroupRead) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *GroupSettingsGroupRead) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// SetID sets the value of ID.
+func (s *GroupSettingsGroupRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *GroupSettingsGroupRead) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *GroupSettingsGroupRead) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *GroupSettingsGroupRead) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+func (*GroupSettingsGroupRead) readGroupSettingsGroupRes() {}
+
+// Ref: #/components/schemas/GroupSettingsList
+type GroupSettingsList struct {
+	ID         uuid.UUID                   `json:"id"`
+	CreatedAt  time.Time                   `json:"created_at"`
+	UpdatedAt  time.Time                   `json:"updated_at"`
+	CreatedBy  OptInt                      `json:"created_by"`
+	UpdatedBy  OptInt                      `json:"updated_by"`
+	Visibility GroupSettingsListVisibility `json:"visibility"`
+	JoinPolicy GroupSettingsListJoinPolicy `json:"join_policy"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupSettingsList) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupSettingsList) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupSettingsList) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupSettingsList) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupSettingsList) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *GroupSettingsList) GetVisibility() GroupSettingsListVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *GroupSettingsList) GetJoinPolicy() GroupSettingsListJoinPolicy {
+	return s.JoinPolicy
+}
+
+// SetID sets the value of ID.
+func (s *GroupSettingsList) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupSettingsList) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupSettingsList) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupSettingsList) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupSettingsList) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *GroupSettingsList) SetVisibility(val GroupSettingsListVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *GroupSettingsList) SetJoinPolicy(val GroupSettingsListJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+type GroupSettingsListJoinPolicy string
+
+const (
+	GroupSettingsListJoinPolicyOPEN                GroupSettingsListJoinPolicy = "OPEN"
+	GroupSettingsListJoinPolicyINVITEONLY          GroupSettingsListJoinPolicy = "INVITE_ONLY"
+	GroupSettingsListJoinPolicyAPPLICATIONONLY     GroupSettingsListJoinPolicy = "APPLICATION_ONLY"
+	GroupSettingsListJoinPolicyINVITEORAPPLICATION GroupSettingsListJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all GroupSettingsListJoinPolicy values.
+func (GroupSettingsListJoinPolicy) AllValues() []GroupSettingsListJoinPolicy {
+	return []GroupSettingsListJoinPolicy{
+		GroupSettingsListJoinPolicyOPEN,
+		GroupSettingsListJoinPolicyINVITEONLY,
+		GroupSettingsListJoinPolicyAPPLICATIONONLY,
+		GroupSettingsListJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsListJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsListJoinPolicyOPEN:
+		return []byte(s), nil
+	case GroupSettingsListJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case GroupSettingsListJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case GroupSettingsListJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsListJoinPolicy) UnmarshalText(data []byte) error {
+	switch GroupSettingsListJoinPolicy(data) {
+	case GroupSettingsListJoinPolicyOPEN:
+		*s = GroupSettingsListJoinPolicyOPEN
+		return nil
+	case GroupSettingsListJoinPolicyINVITEONLY:
+		*s = GroupSettingsListJoinPolicyINVITEONLY
+		return nil
+	case GroupSettingsListJoinPolicyAPPLICATIONONLY:
+		*s = GroupSettingsListJoinPolicyAPPLICATIONONLY
+		return nil
+	case GroupSettingsListJoinPolicyINVITEORAPPLICATION:
+		*s = GroupSettingsListJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type GroupSettingsListVisibility string
+
+const (
+	GroupSettingsListVisibilityPUBLIC  GroupSettingsListVisibility = "PUBLIC"
+	GroupSettingsListVisibilityPRIVATE GroupSettingsListVisibility = "PRIVATE"
+)
+
+// AllValues returns all GroupSettingsListVisibility values.
+func (GroupSettingsListVisibility) AllValues() []GroupSettingsListVisibility {
+	return []GroupSettingsListVisibility{
+		GroupSettingsListVisibilityPUBLIC,
+		GroupSettingsListVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsListVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsListVisibilityPUBLIC:
+		return []byte(s), nil
+	case GroupSettingsListVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsListVisibility) UnmarshalText(data []byte) error {
+	switch GroupSettingsListVisibility(data) {
+	case GroupSettingsListVisibilityPUBLIC:
+		*s = GroupSettingsListVisibilityPUBLIC
+		return nil
+	case GroupSettingsListVisibilityPRIVATE:
+		*s = GroupSettingsListVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/GroupSettingsRead
+type GroupSettingsRead struct {
+	ID         uuid.UUID                   `json:"id"`
+	CreatedAt  time.Time                   `json:"created_at"`
+	UpdatedAt  time.Time                   `json:"updated_at"`
+	CreatedBy  OptInt                      `json:"created_by"`
+	UpdatedBy  OptInt                      `json:"updated_by"`
+	Visibility GroupSettingsReadVisibility `json:"visibility"`
+	JoinPolicy GroupSettingsReadJoinPolicy `json:"join_policy"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupSettingsRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupSettingsRead) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupSettingsRead) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupSettingsRead) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupSettingsRead) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *GroupSettingsRead) GetVisibility() GroupSettingsReadVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *GroupSettingsRead) GetJoinPolicy() GroupSettingsReadJoinPolicy {
+	return s.JoinPolicy
+}
+
+// SetID sets the value of ID.
+func (s *GroupSettingsRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupSettingsRead) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupSettingsRead) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupSettingsRead) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupSettingsRead) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *GroupSettingsRead) SetVisibility(val GroupSettingsReadVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *GroupSettingsRead) SetJoinPolicy(val GroupSettingsReadJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+func (*GroupSettingsRead) readGroupSettingsRes() {}
+
+type GroupSettingsReadJoinPolicy string
+
+const (
+	GroupSettingsReadJoinPolicyOPEN                GroupSettingsReadJoinPolicy = "OPEN"
+	GroupSettingsReadJoinPolicyINVITEONLY          GroupSettingsReadJoinPolicy = "INVITE_ONLY"
+	GroupSettingsReadJoinPolicyAPPLICATIONONLY     GroupSettingsReadJoinPolicy = "APPLICATION_ONLY"
+	GroupSettingsReadJoinPolicyINVITEORAPPLICATION GroupSettingsReadJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all GroupSettingsReadJoinPolicy values.
+func (GroupSettingsReadJoinPolicy) AllValues() []GroupSettingsReadJoinPolicy {
+	return []GroupSettingsReadJoinPolicy{
+		GroupSettingsReadJoinPolicyOPEN,
+		GroupSettingsReadJoinPolicyINVITEONLY,
+		GroupSettingsReadJoinPolicyAPPLICATIONONLY,
+		GroupSettingsReadJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsReadJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsReadJoinPolicyOPEN:
+		return []byte(s), nil
+	case GroupSettingsReadJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case GroupSettingsReadJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case GroupSettingsReadJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsReadJoinPolicy) UnmarshalText(data []byte) error {
+	switch GroupSettingsReadJoinPolicy(data) {
+	case GroupSettingsReadJoinPolicyOPEN:
+		*s = GroupSettingsReadJoinPolicyOPEN
+		return nil
+	case GroupSettingsReadJoinPolicyINVITEONLY:
+		*s = GroupSettingsReadJoinPolicyINVITEONLY
+		return nil
+	case GroupSettingsReadJoinPolicyAPPLICATIONONLY:
+		*s = GroupSettingsReadJoinPolicyAPPLICATIONONLY
+		return nil
+	case GroupSettingsReadJoinPolicyINVITEORAPPLICATION:
+		*s = GroupSettingsReadJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type GroupSettingsReadVisibility string
+
+const (
+	GroupSettingsReadVisibilityPUBLIC  GroupSettingsReadVisibility = "PUBLIC"
+	GroupSettingsReadVisibilityPRIVATE GroupSettingsReadVisibility = "PRIVATE"
+)
+
+// AllValues returns all GroupSettingsReadVisibility values.
+func (GroupSettingsReadVisibility) AllValues() []GroupSettingsReadVisibility {
+	return []GroupSettingsReadVisibility{
+		GroupSettingsReadVisibilityPUBLIC,
+		GroupSettingsReadVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsReadVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsReadVisibilityPUBLIC:
+		return []byte(s), nil
+	case GroupSettingsReadVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsReadVisibility) UnmarshalText(data []byte) error {
+	switch GroupSettingsReadVisibility(data) {
+	case GroupSettingsReadVisibilityPUBLIC:
+		*s = GroupSettingsReadVisibilityPUBLIC
+		return nil
+	case GroupSettingsReadVisibilityPRIVATE:
+		*s = GroupSettingsReadVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/GroupSettingsUpdate
+type GroupSettingsUpdate struct {
+	ID         uuid.UUID                     `json:"id"`
+	CreatedAt  time.Time                     `json:"created_at"`
+	UpdatedAt  time.Time                     `json:"updated_at"`
+	CreatedBy  OptInt                        `json:"created_by"`
+	UpdatedBy  OptInt                        `json:"updated_by"`
+	Visibility GroupSettingsUpdateVisibility `json:"visibility"`
+	JoinPolicy GroupSettingsUpdateJoinPolicy `json:"join_policy"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupSettingsUpdate) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetCreatedAt returns the value of CreatedAt.
+func (s *GroupSettingsUpdate) GetCreatedAt() time.Time {
+	return s.CreatedAt
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *GroupSettingsUpdate) GetUpdatedAt() time.Time {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *GroupSettingsUpdate) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *GroupSettingsUpdate) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *GroupSettingsUpdate) GetVisibility() GroupSettingsUpdateVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *GroupSettingsUpdate) GetJoinPolicy() GroupSettingsUpdateJoinPolicy {
+	return s.JoinPolicy
+}
+
+// SetID sets the value of ID.
+func (s *GroupSettingsUpdate) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetCreatedAt sets the value of CreatedAt.
+func (s *GroupSettingsUpdate) SetCreatedAt(val time.Time) {
+	s.CreatedAt = val
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *GroupSettingsUpdate) SetUpdatedAt(val time.Time) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *GroupSettingsUpdate) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *GroupSettingsUpdate) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *GroupSettingsUpdate) SetVisibility(val GroupSettingsUpdateVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *GroupSettingsUpdate) SetJoinPolicy(val GroupSettingsUpdateJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+func (*GroupSettingsUpdate) updateGroupSettingsRes() {}
+
+type GroupSettingsUpdateJoinPolicy string
+
+const (
+	GroupSettingsUpdateJoinPolicyOPEN                GroupSettingsUpdateJoinPolicy = "OPEN"
+	GroupSettingsUpdateJoinPolicyINVITEONLY          GroupSettingsUpdateJoinPolicy = "INVITE_ONLY"
+	GroupSettingsUpdateJoinPolicyAPPLICATIONONLY     GroupSettingsUpdateJoinPolicy = "APPLICATION_ONLY"
+	GroupSettingsUpdateJoinPolicyINVITEORAPPLICATION GroupSettingsUpdateJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all GroupSettingsUpdateJoinPolicy values.
+func (GroupSettingsUpdateJoinPolicy) AllValues() []GroupSettingsUpdateJoinPolicy {
+	return []GroupSettingsUpdateJoinPolicy{
+		GroupSettingsUpdateJoinPolicyOPEN,
+		GroupSettingsUpdateJoinPolicyINVITEONLY,
+		GroupSettingsUpdateJoinPolicyAPPLICATIONONLY,
+		GroupSettingsUpdateJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsUpdateJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsUpdateJoinPolicyOPEN:
+		return []byte(s), nil
+	case GroupSettingsUpdateJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case GroupSettingsUpdateJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case GroupSettingsUpdateJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsUpdateJoinPolicy) UnmarshalText(data []byte) error {
+	switch GroupSettingsUpdateJoinPolicy(data) {
+	case GroupSettingsUpdateJoinPolicyOPEN:
+		*s = GroupSettingsUpdateJoinPolicyOPEN
+		return nil
+	case GroupSettingsUpdateJoinPolicyINVITEONLY:
+		*s = GroupSettingsUpdateJoinPolicyINVITEONLY
+		return nil
+	case GroupSettingsUpdateJoinPolicyAPPLICATIONONLY:
+		*s = GroupSettingsUpdateJoinPolicyAPPLICATIONONLY
+		return nil
+	case GroupSettingsUpdateJoinPolicyINVITEORAPPLICATION:
+		*s = GroupSettingsUpdateJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type GroupSettingsUpdateVisibility string
+
+const (
+	GroupSettingsUpdateVisibilityPUBLIC  GroupSettingsUpdateVisibility = "PUBLIC"
+	GroupSettingsUpdateVisibilityPRIVATE GroupSettingsUpdateVisibility = "PRIVATE"
+)
+
+// AllValues returns all GroupSettingsUpdateVisibility values.
+func (GroupSettingsUpdateVisibility) AllValues() []GroupSettingsUpdateVisibility {
+	return []GroupSettingsUpdateVisibility{
+		GroupSettingsUpdateVisibilityPUBLIC,
+		GroupSettingsUpdateVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s GroupSettingsUpdateVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case GroupSettingsUpdateVisibilityPUBLIC:
+		return []byte(s), nil
+	case GroupSettingsUpdateVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *GroupSettingsUpdateVisibility) UnmarshalText(data []byte) error {
+	switch GroupSettingsUpdateVisibility(data) {
+	case GroupSettingsUpdateVisibilityPUBLIC:
+		*s = GroupSettingsUpdateVisibilityPUBLIC
+		return nil
+	case GroupSettingsUpdateVisibilityPRIVATE:
+		*s = GroupSettingsUpdateVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+// Ref: #/components/schemas/GroupUpdate
+type GroupUpdate struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	LogoURL     string    `json:"logo_url"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupUpdate) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *GroupUpdate) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *GroupUpdate) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *GroupUpdate) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// SetID sets the value of ID.
+func (s *GroupUpdate) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *GroupUpdate) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *GroupUpdate) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *GroupUpdate) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+func (*GroupUpdate) updateGroupRes() {}
 
 // Ref: #/components/schemas/IntegrationCreate
 type IntegrationCreate struct {
@@ -1083,6 +2549,18 @@ func (s *IntegrationUpdate) SetSecretName(val string) {
 
 func (*IntegrationUpdate) updateIntegrationRes() {}
 
+type ListGroupMembershipsOKApplicationJSON []GroupMembershipsList
+
+func (*ListGroupMembershipsOKApplicationJSON) listGroupMembershipsRes() {}
+
+type ListGroupOKApplicationJSON []GroupList
+
+func (*ListGroupOKApplicationJSON) listGroupRes() {}
+
+type ListGroupSettingsOKApplicationJSON []GroupSettingsList
+
+func (*ListGroupSettingsOKApplicationJSON) listGroupSettingsRes() {}
+
 type ListIntegrationOKApplicationJSON []IntegrationList
 
 func (*ListIntegrationOKApplicationJSON) listIntegrationRes() {}
@@ -1190,6 +2668,56 @@ func (s *MembershipCreate) SetCurrent(val bool) {
 }
 
 func (*MembershipCreate) createMembershipRes() {}
+
+// Ref: #/components/schemas/Membership_GroupRead
+type MembershipGroupRead struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	LogoURL     string    `json:"logo_url"`
+}
+
+// GetID returns the value of ID.
+func (s *MembershipGroupRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *MembershipGroupRead) GetName() string {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *MembershipGroupRead) GetDescription() string {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *MembershipGroupRead) GetLogoURL() string {
+	return s.LogoURL
+}
+
+// SetID sets the value of ID.
+func (s *MembershipGroupRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *MembershipGroupRead) SetName(val string) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *MembershipGroupRead) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *MembershipGroupRead) SetLogoURL(val string) {
+	s.LogoURL = val
+}
+
+func (*MembershipGroupRead) readMembershipGroupRes() {}
 
 // Ref: #/components/schemas/MembershipList
 type MembershipList struct {
@@ -1878,6 +3406,98 @@ func (o OptUUID) Or(d uuid.UUID) uuid.UUID {
 	return d
 }
 
+// NewOptUpdateGroupSettingsReqJoinPolicy returns new OptUpdateGroupSettingsReqJoinPolicy with value set to v.
+func NewOptUpdateGroupSettingsReqJoinPolicy(v UpdateGroupSettingsReqJoinPolicy) OptUpdateGroupSettingsReqJoinPolicy {
+	return OptUpdateGroupSettingsReqJoinPolicy{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptUpdateGroupSettingsReqJoinPolicy is optional UpdateGroupSettingsReqJoinPolicy.
+type OptUpdateGroupSettingsReqJoinPolicy struct {
+	Value UpdateGroupSettingsReqJoinPolicy
+	Set   bool
+}
+
+// IsSet returns true if OptUpdateGroupSettingsReqJoinPolicy was set.
+func (o OptUpdateGroupSettingsReqJoinPolicy) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptUpdateGroupSettingsReqJoinPolicy) Reset() {
+	var v UpdateGroupSettingsReqJoinPolicy
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptUpdateGroupSettingsReqJoinPolicy) SetTo(v UpdateGroupSettingsReqJoinPolicy) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptUpdateGroupSettingsReqJoinPolicy) Get() (v UpdateGroupSettingsReqJoinPolicy, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptUpdateGroupSettingsReqJoinPolicy) Or(d UpdateGroupSettingsReqJoinPolicy) UpdateGroupSettingsReqJoinPolicy {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptUpdateGroupSettingsReqVisibility returns new OptUpdateGroupSettingsReqVisibility with value set to v.
+func NewOptUpdateGroupSettingsReqVisibility(v UpdateGroupSettingsReqVisibility) OptUpdateGroupSettingsReqVisibility {
+	return OptUpdateGroupSettingsReqVisibility{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptUpdateGroupSettingsReqVisibility is optional UpdateGroupSettingsReqVisibility.
+type OptUpdateGroupSettingsReqVisibility struct {
+	Value UpdateGroupSettingsReqVisibility
+	Set   bool
+}
+
+// IsSet returns true if OptUpdateGroupSettingsReqVisibility was set.
+func (o OptUpdateGroupSettingsReqVisibility) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptUpdateGroupSettingsReqVisibility) Reset() {
+	var v UpdateGroupSettingsReqVisibility
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptUpdateGroupSettingsReqVisibility) SetTo(v UpdateGroupSettingsReqVisibility) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptUpdateGroupSettingsReqVisibility) Get() (v UpdateGroupSettingsReqVisibility, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptUpdateGroupSettingsReqVisibility) Or(d UpdateGroupSettingsReqVisibility) UpdateGroupSettingsReqVisibility {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // Ref: #/components/schemas/OrganizationCreate
 type OrganizationCreate struct {
 	ID        uuid.UUID `json:"id"`
@@ -2362,16 +3982,23 @@ func (s *R400) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
+func (*R400) createGroupRes()                  {}
+func (*R400) createGroupSettingsRes()          {}
 func (*R400) createIntegrationRes()            {}
 func (*R400) createMembershipRes()             {}
 func (*R400) createOrganizationRes()           {}
 func (*R400) createSessionRes()                {}
 func (*R400) createUserRes()                   {}
+func (*R400) deleteGroupRes()                  {}
+func (*R400) deleteGroupSettingsRes()          {}
 func (*R400) deleteIntegrationRes()            {}
 func (*R400) deleteMembershipRes()             {}
 func (*R400) deleteOrganizationRes()           {}
 func (*R400) deleteSessionRes()                {}
 func (*R400) deleteUserRes()                   {}
+func (*R400) listGroupMembershipsRes()         {}
+func (*R400) listGroupRes()                    {}
+func (*R400) listGroupSettingsRes()            {}
 func (*R400) listIntegrationRes()              {}
 func (*R400) listMembershipRes()               {}
 func (*R400) listOrganizationIntegrationsRes() {}
@@ -2381,8 +4008,13 @@ func (*R400) listSessionRes()                  {}
 func (*R400) listUserMembershipsRes()          {}
 func (*R400) listUserRes()                     {}
 func (*R400) listUserSessionsRes()             {}
+func (*R400) readGroupRes()                    {}
+func (*R400) readGroupSettingRes()             {}
+func (*R400) readGroupSettingsGroupRes()       {}
+func (*R400) readGroupSettingsRes()            {}
 func (*R400) readIntegrationOrganizationRes()  {}
 func (*R400) readIntegrationRes()              {}
+func (*R400) readMembershipGroupRes()          {}
 func (*R400) readMembershipOrganizationRes()   {}
 func (*R400) readMembershipRes()               {}
 func (*R400) readMembershipUserRes()           {}
@@ -2390,6 +4022,8 @@ func (*R400) readOrganizationRes()             {}
 func (*R400) readSessionRes()                  {}
 func (*R400) readSessionUsersRes()             {}
 func (*R400) readUserRes()                     {}
+func (*R400) updateGroupRes()                  {}
+func (*R400) updateGroupSettingsRes()          {}
 func (*R400) updateIntegrationRes()            {}
 func (*R400) updateMembershipRes()             {}
 func (*R400) updateOrganizationRes()           {}
@@ -2432,11 +4066,16 @@ func (s *R404) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
+func (*R404) deleteGroupRes()                  {}
+func (*R404) deleteGroupSettingsRes()          {}
 func (*R404) deleteIntegrationRes()            {}
 func (*R404) deleteMembershipRes()             {}
 func (*R404) deleteOrganizationRes()           {}
 func (*R404) deleteSessionRes()                {}
 func (*R404) deleteUserRes()                   {}
+func (*R404) listGroupMembershipsRes()         {}
+func (*R404) listGroupRes()                    {}
+func (*R404) listGroupSettingsRes()            {}
 func (*R404) listIntegrationRes()              {}
 func (*R404) listMembershipRes()               {}
 func (*R404) listOrganizationIntegrationsRes() {}
@@ -2446,8 +4085,13 @@ func (*R404) listSessionRes()                  {}
 func (*R404) listUserMembershipsRes()          {}
 func (*R404) listUserRes()                     {}
 func (*R404) listUserSessionsRes()             {}
+func (*R404) readGroupRes()                    {}
+func (*R404) readGroupSettingRes()             {}
+func (*R404) readGroupSettingsGroupRes()       {}
+func (*R404) readGroupSettingsRes()            {}
 func (*R404) readIntegrationOrganizationRes()  {}
 func (*R404) readIntegrationRes()              {}
+func (*R404) readMembershipGroupRes()          {}
 func (*R404) readMembershipOrganizationRes()   {}
 func (*R404) readMembershipRes()               {}
 func (*R404) readMembershipUserRes()           {}
@@ -2455,6 +4099,8 @@ func (*R404) readOrganizationRes()             {}
 func (*R404) readSessionRes()                  {}
 func (*R404) readSessionUsersRes()             {}
 func (*R404) readUserRes()                     {}
+func (*R404) updateGroupRes()                  {}
+func (*R404) updateGroupSettingsRes()          {}
 func (*R404) updateIntegrationRes()            {}
 func (*R404) updateMembershipRes()             {}
 func (*R404) updateOrganizationRes()           {}
@@ -2497,16 +4143,23 @@ func (s *R409) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
+func (*R409) createGroupRes()                  {}
+func (*R409) createGroupSettingsRes()          {}
 func (*R409) createIntegrationRes()            {}
 func (*R409) createMembershipRes()             {}
 func (*R409) createOrganizationRes()           {}
 func (*R409) createSessionRes()                {}
 func (*R409) createUserRes()                   {}
+func (*R409) deleteGroupRes()                  {}
+func (*R409) deleteGroupSettingsRes()          {}
 func (*R409) deleteIntegrationRes()            {}
 func (*R409) deleteMembershipRes()             {}
 func (*R409) deleteOrganizationRes()           {}
 func (*R409) deleteSessionRes()                {}
 func (*R409) deleteUserRes()                   {}
+func (*R409) listGroupMembershipsRes()         {}
+func (*R409) listGroupRes()                    {}
+func (*R409) listGroupSettingsRes()            {}
 func (*R409) listIntegrationRes()              {}
 func (*R409) listMembershipRes()               {}
 func (*R409) listOrganizationIntegrationsRes() {}
@@ -2516,8 +4169,13 @@ func (*R409) listSessionRes()                  {}
 func (*R409) listUserMembershipsRes()          {}
 func (*R409) listUserRes()                     {}
 func (*R409) listUserSessionsRes()             {}
+func (*R409) readGroupRes()                    {}
+func (*R409) readGroupSettingRes()             {}
+func (*R409) readGroupSettingsGroupRes()       {}
+func (*R409) readGroupSettingsRes()            {}
 func (*R409) readIntegrationOrganizationRes()  {}
 func (*R409) readIntegrationRes()              {}
+func (*R409) readMembershipGroupRes()          {}
 func (*R409) readMembershipOrganizationRes()   {}
 func (*R409) readMembershipRes()               {}
 func (*R409) readMembershipUserRes()           {}
@@ -2525,6 +4183,8 @@ func (*R409) readOrganizationRes()             {}
 func (*R409) readSessionRes()                  {}
 func (*R409) readSessionUsersRes()             {}
 func (*R409) readUserRes()                     {}
+func (*R409) updateGroupRes()                  {}
+func (*R409) updateGroupSettingsRes()          {}
 func (*R409) updateIntegrationRes()            {}
 func (*R409) updateMembershipRes()             {}
 func (*R409) updateOrganizationRes()           {}
@@ -2567,16 +4227,23 @@ func (s *R500) SetErrors(val jx.Raw) {
 	s.Errors = val
 }
 
+func (*R500) createGroupRes()                  {}
+func (*R500) createGroupSettingsRes()          {}
 func (*R500) createIntegrationRes()            {}
 func (*R500) createMembershipRes()             {}
 func (*R500) createOrganizationRes()           {}
 func (*R500) createSessionRes()                {}
 func (*R500) createUserRes()                   {}
+func (*R500) deleteGroupRes()                  {}
+func (*R500) deleteGroupSettingsRes()          {}
 func (*R500) deleteIntegrationRes()            {}
 func (*R500) deleteMembershipRes()             {}
 func (*R500) deleteOrganizationRes()           {}
 func (*R500) deleteSessionRes()                {}
 func (*R500) deleteUserRes()                   {}
+func (*R500) listGroupMembershipsRes()         {}
+func (*R500) listGroupRes()                    {}
+func (*R500) listGroupSettingsRes()            {}
 func (*R500) listIntegrationRes()              {}
 func (*R500) listMembershipRes()               {}
 func (*R500) listOrganizationIntegrationsRes() {}
@@ -2586,8 +4253,13 @@ func (*R500) listSessionRes()                  {}
 func (*R500) listUserMembershipsRes()          {}
 func (*R500) listUserRes()                     {}
 func (*R500) listUserSessionsRes()             {}
+func (*R500) readGroupRes()                    {}
+func (*R500) readGroupSettingRes()             {}
+func (*R500) readGroupSettingsGroupRes()       {}
+func (*R500) readGroupSettingsRes()            {}
 func (*R500) readIntegrationOrganizationRes()  {}
 func (*R500) readIntegrationRes()              {}
+func (*R500) readMembershipGroupRes()          {}
 func (*R500) readMembershipOrganizationRes()   {}
 func (*R500) readMembershipRes()               {}
 func (*R500) readMembershipUserRes()           {}
@@ -2595,6 +4267,8 @@ func (*R500) readOrganizationRes()             {}
 func (*R500) readSessionRes()                  {}
 func (*R500) readSessionUsersRes()             {}
 func (*R500) readUserRes()                     {}
+func (*R500) updateGroupRes()                  {}
+func (*R500) updateGroupSettingsRes()          {}
 func (*R500) updateIntegrationRes()            {}
 func (*R500) updateMembershipRes()             {}
 func (*R500) updateOrganizationRes()           {}
@@ -3426,6 +5100,229 @@ func (s *SessionUsersRead) SetSuspendedAt(val OptDateTime) {
 
 func (*SessionUsersRead) readSessionUsersRes() {}
 
+type UpdateGroupReq struct {
+	Name        OptString   `json:"name"`
+	Description OptString   `json:"description"`
+	LogoURL     OptString   `json:"logo_url"`
+	Setting     OptUUID     `json:"setting"`
+	Memberships []uuid.UUID `json:"memberships"`
+}
+
+// GetName returns the value of Name.
+func (s *UpdateGroupReq) GetName() OptString {
+	return s.Name
+}
+
+// GetDescription returns the value of Description.
+func (s *UpdateGroupReq) GetDescription() OptString {
+	return s.Description
+}
+
+// GetLogoURL returns the value of LogoURL.
+func (s *UpdateGroupReq) GetLogoURL() OptString {
+	return s.LogoURL
+}
+
+// GetSetting returns the value of Setting.
+func (s *UpdateGroupReq) GetSetting() OptUUID {
+	return s.Setting
+}
+
+// GetMemberships returns the value of Memberships.
+func (s *UpdateGroupReq) GetMemberships() []uuid.UUID {
+	return s.Memberships
+}
+
+// SetName sets the value of Name.
+func (s *UpdateGroupReq) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetDescription sets the value of Description.
+func (s *UpdateGroupReq) SetDescription(val OptString) {
+	s.Description = val
+}
+
+// SetLogoURL sets the value of LogoURL.
+func (s *UpdateGroupReq) SetLogoURL(val OptString) {
+	s.LogoURL = val
+}
+
+// SetSetting sets the value of Setting.
+func (s *UpdateGroupReq) SetSetting(val OptUUID) {
+	s.Setting = val
+}
+
+// SetMemberships sets the value of Memberships.
+func (s *UpdateGroupReq) SetMemberships(val []uuid.UUID) {
+	s.Memberships = val
+}
+
+type UpdateGroupSettingsReq struct {
+	UpdatedAt  OptDateTime                         `json:"updated_at"`
+	CreatedBy  OptInt                              `json:"created_by"`
+	UpdatedBy  OptInt                              `json:"updated_by"`
+	Visibility OptUpdateGroupSettingsReqVisibility `json:"visibility"`
+	JoinPolicy OptUpdateGroupSettingsReqJoinPolicy `json:"join_policy"`
+	Group      OptUUID                             `json:"group"`
+}
+
+// GetUpdatedAt returns the value of UpdatedAt.
+func (s *UpdateGroupSettingsReq) GetUpdatedAt() OptDateTime {
+	return s.UpdatedAt
+}
+
+// GetCreatedBy returns the value of CreatedBy.
+func (s *UpdateGroupSettingsReq) GetCreatedBy() OptInt {
+	return s.CreatedBy
+}
+
+// GetUpdatedBy returns the value of UpdatedBy.
+func (s *UpdateGroupSettingsReq) GetUpdatedBy() OptInt {
+	return s.UpdatedBy
+}
+
+// GetVisibility returns the value of Visibility.
+func (s *UpdateGroupSettingsReq) GetVisibility() OptUpdateGroupSettingsReqVisibility {
+	return s.Visibility
+}
+
+// GetJoinPolicy returns the value of JoinPolicy.
+func (s *UpdateGroupSettingsReq) GetJoinPolicy() OptUpdateGroupSettingsReqJoinPolicy {
+	return s.JoinPolicy
+}
+
+// GetGroup returns the value of Group.
+func (s *UpdateGroupSettingsReq) GetGroup() OptUUID {
+	return s.Group
+}
+
+// SetUpdatedAt sets the value of UpdatedAt.
+func (s *UpdateGroupSettingsReq) SetUpdatedAt(val OptDateTime) {
+	s.UpdatedAt = val
+}
+
+// SetCreatedBy sets the value of CreatedBy.
+func (s *UpdateGroupSettingsReq) SetCreatedBy(val OptInt) {
+	s.CreatedBy = val
+}
+
+// SetUpdatedBy sets the value of UpdatedBy.
+func (s *UpdateGroupSettingsReq) SetUpdatedBy(val OptInt) {
+	s.UpdatedBy = val
+}
+
+// SetVisibility sets the value of Visibility.
+func (s *UpdateGroupSettingsReq) SetVisibility(val OptUpdateGroupSettingsReqVisibility) {
+	s.Visibility = val
+}
+
+// SetJoinPolicy sets the value of JoinPolicy.
+func (s *UpdateGroupSettingsReq) SetJoinPolicy(val OptUpdateGroupSettingsReqJoinPolicy) {
+	s.JoinPolicy = val
+}
+
+// SetGroup sets the value of Group.
+func (s *UpdateGroupSettingsReq) SetGroup(val OptUUID) {
+	s.Group = val
+}
+
+type UpdateGroupSettingsReqJoinPolicy string
+
+const (
+	UpdateGroupSettingsReqJoinPolicyOPEN                UpdateGroupSettingsReqJoinPolicy = "OPEN"
+	UpdateGroupSettingsReqJoinPolicyINVITEONLY          UpdateGroupSettingsReqJoinPolicy = "INVITE_ONLY"
+	UpdateGroupSettingsReqJoinPolicyAPPLICATIONONLY     UpdateGroupSettingsReqJoinPolicy = "APPLICATION_ONLY"
+	UpdateGroupSettingsReqJoinPolicyINVITEORAPPLICATION UpdateGroupSettingsReqJoinPolicy = "INVITE_OR_APPLICATION"
+)
+
+// AllValues returns all UpdateGroupSettingsReqJoinPolicy values.
+func (UpdateGroupSettingsReqJoinPolicy) AllValues() []UpdateGroupSettingsReqJoinPolicy {
+	return []UpdateGroupSettingsReqJoinPolicy{
+		UpdateGroupSettingsReqJoinPolicyOPEN,
+		UpdateGroupSettingsReqJoinPolicyINVITEONLY,
+		UpdateGroupSettingsReqJoinPolicyAPPLICATIONONLY,
+		UpdateGroupSettingsReqJoinPolicyINVITEORAPPLICATION,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s UpdateGroupSettingsReqJoinPolicy) MarshalText() ([]byte, error) {
+	switch s {
+	case UpdateGroupSettingsReqJoinPolicyOPEN:
+		return []byte(s), nil
+	case UpdateGroupSettingsReqJoinPolicyINVITEONLY:
+		return []byte(s), nil
+	case UpdateGroupSettingsReqJoinPolicyAPPLICATIONONLY:
+		return []byte(s), nil
+	case UpdateGroupSettingsReqJoinPolicyINVITEORAPPLICATION:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *UpdateGroupSettingsReqJoinPolicy) UnmarshalText(data []byte) error {
+	switch UpdateGroupSettingsReqJoinPolicy(data) {
+	case UpdateGroupSettingsReqJoinPolicyOPEN:
+		*s = UpdateGroupSettingsReqJoinPolicyOPEN
+		return nil
+	case UpdateGroupSettingsReqJoinPolicyINVITEONLY:
+		*s = UpdateGroupSettingsReqJoinPolicyINVITEONLY
+		return nil
+	case UpdateGroupSettingsReqJoinPolicyAPPLICATIONONLY:
+		*s = UpdateGroupSettingsReqJoinPolicyAPPLICATIONONLY
+		return nil
+	case UpdateGroupSettingsReqJoinPolicyINVITEORAPPLICATION:
+		*s = UpdateGroupSettingsReqJoinPolicyINVITEORAPPLICATION
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type UpdateGroupSettingsReqVisibility string
+
+const (
+	UpdateGroupSettingsReqVisibilityPUBLIC  UpdateGroupSettingsReqVisibility = "PUBLIC"
+	UpdateGroupSettingsReqVisibilityPRIVATE UpdateGroupSettingsReqVisibility = "PRIVATE"
+)
+
+// AllValues returns all UpdateGroupSettingsReqVisibility values.
+func (UpdateGroupSettingsReqVisibility) AllValues() []UpdateGroupSettingsReqVisibility {
+	return []UpdateGroupSettingsReqVisibility{
+		UpdateGroupSettingsReqVisibilityPUBLIC,
+		UpdateGroupSettingsReqVisibilityPRIVATE,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s UpdateGroupSettingsReqVisibility) MarshalText() ([]byte, error) {
+	switch s {
+	case UpdateGroupSettingsReqVisibilityPUBLIC:
+		return []byte(s), nil
+	case UpdateGroupSettingsReqVisibilityPRIVATE:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *UpdateGroupSettingsReqVisibility) UnmarshalText(data []byte) error {
+	switch UpdateGroupSettingsReqVisibility(data) {
+	case UpdateGroupSettingsReqVisibilityPUBLIC:
+		*s = UpdateGroupSettingsReqVisibilityPUBLIC
+		return nil
+	case UpdateGroupSettingsReqVisibilityPRIVATE:
+		*s = UpdateGroupSettingsReqVisibilityPRIVATE
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 type UpdateIntegrationReq struct {
 	UpdatedAt    OptDateTime `json:"updated_at"`
 	CreatedBy    OptInt      `json:"created_by"`
@@ -3491,6 +5388,7 @@ type UpdateMembershipReq struct {
 	Current      OptBool     `json:"current"`
 	Organization OptUUID     `json:"organization"`
 	User         OptUUID     `json:"user"`
+	Group        OptUUID     `json:"group"`
 }
 
 // GetUpdatedAt returns the value of UpdatedAt.
@@ -3523,6 +5421,11 @@ func (s *UpdateMembershipReq) GetUser() OptUUID {
 	return s.User
 }
 
+// GetGroup returns the value of Group.
+func (s *UpdateMembershipReq) GetGroup() OptUUID {
+	return s.Group
+}
+
 // SetUpdatedAt sets the value of UpdatedAt.
 func (s *UpdateMembershipReq) SetUpdatedAt(val OptDateTime) {
 	s.UpdatedAt = val
@@ -3551,6 +5454,11 @@ func (s *UpdateMembershipReq) SetOrganization(val OptUUID) {
 // SetUser sets the value of User.
 func (s *UpdateMembershipReq) SetUser(val OptUUID) {
 	s.User = val
+}
+
+// SetGroup sets the value of Group.
+func (s *UpdateMembershipReq) SetGroup(val OptUUID) {
+	s.Group = val
 }
 
 type UpdateOrganizationReq struct {

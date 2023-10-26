@@ -11,6 +11,34 @@ import (
 	ht "github.com/ogen-go/ogen/http"
 )
 
+func encodeCreateGroupRequest(
+	req *CreateGroupReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := jx.GetEncoder()
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeCreateGroupSettingsRequest(
+	req *CreateGroupSettingsReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := jx.GetEncoder()
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
 func encodeCreateIntegrationRequest(
 	req *CreateIntegrationReq,
 	r *http.Request,
@@ -69,6 +97,34 @@ func encodeCreateSessionRequest(
 
 func encodeCreateUserRequest(
 	req *CreateUserReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := jx.GetEncoder()
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeUpdateGroupRequest(
+	req *UpdateGroupReq,
+	r *http.Request,
+) error {
+	const contentType = "application/json"
+	e := jx.GetEncoder()
+	{
+		req.Encode(e)
+	}
+	encoded := e.Bytes()
+	ht.SetBody(r, bytes.NewReader(encoded), contentType)
+	return nil
+}
+
+func encodeUpdateGroupSettingsRequest(
+	req *UpdateGroupSettingsReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

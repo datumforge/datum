@@ -8,6 +8,26 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (gr *Group) Setting(ctx context.Context) (*GroupSettings, error) {
+	result, err := gr.Edges.SettingOrErr()
+	if IsNotLoaded(err) {
+		result, err = gr.QuerySetting().Only(ctx)
+	}
+	return result, err
+}
+
+func (gr *Group) Memberships(ctx context.Context) (result []*Membership, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = gr.NamedMemberships(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = gr.Edges.MembershipsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = gr.QueryMemberships().All(ctx)
+	}
+	return result, err
+}
+
 func (i *Integration) Organization(ctx context.Context) (*Organization, error) {
 	result, err := i.Edges.OrganizationOrErr()
 	if IsNotLoaded(err) {
@@ -28,6 +48,14 @@ func (m *Membership) User(ctx context.Context) (*User, error) {
 	result, err := m.Edges.UserOrErr()
 	if IsNotLoaded(err) {
 		result, err = m.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (m *Membership) Group(ctx context.Context) (*Group, error) {
+	result, err := m.Edges.GroupOrErr()
+	if IsNotLoaded(err) {
+		result, err = m.QueryGroup().Only(ctx)
 	}
 	return result, err
 }

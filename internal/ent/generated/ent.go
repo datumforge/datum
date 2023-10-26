@@ -12,6 +12,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -77,11 +79,13 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			integration.Table:  integration.ValidColumn,
-			membership.Table:   membership.ValidColumn,
-			organization.Table: organization.ValidColumn,
-			session.Table:      session.ValidColumn,
-			user.Table:         user.ValidColumn,
+			group.Table:         group.ValidColumn,
+			groupsettings.Table: groupsettings.ValidColumn,
+			integration.Table:   integration.ValidColumn,
+			membership.Table:    membership.ValidColumn,
+			organization.Table:  organization.ValidColumn,
+			session.Table:       session.ValidColumn,
+			user.Table:          user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

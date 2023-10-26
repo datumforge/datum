@@ -60,6 +60,208 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 			switch elem[0] {
+			case 'g': // Prefix: "group"
+				if l := len("group"); len(elem) >= l && elem[0:l] == "group" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case '-': // Prefix: "-settings"
+					if l := len("-settings"); len(elem) >= l && elem[0:l] == "-settings" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleListGroupSettingsRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleCreateGroupSettingsRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET,POST")
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch r.Method {
+							case "DELETE":
+								s.handleDeleteGroupSettingsRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleReadGroupSettingsRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "PATCH":
+								s.handleUpdateGroupSettingsRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET,PATCH")
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/group"
+							if l := len("/group"); len(elem) >= l && elem[0:l] == "/group" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleReadGroupSettingsGroupRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+						}
+					}
+				case 's': // Prefix: "s"
+					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch r.Method {
+						case "GET":
+							s.handleListGroupRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleCreateGroupRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET,POST")
+						}
+
+						return
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch r.Method {
+							case "DELETE":
+								s.handleDeleteGroupRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleReadGroupRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "PATCH":
+								s.handleUpdateGroupRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET,PATCH")
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/"
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								break
+							}
+							switch elem[0] {
+							case 'm': // Prefix: "memberships"
+								if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleListGroupMembershipsRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
+									}
+
+									return
+								}
+							case 's': // Prefix: "setting"
+								if l := len("setting"); len(elem) >= l && elem[0:l] == "setting" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleReadGroupSettingRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
+									}
+
+									return
+								}
+							}
+						}
+					}
+				}
 			case 'i': // Prefix: "integrations"
 				if l := len("integrations"); len(elem) >= l && elem[0:l] == "integrations" {
 					elem = elem[l:]
@@ -207,6 +409,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							break
 						}
 						switch elem[0] {
+						case 'g': // Prefix: "group"
+							if l := len("group"); len(elem) >= l && elem[0:l] == "group" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleReadMembershipGroupRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
 						case 'o': // Prefix: "organization"
 							if l := len("organization"); len(elem) >= l && elem[0:l] == "organization" {
 								elem = elem[l:]
@@ -643,6 +865,254 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				break
 			}
 			switch elem[0] {
+			case 'g': // Prefix: "group"
+				if l := len("group"); len(elem) >= l && elem[0:l] == "group" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case '-': // Prefix: "-settings"
+					if l := len("-settings"); len(elem) >= l && elem[0:l] == "-settings" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = "ListGroupSettings"
+							r.summary = "List GroupSettings"
+							r.operationID = "listGroupSettings"
+							r.pathPattern = "/group-settings"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = "CreateGroupSettings"
+							r.summary = "Create a new GroupSettings"
+							r.operationID = "createGroupSettings"
+							r.pathPattern = "/group-settings"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch method {
+							case "DELETE":
+								r.name = "DeleteGroupSettings"
+								r.summary = "Deletes a GroupSettings by ID"
+								r.operationID = "deleteGroupSettings"
+								r.pathPattern = "/group-settings/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = "ReadGroupSettings"
+								r.summary = "Find a GroupSettings by ID"
+								r.operationID = "readGroupSettings"
+								r.pathPattern = "/group-settings/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "PATCH":
+								r.name = "UpdateGroupSettings"
+								r.summary = "Updates a GroupSettings"
+								r.operationID = "updateGroupSettings"
+								r.pathPattern = "/group-settings/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/group"
+							if l := len("/group"); len(elem) >= l && elem[0:l] == "/group" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ReadGroupSettingsGroup
+									r.name = "ReadGroupSettingsGroup"
+									r.summary = "Find the attached Group"
+									r.operationID = "readGroupSettingsGroup"
+									r.pathPattern = "/group-settings/{id}/group"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+						}
+					}
+				case 's': // Prefix: "s"
+					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							r.name = "ListGroup"
+							r.summary = "List Groups"
+							r.operationID = "listGroup"
+							r.pathPattern = "/groups"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = "CreateGroup"
+							r.summary = "Create a new Group"
+							r.operationID = "createGroup"
+							r.pathPattern = "/groups"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+					switch elem[0] {
+					case '/': // Prefix: "/"
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						// Param: "id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch method {
+							case "DELETE":
+								r.name = "DeleteGroup"
+								r.summary = "Deletes a Group by ID"
+								r.operationID = "deleteGroup"
+								r.pathPattern = "/groups/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = "ReadGroup"
+								r.summary = "Find a Group by ID"
+								r.operationID = "readGroup"
+								r.pathPattern = "/groups/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "PATCH":
+								r.name = "UpdateGroup"
+								r.summary = "Updates a Group"
+								r.operationID = "updateGroup"
+								r.pathPattern = "/groups/{id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/"
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								break
+							}
+							switch elem[0] {
+							case 'm': // Prefix: "memberships"
+								if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									switch method {
+									case "GET":
+										// Leaf: ListGroupMemberships
+										r.name = "ListGroupMemberships"
+										r.summary = "List attached Memberships"
+										r.operationID = "listGroupMemberships"
+										r.pathPattern = "/groups/{id}/memberships"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+							case 's': // Prefix: "setting"
+								if l := len("setting"); len(elem) >= l && elem[0:l] == "setting" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									switch method {
+									case "GET":
+										// Leaf: ReadGroupSetting
+										r.name = "ReadGroupSetting"
+										r.summary = "Find the attached GroupSettings"
+										r.operationID = "readGroupSetting"
+										r.pathPattern = "/groups/{id}/setting"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+							}
+						}
+					}
+				}
 			case 'i': // Prefix: "integrations"
 				if l := len("integrations"); len(elem) >= l && elem[0:l] == "integrations" {
 					elem = elem[l:]
@@ -832,6 +1302,28 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							break
 						}
 						switch elem[0] {
+						case 'g': // Prefix: "group"
+							if l := len("group"); len(elem) >= l && elem[0:l] == "group" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ReadMembershipGroup
+									r.name = "ReadMembershipGroup"
+									r.summary = "Find the attached Group"
+									r.operationID = "readMembershipGroup"
+									r.pathPattern = "/memberships/{id}/group"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
 						case 'o': // Prefix: "organization"
 							if l := len("organization"); len(elem) >= l && elem[0:l] == "organization" {
 								elem = elem[l:]

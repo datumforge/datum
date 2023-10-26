@@ -29,7 +29,7 @@ func (Membership) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("organization", Organization.Type).Ref("memberships").Unique().Required(),
 		edge.From("user", User.Type).Ref("memberships").Unique().Required(),
-		edge.From("group", User.Type).Ref("memberships").Unique().Required(),
+		edge.From("group", Group.Type).Ref("memberships").Unique().Required(),
 	}
 }
 

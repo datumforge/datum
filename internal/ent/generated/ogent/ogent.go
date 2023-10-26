@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -28,6 +30,467 @@ func rawError(err error) jx.Raw {
 	var e jx.Encoder
 	e.Str(err.Error())
 	return e.Bytes()
+}
+
+// CreateGroup handles POST /groups requests.
+func (h *OgentHandler) CreateGroup(ctx context.Context, req *CreateGroupReq) (CreateGroupRes, error) {
+	b := h.client.Group.Create()
+	// Add all fields.
+	b.SetName(req.Name)
+	b.SetDescription(req.Description)
+	b.SetLogoURL(req.LogoURL)
+	// Add all edges.
+	b.SetSettingID(req.Setting)
+	b.AddMembershipIDs(req.Memberships...)
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.Group.Query().Where(group.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewGroupCreate(e), nil
+}
+
+// ReadGroup handles GET /groups/{id} requests.
+func (h *OgentHandler) ReadGroup(ctx context.Context, params ReadGroupParams) (ReadGroupRes, error) {
+	q := h.client.Group.Query().Where(group.IDEQ(params.ID))
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewGroupRead(e), nil
+}
+
+// UpdateGroup handles PATCH /groups/{id} requests.
+func (h *OgentHandler) UpdateGroup(ctx context.Context, req *UpdateGroupReq, params UpdateGroupParams) (UpdateGroupRes, error) {
+	b := h.client.Group.UpdateOneID(params.ID)
+	// Add all fields.
+	if v, ok := req.Name.Get(); ok {
+		b.SetName(v)
+	}
+	if v, ok := req.Description.Get(); ok {
+		b.SetDescription(v)
+	}
+	if v, ok := req.LogoURL.Get(); ok {
+		b.SetLogoURL(v)
+	}
+	// Add all edges.
+	if v, ok := req.Setting.Get(); ok {
+		b.SetSettingID(v)
+	}
+	if req.Memberships != nil {
+		b.ClearMemberships().AddMembershipIDs(req.Memberships...)
+	}
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.Group.Query().Where(group.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewGroupUpdate(e), nil
+}
+
+// DeleteGroup handles DELETE /groups/{id} requests.
+func (h *OgentHandler) DeleteGroup(ctx context.Context, params DeleteGroupParams) (DeleteGroupRes, error) {
+	err := h.client.Group.DeleteOneID(params.ID).Exec(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return new(DeleteGroupNoContent), nil
+
+}
+
+// ListGroup handles GET /groups requests.
+func (h *OgentHandler) ListGroup(ctx context.Context, params ListGroupParams) (ListGroupRes, error) {
+	q := h.client.Group.Query()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewGroupLists(es)
+	return (*ListGroupOKApplicationJSON)(&r), nil
+}
+
+// ReadGroupSetting handles GET /groups/{id}/setting requests.
+func (h *OgentHandler) ReadGroupSetting(ctx context.Context, params ReadGroupSettingParams) (ReadGroupSettingRes, error) {
+	q := h.client.Group.Query().Where(group.IDEQ(params.ID)).QuerySetting()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewGroupSettingRead(e), nil
+}
+
+// ListGroupMemberships handles GET /groups/{id}/memberships requests.
+func (h *OgentHandler) ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (ListGroupMembershipsRes, error) {
+	q := h.client.Group.Query().Where(group.IDEQ(params.ID)).QueryMemberships()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewGroupMembershipsLists(es)
+	return (*ListGroupMembershipsOKApplicationJSON)(&r), nil
+}
+
+// CreateGroupSettings handles POST /group-settings-slice requests.
+func (h *OgentHandler) CreateGroupSettings(ctx context.Context, req *CreateGroupSettingsReq) (CreateGroupSettingsRes, error) {
+	b := h.client.GroupSettings.Create()
+	// Add all fields.
+	b.SetCreatedAt(req.CreatedAt)
+	b.SetUpdatedAt(req.UpdatedAt)
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	b.SetVisibility(groupsettings.Visibility(req.Visibility))
+	b.SetJoinPolicy(groupsettings.JoinPolicy(req.JoinPolicy))
+	// Add all edges.
+	if v, ok := req.Group.Get(); ok {
+		b.SetGroupID(v)
+	}
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.GroupSettings.Query().Where(groupsettings.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewGroupSettingsCreate(e), nil
+}
+
+// ReadGroupSettings handles GET /group-settings-slice/{id} requests.
+func (h *OgentHandler) ReadGroupSettings(ctx context.Context, params ReadGroupSettingsParams) (ReadGroupSettingsRes, error) {
+	q := h.client.GroupSettings.Query().Where(groupsettings.IDEQ(params.ID))
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewGroupSettingsRead(e), nil
+}
+
+// UpdateGroupSettings handles PATCH /group-settings-slice/{id} requests.
+func (h *OgentHandler) UpdateGroupSettings(ctx context.Context, req *UpdateGroupSettingsReq, params UpdateGroupSettingsParams) (UpdateGroupSettingsRes, error) {
+	b := h.client.GroupSettings.UpdateOneID(params.ID)
+	// Add all fields.
+	if v, ok := req.UpdatedAt.Get(); ok {
+		b.SetUpdatedAt(v)
+	}
+	if v, ok := req.CreatedBy.Get(); ok {
+		b.SetCreatedBy(v)
+	}
+	if v, ok := req.UpdatedBy.Get(); ok {
+		b.SetUpdatedBy(v)
+	}
+	if v, ok := req.Visibility.Get(); ok {
+		b.SetVisibility(groupsettings.Visibility(v))
+	}
+	if v, ok := req.JoinPolicy.Get(); ok {
+		b.SetJoinPolicy(groupsettings.JoinPolicy(v))
+	}
+	// Add all edges.
+	if v, ok := req.Group.Get(); ok {
+		b.SetGroupID(v)
+	}
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.GroupSettings.Query().Where(groupsettings.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewGroupSettingsUpdate(e), nil
+}
+
+// DeleteGroupSettings handles DELETE /group-settings-slice/{id} requests.
+func (h *OgentHandler) DeleteGroupSettings(ctx context.Context, params DeleteGroupSettingsParams) (DeleteGroupSettingsRes, error) {
+	err := h.client.GroupSettings.DeleteOneID(params.ID).Exec(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return new(DeleteGroupSettingsNoContent), nil
+
+}
+
+// ListGroupSettings handles GET /group-settings-slice requests.
+func (h *OgentHandler) ListGroupSettings(ctx context.Context, params ListGroupSettingsParams) (ListGroupSettingsRes, error) {
+	q := h.client.GroupSettings.Query()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewGroupSettingsLists(es)
+	return (*ListGroupSettingsOKApplicationJSON)(&r), nil
+}
+
+// ReadGroupSettingsGroup handles GET /group-settings-slice/{id}/group requests.
+func (h *OgentHandler) ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (ReadGroupSettingsGroupRes, error) {
+	q := h.client.GroupSettings.Query().Where(groupsettings.IDEQ(params.ID)).QueryGroup()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewGroupSettingsGroupRead(e), nil
 }
 
 // CreateIntegration handles POST /integrations requests.
@@ -262,6 +725,7 @@ func (h *OgentHandler) CreateMembership(ctx context.Context, req *CreateMembersh
 	// Add all edges.
 	b.SetOrganizationID(req.Organization)
 	b.SetUserID(req.User)
+	b.SetGroupID(req.Group)
 	// Persist to storage.
 	e, err := b.Save(ctx)
 	if err != nil {
@@ -341,6 +805,9 @@ func (h *OgentHandler) UpdateMembership(ctx context.Context, req *UpdateMembersh
 	}
 	if v, ok := req.User.Get(); ok {
 		b.SetUserID(v)
+	}
+	if v, ok := req.Group.Get(); ok {
+		b.SetGroupID(v)
 	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -486,6 +953,32 @@ func (h *OgentHandler) ReadMembershipUser(ctx context.Context, params ReadMember
 		}
 	}
 	return NewMembershipUserRead(e), nil
+}
+
+// ReadMembershipGroup handles GET /memberships/{id}/group requests.
+func (h *OgentHandler) ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (ReadMembershipGroupRes, error) {
+	q := h.client.Membership.Query().Where(membership.IDEQ(params.ID)).QueryGroup()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewMembershipGroupRead(e), nil
 }
 
 // CreateOrganization handles POST /organizations requests.

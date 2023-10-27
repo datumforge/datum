@@ -4,7 +4,7 @@ set -ueo pipefail
 repoRoot=$(git rev-parse --show-toplevel)
 entSchemaDir=$repoRoot/internal/ent/schema
 graphSchemaDir=schema
-schemas=$(find $entSchemaDir -name '*.go')
+schemas=$(find $entSchemaDir -name '*.go' -exec ./skip_file.sh {} \;)
 
 for file in $schemas
 do

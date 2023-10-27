@@ -24,6 +24,7 @@ func main() {
 	}
 	// Migrate diff options.
 	opts := []schema.MigrateOption{
+		schema.WithGlobalUniqueID(true),             // ensures uniqueness across tables
 		schema.WithDir(dir),                         // provide migration directory
 		schema.WithMigrationMode(schema.ModeReplay), // provide migration mode
 		schema.WithDialect(dialect.SQLite),          // Ent dialect to use

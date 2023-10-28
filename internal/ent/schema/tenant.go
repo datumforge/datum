@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/google/uuid"
 )
 

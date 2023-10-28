@@ -8,7 +8,8 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/google/uuid"
 )
 
@@ -17,12 +18,12 @@ type Group struct {
 	ent.Schema
 }
 
-// Mixin of the Group
+// Mixin of the User
 func (Group) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		AuditMixin{},
-		BaseMixin{},
-		TenantMixin{},
+		mixin.AuditMixin{},
+		mixin.BaseMixin{},
+		mixin.TenantMixin{},
 	}
 }
 

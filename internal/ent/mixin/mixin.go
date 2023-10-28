@@ -1,4 +1,4 @@
-package schema
+package mixin
 
 import (
 	"entgo.io/ent"
@@ -6,7 +6,9 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
-	"github.com/datumforge/datum/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/schema"
+
 	"github.com/google/uuid"
 )
 
@@ -46,7 +48,7 @@ func (TenantMixin) Fields() []ent.Field {
 // Edges for all schemas that embed TenantMixin.
 func (TenantMixin) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("tenant", Tenant.Type).
+		edge.To("tenant", schema.Tenant.Type).
 			Field("tenant_id").
 			Unique().
 			Required().

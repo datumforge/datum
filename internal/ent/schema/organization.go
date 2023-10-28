@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/google/uuid"
 )
 
@@ -50,6 +51,6 @@ func (Organization) Annotations() []schema.Annotation {
 // Mixin of the Organization
 func (Organization) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		AuditMixin{},
+		mixin.AuditMixin{},
 	}
 }

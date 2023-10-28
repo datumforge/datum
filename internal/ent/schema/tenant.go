@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/privacy/rule"
+	"github.com/google/uuid"
 )
 
 // Tenant holds the schema definition for the Tenant entity.
@@ -19,6 +20,7 @@ type Tenant struct {
 // Fields of the Tenant.
 func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
 		field.String("name").
 			NotEmpty(),
 	}

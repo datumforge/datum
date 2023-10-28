@@ -19,6 +19,7 @@ type CreateGroupInput struct {
 	Name          string
 	Description   *string
 	LogoURL       string
+	TenantID      uuid.UUID
 	SettingID     uuid.UUID
 	MembershipIDs []uuid.UUID
 	UserIDs       []uuid.UUID
@@ -43,6 +44,7 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 		m.SetDescription(*v)
 	}
 	m.SetLogoURL(i.LogoURL)
+	m.SetTenantID(i.TenantID)
 	m.SetSettingID(i.SettingID)
 	if v := i.MembershipIDs; len(v) > 0 {
 		m.AddMembershipIDs(v...)
@@ -632,6 +634,46 @@ func (c *SessionUpdateOne) SetInput(i UpdateSessionInput) *SessionUpdateOne {
 	return c
 }
 
+// CreateTenantInput represents a mutation input for creating tenants.
+type CreateTenantInput struct {
+	Name string
+}
+
+// Mutate applies the CreateTenantInput on the TenantMutation builder.
+func (i *CreateTenantInput) Mutate(m *TenantMutation) {
+	m.SetName(i.Name)
+}
+
+// SetInput applies the change-set in the CreateTenantInput on the TenantCreate builder.
+func (c *TenantCreate) SetInput(i CreateTenantInput) *TenantCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTenantInput represents a mutation input for updating tenants.
+type UpdateTenantInput struct {
+	Name *string
+}
+
+// Mutate applies the UpdateTenantInput on the TenantMutation builder.
+func (i *UpdateTenantInput) Mutate(m *TenantMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTenantInput on the TenantUpdate builder.
+func (c *TenantUpdate) SetInput(i UpdateTenantInput) *TenantUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTenantInput on the TenantUpdateOne builder.
+func (c *TenantUpdateOne) SetInput(i UpdateTenantInput) *TenantUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
 	CreatedAt       *time.Time
@@ -649,6 +691,7 @@ type CreateUserInput struct {
 	SilencedAt      *time.Time
 	SuspendedAt     *time.Time
 	RecoveryCode    *string
+	TenantID        uuid.UUID
 	MembershipIDs   []uuid.UUID
 	SessionIDs      []uuid.UUID
 	GroupIDs        []uuid.UUID
@@ -695,6 +738,7 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.RecoveryCode; v != nil {
 		m.SetRecoveryCode(*v)
 	}
+	m.SetTenantID(i.TenantID)
 	if v := i.MembershipIDs; len(v) > 0 {
 		m.AddMembershipIDs(v...)
 	}

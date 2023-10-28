@@ -43,7 +43,7 @@ func (User) Fields() []ent.Field {
 				_, err := mail.ParseAddress(email)
 				return err
 			}),
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("first_name").NotEmpty().MaxLen(nameMaxLen),
 		field.String("last_name").NotEmpty().MaxLen(nameMaxLen),
 		field.String("display_name").

@@ -37,6 +37,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldUpdatedAt:   {Type: field.TypeTime, Column: group.FieldUpdatedAt},
 			group.FieldCreatedBy:   {Type: field.TypeInt, Column: group.FieldCreatedBy},
 			group.FieldUpdatedBy:   {Type: field.TypeInt, Column: group.FieldUpdatedBy},
+			group.FieldTenantID:    {Type: field.TypeUUID, Column: group.FieldTenantID},
 			group.FieldName:        {Type: field.TypeString, Column: group.FieldName},
 			group.FieldDescription: {Type: field.TypeString, Column: group.FieldDescription},
 			group.FieldLogoURL:     {Type: field.TypeString, Column: group.FieldLogoURL},
@@ -168,6 +169,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
 			user.FieldCreatedBy:       {Type: field.TypeInt, Column: user.FieldCreatedBy},
 			user.FieldUpdatedBy:       {Type: field.TypeInt, Column: user.FieldUpdatedBy},
+			user.FieldTenantID:        {Type: field.TypeUUID, Column: user.FieldTenantID},
 			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
 			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
 			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
@@ -181,6 +183,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldRecoveryCode:    {Type: field.TypeString, Column: user.FieldRecoveryCode},
 		},
 	}
+	graph.MustAddE(
+		"tenant",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   group.TenantTable,
+			Columns: []string{group.TenantColumn},
+			Bidi:    false,
+		},
+		"Group",
+		"Tenant",
+	)
 	graph.MustAddE(
 		"setting",
 		&sqlgraph.EdgeSpec{
@@ -314,6 +328,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"User",
 	)
 	graph.MustAddE(
+		"tenant",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   user.TenantTable,
+			Columns: []string{user.TenantColumn},
+			Bidi:    false,
+		},
+		"User",
+		"Tenant",
+	)
+	graph.MustAddE(
 		"memberships",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -418,6 +444,11 @@ func (f *GroupFilter) WhereUpdatedBy(p entql.IntP) {
 	f.Where(p.Field(group.FieldUpdatedBy))
 }
 
+// WhereTenantID applies the entql [16]byte predicate on the tenant_id field.
+func (f *GroupFilter) WhereTenantID(p entql.ValueP) {
+	f.Where(p.Field(group.FieldTenantID))
+}
+
 // WhereName applies the entql string predicate on the name field.
 func (f *GroupFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(group.FieldName))
@@ -431,6 +462,20 @@ func (f *GroupFilter) WhereDescription(p entql.StringP) {
 // WhereLogoURL applies the entql string predicate on the logo_url field.
 func (f *GroupFilter) WhereLogoURL(p entql.StringP) {
 	f.Where(p.Field(group.FieldLogoURL))
+}
+
+// WhereHasTenant applies a predicate to check if query has an edge tenant.
+func (f *GroupFilter) WhereHasTenant() {
+	f.Where(entql.HasEdge("tenant"))
+}
+
+// WhereHasTenantWith applies a predicate to check if query has an edge tenant with a given conditions (other predicates).
+func (f *GroupFilter) WhereHasTenantWith(preds ...predicate.Tenant) {
+	f.Where(entql.HasEdgeWith("tenant", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }
 
 // WhereHasSetting applies a predicate to check if query has an edge setting.
@@ -1052,6 +1097,11 @@ func (f *UserFilter) WhereUpdatedBy(p entql.IntP) {
 	f.Where(p.Field(user.FieldUpdatedBy))
 }
 
+// WhereTenantID applies the entql [16]byte predicate on the tenant_id field.
+func (f *UserFilter) WhereTenantID(p entql.ValueP) {
+	f.Where(p.Field(user.FieldTenantID))
+}
+
 // WhereEmail applies the entql string predicate on the email field.
 func (f *UserFilter) WhereEmail(p entql.StringP) {
 	f.Where(p.Field(user.FieldEmail))
@@ -1105,6 +1155,20 @@ func (f *UserFilter) WhereSuspendedAt(p entql.TimeP) {
 // WhereRecoveryCode applies the entql string predicate on the recovery_code field.
 func (f *UserFilter) WhereRecoveryCode(p entql.StringP) {
 	f.Where(p.Field(user.FieldRecoveryCode))
+}
+
+// WhereHasTenant applies a predicate to check if query has an edge tenant.
+func (f *UserFilter) WhereHasTenant() {
+	f.Where(entql.HasEdge("tenant"))
+}
+
+// WhereHasTenantWith applies a predicate to check if query has an edge tenant with a given conditions (other predicates).
+func (f *UserFilter) WhereHasTenantWith(preds ...predicate.Tenant) {
+	f.Where(entql.HasEdgeWith("tenant", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }
 
 // WhereHasMemberships applies a predicate to check if query has an edge memberships.

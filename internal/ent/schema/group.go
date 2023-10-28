@@ -29,7 +29,7 @@ func (Group) Mixin() []ent.Mixin {
 // Fields of the Group.
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("name").NotEmpty(),
 		field.String("description").Default("").Annotations(
 			entgql.Skip(entgql.SkipWhereInput),

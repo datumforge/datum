@@ -38,6 +38,20 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "tenant":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TenantClient{config: gr.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			gr.withTenant = query
+			if _, ok := fieldSeen[group.FieldTenantID]; !ok {
+				selectedFields = append(selectedFields, group.FieldTenantID)
+				fieldSeen[group.FieldTenantID] = struct{}{}
+			}
 		case "setting":
 			var (
 				alias = field.Alias
@@ -91,6 +105,11 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			if _, ok := fieldSeen[group.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, group.FieldUpdatedBy)
 				fieldSeen[group.FieldUpdatedBy] = struct{}{}
+			}
+		case "tenantID":
+			if _, ok := fieldSeen[group.FieldTenantID]; !ok {
+				selectedFields = append(selectedFields, group.FieldTenantID)
+				fieldSeen[group.FieldTenantID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[group.FieldName]; !ok {
@@ -780,6 +799,20 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "tenant":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TenantClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.withTenant = query
+			if _, ok := fieldSeen[user.FieldTenantID]; !ok {
+				selectedFields = append(selectedFields, user.FieldTenantID)
+				fieldSeen[user.FieldTenantID] = struct{}{}
+			}
 		case "memberships":
 			var (
 				alias = field.Alias
@@ -835,6 +868,11 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if _, ok := fieldSeen[user.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, user.FieldUpdatedBy)
 				fieldSeen[user.FieldUpdatedBy] = struct{}{}
+			}
+		case "tenantID":
+			if _, ok := fieldSeen[user.FieldTenantID]; !ok {
+				selectedFields = append(selectedFields, user.FieldTenantID)
+				fieldSeen[user.FieldTenantID] = struct{}{}
 			}
 		case "email":
 			if _, ok := fieldSeen[user.FieldEmail]; !ok {

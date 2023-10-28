@@ -5,7 +5,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/privacy/rule"
@@ -20,7 +22,7 @@ type Tenant struct {
 // Fields of the Tenant.
 func (Tenant) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("name").
 			NotEmpty(),
 	}
@@ -42,5 +44,13 @@ func (Tenant) Policy() ent.Policy {
 			rule.AllowIfAdmin(),
 			privacy.AlwaysDenyRule(),
 		},
+	}
+}
+
+// Annotations of the Tenant
+func (Tenant) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }

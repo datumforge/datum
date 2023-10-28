@@ -53,6 +53,11 @@ func (r *queryResolver) Sessions(ctx context.Context) ([]*generated.Session, err
 	return r.client.Session.Query().AllX(ctx), nil
 }
 
+// Tenants is the resolver for the tenants field.
+func (r *queryResolver) Tenants(ctx context.Context) ([]*generated.Tenant, error) {
+	panic(fmt.Errorf("not implemented: Tenants - tenants"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*generated.User, error) {
 	return r.client.User.Query().AllX(ctx), nil

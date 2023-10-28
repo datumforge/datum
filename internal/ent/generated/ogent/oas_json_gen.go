@@ -45,6 +45,10 @@ func (s *CreateGroupReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -55,6 +59,10 @@ func (s *CreateGroupReq) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("logo_url")
 		e.Str(s.LogoURL)
+	}
+	{
+		e.FieldStart("tenant")
+		json.EncodeUUID(e, s.Tenant)
 	}
 	{
 		e.FieldStart("setting")
@@ -82,17 +90,19 @@ func (s *CreateGroupReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateGroupReq = [10]string{
-	0: "created_at",
-	1: "updated_at",
-	2: "created_by",
-	3: "updated_by",
-	4: "name",
-	5: "description",
-	6: "logo_url",
-	7: "setting",
-	8: "memberships",
-	9: "users",
+var jsonFieldsNameOfCreateGroupReq = [12]string{
+	0:  "created_at",
+	1:  "updated_at",
+	2:  "created_by",
+	3:  "updated_by",
+	4:  "tenant_id",
+	5:  "name",
+	6:  "description",
+	7:  "logo_url",
+	8:  "tenant",
+	9:  "setting",
+	10: "memberships",
+	11: "users",
 }
 
 // Decode decodes CreateGroupReq from json.
@@ -148,8 +158,20 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -161,7 +183,7 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -173,7 +195,7 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -184,8 +206,20 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"logo_url\"")
 			}
+		case "tenant":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.Tenant = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant\"")
+			}
 		case "setting":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := json.DecodeUUID(d)
 				s.Setting = v
@@ -245,7 +279,7 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11110011,
-		0b00000000,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1640,6 +1674,10 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -1696,6 +1734,10 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant")
+		json.EncodeUUID(e, s.Tenant)
+	}
+	{
 		if s.Memberships != nil {
 			e.FieldStart("memberships")
 			e.ArrStart()
@@ -1727,25 +1769,27 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfCreateUserReq = [18]string{
+var jsonFieldsNameOfCreateUserReq = [20]string{
 	0:  "created_at",
 	1:  "updated_at",
 	2:  "created_by",
 	3:  "updated_by",
-	4:  "email",
-	5:  "first_name",
-	6:  "last_name",
-	7:  "display_name",
-	8:  "locked",
-	9:  "avatar_remote_url",
-	10: "avatar_local_file",
-	11: "avatar_updated_at",
-	12: "silenced_at",
-	13: "suspended_at",
-	14: "recovery_code",
-	15: "memberships",
-	16: "sessions",
-	17: "groups",
+	4:  "tenant_id",
+	5:  "email",
+	6:  "first_name",
+	7:  "last_name",
+	8:  "display_name",
+	9:  "locked",
+	10: "avatar_remote_url",
+	11: "avatar_local_file",
+	12: "avatar_updated_at",
+	13: "silenced_at",
+	14: "suspended_at",
+	15: "recovery_code",
+	16: "tenant",
+	17: "memberships",
+	18: "sessions",
+	19: "groups",
 }
 
 // Decode decodes CreateUserReq from json.
@@ -1801,8 +1845,20 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -1814,7 +1870,7 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 5
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -1826,7 +1882,7 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -1838,7 +1894,7 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -1850,7 +1906,7 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -1921,6 +1977,18 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"recovery_code\"")
 			}
+		case "tenant":
+			requiredBitSet[2] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.Tenant = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant\"")
+			}
 		case "memberships":
 			if err := func() error {
 				s.Memberships = make([]uuid.UUID, 0)
@@ -1989,8 +2057,8 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [3]uint8{
 		0b11110011,
+		0b00000011,
 		0b00000001,
-		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2070,6 +2138,10 @@ func (s *GroupCreate) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -2083,15 +2155,16 @@ func (s *GroupCreate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGroupCreate = [8]string{
+var jsonFieldsNameOfGroupCreate = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes GroupCreate from json.
@@ -2099,7 +2172,7 @@ func (s *GroupCreate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode GroupCreate to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -2159,8 +2232,20 @@ func (s *GroupCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -2172,7 +2257,7 @@ func (s *GroupCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -2184,7 +2269,7 @@ func (s *GroupCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -2204,8 +2289,9 @@ func (s *GroupCreate) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2285,6 +2371,10 @@ func (s *GroupList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -2298,15 +2388,16 @@ func (s *GroupList) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGroupList = [8]string{
+var jsonFieldsNameOfGroupList = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes GroupList from json.
@@ -2314,7 +2405,7 @@ func (s *GroupList) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode GroupList to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -2374,8 +2465,20 @@ func (s *GroupList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -2387,7 +2490,7 @@ func (s *GroupList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -2399,7 +2502,7 @@ func (s *GroupList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -2419,8 +2522,9 @@ func (s *GroupList) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2681,6 +2785,10 @@ func (s *GroupRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -2694,15 +2802,16 @@ func (s *GroupRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGroupRead = [8]string{
+var jsonFieldsNameOfGroupRead = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes GroupRead from json.
@@ -2710,7 +2819,7 @@ func (s *GroupRead) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode GroupRead to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -2770,8 +2879,20 @@ func (s *GroupRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -2783,7 +2904,7 @@ func (s *GroupRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -2795,7 +2916,7 @@ func (s *GroupRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -2815,8 +2936,9 @@ func (s *GroupRead) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -3454,6 +3576,10 @@ func (s *GroupSettingsGroupRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -3467,15 +3593,16 @@ func (s *GroupSettingsGroupRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGroupSettingsGroupRead = [8]string{
+var jsonFieldsNameOfGroupSettingsGroupRead = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes GroupSettingsGroupRead from json.
@@ -3483,7 +3610,7 @@ func (s *GroupSettingsGroupRead) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode GroupSettingsGroupRead to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -3543,8 +3670,20 @@ func (s *GroupSettingsGroupRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -3556,7 +3695,7 @@ func (s *GroupSettingsGroupRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -3568,7 +3707,7 @@ func (s *GroupSettingsGroupRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -3588,8 +3727,9 @@ func (s *GroupSettingsGroupRead) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -4473,6 +4613,119 @@ func (s *GroupSettingsUpdateVisibility) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *GroupTenantRead) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *GroupTenantRead) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		json.EncodeUUID(e, s.ID)
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+}
+
+var jsonFieldsNameOfGroupTenantRead = [2]string{
+	0: "id",
+	1: "name",
+}
+
+// Decode decodes GroupTenantRead from json.
+func (s *GroupTenantRead) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode GroupTenantRead to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.ID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode GroupTenantRead")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfGroupTenantRead) {
+					name = jsonFieldsNameOfGroupTenantRead[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *GroupTenantRead) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *GroupTenantRead) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *GroupUpdate) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -4506,6 +4759,10 @@ func (s *GroupUpdate) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -4519,15 +4776,16 @@ func (s *GroupUpdate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGroupUpdate = [8]string{
+var jsonFieldsNameOfGroupUpdate = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes GroupUpdate from json.
@@ -4535,7 +4793,7 @@ func (s *GroupUpdate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode GroupUpdate to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -4595,8 +4853,20 @@ func (s *GroupUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -4608,7 +4878,7 @@ func (s *GroupUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -4620,7 +4890,7 @@ func (s *GroupUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -4640,8 +4910,9 @@ func (s *GroupUpdate) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -4721,6 +4992,10 @@ func (s *GroupUsersList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -4772,22 +5047,23 @@ func (s *GroupUsersList) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfGroupUsersList = [15]string{
+var jsonFieldsNameOfGroupUsersList = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes GroupUsersList from json.
@@ -4855,8 +5131,20 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -4868,7 +5156,7 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -4880,7 +5168,7 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -4892,7 +5180,7 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -4904,7 +5192,7 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -4976,7 +5264,7 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -7028,6 +7316,10 @@ func (s *MembershipGroupRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -7041,15 +7333,16 @@ func (s *MembershipGroupRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfMembershipGroupRead = [8]string{
+var jsonFieldsNameOfMembershipGroupRead = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes MembershipGroupRead from json.
@@ -7057,7 +7350,7 @@ func (s *MembershipGroupRead) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode MembershipGroupRead to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -7117,8 +7410,20 @@ func (s *MembershipGroupRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -7130,7 +7435,7 @@ func (s *MembershipGroupRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -7142,7 +7447,7 @@ func (s *MembershipGroupRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -7162,8 +7467,9 @@ func (s *MembershipGroupRead) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -7967,6 +8273,10 @@ func (s *MembershipUserRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -8018,22 +8328,23 @@ func (s *MembershipUserRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfMembershipUserRead = [15]string{
+var jsonFieldsNameOfMembershipUserRead = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes MembershipUserRead from json.
@@ -8101,8 +8412,20 @@ func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -8114,7 +8437,7 @@ func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -8126,7 +8449,7 @@ func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -8138,7 +8461,7 @@ func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -8150,7 +8473,7 @@ func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -8222,7 +8545,7 @@ func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -11347,6 +11670,10 @@ func (s *SessionUsersRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -11398,22 +11725,23 @@ func (s *SessionUsersRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfSessionUsersRead = [15]string{
+var jsonFieldsNameOfSessionUsersRead = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes SessionUsersRead from json.
@@ -11481,8 +11809,20 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -11494,7 +11834,7 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -11506,7 +11846,7 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -11518,7 +11858,7 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -11530,7 +11870,7 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -11602,7 +11942,7 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -12146,6 +12486,12 @@ func (s *UpdateGroupReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Tenant.Set {
+			e.FieldStart("tenant")
+			s.Tenant.Encode(e)
+		}
+	}
+	{
 		if s.Setting.Set {
 			e.FieldStart("setting")
 			s.Setting.Encode(e)
@@ -12173,16 +12519,17 @@ func (s *UpdateGroupReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateGroupReq = [9]string{
+var jsonFieldsNameOfUpdateGroupReq = [10]string{
 	0: "updated_at",
 	1: "created_by",
 	2: "updated_by",
 	3: "name",
 	4: "description",
 	5: "logo_url",
-	6: "setting",
-	7: "memberships",
-	8: "users",
+	6: "tenant",
+	7: "setting",
+	8: "memberships",
+	9: "users",
 }
 
 // Decode decodes UpdateGroupReq from json.
@@ -12252,6 +12599,16 @@ func (s *UpdateGroupReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"logo_url\"")
+			}
+		case "tenant":
+			if err := func() error {
+				s.Tenant.Reset()
+				if err := s.Tenant.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant\"")
 			}
 		case "setting":
 			if err := func() error {
@@ -13350,6 +13707,12 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Tenant.Set {
+			e.FieldStart("tenant")
+			s.Tenant.Encode(e)
+		}
+	}
+	{
 		if s.Memberships != nil {
 			e.FieldStart("memberships")
 			e.ArrStart()
@@ -13381,7 +13744,7 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateUserReq = [17]string{
+var jsonFieldsNameOfUpdateUserReq = [18]string{
 	0:  "updated_at",
 	1:  "created_by",
 	2:  "updated_by",
@@ -13396,9 +13759,10 @@ var jsonFieldsNameOfUpdateUserReq = [17]string{
 	11: "silenced_at",
 	12: "suspended_at",
 	13: "recovery_code",
-	14: "memberships",
-	15: "sessions",
-	16: "groups",
+	14: "tenant",
+	15: "memberships",
+	16: "sessions",
+	17: "groups",
 }
 
 // Decode decodes UpdateUserReq from json.
@@ -13549,6 +13913,16 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"recovery_code\"")
 			}
+		case "tenant":
+			if err := func() error {
+				s.Tenant.Reset()
+				if err := s.Tenant.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant\"")
+			}
 		case "memberships":
 			if err := func() error {
 				s.Memberships = make([]uuid.UUID, 0)
@@ -13664,6 +14038,10 @@ func (s *UserCreate) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -13715,22 +14093,23 @@ func (s *UserCreate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUserCreate = [15]string{
+var jsonFieldsNameOfUserCreate = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes UserCreate from json.
@@ -13798,8 +14177,20 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -13811,7 +14202,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -13823,7 +14214,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -13835,7 +14226,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -13847,7 +14238,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -13919,7 +14310,7 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -13999,6 +14390,10 @@ func (s *UserGroupsList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
@@ -14012,15 +14407,16 @@ func (s *UserGroupsList) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUserGroupsList = [8]string{
+var jsonFieldsNameOfUserGroupsList = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
+	5: "tenant_id",
+	6: "name",
+	7: "description",
+	8: "logo_url",
 }
 
 // Decode decodes UserGroupsList from json.
@@ -14028,7 +14424,7 @@ func (s *UserGroupsList) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode UserGroupsList to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -14088,8 +14484,20 @@ func (s *UserGroupsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "name":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Name = string(v)
@@ -14101,7 +14509,7 @@ func (s *UserGroupsList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
 		case "description":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.Description = string(v)
@@ -14113,7 +14521,7 @@ func (s *UserGroupsList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LogoURL = string(v)
@@ -14133,8 +14541,9 @@ func (s *UserGroupsList) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b11100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -14214,6 +14623,10 @@ func (s *UserList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -14265,22 +14678,23 @@ func (s *UserList) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUserList = [15]string{
+var jsonFieldsNameOfUserList = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes UserList from json.
@@ -14348,8 +14762,20 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -14361,7 +14787,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -14373,7 +14799,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -14385,7 +14811,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -14397,7 +14823,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -14469,7 +14895,7 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -14730,6 +15156,10 @@ func (s *UserRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
+	}
+	{
 		e.FieldStart("email")
 		e.Str(s.Email)
 	}
@@ -14781,22 +15211,23 @@ func (s *UserRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUserRead = [15]string{
+var jsonFieldsNameOfUserRead = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes UserRead from json.
@@ -14864,8 +15295,20 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -14877,7 +15320,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -14889,7 +15332,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -14901,7 +15344,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -14913,7 +15356,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -14985,7 +15428,7 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -15322,6 +15765,119 @@ func (s *UserSessionsListType) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *UserTenantRead) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *UserTenantRead) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		json.EncodeUUID(e, s.ID)
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+}
+
+var jsonFieldsNameOfUserTenantRead = [2]string{
+	0: "id",
+	1: "name",
+}
+
+// Decode decodes UserTenantRead from json.
+func (s *UserTenantRead) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode UserTenantRead to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.ID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode UserTenantRead")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfUserTenantRead) {
+					name = jsonFieldsNameOfUserTenantRead[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *UserTenantRead) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *UserTenantRead) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *UserUpdate) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -15353,6 +15909,10 @@ func (s *UserUpdate) encodeFields(e *jx.Encoder) {
 			e.FieldStart("updated_by")
 			s.UpdatedBy.Encode(e)
 		}
+	}
+	{
+		e.FieldStart("tenant_id")
+		json.EncodeUUID(e, s.TenantID)
 	}
 	{
 		e.FieldStart("email")
@@ -15406,22 +15966,23 @@ func (s *UserUpdate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUserUpdate = [15]string{
+var jsonFieldsNameOfUserUpdate = [16]string{
 	0:  "id",
 	1:  "created_at",
 	2:  "updated_at",
 	3:  "created_by",
 	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
+	5:  "tenant_id",
+	6:  "email",
+	7:  "first_name",
+	8:  "last_name",
+	9:  "display_name",
+	10: "locked",
+	11: "avatar_remote_url",
+	12: "avatar_local_file",
+	13: "avatar_updated_at",
+	14: "silenced_at",
+	15: "suspended_at",
 }
 
 // Decode decodes UserUpdate from json.
@@ -15489,8 +16050,20 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "email":
+		case "tenant_id":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.TenantID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tenant_id\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Email = string(v)
@@ -15502,7 +16075,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"email\"")
 			}
 		case "first_name":
-			requiredBitSet[0] |= 1 << 6
+			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				v, err := d.Str()
 				s.FirstName = string(v)
@@ -15514,7 +16087,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"first_name\"")
 			}
 		case "last_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.LastName = string(v)
@@ -15526,7 +16099,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"last_name\"")
 			}
 		case "display_name":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Str()
 				s.DisplayName = string(v)
@@ -15538,7 +16111,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"display_name\"")
 			}
 		case "locked":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Bool()
 				s.Locked = bool(v)
@@ -15610,7 +16183,7 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11100111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

@@ -97,6 +97,24 @@ type SessionUpdatePayload struct {
 	Session *generated.Session `json:"session"`
 }
 
+// Return response for createTenant mutation
+type TenantCreatePayload struct {
+	// Created tenant
+	Tenant *generated.Tenant `json:"tenant"`
+}
+
+// Return response for deleteTenant mutation
+type TenantDeletePayload struct {
+	// Deleted tenant ID
+	DeletedID uuid.UUID `json:"deletedID"`
+}
+
+// Return response for updateTenant mutation
+type TenantUpdatePayload struct {
+	// Updated tenant
+	Tenant *generated.Tenant `json:"tenant"`
+}
+
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user

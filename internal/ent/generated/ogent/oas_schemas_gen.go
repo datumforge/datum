@@ -15,9 +15,11 @@ type CreateGroupReq struct {
 	UpdatedAt   time.Time   `json:"updated_at"`
 	CreatedBy   OptInt      `json:"created_by"`
 	UpdatedBy   OptInt      `json:"updated_by"`
+	TenantID    uuid.UUID   `json:"tenant_id"`
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
 	LogoURL     string      `json:"logo_url"`
+	Tenant      uuid.UUID   `json:"tenant"`
 	Setting     uuid.UUID   `json:"setting"`
 	Memberships []uuid.UUID `json:"memberships"`
 	Users       []uuid.UUID `json:"users"`
@@ -43,6 +45,11 @@ func (s *CreateGroupReq) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
 }
 
+// GetTenantID returns the value of TenantID.
+func (s *CreateGroupReq) GetTenantID() uuid.UUID {
+	return s.TenantID
+}
+
 // GetName returns the value of Name.
 func (s *CreateGroupReq) GetName() string {
 	return s.Name
@@ -56,6 +63,11 @@ func (s *CreateGroupReq) GetDescription() string {
 // GetLogoURL returns the value of LogoURL.
 func (s *CreateGroupReq) GetLogoURL() string {
 	return s.LogoURL
+}
+
+// GetTenant returns the value of Tenant.
+func (s *CreateGroupReq) GetTenant() uuid.UUID {
+	return s.Tenant
 }
 
 // GetSetting returns the value of Setting.
@@ -93,6 +105,11 @@ func (s *CreateGroupReq) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
 }
 
+// SetTenantID sets the value of TenantID.
+func (s *CreateGroupReq) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
+}
+
 // SetName sets the value of Name.
 func (s *CreateGroupReq) SetName(val string) {
 	s.Name = val
@@ -106,6 +123,11 @@ func (s *CreateGroupReq) SetDescription(val string) {
 // SetLogoURL sets the value of LogoURL.
 func (s *CreateGroupReq) SetLogoURL(val string) {
 	s.LogoURL = val
+}
+
+// SetTenant sets the value of Tenant.
+func (s *CreateGroupReq) SetTenant(val uuid.UUID) {
+	s.Tenant = val
 }
 
 // SetSetting sets the value of Setting.
@@ -741,6 +763,7 @@ type CreateUserReq struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -752,6 +775,7 @@ type CreateUserReq struct {
 	SilencedAt      OptDateTime `json:"silenced_at"`
 	SuspendedAt     OptDateTime `json:"suspended_at"`
 	RecoveryCode    OptString   `json:"recovery_code"`
+	Tenant          uuid.UUID   `json:"tenant"`
 	Memberships     []uuid.UUID `json:"memberships"`
 	Sessions        []uuid.UUID `json:"sessions"`
 	Groups          []uuid.UUID `json:"groups"`
@@ -775,6 +799,11 @@ func (s *CreateUserReq) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *CreateUserReq) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *CreateUserReq) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -832,6 +861,11 @@ func (s *CreateUserReq) GetRecoveryCode() OptString {
 	return s.RecoveryCode
 }
 
+// GetTenant returns the value of Tenant.
+func (s *CreateUserReq) GetTenant() uuid.UUID {
+	return s.Tenant
+}
+
 // GetMemberships returns the value of Memberships.
 func (s *CreateUserReq) GetMemberships() []uuid.UUID {
 	return s.Memberships
@@ -865,6 +899,11 @@ func (s *CreateUserReq) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *CreateUserReq) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *CreateUserReq) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.
@@ -920,6 +959,11 @@ func (s *CreateUserReq) SetSuspendedAt(val OptDateTime) {
 // SetRecoveryCode sets the value of RecoveryCode.
 func (s *CreateUserReq) SetRecoveryCode(val OptString) {
 	s.RecoveryCode = val
+}
+
+// SetTenant sets the value of Tenant.
+func (s *CreateUserReq) SetTenant(val uuid.UUID) {
+	s.Tenant = val
 }
 
 // SetMemberships sets the value of Memberships.
@@ -984,6 +1028,7 @@ type GroupCreate struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1012,6 +1057,11 @@ func (s *GroupCreate) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *GroupCreate) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *GroupCreate) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -1054,6 +1104,11 @@ func (s *GroupCreate) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
 }
 
+// SetTenantID sets the value of TenantID.
+func (s *GroupCreate) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
+}
+
 // SetName sets the value of Name.
 func (s *GroupCreate) SetName(val string) {
 	s.Name = val
@@ -1078,6 +1133,7 @@ type GroupList struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1106,6 +1162,11 @@ func (s *GroupList) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *GroupList) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *GroupList) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -1146,6 +1207,11 @@ func (s *GroupList) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *GroupList) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *GroupList) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetName sets the value of Name.
@@ -1240,6 +1306,7 @@ type GroupRead struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1268,6 +1335,11 @@ func (s *GroupRead) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *GroupRead) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *GroupRead) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -1308,6 +1380,11 @@ func (s *GroupRead) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *GroupRead) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *GroupRead) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetName sets the value of Name.
@@ -1692,6 +1769,7 @@ type GroupSettingsGroupRead struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1720,6 +1798,11 @@ func (s *GroupSettingsGroupRead) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *GroupSettingsGroupRead) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *GroupSettingsGroupRead) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -1760,6 +1843,11 @@ func (s *GroupSettingsGroupRead) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *GroupSettingsGroupRead) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *GroupSettingsGroupRead) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetName sets the value of Name.
@@ -2314,6 +2402,34 @@ func (s *GroupSettingsUpdateVisibility) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/Group_TenantRead
+type GroupTenantRead struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *GroupTenantRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *GroupTenantRead) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *GroupTenantRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *GroupTenantRead) SetName(val string) {
+	s.Name = val
+}
+
+func (*GroupTenantRead) readGroupTenantRes() {}
+
 // Ref: #/components/schemas/GroupUpdate
 type GroupUpdate struct {
 	ID          uuid.UUID `json:"id"`
@@ -2321,6 +2437,7 @@ type GroupUpdate struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -2349,6 +2466,11 @@ func (s *GroupUpdate) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *GroupUpdate) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *GroupUpdate) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -2391,6 +2513,11 @@ func (s *GroupUpdate) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
 }
 
+// SetTenantID sets the value of TenantID.
+func (s *GroupUpdate) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
+}
+
 // SetName sets the value of Name.
 func (s *GroupUpdate) SetName(val string) {
 	s.Name = val
@@ -2415,6 +2542,7 @@ type GroupUsersList struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -2450,6 +2578,11 @@ func (s *GroupUsersList) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *GroupUsersList) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *GroupUsersList) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -2525,6 +2658,11 @@ func (s *GroupUsersList) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *GroupUsersList) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *GroupUsersList) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.
@@ -3162,6 +3300,7 @@ type MembershipGroupRead struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -3190,6 +3329,11 @@ func (s *MembershipGroupRead) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *MembershipGroupRead) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *MembershipGroupRead) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -3230,6 +3374,11 @@ func (s *MembershipGroupRead) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *MembershipGroupRead) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *MembershipGroupRead) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetName sets the value of Name.
@@ -3542,6 +3691,7 @@ type MembershipUserRead struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -3577,6 +3727,11 @@ func (s *MembershipUserRead) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *MembershipUserRead) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *MembershipUserRead) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -3652,6 +3807,11 @@ func (s *MembershipUserRead) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *MembershipUserRead) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *MembershipUserRead) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.
@@ -4547,6 +4707,7 @@ func (*R400) readGroupRes()                    {}
 func (*R400) readGroupSettingRes()             {}
 func (*R400) readGroupSettingsGroupRes()       {}
 func (*R400) readGroupSettingsRes()            {}
+func (*R400) readGroupTenantRes()              {}
 func (*R400) readIntegrationOrganizationRes()  {}
 func (*R400) readIntegrationRes()              {}
 func (*R400) readMembershipGroupRes()          {}
@@ -4558,6 +4719,7 @@ func (*R400) readSessionRes()                  {}
 func (*R400) readSessionUsersRes()             {}
 func (*R400) readTenantRes()                   {}
 func (*R400) readUserRes()                     {}
+func (*R400) readUserTenantRes()               {}
 func (*R400) updateGroupRes()                  {}
 func (*R400) updateGroupSettingsRes()          {}
 func (*R400) updateIntegrationRes()            {}
@@ -4630,6 +4792,7 @@ func (*R404) readGroupRes()                    {}
 func (*R404) readGroupSettingRes()             {}
 func (*R404) readGroupSettingsGroupRes()       {}
 func (*R404) readGroupSettingsRes()            {}
+func (*R404) readGroupTenantRes()              {}
 func (*R404) readIntegrationOrganizationRes()  {}
 func (*R404) readIntegrationRes()              {}
 func (*R404) readMembershipGroupRes()          {}
@@ -4641,6 +4804,7 @@ func (*R404) readSessionRes()                  {}
 func (*R404) readSessionUsersRes()             {}
 func (*R404) readTenantRes()                   {}
 func (*R404) readUserRes()                     {}
+func (*R404) readUserTenantRes()               {}
 func (*R404) updateGroupRes()                  {}
 func (*R404) updateGroupSettingsRes()          {}
 func (*R404) updateIntegrationRes()            {}
@@ -4721,6 +4885,7 @@ func (*R409) readGroupRes()                    {}
 func (*R409) readGroupSettingRes()             {}
 func (*R409) readGroupSettingsGroupRes()       {}
 func (*R409) readGroupSettingsRes()            {}
+func (*R409) readGroupTenantRes()              {}
 func (*R409) readIntegrationOrganizationRes()  {}
 func (*R409) readIntegrationRes()              {}
 func (*R409) readMembershipGroupRes()          {}
@@ -4732,6 +4897,7 @@ func (*R409) readSessionRes()                  {}
 func (*R409) readSessionUsersRes()             {}
 func (*R409) readTenantRes()                   {}
 func (*R409) readUserRes()                     {}
+func (*R409) readUserTenantRes()               {}
 func (*R409) updateGroupRes()                  {}
 func (*R409) updateGroupSettingsRes()          {}
 func (*R409) updateIntegrationRes()            {}
@@ -4812,6 +4978,7 @@ func (*R500) readGroupRes()                    {}
 func (*R500) readGroupSettingRes()             {}
 func (*R500) readGroupSettingsGroupRes()       {}
 func (*R500) readGroupSettingsRes()            {}
+func (*R500) readGroupTenantRes()              {}
 func (*R500) readIntegrationOrganizationRes()  {}
 func (*R500) readIntegrationRes()              {}
 func (*R500) readMembershipGroupRes()          {}
@@ -4823,6 +4990,7 @@ func (*R500) readSessionRes()                  {}
 func (*R500) readSessionUsersRes()             {}
 func (*R500) readTenantRes()                   {}
 func (*R500) readUserRes()                     {}
+func (*R500) readUserTenantRes()               {}
 func (*R500) updateGroupRes()                  {}
 func (*R500) updateGroupSettingsRes()          {}
 func (*R500) updateIntegrationRes()            {}
@@ -5493,6 +5661,7 @@ type SessionUsersRead struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -5528,6 +5697,11 @@ func (s *SessionUsersRead) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *SessionUsersRead) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *SessionUsersRead) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -5603,6 +5777,11 @@ func (s *SessionUsersRead) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *SessionUsersRead) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *SessionUsersRead) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.
@@ -5774,6 +5953,7 @@ type UpdateGroupReq struct {
 	Name        OptString   `json:"name"`
 	Description OptString   `json:"description"`
 	LogoURL     OptString   `json:"logo_url"`
+	Tenant      OptUUID     `json:"tenant"`
 	Setting     OptUUID     `json:"setting"`
 	Memberships []uuid.UUID `json:"memberships"`
 	Users       []uuid.UUID `json:"users"`
@@ -5807,6 +5987,11 @@ func (s *UpdateGroupReq) GetDescription() OptString {
 // GetLogoURL returns the value of LogoURL.
 func (s *UpdateGroupReq) GetLogoURL() OptString {
 	return s.LogoURL
+}
+
+// GetTenant returns the value of Tenant.
+func (s *UpdateGroupReq) GetTenant() OptUUID {
+	return s.Tenant
 }
 
 // GetSetting returns the value of Setting.
@@ -5852,6 +6037,11 @@ func (s *UpdateGroupReq) SetDescription(val OptString) {
 // SetLogoURL sets the value of LogoURL.
 func (s *UpdateGroupReq) SetLogoURL(val OptString) {
 	s.LogoURL = val
+}
+
+// SetTenant sets the value of Tenant.
+func (s *UpdateGroupReq) SetTenant(val OptUUID) {
+	s.Tenant = val
 }
 
 // SetSetting sets the value of Setting.
@@ -6350,6 +6540,7 @@ type UpdateUserReq struct {
 	SilencedAt      OptDateTime `json:"silenced_at"`
 	SuspendedAt     OptDateTime `json:"suspended_at"`
 	RecoveryCode    OptString   `json:"recovery_code"`
+	Tenant          OptUUID     `json:"tenant"`
 	Memberships     []uuid.UUID `json:"memberships"`
 	Sessions        []uuid.UUID `json:"sessions"`
 	Groups          []uuid.UUID `json:"groups"`
@@ -6423,6 +6614,11 @@ func (s *UpdateUserReq) GetSuspendedAt() OptDateTime {
 // GetRecoveryCode returns the value of RecoveryCode.
 func (s *UpdateUserReq) GetRecoveryCode() OptString {
 	return s.RecoveryCode
+}
+
+// GetTenant returns the value of Tenant.
+func (s *UpdateUserReq) GetTenant() OptUUID {
+	return s.Tenant
 }
 
 // GetMemberships returns the value of Memberships.
@@ -6510,6 +6706,11 @@ func (s *UpdateUserReq) SetRecoveryCode(val OptString) {
 	s.RecoveryCode = val
 }
 
+// SetTenant sets the value of Tenant.
+func (s *UpdateUserReq) SetTenant(val OptUUID) {
+	s.Tenant = val
+}
+
 // SetMemberships sets the value of Memberships.
 func (s *UpdateUserReq) SetMemberships(val []uuid.UUID) {
 	s.Memberships = val
@@ -6532,6 +6733,7 @@ type UserCreate struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -6567,6 +6769,11 @@ func (s *UserCreate) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *UserCreate) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *UserCreate) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -6644,6 +6851,11 @@ func (s *UserCreate) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
 }
 
+// SetTenantID sets the value of TenantID.
+func (s *UserCreate) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
+}
+
 // SetEmail sets the value of Email.
 func (s *UserCreate) SetEmail(val string) {
 	s.Email = val
@@ -6703,6 +6915,7 @@ type UserGroupsList struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   OptInt    `json:"created_by"`
 	UpdatedBy   OptInt    `json:"updated_by"`
+	TenantID    uuid.UUID `json:"tenant_id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -6731,6 +6944,11 @@ func (s *UserGroupsList) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *UserGroupsList) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *UserGroupsList) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetName returns the value of Name.
@@ -6773,6 +6991,11 @@ func (s *UserGroupsList) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
 }
 
+// SetTenantID sets the value of TenantID.
+func (s *UserGroupsList) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
+}
+
 // SetName sets the value of Name.
 func (s *UserGroupsList) SetName(val string) {
 	s.Name = val
@@ -6795,6 +7018,7 @@ type UserList struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -6830,6 +7054,11 @@ func (s *UserList) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *UserList) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *UserList) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -6905,6 +7134,11 @@ func (s *UserList) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *UserList) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *UserList) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.
@@ -7034,6 +7268,7 @@ type UserRead struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -7069,6 +7304,11 @@ func (s *UserRead) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *UserRead) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *UserRead) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -7144,6 +7384,11 @@ func (s *UserRead) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *UserRead) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *UserRead) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.
@@ -7360,6 +7605,34 @@ func (s *UserSessionsListType) UnmarshalText(data []byte) error {
 	}
 }
 
+// Ref: #/components/schemas/User_TenantRead
+type UserTenantRead struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
+
+// GetID returns the value of ID.
+func (s *UserTenantRead) GetID() uuid.UUID {
+	return s.ID
+}
+
+// GetName returns the value of Name.
+func (s *UserTenantRead) GetName() string {
+	return s.Name
+}
+
+// SetID sets the value of ID.
+func (s *UserTenantRead) SetID(val uuid.UUID) {
+	s.ID = val
+}
+
+// SetName sets the value of Name.
+func (s *UserTenantRead) SetName(val string) {
+	s.Name = val
+}
+
+func (*UserTenantRead) readUserTenantRes() {}
+
 // Ref: #/components/schemas/UserUpdate
 type UserUpdate struct {
 	ID              uuid.UUID   `json:"id"`
@@ -7367,6 +7640,7 @@ type UserUpdate struct {
 	UpdatedAt       time.Time   `json:"updated_at"`
 	CreatedBy       OptInt      `json:"created_by"`
 	UpdatedBy       OptInt      `json:"updated_by"`
+	TenantID        uuid.UUID   `json:"tenant_id"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -7402,6 +7676,11 @@ func (s *UserUpdate) GetCreatedBy() OptInt {
 // GetUpdatedBy returns the value of UpdatedBy.
 func (s *UserUpdate) GetUpdatedBy() OptInt {
 	return s.UpdatedBy
+}
+
+// GetTenantID returns the value of TenantID.
+func (s *UserUpdate) GetTenantID() uuid.UUID {
+	return s.TenantID
 }
 
 // GetEmail returns the value of Email.
@@ -7477,6 +7756,11 @@ func (s *UserUpdate) SetCreatedBy(val OptInt) {
 // SetUpdatedBy sets the value of UpdatedBy.
 func (s *UserUpdate) SetUpdatedBy(val OptInt) {
 	s.UpdatedBy = val
+}
+
+// SetTenantID sets the value of TenantID.
+func (s *UserUpdate) SetTenantID(val uuid.UUID) {
+	s.TenantID = val
 }
 
 // SetEmail sets the value of Email.

@@ -19,7 +19,7 @@ type Membership struct {
 func (Membership) Fields() []ent.Field {
 	return []ent.Field{
 		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique(),
+		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.Bool("current").Default(false),
 	}
 }

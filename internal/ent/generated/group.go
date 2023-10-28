@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/google/uuid"
 )
 
@@ -27,6 +28,8 @@ type Group struct {
 	CreatedBy int `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy int `json:"updated_by,omitempty"`
+	// TenantID holds the value of the "tenant_id" field.
+	TenantID uuid.UUID `json:"tenant_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -41,6 +44,8 @@ type Group struct {
 
 // GroupEdges holds the relations/edges for other nodes in the graph.
 type GroupEdges struct {
+	// Tenant holds the value of the tenant edge.
+	Tenant *Tenant `json:"tenant,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *GroupSettings `json:"setting,omitempty"`
 	// Memberships holds the value of the memberships edge.
@@ -49,18 +54,31 @@ type GroupEdges struct {
 	Users []*User `json:"users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
 	namedMemberships map[string][]*Membership
 	namedUsers       map[string][]*User
 }
 
+// TenantOrErr returns the Tenant value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e GroupEdges) TenantOrErr() (*Tenant, error) {
+	if e.loadedTypes[0] {
+		if e.Tenant == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: tenant.Label}
+		}
+		return e.Tenant, nil
+	}
+	return nil, &NotLoadedError{edge: "tenant"}
+}
+
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e GroupEdges) SettingOrErr() (*GroupSettings, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: groupsettings.Label}
@@ -73,7 +91,7 @@ func (e GroupEdges) SettingOrErr() (*GroupSettings, error) {
 // MembershipsOrErr returns the Memberships value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) MembershipsOrErr() ([]*Membership, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.Memberships, nil
 	}
 	return nil, &NotLoadedError{edge: "memberships"}
@@ -82,7 +100,7 @@ func (e GroupEdges) MembershipsOrErr() ([]*Membership, error) {
 // UsersOrErr returns the Users value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Users, nil
 	}
 	return nil, &NotLoadedError{edge: "users"}
@@ -99,7 +117,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case group.FieldID:
+		case group.FieldID, group.FieldTenantID:
 			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -146,6 +164,12 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gr.UpdatedBy = int(value.Int64)
 			}
+		case group.FieldTenantID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value != nil {
+				gr.TenantID = *value
+			}
 		case group.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -175,6 +199,11 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (gr *Group) Value(name string) (ent.Value, error) {
 	return gr.selectValues.Get(name)
+}
+
+// QueryTenant queries the "tenant" edge of the Group entity.
+func (gr *Group) QueryTenant() *TenantQuery {
+	return NewGroupClient(gr.config).QueryTenant(gr)
 }
 
 // QuerySetting queries the "setting" edge of the Group entity.
@@ -226,6 +255,9 @@ func (gr *Group) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(fmt.Sprintf("%v", gr.UpdatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("tenant_id=")
+	builder.WriteString(fmt.Sprintf("%v", gr.TenantID))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(gr.Name)

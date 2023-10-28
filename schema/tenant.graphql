@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up tenant by ID
+    """
+     tenant(
+        """
+        ID of the tenant
+        """
+        id: ID!
+    ):  Tenant!
+}
+
+extend type Mutation{
+    """
+    Create a new tenant
+    """
+    createTenant(
+        """
+        values of the tenant
+        """
+        input: CreateTenantInput!
+    ): TenantCreatePayload!
+    """
+    Update an existing tenant
+    """
+    updateTenant(
+        """
+        ID of the tenant
+        """
+        id: ID!
+        """
+        New values for the tenant
+        """
+        input: UpdateTenantInput!
+    ): TenantUpdatePayload!
+    """
+    Delete an existing tenant
+    """
+    deleteTenant(
+        """
+        ID of the tenant
+        """
+        id: ID!
+    ): TenantDeletePayload!
+}
+
+"""
+Return response for createTenant mutation
+"""
+type TenantCreatePayload {
+    """
+    Created tenant
+    """
+    tenant: Tenant!
+}
+
+"""
+Return response for updateTenant mutation
+"""
+type TenantUpdatePayload {
+    """
+    Updated tenant
+    """
+    tenant: Tenant!
+}
+
+"""
+Return response for deleteTenant mutation
+"""
+type TenantDeletePayload {
+    """
+    Deleted tenant ID
+    """
+    deletedID: ID!
+}

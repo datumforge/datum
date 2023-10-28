@@ -47,7 +47,9 @@ func (tc *TenantCreate) Mutation() *TenantMutation {
 
 // Save creates the Tenant in the database.
 func (tc *TenantCreate) Save(ctx context.Context) (*Tenant, error) {
-	tc.defaults()
+	if err := tc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, tc.sqlSave, tc.mutation, tc.hooks)
 }
 
@@ -74,11 +76,15 @@ func (tc *TenantCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (tc *TenantCreate) defaults() {
+func (tc *TenantCreate) defaults() error {
 	if _, ok := tc.mutation.ID(); !ok {
+		if tenant.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized tenant.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := tenant.DefaultID()
 		tc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

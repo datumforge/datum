@@ -45,10 +45,12 @@ func (h *OgentHandler) CreateGroup(ctx context.Context, req *CreateGroupReq) (Cr
 	if v, ok := req.UpdatedBy.Get(); ok {
 		b.SetUpdatedBy(v)
 	}
+	b.SetTenantID(req.TenantID)
 	b.SetName(req.Name)
 	b.SetDescription(req.Description)
 	b.SetLogoURL(req.LogoURL)
 	// Add all edges.
+	b.SetTenantID(req.Tenant)
 	b.SetSettingID(req.Setting)
 	b.AddMembershipIDs(req.Memberships...)
 	b.AddUserIDs(req.Users...)
@@ -233,6 +235,32 @@ func (h *OgentHandler) ListGroup(ctx context.Context, params ListGroupParams) (L
 	}
 	r := NewGroupLists(es)
 	return (*ListGroupOKApplicationJSON)(&r), nil
+}
+
+// ReadGroupTenant handles GET /groups/{id}/tenant requests.
+func (h *OgentHandler) ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (ReadGroupTenantRes, error) {
+	q := h.client.Group.Query().Where(group.IDEQ(params.ID)).QueryTenant()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewGroupTenantRead(e), nil
 }
 
 // ReadGroupSetting handles GET /groups/{id}/setting requests.
@@ -1704,6 +1732,7 @@ func (h *OgentHandler) CreateUser(ctx context.Context, req *CreateUserReq) (Crea
 	if v, ok := req.UpdatedBy.Get(); ok {
 		b.SetUpdatedBy(v)
 	}
+	b.SetTenantID(req.TenantID)
 	b.SetEmail(req.Email)
 	b.SetFirstName(req.FirstName)
 	b.SetLastName(req.LastName)
@@ -1728,6 +1757,7 @@ func (h *OgentHandler) CreateUser(ctx context.Context, req *CreateUserReq) (Crea
 		b.SetRecoveryCode(v)
 	}
 	// Add all edges.
+	b.SetTenantID(req.Tenant)
 	b.AddMembershipIDs(req.Memberships...)
 	b.AddSessionIDs(req.Sessions...)
 	b.AddGroupIDs(req.Groups...)
@@ -1936,6 +1966,32 @@ func (h *OgentHandler) ListUser(ctx context.Context, params ListUserParams) (Lis
 	}
 	r := NewUserLists(es)
 	return (*ListUserOKApplicationJSON)(&r), nil
+}
+
+// ReadUserTenant handles GET /users/{id}/tenant requests.
+func (h *OgentHandler) ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (ReadUserTenantRes, error) {
+	q := h.client.User.Query().Where(user.IDEQ(params.ID)).QueryTenant()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewUserTenantRead(e), nil
 }
 
 // ListUserMemberships handles GET /users/{id}/memberships requests.

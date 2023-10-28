@@ -218,6 +218,12 @@ type Handler interface {
 	//
 	// GET /group-settings/{id}/group
 	ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (ReadGroupSettingsGroupRes, error)
+	// ReadGroupTenant implements readGroupTenant operation.
+	//
+	// Find the attached Tenant of the Group with the given ID.
+	//
+	// GET /groups/{id}/tenant
+	ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (ReadGroupTenantRes, error)
 	// ReadIntegration implements readIntegration operation.
 	//
 	// Finds the Integration with the requested ID and returns it.
@@ -284,6 +290,12 @@ type Handler interface {
 	//
 	// GET /users/{id}
 	ReadUser(ctx context.Context, params ReadUserParams) (ReadUserRes, error)
+	// ReadUserTenant implements readUserTenant operation.
+	//
+	// Find the attached Tenant of the User with the given ID.
+	//
+	// GET /users/{id}/tenant
+	ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (ReadUserTenantRes, error)
 	// UpdateGroup implements updateGroup operation.
 	//
 	// Updates a Group and persists changes to storage.

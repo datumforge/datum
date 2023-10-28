@@ -58,6 +58,8 @@ type GroupMutation struct {
 	description        *string
 	logo_url           *string
 	clearedFields      map[string]struct{}
+	tenant             *uuid.UUID
+	clearedtenant      bool
 	setting            *uuid.UUID
 	clearedsetting     bool
 	memberships        map[uuid.UUID]struct{}
@@ -387,6 +389,42 @@ func (m *GroupMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, group.FieldUpdatedBy)
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (m *GroupMutation) SetTenantID(u uuid.UUID) {
+	m.tenant = &u
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *GroupMutation) TenantID() (r uuid.UUID, exists bool) {
+	v := m.tenant
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldTenantID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *GroupMutation) ResetTenantID() {
+	m.tenant = nil
+}
+
 // SetName sets the "name" field.
 func (m *GroupMutation) SetName(s string) {
 	m.name = &s
@@ -493,6 +531,33 @@ func (m *GroupMutation) OldLogoURL(ctx context.Context) (v string, err error) {
 // ResetLogoURL resets all changes to the "logo_url" field.
 func (m *GroupMutation) ResetLogoURL() {
 	m.logo_url = nil
+}
+
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (m *GroupMutation) ClearTenant() {
+	m.clearedtenant = true
+	m.clearedFields[group.FieldTenantID] = struct{}{}
+}
+
+// TenantCleared reports if the "tenant" edge to the Tenant entity was cleared.
+func (m *GroupMutation) TenantCleared() bool {
+	return m.clearedtenant
+}
+
+// TenantIDs returns the "tenant" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TenantID instead. It exists only for internal usage by the builders.
+func (m *GroupMutation) TenantIDs() (ids []uuid.UUID) {
+	if id := m.tenant; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTenant resets all changes to the "tenant" edge.
+func (m *GroupMutation) ResetTenant() {
+	m.tenant = nil
+	m.clearedtenant = false
 }
 
 // SetSettingID sets the "setting" edge to the GroupSettings entity by id.
@@ -676,7 +741,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
 	}
@@ -688,6 +753,9 @@ func (m *GroupMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, group.FieldUpdatedBy)
+	}
+	if m.tenant != nil {
+		fields = append(fields, group.FieldTenantID)
 	}
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
@@ -714,6 +782,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case group.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case group.FieldTenantID:
+		return m.TenantID()
 	case group.FieldName:
 		return m.Name()
 	case group.FieldDescription:
@@ -737,6 +807,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedBy(ctx)
 	case group.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case group.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case group.FieldName:
 		return m.OldName(ctx)
 	case group.FieldDescription:
@@ -779,6 +851,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case group.FieldTenantID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
 		return nil
 	case group.FieldName:
 		v, ok := value.(string)
@@ -904,6 +983,9 @@ func (m *GroupMutation) ResetField(name string) error {
 	case group.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case group.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case group.FieldName:
 		m.ResetName()
 		return nil
@@ -919,7 +1001,10 @@ func (m *GroupMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.tenant != nil {
+		edges = append(edges, group.EdgeTenant)
+	}
 	if m.setting != nil {
 		edges = append(edges, group.EdgeSetting)
 	}
@@ -936,6 +1021,10 @@ func (m *GroupMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case group.EdgeTenant:
+		if id := m.tenant; id != nil {
+			return []ent.Value{*id}
+		}
 	case group.EdgeSetting:
 		if id := m.setting; id != nil {
 			return []ent.Value{*id}
@@ -958,7 +1047,7 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedmemberships != nil {
 		edges = append(edges, group.EdgeMemberships)
 	}
@@ -990,7 +1079,10 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.clearedtenant {
+		edges = append(edges, group.EdgeTenant)
+	}
 	if m.clearedsetting {
 		edges = append(edges, group.EdgeSetting)
 	}
@@ -1007,6 +1099,8 @@ func (m *GroupMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *GroupMutation) EdgeCleared(name string) bool {
 	switch name {
+	case group.EdgeTenant:
+		return m.clearedtenant
 	case group.EdgeSetting:
 		return m.clearedsetting
 	case group.EdgeMemberships:
@@ -1021,6 +1115,9 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *GroupMutation) ClearEdge(name string) error {
 	switch name {
+	case group.EdgeTenant:
+		m.ClearTenant()
+		return nil
 	case group.EdgeSetting:
 		m.ClearSetting()
 		return nil
@@ -1032,6 +1129,9 @@ func (m *GroupMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *GroupMutation) ResetEdge(name string) error {
 	switch name {
+	case group.EdgeTenant:
+		m.ResetTenant()
+		return nil
 	case group.EdgeSetting:
 		m.ResetSetting()
 		return nil
@@ -5679,6 +5779,8 @@ type UserMutation struct {
 	suspended_at       *time.Time
 	recovery_code      *string
 	clearedFields      map[string]struct{}
+	tenant             *uuid.UUID
+	clearedtenant      bool
 	memberships        map[uuid.UUID]struct{}
 	removedmemberships map[uuid.UUID]struct{}
 	clearedmemberships bool
@@ -6007,6 +6109,42 @@ func (m *UserMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	m.addupdated_by = nil
 	delete(m.clearedFields, user.FieldUpdatedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *UserMutation) SetTenantID(u uuid.UUID) {
+	m.tenant = &u
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *UserMutation) TenantID() (r uuid.UUID, exists bool) {
+	v := m.tenant
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldTenantID(ctx context.Context) (v uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *UserMutation) ResetTenantID() {
+	m.tenant = nil
 }
 
 // SetEmail sets the "email" field.
@@ -6483,6 +6621,33 @@ func (m *UserMutation) ResetRecoveryCode() {
 	delete(m.clearedFields, user.FieldRecoveryCode)
 }
 
+// ClearTenant clears the "tenant" edge to the Tenant entity.
+func (m *UserMutation) ClearTenant() {
+	m.clearedtenant = true
+	m.clearedFields[user.FieldTenantID] = struct{}{}
+}
+
+// TenantCleared reports if the "tenant" edge to the Tenant entity was cleared.
+func (m *UserMutation) TenantCleared() bool {
+	return m.clearedtenant
+}
+
+// TenantIDs returns the "tenant" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// TenantID instead. It exists only for internal usage by the builders.
+func (m *UserMutation) TenantIDs() (ids []uuid.UUID) {
+	if id := m.tenant; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetTenant resets all changes to the "tenant" edge.
+func (m *UserMutation) ResetTenant() {
+	m.tenant = nil
+	m.clearedtenant = false
+}
+
 // AddMembershipIDs adds the "memberships" edge to the Membership entity by ids.
 func (m *UserMutation) AddMembershipIDs(ids ...uuid.UUID) {
 	if m.memberships == nil {
@@ -6679,7 +6844,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -6691,6 +6856,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, user.FieldUpdatedBy)
+	}
+	if m.tenant != nil {
+		fields = append(fields, user.FieldTenantID)
 	}
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
@@ -6741,6 +6909,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case user.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case user.FieldTenantID:
+		return m.TenantID()
 	case user.FieldEmail:
 		return m.Email()
 	case user.FieldFirstName:
@@ -6780,6 +6950,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedBy(ctx)
 	case user.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case user.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case user.FieldEmail:
 		return m.OldEmail(ctx)
 	case user.FieldFirstName:
@@ -6838,6 +7010,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case user.FieldTenantID:
+		v, ok := value.(uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
 		return nil
 	case user.FieldEmail:
 		v, ok := value.(string)
@@ -7055,6 +7234,9 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case user.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case user.FieldEmail:
 		m.ResetEmail()
 		return nil
@@ -7094,7 +7276,10 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.tenant != nil {
+		edges = append(edges, user.EdgeTenant)
+	}
 	if m.memberships != nil {
 		edges = append(edges, user.EdgeMemberships)
 	}
@@ -7111,6 +7296,10 @@ func (m *UserMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *UserMutation) AddedIDs(name string) []ent.Value {
 	switch name {
+	case user.EdgeTenant:
+		if id := m.tenant; id != nil {
+			return []ent.Value{*id}
+		}
 	case user.EdgeMemberships:
 		ids := make([]ent.Value, 0, len(m.memberships))
 		for id := range m.memberships {
@@ -7135,7 +7324,7 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedmemberships != nil {
 		edges = append(edges, user.EdgeMemberships)
 	}
@@ -7176,7 +7365,10 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.clearedtenant {
+		edges = append(edges, user.EdgeTenant)
+	}
 	if m.clearedmemberships {
 		edges = append(edges, user.EdgeMemberships)
 	}
@@ -7193,6 +7385,8 @@ func (m *UserMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
+	case user.EdgeTenant:
+		return m.clearedtenant
 	case user.EdgeMemberships:
 		return m.clearedmemberships
 	case user.EdgeSessions:
@@ -7207,6 +7401,9 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *UserMutation) ClearEdge(name string) error {
 	switch name {
+	case user.EdgeTenant:
+		m.ClearTenant()
+		return nil
 	}
 	return fmt.Errorf("unknown User unique edge %s", name)
 }
@@ -7215,6 +7412,9 @@ func (m *UserMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
 	switch name {
+	case user.EdgeTenant:
+		m.ResetTenant()
+		return nil
 	case user.EdgeMemberships:
 		m.ResetMemberships()
 		return nil

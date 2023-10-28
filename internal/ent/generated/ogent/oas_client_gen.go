@@ -233,6 +233,12 @@ type Invoker interface {
 	//
 	// GET /group-settings/{id}/group
 	ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (ReadGroupSettingsGroupRes, error)
+	// ReadGroupTenant invokes readGroupTenant operation.
+	//
+	// Find the attached Tenant of the Group with the given ID.
+	//
+	// GET /groups/{id}/tenant
+	ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (ReadGroupTenantRes, error)
 	// ReadIntegration invokes readIntegration operation.
 	//
 	// Finds the Integration with the requested ID and returns it.
@@ -299,6 +305,12 @@ type Invoker interface {
 	//
 	// GET /users/{id}
 	ReadUser(ctx context.Context, params ReadUserParams) (ReadUserRes, error)
+	// ReadUserTenant invokes readUserTenant operation.
+	//
+	// Find the attached Tenant of the User with the given ID.
+	//
+	// GET /users/{id}/tenant
+	ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (ReadUserTenantRes, error)
 	// UpdateGroup invokes updateGroup operation.
 	//
 	// Updates a Group and persists changes to storage.
@@ -3880,6 +3892,97 @@ func (c *Client) sendReadGroupSettingsGroup(ctx context.Context, params ReadGrou
 	return result, nil
 }
 
+// ReadGroupTenant invokes readGroupTenant operation.
+//
+// Find the attached Tenant of the Group with the given ID.
+//
+// GET /groups/{id}/tenant
+func (c *Client) ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (ReadGroupTenantRes, error) {
+	res, err := c.sendReadGroupTenant(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (res ReadGroupTenantRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readGroupTenant"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/groups/{id}/tenant"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadGroupTenant",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/groups/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/tenant"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadGroupTenantResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // ReadIntegration invokes readIntegration operation.
 //
 // Finds the Integration with the requested ID and returns it.
@@ -4868,6 +4971,97 @@ func (c *Client) sendReadUser(ctx context.Context, params ReadUserParams) (res R
 
 	stage = "DecodeResponse"
 	result, err := decodeReadUserResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadUserTenant invokes readUserTenant operation.
+//
+// Find the attached Tenant of the User with the given ID.
+//
+// GET /users/{id}/tenant
+func (c *Client) ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (ReadUserTenantRes, error) {
+	res, err := c.sendReadUserTenant(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadUserTenant(ctx context.Context, params ReadUserTenantParams) (res ReadUserTenantRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readUserTenant"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/users/{id}/tenant"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadUserTenant",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/users/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/tenant"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadUserTenantResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

@@ -3325,6 +3325,72 @@ func decodeReadGroupSettingsGroupParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
+// ReadGroupTenantParams is parameters of readGroupTenant operation.
+type ReadGroupTenantParams struct {
+	// ID of the Group.
+	ID uuid.UUID
+}
+
+func unpackReadGroupTenantParams(packed middleware.Parameters) (params ReadGroupTenantParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	return params
+}
+
+func decodeReadGroupTenantParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadGroupTenantParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // ReadIntegrationParams is parameters of readIntegration operation.
 type ReadIntegrationParams struct {
 	// ID of the Integration.
@@ -4003,6 +4069,72 @@ func unpackReadUserParams(packed middleware.Parameters) (params ReadUserParams) 
 }
 
 func decodeReadUserParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadUserParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// ReadUserTenantParams is parameters of readUserTenant operation.
+type ReadUserTenantParams struct {
+	// ID of the User.
+	ID uuid.UUID
+}
+
+func unpackReadUserTenantParams(packed middleware.Parameters) (params ReadUserTenantParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	return params
+}
+
+func decodeReadUserTenantParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadUserTenantParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]

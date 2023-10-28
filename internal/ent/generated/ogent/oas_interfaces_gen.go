@@ -141,6 +141,10 @@ type ReadGroupSettingsRes interface {
 	readGroupSettingsRes()
 }
 
+type ReadGroupTenantRes interface {
+	readGroupTenantRes()
+}
+
 type ReadIntegrationOrganizationRes interface {
 	readIntegrationOrganizationRes()
 }
@@ -183,6 +187,10 @@ type ReadTenantRes interface {
 
 type ReadUserRes interface {
 	readUserRes()
+}
+
+type ReadUserTenantRes interface {
+	readUserTenantRes()
 }
 
 type UpdateGroupRes interface {

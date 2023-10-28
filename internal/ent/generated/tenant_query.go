@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -330,6 +331,12 @@ func (tq *TenantQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		tq.sql = prev
+	}
+	if tenant.Policy == nil {
+		return errors.New("generated: uninitialized tenant.Policy (forgotten import generated/runtime?)")
+	}
+	if err := tenant.Policy.EvalQuery(ctx, tq); err != nil {
+		return err
 	}
 	return nil
 }

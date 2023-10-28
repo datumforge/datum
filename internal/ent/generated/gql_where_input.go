@@ -80,6 +80,12 @@ type GroupWhereInput struct {
 	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
 	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
 
+	// "tenant_id" field predicates.
+	TenantID      *uuid.UUID  `json:"tenantID,omitempty"`
+	TenantIDNEQ   *uuid.UUID  `json:"tenantIDNEQ,omitempty"`
+	TenantIDIn    []uuid.UUID `json:"tenantIDIn,omitempty"`
+	TenantIDNotIn []uuid.UUID `json:"tenantIDNotIn,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -94,6 +100,10 @@ type GroupWhereInput struct {
 	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "tenant" edge predicates.
+	HasTenant     *bool               `json:"hasTenant,omitempty"`
+	HasTenantWith []*TenantWhereInput `json:"hasTenantWith,omitempty"`
 
 	// "setting" edge predicates.
 	HasSetting     *bool                      `json:"hasSetting,omitempty"`
@@ -311,6 +321,18 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, group.UpdatedByNotNil())
 	}
+	if i.TenantID != nil {
+		predicates = append(predicates, group.TenantIDEQ(*i.TenantID))
+	}
+	if i.TenantIDNEQ != nil {
+		predicates = append(predicates, group.TenantIDNEQ(*i.TenantIDNEQ))
+	}
+	if len(i.TenantIDIn) > 0 {
+		predicates = append(predicates, group.TenantIDIn(i.TenantIDIn...))
+	}
+	if len(i.TenantIDNotIn) > 0 {
+		predicates = append(predicates, group.TenantIDNotIn(i.TenantIDNotIn...))
+	}
 	if i.Name != nil {
 		predicates = append(predicates, group.NameEQ(*i.Name))
 	}
@@ -351,6 +373,24 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 		predicates = append(predicates, group.NameContainsFold(*i.NameContainsFold))
 	}
 
+	if i.HasTenant != nil {
+		p := group.HasTenant()
+		if !*i.HasTenant {
+			p = group.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTenantWith) > 0 {
+		with := make([]predicate.Tenant, 0, len(i.HasTenantWith))
+		for _, w := range i.HasTenantWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTenantWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, group.HasTenantWith(with...))
+	}
 	if i.HasSetting != nil {
 		p := group.HasSetting()
 		if !*i.HasSetting {
@@ -2656,6 +2696,12 @@ type UserWhereInput struct {
 	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
 	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
 
+	// "tenant_id" field predicates.
+	TenantID      *uuid.UUID  `json:"tenantID,omitempty"`
+	TenantIDNEQ   *uuid.UUID  `json:"tenantIDNEQ,omitempty"`
+	TenantIDIn    []uuid.UUID `json:"tenantIDIn,omitempty"`
+	TenantIDNotIn []uuid.UUID `json:"tenantIDNotIn,omitempty"`
+
 	// "email" field predicates.
 	Email             *string  `json:"email,omitempty"`
 	EmailNEQ          *string  `json:"emailNEQ,omitempty"`
@@ -2806,6 +2852,10 @@ type UserWhereInput struct {
 	RecoveryCodeNotNil       bool     `json:"recoveryCodeNotNil,omitempty"`
 	RecoveryCodeEqualFold    *string  `json:"recoveryCodeEqualFold,omitempty"`
 	RecoveryCodeContainsFold *string  `json:"recoveryCodeContainsFold,omitempty"`
+
+	// "tenant" edge predicates.
+	HasTenant     *bool               `json:"hasTenant,omitempty"`
+	HasTenantWith []*TenantWhereInput `json:"hasTenantWith,omitempty"`
 
 	// "memberships" edge predicates.
 	HasMemberships     *bool                   `json:"hasMemberships,omitempty"`
@@ -3022,6 +3072,18 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, user.UpdatedByNotNil())
+	}
+	if i.TenantID != nil {
+		predicates = append(predicates, user.TenantIDEQ(*i.TenantID))
+	}
+	if i.TenantIDNEQ != nil {
+		predicates = append(predicates, user.TenantIDNEQ(*i.TenantIDNEQ))
+	}
+	if len(i.TenantIDIn) > 0 {
+		predicates = append(predicates, user.TenantIDIn(i.TenantIDIn...))
+	}
+	if len(i.TenantIDNotIn) > 0 {
+		predicates = append(predicates, user.TenantIDNotIn(i.TenantIDNotIn...))
 	}
 	if i.Email != nil {
 		predicates = append(predicates, user.EmailEQ(*i.Email))
@@ -3411,6 +3473,24 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		predicates = append(predicates, user.RecoveryCodeContainsFold(*i.RecoveryCodeContainsFold))
 	}
 
+	if i.HasTenant != nil {
+		p := user.HasTenant()
+		if !*i.HasTenant {
+			p = user.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasTenantWith) > 0 {
+		with := make([]predicate.Tenant, 0, len(i.HasTenantWith))
+		for _, w := range i.HasTenantWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasTenantWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, user.HasTenantWith(with...))
+	}
 	if i.HasMemberships != nil {
 		p := user.HasMemberships()
 		if !*i.HasMemberships {

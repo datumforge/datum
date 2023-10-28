@@ -43,7 +43,7 @@ func FilterTenantRule() privacy.QueryMutationRule {
 	// TenantsFilter is an interface to wrap WhereTenantID()
 	// predicate that is used by both `Group` and `User` schemas.
 	type TenantsFilter interface {
-		WhereTenantID(entql.Field)
+		WhereTenantID(entql.ValueP)
 	}
 	return privacy.FilterFunc(func(ctx context.Context, f privacy.Filter) error {
 		view := viewer.FromContext(ctx)
@@ -56,7 +56,7 @@ func FilterTenantRule() privacy.QueryMutationRule {
 			return privacy.Denyf("unexpected filter type %T", f)
 		}
 		// Make sure that a tenant reads only entities that have an edge to it.
-		tf.WhereTenantID(entql.IntEQ(tid))
+		tf.WhereTenantID(entql.ValueEQ(tid))
 		// Skip to the next privacy rule (equivalent to return nil).
 		return privacy.Skip
 	})
@@ -77,7 +77,7 @@ func DenyMismatchedTenants() privacy.MutationRule {
 		}
 		// Query the tenant-ids of all attached users. Expect all users to be connected to the same tenant
 		// as the group. Note, we use privacy.DecisionContext to skip the FilterTenantRule defined above.
-		ids, err := m.Client().User.Query().Where(user.IDIn(users...)).Select(user.FieldID).Ints(privacy.DecisionContext(ctx, privacy.Allow))
+		ids, err := m.Client().User.Query().Where(user.IDIn(users...)).Select(user.FieldID).IDs(privacy.DecisionContext(ctx, privacy.Allow))
 		if err != nil {
 			return privacy.Denyf("querying the tenant-ids %v", err)
 		}

@@ -258,6 +258,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 									return
 								}
+							case 't': // Prefix: "tenant"
+								if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleReadGroupTenantRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
+									}
+
+									return
+								}
 							case 'u': // Prefix: "users"
 								if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
 									elem = elem[l:]
@@ -864,6 +884,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 								return
 							}
+						case 't': // Prefix: "tenant"
+							if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleReadUserTenantRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
 						}
 					}
 				}
@@ -1196,6 +1236,28 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										r.summary = "Find the attached GroupSettings"
 										r.operationID = "readGroupSetting"
 										r.pathPattern = "/groups/{id}/setting"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+							case 't': // Prefix: "tenant"
+								if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									switch method {
+									case "GET":
+										// Leaf: ReadGroupTenant
+										r.name = "ReadGroupTenant"
+										r.summary = "Find the attached Tenant"
+										r.operationID = "readGroupTenant"
+										r.pathPattern = "/groups/{id}/tenant"
 										r.args = args
 										r.count = 1
 										return r, true
@@ -1946,6 +2008,28 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									r.summary = "List attached Sessions"
 									r.operationID = "listUserSessions"
 									r.pathPattern = "/users/{id}/sessions"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+						case 't': // Prefix: "tenant"
+							if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ReadUserTenant
+									r.name = "ReadUserTenant"
+									r.summary = "Find the attached Tenant"
+									r.operationID = "readUserTenant"
+									r.pathPattern = "/users/{id}/tenant"
 									r.args = args
 									r.count = 1
 									return r, true

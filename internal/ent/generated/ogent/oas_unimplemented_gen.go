@@ -328,6 +328,15 @@ func (UnimplementedHandler) ReadGroupSettingsGroup(ctx context.Context, params R
 	return r, ht.ErrNotImplemented
 }
 
+// ReadGroupTenant implements readGroupTenant operation.
+//
+// Find the attached Tenant of the Group with the given ID.
+//
+// GET /groups/{id}/tenant
+func (UnimplementedHandler) ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (r ReadGroupTenantRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ReadIntegration implements readIntegration operation.
 //
 // Finds the Integration with the requested ID and returns it.
@@ -424,6 +433,15 @@ func (UnimplementedHandler) ReadTenant(ctx context.Context, params ReadTenantPar
 //
 // GET /users/{id}
 func (UnimplementedHandler) ReadUser(ctx context.Context, params ReadUserParams) (r ReadUserRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadUserTenant implements readUserTenant operation.
+//
+// Find the attached Tenant of the User with the given ID.
+//
+// GET /users/{id}/tenant
+func (UnimplementedHandler) ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (r ReadUserTenantRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

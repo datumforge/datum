@@ -5,6 +5,7 @@ package generated
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 
@@ -28,6 +30,7 @@ type GroupQuery struct {
 	order                []group.OrderOption
 	inters               []Interceptor
 	predicates           []predicate.Group
+	withTenant           *TenantQuery
 	withSetting          *GroupSettingsQuery
 	withMemberships      *MembershipQuery
 	withUsers            *UserQuery
@@ -69,6 +72,31 @@ func (gq *GroupQuery) Unique(unique bool) *GroupQuery {
 func (gq *GroupQuery) Order(o ...group.OrderOption) *GroupQuery {
 	gq.order = append(gq.order, o...)
 	return gq
+}
+
+// QueryTenant chains the current query on the "tenant" edge.
+func (gq *GroupQuery) QueryTenant() *TenantQuery {
+	query := (&TenantClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(tenant.Table, tenant.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, group.TenantTable, group.TenantColumn),
+		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.Tenant
+		step.Edge.Schema = schemaConfig.Group
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // QuerySetting chains the current query on the "setting" edge.
@@ -338,6 +366,7 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		order:           append([]group.OrderOption{}, gq.order...),
 		inters:          append([]Interceptor{}, gq.inters...),
 		predicates:      append([]predicate.Group{}, gq.predicates...),
+		withTenant:      gq.withTenant.Clone(),
 		withSetting:     gq.withSetting.Clone(),
 		withMemberships: gq.withMemberships.Clone(),
 		withUsers:       gq.withUsers.Clone(),
@@ -345,6 +374,17 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		sql:  gq.sql.Clone(),
 		path: gq.path,
 	}
+}
+
+// WithTenant tells the query-builder to eager-load the nodes that are connected to
+// the "tenant" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithTenant(opts ...func(*TenantQuery)) *GroupQuery {
+	query := (&TenantClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withTenant = query
+	return gq
 }
 
 // WithSetting tells the query-builder to eager-load the nodes that are connected to
@@ -451,6 +491,12 @@ func (gq *GroupQuery) prepareQuery(ctx context.Context) error {
 		}
 		gq.sql = prev
 	}
+	if group.Policy == nil {
+		return errors.New("generated: uninitialized group.Policy (forgotten import generated/runtime?)")
+	}
+	if err := group.Policy.EvalQuery(ctx, gq); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -458,7 +504,8 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = gq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
+			gq.withTenant != nil,
 			gq.withSetting != nil,
 			gq.withMemberships != nil,
 			gq.withUsers != nil,
@@ -486,6 +533,12 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	if query := gq.withTenant; query != nil {
+		if err := gq.loadTenant(ctx, query, nodes, nil,
+			func(n *Group, e *Tenant) { n.Edges.Tenant = e }); err != nil {
+			return nil, err
+		}
 	}
 	if query := gq.withSetting; query != nil {
 		if err := gq.loadSetting(ctx, query, nodes, nil,
@@ -529,6 +582,35 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	return nodes, nil
 }
 
+func (gq *GroupQuery) loadTenant(ctx context.Context, query *TenantQuery, nodes []*Group, init func(*Group), assign func(*Group, *Tenant)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Group)
+	for i := range nodes {
+		fk := nodes[i].TenantID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(tenant.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "tenant_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (gq *GroupQuery) loadSetting(ctx context.Context, query *GroupSettingsQuery, nodes []*Group, init func(*Group), assign func(*Group, *GroupSettings)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Group)
@@ -680,6 +762,9 @@ func (gq *GroupQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != group.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if gq.withTenant != nil {
+			_spec.Node.AddColumnOnce(group.FieldTenantID)
 		}
 	}
 	if ps := gq.predicates; len(ps) > 0 {

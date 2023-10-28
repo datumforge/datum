@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/schema/mixin"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/privacy/rule"
+	"github.com/google/uuid"
 )
 
 // BaseMixin for all schemas in the graph.
@@ -38,8 +39,7 @@ type TenantMixin struct {
 // Fields for all schemas that embed TenantMixin.
 func (TenantMixin) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("tenant_id").
-			Immutable(),
+		field.UUID("tenant_id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 	}
 }
 

@@ -13,7 +13,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 )
@@ -77,20 +76,6 @@ func (uc *UserCreate) SetUpdatedBy(i int) *UserCreate {
 func (uc *UserCreate) SetNillableUpdatedBy(i *int) *UserCreate {
 	if i != nil {
 		uc.SetUpdatedBy(*i)
-	}
-	return uc
-}
-
-// SetTenantID sets the "tenant_id" field.
-func (uc *UserCreate) SetTenantID(u uuid.UUID) *UserCreate {
-	uc.mutation.SetTenantID(u)
-	return uc
-}
-
-// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableTenantID(u *uuid.UUID) *UserCreate {
-	if u != nil {
-		uc.SetTenantID(*u)
 	}
 	return uc
 }
@@ -239,11 +224,6 @@ func (uc *UserCreate) SetNillableID(u *uuid.UUID) *UserCreate {
 	return uc
 }
 
-// SetTenant sets the "tenant" edge to the Tenant entity.
-func (uc *UserCreate) SetTenant(t *Tenant) *UserCreate {
-	return uc.SetTenantID(t.ID)
-}
-
 // AddMembershipIDs adds the "memberships" edge to the Membership entity by IDs.
 func (uc *UserCreate) AddMembershipIDs(ids ...uuid.UUID) *UserCreate {
 	uc.mutation.AddMembershipIDs(ids...)
@@ -340,13 +320,6 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := uc.mutation.TenantID(); !ok {
-		if user.DefaultTenantID == nil {
-			return fmt.Errorf("generated: uninitialized user.DefaultTenantID (forgotten import generated/runtime?)")
-		}
-		v := user.DefaultTenantID()
-		uc.mutation.SetTenantID(v)
-	}
 	if _, ok := uc.mutation.DisplayName(); !ok {
 		v := user.DefaultDisplayName
 		uc.mutation.SetDisplayName(v)
@@ -372,9 +345,6 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "User.updated_at"`)}
-	}
-	if _, ok := uc.mutation.TenantID(); !ok {
-		return &ValidationError{Name: "tenant_id", err: errors.New(`generated: missing required field "User.tenant_id"`)}
 	}
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "User.email"`)}
@@ -420,9 +390,6 @@ func (uc *UserCreate) check() error {
 		if err := user.AvatarLocalFileValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
-	}
-	if _, ok := uc.mutation.TenantID(); !ok {
-		return &ValidationError{Name: "tenant", err: errors.New(`generated: missing required edge "User.tenant"`)}
 	}
 	return nil
 }
@@ -519,24 +486,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.RecoveryCode(); ok {
 		_spec.SetField(user.FieldRecoveryCode, field.TypeString, value)
 		_node.RecoveryCode = &value
-	}
-	if nodes := uc.mutation.TenantIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   user.TenantTable,
-			Columns: []string{user.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = uc.schemaConfig.User
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.TenantID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := uc.mutation.MembershipsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

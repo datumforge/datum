@@ -447,9 +447,6 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
-	if _, ok := uu.mutation.TenantID(); uu.mutation.TenantCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "User.tenant"`)
-	}
 	return nil
 }
 
@@ -1128,9 +1125,6 @@ func (uuo *UserUpdateOne) check() error {
 		if err := user.AvatarLocalFileValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
-	}
-	if _, ok := uuo.mutation.TenantID(); uuo.mutation.TenantCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "User.tenant"`)
 	}
 	return nil
 }

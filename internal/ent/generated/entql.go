@@ -10,7 +10,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"entgo.io/ent/dialect/sql"
@@ -21,7 +20,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
@@ -37,7 +36,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldUpdatedAt:   {Type: field.TypeTime, Column: group.FieldUpdatedAt},
 			group.FieldCreatedBy:   {Type: field.TypeInt, Column: group.FieldCreatedBy},
 			group.FieldUpdatedBy:   {Type: field.TypeInt, Column: group.FieldUpdatedBy},
-			group.FieldTenantID:    {Type: field.TypeUUID, Column: group.FieldTenantID},
 			group.FieldName:        {Type: field.TypeString, Column: group.FieldName},
 			group.FieldDescription: {Type: field.TypeString, Column: group.FieldDescription},
 			group.FieldLogoURL:     {Type: field.TypeString, Column: group.FieldLogoURL},
@@ -142,20 +140,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   tenant.Table,
-			Columns: tenant.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: tenant.FieldID,
-			},
-		},
-		Type: "Tenant",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			tenant.FieldName: {Type: field.TypeString, Column: tenant.FieldName},
-		},
-	}
-	graph.Nodes[7] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -169,7 +153,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
 			user.FieldCreatedBy:       {Type: field.TypeInt, Column: user.FieldCreatedBy},
 			user.FieldUpdatedBy:       {Type: field.TypeInt, Column: user.FieldUpdatedBy},
-			user.FieldTenantID:        {Type: field.TypeUUID, Column: user.FieldTenantID},
 			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
 			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
 			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
@@ -183,18 +166,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldRecoveryCode:    {Type: field.TypeString, Column: user.FieldRecoveryCode},
 		},
 	}
-	graph.MustAddE(
-		"tenant",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   group.TenantTable,
-			Columns: []string{group.TenantColumn},
-			Bidi:    false,
-		},
-		"Group",
-		"Tenant",
-	)
 	graph.MustAddE(
 		"setting",
 		&sqlgraph.EdgeSpec{
@@ -328,18 +299,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"User",
 	)
 	graph.MustAddE(
-		"tenant",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   user.TenantTable,
-			Columns: []string{user.TenantColumn},
-			Bidi:    false,
-		},
-		"User",
-		"Tenant",
-	)
-	graph.MustAddE(
 		"memberships",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -444,11 +403,6 @@ func (f *GroupFilter) WhereUpdatedBy(p entql.IntP) {
 	f.Where(p.Field(group.FieldUpdatedBy))
 }
 
-// WhereTenantID applies the entql [16]byte predicate on the tenant_id field.
-func (f *GroupFilter) WhereTenantID(p entql.ValueP) {
-	f.Where(p.Field(group.FieldTenantID))
-}
-
 // WhereName applies the entql string predicate on the name field.
 func (f *GroupFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(group.FieldName))
@@ -462,20 +416,6 @@ func (f *GroupFilter) WhereDescription(p entql.StringP) {
 // WhereLogoURL applies the entql string predicate on the logo_url field.
 func (f *GroupFilter) WhereLogoURL(p entql.StringP) {
 	f.Where(p.Field(group.FieldLogoURL))
-}
-
-// WhereHasTenant applies a predicate to check if query has an edge tenant.
-func (f *GroupFilter) WhereHasTenant() {
-	f.Where(entql.HasEdge("tenant"))
-}
-
-// WhereHasTenantWith applies a predicate to check if query has an edge tenant with a given conditions (other predicates).
-func (f *GroupFilter) WhereHasTenantWith(preds ...predicate.Tenant) {
-	f.Where(entql.HasEdgeWith("tenant", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }
 
 // WhereHasSetting applies a predicate to check if query has an edge setting.
@@ -993,51 +933,6 @@ func (f *SessionFilter) WhereHasUsersWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (tq *TenantQuery) addPredicate(pred func(s *sql.Selector)) {
-	tq.predicates = append(tq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the TenantQuery builder.
-func (tq *TenantQuery) Filter() *TenantFilter {
-	return &TenantFilter{config: tq.config, predicateAdder: tq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *TenantMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the TenantMutation builder.
-func (m *TenantMutation) Filter() *TenantFilter {
-	return &TenantFilter{config: m.config, predicateAdder: m}
-}
-
-// TenantFilter provides a generic filtering capability at runtime for TenantQuery.
-type TenantFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *TenantFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *TenantFilter) WhereID(p entql.ValueP) {
-	f.Where(p.Field(tenant.FieldID))
-}
-
-// WhereName applies the entql string predicate on the name field.
-func (f *TenantFilter) WhereName(p entql.StringP) {
-	f.Where(p.Field(tenant.FieldName))
-}
-
-// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -1066,7 +961,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1095,11 +990,6 @@ func (f *UserFilter) WhereCreatedBy(p entql.IntP) {
 // WhereUpdatedBy applies the entql int predicate on the updated_by field.
 func (f *UserFilter) WhereUpdatedBy(p entql.IntP) {
 	f.Where(p.Field(user.FieldUpdatedBy))
-}
-
-// WhereTenantID applies the entql [16]byte predicate on the tenant_id field.
-func (f *UserFilter) WhereTenantID(p entql.ValueP) {
-	f.Where(p.Field(user.FieldTenantID))
 }
 
 // WhereEmail applies the entql string predicate on the email field.
@@ -1155,20 +1045,6 @@ func (f *UserFilter) WhereSuspendedAt(p entql.TimeP) {
 // WhereRecoveryCode applies the entql string predicate on the recovery_code field.
 func (f *UserFilter) WhereRecoveryCode(p entql.StringP) {
 	f.Where(p.Field(user.FieldRecoveryCode))
-}
-
-// WhereHasTenant applies a predicate to check if query has an edge tenant.
-func (f *UserFilter) WhereHasTenant() {
-	f.Where(entql.HasEdge("tenant"))
-}
-
-// WhereHasTenantWith applies a predicate to check if query has an edge tenant with a given conditions (other predicates).
-func (f *UserFilter) WhereHasTenantWith(preds ...predicate.Tenant) {
-	f.Where(entql.HasEdgeWith("tenant", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }
 
 // WhereHasMemberships applies a predicate to check if query has an edge memberships.

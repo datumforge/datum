@@ -1,7 +1,3 @@
-// Copyright 2019-present Facebook Inc. All rights reserved.
-// This source code is licensed under the Apache 2.0 license found
-// in the LICENSE file in the root directory of this source tree.
-
 package viewer
 
 import (
@@ -23,13 +19,13 @@ const (
 
 // Viewer describes the query/mutation viewer-context.
 type Viewer interface {
-	Admin() bool               // If viewer is admin.
-	Tenant() (uuid.UUID, bool) // Tenant identifier.
+	Admin() bool                     // If viewer is admin.
+	Organization() (uuid.UUID, bool) // Tenant identifier.
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
-	T    *generated.Tenant
+	T    *generated.Organization
 	Role Role // Attached roles.
 }
 
@@ -37,7 +33,7 @@ func (v UserViewer) Admin() bool {
 	return v.Role&Admin != 0
 }
 
-func (v UserViewer) Tenant() (uuid.UUID, bool) {
+func (v UserViewer) Organization() (uuid.UUID, bool) {
 	if v.T != nil {
 		return v.T.ID, true
 	}

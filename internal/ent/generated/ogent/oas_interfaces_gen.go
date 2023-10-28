@@ -25,10 +25,6 @@ type CreateSessionRes interface {
 	createSessionRes()
 }
 
-type CreateTenantRes interface {
-	createTenantRes()
-}
-
 type CreateUserRes interface {
 	createUserRes()
 }
@@ -55,10 +51,6 @@ type DeleteOrganizationRes interface {
 
 type DeleteSessionRes interface {
 	deleteSessionRes()
-}
-
-type DeleteTenantRes interface {
-	deleteTenantRes()
 }
 
 type DeleteUserRes interface {
@@ -105,10 +97,6 @@ type ListSessionRes interface {
 	listSessionRes()
 }
 
-type ListTenantRes interface {
-	listTenantRes()
-}
-
 type ListUserGroupsRes interface {
 	listUserGroupsRes()
 }
@@ -139,10 +127,6 @@ type ReadGroupSettingsGroupRes interface {
 
 type ReadGroupSettingsRes interface {
 	readGroupSettingsRes()
-}
-
-type ReadGroupTenantRes interface {
-	readGroupTenantRes()
 }
 
 type ReadIntegrationOrganizationRes interface {
@@ -181,16 +165,8 @@ type ReadSessionUsersRes interface {
 	readSessionUsersRes()
 }
 
-type ReadTenantRes interface {
-	readTenantRes()
-}
-
 type ReadUserRes interface {
 	readUserRes()
-}
-
-type ReadUserTenantRes interface {
-	readUserTenantRes()
 }
 
 type UpdateGroupRes interface {
@@ -215,10 +191,6 @@ type UpdateOrganizationRes interface {
 
 type UpdateSessionRes interface {
 	updateSessionRes()
-}
-
-type UpdateTenantRes interface {
-	updateTenantRes()
 }
 
 type UpdateUserRes interface {

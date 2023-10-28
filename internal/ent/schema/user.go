@@ -29,8 +29,7 @@ type User struct {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
-		BaseMixin{},
-		TenantMixin{},
+		mixin.BaseMixin{},
 	}
 }
 

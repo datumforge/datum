@@ -14,7 +14,6 @@ func NewGroupCreate(e *generated.Group) *GroupCreate {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -49,7 +48,6 @@ func NewGroupList(e *generated.Group) *GroupList {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -84,7 +82,6 @@ func NewGroupRead(e *generated.Group) *GroupRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -251,7 +248,6 @@ func NewGroupSettingsGroupRead(e *generated.Group) *GroupSettingsGroupRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -286,7 +282,6 @@ func NewGroupUpdate(e *generated.Group) *GroupUpdate {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -376,34 +371,6 @@ func (gs *GroupSettingRead) Elem() GroupSettingRead {
 	return *gs
 }
 
-func NewGroupTenantRead(e *generated.Tenant) *GroupTenantRead {
-	if e == nil {
-		return nil
-	}
-	var ret GroupTenantRead
-	ret.ID = e.ID
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewGroupTenantReads(es []*generated.Tenant) []GroupTenantRead {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]GroupTenantRead, len(es))
-	for i, e := range es {
-		r[i] = NewGroupTenantRead(e).Elem()
-	}
-	return r
-}
-
-func (t *GroupTenantRead) Elem() GroupTenantRead {
-	if t == nil {
-		return GroupTenantRead{}
-	}
-	return *t
-}
-
 func NewGroupUsersList(e *generated.User) *GroupUsersList {
 	if e == nil {
 		return nil
@@ -414,7 +381,6 @@ func NewGroupUsersList(e *generated.User) *GroupUsersList {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -767,7 +733,6 @@ func NewMembershipGroupRead(e *generated.Group) *MembershipGroupRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -834,7 +799,6 @@ func NewMembershipUserRead(e *generated.User) *MembershipUserRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1229,7 +1193,6 @@ func NewSessionUsersRead(e *generated.User) *SessionUsersRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1276,118 +1239,6 @@ func (u *SessionUsersRead) Elem() SessionUsersRead {
 	return *u
 }
 
-func NewTenantCreate(e *generated.Tenant) *TenantCreate {
-	if e == nil {
-		return nil
-	}
-	var ret TenantCreate
-	ret.ID = e.ID
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewTenantCreates(es []*generated.Tenant) []TenantCreate {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]TenantCreate, len(es))
-	for i, e := range es {
-		r[i] = NewTenantCreate(e).Elem()
-	}
-	return r
-}
-
-func (t *TenantCreate) Elem() TenantCreate {
-	if t == nil {
-		return TenantCreate{}
-	}
-	return *t
-}
-
-func NewTenantList(e *generated.Tenant) *TenantList {
-	if e == nil {
-		return nil
-	}
-	var ret TenantList
-	ret.ID = e.ID
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewTenantLists(es []*generated.Tenant) []TenantList {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]TenantList, len(es))
-	for i, e := range es {
-		r[i] = NewTenantList(e).Elem()
-	}
-	return r
-}
-
-func (t *TenantList) Elem() TenantList {
-	if t == nil {
-		return TenantList{}
-	}
-	return *t
-}
-
-func NewTenantRead(e *generated.Tenant) *TenantRead {
-	if e == nil {
-		return nil
-	}
-	var ret TenantRead
-	ret.ID = e.ID
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewTenantReads(es []*generated.Tenant) []TenantRead {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]TenantRead, len(es))
-	for i, e := range es {
-		r[i] = NewTenantRead(e).Elem()
-	}
-	return r
-}
-
-func (t *TenantRead) Elem() TenantRead {
-	if t == nil {
-		return TenantRead{}
-	}
-	return *t
-}
-
-func NewTenantUpdate(e *generated.Tenant) *TenantUpdate {
-	if e == nil {
-		return nil
-	}
-	var ret TenantUpdate
-	ret.ID = e.ID
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewTenantUpdates(es []*generated.Tenant) []TenantUpdate {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]TenantUpdate, len(es))
-	for i, e := range es {
-		r[i] = NewTenantUpdate(e).Elem()
-	}
-	return r
-}
-
-func (t *TenantUpdate) Elem() TenantUpdate {
-	if t == nil {
-		return TenantUpdate{}
-	}
-	return *t
-}
-
 func NewUserCreate(e *generated.User) *UserCreate {
 	if e == nil {
 		return nil
@@ -1398,7 +1249,6 @@ func NewUserCreate(e *generated.User) *UserCreate {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1455,7 +1305,6 @@ func NewUserList(e *generated.User) *UserList {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1512,7 +1361,6 @@ func NewUserRead(e *generated.User) *UserRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1569,7 +1417,6 @@ func NewUserUpdate(e *generated.User) *UserUpdate {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1626,7 +1473,6 @@ func NewUserGroupsList(e *generated.Group) *UserGroupsList {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptInt(e.CreatedBy)
 	ret.UpdatedBy = NewOptInt(e.UpdatedBy)
-	ret.TenantID = e.TenantID
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -1717,32 +1563,4 @@ func (s *UserSessionsList) Elem() UserSessionsList {
 		return UserSessionsList{}
 	}
 	return *s
-}
-
-func NewUserTenantRead(e *generated.Tenant) *UserTenantRead {
-	if e == nil {
-		return nil
-	}
-	var ret UserTenantRead
-	ret.ID = e.ID
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewUserTenantReads(es []*generated.Tenant) []UserTenantRead {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]UserTenantRead, len(es))
-	for i, e := range es {
-		r[i] = NewUserTenantRead(e).Elem()
-	}
-	return r
-}
-
-func (t *UserTenantRead) Elem() UserTenantRead {
-	if t == nil {
-		return UserTenantRead{}
-	}
-	return *t
 }

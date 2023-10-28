@@ -258,26 +258,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 									return
 								}
-							case 't': // Prefix: "tenant"
-								if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "GET":
-										s.handleReadGroupTenantRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "GET")
-									}
-
-									return
-								}
 							case 'u': // Prefix: "users"
 								if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
 									elem = elem[l:]
@@ -702,60 +682,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 				}
-			case 't': // Prefix: "tenants"
-				if l := len("tenants"); len(elem) >= l && elem[0:l] == "tenants" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleListTenantRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleCreateTenantRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,POST")
-					}
-
-					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "DELETE":
-							s.handleDeleteTenantRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "GET":
-							s.handleReadTenantRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "PATCH":
-							s.handleUpdateTenantRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "DELETE,GET,PATCH")
-						}
-
-						return
-					}
-				}
 			case 'u': // Prefix: "users"
 				if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
 					elem = elem[l:]
@@ -876,26 +802,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								switch r.Method {
 								case "GET":
 									s.handleListUserSessionsRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-						case 't': // Prefix: "tenant"
-							if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleReadUserTenantRequest([1]string{
 										args[0],
 									}, elemIsEscaped, w, r)
 								default:
@@ -1236,28 +1142,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										r.summary = "Find the attached GroupSettings"
 										r.operationID = "readGroupSetting"
 										r.pathPattern = "/groups/{id}/setting"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
-								}
-							case 't': // Prefix: "tenant"
-								if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									switch method {
-									case "GET":
-										// Leaf: ReadGroupTenant
-										r.name = "ReadGroupTenant"
-										r.summary = "Find the attached Tenant"
-										r.operationID = "readGroupTenant"
-										r.pathPattern = "/groups/{id}/tenant"
 										r.args = args
 										r.count = 1
 										return r, true
@@ -1785,82 +1669,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 				}
-			case 't': // Prefix: "tenants"
-				if l := len("tenants"); len(elem) >= l && elem[0:l] == "tenants" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = "ListTenant"
-						r.summary = "List Tenants"
-						r.operationID = "listTenant"
-						r.pathPattern = "/tenants"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = "CreateTenant"
-						r.summary = "Create a new Tenant"
-						r.operationID = "createTenant"
-						r.pathPattern = "/tenants"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Leaf parameter
-					args[0] = elem
-					elem = ""
-
-					if len(elem) == 0 {
-						switch method {
-						case "DELETE":
-							// Leaf: DeleteTenant
-							r.name = "DeleteTenant"
-							r.summary = "Deletes a Tenant by ID"
-							r.operationID = "deleteTenant"
-							r.pathPattern = "/tenants/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "GET":
-							// Leaf: ReadTenant
-							r.name = "ReadTenant"
-							r.summary = "Find a Tenant by ID"
-							r.operationID = "readTenant"
-							r.pathPattern = "/tenants/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "PATCH":
-							// Leaf: UpdateTenant
-							r.name = "UpdateTenant"
-							r.summary = "Updates a Tenant"
-							r.operationID = "updateTenant"
-							r.pathPattern = "/tenants/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-				}
 			case 'u': // Prefix: "users"
 				if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
 					elem = elem[l:]
@@ -2008,28 +1816,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									r.summary = "List attached Sessions"
 									r.operationID = "listUserSessions"
 									r.pathPattern = "/users/{id}/sessions"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-						case 't': // Prefix: "tenant"
-							if l := len("tenant"); len(elem) >= l && elem[0:l] == "tenant" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									// Leaf: ReadUserTenant
-									r.name = "ReadUserTenant"
-									r.summary = "Find the attached Tenant"
-									r.operationID = "readUserTenant"
-									r.pathPattern = "/users/{id}/tenant"
 									r.args = args
 									r.count = 1
 									return r, true

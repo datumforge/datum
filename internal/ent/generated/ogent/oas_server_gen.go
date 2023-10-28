@@ -44,12 +44,6 @@ type Handler interface {
 	//
 	// POST /sessions
 	CreateSession(ctx context.Context, req *CreateSessionReq) (CreateSessionRes, error)
-	// CreateTenant implements createTenant operation.
-	//
-	// Creates a new Tenant and persists it to storage.
-	//
-	// POST /tenants
-	CreateTenant(ctx context.Context, req *CreateTenantReq) (CreateTenantRes, error)
 	// CreateUser implements createUser operation.
 	//
 	// Creates a new User and persists it to storage.
@@ -92,12 +86,6 @@ type Handler interface {
 	//
 	// DELETE /sessions/{id}
 	DeleteSession(ctx context.Context, params DeleteSessionParams) (DeleteSessionRes, error)
-	// DeleteTenant implements deleteTenant operation.
-	//
-	// Deletes the Tenant with the requested ID.
-	//
-	// DELETE /tenants/{id}
-	DeleteTenant(ctx context.Context, params DeleteTenantParams) (DeleteTenantRes, error)
 	// DeleteUser implements deleteUser operation.
 	//
 	// Deletes the User with the requested ID.
@@ -164,12 +152,6 @@ type Handler interface {
 	//
 	// GET /sessions
 	ListSession(ctx context.Context, params ListSessionParams) (ListSessionRes, error)
-	// ListTenant implements listTenant operation.
-	//
-	// List Tenants.
-	//
-	// GET /tenants
-	ListTenant(ctx context.Context, params ListTenantParams) (ListTenantRes, error)
 	// ListUser implements listUser operation.
 	//
 	// List Users.
@@ -218,12 +200,6 @@ type Handler interface {
 	//
 	// GET /group-settings/{id}/group
 	ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (ReadGroupSettingsGroupRes, error)
-	// ReadGroupTenant implements readGroupTenant operation.
-	//
-	// Find the attached Tenant of the Group with the given ID.
-	//
-	// GET /groups/{id}/tenant
-	ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (ReadGroupTenantRes, error)
 	// ReadIntegration implements readIntegration operation.
 	//
 	// Finds the Integration with the requested ID and returns it.
@@ -278,24 +254,12 @@ type Handler interface {
 	//
 	// GET /sessions/{id}/users
 	ReadSessionUsers(ctx context.Context, params ReadSessionUsersParams) (ReadSessionUsersRes, error)
-	// ReadTenant implements readTenant operation.
-	//
-	// Finds the Tenant with the requested ID and returns it.
-	//
-	// GET /tenants/{id}
-	ReadTenant(ctx context.Context, params ReadTenantParams) (ReadTenantRes, error)
 	// ReadUser implements readUser operation.
 	//
 	// Finds the User with the requested ID and returns it.
 	//
 	// GET /users/{id}
 	ReadUser(ctx context.Context, params ReadUserParams) (ReadUserRes, error)
-	// ReadUserTenant implements readUserTenant operation.
-	//
-	// Find the attached Tenant of the User with the given ID.
-	//
-	// GET /users/{id}/tenant
-	ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (ReadUserTenantRes, error)
 	// UpdateGroup implements updateGroup operation.
 	//
 	// Updates a Group and persists changes to storage.
@@ -332,12 +296,6 @@ type Handler interface {
 	//
 	// PATCH /sessions/{id}
 	UpdateSession(ctx context.Context, req *UpdateSessionReq, params UpdateSessionParams) (UpdateSessionRes, error)
-	// UpdateTenant implements updateTenant operation.
-	//
-	// Updates a Tenant and persists changes to storage.
-	//
-	// PATCH /tenants/{id}
-	UpdateTenant(ctx context.Context, req *UpdateTenantReq, params UpdateTenantParams) (UpdateTenantRes, error)
 	// UpdateUser implements updateUser operation.
 	//
 	// Updates a User and persists changes to storage.

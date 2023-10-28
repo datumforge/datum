@@ -268,9 +268,6 @@ func (gu *GroupUpdate) check() error {
 			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
 		}
 	}
-	if _, ok := gu.mutation.TenantID(); gu.mutation.TenantCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Group.tenant"`)
-	}
 	if _, ok := gu.mutation.SettingID(); gu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
 	}
@@ -714,9 +711,6 @@ func (guo *GroupUpdateOne) check() error {
 		if err := group.LogoURLValidator(v); err != nil {
 			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
 		}
-	}
-	if _, ok := guo.mutation.TenantID(); guo.mutation.TenantCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Group.tenant"`)
 	}
 	if _, ok := guo.mutation.SettingID(); guo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)

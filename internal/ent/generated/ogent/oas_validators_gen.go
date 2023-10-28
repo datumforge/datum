@@ -492,14 +492,6 @@ func (s ListSessionOKApplicationJSON) Validate() error {
 	return nil
 }
 
-func (s ListTenantOKApplicationJSON) Validate() error {
-	alias := ([]TenantList)(s)
-	if alias == nil {
-		return errors.New("nil is invalid value")
-	}
-	return nil
-}
-
 func (s ListUserGroupsOKApplicationJSON) Validate() error {
 	alias := ([]UserGroupsList)(s)
 	if alias == nil {

@@ -13,7 +13,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/membership"
-	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 )
@@ -81,20 +80,6 @@ func (gc *GroupCreate) SetNillableUpdatedBy(i *int) *GroupCreate {
 	return gc
 }
 
-// SetTenantID sets the "tenant_id" field.
-func (gc *GroupCreate) SetTenantID(u uuid.UUID) *GroupCreate {
-	gc.mutation.SetTenantID(u)
-	return gc
-}
-
-// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (gc *GroupCreate) SetNillableTenantID(u *uuid.UUID) *GroupCreate {
-	if u != nil {
-		gc.SetTenantID(*u)
-	}
-	return gc
-}
-
 // SetName sets the "name" field.
 func (gc *GroupCreate) SetName(s string) *GroupCreate {
 	gc.mutation.SetName(s)
@@ -133,11 +118,6 @@ func (gc *GroupCreate) SetNillableID(u *uuid.UUID) *GroupCreate {
 		gc.SetID(*u)
 	}
 	return gc
-}
-
-// SetTenant sets the "tenant" edge to the Tenant entity.
-func (gc *GroupCreate) SetTenant(t *Tenant) *GroupCreate {
-	return gc.SetTenantID(t.ID)
 }
 
 // SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
@@ -232,13 +212,6 @@ func (gc *GroupCreate) defaults() error {
 		v := group.DefaultUpdatedAt()
 		gc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := gc.mutation.TenantID(); !ok {
-		if group.DefaultTenantID == nil {
-			return fmt.Errorf("generated: uninitialized group.DefaultTenantID (forgotten import generated/runtime?)")
-		}
-		v := group.DefaultTenantID()
-		gc.mutation.SetTenantID(v)
-	}
 	if _, ok := gc.mutation.Description(); !ok {
 		v := group.DefaultDescription
 		gc.mutation.SetDescription(v)
@@ -261,9 +234,6 @@ func (gc *GroupCreate) check() error {
 	if _, ok := gc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Group.updated_at"`)}
 	}
-	if _, ok := gc.mutation.TenantID(); !ok {
-		return &ValidationError{Name: "tenant_id", err: errors.New(`generated: missing required field "Group.tenant_id"`)}
-	}
 	if _, ok := gc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Group.name"`)}
 	}
@@ -282,9 +252,6 @@ func (gc *GroupCreate) check() error {
 		if err := group.LogoURLValidator(v); err != nil {
 			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
 		}
-	}
-	if _, ok := gc.mutation.TenantID(); !ok {
-		return &ValidationError{Name: "tenant", err: errors.New(`generated: missing required edge "Group.tenant"`)}
 	}
 	if _, ok := gc.mutation.SettingID(); !ok {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Group.setting"`)}
@@ -352,24 +319,6 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
 		_node.LogoURL = value
-	}
-	if nodes := gc.mutation.TenantIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   group.TenantTable,
-			Columns: []string{group.TenantColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(tenant.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = gc.schemaConfig.Group
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.TenantID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := gc.mutation.SettingIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

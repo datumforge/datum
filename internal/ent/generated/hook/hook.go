@@ -81,18 +81,6 @@ func (f SessionFunc) Mutate(ctx context.Context, m generated.Mutation) (generate
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SessionMutation", m)
 }
 
-// The TenantFunc type is an adapter to allow the use of ordinary
-// function as Tenant mutator.
-type TenantFunc func(context.Context, *generated.TenantMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f TenantFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.TenantMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.TenantMutation", m)
-}
-
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *generated.UserMutation) (generated.Value, error)

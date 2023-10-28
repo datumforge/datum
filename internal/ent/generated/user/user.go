@@ -24,8 +24,6 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
-	// FieldTenantID holds the string denoting the tenant_id field in the database.
-	FieldTenantID = "tenant_id"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
 	// FieldFirstName holds the string denoting the first_name field in the database.
@@ -48,8 +46,6 @@ const (
 	FieldSuspendedAt = "suspended_at"
 	// FieldRecoveryCode holds the string denoting the recovery_code field in the database.
 	FieldRecoveryCode = "recovery_code"
-	// EdgeTenant holds the string denoting the tenant edge name in mutations.
-	EdgeTenant = "tenant"
 	// EdgeMemberships holds the string denoting the memberships edge name in mutations.
 	EdgeMemberships = "memberships"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
@@ -58,13 +54,6 @@ const (
 	EdgeGroups = "groups"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// TenantTable is the table that holds the tenant relation/edge.
-	TenantTable = "users"
-	// TenantInverseTable is the table name for the Tenant entity.
-	// It exists in this package in order to avoid circular dependency with the "tenant" package.
-	TenantInverseTable = "tenants"
-	// TenantColumn is the table column denoting the tenant relation/edge.
-	TenantColumn = "tenant_id"
 	// MembershipsTable is the table that holds the memberships relation/edge.
 	MembershipsTable = "memberships"
 	// MembershipsInverseTable is the table name for the Membership entity.
@@ -93,7 +82,6 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
-	FieldTenantID,
 	FieldEmail,
 	FieldFirstName,
 	FieldLastName,
@@ -137,8 +125,6 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID func() uuid.UUID
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
 	// FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
@@ -185,11 +171,6 @@ func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedBy orders the results by the updated_by field.
 func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
-}
-
-// ByTenantID orders the results by the tenant_id field.
-func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByEmail orders the results by the email field.
@@ -247,13 +228,6 @@ func ByRecoveryCode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRecoveryCode, opts...).ToFunc()
 }
 
-// ByTenantField orders the results by tenant field.
-func ByTenantField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newTenantStep(), sql.OrderByField(field, opts...))
-	}
-}
-
 // ByMembershipsCount orders the results by memberships count.
 func ByMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -294,13 +268,6 @@ func ByGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
-}
-func newTenantStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(TenantInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, false, TenantTable, TenantColumn),
-	)
 }
 func newMembershipsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

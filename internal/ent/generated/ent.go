@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -86,7 +85,6 @@ func checkColumn(table, column string) error {
 			membership.Table:    membership.ValidColumn,
 			organization.Table:  organization.ValidColumn,
 			session.Table:       session.ValidColumn,
-			tenant.Table:        tenant.ValidColumn,
 			user.Table:          user.ValidColumn,
 		})
 	})

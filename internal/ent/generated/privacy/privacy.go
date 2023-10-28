@@ -255,30 +255,6 @@ func (f SessionMutationRuleFunc) EvalMutation(ctx context.Context, m generated.M
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.SessionMutation", m)
 }
 
-// The TenantQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type TenantQueryRuleFunc func(context.Context, *generated.TenantQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f TenantQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.TenantQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TenantQuery", q)
-}
-
-// The TenantMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type TenantMutationRuleFunc func(context.Context, *generated.TenantMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f TenantMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.TenantMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TenantMutation", m)
-}
-
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *generated.UserQuery) error
@@ -350,8 +326,6 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.SessionQuery:
 		return q.Filter(), nil
-	case *generated.TenantQuery:
-		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
 	default:
@@ -372,8 +346,6 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil
 	case *generated.SessionMutation:
-		return m.Filter(), nil
-	case *generated.TenantMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil

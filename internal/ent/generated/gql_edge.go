@@ -8,14 +8,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-func (gr *Group) Tenant(ctx context.Context) (*Tenant, error) {
-	result, err := gr.Edges.TenantOrErr()
-	if IsNotLoaded(err) {
-		result, err = gr.QueryTenant().Only(ctx)
-	}
-	return result, err
-}
-
 func (gr *Group) Setting(ctx context.Context) (*GroupSettings, error) {
 	result, err := gr.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
@@ -110,14 +102,6 @@ func (s *Session) Users(ctx context.Context) (*User, error) {
 		result, err = s.QueryUsers().Only(ctx)
 	}
 	return result, MaskNotFound(err)
-}
-
-func (u *User) Tenant(ctx context.Context) (*Tenant, error) {
-	result, err := u.Edges.TenantOrErr()
-	if IsNotLoaded(err) {
-		result, err = u.QueryTenant().Only(ctx)
-	}
-	return result, err
 }
 
 func (u *User) Memberships(ctx context.Context) (result []*Membership, err error) {

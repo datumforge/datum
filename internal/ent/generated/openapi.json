@@ -451,10 +451,6 @@
                   "updated_by": {
                     "type": "integer"
                   },
-                  "tenant_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
                   "name": {
                     "type": "string"
                   },
@@ -463,10 +459,6 @@
                   },
                   "logo_url": {
                     "type": "string"
-                  },
-                  "tenant": {
-                    "type": "string",
-                    "format": "uuid"
                   },
                   "setting": {
                     "type": "string",
@@ -490,11 +482,9 @@
                 "required": [
                   "created_at",
                   "updated_at",
-                  "tenant_id",
                   "name",
                   "description",
                   "logo_url",
-                  "tenant",
                   "setting"
                 ]
               }
@@ -652,10 +642,6 @@
                   "logo_url": {
                     "type": "string"
                   },
-                  "tenant": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
                   "setting": {
                     "type": "string",
                     "format": "uuid"
@@ -798,52 +784,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Group_SettingRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/groups/{id}/tenant": {
-      "get": {
-        "tags": [
-          "Group"
-        ],
-        "summary": "Find the attached Tenant",
-        "description": "Find the attached Tenant of the Group with the given ID",
-        "operationId": "readGroupTenant",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Group",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant attached to Group with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Group_TenantRead"
                 }
               }
             }
@@ -2493,255 +2433,6 @@
         }
       }
     },
-    "/tenants": {
-      "get": {
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "List Tenants",
-        "description": "List Tenants.",
-        "operationId": "listTenant",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Tenant list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TenantList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "Create a new Tenant",
-        "description": "Creates a new Tenant and persists it to storage.",
-        "operationId": "createTenant",
-        "requestBody": {
-          "description": "Tenant to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "name"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TenantCreate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/tenants/{id}": {
-      "get": {
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "Find a Tenant by ID",
-        "description": "Finds the Tenant with the requested ID and returns it.",
-        "operationId": "readTenant",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Tenant",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TenantRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "Deletes a Tenant by ID",
-        "description": "Deletes the Tenant with the requested ID.",
-        "operationId": "deleteTenant",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Tenant",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Tenant with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Tenant"
-        ],
-        "summary": "Updates a Tenant",
-        "description": "Updates a Tenant and persists changes to storage.",
-        "operationId": "updateTenant",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Tenant",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Tenant properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Tenant updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TenantUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/users": {
       "get": {
         "tags": [
@@ -2827,10 +2518,6 @@
                   "updated_by": {
                     "type": "integer"
                   },
-                  "tenant_id": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
                   "email": {
                     "type": "string"
                   },
@@ -2867,10 +2554,6 @@
                   "recovery_code": {
                     "type": "string"
                   },
-                  "tenant": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
                   "memberships": {
                     "type": "array",
                     "items": {
@@ -2896,13 +2579,11 @@
                 "required": [
                   "created_at",
                   "updated_at",
-                  "tenant_id",
                   "email",
                   "first_name",
                   "last_name",
                   "display_name",
-                  "locked",
-                  "tenant"
+                  "locked"
                 ]
               }
             }
@@ -3085,10 +2766,6 @@
                   },
                   "recovery_code": {
                     "type": "string"
-                  },
-                  "tenant": {
-                    "type": "string",
-                    "format": "uuid"
                   },
                   "memberships": {
                     "type": "array",
@@ -3337,52 +3014,6 @@
           }
         }
       }
-    },
-    "/users/{id}/tenant": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Find the attached Tenant",
-        "description": "Find the attached Tenant of the User with the given ID",
-        "operationId": "readUserTenant",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the User",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tenant attached to User with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User_TenantRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -3408,10 +3039,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -3420,9 +3047,6 @@
           },
           "logo_url": {
             "type": "string"
-          },
-          "tenant": {
-            "$ref": "#/components/schemas/Tenant"
           },
           "setting": {
             "$ref": "#/components/schemas/GroupSettings"
@@ -3444,11 +3068,9 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url",
-          "tenant",
           "setting"
         ]
       },
@@ -3473,10 +3095,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -3491,7 +3109,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -3518,10 +3135,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -3536,7 +3149,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -3563,10 +3175,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -3581,7 +3189,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -3851,10 +3458,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -3869,7 +3472,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -3896,10 +3498,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -3914,7 +3512,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -4000,22 +3597,6 @@
           "join_policy"
         ]
       },
-      "Group_TenantRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
       "Group_UsersList": {
         "type": "object",
         "properties": {
@@ -4036,10 +3617,6 @@
           },
           "updated_by": {
             "type": "integer"
-          },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -4079,7 +3656,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
@@ -4511,10 +4087,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -4529,7 +4101,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -4588,10 +4159,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "email": {
             "type": "string"
           },
@@ -4630,7 +4197,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
@@ -5165,10 +4731,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "email": {
             "type": "string"
           },
@@ -5207,92 +4769,11 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
           "display_name",
           "locked"
-        ]
-      },
-      "Tenant": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "TenantCreate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "TenantList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "TenantRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "TenantUpdate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
         ]
       },
       "User": {
@@ -5315,10 +4796,6 @@
           },
           "updated_by": {
             "type": "integer"
-          },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -5356,9 +4833,6 @@
           "recovery_code": {
             "type": "string"
           },
-          "tenant": {
-            "$ref": "#/components/schemas/Tenant"
-          },
           "memberships": {
             "type": "array",
             "items": {
@@ -5382,13 +4856,11 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
           "display_name",
-          "locked",
-          "tenant"
+          "locked"
         ]
       },
       "UserCreate": {
@@ -5411,10 +4883,6 @@
           },
           "updated_by": {
             "type": "integer"
-          },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -5454,7 +4922,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
@@ -5483,10 +4950,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "email": {
             "type": "string"
           },
@@ -5525,7 +4988,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
@@ -5554,10 +5016,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "email": {
             "type": "string"
           },
@@ -5596,7 +5054,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
@@ -5625,10 +5082,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "email": {
             "type": "string"
           },
@@ -5667,7 +5120,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "email",
           "first_name",
           "last_name",
@@ -5696,10 +5148,6 @@
           "updated_by": {
             "type": "integer"
           },
-          "tenant_id": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           },
@@ -5714,7 +5162,6 @@
           "id",
           "created_at",
           "updated_at",
-          "tenant_id",
           "name",
           "description",
           "logo_url"
@@ -5802,22 +5249,6 @@
           "disabled",
           "token",
           "ips"
-        ]
-      },
-      "User_TenantRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name"
         ]
       }
     },

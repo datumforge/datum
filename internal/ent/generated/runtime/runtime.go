@@ -12,7 +12,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/tenant"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/schema"
 	"github.com/google/uuid"
@@ -26,7 +25,7 @@ import (
 // to their package variables.
 func init() {
 	groupMixin := schema.Group{}.Mixin()
-	group.Policy = privacy.NewPolicies(groupMixin[1], groupMixin[2], schema.Group{})
+	group.Policy = privacy.NewPolicies(groupMixin[1], schema.Group{})
 	group.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := group.Policy.EvalMutation(ctx, m); err != nil {
@@ -40,8 +39,6 @@ func init() {
 	group.Hooks[1] = groupMixinHooks0[0]
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
-	groupMixinFields2 := groupMixin[2].Fields()
-	_ = groupMixinFields2
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescCreatedAt is the schema descriptor for created_at field.
@@ -54,10 +51,6 @@ func init() {
 	group.DefaultUpdatedAt = groupDescUpdatedAt.Default.(func() time.Time)
 	// group.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	group.UpdateDefaultUpdatedAt = groupDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// groupDescTenantID is the schema descriptor for tenant_id field.
-	groupDescTenantID := groupMixinFields2[0].Descriptor()
-	// group.DefaultTenantID holds the default value on creation for the tenant_id field.
-	group.DefaultTenantID = groupDescTenantID.Default.(func() uuid.UUID)
 	// groupDescName is the schema descriptor for name field.
 	groupDescName := groupFields[1].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -207,28 +200,8 @@ func init() {
 	sessionDescID := sessionFields[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() uuid.UUID)
-	tenantMixin := schema.Tenant{}.Mixin()
-	tenant.Policy = privacy.NewPolicies(tenantMixin[0], schema.Tenant{})
-	tenant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := tenant.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
-	tenantFields := schema.Tenant{}.Fields()
-	_ = tenantFields
-	// tenantDescName is the schema descriptor for name field.
-	tenantDescName := tenantFields[1].Descriptor()
-	// tenant.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	tenant.NameValidator = tenantDescName.Validators[0].(func(string) error)
-	// tenantDescID is the schema descriptor for id field.
-	tenantDescID := tenantFields[0].Descriptor()
-	// tenant.DefaultID holds the default value on creation for the id field.
-	tenant.DefaultID = tenantDescID.Default.(func() uuid.UUID)
 	userMixin := schema.User{}.Mixin()
-	user.Policy = privacy.NewPolicies(userMixin[1], userMixin[2], schema.User{})
+	user.Policy = privacy.NewPolicies(userMixin[1], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
 		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 			if err := user.Policy.EvalMutation(ctx, m); err != nil {
@@ -242,8 +215,6 @@ func init() {
 	user.Hooks[1] = userMixinHooks0[0]
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
-	userMixinFields2 := userMixin[2].Fields()
-	_ = userMixinFields2
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
@@ -256,10 +227,6 @@ func init() {
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// userDescTenantID is the schema descriptor for tenant_id field.
-	userDescTenantID := userMixinFields2[0].Descriptor()
-	// user.DefaultTenantID holds the default value on creation for the tenant_id field.
-	user.DefaultTenantID = userDescTenantID.Default.(func() uuid.UUID)
 	// userDescEmail is the schema descriptor for email field.
 	userDescEmail := userFields[0].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.

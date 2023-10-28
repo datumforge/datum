@@ -13,7 +13,6 @@ type SchemaConfig struct {
 	Membership    string // Membership table.
 	Organization  string // Organization table.
 	Session       string // Session table.
-	Tenant        string // Tenant table.
 	User          string // User table.
 	UserGroups    string // User-groups->Group table.
 }

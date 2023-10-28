@@ -67,15 +67,6 @@ func (UnimplementedHandler) CreateSession(ctx context.Context, req *CreateSessio
 	return r, ht.ErrNotImplemented
 }
 
-// CreateTenant implements createTenant operation.
-//
-// Creates a new Tenant and persists it to storage.
-//
-// POST /tenants
-func (UnimplementedHandler) CreateTenant(ctx context.Context, req *CreateTenantReq) (r CreateTenantRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // CreateUser implements createUser operation.
 //
 // Creates a new User and persists it to storage.
@@ -136,15 +127,6 @@ func (UnimplementedHandler) DeleteOrganization(ctx context.Context, params Delet
 //
 // DELETE /sessions/{id}
 func (UnimplementedHandler) DeleteSession(ctx context.Context, params DeleteSessionParams) (r DeleteSessionRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// DeleteTenant implements deleteTenant operation.
-//
-// Deletes the Tenant with the requested ID.
-//
-// DELETE /tenants/{id}
-func (UnimplementedHandler) DeleteTenant(ctx context.Context, params DeleteTenantParams) (r DeleteTenantRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -247,15 +229,6 @@ func (UnimplementedHandler) ListSession(ctx context.Context, params ListSessionP
 	return r, ht.ErrNotImplemented
 }
 
-// ListTenant implements listTenant operation.
-//
-// List Tenants.
-//
-// GET /tenants
-func (UnimplementedHandler) ListTenant(ctx context.Context, params ListTenantParams) (r ListTenantRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ListUser implements listUser operation.
 //
 // List Users.
@@ -325,15 +298,6 @@ func (UnimplementedHandler) ReadGroupSettings(ctx context.Context, params ReadGr
 //
 // GET /group-settings/{id}/group
 func (UnimplementedHandler) ReadGroupSettingsGroup(ctx context.Context, params ReadGroupSettingsGroupParams) (r ReadGroupSettingsGroupRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadGroupTenant implements readGroupTenant operation.
-//
-// Find the attached Tenant of the Group with the given ID.
-//
-// GET /groups/{id}/tenant
-func (UnimplementedHandler) ReadGroupTenant(ctx context.Context, params ReadGroupTenantParams) (r ReadGroupTenantRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -418,30 +382,12 @@ func (UnimplementedHandler) ReadSessionUsers(ctx context.Context, params ReadSes
 	return r, ht.ErrNotImplemented
 }
 
-// ReadTenant implements readTenant operation.
-//
-// Finds the Tenant with the requested ID and returns it.
-//
-// GET /tenants/{id}
-func (UnimplementedHandler) ReadTenant(ctx context.Context, params ReadTenantParams) (r ReadTenantRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ReadUser implements readUser operation.
 //
 // Finds the User with the requested ID and returns it.
 //
 // GET /users/{id}
 func (UnimplementedHandler) ReadUser(ctx context.Context, params ReadUserParams) (r ReadUserRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadUserTenant implements readUserTenant operation.
-//
-// Find the attached Tenant of the User with the given ID.
-//
-// GET /users/{id}/tenant
-func (UnimplementedHandler) ReadUserTenant(ctx context.Context, params ReadUserTenantParams) (r ReadUserTenantRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -496,15 +442,6 @@ func (UnimplementedHandler) UpdateOrganization(ctx context.Context, req *UpdateO
 //
 // PATCH /sessions/{id}
 func (UnimplementedHandler) UpdateSession(ctx context.Context, req *UpdateSessionReq, params UpdateSessionParams) (r UpdateSessionRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UpdateTenant implements updateTenant operation.
-//
-// Updates a Tenant and persists changes to storage.
-//
-// PATCH /tenants/{id}
-func (UnimplementedHandler) UpdateTenant(ctx context.Context, req *UpdateTenantReq, params UpdateTenantParams) (r UpdateTenantRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

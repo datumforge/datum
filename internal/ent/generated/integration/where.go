@@ -9,6 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
@@ -483,6 +485,9 @@ func HasOrganization() predicate.Integration {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
 		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Integration
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -491,6 +496,9 @@ func HasOrganization() predicate.Integration {
 func HasOrganizationWith(preds ...predicate.Organization) predicate.Integration {
 	return predicate.Integration(func(s *sql.Selector) {
 		step := newOrganizationStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Integration
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

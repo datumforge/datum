@@ -9,6 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -41,6 +43,8 @@ func (ud *UserDelete) ExecX(ctx context.Context) int {
 
 func (ud *UserDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID))
+	_spec.Node.Schema = ud.schemaConfig.User
+	ctx = internal.NewSchemaConfigContext(ctx, ud.schemaConfig)
 	if ps := ud.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

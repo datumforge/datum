@@ -8,8 +8,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // OrganizationDelete is the builder for deleting a Organization entity.
@@ -41,6 +43,8 @@ func (od *OrganizationDelete) ExecX(ctx context.Context) int {
 
 func (od *OrganizationDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec.Node.Schema = od.schemaConfig.Organization
+	ctx = internal.NewSchemaConfigContext(ctx, od.schemaConfig)
 	if ps := od.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

@@ -15,6 +15,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // GroupSettingsUpdate is the builder for updating GroupSettings entities.
@@ -255,6 +257,7 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gsu.schemaConfig.GroupSettings
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := gsu.mutation.GroupIDs(); len(nodes) > 0 {
@@ -268,11 +271,14 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gsu.schemaConfig.GroupSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = gsu.schemaConfig.GroupSettings
+	ctx = internal.NewSchemaConfigContext(ctx, gsu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, gsu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{groupsettings.Label}
@@ -548,6 +554,7 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gsuo.schemaConfig.GroupSettings
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := gsuo.mutation.GroupIDs(); len(nodes) > 0 {
@@ -561,11 +568,14 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gsuo.schemaConfig.GroupSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = gsuo.schemaConfig.GroupSettings
+	ctx = internal.NewSchemaConfigContext(ctx, gsuo.schemaConfig)
 	_node = &GroupSettings{config: gsuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

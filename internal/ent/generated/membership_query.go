@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // MembershipQuery is the builder for querying Membership entities.
@@ -83,6 +85,9 @@ func (mq *MembershipQuery) QueryOrganization() *OrganizationQuery {
 			sqlgraph.To(organization.Table, organization.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.OrganizationTable, membership.OrganizationColumn),
 		)
+		schemaConfig := mq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Membership
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -105,6 +110,9 @@ func (mq *MembershipQuery) QueryUser() *UserQuery {
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.UserTable, membership.UserColumn),
 		)
+		schemaConfig := mq.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.Membership
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -127,6 +135,9 @@ func (mq *MembershipQuery) QueryGroup() *GroupQuery {
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.GroupTable, membership.GroupColumn),
 		)
+		schemaConfig := mq.schemaConfig
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.Membership
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -467,6 +478,8 @@ func (mq *MembershipQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*M
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	_spec.Node.Schema = mq.schemaConfig.Membership
+	ctx = internal.NewSchemaConfigContext(ctx, mq.schemaConfig)
 	if len(mq.modifiers) > 0 {
 		_spec.Modifiers = mq.modifiers
 	}
@@ -604,6 +617,8 @@ func (mq *MembershipQuery) loadGroup(ctx context.Context, query *GroupQuery, nod
 
 func (mq *MembershipQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mq.querySpec()
+	_spec.Node.Schema = mq.schemaConfig.Membership
+	ctx = internal.NewSchemaConfigContext(ctx, mq.schemaConfig)
 	if len(mq.modifiers) > 0 {
 		_spec.Modifiers = mq.modifiers
 	}
@@ -669,6 +684,9 @@ func (mq *MembershipQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if mq.ctx.Unique != nil && *mq.ctx.Unique {
 		selector.Distinct()
 	}
+	t1.Schema(mq.schemaConfig.Membership)
+	ctx = internal.NewSchemaConfigContext(ctx, mq.schemaConfig)
+	selector.WithContext(ctx)
 	for _, p := range mq.predicates {
 		p(selector)
 	}

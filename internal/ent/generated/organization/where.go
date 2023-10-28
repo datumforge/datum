@@ -9,6 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
@@ -333,6 +335,9 @@ func HasMemberships() predicate.Organization {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, MembershipsTable, MembershipsColumn),
 		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -341,6 +346,9 @@ func HasMemberships() predicate.Organization {
 func HasMembershipsWith(preds ...predicate.Membership) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		step := newMembershipsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -356,6 +364,9 @@ func HasIntegrations() predicate.Organization {
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, IntegrationsTable, IntegrationsColumn),
 		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -364,6 +375,9 @@ func HasIntegrations() predicate.Organization {
 func HasIntegrationsWith(preds ...predicate.Integration) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		step := newIntegrationsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

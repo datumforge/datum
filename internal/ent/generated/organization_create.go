@@ -237,6 +237,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		_node = &Organization{config: oc.config}
 		_spec = sqlgraph.NewCreateSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
 	)
+	_spec.Schema = oc.schemaConfig.Organization
 	if id, ok := oc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
@@ -272,6 +273,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = oc.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -288,6 +290,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = oc.schemaConfig.Integration
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // OrganizationQuery is the builder for querying Organization entities.
@@ -83,6 +85,9 @@ func (oq *OrganizationQuery) QueryMemberships() *MembershipQuery {
 			sqlgraph.To(membership.Table, membership.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.MembershipsTable, organization.MembershipsColumn),
 		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -105,6 +110,9 @@ func (oq *OrganizationQuery) QueryIntegrations() *IntegrationQuery {
 			sqlgraph.To(integration.Table, integration.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.IntegrationsTable, organization.IntegrationsColumn),
 		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -425,6 +433,8 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	_spec.Node.Schema = oq.schemaConfig.Organization
+	ctx = internal.NewSchemaConfigContext(ctx, oq.schemaConfig)
 	if len(oq.modifiers) > 0 {
 		_spec.Modifiers = oq.modifiers
 	}
@@ -538,6 +548,8 @@ func (oq *OrganizationQuery) loadIntegrations(ctx context.Context, query *Integr
 
 func (oq *OrganizationQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := oq.querySpec()
+	_spec.Node.Schema = oq.schemaConfig.Organization
+	ctx = internal.NewSchemaConfigContext(ctx, oq.schemaConfig)
 	if len(oq.modifiers) > 0 {
 		_spec.Modifiers = oq.modifiers
 	}
@@ -603,6 +615,9 @@ func (oq *OrganizationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if oq.ctx.Unique != nil && *oq.ctx.Unique {
 		selector.Distinct()
 	}
+	t1.Schema(oq.schemaConfig.Organization)
+	ctx = internal.NewSchemaConfigContext(ctx, oq.schemaConfig)
+	selector.WithContext(ctx)
 	for _, p := range oq.predicates {
 		p(selector)
 	}

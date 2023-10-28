@@ -8,8 +8,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // GroupDelete is the builder for deleting a Group entity.
@@ -41,6 +43,8 @@ func (gd *GroupDelete) ExecX(ctx context.Context) int {
 
 func (gd *GroupDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(group.Table, sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID))
+	_spec.Node.Schema = gd.schemaConfig.Group
+	ctx = internal.NewSchemaConfigContext(ctx, gd.schemaConfig)
 	if ps := gd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

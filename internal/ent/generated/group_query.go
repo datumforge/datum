@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // GroupQuery is the builder for querying Group entities.
@@ -82,6 +84,9 @@ func (gq *GroupQuery) QuerySetting() *GroupSettingsQuery {
 			sqlgraph.To(groupsettings.Table, groupsettings.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, group.SettingTable, group.SettingColumn),
 		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.GroupSettings
+		step.Edge.Schema = schemaConfig.GroupSettings
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -104,6 +109,9 @@ func (gq *GroupQuery) QueryMemberships() *MembershipQuery {
 			sqlgraph.To(membership.Table, membership.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.MembershipsTable, group.MembershipsColumn),
 		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -424,6 +432,8 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	_spec.Node.Schema = gq.schemaConfig.Group
+	ctx = internal.NewSchemaConfigContext(ctx, gq.schemaConfig)
 	if len(gq.modifiers) > 0 {
 		_spec.Modifiers = gq.modifiers
 	}
@@ -526,6 +536,8 @@ func (gq *GroupQuery) loadMemberships(ctx context.Context, query *MembershipQuer
 
 func (gq *GroupQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := gq.querySpec()
+	_spec.Node.Schema = gq.schemaConfig.Group
+	ctx = internal.NewSchemaConfigContext(ctx, gq.schemaConfig)
 	if len(gq.modifiers) > 0 {
 		_spec.Modifiers = gq.modifiers
 	}
@@ -591,6 +603,9 @@ func (gq *GroupQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if gq.ctx.Unique != nil && *gq.ctx.Unique {
 		selector.Distinct()
 	}
+	t1.Schema(gq.schemaConfig.Group)
+	ctx = internal.NewSchemaConfigContext(ctx, gq.schemaConfig)
+	selector.WithContext(ctx)
 	for _, p := range gq.predicates {
 		p(selector)
 	}

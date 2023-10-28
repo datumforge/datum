@@ -263,6 +263,7 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 		_node = &GroupSettings{config: gsc.config}
 		_spec = sqlgraph.NewCreateSpec(groupsettings.Table, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
 	)
+	_spec.Schema = gsc.schemaConfig.GroupSettings
 	if id, ok := gsc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
@@ -302,6 +303,7 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gsc.schemaConfig.GroupSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

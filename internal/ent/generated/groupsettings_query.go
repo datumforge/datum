@@ -14,6 +14,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // GroupSettingsQuery is the builder for querying GroupSettings entities.
@@ -79,6 +81,9 @@ func (gsq *GroupSettingsQuery) QueryGroup() *GroupQuery {
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, groupsettings.GroupTable, groupsettings.GroupColumn),
 		)
+		schemaConfig := gsq.schemaConfig
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.GroupSettings
 		fromU = sqlgraph.SetNeighbors(gsq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -393,6 +398,8 @@ func (gsq *GroupSettingsQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	_spec.Node.Schema = gsq.schemaConfig.GroupSettings
+	ctx = internal.NewSchemaConfigContext(ctx, gsq.schemaConfig)
 	if len(gsq.modifiers) > 0 {
 		_spec.Modifiers = gsq.modifiers
 	}
@@ -454,6 +461,8 @@ func (gsq *GroupSettingsQuery) loadGroup(ctx context.Context, query *GroupQuery,
 
 func (gsq *GroupSettingsQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := gsq.querySpec()
+	_spec.Node.Schema = gsq.schemaConfig.GroupSettings
+	ctx = internal.NewSchemaConfigContext(ctx, gsq.schemaConfig)
 	if len(gsq.modifiers) > 0 {
 		_spec.Modifiers = gsq.modifiers
 	}
@@ -519,6 +528,9 @@ func (gsq *GroupSettingsQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if gsq.ctx.Unique != nil && *gsq.ctx.Unique {
 		selector.Distinct()
 	}
+	t1.Schema(gsq.schemaConfig.GroupSettings)
+	ctx = internal.NewSchemaConfigContext(ctx, gsq.schemaConfig)
+	selector.WithContext(ctx)
 	for _, p := range gsq.predicates {
 		p(selector)
 	}

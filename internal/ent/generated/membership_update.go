@@ -17,6 +17,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // MembershipUpdate is the builder for updating Membership entities.
@@ -265,6 +267,7 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = mu.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := mu.mutation.OrganizationIDs(); len(nodes) > 0 {
@@ -278,6 +281,7 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = mu.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -294,6 +298,7 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = mu.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := mu.mutation.UserIDs(); len(nodes) > 0 {
@@ -307,6 +312,7 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = mu.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -323,6 +329,7 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = mu.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := mu.mutation.GroupIDs(); len(nodes) > 0 {
@@ -336,11 +343,14 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = mu.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = mu.schemaConfig.Membership
+	ctx = internal.NewSchemaConfigContext(ctx, mu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{membership.Label}
@@ -624,6 +634,7 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = muo.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := muo.mutation.OrganizationIDs(); len(nodes) > 0 {
@@ -637,6 +648,7 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = muo.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -653,6 +665,7 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = muo.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := muo.mutation.UserIDs(); len(nodes) > 0 {
@@ -666,6 +679,7 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = muo.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -682,6 +696,7 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = muo.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := muo.mutation.GroupIDs(); len(nodes) > 0 {
@@ -695,11 +710,14 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = muo.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = muo.schemaConfig.Membership
+	ctx = internal.NewSchemaConfigContext(ctx, muo.schemaConfig)
 	_node = &Membership{config: muo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

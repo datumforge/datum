@@ -8,8 +8,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // IntegrationDelete is the builder for deleting a Integration entity.
@@ -41,6 +43,8 @@ func (id *IntegrationDelete) ExecX(ctx context.Context) int {
 
 func (id *IntegrationDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(integration.Table, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID))
+	_spec.Node.Schema = id.schemaConfig.Integration
+	ctx = internal.NewSchemaConfigContext(ctx, id.schemaConfig)
 	if ps := id.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

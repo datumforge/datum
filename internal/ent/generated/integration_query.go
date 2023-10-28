@@ -14,6 +14,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // IntegrationQuery is the builder for querying Integration entities.
@@ -79,6 +81,9 @@ func (iq *IntegrationQuery) QueryOrganization() *OrganizationQuery {
 			sqlgraph.To(organization.Table, organization.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, integration.OrganizationTable, integration.OrganizationColumn),
 		)
+		schemaConfig := iq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Integration
 		fromU = sqlgraph.SetNeighbors(iq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -393,6 +398,8 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	_spec.Node.Schema = iq.schemaConfig.Integration
+	ctx = internal.NewSchemaConfigContext(ctx, iq.schemaConfig)
 	if len(iq.modifiers) > 0 {
 		_spec.Modifiers = iq.modifiers
 	}
@@ -454,6 +461,8 @@ func (iq *IntegrationQuery) loadOrganization(ctx context.Context, query *Organiz
 
 func (iq *IntegrationQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := iq.querySpec()
+	_spec.Node.Schema = iq.schemaConfig.Integration
+	ctx = internal.NewSchemaConfigContext(ctx, iq.schemaConfig)
 	if len(iq.modifiers) > 0 {
 		_spec.Modifiers = iq.modifiers
 	}
@@ -519,6 +528,9 @@ func (iq *IntegrationQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if iq.ctx.Unique != nil && *iq.ctx.Unique {
 		selector.Distinct()
 	}
+	t1.Schema(iq.schemaConfig.Integration)
+	ctx = internal.NewSchemaConfigContext(ctx, iq.schemaConfig)
+	selector.WithContext(ctx)
 	for _, p := range iq.predicates {
 		p(selector)
 	}

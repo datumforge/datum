@@ -8,8 +8,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // GroupSettingsDelete is the builder for deleting a GroupSettings entity.
@@ -41,6 +43,8 @@ func (gsd *GroupSettingsDelete) ExecX(ctx context.Context) int {
 
 func (gsd *GroupSettingsDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(groupsettings.Table, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
+	_spec.Node.Schema = gsd.schemaConfig.GroupSettings
+	ctx = internal.NewSchemaConfigContext(ctx, gsd.schemaConfig)
 	if ps := gsd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

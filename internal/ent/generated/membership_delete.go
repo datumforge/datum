@@ -8,8 +8,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
+	"github.com/datumforge/datum/internal/ent/generated/membership"
 )
 
 // MembershipDelete is the builder for deleting a Membership entity.
@@ -41,6 +43,8 @@ func (md *MembershipDelete) ExecX(ctx context.Context) int {
 
 func (md *MembershipDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(membership.Table, sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID))
+	_spec.Node.Schema = md.schemaConfig.Membership
+	ctx = internal.NewSchemaConfigContext(ctx, md.schemaConfig)
 	if ps := md.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

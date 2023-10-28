@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // GroupUpdate is the builder for updating Group entities.
@@ -288,6 +290,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gu.schemaConfig.GroupSettings
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := gu.mutation.SettingIDs(); len(nodes) > 0 {
@@ -301,6 +304,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gu.schemaConfig.GroupSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -317,6 +321,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gu.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := gu.mutation.RemovedMembershipsIDs(); len(nodes) > 0 && !gu.mutation.MembershipsCleared() {
@@ -330,6 +335,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gu.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -346,11 +352,14 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = gu.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = gu.schemaConfig.Group
+	ctx = internal.NewSchemaConfigContext(ctx, gu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, gu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -658,6 +667,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = guo.schemaConfig.GroupSettings
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := guo.mutation.SettingIDs(); len(nodes) > 0 {
@@ -671,6 +681,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = guo.schemaConfig.GroupSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -687,6 +698,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = guo.schemaConfig.Membership
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := guo.mutation.RemovedMembershipsIDs(); len(nodes) > 0 && !guo.mutation.MembershipsCleared() {
@@ -700,6 +712,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = guo.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -716,11 +729,14 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = guo.schemaConfig.Membership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = guo.schemaConfig.Group
+	ctx = internal.NewSchemaConfigContext(ctx, guo.schemaConfig)
 	_node = &Group{config: guo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

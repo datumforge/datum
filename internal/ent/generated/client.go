@@ -23,6 +23,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // Client is the client that holds all ent builders.
@@ -79,6 +81,8 @@ type (
 		hooks *hooks
 		// interceptors to execute on queries.
 		inters *inters
+		// schemaConfig contains alternative names for all tables.
+		schemaConfig SchemaConfig
 	}
 	// Option function to configure the client.
 	Option func(*config)
@@ -369,6 +373,9 @@ func (c *GroupClient) QuerySetting(gr *Group) *GroupSettingsQuery {
 			sqlgraph.To(groupsettings.Table, groupsettings.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, group.SettingTable, group.SettingColumn),
 		)
+		schemaConfig := gr.schemaConfig
+		step.To.Schema = schemaConfig.GroupSettings
+		step.Edge.Schema = schemaConfig.GroupSettings
 		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -385,6 +392,9 @@ func (c *GroupClient) QueryMemberships(gr *Group) *MembershipQuery {
 			sqlgraph.To(membership.Table, membership.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.MembershipsTable, group.MembershipsColumn),
 		)
+		schemaConfig := gr.schemaConfig
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -535,6 +545,9 @@ func (c *GroupSettingsClient) QueryGroup(gs *GroupSettings) *GroupQuery {
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, true, groupsettings.GroupTable, groupsettings.GroupColumn),
 		)
+		schemaConfig := gs.schemaConfig
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.GroupSettings
 		fromV = sqlgraph.Neighbors(gs.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -685,6 +698,9 @@ func (c *IntegrationClient) QueryOrganization(i *Integration) *OrganizationQuery
 			sqlgraph.To(organization.Table, organization.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, integration.OrganizationTable, integration.OrganizationColumn),
 		)
+		schemaConfig := i.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Integration
 		fromV = sqlgraph.Neighbors(i.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -835,6 +851,9 @@ func (c *MembershipClient) QueryOrganization(m *Membership) *OrganizationQuery {
 			sqlgraph.To(organization.Table, organization.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.OrganizationTable, membership.OrganizationColumn),
 		)
+		schemaConfig := m.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Membership
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -851,6 +870,9 @@ func (c *MembershipClient) QueryUser(m *Membership) *UserQuery {
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.UserTable, membership.UserColumn),
 		)
+		schemaConfig := m.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.Membership
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -867,6 +889,9 @@ func (c *MembershipClient) QueryGroup(m *Membership) *GroupQuery {
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, membership.GroupTable, membership.GroupColumn),
 		)
+		schemaConfig := m.schemaConfig
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.Membership
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1017,6 +1042,9 @@ func (c *OrganizationClient) QueryMemberships(o *Organization) *MembershipQuery 
 			sqlgraph.To(membership.Table, membership.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.MembershipsTable, organization.MembershipsColumn),
 		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1033,6 +1061,9 @@ func (c *OrganizationClient) QueryIntegrations(o *Organization) *IntegrationQuer
 			sqlgraph.To(integration.Table, integration.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, organization.IntegrationsTable, organization.IntegrationsColumn),
 		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Integration
+		step.Edge.Schema = schemaConfig.Integration
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1183,6 +1214,9 @@ func (c *SessionClient) QueryUsers(s *Session) *UserQuery {
 			sqlgraph.To(user.Table, user.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, session.UsersTable, session.UsersColumn),
 		)
+		schemaConfig := s.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.Session
 		fromV = sqlgraph.Neighbors(s.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1333,6 +1367,9 @@ func (c *UserClient) QueryMemberships(u *User) *MembershipQuery {
 			sqlgraph.To(membership.Table, membership.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.MembershipsTable, user.MembershipsColumn),
 		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1349,6 +1386,9 @@ func (c *UserClient) QuerySessions(u *User) *SessionQuery {
 			sqlgraph.To(session.Table, session.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
 		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.Session
+		step.Edge.Schema = schemaConfig.Session
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1392,3 +1432,15 @@ type (
 		User []ent.Interceptor
 	}
 )
+
+// SchemaConfig represents alternative schema names for all tables
+// that can be passed at runtime.
+type SchemaConfig = internal.SchemaConfig
+
+// AlternateSchemas allows alternate schema names to be
+// passed into ent operations.
+func AlternateSchema(schemaConfig SchemaConfig) Option {
+	return func(c *config) {
+		c.schemaConfig = schemaConfig
+	}
+}

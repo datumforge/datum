@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // UserQuery is the builder for querying User entities.
@@ -83,6 +85,9 @@ func (uq *UserQuery) QueryMemberships() *MembershipQuery {
 			sqlgraph.To(membership.Table, membership.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.MembershipsTable, user.MembershipsColumn),
 		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.Membership
+		step.Edge.Schema = schemaConfig.Membership
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -105,6 +110,9 @@ func (uq *UserQuery) QuerySessions() *SessionQuery {
 			sqlgraph.To(session.Table, session.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
 		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.Session
+		step.Edge.Schema = schemaConfig.Session
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -425,6 +433,8 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
+	_spec.Node.Schema = uq.schemaConfig.User
+	ctx = internal.NewSchemaConfigContext(ctx, uq.schemaConfig)
 	if len(uq.modifiers) > 0 {
 		_spec.Modifiers = uq.modifiers
 	}
@@ -538,6 +548,8 @@ func (uq *UserQuery) loadSessions(ctx context.Context, query *SessionQuery, node
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := uq.querySpec()
+	_spec.Node.Schema = uq.schemaConfig.User
+	ctx = internal.NewSchemaConfigContext(ctx, uq.schemaConfig)
 	if len(uq.modifiers) > 0 {
 		_spec.Modifiers = uq.modifiers
 	}
@@ -603,6 +615,9 @@ func (uq *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if uq.ctx.Unique != nil && *uq.ctx.Unique {
 		selector.Distinct()
 	}
+	t1.Schema(uq.schemaConfig.User)
+	ctx = internal.NewSchemaConfigContext(ctx, uq.schemaConfig)
+	selector.WithContext(ctx)
 	for _, p := range uq.predicates {
 		p(selector)
 	}

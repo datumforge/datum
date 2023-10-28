@@ -15,6 +15,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/google/uuid"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // IntegrationUpdate is the builder for updating Integration entities.
@@ -232,6 +234,7 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = iu.schemaConfig.Integration
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := iu.mutation.OrganizationIDs(); len(nodes) > 0 {
@@ -245,11 +248,14 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = iu.schemaConfig.Integration
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = iu.schemaConfig.Integration
+	ctx = internal.NewSchemaConfigContext(ctx, iu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, iu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{integration.Label}
@@ -502,6 +508,7 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = iuo.schemaConfig.Integration
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := iuo.mutation.OrganizationIDs(); len(nodes) > 0 {
@@ -515,11 +522,14 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
+		edge.Schema = iuo.schemaConfig.Integration
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	_spec.Node.Schema = iuo.schemaConfig.Integration
+	ctx = internal.NewSchemaConfigContext(ctx, iuo.schemaConfig)
 	_node = &Integration{config: iuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues

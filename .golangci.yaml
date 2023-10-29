@@ -4,8 +4,11 @@ linters-settings:
   gofumpt:
     extra-rules: true
 
-skip-dirs:
-  - internal/entclean
+run:
+  skip-dirs:
+    - internal/entclean
+  skip-files:
+    - internal/entclean/main.go
 
 linters:
   enable:

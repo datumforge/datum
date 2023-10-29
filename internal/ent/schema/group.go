@@ -7,7 +7,9 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+
 	"github.com/datumforge/datum/internal/ent/mixin"
+
 	"github.com/google/uuid"
 )
 
@@ -55,17 +57,3 @@ func (Group) Annotations() []schema.Annotation {
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }
-
-// Policy defines the privacy policy of the Group.
-//func (Group) Policy() ent.Policy {
-//	return privacy.Policy{
-//		Mutation: privacy.MutationPolicy{
-//			// Limit DenyMismatchedTenants only for
-//			// Create operations
-//			privacy.OnMutationOperation(
-//				rule.DenyMismatchedTenants(),
-//				ent.OpCreate,
-//			),
-//		},
-//	}
-//}

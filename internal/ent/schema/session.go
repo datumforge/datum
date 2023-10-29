@@ -9,9 +9,10 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/google/uuid"
 	"lukechampine.com/frand"
+
+	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
 // Session holds authentication sessions. They can either be first-party web auth sessions or OAuth sessions. Sessions should persist in the database for some time duration after expiration, but with the "disabled" boolean set to true.

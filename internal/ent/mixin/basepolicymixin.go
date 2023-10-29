@@ -3,6 +3,7 @@ package mixin
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/mixin"
+
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )

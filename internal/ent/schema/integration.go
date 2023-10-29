@@ -6,7 +6,9 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+
 	"github.com/datumforge/datum/internal/ent/mixin"
+
 	"github.com/google/uuid"
 )
 

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+
 	"github.com/google/uuid"
 )
 

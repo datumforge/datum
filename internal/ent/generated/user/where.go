@@ -69,12 +69,12 @@ func UpdatedAt(v time.Time) predicate.User {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v int) predicate.User {
+func CreatedBy(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v int) predicate.User {
+func UpdatedBy(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
@@ -214,42 +214,42 @@ func UpdatedAtLTE(v time.Time) predicate.User {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v int) predicate.User {
+func CreatedByEQ(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v int) predicate.User {
+func CreatedByNEQ(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...int) predicate.User {
+func CreatedByIn(vs ...uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...int) predicate.User {
+func CreatedByNotIn(vs ...uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v int) predicate.User {
+func CreatedByGT(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v int) predicate.User {
+func CreatedByGTE(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v int) predicate.User {
+func CreatedByLT(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v int) predicate.User {
+func CreatedByLTE(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -264,42 +264,42 @@ func CreatedByNotNil() predicate.User {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v int) predicate.User {
+func UpdatedByEQ(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v int) predicate.User {
+func UpdatedByNEQ(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...int) predicate.User {
+func UpdatedByIn(vs ...uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...int) predicate.User {
+func UpdatedByNotIn(vs ...uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v int) predicate.User {
+func UpdatedByGT(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v int) predicate.User {
+func UpdatedByGTE(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v int) predicate.User {
+func UpdatedByLT(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v int) predicate.User {
+func UpdatedByLTE(v uuid.UUID) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldUpdatedBy, v))
 }
 

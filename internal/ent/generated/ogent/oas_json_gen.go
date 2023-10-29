@@ -8192,41 +8192,6 @@ func (s *OptDateTime) UnmarshalJSON(data []byte) error {
 	return s.Decode(d, json.DecodeDateTime)
 }
 
-// Encode encodes int as json.
-func (o OptInt) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	e.Int(int(o.Value))
-}
-
-// Decode decodes int from json.
-func (o *OptInt) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptInt to nil")
-	}
-	o.Set = true
-	v, err := d.Int()
-	if err != nil {
-		return err
-	}
-	o.Value = int(v)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptInt) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptInt) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes string as json.
 func (o OptString) Encode(e *jx.Encoder) {
 	if !o.Set {

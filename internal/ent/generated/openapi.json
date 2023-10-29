@@ -86,10 +86,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "visibility": {
                     "type": "string",
@@ -261,10 +263,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "visibility": {
                     "type": "string",
@@ -446,10 +450,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "name": {
                     "type": "string"
@@ -628,10 +634,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "name": {
                     "type": "string"
@@ -948,10 +956,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "kind": {
                     "type": "string"
@@ -1115,10 +1125,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "description": {
                     "type": "string"
@@ -1285,10 +1297,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "current": {
                     "type": "boolean"
@@ -1455,10 +1469,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "current": {
                     "type": "boolean"
@@ -1725,10 +1741,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "name": {
                     "type": "string"
@@ -1894,10 +1912,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "name": {
                     "type": "string"
@@ -2158,10 +2178,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "type": {
                     "type": "string",
@@ -2337,10 +2359,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "disabled": {
                     "type": "boolean"
@@ -2513,10 +2537,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "email": {
                     "type": "string"
@@ -2726,10 +2752,12 @@
                     "format": "date-time"
                   },
                   "created_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "updated_by": {
-                    "type": "integer"
+                    "type": "string",
+                    "format": "uuid"
                   },
                   "email": {
                     "type": "string"
@@ -3034,10 +3062,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3090,10 +3120,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3130,10 +3162,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3170,10 +3204,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3210,10 +3246,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "visibility": {
             "type": "string",
@@ -3261,10 +3299,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "visibility": {
             "type": "string",
@@ -3309,10 +3349,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "visibility": {
             "type": "string",
@@ -3357,10 +3399,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "visibility": {
             "type": "string",
@@ -3405,10 +3449,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "visibility": {
             "type": "string",
@@ -3453,10 +3499,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3493,10 +3541,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3533,10 +3583,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -3565,10 +3617,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "visibility": {
             "type": "string",
@@ -3613,10 +3667,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -3679,10 +3735,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "kind": {
             "type": "string"
@@ -3722,10 +3780,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "kind": {
             "type": "string"
@@ -3761,10 +3821,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "kind": {
             "type": "string"
@@ -3800,10 +3862,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "kind": {
             "type": "string"
@@ -3839,10 +3903,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "kind": {
             "type": "string"
@@ -3878,10 +3944,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -3910,10 +3978,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -3954,10 +4024,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -3986,10 +4058,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -4018,10 +4092,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -4050,10 +4126,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -4082,10 +4160,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4122,10 +4202,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4154,10 +4236,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -4220,10 +4304,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4264,10 +4350,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4296,10 +4384,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4328,10 +4418,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4360,10 +4452,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -4392,10 +4486,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "kind": {
             "type": "string"
@@ -4431,10 +4527,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -4463,10 +4561,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
@@ -4518,10 +4618,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
@@ -4570,10 +4672,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
@@ -4622,10 +4726,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
@@ -4674,10 +4780,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",
@@ -4726,10 +4834,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -4792,10 +4902,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -4879,10 +4991,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -4945,10 +5059,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -5011,10 +5127,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -5077,10 +5195,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "email": {
             "type": "string"
@@ -5143,10 +5263,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "type": "string"
@@ -5183,10 +5305,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "current": {
             "type": "boolean"
@@ -5215,10 +5339,12 @@
             "format": "date-time"
           },
           "created_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "updated_by": {
-            "type": "integer"
+            "type": "string",
+            "format": "uuid"
           },
           "type": {
             "type": "string",

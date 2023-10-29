@@ -23,9 +23,9 @@ type Organization struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int `json:"created_by,omitempty"`
+	CreatedBy uuid.UUID `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int `json:"updated_by,omitempty"`
+	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -73,13 +73,11 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organization.FieldCreatedBy, organization.FieldUpdatedBy:
-			values[i] = new(sql.NullInt64)
 		case organization.FieldName:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case organization.FieldID:
+		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy:
 			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -115,16 +113,16 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				o.UpdatedAt = value.Time
 			}
 		case organization.FieldCreatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value.Valid {
-				o.CreatedBy = int(value.Int64)
+			} else if value != nil {
+				o.CreatedBy = *value
 			}
 		case organization.FieldUpdatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value.Valid {
-				o.UpdatedBy = int(value.Int64)
+			} else if value != nil {
+				o.UpdatedBy = *value
 			}
 		case organization.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {

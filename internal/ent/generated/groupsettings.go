@@ -24,9 +24,9 @@ type GroupSettings struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int `json:"created_by,omitempty"`
+	CreatedBy uuid.UUID `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int `json:"updated_by,omitempty"`
+	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
 	// Visibility holds the value of the "visibility" field.
 	Visibility groupsettings.Visibility `json:"visibility,omitempty"`
 	// JoinPolicy holds the value of the "join_policy" field.
@@ -65,13 +65,11 @@ func (*GroupSettings) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case groupsettings.FieldCreatedBy, groupsettings.FieldUpdatedBy:
-			values[i] = new(sql.NullInt64)
 		case groupsettings.FieldVisibility, groupsettings.FieldJoinPolicy:
 			values[i] = new(sql.NullString)
 		case groupsettings.FieldCreatedAt, groupsettings.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case groupsettings.FieldID:
+		case groupsettings.FieldID, groupsettings.FieldCreatedBy, groupsettings.FieldUpdatedBy:
 			values[i] = new(uuid.UUID)
 		case groupsettings.ForeignKeys[0]: // group_setting
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
@@ -109,16 +107,16 @@ func (gs *GroupSettings) assignValues(columns []string, values []any) error {
 				gs.UpdatedAt = value.Time
 			}
 		case groupsettings.FieldCreatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value.Valid {
-				gs.CreatedBy = int(value.Int64)
+			} else if value != nil {
+				gs.CreatedBy = *value
 			}
 		case groupsettings.FieldUpdatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value.Valid {
-				gs.UpdatedBy = int(value.Int64)
+			} else if value != nil {
+				gs.UpdatedBy = *value
 			}
 		case groupsettings.FieldVisibility:
 			if value, ok := values[i].(*sql.NullString); !ok {

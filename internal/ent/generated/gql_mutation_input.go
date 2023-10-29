@@ -14,8 +14,8 @@ import (
 type CreateGroupInput struct {
 	CreatedAt     *time.Time
 	UpdatedAt     *time.Time
-	CreatedBy     *int
-	UpdatedBy     *int
+	CreatedBy     *uuid.UUID
+	UpdatedBy     *uuid.UUID
 	Name          string
 	Description   *string
 	LogoURL       string
@@ -62,9 +62,9 @@ func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
 type UpdateGroupInput struct {
 	UpdatedAt           *time.Time
 	ClearCreatedBy      bool
-	CreatedBy           *int
+	CreatedBy           *uuid.UUID
 	ClearUpdatedBy      bool
-	UpdatedBy           *int
+	UpdatedBy           *uuid.UUID
 	Name                *string
 	Description         *string
 	LogoURL             *string
@@ -142,8 +142,8 @@ func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
 type CreateGroupSettingsInput struct {
 	CreatedAt  *time.Time
 	UpdatedAt  *time.Time
-	CreatedBy  *int
-	UpdatedBy  *int
+	CreatedBy  *uuid.UUID
+	UpdatedBy  *uuid.UUID
 	Visibility *groupsettings.Visibility
 	JoinPolicy *groupsettings.JoinPolicy
 }
@@ -180,9 +180,9 @@ func (c *GroupSettingsCreate) SetInput(i CreateGroupSettingsInput) *GroupSetting
 type UpdateGroupSettingsInput struct {
 	UpdatedAt      *time.Time
 	ClearCreatedBy bool
-	CreatedBy      *int
+	CreatedBy      *uuid.UUID
 	ClearUpdatedBy bool
-	UpdatedBy      *int
+	UpdatedBy      *uuid.UUID
 	Visibility     *groupsettings.Visibility
 	JoinPolicy     *groupsettings.JoinPolicy
 }
@@ -228,8 +228,8 @@ func (c *GroupSettingsUpdateOne) SetInput(i UpdateGroupSettingsInput) *GroupSett
 type CreateIntegrationInput struct {
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
-	CreatedBy      *int
-	UpdatedBy      *int
+	CreatedBy      *uuid.UUID
+	UpdatedBy      *uuid.UUID
 	Kind           string
 	Description    *string
 	SecretName     string
@@ -268,9 +268,9 @@ func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreat
 type UpdateIntegrationInput struct {
 	UpdatedAt        *time.Time
 	ClearCreatedBy   bool
-	CreatedBy        *int
+	CreatedBy        *uuid.UUID
 	ClearUpdatedBy   bool
-	UpdatedBy        *int
+	UpdatedBy        *uuid.UUID
 	ClearDescription bool
 	Description      *string
 	OrganizationID   *uuid.UUID
@@ -320,8 +320,8 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 type CreateMembershipInput struct {
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
-	CreatedBy      *int
-	UpdatedBy      *int
+	CreatedBy      *uuid.UUID
+	UpdatedBy      *uuid.UUID
 	Current        *bool
 	OrganizationID uuid.UUID
 	UserID         uuid.UUID
@@ -360,9 +360,9 @@ func (c *MembershipCreate) SetInput(i CreateMembershipInput) *MembershipCreate {
 type UpdateMembershipInput struct {
 	UpdatedAt      *time.Time
 	ClearCreatedBy bool
-	CreatedBy      *int
+	CreatedBy      *uuid.UUID
 	ClearUpdatedBy bool
-	UpdatedBy      *int
+	UpdatedBy      *uuid.UUID
 	Current        *bool
 	OrganizationID *uuid.UUID
 	UserID         *uuid.UUID
@@ -416,8 +416,8 @@ func (c *MembershipUpdateOne) SetInput(i UpdateMembershipInput) *MembershipUpdat
 type CreateOrganizationInput struct {
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
-	CreatedBy      *int
-	UpdatedBy      *int
+	CreatedBy      *uuid.UUID
+	UpdatedBy      *uuid.UUID
 	Name           string
 	MembershipIDs  []uuid.UUID
 	IntegrationIDs []uuid.UUID
@@ -456,9 +456,9 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 type UpdateOrganizationInput struct {
 	UpdatedAt            *time.Time
 	ClearCreatedBy       bool
-	CreatedBy            *int
+	CreatedBy            *uuid.UUID
 	ClearUpdatedBy       bool
-	UpdatedBy            *int
+	UpdatedBy            *uuid.UUID
 	Name                 *string
 	ClearMemberships     bool
 	AddMembershipIDs     []uuid.UUID
@@ -524,8 +524,8 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 type CreateSessionInput struct {
 	CreatedAt *time.Time
 	UpdatedAt *time.Time
-	CreatedBy *int
-	UpdatedBy *int
+	CreatedBy *uuid.UUID
+	UpdatedBy *uuid.UUID
 	Type      session.Type
 	Disabled  bool
 	Token     *string
@@ -572,9 +572,9 @@ func (c *SessionCreate) SetInput(i CreateSessionInput) *SessionCreate {
 type UpdateSessionInput struct {
 	UpdatedAt      *time.Time
 	ClearCreatedBy bool
-	CreatedBy      *int
+	CreatedBy      *uuid.UUID
 	ClearUpdatedBy bool
-	UpdatedBy      *int
+	UpdatedBy      *uuid.UUID
 	Disabled       *bool
 	ClearUserAgent bool
 	UserAgent      *string
@@ -636,8 +636,8 @@ func (c *SessionUpdateOne) SetInput(i UpdateSessionInput) *SessionUpdateOne {
 type CreateUserInput struct {
 	CreatedAt       *time.Time
 	UpdatedAt       *time.Time
-	CreatedBy       *int
-	UpdatedBy       *int
+	CreatedBy       *uuid.UUID
+	UpdatedBy       *uuid.UUID
 	Email           string
 	FirstName       string
 	LastName        string
@@ -716,9 +716,9 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 type UpdateUserInput struct {
 	UpdatedAt            *time.Time
 	ClearCreatedBy       bool
-	CreatedBy            *int
+	CreatedBy            *uuid.UUID
 	ClearUpdatedBy       bool
-	UpdatedBy            *int
+	UpdatedBy            *uuid.UUID
 	Email                *string
 	FirstName            *string
 	LastName             *string

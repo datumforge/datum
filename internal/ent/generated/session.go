@@ -24,9 +24,9 @@ type Session struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int `json:"created_by,omitempty"`
+	CreatedBy uuid.UUID `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int `json:"updated_by,omitempty"`
+	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
 	// Sessions can derrive from the local (password auth), oauth, or app_password
 	Type session.Type `json:"type,omitempty"`
 	// The session may be disabled by the user or by automatic security policy
@@ -76,13 +76,11 @@ func (*Session) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case session.FieldDisabled:
 			values[i] = new(sql.NullBool)
-		case session.FieldCreatedBy, session.FieldUpdatedBy:
-			values[i] = new(sql.NullInt64)
 		case session.FieldType, session.FieldToken, session.FieldUserAgent, session.FieldIps:
 			values[i] = new(sql.NullString)
 		case session.FieldCreatedAt, session.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case session.FieldID:
+		case session.FieldID, session.FieldCreatedBy, session.FieldUpdatedBy:
 			values[i] = new(uuid.UUID)
 		case session.ForeignKeys[0]: // session_users
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
@@ -122,16 +120,16 @@ func (s *Session) assignValues(columns []string, values []any) error {
 				s.UpdatedAt = value.Time
 			}
 		case session.FieldCreatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value.Valid {
-				s.CreatedBy = int(value.Int64)
+			} else if value != nil {
+				s.CreatedBy = *value
 			}
 		case session.FieldUpdatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value.Valid {
-				s.UpdatedBy = int(value.Int64)
+			} else if value != nil {
+				s.UpdatedBy = *value
 			}
 		case session.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {

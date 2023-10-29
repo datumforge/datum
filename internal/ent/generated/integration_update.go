@@ -39,23 +39,16 @@ func (iu *IntegrationUpdate) SetUpdatedAt(t time.Time) *IntegrationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (iu *IntegrationUpdate) SetCreatedBy(i int) *IntegrationUpdate {
-	iu.mutation.ResetCreatedBy()
-	iu.mutation.SetCreatedBy(i)
+func (iu *IntegrationUpdate) SetCreatedBy(u uuid.UUID) *IntegrationUpdate {
+	iu.mutation.SetCreatedBy(u)
 	return iu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (iu *IntegrationUpdate) SetNillableCreatedBy(i *int) *IntegrationUpdate {
-	if i != nil {
-		iu.SetCreatedBy(*i)
+func (iu *IntegrationUpdate) SetNillableCreatedBy(u *uuid.UUID) *IntegrationUpdate {
+	if u != nil {
+		iu.SetCreatedBy(*u)
 	}
-	return iu
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (iu *IntegrationUpdate) AddCreatedBy(i int) *IntegrationUpdate {
-	iu.mutation.AddCreatedBy(i)
 	return iu
 }
 
@@ -66,23 +59,16 @@ func (iu *IntegrationUpdate) ClearCreatedBy() *IntegrationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (iu *IntegrationUpdate) SetUpdatedBy(i int) *IntegrationUpdate {
-	iu.mutation.ResetUpdatedBy()
-	iu.mutation.SetUpdatedBy(i)
+func (iu *IntegrationUpdate) SetUpdatedBy(u uuid.UUID) *IntegrationUpdate {
+	iu.mutation.SetUpdatedBy(u)
 	return iu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (iu *IntegrationUpdate) SetNillableUpdatedBy(i *int) *IntegrationUpdate {
-	if i != nil {
-		iu.SetUpdatedBy(*i)
+func (iu *IntegrationUpdate) SetNillableUpdatedBy(u *uuid.UUID) *IntegrationUpdate {
+	if u != nil {
+		iu.SetUpdatedBy(*u)
 	}
-	return iu
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (iu *IntegrationUpdate) AddUpdatedBy(i int) *IntegrationUpdate {
-	iu.mutation.AddUpdatedBy(i)
 	return iu
 }
 
@@ -200,22 +186,16 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := iu.mutation.CreatedBy(); ok {
-		_spec.SetField(integration.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := iu.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(integration.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(integration.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if iu.mutation.CreatedByCleared() {
-		_spec.ClearField(integration.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(integration.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := iu.mutation.UpdatedBy(); ok {
-		_spec.SetField(integration.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := iu.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(integration.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(integration.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if iu.mutation.UpdatedByCleared() {
-		_spec.ClearField(integration.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(integration.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := iu.mutation.Description(); ok {
 		_spec.SetField(integration.FieldDescription, field.TypeString, value)
@@ -283,23 +263,16 @@ func (iuo *IntegrationUpdateOne) SetUpdatedAt(t time.Time) *IntegrationUpdateOne
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (iuo *IntegrationUpdateOne) SetCreatedBy(i int) *IntegrationUpdateOne {
-	iuo.mutation.ResetCreatedBy()
-	iuo.mutation.SetCreatedBy(i)
+func (iuo *IntegrationUpdateOne) SetCreatedBy(u uuid.UUID) *IntegrationUpdateOne {
+	iuo.mutation.SetCreatedBy(u)
 	return iuo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (iuo *IntegrationUpdateOne) SetNillableCreatedBy(i *int) *IntegrationUpdateOne {
-	if i != nil {
-		iuo.SetCreatedBy(*i)
+func (iuo *IntegrationUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *IntegrationUpdateOne {
+	if u != nil {
+		iuo.SetCreatedBy(*u)
 	}
-	return iuo
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (iuo *IntegrationUpdateOne) AddCreatedBy(i int) *IntegrationUpdateOne {
-	iuo.mutation.AddCreatedBy(i)
 	return iuo
 }
 
@@ -310,23 +283,16 @@ func (iuo *IntegrationUpdateOne) ClearCreatedBy() *IntegrationUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (iuo *IntegrationUpdateOne) SetUpdatedBy(i int) *IntegrationUpdateOne {
-	iuo.mutation.ResetUpdatedBy()
-	iuo.mutation.SetUpdatedBy(i)
+func (iuo *IntegrationUpdateOne) SetUpdatedBy(u uuid.UUID) *IntegrationUpdateOne {
+	iuo.mutation.SetUpdatedBy(u)
 	return iuo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (iuo *IntegrationUpdateOne) SetNillableUpdatedBy(i *int) *IntegrationUpdateOne {
-	if i != nil {
-		iuo.SetUpdatedBy(*i)
+func (iuo *IntegrationUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *IntegrationUpdateOne {
+	if u != nil {
+		iuo.SetUpdatedBy(*u)
 	}
-	return iuo
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (iuo *IntegrationUpdateOne) AddUpdatedBy(i int) *IntegrationUpdateOne {
-	iuo.mutation.AddUpdatedBy(i)
 	return iuo
 }
 
@@ -474,22 +440,16 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := iuo.mutation.CreatedBy(); ok {
-		_spec.SetField(integration.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := iuo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(integration.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(integration.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if iuo.mutation.CreatedByCleared() {
-		_spec.ClearField(integration.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(integration.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := iuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(integration.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := iuo.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(integration.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(integration.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if iuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(integration.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(integration.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := iuo.mutation.Description(); ok {
 		_spec.SetField(integration.FieldDescription, field.TypeString, value)

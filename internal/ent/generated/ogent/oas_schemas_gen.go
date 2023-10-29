@@ -13,8 +13,8 @@ import (
 type CreateGroupReq struct {
 	CreatedAt   time.Time   `json:"created_at"`
 	UpdatedAt   time.Time   `json:"updated_at"`
-	CreatedBy   OptInt      `json:"created_by"`
-	UpdatedBy   OptInt      `json:"updated_by"`
+	CreatedBy   OptUUID     `json:"created_by"`
+	UpdatedBy   OptUUID     `json:"updated_by"`
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
 	LogoURL     string      `json:"logo_url"`
@@ -34,12 +34,12 @@ func (s *CreateGroupReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateGroupReq) GetCreatedBy() OptInt {
+func (s *CreateGroupReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateGroupReq) GetUpdatedBy() OptInt {
+func (s *CreateGroupReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -84,12 +84,12 @@ func (s *CreateGroupReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateGroupReq) SetCreatedBy(val OptInt) {
+func (s *CreateGroupReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateGroupReq) SetUpdatedBy(val OptInt) {
+func (s *CreateGroupReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -126,8 +126,8 @@ func (s *CreateGroupReq) SetUsers(val []uuid.UUID) {
 type CreateGroupSettingsReq struct {
 	CreatedAt  time.Time                        `json:"created_at"`
 	UpdatedAt  time.Time                        `json:"updated_at"`
-	CreatedBy  OptInt                           `json:"created_by"`
-	UpdatedBy  OptInt                           `json:"updated_by"`
+	CreatedBy  OptUUID                          `json:"created_by"`
+	UpdatedBy  OptUUID                          `json:"updated_by"`
 	Visibility CreateGroupSettingsReqVisibility `json:"visibility"`
 	JoinPolicy CreateGroupSettingsReqJoinPolicy `json:"join_policy"`
 	Group      OptUUID                          `json:"group"`
@@ -144,12 +144,12 @@ func (s *CreateGroupSettingsReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateGroupSettingsReq) GetCreatedBy() OptInt {
+func (s *CreateGroupSettingsReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateGroupSettingsReq) GetUpdatedBy() OptInt {
+func (s *CreateGroupSettingsReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -179,12 +179,12 @@ func (s *CreateGroupSettingsReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateGroupSettingsReq) SetCreatedBy(val OptInt) {
+func (s *CreateGroupSettingsReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateGroupSettingsReq) SetUpdatedBy(val OptInt) {
+func (s *CreateGroupSettingsReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -302,8 +302,8 @@ func (s *CreateGroupSettingsReqVisibility) UnmarshalText(data []byte) error {
 type CreateIntegrationReq struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
-	CreatedBy    OptInt    `json:"created_by"`
-	UpdatedBy    OptInt    `json:"updated_by"`
+	CreatedBy    OptUUID   `json:"created_by"`
+	UpdatedBy    OptUUID   `json:"updated_by"`
 	Kind         string    `json:"kind"`
 	Description  OptString `json:"description"`
 	SecretName   string    `json:"secret_name"`
@@ -321,12 +321,12 @@ func (s *CreateIntegrationReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateIntegrationReq) GetCreatedBy() OptInt {
+func (s *CreateIntegrationReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateIntegrationReq) GetUpdatedBy() OptInt {
+func (s *CreateIntegrationReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -361,12 +361,12 @@ func (s *CreateIntegrationReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateIntegrationReq) SetCreatedBy(val OptInt) {
+func (s *CreateIntegrationReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateIntegrationReq) SetUpdatedBy(val OptInt) {
+func (s *CreateIntegrationReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -393,8 +393,8 @@ func (s *CreateIntegrationReq) SetOrganization(val uuid.UUID) {
 type CreateMembershipReq struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
-	CreatedBy    OptInt    `json:"created_by"`
-	UpdatedBy    OptInt    `json:"updated_by"`
+	CreatedBy    OptUUID   `json:"created_by"`
+	UpdatedBy    OptUUID   `json:"updated_by"`
 	Current      bool      `json:"current"`
 	Organization uuid.UUID `json:"organization"`
 	User         uuid.UUID `json:"user"`
@@ -412,12 +412,12 @@ func (s *CreateMembershipReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateMembershipReq) GetCreatedBy() OptInt {
+func (s *CreateMembershipReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateMembershipReq) GetUpdatedBy() OptInt {
+func (s *CreateMembershipReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -452,12 +452,12 @@ func (s *CreateMembershipReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateMembershipReq) SetCreatedBy(val OptInt) {
+func (s *CreateMembershipReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateMembershipReq) SetUpdatedBy(val OptInt) {
+func (s *CreateMembershipReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -484,8 +484,8 @@ func (s *CreateMembershipReq) SetGroup(val uuid.UUID) {
 type CreateOrganizationReq struct {
 	CreatedAt    time.Time   `json:"created_at"`
 	UpdatedAt    time.Time   `json:"updated_at"`
-	CreatedBy    OptInt      `json:"created_by"`
-	UpdatedBy    OptInt      `json:"updated_by"`
+	CreatedBy    OptUUID     `json:"created_by"`
+	UpdatedBy    OptUUID     `json:"updated_by"`
 	Name         string      `json:"name"`
 	Memberships  []uuid.UUID `json:"memberships"`
 	Integrations []uuid.UUID `json:"integrations"`
@@ -502,12 +502,12 @@ func (s *CreateOrganizationReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateOrganizationReq) GetCreatedBy() OptInt {
+func (s *CreateOrganizationReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateOrganizationReq) GetUpdatedBy() OptInt {
+func (s *CreateOrganizationReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -537,12 +537,12 @@ func (s *CreateOrganizationReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateOrganizationReq) SetCreatedBy(val OptInt) {
+func (s *CreateOrganizationReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateOrganizationReq) SetUpdatedBy(val OptInt) {
+func (s *CreateOrganizationReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -564,8 +564,8 @@ func (s *CreateOrganizationReq) SetIntegrations(val []uuid.UUID) {
 type CreateSessionReq struct {
 	CreatedAt time.Time            `json:"created_at"`
 	UpdatedAt time.Time            `json:"updated_at"`
-	CreatedBy OptInt               `json:"created_by"`
-	UpdatedBy OptInt               `json:"updated_by"`
+	CreatedBy OptUUID              `json:"created_by"`
+	UpdatedBy OptUUID              `json:"updated_by"`
 	Type      CreateSessionReqType `json:"type"`
 	Disabled  bool                 `json:"disabled"`
 	Token     string               `json:"token"`
@@ -585,12 +585,12 @@ func (s *CreateSessionReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateSessionReq) GetCreatedBy() OptInt {
+func (s *CreateSessionReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateSessionReq) GetUpdatedBy() OptInt {
+func (s *CreateSessionReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -635,12 +635,12 @@ func (s *CreateSessionReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateSessionReq) SetCreatedBy(val OptInt) {
+func (s *CreateSessionReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateSessionReq) SetUpdatedBy(val OptInt) {
+func (s *CreateSessionReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -725,8 +725,8 @@ func (s *CreateSessionReqType) UnmarshalText(data []byte) error {
 type CreateUserReq struct {
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -754,12 +754,12 @@ func (s *CreateUserReq) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *CreateUserReq) GetCreatedBy() OptInt {
+func (s *CreateUserReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *CreateUserReq) GetUpdatedBy() OptInt {
+func (s *CreateUserReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -844,12 +844,12 @@ func (s *CreateUserReq) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *CreateUserReq) SetCreatedBy(val OptInt) {
+func (s *CreateUserReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *CreateUserReq) SetUpdatedBy(val OptInt) {
+func (s *CreateUserReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -963,8 +963,8 @@ type GroupCreate struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -986,12 +986,12 @@ func (s *GroupCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupCreate) GetCreatedBy() OptInt {
+func (s *GroupCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupCreate) GetUpdatedBy() OptInt {
+func (s *GroupCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1026,12 +1026,12 @@ func (s *GroupCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupCreate) SetCreatedBy(val OptInt) {
+func (s *GroupCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupCreate) SetUpdatedBy(val OptInt) {
+func (s *GroupCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1057,8 +1057,8 @@ type GroupList struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1080,12 +1080,12 @@ func (s *GroupList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupList) GetCreatedBy() OptInt {
+func (s *GroupList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupList) GetUpdatedBy() OptInt {
+func (s *GroupList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1120,12 +1120,12 @@ func (s *GroupList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupList) SetCreatedBy(val OptInt) {
+func (s *GroupList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupList) SetUpdatedBy(val OptInt) {
+func (s *GroupList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1149,8 +1149,8 @@ type GroupMembershipsList struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -1170,12 +1170,12 @@ func (s *GroupMembershipsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupMembershipsList) GetCreatedBy() OptInt {
+func (s *GroupMembershipsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupMembershipsList) GetUpdatedBy() OptInt {
+func (s *GroupMembershipsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1200,12 +1200,12 @@ func (s *GroupMembershipsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupMembershipsList) SetCreatedBy(val OptInt) {
+func (s *GroupMembershipsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupMembershipsList) SetUpdatedBy(val OptInt) {
+func (s *GroupMembershipsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1219,8 +1219,8 @@ type GroupRead struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1242,12 +1242,12 @@ func (s *GroupRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupRead) GetCreatedBy() OptInt {
+func (s *GroupRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupRead) GetUpdatedBy() OptInt {
+func (s *GroupRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1282,12 +1282,12 @@ func (s *GroupRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupRead) SetCreatedBy(val OptInt) {
+func (s *GroupRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupRead) SetUpdatedBy(val OptInt) {
+func (s *GroupRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1313,8 +1313,8 @@ type GroupSettingRead struct {
 	ID         uuid.UUID                  `json:"id"`
 	CreatedAt  time.Time                  `json:"created_at"`
 	UpdatedAt  time.Time                  `json:"updated_at"`
-	CreatedBy  OptInt                     `json:"created_by"`
-	UpdatedBy  OptInt                     `json:"updated_by"`
+	CreatedBy  OptUUID                    `json:"created_by"`
+	UpdatedBy  OptUUID                    `json:"updated_by"`
 	Visibility GroupSettingReadVisibility `json:"visibility"`
 	JoinPolicy GroupSettingReadJoinPolicy `json:"join_policy"`
 }
@@ -1335,12 +1335,12 @@ func (s *GroupSettingRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupSettingRead) GetCreatedBy() OptInt {
+func (s *GroupSettingRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupSettingRead) GetUpdatedBy() OptInt {
+func (s *GroupSettingRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1370,12 +1370,12 @@ func (s *GroupSettingRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupSettingRead) SetCreatedBy(val OptInt) {
+func (s *GroupSettingRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupSettingRead) SetUpdatedBy(val OptInt) {
+func (s *GroupSettingRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1492,8 +1492,8 @@ type GroupSettingsCreate struct {
 	ID         uuid.UUID                     `json:"id"`
 	CreatedAt  time.Time                     `json:"created_at"`
 	UpdatedAt  time.Time                     `json:"updated_at"`
-	CreatedBy  OptInt                        `json:"created_by"`
-	UpdatedBy  OptInt                        `json:"updated_by"`
+	CreatedBy  OptUUID                       `json:"created_by"`
+	UpdatedBy  OptUUID                       `json:"updated_by"`
 	Visibility GroupSettingsCreateVisibility `json:"visibility"`
 	JoinPolicy GroupSettingsCreateJoinPolicy `json:"join_policy"`
 }
@@ -1514,12 +1514,12 @@ func (s *GroupSettingsCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupSettingsCreate) GetCreatedBy() OptInt {
+func (s *GroupSettingsCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupSettingsCreate) GetUpdatedBy() OptInt {
+func (s *GroupSettingsCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1549,12 +1549,12 @@ func (s *GroupSettingsCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupSettingsCreate) SetCreatedBy(val OptInt) {
+func (s *GroupSettingsCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupSettingsCreate) SetUpdatedBy(val OptInt) {
+func (s *GroupSettingsCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1671,8 +1671,8 @@ type GroupSettingsGroupRead struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -1694,12 +1694,12 @@ func (s *GroupSettingsGroupRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupSettingsGroupRead) GetCreatedBy() OptInt {
+func (s *GroupSettingsGroupRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupSettingsGroupRead) GetUpdatedBy() OptInt {
+func (s *GroupSettingsGroupRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1734,12 +1734,12 @@ func (s *GroupSettingsGroupRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupSettingsGroupRead) SetCreatedBy(val OptInt) {
+func (s *GroupSettingsGroupRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupSettingsGroupRead) SetUpdatedBy(val OptInt) {
+func (s *GroupSettingsGroupRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1765,8 +1765,8 @@ type GroupSettingsList struct {
 	ID         uuid.UUID                   `json:"id"`
 	CreatedAt  time.Time                   `json:"created_at"`
 	UpdatedAt  time.Time                   `json:"updated_at"`
-	CreatedBy  OptInt                      `json:"created_by"`
-	UpdatedBy  OptInt                      `json:"updated_by"`
+	CreatedBy  OptUUID                     `json:"created_by"`
+	UpdatedBy  OptUUID                     `json:"updated_by"`
 	Visibility GroupSettingsListVisibility `json:"visibility"`
 	JoinPolicy GroupSettingsListJoinPolicy `json:"join_policy"`
 }
@@ -1787,12 +1787,12 @@ func (s *GroupSettingsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupSettingsList) GetCreatedBy() OptInt {
+func (s *GroupSettingsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupSettingsList) GetUpdatedBy() OptInt {
+func (s *GroupSettingsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1822,12 +1822,12 @@ func (s *GroupSettingsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupSettingsList) SetCreatedBy(val OptInt) {
+func (s *GroupSettingsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupSettingsList) SetUpdatedBy(val OptInt) {
+func (s *GroupSettingsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -1942,8 +1942,8 @@ type GroupSettingsRead struct {
 	ID         uuid.UUID                   `json:"id"`
 	CreatedAt  time.Time                   `json:"created_at"`
 	UpdatedAt  time.Time                   `json:"updated_at"`
-	CreatedBy  OptInt                      `json:"created_by"`
-	UpdatedBy  OptInt                      `json:"updated_by"`
+	CreatedBy  OptUUID                     `json:"created_by"`
+	UpdatedBy  OptUUID                     `json:"updated_by"`
 	Visibility GroupSettingsReadVisibility `json:"visibility"`
 	JoinPolicy GroupSettingsReadJoinPolicy `json:"join_policy"`
 }
@@ -1964,12 +1964,12 @@ func (s *GroupSettingsRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupSettingsRead) GetCreatedBy() OptInt {
+func (s *GroupSettingsRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupSettingsRead) GetUpdatedBy() OptInt {
+func (s *GroupSettingsRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -1999,12 +1999,12 @@ func (s *GroupSettingsRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupSettingsRead) SetCreatedBy(val OptInt) {
+func (s *GroupSettingsRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupSettingsRead) SetUpdatedBy(val OptInt) {
+func (s *GroupSettingsRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2121,8 +2121,8 @@ type GroupSettingsUpdate struct {
 	ID         uuid.UUID                     `json:"id"`
 	CreatedAt  time.Time                     `json:"created_at"`
 	UpdatedAt  time.Time                     `json:"updated_at"`
-	CreatedBy  OptInt                        `json:"created_by"`
-	UpdatedBy  OptInt                        `json:"updated_by"`
+	CreatedBy  OptUUID                       `json:"created_by"`
+	UpdatedBy  OptUUID                       `json:"updated_by"`
 	Visibility GroupSettingsUpdateVisibility `json:"visibility"`
 	JoinPolicy GroupSettingsUpdateJoinPolicy `json:"join_policy"`
 }
@@ -2143,12 +2143,12 @@ func (s *GroupSettingsUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupSettingsUpdate) GetCreatedBy() OptInt {
+func (s *GroupSettingsUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupSettingsUpdate) GetUpdatedBy() OptInt {
+func (s *GroupSettingsUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2178,12 +2178,12 @@ func (s *GroupSettingsUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupSettingsUpdate) SetCreatedBy(val OptInt) {
+func (s *GroupSettingsUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupSettingsUpdate) SetUpdatedBy(val OptInt) {
+func (s *GroupSettingsUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2300,8 +2300,8 @@ type GroupUpdate struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -2323,12 +2323,12 @@ func (s *GroupUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupUpdate) GetCreatedBy() OptInt {
+func (s *GroupUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupUpdate) GetUpdatedBy() OptInt {
+func (s *GroupUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2363,12 +2363,12 @@ func (s *GroupUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupUpdate) SetCreatedBy(val OptInt) {
+func (s *GroupUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupUpdate) SetUpdatedBy(val OptInt) {
+func (s *GroupUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2394,8 +2394,8 @@ type GroupUsersList struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -2424,12 +2424,12 @@ func (s *GroupUsersList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *GroupUsersList) GetCreatedBy() OptInt {
+func (s *GroupUsersList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *GroupUsersList) GetUpdatedBy() OptInt {
+func (s *GroupUsersList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2499,12 +2499,12 @@ func (s *GroupUsersList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *GroupUsersList) SetCreatedBy(val OptInt) {
+func (s *GroupUsersList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *GroupUsersList) SetUpdatedBy(val OptInt) {
+func (s *GroupUsersList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2563,8 +2563,8 @@ type IntegrationCreate struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Kind        string    `json:"kind"`
 	Description OptString `json:"description"`
 	SecretName  string    `json:"secret_name"`
@@ -2586,12 +2586,12 @@ func (s *IntegrationCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *IntegrationCreate) GetCreatedBy() OptInt {
+func (s *IntegrationCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *IntegrationCreate) GetUpdatedBy() OptInt {
+func (s *IntegrationCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2626,12 +2626,12 @@ func (s *IntegrationCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *IntegrationCreate) SetCreatedBy(val OptInt) {
+func (s *IntegrationCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *IntegrationCreate) SetUpdatedBy(val OptInt) {
+func (s *IntegrationCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2657,8 +2657,8 @@ type IntegrationList struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Kind        string    `json:"kind"`
 	Description OptString `json:"description"`
 	SecretName  string    `json:"secret_name"`
@@ -2680,12 +2680,12 @@ func (s *IntegrationList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *IntegrationList) GetCreatedBy() OptInt {
+func (s *IntegrationList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *IntegrationList) GetUpdatedBy() OptInt {
+func (s *IntegrationList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2720,12 +2720,12 @@ func (s *IntegrationList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *IntegrationList) SetCreatedBy(val OptInt) {
+func (s *IntegrationList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *IntegrationList) SetUpdatedBy(val OptInt) {
+func (s *IntegrationList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2749,8 +2749,8 @@ type IntegrationOrganizationRead struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Name      string    `json:"name"`
 }
 
@@ -2770,12 +2770,12 @@ func (s *IntegrationOrganizationRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *IntegrationOrganizationRead) GetCreatedBy() OptInt {
+func (s *IntegrationOrganizationRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *IntegrationOrganizationRead) GetUpdatedBy() OptInt {
+func (s *IntegrationOrganizationRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2800,12 +2800,12 @@ func (s *IntegrationOrganizationRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *IntegrationOrganizationRead) SetCreatedBy(val OptInt) {
+func (s *IntegrationOrganizationRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *IntegrationOrganizationRead) SetUpdatedBy(val OptInt) {
+func (s *IntegrationOrganizationRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2821,8 +2821,8 @@ type IntegrationRead struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Kind        string    `json:"kind"`
 	Description OptString `json:"description"`
 	SecretName  string    `json:"secret_name"`
@@ -2844,12 +2844,12 @@ func (s *IntegrationRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *IntegrationRead) GetCreatedBy() OptInt {
+func (s *IntegrationRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *IntegrationRead) GetUpdatedBy() OptInt {
+func (s *IntegrationRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2884,12 +2884,12 @@ func (s *IntegrationRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *IntegrationRead) SetCreatedBy(val OptInt) {
+func (s *IntegrationRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *IntegrationRead) SetUpdatedBy(val OptInt) {
+func (s *IntegrationRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -2915,8 +2915,8 @@ type IntegrationUpdate struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Kind        string    `json:"kind"`
 	Description OptString `json:"description"`
 	SecretName  string    `json:"secret_name"`
@@ -2938,12 +2938,12 @@ func (s *IntegrationUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *IntegrationUpdate) GetCreatedBy() OptInt {
+func (s *IntegrationUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *IntegrationUpdate) GetUpdatedBy() OptInt {
+func (s *IntegrationUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -2978,12 +2978,12 @@ func (s *IntegrationUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *IntegrationUpdate) SetCreatedBy(val OptInt) {
+func (s *IntegrationUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *IntegrationUpdate) SetUpdatedBy(val OptInt) {
+func (s *IntegrationUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3065,8 +3065,8 @@ type MembershipCreate struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -3086,12 +3086,12 @@ func (s *MembershipCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipCreate) GetCreatedBy() OptInt {
+func (s *MembershipCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipCreate) GetUpdatedBy() OptInt {
+func (s *MembershipCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3116,12 +3116,12 @@ func (s *MembershipCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipCreate) SetCreatedBy(val OptInt) {
+func (s *MembershipCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipCreate) SetUpdatedBy(val OptInt) {
+func (s *MembershipCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3137,8 +3137,8 @@ type MembershipGroupRead struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -3160,12 +3160,12 @@ func (s *MembershipGroupRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipGroupRead) GetCreatedBy() OptInt {
+func (s *MembershipGroupRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipGroupRead) GetUpdatedBy() OptInt {
+func (s *MembershipGroupRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3200,12 +3200,12 @@ func (s *MembershipGroupRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipGroupRead) SetCreatedBy(val OptInt) {
+func (s *MembershipGroupRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipGroupRead) SetUpdatedBy(val OptInt) {
+func (s *MembershipGroupRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3231,8 +3231,8 @@ type MembershipList struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -3252,12 +3252,12 @@ func (s *MembershipList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipList) GetCreatedBy() OptInt {
+func (s *MembershipList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipList) GetUpdatedBy() OptInt {
+func (s *MembershipList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3282,12 +3282,12 @@ func (s *MembershipList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipList) SetCreatedBy(val OptInt) {
+func (s *MembershipList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipList) SetUpdatedBy(val OptInt) {
+func (s *MembershipList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3301,8 +3301,8 @@ type MembershipOrganizationRead struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Name      string    `json:"name"`
 }
 
@@ -3322,12 +3322,12 @@ func (s *MembershipOrganizationRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipOrganizationRead) GetCreatedBy() OptInt {
+func (s *MembershipOrganizationRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipOrganizationRead) GetUpdatedBy() OptInt {
+func (s *MembershipOrganizationRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3352,12 +3352,12 @@ func (s *MembershipOrganizationRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipOrganizationRead) SetCreatedBy(val OptInt) {
+func (s *MembershipOrganizationRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipOrganizationRead) SetUpdatedBy(val OptInt) {
+func (s *MembershipOrganizationRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3373,8 +3373,8 @@ type MembershipRead struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -3394,12 +3394,12 @@ func (s *MembershipRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipRead) GetCreatedBy() OptInt {
+func (s *MembershipRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipRead) GetUpdatedBy() OptInt {
+func (s *MembershipRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3424,12 +3424,12 @@ func (s *MembershipRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipRead) SetCreatedBy(val OptInt) {
+func (s *MembershipRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipRead) SetUpdatedBy(val OptInt) {
+func (s *MembershipRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3445,8 +3445,8 @@ type MembershipUpdate struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -3466,12 +3466,12 @@ func (s *MembershipUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipUpdate) GetCreatedBy() OptInt {
+func (s *MembershipUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipUpdate) GetUpdatedBy() OptInt {
+func (s *MembershipUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3496,12 +3496,12 @@ func (s *MembershipUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipUpdate) SetCreatedBy(val OptInt) {
+func (s *MembershipUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipUpdate) SetUpdatedBy(val OptInt) {
+func (s *MembershipUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -3517,8 +3517,8 @@ type MembershipUserRead struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -3547,12 +3547,12 @@ func (s *MembershipUserRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *MembershipUserRead) GetCreatedBy() OptInt {
+func (s *MembershipUserRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *MembershipUserRead) GetUpdatedBy() OptInt {
+func (s *MembershipUserRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -3622,12 +3622,12 @@ func (s *MembershipUserRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *MembershipUserRead) SetCreatedBy(val OptInt) {
+func (s *MembershipUserRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *MembershipUserRead) SetUpdatedBy(val OptInt) {
+func (s *MembershipUserRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4010,8 +4010,8 @@ type OrganizationCreate struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Name      string    `json:"name"`
 }
 
@@ -4031,12 +4031,12 @@ func (s *OrganizationCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *OrganizationCreate) GetCreatedBy() OptInt {
+func (s *OrganizationCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *OrganizationCreate) GetUpdatedBy() OptInt {
+func (s *OrganizationCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4061,12 +4061,12 @@ func (s *OrganizationCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *OrganizationCreate) SetCreatedBy(val OptInt) {
+func (s *OrganizationCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *OrganizationCreate) SetUpdatedBy(val OptInt) {
+func (s *OrganizationCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4082,8 +4082,8 @@ type OrganizationIntegrationsList struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Kind        string    `json:"kind"`
 	Description OptString `json:"description"`
 	SecretName  string    `json:"secret_name"`
@@ -4105,12 +4105,12 @@ func (s *OrganizationIntegrationsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *OrganizationIntegrationsList) GetCreatedBy() OptInt {
+func (s *OrganizationIntegrationsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *OrganizationIntegrationsList) GetUpdatedBy() OptInt {
+func (s *OrganizationIntegrationsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4145,12 +4145,12 @@ func (s *OrganizationIntegrationsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *OrganizationIntegrationsList) SetCreatedBy(val OptInt) {
+func (s *OrganizationIntegrationsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *OrganizationIntegrationsList) SetUpdatedBy(val OptInt) {
+func (s *OrganizationIntegrationsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4174,8 +4174,8 @@ type OrganizationList struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Name      string    `json:"name"`
 }
 
@@ -4195,12 +4195,12 @@ func (s *OrganizationList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *OrganizationList) GetCreatedBy() OptInt {
+func (s *OrganizationList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *OrganizationList) GetUpdatedBy() OptInt {
+func (s *OrganizationList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4225,12 +4225,12 @@ func (s *OrganizationList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *OrganizationList) SetCreatedBy(val OptInt) {
+func (s *OrganizationList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *OrganizationList) SetUpdatedBy(val OptInt) {
+func (s *OrganizationList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4244,8 +4244,8 @@ type OrganizationMembershipsList struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -4265,12 +4265,12 @@ func (s *OrganizationMembershipsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *OrganizationMembershipsList) GetCreatedBy() OptInt {
+func (s *OrganizationMembershipsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *OrganizationMembershipsList) GetUpdatedBy() OptInt {
+func (s *OrganizationMembershipsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4295,12 +4295,12 @@ func (s *OrganizationMembershipsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *OrganizationMembershipsList) SetCreatedBy(val OptInt) {
+func (s *OrganizationMembershipsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *OrganizationMembershipsList) SetUpdatedBy(val OptInt) {
+func (s *OrganizationMembershipsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4314,8 +4314,8 @@ type OrganizationRead struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Name      string    `json:"name"`
 }
 
@@ -4335,12 +4335,12 @@ func (s *OrganizationRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *OrganizationRead) GetCreatedBy() OptInt {
+func (s *OrganizationRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *OrganizationRead) GetUpdatedBy() OptInt {
+func (s *OrganizationRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4365,12 +4365,12 @@ func (s *OrganizationRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *OrganizationRead) SetCreatedBy(val OptInt) {
+func (s *OrganizationRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *OrganizationRead) SetUpdatedBy(val OptInt) {
+func (s *OrganizationRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4386,8 +4386,8 @@ type OrganizationUpdate struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Name      string    `json:"name"`
 }
 
@@ -4407,12 +4407,12 @@ func (s *OrganizationUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *OrganizationUpdate) GetCreatedBy() OptInt {
+func (s *OrganizationUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *OrganizationUpdate) GetUpdatedBy() OptInt {
+func (s *OrganizationUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4437,12 +4437,12 @@ func (s *OrganizationUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *OrganizationUpdate) SetCreatedBy(val OptInt) {
+func (s *OrganizationUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *OrganizationUpdate) SetUpdatedBy(val OptInt) {
+func (s *OrganizationUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4795,8 +4795,8 @@ type SessionCreate struct {
 	ID        uuid.UUID         `json:"id"`
 	CreatedAt time.Time         `json:"created_at"`
 	UpdatedAt time.Time         `json:"updated_at"`
-	CreatedBy OptInt            `json:"created_by"`
-	UpdatedBy OptInt            `json:"updated_by"`
+	CreatedBy OptUUID           `json:"created_by"`
+	UpdatedBy OptUUID           `json:"updated_by"`
 	Type      SessionCreateType `json:"type"`
 	Disabled  bool              `json:"disabled"`
 	Token     string            `json:"token"`
@@ -4820,12 +4820,12 @@ func (s *SessionCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *SessionCreate) GetCreatedBy() OptInt {
+func (s *SessionCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *SessionCreate) GetUpdatedBy() OptInt {
+func (s *SessionCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -4870,12 +4870,12 @@ func (s *SessionCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *SessionCreate) SetCreatedBy(val OptInt) {
+func (s *SessionCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *SessionCreate) SetUpdatedBy(val OptInt) {
+func (s *SessionCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -4959,8 +4959,8 @@ type SessionList struct {
 	ID        uuid.UUID       `json:"id"`
 	CreatedAt time.Time       `json:"created_at"`
 	UpdatedAt time.Time       `json:"updated_at"`
-	CreatedBy OptInt          `json:"created_by"`
-	UpdatedBy OptInt          `json:"updated_by"`
+	CreatedBy OptUUID         `json:"created_by"`
+	UpdatedBy OptUUID         `json:"updated_by"`
 	Type      SessionListType `json:"type"`
 	Disabled  bool            `json:"disabled"`
 	Token     string          `json:"token"`
@@ -4984,12 +4984,12 @@ func (s *SessionList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *SessionList) GetCreatedBy() OptInt {
+func (s *SessionList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *SessionList) GetUpdatedBy() OptInt {
+func (s *SessionList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5034,12 +5034,12 @@ func (s *SessionList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *SessionList) SetCreatedBy(val OptInt) {
+func (s *SessionList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *SessionList) SetUpdatedBy(val OptInt) {
+func (s *SessionList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5121,8 +5121,8 @@ type SessionRead struct {
 	ID        uuid.UUID       `json:"id"`
 	CreatedAt time.Time       `json:"created_at"`
 	UpdatedAt time.Time       `json:"updated_at"`
-	CreatedBy OptInt          `json:"created_by"`
-	UpdatedBy OptInt          `json:"updated_by"`
+	CreatedBy OptUUID         `json:"created_by"`
+	UpdatedBy OptUUID         `json:"updated_by"`
 	Type      SessionReadType `json:"type"`
 	Disabled  bool            `json:"disabled"`
 	Token     string          `json:"token"`
@@ -5146,12 +5146,12 @@ func (s *SessionRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *SessionRead) GetCreatedBy() OptInt {
+func (s *SessionRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *SessionRead) GetUpdatedBy() OptInt {
+func (s *SessionRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5196,12 +5196,12 @@ func (s *SessionRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *SessionRead) SetCreatedBy(val OptInt) {
+func (s *SessionRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *SessionRead) SetUpdatedBy(val OptInt) {
+func (s *SessionRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5285,8 +5285,8 @@ type SessionUpdate struct {
 	ID        uuid.UUID         `json:"id"`
 	CreatedAt time.Time         `json:"created_at"`
 	UpdatedAt time.Time         `json:"updated_at"`
-	CreatedBy OptInt            `json:"created_by"`
-	UpdatedBy OptInt            `json:"updated_by"`
+	CreatedBy OptUUID           `json:"created_by"`
+	UpdatedBy OptUUID           `json:"updated_by"`
 	Type      SessionUpdateType `json:"type"`
 	Disabled  bool              `json:"disabled"`
 	Token     string            `json:"token"`
@@ -5310,12 +5310,12 @@ func (s *SessionUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *SessionUpdate) GetCreatedBy() OptInt {
+func (s *SessionUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *SessionUpdate) GetUpdatedBy() OptInt {
+func (s *SessionUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5360,12 +5360,12 @@ func (s *SessionUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *SessionUpdate) SetCreatedBy(val OptInt) {
+func (s *SessionUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *SessionUpdate) SetUpdatedBy(val OptInt) {
+func (s *SessionUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5449,8 +5449,8 @@ type SessionUsersRead struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -5479,12 +5479,12 @@ func (s *SessionUsersRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *SessionUsersRead) GetCreatedBy() OptInt {
+func (s *SessionUsersRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *SessionUsersRead) GetUpdatedBy() OptInt {
+func (s *SessionUsersRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5554,12 +5554,12 @@ func (s *SessionUsersRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *SessionUsersRead) SetCreatedBy(val OptInt) {
+func (s *SessionUsersRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *SessionUsersRead) SetUpdatedBy(val OptInt) {
+func (s *SessionUsersRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5617,8 +5617,8 @@ func (*SessionUsersRead) readSessionUsersRes() {}
 
 type UpdateGroupReq struct {
 	UpdatedAt   OptDateTime `json:"updated_at"`
-	CreatedBy   OptInt      `json:"created_by"`
-	UpdatedBy   OptInt      `json:"updated_by"`
+	CreatedBy   OptUUID     `json:"created_by"`
+	UpdatedBy   OptUUID     `json:"updated_by"`
 	Name        OptString   `json:"name"`
 	Description OptString   `json:"description"`
 	LogoURL     OptString   `json:"logo_url"`
@@ -5633,12 +5633,12 @@ func (s *UpdateGroupReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateGroupReq) GetCreatedBy() OptInt {
+func (s *UpdateGroupReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateGroupReq) GetUpdatedBy() OptInt {
+func (s *UpdateGroupReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5678,12 +5678,12 @@ func (s *UpdateGroupReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateGroupReq) SetCreatedBy(val OptInt) {
+func (s *UpdateGroupReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateGroupReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateGroupReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5719,8 +5719,8 @@ func (s *UpdateGroupReq) SetUsers(val []uuid.UUID) {
 
 type UpdateGroupSettingsReq struct {
 	UpdatedAt  OptDateTime                         `json:"updated_at"`
-	CreatedBy  OptInt                              `json:"created_by"`
-	UpdatedBy  OptInt                              `json:"updated_by"`
+	CreatedBy  OptUUID                             `json:"created_by"`
+	UpdatedBy  OptUUID                             `json:"updated_by"`
 	Visibility OptUpdateGroupSettingsReqVisibility `json:"visibility"`
 	JoinPolicy OptUpdateGroupSettingsReqJoinPolicy `json:"join_policy"`
 	Group      OptUUID                             `json:"group"`
@@ -5732,12 +5732,12 @@ func (s *UpdateGroupSettingsReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateGroupSettingsReq) GetCreatedBy() OptInt {
+func (s *UpdateGroupSettingsReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateGroupSettingsReq) GetUpdatedBy() OptInt {
+func (s *UpdateGroupSettingsReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5762,12 +5762,12 @@ func (s *UpdateGroupSettingsReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateGroupSettingsReq) SetCreatedBy(val OptInt) {
+func (s *UpdateGroupSettingsReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateGroupSettingsReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateGroupSettingsReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5884,8 +5884,8 @@ func (s *UpdateGroupSettingsReqVisibility) UnmarshalText(data []byte) error {
 
 type UpdateIntegrationReq struct {
 	UpdatedAt    OptDateTime `json:"updated_at"`
-	CreatedBy    OptInt      `json:"created_by"`
-	UpdatedBy    OptInt      `json:"updated_by"`
+	CreatedBy    OptUUID     `json:"created_by"`
+	UpdatedBy    OptUUID     `json:"updated_by"`
 	Description  OptString   `json:"description"`
 	Organization OptUUID     `json:"organization"`
 }
@@ -5896,12 +5896,12 @@ func (s *UpdateIntegrationReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateIntegrationReq) GetCreatedBy() OptInt {
+func (s *UpdateIntegrationReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateIntegrationReq) GetUpdatedBy() OptInt {
+func (s *UpdateIntegrationReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5921,12 +5921,12 @@ func (s *UpdateIntegrationReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateIntegrationReq) SetCreatedBy(val OptInt) {
+func (s *UpdateIntegrationReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateIntegrationReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateIntegrationReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -5942,8 +5942,8 @@ func (s *UpdateIntegrationReq) SetOrganization(val OptUUID) {
 
 type UpdateMembershipReq struct {
 	UpdatedAt    OptDateTime `json:"updated_at"`
-	CreatedBy    OptInt      `json:"created_by"`
-	UpdatedBy    OptInt      `json:"updated_by"`
+	CreatedBy    OptUUID     `json:"created_by"`
+	UpdatedBy    OptUUID     `json:"updated_by"`
 	Current      OptBool     `json:"current"`
 	Organization OptUUID     `json:"organization"`
 	User         OptUUID     `json:"user"`
@@ -5956,12 +5956,12 @@ func (s *UpdateMembershipReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateMembershipReq) GetCreatedBy() OptInt {
+func (s *UpdateMembershipReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateMembershipReq) GetUpdatedBy() OptInt {
+func (s *UpdateMembershipReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -5991,12 +5991,12 @@ func (s *UpdateMembershipReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateMembershipReq) SetCreatedBy(val OptInt) {
+func (s *UpdateMembershipReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateMembershipReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateMembershipReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6022,8 +6022,8 @@ func (s *UpdateMembershipReq) SetGroup(val OptUUID) {
 
 type UpdateOrganizationReq struct {
 	UpdatedAt    OptDateTime `json:"updated_at"`
-	CreatedBy    OptInt      `json:"created_by"`
-	UpdatedBy    OptInt      `json:"updated_by"`
+	CreatedBy    OptUUID     `json:"created_by"`
+	UpdatedBy    OptUUID     `json:"updated_by"`
 	Name         OptString   `json:"name"`
 	Memberships  []uuid.UUID `json:"memberships"`
 	Integrations []uuid.UUID `json:"integrations"`
@@ -6035,12 +6035,12 @@ func (s *UpdateOrganizationReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateOrganizationReq) GetCreatedBy() OptInt {
+func (s *UpdateOrganizationReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateOrganizationReq) GetUpdatedBy() OptInt {
+func (s *UpdateOrganizationReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6065,12 +6065,12 @@ func (s *UpdateOrganizationReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateOrganizationReq) SetCreatedBy(val OptInt) {
+func (s *UpdateOrganizationReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateOrganizationReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateOrganizationReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6091,8 +6091,8 @@ func (s *UpdateOrganizationReq) SetIntegrations(val []uuid.UUID) {
 
 type UpdateSessionReq struct {
 	UpdatedAt OptDateTime `json:"updated_at"`
-	CreatedBy OptInt      `json:"created_by"`
-	UpdatedBy OptInt      `json:"updated_by"`
+	CreatedBy OptUUID     `json:"created_by"`
+	UpdatedBy OptUUID     `json:"updated_by"`
 	Disabled  OptBool     `json:"disabled"`
 	UserAgent OptString   `json:"user_agent"`
 	Ips       OptString   `json:"ips"`
@@ -6105,12 +6105,12 @@ func (s *UpdateSessionReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateSessionReq) GetCreatedBy() OptInt {
+func (s *UpdateSessionReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateSessionReq) GetUpdatedBy() OptInt {
+func (s *UpdateSessionReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6140,12 +6140,12 @@ func (s *UpdateSessionReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateSessionReq) SetCreatedBy(val OptInt) {
+func (s *UpdateSessionReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateSessionReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateSessionReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6171,8 +6171,8 @@ func (s *UpdateSessionReq) SetUsers(val OptUUID) {
 
 type UpdateUserReq struct {
 	UpdatedAt       OptDateTime `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           OptString   `json:"email"`
 	FirstName       OptString   `json:"first_name"`
 	LastName        OptString   `json:"last_name"`
@@ -6195,12 +6195,12 @@ func (s *UpdateUserReq) GetUpdatedAt() OptDateTime {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UpdateUserReq) GetCreatedBy() OptInt {
+func (s *UpdateUserReq) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UpdateUserReq) GetUpdatedBy() OptInt {
+func (s *UpdateUserReq) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6280,12 +6280,12 @@ func (s *UpdateUserReq) SetUpdatedAt(val OptDateTime) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UpdateUserReq) SetCreatedBy(val OptInt) {
+func (s *UpdateUserReq) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UpdateUserReq) SetUpdatedBy(val OptInt) {
+func (s *UpdateUserReq) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6364,8 +6364,8 @@ type UserCreate struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -6394,12 +6394,12 @@ func (s *UserCreate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserCreate) GetCreatedBy() OptInt {
+func (s *UserCreate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserCreate) GetUpdatedBy() OptInt {
+func (s *UserCreate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6469,12 +6469,12 @@ func (s *UserCreate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserCreate) SetCreatedBy(val OptInt) {
+func (s *UserCreate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserCreate) SetUpdatedBy(val OptInt) {
+func (s *UserCreate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6535,8 +6535,8 @@ type UserGroupsList struct {
 	ID          uuid.UUID `json:"id"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	CreatedBy   OptInt    `json:"created_by"`
-	UpdatedBy   OptInt    `json:"updated_by"`
+	CreatedBy   OptUUID   `json:"created_by"`
+	UpdatedBy   OptUUID   `json:"updated_by"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	LogoURL     string    `json:"logo_url"`
@@ -6558,12 +6558,12 @@ func (s *UserGroupsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserGroupsList) GetCreatedBy() OptInt {
+func (s *UserGroupsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserGroupsList) GetUpdatedBy() OptInt {
+func (s *UserGroupsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6598,12 +6598,12 @@ func (s *UserGroupsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserGroupsList) SetCreatedBy(val OptInt) {
+func (s *UserGroupsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserGroupsList) SetUpdatedBy(val OptInt) {
+func (s *UserGroupsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6627,8 +6627,8 @@ type UserList struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -6657,12 +6657,12 @@ func (s *UserList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserList) GetCreatedBy() OptInt {
+func (s *UserList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserList) GetUpdatedBy() OptInt {
+func (s *UserList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6732,12 +6732,12 @@ func (s *UserList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserList) SetCreatedBy(val OptInt) {
+func (s *UserList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserList) SetUpdatedBy(val OptInt) {
+func (s *UserList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6796,8 +6796,8 @@ type UserMembershipsList struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	CreatedBy OptInt    `json:"created_by"`
-	UpdatedBy OptInt    `json:"updated_by"`
+	CreatedBy OptUUID   `json:"created_by"`
+	UpdatedBy OptUUID   `json:"updated_by"`
 	Current   bool      `json:"current"`
 }
 
@@ -6817,12 +6817,12 @@ func (s *UserMembershipsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserMembershipsList) GetCreatedBy() OptInt {
+func (s *UserMembershipsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserMembershipsList) GetUpdatedBy() OptInt {
+func (s *UserMembershipsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6847,12 +6847,12 @@ func (s *UserMembershipsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserMembershipsList) SetCreatedBy(val OptInt) {
+func (s *UserMembershipsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserMembershipsList) SetUpdatedBy(val OptInt) {
+func (s *UserMembershipsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -6866,8 +6866,8 @@ type UserRead struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -6896,12 +6896,12 @@ func (s *UserRead) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserRead) GetCreatedBy() OptInt {
+func (s *UserRead) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserRead) GetUpdatedBy() OptInt {
+func (s *UserRead) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -6971,12 +6971,12 @@ func (s *UserRead) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserRead) SetCreatedBy(val OptInt) {
+func (s *UserRead) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserRead) SetUpdatedBy(val OptInt) {
+func (s *UserRead) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -7037,8 +7037,8 @@ type UserSessionsList struct {
 	ID        uuid.UUID            `json:"id"`
 	CreatedAt time.Time            `json:"created_at"`
 	UpdatedAt time.Time            `json:"updated_at"`
-	CreatedBy OptInt               `json:"created_by"`
-	UpdatedBy OptInt               `json:"updated_by"`
+	CreatedBy OptUUID              `json:"created_by"`
+	UpdatedBy OptUUID              `json:"updated_by"`
 	Type      UserSessionsListType `json:"type"`
 	Disabled  bool                 `json:"disabled"`
 	Token     string               `json:"token"`
@@ -7062,12 +7062,12 @@ func (s *UserSessionsList) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserSessionsList) GetCreatedBy() OptInt {
+func (s *UserSessionsList) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserSessionsList) GetUpdatedBy() OptInt {
+func (s *UserSessionsList) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -7112,12 +7112,12 @@ func (s *UserSessionsList) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserSessionsList) SetCreatedBy(val OptInt) {
+func (s *UserSessionsList) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserSessionsList) SetUpdatedBy(val OptInt) {
+func (s *UserSessionsList) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 
@@ -7199,8 +7199,8 @@ type UserUpdate struct {
 	ID              uuid.UUID   `json:"id"`
 	CreatedAt       time.Time   `json:"created_at"`
 	UpdatedAt       time.Time   `json:"updated_at"`
-	CreatedBy       OptInt      `json:"created_by"`
-	UpdatedBy       OptInt      `json:"updated_by"`
+	CreatedBy       OptUUID     `json:"created_by"`
+	UpdatedBy       OptUUID     `json:"updated_by"`
 	Email           string      `json:"email"`
 	FirstName       string      `json:"first_name"`
 	LastName        string      `json:"last_name"`
@@ -7229,12 +7229,12 @@ func (s *UserUpdate) GetUpdatedAt() time.Time {
 }
 
 // GetCreatedBy returns the value of CreatedBy.
-func (s *UserUpdate) GetCreatedBy() OptInt {
+func (s *UserUpdate) GetCreatedBy() OptUUID {
 	return s.CreatedBy
 }
 
 // GetUpdatedBy returns the value of UpdatedBy.
-func (s *UserUpdate) GetUpdatedBy() OptInt {
+func (s *UserUpdate) GetUpdatedBy() OptUUID {
 	return s.UpdatedBy
 }
 
@@ -7304,12 +7304,12 @@ func (s *UserUpdate) SetUpdatedAt(val time.Time) {
 }
 
 // SetCreatedBy sets the value of CreatedBy.
-func (s *UserUpdate) SetCreatedBy(val OptInt) {
+func (s *UserUpdate) SetCreatedBy(val OptUUID) {
 	s.CreatedBy = val
 }
 
 // SetUpdatedBy sets the value of UpdatedBy.
-func (s *UserUpdate) SetUpdatedBy(val OptInt) {
+func (s *UserUpdate) SetUpdatedBy(val OptUUID) {
 	s.UpdatedBy = val
 }
 

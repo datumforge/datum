@@ -56,28 +56,28 @@ type GroupWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
@@ -452,28 +452,28 @@ type GroupSettingsWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "visibility" field predicates.
 	Visibility      *groupsettings.Visibility  `json:"visibility,omitempty"`
@@ -764,28 +764,28 @@ type IntegrationWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "kind" field predicates.
 	Kind             *string  `json:"kind,omitempty"`
@@ -1232,28 +1232,28 @@ type MembershipWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "current" field predicates.
 	Current    *bool `json:"current,omitempty"`
@@ -1584,28 +1584,28 @@ type OrganizationWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
@@ -1958,28 +1958,28 @@ type SessionWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "type" field predicates.
 	Type      *session.Type  `json:"type,omitempty"`
@@ -2454,28 +2454,28 @@ type UserWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *int  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *int  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []int `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []int `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *int  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *int  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *int  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *int  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool  `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool  `json:"createdByNotNil,omitempty"`
+	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
+	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
+	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
+	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
+	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
+	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
+	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
+	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
+	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *int  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *int  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []int `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []int `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *int  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *int  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *int  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *int  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool  `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool  `json:"updatedByNotNil,omitempty"`
+	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
+	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
 	// "email" field predicates.
 	Email             *string  `json:"email,omitempty"`

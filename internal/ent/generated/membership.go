@@ -26,9 +26,9 @@ type Membership struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int `json:"created_by,omitempty"`
+	CreatedBy uuid.UUID `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int `json:"updated_by,omitempty"`
+	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
 	// Current holds the value of the "current" field.
 	Current bool `json:"current,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -101,11 +101,9 @@ func (*Membership) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case membership.FieldCurrent:
 			values[i] = new(sql.NullBool)
-		case membership.FieldCreatedBy, membership.FieldUpdatedBy:
-			values[i] = new(sql.NullInt64)
 		case membership.FieldCreatedAt, membership.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case membership.FieldID:
+		case membership.FieldID, membership.FieldCreatedBy, membership.FieldUpdatedBy:
 			values[i] = new(uuid.UUID)
 		case membership.ForeignKeys[0]: // group_memberships
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
@@ -147,16 +145,16 @@ func (m *Membership) assignValues(columns []string, values []any) error {
 				m.UpdatedAt = value.Time
 			}
 		case membership.FieldCreatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value.Valid {
-				m.CreatedBy = int(value.Int64)
+			} else if value != nil {
+				m.CreatedBy = *value
 			}
 		case membership.FieldUpdatedBy:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value.Valid {
-				m.UpdatedBy = int(value.Int64)
+			} else if value != nil {
+				m.UpdatedBy = *value
 			}
 		case membership.FieldCurrent:
 			if value, ok := values[i].(*sql.NullBool); !ok {

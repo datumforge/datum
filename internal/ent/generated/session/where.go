@@ -69,12 +69,12 @@ func UpdatedAt(v time.Time) predicate.Session {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v int) predicate.Session {
+func CreatedBy(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v int) predicate.Session {
+func UpdatedBy(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
@@ -179,42 +179,42 @@ func UpdatedAtLTE(v time.Time) predicate.Session {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v int) predicate.Session {
+func CreatedByEQ(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v int) predicate.Session {
+func CreatedByNEQ(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...int) predicate.Session {
+func CreatedByIn(vs ...uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...int) predicate.Session {
+func CreatedByNotIn(vs ...uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v int) predicate.Session {
+func CreatedByGT(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v int) predicate.Session {
+func CreatedByGTE(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v int) predicate.Session {
+func CreatedByLT(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v int) predicate.Session {
+func CreatedByLTE(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -229,42 +229,42 @@ func CreatedByNotNil() predicate.Session {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v int) predicate.Session {
+func UpdatedByEQ(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v int) predicate.Session {
+func UpdatedByNEQ(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...int) predicate.Session {
+func UpdatedByIn(vs ...uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...int) predicate.Session {
+func UpdatedByNotIn(vs ...uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v int) predicate.Session {
+func UpdatedByGT(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v int) predicate.Session {
+func UpdatedByGTE(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v int) predicate.Session {
+func UpdatedByLT(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v int) predicate.Session {
+func UpdatedByLTE(v uuid.UUID) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldUpdatedBy, v))
 }
 

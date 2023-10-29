@@ -52,29 +52,29 @@ func (oc *OrganizationCreate) SetNillableUpdatedAt(t *time.Time) *OrganizationCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (oc *OrganizationCreate) SetCreatedBy(i int) *OrganizationCreate {
-	oc.mutation.SetCreatedBy(i)
+func (oc *OrganizationCreate) SetCreatedBy(u uuid.UUID) *OrganizationCreate {
+	oc.mutation.SetCreatedBy(u)
 	return oc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableCreatedBy(i *int) *OrganizationCreate {
-	if i != nil {
-		oc.SetCreatedBy(*i)
+func (oc *OrganizationCreate) SetNillableCreatedBy(u *uuid.UUID) *OrganizationCreate {
+	if u != nil {
+		oc.SetCreatedBy(*u)
 	}
 	return oc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (oc *OrganizationCreate) SetUpdatedBy(i int) *OrganizationCreate {
-	oc.mutation.SetUpdatedBy(i)
+func (oc *OrganizationCreate) SetUpdatedBy(u uuid.UUID) *OrganizationCreate {
+	oc.mutation.SetUpdatedBy(u)
 	return oc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableUpdatedBy(i *int) *OrganizationCreate {
-	if i != nil {
-		oc.SetUpdatedBy(*i)
+func (oc *OrganizationCreate) SetNillableUpdatedBy(u *uuid.UUID) *OrganizationCreate {
+	if u != nil {
+		oc.SetUpdatedBy(*u)
 	}
 	return oc
 }
@@ -251,11 +251,11 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		_node.UpdatedAt = value
 	}
 	if value, ok := oc.mutation.CreatedBy(); ok {
-		_spec.SetField(organization.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(organization.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := oc.mutation.UpdatedBy(); ok {
-		_spec.SetField(organization.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(organization.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := oc.mutation.Name(); ok {

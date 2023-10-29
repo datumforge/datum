@@ -24,9 +24,9 @@ type Integration struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy int `json:"created_by,omitempty"`
+	CreatedBy uuid.UUID `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy int `json:"updated_by,omitempty"`
+	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
 	// Kind holds the value of the "kind" field.
 	Kind string `json:"kind,omitempty"`
 	// Description holds the value of the "description" field.
@@ -69,13 +69,11 @@ func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case integration.FieldCreatedBy, integration.FieldUpdatedBy:
-			values[i] = new(sql.NullInt64)
 		case integration.FieldKind, integration.FieldDescription, integration.FieldSecretName:
 			values[i] = new(sql.NullString)
 		case integration.FieldCreatedAt, integration.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case integration.FieldID:
+		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy:
 			values[i] = new(uuid.UUID)
 		case integration.ForeignKeys[0]: // organization_integrations
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
@@ -113,16 +111,16 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 				i.UpdatedAt = value.Time
 			}
 		case integration.FieldCreatedBy:
-			if value, ok := values[j].(*sql.NullInt64); !ok {
+			if value, ok := values[j].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[j])
-			} else if value.Valid {
-				i.CreatedBy = int(value.Int64)
+			} else if value != nil {
+				i.CreatedBy = *value
 			}
 		case integration.FieldUpdatedBy:
-			if value, ok := values[j].(*sql.NullInt64); !ok {
+			if value, ok := values[j].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[j])
-			} else if value.Valid {
-				i.UpdatedBy = int(value.Int64)
+			} else if value != nil {
+				i.UpdatedBy = *value
 			}
 		case integration.FieldKind:
 			if value, ok := values[j].(*sql.NullString); !ok {

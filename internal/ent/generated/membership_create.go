@@ -53,29 +53,29 @@ func (mc *MembershipCreate) SetNillableUpdatedAt(t *time.Time) *MembershipCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (mc *MembershipCreate) SetCreatedBy(i int) *MembershipCreate {
-	mc.mutation.SetCreatedBy(i)
+func (mc *MembershipCreate) SetCreatedBy(u uuid.UUID) *MembershipCreate {
+	mc.mutation.SetCreatedBy(u)
 	return mc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (mc *MembershipCreate) SetNillableCreatedBy(i *int) *MembershipCreate {
-	if i != nil {
-		mc.SetCreatedBy(*i)
+func (mc *MembershipCreate) SetNillableCreatedBy(u *uuid.UUID) *MembershipCreate {
+	if u != nil {
+		mc.SetCreatedBy(*u)
 	}
 	return mc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (mc *MembershipCreate) SetUpdatedBy(i int) *MembershipCreate {
-	mc.mutation.SetUpdatedBy(i)
+func (mc *MembershipCreate) SetUpdatedBy(u uuid.UUID) *MembershipCreate {
+	mc.mutation.SetUpdatedBy(u)
 	return mc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (mc *MembershipCreate) SetNillableUpdatedBy(i *int) *MembershipCreate {
-	if i != nil {
-		mc.SetUpdatedBy(*i)
+func (mc *MembershipCreate) SetNillableUpdatedBy(u *uuid.UUID) *MembershipCreate {
+	if u != nil {
+		mc.SetUpdatedBy(*u)
 	}
 	return mc
 }
@@ -271,11 +271,11 @@ func (mc *MembershipCreate) createSpec() (*Membership, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := mc.mutation.CreatedBy(); ok {
-		_spec.SetField(membership.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(membership.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := mc.mutation.UpdatedBy(); ok {
-		_spec.SetField(membership.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(membership.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := mc.mutation.Current(); ok {

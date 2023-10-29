@@ -51,29 +51,29 @@ func (ic *IntegrationCreate) SetNillableUpdatedAt(t *time.Time) *IntegrationCrea
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (ic *IntegrationCreate) SetCreatedBy(i int) *IntegrationCreate {
-	ic.mutation.SetCreatedBy(i)
+func (ic *IntegrationCreate) SetCreatedBy(u uuid.UUID) *IntegrationCreate {
+	ic.mutation.SetCreatedBy(u)
 	return ic
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableCreatedBy(i *int) *IntegrationCreate {
-	if i != nil {
-		ic.SetCreatedBy(*i)
+func (ic *IntegrationCreate) SetNillableCreatedBy(u *uuid.UUID) *IntegrationCreate {
+	if u != nil {
+		ic.SetCreatedBy(*u)
 	}
 	return ic
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (ic *IntegrationCreate) SetUpdatedBy(i int) *IntegrationCreate {
-	ic.mutation.SetUpdatedBy(i)
+func (ic *IntegrationCreate) SetUpdatedBy(u uuid.UUID) *IntegrationCreate {
+	ic.mutation.SetUpdatedBy(u)
 	return ic
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableUpdatedBy(i *int) *IntegrationCreate {
-	if i != nil {
-		ic.SetUpdatedBy(*i)
+func (ic *IntegrationCreate) SetNillableUpdatedBy(u *uuid.UUID) *IntegrationCreate {
+	if u != nil {
+		ic.SetUpdatedBy(*u)
 	}
 	return ic
 }
@@ -252,11 +252,11 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := ic.mutation.CreatedBy(); ok {
-		_spec.SetField(integration.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(integration.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := ic.mutation.UpdatedBy(); ok {
-		_spec.SetField(integration.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(integration.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := ic.mutation.Kind(); ok {

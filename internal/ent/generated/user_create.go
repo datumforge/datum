@@ -53,29 +53,29 @@ func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (uc *UserCreate) SetCreatedBy(i int) *UserCreate {
-	uc.mutation.SetCreatedBy(i)
+func (uc *UserCreate) SetCreatedBy(u uuid.UUID) *UserCreate {
+	uc.mutation.SetCreatedBy(u)
 	return uc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCreatedBy(i *int) *UserCreate {
-	if i != nil {
-		uc.SetCreatedBy(*i)
+func (uc *UserCreate) SetNillableCreatedBy(u *uuid.UUID) *UserCreate {
+	if u != nil {
+		uc.SetCreatedBy(*u)
 	}
 	return uc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (uc *UserCreate) SetUpdatedBy(i int) *UserCreate {
-	uc.mutation.SetUpdatedBy(i)
+func (uc *UserCreate) SetUpdatedBy(u uuid.UUID) *UserCreate {
+	uc.mutation.SetUpdatedBy(u)
 	return uc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdatedBy(i *int) *UserCreate {
-	if i != nil {
-		uc.SetUpdatedBy(*i)
+func (uc *UserCreate) SetNillableUpdatedBy(u *uuid.UUID) *UserCreate {
+	if u != nil {
+		uc.SetUpdatedBy(*u)
 	}
 	return uc
 }
@@ -436,11 +436,11 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := uc.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(user.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := uc.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(user.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := uc.mutation.Email(); ok {

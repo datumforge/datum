@@ -53,29 +53,29 @@ func (gc *GroupCreate) SetNillableUpdatedAt(t *time.Time) *GroupCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gc *GroupCreate) SetCreatedBy(i int) *GroupCreate {
-	gc.mutation.SetCreatedBy(i)
+func (gc *GroupCreate) SetCreatedBy(u uuid.UUID) *GroupCreate {
+	gc.mutation.SetCreatedBy(u)
 	return gc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gc *GroupCreate) SetNillableCreatedBy(i *int) *GroupCreate {
-	if i != nil {
-		gc.SetCreatedBy(*i)
+func (gc *GroupCreate) SetNillableCreatedBy(u *uuid.UUID) *GroupCreate {
+	if u != nil {
+		gc.SetCreatedBy(*u)
 	}
 	return gc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gc *GroupCreate) SetUpdatedBy(i int) *GroupCreate {
-	gc.mutation.SetUpdatedBy(i)
+func (gc *GroupCreate) SetUpdatedBy(u uuid.UUID) *GroupCreate {
+	gc.mutation.SetUpdatedBy(u)
 	return gc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gc *GroupCreate) SetNillableUpdatedBy(i *int) *GroupCreate {
-	if i != nil {
-		gc.SetUpdatedBy(*i)
+func (gc *GroupCreate) SetNillableUpdatedBy(u *uuid.UUID) *GroupCreate {
+	if u != nil {
+		gc.SetUpdatedBy(*u)
 	}
 	return gc
 }
@@ -301,11 +301,11 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := gc.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(group.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := gc.mutation.UpdatedBy(); ok {
-		_spec.SetField(group.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(group.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := gc.mutation.Name(); ok {

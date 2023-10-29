@@ -69,12 +69,12 @@ func UpdatedAt(v time.Time) predicate.Membership {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v int) predicate.Membership {
+func CreatedBy(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v int) predicate.Membership {
+func UpdatedBy(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
@@ -164,42 +164,42 @@ func UpdatedAtLTE(v time.Time) predicate.Membership {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v int) predicate.Membership {
+func CreatedByEQ(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v int) predicate.Membership {
+func CreatedByNEQ(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...int) predicate.Membership {
+func CreatedByIn(vs ...uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...int) predicate.Membership {
+func CreatedByNotIn(vs ...uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v int) predicate.Membership {
+func CreatedByGT(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v int) predicate.Membership {
+func CreatedByGTE(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v int) predicate.Membership {
+func CreatedByLT(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v int) predicate.Membership {
+func CreatedByLTE(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -214,42 +214,42 @@ func CreatedByNotNil() predicate.Membership {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v int) predicate.Membership {
+func UpdatedByEQ(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v int) predicate.Membership {
+func UpdatedByNEQ(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...int) predicate.Membership {
+func UpdatedByIn(vs ...uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...int) predicate.Membership {
+func UpdatedByNotIn(vs ...uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v int) predicate.Membership {
+func UpdatedByGT(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v int) predicate.Membership {
+func UpdatedByGTE(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v int) predicate.Membership {
+func UpdatedByLT(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v int) predicate.Membership {
+func UpdatedByLTE(v uuid.UUID) predicate.Membership {
 	return predicate.Membership(sql.FieldLTE(FieldUpdatedBy, v))
 }
 

@@ -51,29 +51,29 @@ func (sc *SessionCreate) SetNillableUpdatedAt(t *time.Time) *SessionCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (sc *SessionCreate) SetCreatedBy(i int) *SessionCreate {
-	sc.mutation.SetCreatedBy(i)
+func (sc *SessionCreate) SetCreatedBy(u uuid.UUID) *SessionCreate {
+	sc.mutation.SetCreatedBy(u)
 	return sc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableCreatedBy(i *int) *SessionCreate {
-	if i != nil {
-		sc.SetCreatedBy(*i)
+func (sc *SessionCreate) SetNillableCreatedBy(u *uuid.UUID) *SessionCreate {
+	if u != nil {
+		sc.SetCreatedBy(*u)
 	}
 	return sc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (sc *SessionCreate) SetUpdatedBy(i int) *SessionCreate {
-	sc.mutation.SetUpdatedBy(i)
+func (sc *SessionCreate) SetUpdatedBy(u uuid.UUID) *SessionCreate {
+	sc.mutation.SetUpdatedBy(u)
 	return sc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableUpdatedBy(i *int) *SessionCreate {
-	if i != nil {
-		sc.SetUpdatedBy(*i)
+func (sc *SessionCreate) SetNillableUpdatedBy(u *uuid.UUID) *SessionCreate {
+	if u != nil {
+		sc.SetUpdatedBy(*u)
 	}
 	return sc
 }
@@ -300,11 +300,11 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := sc.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(session.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := sc.mutation.UpdatedBy(); ok {
-		_spec.SetField(session.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(session.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := sc.mutation.GetType(); ok {

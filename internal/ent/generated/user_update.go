@@ -41,23 +41,16 @@ func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (uu *UserUpdate) SetCreatedBy(i int) *UserUpdate {
-	uu.mutation.ResetCreatedBy()
-	uu.mutation.SetCreatedBy(i)
+func (uu *UserUpdate) SetCreatedBy(u uuid.UUID) *UserUpdate {
+	uu.mutation.SetCreatedBy(u)
 	return uu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCreatedBy(i *int) *UserUpdate {
-	if i != nil {
-		uu.SetCreatedBy(*i)
+func (uu *UserUpdate) SetNillableCreatedBy(u *uuid.UUID) *UserUpdate {
+	if u != nil {
+		uu.SetCreatedBy(*u)
 	}
-	return uu
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (uu *UserUpdate) AddCreatedBy(i int) *UserUpdate {
-	uu.mutation.AddCreatedBy(i)
 	return uu
 }
 
@@ -68,23 +61,16 @@ func (uu *UserUpdate) ClearCreatedBy() *UserUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (uu *UserUpdate) SetUpdatedBy(i int) *UserUpdate {
-	uu.mutation.ResetUpdatedBy()
-	uu.mutation.SetUpdatedBy(i)
+func (uu *UserUpdate) SetUpdatedBy(u uuid.UUID) *UserUpdate {
+	uu.mutation.SetUpdatedBy(u)
 	return uu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableUpdatedBy(i *int) *UserUpdate {
-	if i != nil {
-		uu.SetUpdatedBy(*i)
+func (uu *UserUpdate) SetNillableUpdatedBy(u *uuid.UUID) *UserUpdate {
+	if u != nil {
+		uu.SetUpdatedBy(*u)
 	}
-	return uu
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (uu *UserUpdate) AddUpdatedBy(i int) *UserUpdate {
-	uu.mutation.AddUpdatedBy(i)
 	return uu
 }
 
@@ -466,22 +452,16 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := uu.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := uu.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(user.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(user.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if uu.mutation.CreatedByCleared() {
-		_spec.ClearField(user.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(user.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := uu.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := uu.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(user.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(user.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if uu.mutation.UpdatedByCleared() {
-		_spec.ClearField(user.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(user.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
@@ -707,23 +687,16 @@ func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (uuo *UserUpdateOne) SetCreatedBy(i int) *UserUpdateOne {
-	uuo.mutation.ResetCreatedBy()
-	uuo.mutation.SetCreatedBy(i)
+func (uuo *UserUpdateOne) SetCreatedBy(u uuid.UUID) *UserUpdateOne {
+	uuo.mutation.SetCreatedBy(u)
 	return uuo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCreatedBy(i *int) *UserUpdateOne {
-	if i != nil {
-		uuo.SetCreatedBy(*i)
+func (uuo *UserUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *UserUpdateOne {
+	if u != nil {
+		uuo.SetCreatedBy(*u)
 	}
-	return uuo
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (uuo *UserUpdateOne) AddCreatedBy(i int) *UserUpdateOne {
-	uuo.mutation.AddCreatedBy(i)
 	return uuo
 }
 
@@ -734,23 +707,16 @@ func (uuo *UserUpdateOne) ClearCreatedBy() *UserUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (uuo *UserUpdateOne) SetUpdatedBy(i int) *UserUpdateOne {
-	uuo.mutation.ResetUpdatedBy()
-	uuo.mutation.SetUpdatedBy(i)
+func (uuo *UserUpdateOne) SetUpdatedBy(u uuid.UUID) *UserUpdateOne {
+	uuo.mutation.SetUpdatedBy(u)
 	return uuo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableUpdatedBy(i *int) *UserUpdateOne {
-	if i != nil {
-		uuo.SetUpdatedBy(*i)
+func (uuo *UserUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *UserUpdateOne {
+	if u != nil {
+		uuo.SetUpdatedBy(*u)
 	}
-	return uuo
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (uuo *UserUpdateOne) AddUpdatedBy(i int) *UserUpdateOne {
-	uuo.mutation.AddUpdatedBy(i)
 	return uuo
 }
 
@@ -1162,22 +1128,16 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := uuo.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := uuo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(user.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(user.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if uuo.mutation.CreatedByCleared() {
-		_spec.ClearField(user.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(user.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := uuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := uuo.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(user.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(user.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if uuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(user.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(user.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

@@ -34,8 +34,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			group.FieldCreatedAt:   {Type: field.TypeTime, Column: group.FieldCreatedAt},
 			group.FieldUpdatedAt:   {Type: field.TypeTime, Column: group.FieldUpdatedAt},
-			group.FieldCreatedBy:   {Type: field.TypeInt, Column: group.FieldCreatedBy},
-			group.FieldUpdatedBy:   {Type: field.TypeInt, Column: group.FieldUpdatedBy},
+			group.FieldCreatedBy:   {Type: field.TypeUUID, Column: group.FieldCreatedBy},
+			group.FieldUpdatedBy:   {Type: field.TypeUUID, Column: group.FieldUpdatedBy},
 			group.FieldName:        {Type: field.TypeString, Column: group.FieldName},
 			group.FieldDescription: {Type: field.TypeString, Column: group.FieldDescription},
 			group.FieldLogoURL:     {Type: field.TypeString, Column: group.FieldLogoURL},
@@ -54,8 +54,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			groupsettings.FieldCreatedAt:  {Type: field.TypeTime, Column: groupsettings.FieldCreatedAt},
 			groupsettings.FieldUpdatedAt:  {Type: field.TypeTime, Column: groupsettings.FieldUpdatedAt},
-			groupsettings.FieldCreatedBy:  {Type: field.TypeInt, Column: groupsettings.FieldCreatedBy},
-			groupsettings.FieldUpdatedBy:  {Type: field.TypeInt, Column: groupsettings.FieldUpdatedBy},
+			groupsettings.FieldCreatedBy:  {Type: field.TypeUUID, Column: groupsettings.FieldCreatedBy},
+			groupsettings.FieldUpdatedBy:  {Type: field.TypeUUID, Column: groupsettings.FieldUpdatedBy},
 			groupsettings.FieldVisibility: {Type: field.TypeEnum, Column: groupsettings.FieldVisibility},
 			groupsettings.FieldJoinPolicy: {Type: field.TypeEnum, Column: groupsettings.FieldJoinPolicy},
 		},
@@ -73,8 +73,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			integration.FieldCreatedAt:   {Type: field.TypeTime, Column: integration.FieldCreatedAt},
 			integration.FieldUpdatedAt:   {Type: field.TypeTime, Column: integration.FieldUpdatedAt},
-			integration.FieldCreatedBy:   {Type: field.TypeInt, Column: integration.FieldCreatedBy},
-			integration.FieldUpdatedBy:   {Type: field.TypeInt, Column: integration.FieldUpdatedBy},
+			integration.FieldCreatedBy:   {Type: field.TypeUUID, Column: integration.FieldCreatedBy},
+			integration.FieldUpdatedBy:   {Type: field.TypeUUID, Column: integration.FieldUpdatedBy},
 			integration.FieldKind:        {Type: field.TypeString, Column: integration.FieldKind},
 			integration.FieldDescription: {Type: field.TypeString, Column: integration.FieldDescription},
 			integration.FieldSecretName:  {Type: field.TypeString, Column: integration.FieldSecretName},
@@ -93,8 +93,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			membership.FieldCreatedAt: {Type: field.TypeTime, Column: membership.FieldCreatedAt},
 			membership.FieldUpdatedAt: {Type: field.TypeTime, Column: membership.FieldUpdatedAt},
-			membership.FieldCreatedBy: {Type: field.TypeInt, Column: membership.FieldCreatedBy},
-			membership.FieldUpdatedBy: {Type: field.TypeInt, Column: membership.FieldUpdatedBy},
+			membership.FieldCreatedBy: {Type: field.TypeUUID, Column: membership.FieldCreatedBy},
+			membership.FieldUpdatedBy: {Type: field.TypeUUID, Column: membership.FieldUpdatedBy},
 			membership.FieldCurrent:   {Type: field.TypeBool, Column: membership.FieldCurrent},
 		},
 	}
@@ -111,8 +111,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			organization.FieldCreatedAt: {Type: field.TypeTime, Column: organization.FieldCreatedAt},
 			organization.FieldUpdatedAt: {Type: field.TypeTime, Column: organization.FieldUpdatedAt},
-			organization.FieldCreatedBy: {Type: field.TypeInt, Column: organization.FieldCreatedBy},
-			organization.FieldUpdatedBy: {Type: field.TypeInt, Column: organization.FieldUpdatedBy},
+			organization.FieldCreatedBy: {Type: field.TypeUUID, Column: organization.FieldCreatedBy},
+			organization.FieldUpdatedBy: {Type: field.TypeUUID, Column: organization.FieldUpdatedBy},
 			organization.FieldName:      {Type: field.TypeString, Column: organization.FieldName},
 		},
 	}
@@ -129,8 +129,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			session.FieldCreatedAt: {Type: field.TypeTime, Column: session.FieldCreatedAt},
 			session.FieldUpdatedAt: {Type: field.TypeTime, Column: session.FieldUpdatedAt},
-			session.FieldCreatedBy: {Type: field.TypeInt, Column: session.FieldCreatedBy},
-			session.FieldUpdatedBy: {Type: field.TypeInt, Column: session.FieldUpdatedBy},
+			session.FieldCreatedBy: {Type: field.TypeUUID, Column: session.FieldCreatedBy},
+			session.FieldUpdatedBy: {Type: field.TypeUUID, Column: session.FieldUpdatedBy},
 			session.FieldType:      {Type: field.TypeEnum, Column: session.FieldType},
 			session.FieldDisabled:  {Type: field.TypeBool, Column: session.FieldDisabled},
 			session.FieldToken:     {Type: field.TypeString, Column: session.FieldToken},
@@ -151,8 +151,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Fields: map[string]*sqlgraph.FieldSpec{
 			user.FieldCreatedAt:       {Type: field.TypeTime, Column: user.FieldCreatedAt},
 			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
-			user.FieldCreatedBy:       {Type: field.TypeInt, Column: user.FieldCreatedBy},
-			user.FieldUpdatedBy:       {Type: field.TypeInt, Column: user.FieldUpdatedBy},
+			user.FieldCreatedBy:       {Type: field.TypeUUID, Column: user.FieldCreatedBy},
+			user.FieldUpdatedBy:       {Type: field.TypeUUID, Column: user.FieldUpdatedBy},
 			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
 			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
 			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
@@ -393,13 +393,13 @@ func (f *GroupFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(group.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *GroupFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *GroupFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(group.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *GroupFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *GroupFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(group.FieldUpdatedBy))
 }
 
@@ -510,13 +510,13 @@ func (f *GroupSettingsFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(groupsettings.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *GroupSettingsFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *GroupSettingsFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(groupsettings.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *GroupSettingsFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *GroupSettingsFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(groupsettings.FieldUpdatedBy))
 }
 
@@ -594,13 +594,13 @@ func (f *IntegrationFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(integration.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *IntegrationFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *IntegrationFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(integration.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *IntegrationFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *IntegrationFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(integration.FieldUpdatedBy))
 }
 
@@ -683,13 +683,13 @@ func (f *MembershipFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(membership.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *MembershipFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *MembershipFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(membership.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *MembershipFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *MembershipFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(membership.FieldUpdatedBy))
 }
 
@@ -790,13 +790,13 @@ func (f *OrganizationFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(organization.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *OrganizationFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *OrganizationFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(organization.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *OrganizationFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *OrganizationFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(organization.FieldUpdatedBy))
 }
 
@@ -883,13 +883,13 @@ func (f *SessionFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(session.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *SessionFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *SessionFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(session.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *SessionFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *SessionFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(session.FieldUpdatedBy))
 }
 
@@ -982,13 +982,13 @@ func (f *UserFilter) WhereUpdatedAt(p entql.TimeP) {
 	f.Where(p.Field(user.FieldUpdatedAt))
 }
 
-// WhereCreatedBy applies the entql int predicate on the created_by field.
-func (f *UserFilter) WhereCreatedBy(p entql.IntP) {
+// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
+func (f *UserFilter) WhereCreatedBy(p entql.ValueP) {
 	f.Where(p.Field(user.FieldCreatedBy))
 }
 
-// WhereUpdatedBy applies the entql int predicate on the updated_by field.
-func (f *UserFilter) WhereUpdatedBy(p entql.IntP) {
+// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
+func (f *UserFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(user.FieldUpdatedBy))
 }
 

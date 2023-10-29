@@ -39,23 +39,16 @@ func (su *SessionUpdate) SetUpdatedAt(t time.Time) *SessionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (su *SessionUpdate) SetCreatedBy(i int) *SessionUpdate {
-	su.mutation.ResetCreatedBy()
-	su.mutation.SetCreatedBy(i)
+func (su *SessionUpdate) SetCreatedBy(u uuid.UUID) *SessionUpdate {
+	su.mutation.SetCreatedBy(u)
 	return su
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableCreatedBy(i *int) *SessionUpdate {
-	if i != nil {
-		su.SetCreatedBy(*i)
+func (su *SessionUpdate) SetNillableCreatedBy(u *uuid.UUID) *SessionUpdate {
+	if u != nil {
+		su.SetCreatedBy(*u)
 	}
-	return su
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (su *SessionUpdate) AddCreatedBy(i int) *SessionUpdate {
-	su.mutation.AddCreatedBy(i)
 	return su
 }
 
@@ -66,23 +59,16 @@ func (su *SessionUpdate) ClearCreatedBy() *SessionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (su *SessionUpdate) SetUpdatedBy(i int) *SessionUpdate {
-	su.mutation.ResetUpdatedBy()
-	su.mutation.SetUpdatedBy(i)
+func (su *SessionUpdate) SetUpdatedBy(u uuid.UUID) *SessionUpdate {
+	su.mutation.SetUpdatedBy(u)
 	return su
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableUpdatedBy(i *int) *SessionUpdate {
-	if i != nil {
-		su.SetUpdatedBy(*i)
+func (su *SessionUpdate) SetNillableUpdatedBy(u *uuid.UUID) *SessionUpdate {
+	if u != nil {
+		su.SetUpdatedBy(*u)
 	}
-	return su
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (su *SessionUpdate) AddUpdatedBy(i int) *SessionUpdate {
-	su.mutation.AddUpdatedBy(i)
 	return su
 }
 
@@ -209,22 +195,16 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := su.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := su.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(session.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(session.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if su.mutation.CreatedByCleared() {
-		_spec.ClearField(session.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(session.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := su.mutation.UpdatedBy(); ok {
-		_spec.SetField(session.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := su.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(session.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(session.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if su.mutation.UpdatedByCleared() {
-		_spec.ClearField(session.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(session.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := su.mutation.Disabled(); ok {
 		_spec.SetField(session.FieldDisabled, field.TypeBool, value)
@@ -298,23 +278,16 @@ func (suo *SessionUpdateOne) SetUpdatedAt(t time.Time) *SessionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (suo *SessionUpdateOne) SetCreatedBy(i int) *SessionUpdateOne {
-	suo.mutation.ResetCreatedBy()
-	suo.mutation.SetCreatedBy(i)
+func (suo *SessionUpdateOne) SetCreatedBy(u uuid.UUID) *SessionUpdateOne {
+	suo.mutation.SetCreatedBy(u)
 	return suo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableCreatedBy(i *int) *SessionUpdateOne {
-	if i != nil {
-		suo.SetCreatedBy(*i)
+func (suo *SessionUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *SessionUpdateOne {
+	if u != nil {
+		suo.SetCreatedBy(*u)
 	}
-	return suo
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (suo *SessionUpdateOne) AddCreatedBy(i int) *SessionUpdateOne {
-	suo.mutation.AddCreatedBy(i)
 	return suo
 }
 
@@ -325,23 +298,16 @@ func (suo *SessionUpdateOne) ClearCreatedBy() *SessionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (suo *SessionUpdateOne) SetUpdatedBy(i int) *SessionUpdateOne {
-	suo.mutation.ResetUpdatedBy()
-	suo.mutation.SetUpdatedBy(i)
+func (suo *SessionUpdateOne) SetUpdatedBy(u uuid.UUID) *SessionUpdateOne {
+	suo.mutation.SetUpdatedBy(u)
 	return suo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUpdatedBy(i *int) *SessionUpdateOne {
-	if i != nil {
-		suo.SetUpdatedBy(*i)
+func (suo *SessionUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *SessionUpdateOne {
+	if u != nil {
+		suo.SetUpdatedBy(*u)
 	}
-	return suo
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (suo *SessionUpdateOne) AddUpdatedBy(i int) *SessionUpdateOne {
-	suo.mutation.AddUpdatedBy(i)
 	return suo
 }
 
@@ -498,22 +464,16 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := suo.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := suo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(session.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(session.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if suo.mutation.CreatedByCleared() {
-		_spec.ClearField(session.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(session.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := suo.mutation.UpdatedBy(); ok {
-		_spec.SetField(session.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := suo.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(session.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(session.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if suo.mutation.UpdatedByCleared() {
-		_spec.ClearField(session.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(session.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := suo.mutation.Disabled(); ok {
 		_spec.SetField(session.FieldDisabled, field.TypeBool, value)

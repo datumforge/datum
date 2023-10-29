@@ -39,23 +39,16 @@ func (gsu *GroupSettingsUpdate) SetUpdatedAt(t time.Time) *GroupSettingsUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gsu *GroupSettingsUpdate) SetCreatedBy(i int) *GroupSettingsUpdate {
-	gsu.mutation.ResetCreatedBy()
-	gsu.mutation.SetCreatedBy(i)
+func (gsu *GroupSettingsUpdate) SetCreatedBy(u uuid.UUID) *GroupSettingsUpdate {
+	gsu.mutation.SetCreatedBy(u)
 	return gsu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsu *GroupSettingsUpdate) SetNillableCreatedBy(i *int) *GroupSettingsUpdate {
-	if i != nil {
-		gsu.SetCreatedBy(*i)
+func (gsu *GroupSettingsUpdate) SetNillableCreatedBy(u *uuid.UUID) *GroupSettingsUpdate {
+	if u != nil {
+		gsu.SetCreatedBy(*u)
 	}
-	return gsu
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (gsu *GroupSettingsUpdate) AddCreatedBy(i int) *GroupSettingsUpdate {
-	gsu.mutation.AddCreatedBy(i)
 	return gsu
 }
 
@@ -66,23 +59,16 @@ func (gsu *GroupSettingsUpdate) ClearCreatedBy() *GroupSettingsUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gsu *GroupSettingsUpdate) SetUpdatedBy(i int) *GroupSettingsUpdate {
-	gsu.mutation.ResetUpdatedBy()
-	gsu.mutation.SetUpdatedBy(i)
+func (gsu *GroupSettingsUpdate) SetUpdatedBy(u uuid.UUID) *GroupSettingsUpdate {
+	gsu.mutation.SetUpdatedBy(u)
 	return gsu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gsu *GroupSettingsUpdate) SetNillableUpdatedBy(i *int) *GroupSettingsUpdate {
-	if i != nil {
-		gsu.SetUpdatedBy(*i)
+func (gsu *GroupSettingsUpdate) SetNillableUpdatedBy(u *uuid.UUID) *GroupSettingsUpdate {
+	if u != nil {
+		gsu.SetUpdatedBy(*u)
 	}
-	return gsu
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (gsu *GroupSettingsUpdate) AddUpdatedBy(i int) *GroupSettingsUpdate {
-	gsu.mutation.AddUpdatedBy(i)
 	return gsu
 }
 
@@ -223,22 +209,16 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		_spec.SetField(groupsettings.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := gsu.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := gsu.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(groupsettings.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if gsu.mutation.CreatedByCleared() {
-		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := gsu.mutation.UpdatedBy(); ok {
-		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := gsu.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(groupsettings.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if gsu.mutation.UpdatedByCleared() {
-		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := gsu.mutation.Visibility(); ok {
 		_spec.SetField(groupsettings.FieldVisibility, field.TypeEnum, value)
@@ -306,23 +286,16 @@ func (gsuo *GroupSettingsUpdateOne) SetUpdatedAt(t time.Time) *GroupSettingsUpda
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gsuo *GroupSettingsUpdateOne) SetCreatedBy(i int) *GroupSettingsUpdateOne {
-	gsuo.mutation.ResetCreatedBy()
-	gsuo.mutation.SetCreatedBy(i)
+func (gsuo *GroupSettingsUpdateOne) SetCreatedBy(u uuid.UUID) *GroupSettingsUpdateOne {
+	gsuo.mutation.SetCreatedBy(u)
 	return gsuo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsuo *GroupSettingsUpdateOne) SetNillableCreatedBy(i *int) *GroupSettingsUpdateOne {
-	if i != nil {
-		gsuo.SetCreatedBy(*i)
+func (gsuo *GroupSettingsUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *GroupSettingsUpdateOne {
+	if u != nil {
+		gsuo.SetCreatedBy(*u)
 	}
-	return gsuo
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (gsuo *GroupSettingsUpdateOne) AddCreatedBy(i int) *GroupSettingsUpdateOne {
-	gsuo.mutation.AddCreatedBy(i)
 	return gsuo
 }
 
@@ -333,23 +306,16 @@ func (gsuo *GroupSettingsUpdateOne) ClearCreatedBy() *GroupSettingsUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gsuo *GroupSettingsUpdateOne) SetUpdatedBy(i int) *GroupSettingsUpdateOne {
-	gsuo.mutation.ResetUpdatedBy()
-	gsuo.mutation.SetUpdatedBy(i)
+func (gsuo *GroupSettingsUpdateOne) SetUpdatedBy(u uuid.UUID) *GroupSettingsUpdateOne {
+	gsuo.mutation.SetUpdatedBy(u)
 	return gsuo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gsuo *GroupSettingsUpdateOne) SetNillableUpdatedBy(i *int) *GroupSettingsUpdateOne {
-	if i != nil {
-		gsuo.SetUpdatedBy(*i)
+func (gsuo *GroupSettingsUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *GroupSettingsUpdateOne {
+	if u != nil {
+		gsuo.SetUpdatedBy(*u)
 	}
-	return gsuo
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (gsuo *GroupSettingsUpdateOne) AddUpdatedBy(i int) *GroupSettingsUpdateOne {
-	gsuo.mutation.AddUpdatedBy(i)
 	return gsuo
 }
 
@@ -520,22 +486,16 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 		_spec.SetField(groupsettings.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := gsuo.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := gsuo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(groupsettings.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if gsuo.mutation.CreatedByCleared() {
-		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := gsuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := gsuo.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(groupsettings.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if gsuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := gsuo.mutation.Visibility(); ok {
 		_spec.SetField(groupsettings.FieldVisibility, field.TypeEnum, value)

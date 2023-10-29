@@ -41,23 +41,16 @@ func (mu *MembershipUpdate) SetUpdatedAt(t time.Time) *MembershipUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (mu *MembershipUpdate) SetCreatedBy(i int) *MembershipUpdate {
-	mu.mutation.ResetCreatedBy()
-	mu.mutation.SetCreatedBy(i)
+func (mu *MembershipUpdate) SetCreatedBy(u uuid.UUID) *MembershipUpdate {
+	mu.mutation.SetCreatedBy(u)
 	return mu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (mu *MembershipUpdate) SetNillableCreatedBy(i *int) *MembershipUpdate {
-	if i != nil {
-		mu.SetCreatedBy(*i)
+func (mu *MembershipUpdate) SetNillableCreatedBy(u *uuid.UUID) *MembershipUpdate {
+	if u != nil {
+		mu.SetCreatedBy(*u)
 	}
-	return mu
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (mu *MembershipUpdate) AddCreatedBy(i int) *MembershipUpdate {
-	mu.mutation.AddCreatedBy(i)
 	return mu
 }
 
@@ -68,23 +61,16 @@ func (mu *MembershipUpdate) ClearCreatedBy() *MembershipUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (mu *MembershipUpdate) SetUpdatedBy(i int) *MembershipUpdate {
-	mu.mutation.ResetUpdatedBy()
-	mu.mutation.SetUpdatedBy(i)
+func (mu *MembershipUpdate) SetUpdatedBy(u uuid.UUID) *MembershipUpdate {
+	mu.mutation.SetUpdatedBy(u)
 	return mu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (mu *MembershipUpdate) SetNillableUpdatedBy(i *int) *MembershipUpdate {
-	if i != nil {
-		mu.SetUpdatedBy(*i)
+func (mu *MembershipUpdate) SetNillableUpdatedBy(u *uuid.UUID) *MembershipUpdate {
+	if u != nil {
+		mu.SetUpdatedBy(*u)
 	}
-	return mu
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (mu *MembershipUpdate) AddUpdatedBy(i int) *MembershipUpdate {
-	mu.mutation.AddUpdatedBy(i)
 	return mu
 }
 
@@ -236,22 +222,16 @@ func (mu *MembershipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(membership.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := mu.mutation.CreatedBy(); ok {
-		_spec.SetField(membership.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := mu.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(membership.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(membership.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if mu.mutation.CreatedByCleared() {
-		_spec.ClearField(membership.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(membership.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := mu.mutation.UpdatedBy(); ok {
-		_spec.SetField(membership.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := mu.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(membership.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(membership.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if mu.mutation.UpdatedByCleared() {
-		_spec.ClearField(membership.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(membership.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := mu.mutation.Current(); ok {
 		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)
@@ -378,23 +358,16 @@ func (muo *MembershipUpdateOne) SetUpdatedAt(t time.Time) *MembershipUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (muo *MembershipUpdateOne) SetCreatedBy(i int) *MembershipUpdateOne {
-	muo.mutation.ResetCreatedBy()
-	muo.mutation.SetCreatedBy(i)
+func (muo *MembershipUpdateOne) SetCreatedBy(u uuid.UUID) *MembershipUpdateOne {
+	muo.mutation.SetCreatedBy(u)
 	return muo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (muo *MembershipUpdateOne) SetNillableCreatedBy(i *int) *MembershipUpdateOne {
-	if i != nil {
-		muo.SetCreatedBy(*i)
+func (muo *MembershipUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *MembershipUpdateOne {
+	if u != nil {
+		muo.SetCreatedBy(*u)
 	}
-	return muo
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (muo *MembershipUpdateOne) AddCreatedBy(i int) *MembershipUpdateOne {
-	muo.mutation.AddCreatedBy(i)
 	return muo
 }
 
@@ -405,23 +378,16 @@ func (muo *MembershipUpdateOne) ClearCreatedBy() *MembershipUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (muo *MembershipUpdateOne) SetUpdatedBy(i int) *MembershipUpdateOne {
-	muo.mutation.ResetUpdatedBy()
-	muo.mutation.SetUpdatedBy(i)
+func (muo *MembershipUpdateOne) SetUpdatedBy(u uuid.UUID) *MembershipUpdateOne {
+	muo.mutation.SetUpdatedBy(u)
 	return muo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (muo *MembershipUpdateOne) SetNillableUpdatedBy(i *int) *MembershipUpdateOne {
-	if i != nil {
-		muo.SetUpdatedBy(*i)
+func (muo *MembershipUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *MembershipUpdateOne {
+	if u != nil {
+		muo.SetUpdatedBy(*u)
 	}
-	return muo
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (muo *MembershipUpdateOne) AddUpdatedBy(i int) *MembershipUpdateOne {
-	muo.mutation.AddUpdatedBy(i)
 	return muo
 }
 
@@ -603,22 +569,16 @@ func (muo *MembershipUpdateOne) sqlSave(ctx context.Context) (_node *Membership,
 		_spec.SetField(membership.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := muo.mutation.CreatedBy(); ok {
-		_spec.SetField(membership.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := muo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(membership.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(membership.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if muo.mutation.CreatedByCleared() {
-		_spec.ClearField(membership.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(membership.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := muo.mutation.UpdatedBy(); ok {
-		_spec.SetField(membership.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := muo.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(membership.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(membership.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if muo.mutation.UpdatedByCleared() {
-		_spec.ClearField(membership.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(membership.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := muo.mutation.Current(); ok {
 		_spec.SetField(membership.FieldCurrent, field.TypeBool, value)

@@ -41,23 +41,16 @@ func (gu *GroupUpdate) SetUpdatedAt(t time.Time) *GroupUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gu *GroupUpdate) SetCreatedBy(i int) *GroupUpdate {
-	gu.mutation.ResetCreatedBy()
-	gu.mutation.SetCreatedBy(i)
+func (gu *GroupUpdate) SetCreatedBy(u uuid.UUID) *GroupUpdate {
+	gu.mutation.SetCreatedBy(u)
 	return gu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableCreatedBy(i *int) *GroupUpdate {
-	if i != nil {
-		gu.SetCreatedBy(*i)
+func (gu *GroupUpdate) SetNillableCreatedBy(u *uuid.UUID) *GroupUpdate {
+	if u != nil {
+		gu.SetCreatedBy(*u)
 	}
-	return gu
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (gu *GroupUpdate) AddCreatedBy(i int) *GroupUpdate {
-	gu.mutation.AddCreatedBy(i)
 	return gu
 }
 
@@ -68,23 +61,16 @@ func (gu *GroupUpdate) ClearCreatedBy() *GroupUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gu *GroupUpdate) SetUpdatedBy(i int) *GroupUpdate {
-	gu.mutation.ResetUpdatedBy()
-	gu.mutation.SetUpdatedBy(i)
+func (gu *GroupUpdate) SetUpdatedBy(u uuid.UUID) *GroupUpdate {
+	gu.mutation.SetUpdatedBy(u)
 	return gu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableUpdatedBy(i *int) *GroupUpdate {
-	if i != nil {
-		gu.SetUpdatedBy(*i)
+func (gu *GroupUpdate) SetNillableUpdatedBy(u *uuid.UUID) *GroupUpdate {
+	if u != nil {
+		gu.SetUpdatedBy(*u)
 	}
-	return gu
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (gu *GroupUpdate) AddUpdatedBy(i int) *GroupUpdate {
-	gu.mutation.AddUpdatedBy(i)
 	return gu
 }
 
@@ -290,22 +276,16 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := gu.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := gu.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(group.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(group.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if gu.mutation.CreatedByCleared() {
-		_spec.ClearField(group.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(group.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := gu.mutation.UpdatedBy(); ok {
-		_spec.SetField(group.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := gu.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(group.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(group.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if gu.mutation.UpdatedByCleared() {
-		_spec.ClearField(group.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
@@ -472,23 +452,16 @@ func (guo *GroupUpdateOne) SetUpdatedAt(t time.Time) *GroupUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (guo *GroupUpdateOne) SetCreatedBy(i int) *GroupUpdateOne {
-	guo.mutation.ResetCreatedBy()
-	guo.mutation.SetCreatedBy(i)
+func (guo *GroupUpdateOne) SetCreatedBy(u uuid.UUID) *GroupUpdateOne {
+	guo.mutation.SetCreatedBy(u)
 	return guo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableCreatedBy(i *int) *GroupUpdateOne {
-	if i != nil {
-		guo.SetCreatedBy(*i)
+func (guo *GroupUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *GroupUpdateOne {
+	if u != nil {
+		guo.SetCreatedBy(*u)
 	}
-	return guo
-}
-
-// AddCreatedBy adds i to the "created_by" field.
-func (guo *GroupUpdateOne) AddCreatedBy(i int) *GroupUpdateOne {
-	guo.mutation.AddCreatedBy(i)
 	return guo
 }
 
@@ -499,23 +472,16 @@ func (guo *GroupUpdateOne) ClearCreatedBy() *GroupUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (guo *GroupUpdateOne) SetUpdatedBy(i int) *GroupUpdateOne {
-	guo.mutation.ResetUpdatedBy()
-	guo.mutation.SetUpdatedBy(i)
+func (guo *GroupUpdateOne) SetUpdatedBy(u uuid.UUID) *GroupUpdateOne {
+	guo.mutation.SetUpdatedBy(u)
 	return guo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableUpdatedBy(i *int) *GroupUpdateOne {
-	if i != nil {
-		guo.SetUpdatedBy(*i)
+func (guo *GroupUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *GroupUpdateOne {
+	if u != nil {
+		guo.SetUpdatedBy(*u)
 	}
-	return guo
-}
-
-// AddUpdatedBy adds i to the "updated_by" field.
-func (guo *GroupUpdateOne) AddUpdatedBy(i int) *GroupUpdateOne {
-	guo.mutation.AddUpdatedBy(i)
 	return guo
 }
 
@@ -751,22 +717,16 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := guo.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeInt, value)
-	}
-	if value, ok := guo.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(group.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(group.FieldCreatedBy, field.TypeUUID, value)
 	}
 	if guo.mutation.CreatedByCleared() {
-		_spec.ClearField(group.FieldCreatedBy, field.TypeInt)
+		_spec.ClearField(group.FieldCreatedBy, field.TypeUUID)
 	}
 	if value, ok := guo.mutation.UpdatedBy(); ok {
-		_spec.SetField(group.FieldUpdatedBy, field.TypeInt, value)
-	}
-	if value, ok := guo.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(group.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(group.FieldUpdatedBy, field.TypeUUID, value)
 	}
 	if guo.mutation.UpdatedByCleared() {
-		_spec.ClearField(group.FieldUpdatedBy, field.TypeInt)
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeUUID)
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

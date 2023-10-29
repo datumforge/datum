@@ -51,29 +51,29 @@ func (gsc *GroupSettingsCreate) SetNillableUpdatedAt(t *time.Time) *GroupSetting
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gsc *GroupSettingsCreate) SetCreatedBy(i int) *GroupSettingsCreate {
-	gsc.mutation.SetCreatedBy(i)
+func (gsc *GroupSettingsCreate) SetCreatedBy(u uuid.UUID) *GroupSettingsCreate {
+	gsc.mutation.SetCreatedBy(u)
 	return gsc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsc *GroupSettingsCreate) SetNillableCreatedBy(i *int) *GroupSettingsCreate {
-	if i != nil {
-		gsc.SetCreatedBy(*i)
+func (gsc *GroupSettingsCreate) SetNillableCreatedBy(u *uuid.UUID) *GroupSettingsCreate {
+	if u != nil {
+		gsc.SetCreatedBy(*u)
 	}
 	return gsc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gsc *GroupSettingsCreate) SetUpdatedBy(i int) *GroupSettingsCreate {
-	gsc.mutation.SetUpdatedBy(i)
+func (gsc *GroupSettingsCreate) SetUpdatedBy(u uuid.UUID) *GroupSettingsCreate {
+	gsc.mutation.SetUpdatedBy(u)
 	return gsc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gsc *GroupSettingsCreate) SetNillableUpdatedBy(i *int) *GroupSettingsCreate {
-	if i != nil {
-		gsc.SetUpdatedBy(*i)
+func (gsc *GroupSettingsCreate) SetNillableUpdatedBy(u *uuid.UUID) *GroupSettingsCreate {
+	if u != nil {
+		gsc.SetUpdatedBy(*u)
 	}
 	return gsc
 }
@@ -277,11 +277,11 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 		_node.UpdatedAt = value
 	}
 	if value, ok := gsc.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeInt, value)
+		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeUUID, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := gsc.mutation.UpdatedBy(); ok {
-		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeInt, value)
+		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := gsc.mutation.Visibility(); ok {

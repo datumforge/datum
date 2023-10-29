@@ -31,8 +31,6 @@ const (
 	defaultShutdownGracePeriod   = 5 * time.Second
 	defaultDBPrimaryURI          = "datum.db?mode=memory&_fk=1"
 	defaultDBSecondaryURI        = "backup.db?mode=memory&_fk=1"
-	defaultFGAScheme             = "https"
-	defaultFGAHost               = ""
 	defaultOIDCJWKSRemoteTimeout = 5 * time.Second
 )
 

@@ -24,6 +24,8 @@ func (BaseMixin) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			// Deny any operation in case there is no "viewer context".
 			rule.DenyIfNoViewer(),
+			rule.AllowIfAdmin(),
+			privacy.AlwaysDenyRule(),
 		},
 	}
 }

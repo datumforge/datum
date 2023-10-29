@@ -1,22 +1,26 @@
 version: "3"
 
+env:
+  ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
+
 tasks:
   clean:
     cmds:
-      - go run ./internal/entclean/main.go --path=internal/ent {{ .CLI_ARGS }}
+      - "go run ./internal/entclean/main.go --path=internal/ent {{ .CLI_ARGS }}"
       - "rm -rf internal/ent/generated/^doc.go"
       - "rm -rf internal/api/^resolver.go"
       - "rm -f schema/ent.graphql"
-      - rm -f schema.graphql
-      - rm -rf internal/testclient/
+      - "rm -f schema.graphql"
+      - "rm -rf internal/testclient/"
   ent:
     - go generate ./...
   install:
     cmds:
-      - go install github.com/go-task/task/v3/cmd/task@latest
-      - go install entgo.io/ent/cmd/ent@latest
-      - curl -sSf https://atlasgo.sh | sh
-      - curl -sSL https://rover.apollo.dev/nix/latest | sh
+      - "go install github.com/go-task/task/v3/cmd/task@latest"
+      - "go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest"
+      - "go install entgo.io/ent/cmd/ent@latest"
+      - "curl -sSf https://atlasgo.sh | sh"
+      - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
       - defer: { task: go:tidy }
   graph:
     cmds:
@@ -27,9 +31,22 @@ tasks:
       - task: tidy
       - go run ./gen_schema.go
       - go run github.com/Yamashou/gqlgenc generate --configdir schema
-  atlas-lint:
+  generate:
+    cmds:
+      - task: ent
+      - task: graph
+      - task: gqlgen
+      - task: atlas:create
+  atlas:all:
+    aliases: [atlas-all]
+      - task: atlas:lint
+      - task: atlas:create
+      - task: atlas:migrate
+  atlas:create:
+    - go run db/create_migrations.go {{ .CLI_ARGS }}
+  atlas:lint:
     - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
-  atlas-migrate:
+  atlas:migrate:
     - atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations"
   rover:
     - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept

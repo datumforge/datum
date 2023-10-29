@@ -9,7 +9,7 @@ tasks:
       - "rm -f schema/ent.graphql"
       - rm -f schema.graphql
       - rm -rf internal/testclient/
-  gen:
+  ent:
     - go generate ./...
   install:
     cmds:

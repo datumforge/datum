@@ -18,6 +18,9 @@ tasks:
       - curl -sSf https://atlasgo.sh | sh
       - curl -sSL https://rover.apollo.dev/nix/latest | sh
       - defer: { task: go:tidy }
+  graph:
+    cmds:
+        - bash scripts/gen_graphql.sh
   gqlgen:
     cmds:
       - go run github.com/99designs/gqlgen generate --verbose

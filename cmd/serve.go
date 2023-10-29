@@ -25,12 +25,16 @@ import (
 	"github.com/datumforge/datum/internal/api"
 	"github.com/datumforge/datum/internal/echox"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/entdb"
 )
 
 const (
 	defaultListenAddr            = ":17608"
 	defaultShutdownGracePeriod   = 5 * time.Second
-	defaultDBURI                 = "datum.db?mode=memory&_fk=1"
+	defaultDBPrimaryURI          = "datum.db?mode=memory&_fk=1"
+	defaultDBSecondaryURI        = "backup.db?mode=memory&_fk=1"
+	defaultFGAScheme             = "https"
+	defaultFGAHost               = ""
 	defaultOIDCJWKSRemoteTimeout = 5 * time.Second
 )
 
@@ -61,8 +65,14 @@ func init() {
 	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
 
 	// Database flags
-	serveCmd.Flags().String("dbURI", defaultDBURI, "db uri")
-	viperBindFlag("server.db", serveCmd.Flags().Lookup("dbURI"))
+	serveCmd.Flags().Bool("db-mutli-write", true, "write to a primary and secondary database")
+	viperBindFlag("server.db.multi-write", serveCmd.Flags().Lookup("db-mutli-write"))
+
+	serveCmd.Flags().String("db-primary", defaultDBPrimaryURI, "db primary uri")
+	viperBindFlag("server.db-primary", serveCmd.Flags().Lookup("db-primary"))
+
+	serveCmd.Flags().String("db-secondary", defaultDBSecondaryURI, "db secondary uri")
+	viperBindFlag("server.db-secondary", serveCmd.Flags().Lookup("db-secondary"))
 
 	// echo-jwt flags
 	serveCmd.Flags().String("jwt-secretkey", "", "secret key for echojwt config")
@@ -81,6 +91,16 @@ func init() {
 	serveCmd.Flags().Duration("oidc-jwks-remote-timeout", defaultOIDCJWKSRemoteTimeout, "timeout for remote JWKS fetching")
 	viperBindFlag("oidc.jwks.remote-timeout", serveCmd.Flags().Lookup("oidc-jwks-remote-timeout"))
 
+	// OpenFGA configuration settings
+	serveCmd.Flags().String("fgaHost", defaultFGAHost, "fga host without the scheme (e.g. api.fga.example instead of https://api.fga.example)")
+	viperBindFlag("fga.host", serveCmd.Flags().Lookup("fgaHost"))
+
+	serveCmd.Flags().String("fgaScheme", defaultFGAScheme, "fga scheme")
+	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fgaScheme"))
+
+	serveCmd.Flags().String("fgaStoreID", "", "fga store ID")
+	viperBindFlag("fga.storeID", serveCmd.Flags().Lookup("fgaStoreID"))
+
 	// only available as a CLI arg because these should only be used in dev environments
 	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
 	serveCmd.Flags().BoolVar(&enablePlayground, "playground", false, "enable the graph playground")
@@ -88,32 +108,23 @@ func init() {
 
 func serve(ctx context.Context) error {
 	// setup db connection for server
-	db, err := newDB()
-	if err != nil {
-		return err
+	var (
+		client *ent.Client
+		err    error
+	)
+
+	if viper.GetBool("server.db.multi-write") {
+		client, err = newMultiDriverDBClient(ctx)
+		if err != nil {
+			return err
+		}
+	} else {
+		client, err = newEntDBDriver(viper.GetString("server.db-primary"), dialect.SQLite)
+		if err != nil {
+			return err
+		}
 	}
-
-	defer db.Close()
-
-	entDB := entsql.OpenDB(dialect.SQLite, db)
-
-	cOpts := []ent.Option{ent.Driver(entDB)}
-
-	if viper.GetBool(("debug")) {
-		cOpts = append(cOpts,
-			ent.Log(logger.Named("ent").Debugln),
-			ent.Debug(),
-		)
-	}
-
-	client := ent.NewClient(cOpts...)
 	defer client.Close()
-
-	// Run the automatic migration tool to create all schema resources.
-	if err := client.Schema.Create(ctx); err != nil {
-		logger.Errorf("failed creating schema resources", zap.Error(err))
-		return err
-	}
 
 	var mw []echo.MiddlewareFunc
 
@@ -211,12 +222,10 @@ func serve(ctx context.Context) error {
 	return nil
 }
 
-// newDB creates returns new sql db connection
-func newDB() (*sql.DB, error) {
-	dbDriverName := "sqlite3"
-
+// newEntDB creates returns new sql db connection
+func newEntDB(dataSource, dbDriverName string) (*entsql.Driver, error) {
 	// setup db connection
-	db, err := sql.Open(dbDriverName, viper.GetString("server.db"))
+	db, err := sql.Open(dbDriverName, dataSource)
 	if err != nil {
 		return nil, fmt.Errorf("failed connecting to database: %w", err)
 	}
@@ -226,7 +235,88 @@ func newDB() (*sql.DB, error) {
 		return nil, fmt.Errorf("failed verifying database connection: %w", err)
 	}
 
-	return db, nil
+	return entsql.OpenDB(dialect.SQLite, db), nil
+}
+
+func newEntDBDriver(dataSource, driver string) (*ent.Client, error) {
+	db, err := newEntDB(dataSource, driver)
+	if err != nil {
+		return nil, err
+	}
+
+	cOpts := []ent.Option{ent.Driver(db)}
+
+	if viper.GetBool(("debug")) {
+		cOpts = append(cOpts,
+			ent.Log(logger.Named("ent").Debugln),
+			ent.Debug(),
+		)
+	}
+
+	client := ent.NewClient(cOpts...)
+
+	return client, nil
+}
+
+func newMultiDriverDBClient(ctx context.Context) (*ent.Client, error) {
+	debug := viper.GetBool(("debug"))
+
+	primaryDB, err := newEntDB(viper.GetString("server.db-primary"), dialect.SQLite)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := createSchema(ctx, primaryDB, debug); err != nil {
+		return nil, err
+	}
+
+	secondaryDB, err := newEntDB(viper.GetString("server.db-secondary"), dialect.SQLite)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := createSchema(ctx, secondaryDB, debug); err != nil {
+		return nil, err
+	}
+
+	// Create Multiwrite driver
+	cOpts := []ent.Option{ent.Driver(&entdb.MultiWriteDriver{Wp: primaryDB, Ws: secondaryDB})}
+	if debug {
+		cOpts = append(cOpts,
+			ent.Log(logger.Named("ent").Debugln),
+			ent.Debug(),
+		)
+	}
+
+	client := ent.NewClient(cOpts...)
+
+	return client, nil
+}
+
+func createEntDBClient(db *entsql.Driver, debug bool) *ent.Client {
+	cOpts := []ent.Option{ent.Driver(db)}
+
+	if debug {
+		cOpts = append(cOpts,
+			ent.Log(logger.Named("ent").Debugln),
+			ent.Debug(),
+		)
+	}
+
+	return ent.NewClient(cOpts...)
+}
+
+func createSchema(ctx context.Context, db *entsql.Driver, debug bool) error {
+	client := createEntDBClient(db, debug)
+
+	// Run the automatic migration tool to create all schema resources.
+	if err := client.Schema.Create(ctx); err != nil {
+		logger.Errorf("failed creating schema resources", zap.Error(err))
+
+		return err
+	}
+
+	return nil
 }
 
 // createJwtMiddleware, TODO expand the config settings

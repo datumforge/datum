@@ -1,0 +1,23 @@
+ci:
+- .github/**
+- .buildkite/**
+
+mixin:
+- internal/ent/mixin/*
+
+privacy:
+- internal/ent/privacy/*
+
+dbschema:
+- internal/ent/schema/*
+
+graphqlschema:
+- schema/**
+
+migrations:
+- db/**
+
+local-development:
+- scripts/**
+- Taskfile.yaml
+- docker/**

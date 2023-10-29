@@ -16,7 +16,7 @@ type Group struct {
 	ent.Schema
 }
 
-// Mixin of the User
+// Mixin of the Group
 func (Group) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},

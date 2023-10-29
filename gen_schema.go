@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/formatter"
 
 	"github.com/datumforge/datum/internal/api"
@@ -23,8 +24,13 @@ func main() {
 	if service := schema.Types["_Service"]; service != nil {
 		service.BuiltIn = false
 	}
-	// entities.Position.Src.BuiltIn = false
 
+	// Add UUID Type to schema.graphql
+	schema.Types["UUID"] = &ast.Definition{
+		Kind:        ast.Scalar,
+		Description: "A Universally Unique Identifier (UUID)",
+		Name:        "UUID",
+	}
 	f, err := os.Create("schema.graphql")
 	if err != nil {
 		log.Fatal(err)

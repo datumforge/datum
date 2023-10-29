@@ -44,11 +44,17 @@ tasks:
       - task: atlas:lint
       - task: atlas:migrate
   atlas:create:
-    - go run db/create_migrations.go {{ .CLI_ARGS }}
+    cmds:
+      - |
+        echo "Enter the name of the migration:"
+        read migration;
+        go run db/create_migrations.go ${migration};
   atlas:lint:
     - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
   atlas:migrate:
     - atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations"
+  atlas:resethash:
+    - atlas migrate hash --dir="file://db/migrations"
   rover:
     - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
     - 'open "http://localhost:4000"'
@@ -81,6 +87,6 @@ tasks:
       - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
   pr:
     cmds:
-      - generate
-      - atlas
-      - go
+      - task: generate
+      - task: atlas
+      - task: go

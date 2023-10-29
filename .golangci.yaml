@@ -5,7 +5,7 @@ linters-settings:
     extra-rules: true
 
 skip-dirs:
-  - internal/ent/entclean
+  - internal/entclean
 
 linters:
   enable:

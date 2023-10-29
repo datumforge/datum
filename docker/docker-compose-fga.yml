@@ -22,10 +22,10 @@ services:
         condition: service_healthy
     image: openfga/openfga:latest
     container_name: migrate
+    command: migrate
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
       - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
-    command: migrate
     networks:
       - default
 
@@ -35,21 +35,35 @@ services:
         condition: service_completed_successfully
     image: openfga/openfga:latest
     container_name: openfga
-    command: run
     environment:
       - OPENFGA_DATASTORE_ENGINE=postgres
       - OPENFGA_DATASTORE_URI=postgres://postgres:password@postgres:5432/postgres?sslmode=disable
+      - OPENFGA_LOG_FORMAT=json
       - OPENFGA_DATASTORE_MAX_OPEN_CONNS=100 #see postgres container
       - OPENFGA_PLAYGROUND_ENABLED=true
+    command:
+      - run
+      - --experimentals
+      - check-query-cache
+      - --check-query-cache-enabled
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/local/bin/grpc_health_probe",
+          "-addr=openfga:8081"
+        ]
+      interval: 5s
+      imeout: 30s
+      retries: 3
     networks:
       - default
     ports:
-      - "8080:8080" #http
-      - "8081:8081" #grpc
-      - "3000:3000" #playground
+      # Needed for the http server
+      - "8080:8080"
+      # Needed for the grpc server (if used)
+      - "8081:8081"
+      # Needed for the playground (Do not enable in prod!)
+      - "3000:3000"
+      # Needed for the prometheus metrics
       - "2112:2112" #prometheus metrics
-    healthcheck:
-      test: ["CMD", "/usr/local/bin/grpc_health_probe", "-addr=openfga:8081"]
-      interval: 5s
-      timeout: 30s
-      retries: 3

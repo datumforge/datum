@@ -45,10 +45,10 @@ func AuditHook(next ent.Mutator) ent.Mutator {
 		CreatedAt() (v time.Time, exists bool) // exists if present before this hook
 		SetUpdatedAt(time.Time)
 		UpdatedAt() (v time.Time, exists bool)
-		SetCreatedBy(int)
-		CreatedBy() (id int, exists bool)
-		SetUpdatedBy(int)
-		UpdatedBy() (id int, exists bool)
+		SetCreatedBy(uuid.UUID)
+		CreatedBy() (id uuid.UUID, exists bool)
+		SetUpdatedBy(uuid.UUID)
+		UpdatedBy() (id uuid.UUID, exists bool)
 	}
 
 	return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {

@@ -9,13 +9,8 @@ services:
       - --debug
       - --pretty
       - --dev
+      - --jwt-secretkey=mysupersecretkey
       # - --oidc=false # uncomment to bypass auth checks
-      - --fgaStoreID
-      - "01HDH9C221KYNTPTEDDDYPA9SV" ## TODO: This is a local test store
-      - --fgaHost
-      - openfga:8080
-      - --fgaScheme
-      - "http"
     ports:
       - "17608:17608"
     restart: unless-stopped

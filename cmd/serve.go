@@ -64,6 +64,10 @@ func init() {
 	serveCmd.Flags().String("dbURI", defaultDBURI, "db uri")
 	viperBindFlag("server.db", serveCmd.Flags().Lookup("dbURI"))
 
+	// echo-jwt flags
+	serveCmd.Flags().String("jwt-secretkey", "", "secret key for echojwt config")
+	viperBindFlag("jtw.secretkey", serveCmd.Flags().Lookup("jwt-secretkey"))
+
 	// OIDC Flags
 	serveCmd.Flags().Bool("oidc", true, "use oidc auth")
 	viperBindFlag("oidc.enabled", serveCmd.Flags().Lookup("oidc"))
@@ -132,7 +136,8 @@ func serve(ctx context.Context) error {
 
 	// add jwt middleware
 	if viper.GetBool("oidc.enabled") {
-		jwtConfig := createJwtMiddleware([]byte("secret"))
+		secretKey := viper.GetString("jtw.secretkey")
+		jwtConfig := createJwtMiddleware([]byte(secretKey))
 
 		mw = append(mw, jwtConfig)
 	}
@@ -141,7 +146,6 @@ func serve(ctx context.Context) error {
 	srv.Use(echox.EchoContextToContextMiddleware())
 	mw = append(mw, echox.EchoContextToContextMiddleware())
 
-	// TODO - add way to skip checks when oidc is disabled
 	r := api.NewResolver(client, logger.Named("resolvers"))
 	handler := r.Handler(enablePlayground, mw...)
 

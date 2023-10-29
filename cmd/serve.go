@@ -61,7 +61,7 @@ func init() {
 	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
 
 	// Database flags
-	serveCmd.Flags().Bool("db-mutli-write", true, "write to a primary and secondary database")
+	serveCmd.Flags().Bool("db-mutli-write", false, "write to a primary and secondary database")
 	viperBindFlag("server.db.multi-write", serveCmd.Flags().Lookup("db-mutli-write"))
 
 	serveCmd.Flags().String("db-primary", defaultDBPrimaryURI, "db primary uri")

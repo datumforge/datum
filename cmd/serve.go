@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
 	"github.com/brpaz/echozap"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
@@ -22,13 +23,18 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/api"
+	"github.com/datumforge/datum/internal/echox"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/fga"
 )
 
 const (
-	defaultListenAddr          = ":17608"
-	defaultShutdownGracePeriod = 5 * time.Second
-	defaultDBURI               = "datum.db?mode=memory&_fk=1"
+	defaultListenAddr            = ":17608"
+	defaultShutdownGracePeriod   = 5 * time.Second
+	defaultDBURI                 = "datum.db?mode=memory&_fk=1"
+	defaultFGAScheme             = "https"
+	defaultFGAHost               = ""
+	defaultOIDCJWKSRemoteTimeout = 5 * time.Second
 )
 
 var (
@@ -47,17 +53,42 @@ var serveCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(serveCmd)
 
+	// Server flags
 	serveCmd.Flags().Bool("debug", false, "enable server debug")
 	viperBindFlag("server.debug", serveCmd.Flags().Lookup("debug"))
 
 	serveCmd.Flags().String("listen", defaultListenAddr, "address to listen on")
 	viperBindFlag("server.listen", serveCmd.Flags().Lookup("listen"))
 
+	serveCmd.Flags().Duration("shutdown-grace-period", defaultShutdownGracePeriod, "server shutdown grace period")
+	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
+
+	// Database flags
 	serveCmd.Flags().String("dbURI", defaultDBURI, "db uri")
 	viperBindFlag("server.db", serveCmd.Flags().Lookup("dbURI"))
 
-	serveCmd.Flags().Duration("shutdown-grace-period", defaultShutdownGracePeriod, "server shutdown grace period")
-	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
+	// OIDC Flags
+	serveCmd.Flags().Bool("oidc", true, "use oidc auth")
+	viperBindFlag("oidc.enabled", serveCmd.Flags().Lookup("oidc"))
+
+	serveCmd.Flags().String("oidc-aud", "", "expected audience on OIDC JWT")
+	viperBindFlag("oidc.audience", serveCmd.Flags().Lookup("oidc-aud"))
+
+	serveCmd.Flags().String("oidc-issuer", "", "expected issuer of OIDC JWT")
+	viperBindFlag("oidc.issuer", serveCmd.Flags().Lookup("oidc-issuer"))
+
+	serveCmd.Flags().Duration("oidc-jwks-remote-timeout", defaultOIDCJWKSRemoteTimeout, "timeout for remote JWKS fetching")
+	viperBindFlag("oidc.jwks.remote-timeout", serveCmd.Flags().Lookup("oidc-jwks-remote-timeout"))
+
+	// OpenFGA configuration settings
+	serveCmd.Flags().String("fgaHost", defaultFGAHost, "fga host without the scheme (e.g. api.fga.example instead of https://api.fga.example)")
+	viperBindFlag("fga.host", serveCmd.Flags().Lookup("fgaHost"))
+
+	serveCmd.Flags().String("fgaScheme", defaultFGAScheme, "fga scheme")
+	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fgaScheme"))
+
+	serveCmd.Flags().String("fgaStoreID", "", "fga store ID")
+	viperBindFlag("fga.storeID", serveCmd.Flags().Lookup("fgaStoreID"))
 
 	// only available as a CLI arg because these should only be used in dev environments
 	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
@@ -65,10 +96,6 @@ func init() {
 }
 
 func serve(ctx context.Context) error {
-	if serveDevMode {
-		enablePlayground = true
-	}
-
 	// setup db connection for server
 	db, err := newDB()
 	if err != nil {
@@ -97,23 +124,61 @@ func serve(ctx context.Context) error {
 		return err
 	}
 
-	// TODO jwt auth middleware
-
 	var mw []echo.MiddlewareFunc
 
-	r := api.NewResolver(client, logger.Named("resolvers"))
-	handler := r.Handler(enablePlayground, mw...)
-
 	srv := echo.New()
-
 	srv.Use(middleware.RequestID())
 	srv.Use(middleware.Recover())
+
+	// dev mode settings
+	if serveDevMode {
+		enablePlayground = true
+
+		srv.Use(middleware.CORS())
+	}
 
 	// add logging
 	zapLogger, _ := zap.NewProduction()
 	srv.Use(echozap.ZapLogger(zapLogger))
 
 	srv.Debug = viper.GetBool("server.debug")
+
+	// add jwt middleware
+	if viper.GetBool("oidc.enabled") {
+		jwtConfig := createJwtMiddleware([]byte("secret"))
+
+		mw = append(mw, jwtConfig)
+	}
+
+	// Add echo context to middleware
+	srv.Use(echox.EchoContextToContextMiddleware())
+	mw = append(mw, echox.EchoContextToContextMiddleware())
+
+	// setup FGA client
+	logger.Infow(
+		"Setting up FGA Client",
+		"host",
+		viper.GetString("fga.host"),
+		"scheme",
+		viper.GetString("fga.scheme"),
+		"store_id",
+		viper.GetString("fga.storeID"),
+	)
+
+	fgaClient, err := fga.NewClient(
+		viper.GetString("fga.host"),
+		fga.WithScheme(viper.GetString("fga.scheme")),
+		fga.WithStoreID(viper.GetString("fga.storeID")),
+		// fga.WithAuthorizationModelID() // TODO - we should add this
+		fga.WithLogger(logger),
+	)
+	if err != nil {
+		return err
+	}
+
+	// TODO - add way to skip checks when oidc is disabled
+	r := api.NewResolver(client, fgaClient, logger.Named("resolvers"))
+	handler := r.Handler(enablePlayground, mw...)
 
 	handler.Routes(srv.Group(""))
 
@@ -193,4 +258,13 @@ func newDB() (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+// createJwtMiddleware, TODO expand the config settings
+func createJwtMiddleware(secret []byte) echo.MiddlewareFunc {
+	config := echojwt.Config{
+		SigningKey: secret,
+	}
+
+	return echojwt.WithConfig(config)
 }

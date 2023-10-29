@@ -17,13 +17,10 @@ type BaseMixin struct {
 func (BaseMixin) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			// Deny any operation in case there is no "viewer context".
 			rule.DenyIfNoViewer(),
-			// Allow admins to query any information.
-			rule.AllowIfAdmin(),
+			privacy.AlwaysAllowRule(),
 		},
 		Mutation: privacy.MutationPolicy{
-			// Deny any operation in case there is no "viewer context".
 			rule.DenyIfNoViewer(),
 			rule.AllowIfAdmin(),
 			privacy.AlwaysDenyRule(),

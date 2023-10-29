@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"net"
 	"net/http"
@@ -12,7 +11,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
-	entsql "entgo.io/ent/dialect/sql"
 	"github.com/brpaz/echozap"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -113,13 +111,22 @@ func serve(ctx context.Context) error {
 		err    error
 	)
 
+	entConfig := entdb.EntClientConfig{
+		Debug:           viper.GetBool("debug"),
+		DriverName:      dialect.SQLite,
+		Logger:          *logger,
+		PrimaryDBSource: viper.GetString("server.db-primary"),
+	}
+
 	if viper.GetBool("server.db.multi-write") {
-		client, err = newMultiDriverDBClient(ctx)
+		entConfig.SecondaryDBSource = viper.GetString("server.db-secondary")
+
+		client, err = entConfig.NewMultiDriverDBClient(ctx)
 		if err != nil {
 			return err
 		}
 	} else {
-		client, err = newEntDBDriver(viper.GetString("server.db-primary"), dialect.SQLite)
+		client, err = entConfig.NewEntDBDriver()
 		if err != nil {
 			return err
 		}
@@ -215,103 +222,6 @@ func serve(ctx context.Context) error {
 
 	if err = srv.Shutdown(ctx); err != nil {
 		logger.Error("server shutdown timed out", zap.Error(err))
-
-		return err
-	}
-
-	return nil
-}
-
-// newEntDB creates returns new sql db connection
-func newEntDB(dataSource, dbDriverName string) (*entsql.Driver, error) {
-	// setup db connection
-	db, err := sql.Open(dbDriverName, dataSource)
-	if err != nil {
-		return nil, fmt.Errorf("failed connecting to database: %w", err)
-	}
-
-	// verify db connection using ping
-	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("failed verifying database connection: %w", err)
-	}
-
-	return entsql.OpenDB(dialect.SQLite, db), nil
-}
-
-func newEntDBDriver(dataSource, driver string) (*ent.Client, error) {
-	db, err := newEntDB(dataSource, driver)
-	if err != nil {
-		return nil, err
-	}
-
-	cOpts := []ent.Option{ent.Driver(db)}
-
-	if viper.GetBool(("debug")) {
-		cOpts = append(cOpts,
-			ent.Log(logger.Named("ent").Debugln),
-			ent.Debug(),
-		)
-	}
-
-	client := ent.NewClient(cOpts...)
-
-	return client, nil
-}
-
-func newMultiDriverDBClient(ctx context.Context) (*ent.Client, error) {
-	debug := viper.GetBool(("debug"))
-
-	primaryDB, err := newEntDB(viper.GetString("server.db-primary"), dialect.SQLite)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := createSchema(ctx, primaryDB, debug); err != nil {
-		return nil, err
-	}
-
-	secondaryDB, err := newEntDB(viper.GetString("server.db-secondary"), dialect.SQLite)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := createSchema(ctx, secondaryDB, debug); err != nil {
-		return nil, err
-	}
-
-	// Create Multiwrite driver
-	cOpts := []ent.Option{ent.Driver(&entdb.MultiWriteDriver{Wp: primaryDB, Ws: secondaryDB})}
-	if debug {
-		cOpts = append(cOpts,
-			ent.Log(logger.Named("ent").Debugln),
-			ent.Debug(),
-		)
-	}
-
-	client := ent.NewClient(cOpts...)
-
-	return client, nil
-}
-
-func createEntDBClient(db *entsql.Driver, debug bool) *ent.Client {
-	cOpts := []ent.Option{ent.Driver(db)}
-
-	if debug {
-		cOpts = append(cOpts,
-			ent.Log(logger.Named("ent").Debugln),
-			ent.Debug(),
-		)
-	}
-
-	return ent.NewClient(cOpts...)
-}
-
-func createSchema(ctx context.Context, db *entsql.Driver, debug bool) error {
-	client := createEntDBClient(db, debug)
-
-	// Run the automatic migration tool to create all schema resources.
-	if err := client.Schema.Create(ctx); err != nil {
-		logger.Errorf("failed creating schema resources", zap.Error(err))
 
 		return err
 	}

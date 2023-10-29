@@ -1,6 +1,8 @@
 module github.com/datumforge/datum
 
-go 1.21
+go 1.21.1
+
+toolchain go1.21.3
 
 require (
 	entgo.io/contrib v0.4.5
@@ -29,7 +31,10 @@ require (
 	go.uber.org/zap v1.26.0
 )
 
-require github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
+require (
+	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
+	github.com/openfga/go-sdk v0.2.3 // indirect
+)
 
 require (
 	ariga.io/atlas v0.15.0 // indirect

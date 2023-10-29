@@ -21,6 +21,7 @@ tasks:
       - "go install entgo.io/ent/cmd/ent@latest"
       - "curl -sSf https://atlasgo.sh | sh"
       - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
+      - "go get -u github.com/openfga/go-sdk"
       - defer: { task: go:tidy }
   graph:
     cmds:
@@ -36,11 +37,11 @@ tasks:
       - task: ent
       - task: graph
       - task: gqlgen
+  atlas:
+    aliases: [atlas]
+    cmds:
       - task: atlas:create
-  atlas:all:
-    aliases: [atlas-all]
       - task: atlas:lint
-      - task: atlas:create
       - task: atlas:migrate
   atlas:create:
     - go run db/create_migrations.go {{ .CLI_ARGS }}
@@ -50,6 +51,7 @@ tasks:
     - atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations"
   rover:
     - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+    - 'open "http://localhost:4000"'
   run-dev:
     - go run main.go serve  --debug --pretty --dev
   go:lint:
@@ -64,8 +66,21 @@ tasks:
     cmds:
       - go mod tidy
   go:all:
+    aliases: [go]
     desc: Runs all go test and lint related tasks
     cmds:
       - task: go:tidy
       - task: go:lint
       - task: go:test
+  compose:fga:
+    cmds:
+      - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
+      - 'open "http://localhost:3000/playground"'
+  compose:datum:
+    cmds:
+      - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
+  pr:
+    cmds:
+      - generate
+      - atlas
+      - go

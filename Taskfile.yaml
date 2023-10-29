@@ -59,7 +59,7 @@ tasks:
     - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
     - 'open "http://localhost:4000"'
   run-dev:
-    - go run main.go serve  --debug --pretty --dev
+    - go run main.go serve  --debug --pretty --dev --jwt-secretkey=mysupersecretkey
   go:lint:
     cmds:
       - golangci-lint run -v

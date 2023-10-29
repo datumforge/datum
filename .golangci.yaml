@@ -5,8 +5,6 @@ linters-settings:
     extra-rules: true
 
 run:
-  skip-dirs:
-    - internal/entclean
   skip-files:
     - internal/entclean/main.go
 

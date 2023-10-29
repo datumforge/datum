@@ -4,6 +4,9 @@ linters-settings:
   gofumpt:
     extra-rules: true
 
+skip-dirs:
+  - internal/ent/entclean
+
 linters:
   enable:
     # default linters

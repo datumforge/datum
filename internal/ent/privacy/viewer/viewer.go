@@ -29,14 +29,17 @@ type UserViewer struct {
 	Role Role // Attached roles.
 }
 
+// Admin of the UserViewer
 func (v UserViewer) Admin() bool {
 	return v.Role&Admin != 0
 }
 
+// Organization of the UserViewer
 func (v UserViewer) Organization() (uuid.UUID, bool) {
 	if v.T != nil {
 		return v.T.ID, true
 	}
+
 	return uuid.UUID{}, false
 }
 

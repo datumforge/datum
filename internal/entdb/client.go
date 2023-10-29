@@ -42,7 +42,7 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 }
 
 // NewEntDBDriver returns a ent db client
-func (c *EntClientConfig) NewEntDBDriver() (*ent.Client, error) {
+func (c *EntClientConfig) NewEntDBDriver(ctx context.Context) (*ent.Client, error) {
 	db, err := c.newEntDB(c.PrimaryDBSource)
 	if err != nil {
 		return nil, err
@@ -58,6 +58,13 @@ func (c *EntClientConfig) NewEntDBDriver() (*ent.Client, error) {
 	}
 
 	client := ent.NewClient(cOpts...)
+
+	// Run the automatic migration tool to create all schema resources.
+	if err := client.Schema.Create(ctx); err != nil {
+		c.Logger.Errorf("failed creating schema resources", zap.Error(err))
+
+		return nil, err
+	}
 
 	return client, nil
 }

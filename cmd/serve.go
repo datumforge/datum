@@ -114,7 +114,7 @@ func serve(ctx context.Context) error {
 			return err
 		}
 	} else {
-		client, err = entConfig.NewEntDBDriver()
+		client, err = entConfig.NewEntDBDriver(ctx)
 		if err != nil {
 			return err
 		}

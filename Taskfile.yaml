@@ -6,12 +6,15 @@ env:
 tasks:
   clean:
     cmds:
-      - "go run ./internal/entclean/main.go --path=internal/ent {{ .CLI_ARGS }}"
+      - |
+        echo "Enter the name of the ent schema object name to clean:"
+        read clean;
+        go run ./internal/entclean/main.go --path=internal/ent ${clean};
       - "rm -rf internal/ent/generated/^doc.go"
       - "rm -rf internal/api/^resolver.go"
       - "rm -f schema/ent.graphql"
       - "rm -f schema.graphql"
-      - "rm -rf internal/testclient/"
+      - "rm -rf internal/datumclient/"
   ent:
     - go generate ./...
   install:

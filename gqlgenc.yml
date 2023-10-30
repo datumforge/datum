@@ -1,9 +1,9 @@
 model:
-  package: testclient
-  filename: ./internal/testclient/gen_models.go
+  package: datumclient
+  filename: ./internal/datumclient/models.go
 client:
-  package: testclient
-  filename: ./internal/testclient/gen_client.go # Where should any generated client go?
+  package: datumclient
+  filename: ./internal/datumclient/client.go
 models:
   Int:
     model: github.com/99designs/gqlgen/graphql.Int64
@@ -11,7 +11,10 @@ models:
     model: github.com/99designs/gqlgen/graphql.Time
   Byte:
     model: github.com/99designs/gqlgen/graphql.Byte
+  UUID:
+    model: github.com/99designs/gqlgen/graphql.UUID
 schema: ["schema.graphql" ]
-query: ["internal/testclient/*.gql"]
+query: ["query/*.graphql"]
 generate:
-  clientInterfaceName: "TestClient"
+  clientV2: true
+  clientInterfaceName: "DatumClient"

@@ -35,7 +35,8 @@ func (Integration) Fields() []ent.Field {
 // Edges of the Integration
 func (Integration) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("organization", Organization.Type).Ref("integrations").Unique().Required(),
+		//		edge.From("organization", Organization.Type).Ref("integrations").Unique().Required(),
+		edge.From("owner", Organization.Type).Ref("integrations").Unique(),
 	}
 }
 

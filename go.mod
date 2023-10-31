@@ -32,7 +32,11 @@ require (
 	go.uber.org/zap v1.26.0
 )
 
-require github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
+require (
+	ariga.io/ogent v0.0.0-20230621041143-ed3e5d4da458 // indirect
+	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
+	github.com/hedwigz/entviz v0.0.0-20221011080911-9d47f6f1d818 // indirect
+)
 
 require (
 	ariga.io/atlas v0.15.0 // indirect

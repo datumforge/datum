@@ -32,6 +32,19 @@ func (Organization) Fields() []ent.Field {
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("description").
+			Comment("An optional description of the Organization").
+			Optional().
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.UUID("parent_organization_id", uuid.UUID{}).Default(uuid.New).Unique().Optional().Immutable().
+			Comment("The ID of the parent organization for the organization.").
+			Annotations(
+				entgql.Type("ID"),
+				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
 			),
 	}
 }
@@ -39,8 +52,18 @@ func (Organization) Fields() []ent.Field {
 // Edges of the Organization
 func (Organization) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.To("children", Organization.Type).
+			Annotations(
+				entgql.RelayConnection(),
+				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
+			).
+			From("parent").
+			Field("parent_organization_id").
+			Immutable().
+			Unique(),
 		// an org can have and belong to many users
-		edge.To("memberships", Membership.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.From("users", User.Type).Ref("organizations"),
+		edge.To("groups", Group.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("integrations", Integration.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 	}
 }

@@ -148,15 +148,12 @@ func (User) Indexes() []ent.Index {
 // Edges of the User
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("memberships", Membership.Type).
-			Annotations(entsql.Annotation{
-				// When a user is deleted, remove their memberships
-				OnDelete: entsql.Cascade}),
+		edge.To("organizations", Organization.Type),
 		edge.To("sessions", Session.Type).
 			Annotations(entsql.Annotation{
 				// When a user is deleted, delete the sessions
 				OnDelete: entsql.Cascade}),
-		edge.To("groups", Group.Type),
+		edge.From("groups", Group.Type).Ref("users"),
 	}
 }
 

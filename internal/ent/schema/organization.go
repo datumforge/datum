@@ -44,7 +44,7 @@ func (Organization) Fields() []ent.Field {
 			Comment("The ID of the parent organization for the organization.").
 			Annotations(
 				entgql.Type("ID"),
-				entgql.Skip(entgql.SkipWhereInput, entgql.SkipMutationUpdateInput, entgql.SkipType),
+				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
 			),
 	}
 }

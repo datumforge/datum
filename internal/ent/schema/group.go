@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
 
@@ -49,6 +50,16 @@ func (Group) Edges() []ent.Edge {
 		edge.To("setting", GroupSettings.Type).Required().Unique(),
 		edge.To("users", User.Type),
 		edge.From("owner", Organization.Type).Ref("groups").Unique(),
+	}
+}
+
+// Indexes of the Group
+func (Group) Indexes() []ent.Index {
+	return []ent.Index{
+		// We have an organization with many groups, and we want to set the group name to be unique under each organization
+		index.Fields("name").
+			Edges("owner").
+			Unique(),
 	}
 }
 

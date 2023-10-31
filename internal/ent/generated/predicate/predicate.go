@@ -15,9 +15,6 @@ type GroupSettings func(*sql.Selector)
 // Integration is the predicate function for integration builders.
 type Integration func(*sql.Selector)
 
-// Membership is the predicate function for membership builders.
-type Membership func(*sql.Selector)
-
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
 

@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -25,18 +25,18 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []user.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.User
-	withMemberships      *MembershipQuery
-	withSessions         *SessionQuery
-	withGroups           *GroupQuery
-	modifiers            []func(*sql.Selector)
-	loadTotal            []func(context.Context, []*User) error
-	withNamedMemberships map[string]*MembershipQuery
-	withNamedSessions    map[string]*SessionQuery
-	withNamedGroups      map[string]*GroupQuery
+	ctx                    *QueryContext
+	order                  []user.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.User
+	withOrganizations      *OrganizationQuery
+	withSessions           *SessionQuery
+	withGroups             *GroupQuery
+	modifiers              []func(*sql.Selector)
+	loadTotal              []func(context.Context, []*User) error
+	withNamedOrganizations map[string]*OrganizationQuery
+	withNamedSessions      map[string]*SessionQuery
+	withNamedGroups        map[string]*GroupQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -73,9 +73,9 @@ func (uq *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	return uq
 }
 
-// QueryMemberships chains the current query on the "memberships" edge.
-func (uq *UserQuery) QueryMemberships() *MembershipQuery {
-	query := (&MembershipClient{config: uq.config}).Query()
+// QueryOrganizations chains the current query on the "organizations" edge.
+func (uq *UserQuery) QueryOrganizations() *OrganizationQuery {
+	query := (&OrganizationClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -86,12 +86,12 @@ func (uq *UserQuery) QueryMemberships() *MembershipQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(membership.Table, membership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.MembershipsTable, user.MembershipsColumn),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.OrganizationsTable, user.OrganizationsPrimaryKey...),
 		)
 		schemaConfig := uq.schemaConfig
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.UserOrganizations
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -137,11 +137,11 @@ func (uq *UserQuery) QueryGroups() *GroupQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.GroupsTable, user.GroupsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.GroupsTable, user.GroupsPrimaryKey...),
 		)
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.Group
-		step.Edge.Schema = schemaConfig.UserGroups
+		step.Edge.Schema = schemaConfig.GroupUsers
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -335,28 +335,28 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:          uq.config,
-		ctx:             uq.ctx.Clone(),
-		order:           append([]user.OrderOption{}, uq.order...),
-		inters:          append([]Interceptor{}, uq.inters...),
-		predicates:      append([]predicate.User{}, uq.predicates...),
-		withMemberships: uq.withMemberships.Clone(),
-		withSessions:    uq.withSessions.Clone(),
-		withGroups:      uq.withGroups.Clone(),
+		config:            uq.config,
+		ctx:               uq.ctx.Clone(),
+		order:             append([]user.OrderOption{}, uq.order...),
+		inters:            append([]Interceptor{}, uq.inters...),
+		predicates:        append([]predicate.User{}, uq.predicates...),
+		withOrganizations: uq.withOrganizations.Clone(),
+		withSessions:      uq.withSessions.Clone(),
+		withGroups:        uq.withGroups.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
 	}
 }
 
-// WithMemberships tells the query-builder to eager-load the nodes that are connected to
-// the "memberships" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithMemberships(opts ...func(*MembershipQuery)) *UserQuery {
-	query := (&MembershipClient{config: uq.config}).Query()
+// WithOrganizations tells the query-builder to eager-load the nodes that are connected to
+// the "organizations" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithOrganizations(opts ...func(*OrganizationQuery)) *UserQuery {
+	query := (&OrganizationClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withMemberships = query
+	uq.withOrganizations = query
 	return uq
 }
 
@@ -467,7 +467,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
 		loadedTypes = [3]bool{
-			uq.withMemberships != nil,
+			uq.withOrganizations != nil,
 			uq.withSessions != nil,
 			uq.withGroups != nil,
 		}
@@ -495,10 +495,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := uq.withMemberships; query != nil {
-		if err := uq.loadMemberships(ctx, query, nodes,
-			func(n *User) { n.Edges.Memberships = []*Membership{} },
-			func(n *User, e *Membership) { n.Edges.Memberships = append(n.Edges.Memberships, e) }); err != nil {
+	if query := uq.withOrganizations; query != nil {
+		if err := uq.loadOrganizations(ctx, query, nodes,
+			func(n *User) { n.Edges.Organizations = []*Organization{} },
+			func(n *User, e *Organization) { n.Edges.Organizations = append(n.Edges.Organizations, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -516,10 +516,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	for name, query := range uq.withNamedMemberships {
-		if err := uq.loadMemberships(ctx, query, nodes,
-			func(n *User) { n.appendNamedMemberships(name) },
-			func(n *User, e *Membership) { n.appendNamedMemberships(name, e) }); err != nil {
+	for name, query := range uq.withNamedOrganizations {
+		if err := uq.loadOrganizations(ctx, query, nodes,
+			func(n *User) { n.appendNamedOrganizations(name) },
+			func(n *User, e *Organization) { n.appendNamedOrganizations(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -545,34 +545,65 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	return nodes, nil
 }
 
-func (uq *UserQuery) loadMemberships(ctx context.Context, query *MembershipQuery, nodes []*User, init func(*User), assign func(*User, *Membership)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
+func (uq *UserQuery) loadOrganizations(ctx context.Context, query *OrganizationQuery, nodes []*User, init func(*User), assign func(*User, *Organization)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[uuid.UUID]*User)
+	nids := make(map[uuid.UUID]map[*User]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
 		if init != nil {
-			init(nodes[i])
+			init(node)
 		}
 	}
-	query.withFKs = true
-	query.Where(predicate.Membership(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.MembershipsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(user.OrganizationsTable)
+		joinT.Schema(uq.schemaConfig.UserOrganizations)
+		s.Join(joinT).On(s.C(organization.FieldID), joinT.C(user.OrganizationsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(user.OrganizationsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(user.OrganizationsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(uuid.UUID)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := *values[0].(*uuid.UUID)
+				inValue := *values[1].(*uuid.UUID)
+				if nids[inValue] == nil {
+					nids[inValue] = map[*User]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Organization](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_memberships
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_memberships" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_memberships" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected "organizations" node returned %v`, n.ID)
 		}
-		assign(node, n)
+		for kn := range nodes {
+			assign(kn, n)
+		}
 	}
 	return nil
 }
@@ -620,11 +651,11 @@ func (uq *UserQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes []
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(user.GroupsTable)
-		joinT.Schema(uq.schemaConfig.UserGroups)
-		s.Join(joinT).On(s.C(group.FieldID), joinT.C(user.GroupsPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(user.GroupsPrimaryKey[0]), edgeIDs...))
+		joinT.Schema(uq.schemaConfig.GroupUsers)
+		s.Join(joinT).On(s.C(group.FieldID), joinT.C(user.GroupsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(user.GroupsPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(user.GroupsPrimaryKey[0]))
+		s.Select(joinT.C(user.GroupsPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -759,17 +790,17 @@ func (uq *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// WithNamedMemberships tells the query-builder to eager-load the nodes that are connected to the "memberships"
+// WithNamedOrganizations tells the query-builder to eager-load the nodes that are connected to the "organizations"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedMemberships(name string, opts ...func(*MembershipQuery)) *UserQuery {
-	query := (&MembershipClient{config: uq.config}).Query()
+func (uq *UserQuery) WithNamedOrganizations(name string, opts ...func(*OrganizationQuery)) *UserQuery {
+	query := (&OrganizationClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if uq.withNamedMemberships == nil {
-		uq.withNamedMemberships = make(map[string]*MembershipQuery)
+	if uq.withNamedOrganizations == nil {
+		uq.withNamedOrganizations = make(map[string]*OrganizationQuery)
 	}
-	uq.withNamedMemberships[name] = query
+	uq.withNamedOrganizations[name] = query
 	return uq
 }
 

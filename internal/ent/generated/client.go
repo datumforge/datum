@@ -19,7 +19,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -38,8 +37,6 @@ type Client struct {
 	GroupSettings *GroupSettingsClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
-	// Membership is the client for interacting with the Membership builders.
-	Membership *MembershipClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// Session is the client for interacting with the Session builders.
@@ -62,7 +59,6 @@ func (c *Client) init() {
 	c.Group = NewGroupClient(c.config)
 	c.GroupSettings = NewGroupSettingsClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
-	c.Membership = NewMembershipClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -156,7 +152,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Group:         NewGroupClient(cfg),
 		GroupSettings: NewGroupSettingsClient(cfg),
 		Integration:   NewIntegrationClient(cfg),
-		Membership:    NewMembershipClient(cfg),
 		Organization:  NewOrganizationClient(cfg),
 		Session:       NewSessionClient(cfg),
 		User:          NewUserClient(cfg),
@@ -182,7 +177,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Group:         NewGroupClient(cfg),
 		GroupSettings: NewGroupSettingsClient(cfg),
 		Integration:   NewIntegrationClient(cfg),
-		Membership:    NewMembershipClient(cfg),
 		Organization:  NewOrganizationClient(cfg),
 		Session:       NewSessionClient(cfg),
 		User:          NewUserClient(cfg),
@@ -215,8 +209,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Group, c.GroupSettings, c.Integration, c.Membership, c.Organization,
-		c.Session, c.User,
+		c.Group, c.GroupSettings, c.Integration, c.Organization, c.Session, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -226,8 +219,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Group, c.GroupSettings, c.Integration, c.Membership, c.Organization,
-		c.Session, c.User,
+		c.Group, c.GroupSettings, c.Integration, c.Organization, c.Session, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -242,8 +234,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GroupSettings.mutate(ctx, m)
 	case *IntegrationMutation:
 		return c.Integration.mutate(ctx, m)
-	case *MembershipMutation:
-		return c.Membership.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
 	case *SessionMutation:
@@ -382,25 +372,6 @@ func (c *GroupClient) QuerySetting(gr *Group) *GroupSettingsQuery {
 	return query
 }
 
-// QueryMemberships queries the memberships edge of a Group.
-func (c *GroupClient) QueryMemberships(gr *Group) *MembershipQuery {
-	query := (&MembershipClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := gr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, id),
-			sqlgraph.To(membership.Table, membership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.MembershipsTable, group.MembershipsColumn),
-		)
-		schemaConfig := gr.schemaConfig
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
-		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryUsers queries the users edge of a Group.
 func (c *GroupClient) QueryUsers(gr *Group) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
@@ -409,11 +380,30 @@ func (c *GroupClient) QueryUsers(gr *Group) *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, group.UsersTable, group.UsersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, group.UsersTable, group.UsersPrimaryKey...),
 		)
 		schemaConfig := gr.schemaConfig
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.UserGroups
+		step.Edge.Schema = schemaConfig.GroupUsers
+		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOwner queries the owner edge of a Group.
+func (c *GroupClient) QueryOwner(gr *Group) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := gr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, group.OwnerTable, group.OwnerColumn),
+		)
+		schemaConfig := gr.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Group
 		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -707,15 +697,15 @@ func (c *IntegrationClient) GetX(ctx context.Context, id uuid.UUID) *Integration
 	return obj
 }
 
-// QueryOrganization queries the organization edge of a Integration.
-func (c *IntegrationClient) QueryOrganization(i *Integration) *OrganizationQuery {
+// QueryOwner queries the owner edge of a Integration.
+func (c *IntegrationClient) QueryOwner(i *Integration) *OrganizationQuery {
 	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := i.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(integration.Table, integration.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, integration.OrganizationTable, integration.OrganizationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, integration.OwnerTable, integration.OwnerColumn),
 		)
 		schemaConfig := i.schemaConfig
 		step.To.Schema = schemaConfig.Organization
@@ -749,197 +739,6 @@ func (c *IntegrationClient) mutate(ctx context.Context, m *IntegrationMutation) 
 		return (&IntegrationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown Integration mutation op: %q", m.Op())
-	}
-}
-
-// MembershipClient is a client for the Membership schema.
-type MembershipClient struct {
-	config
-}
-
-// NewMembershipClient returns a client for the Membership from the given config.
-func NewMembershipClient(c config) *MembershipClient {
-	return &MembershipClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `membership.Hooks(f(g(h())))`.
-func (c *MembershipClient) Use(hooks ...Hook) {
-	c.hooks.Membership = append(c.hooks.Membership, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `membership.Intercept(f(g(h())))`.
-func (c *MembershipClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Membership = append(c.inters.Membership, interceptors...)
-}
-
-// Create returns a builder for creating a Membership entity.
-func (c *MembershipClient) Create() *MembershipCreate {
-	mutation := newMembershipMutation(c.config, OpCreate)
-	return &MembershipCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of Membership entities.
-func (c *MembershipClient) CreateBulk(builders ...*MembershipCreate) *MembershipCreateBulk {
-	return &MembershipCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *MembershipClient) MapCreateBulk(slice any, setFunc func(*MembershipCreate, int)) *MembershipCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &MembershipCreateBulk{err: fmt.Errorf("calling to MembershipClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*MembershipCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &MembershipCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for Membership.
-func (c *MembershipClient) Update() *MembershipUpdate {
-	mutation := newMembershipMutation(c.config, OpUpdate)
-	return &MembershipUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *MembershipClient) UpdateOne(m *Membership) *MembershipUpdateOne {
-	mutation := newMembershipMutation(c.config, OpUpdateOne, withMembership(m))
-	return &MembershipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *MembershipClient) UpdateOneID(id uuid.UUID) *MembershipUpdateOne {
-	mutation := newMembershipMutation(c.config, OpUpdateOne, withMembershipID(id))
-	return &MembershipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for Membership.
-func (c *MembershipClient) Delete() *MembershipDelete {
-	mutation := newMembershipMutation(c.config, OpDelete)
-	return &MembershipDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *MembershipClient) DeleteOne(m *Membership) *MembershipDeleteOne {
-	return c.DeleteOneID(m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *MembershipClient) DeleteOneID(id uuid.UUID) *MembershipDeleteOne {
-	builder := c.Delete().Where(membership.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &MembershipDeleteOne{builder}
-}
-
-// Query returns a query builder for Membership.
-func (c *MembershipClient) Query() *MembershipQuery {
-	return &MembershipQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeMembership},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a Membership entity by its id.
-func (c *MembershipClient) Get(ctx context.Context, id uuid.UUID) (*Membership, error) {
-	return c.Query().Where(membership.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *MembershipClient) GetX(ctx context.Context, id uuid.UUID) *Membership {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// QueryOrganization queries the organization edge of a Membership.
-func (c *MembershipClient) QueryOrganization(m *Membership) *OrganizationQuery {
-	query := (&OrganizationClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(membership.Table, membership.FieldID, id),
-			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, membership.OrganizationTable, membership.OrganizationColumn),
-		)
-		schemaConfig := m.schemaConfig
-		step.To.Schema = schemaConfig.Organization
-		step.Edge.Schema = schemaConfig.Membership
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryUser queries the user edge of a Membership.
-func (c *MembershipClient) QueryUser(m *Membership) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(membership.Table, membership.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, membership.UserTable, membership.UserColumn),
-		)
-		schemaConfig := m.schemaConfig
-		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.Membership
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryGroup queries the group edge of a Membership.
-func (c *MembershipClient) QueryGroup(m *Membership) *GroupQuery {
-	query := (&GroupClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(membership.Table, membership.FieldID, id),
-			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, membership.GroupTable, membership.GroupColumn),
-		)
-		schemaConfig := m.schemaConfig
-		step.To.Schema = schemaConfig.Group
-		step.Edge.Schema = schemaConfig.Membership
-		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// Hooks returns the client hooks.
-func (c *MembershipClient) Hooks() []Hook {
-	hooks := c.hooks.Membership
-	return append(hooks[:len(hooks):len(hooks)], membership.Hooks[:]...)
-}
-
-// Interceptors returns the client interceptors.
-func (c *MembershipClient) Interceptors() []Interceptor {
-	return c.inters.Membership
-}
-
-func (c *MembershipClient) mutate(ctx context.Context, m *MembershipMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&MembershipCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&MembershipUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&MembershipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&MembershipDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("generated: unknown Membership mutation op: %q", m.Op())
 	}
 }
 
@@ -1051,19 +850,76 @@ func (c *OrganizationClient) GetX(ctx context.Context, id uuid.UUID) *Organizati
 	return obj
 }
 
-// QueryMemberships queries the memberships edge of a Organization.
-func (c *OrganizationClient) QueryMemberships(o *Organization) *MembershipQuery {
-	query := (&MembershipClient{config: c.config}).Query()
+// QueryParent queries the parent edge of a Organization.
+func (c *OrganizationClient) QueryParent(o *Organization) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := o.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, id),
-			sqlgraph.To(membership.Table, membership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, organization.MembershipsTable, organization.MembershipsColumn),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, organization.ParentTable, organization.ParentColumn),
 		)
 		schemaConfig := o.schemaConfig
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Organization
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryChildren queries the children edge of a Organization.
+func (c *OrganizationClient) QueryChildren(o *Organization) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.ChildrenTable, organization.ChildrenColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Organization
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryUsers queries the users edge of a Organization.
+func (c *OrganizationClient) QueryUsers(o *Organization) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, organization.UsersTable, organization.UsersPrimaryKey...),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.UserOrganizations
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryGroups queries the groups edge of a Organization.
+func (c *OrganizationClient) QueryGroups(o *Organization) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.GroupsTable, organization.GroupsColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.Group
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1376,19 +1232,19 @@ func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
 	return obj
 }
 
-// QueryMemberships queries the memberships edge of a User.
-func (c *UserClient) QueryMemberships(u *User) *MembershipQuery {
-	query := (&MembershipClient{config: c.config}).Query()
+// QueryOrganizations queries the organizations edge of a User.
+func (c *UserClient) QueryOrganizations(u *User) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(membership.Table, membership.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.MembershipsTable, user.MembershipsColumn),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, user.OrganizationsTable, user.OrganizationsPrimaryKey...),
 		)
 		schemaConfig := u.schemaConfig
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.UserOrganizations
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1422,11 +1278,11 @@ func (c *UserClient) QueryGroups(u *User) *GroupQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, user.GroupsTable, user.GroupsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.GroupsTable, user.GroupsPrimaryKey...),
 		)
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.Group
-		step.Edge.Schema = schemaConfig.UserGroups
+		step.Edge.Schema = schemaConfig.GroupUsers
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -1462,12 +1318,10 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Group, GroupSettings, Integration, Membership, Organization, Session,
-		User []ent.Hook
+		Group, GroupSettings, Integration, Organization, Session, User []ent.Hook
 	}
 	inters struct {
-		Group, GroupSettings, Integration, Membership, Organization, Session,
-		User []ent.Interceptor
+		Group, GroupSettings, Integration, Organization, Session, User []ent.Interceptor
 	}
 )
 

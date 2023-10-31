@@ -497,45 +497,16 @@ func HasSettingWith(preds ...predicate.GroupSettings) predicate.Group {
 	})
 }
 
-// HasMemberships applies the HasEdge predicate on the "memberships" edge.
-func HasMemberships() predicate.Group {
-	return predicate.Group(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MembershipsTable, MembershipsColumn),
-		)
-		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasMembershipsWith applies the HasEdge predicate on the "memberships" edge with a given conditions (other predicates).
-func HasMembershipsWith(preds ...predicate.Membership) predicate.Group {
-	return predicate.Group(func(s *sql.Selector) {
-		step := newMembershipsStep()
-		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasUsers applies the HasEdge predicate on the "users" edge.
 func HasUsers() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, UsersTable, UsersPrimaryKey...),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.UserGroups
+		step.Edge.Schema = schemaConfig.GroupUsers
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -546,7 +517,36 @@ func HasUsersWith(preds ...predicate.User) predicate.Group {
 		step := newUsersStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.UserGroups
+		step.Edge.Schema = schemaConfig.GroupUsers
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Group
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.Organization) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newOwnerStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Group
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

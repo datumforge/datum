@@ -10,9 +10,10 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 )
 
@@ -85,6 +86,34 @@ func (oc *OrganizationCreate) SetName(s string) *OrganizationCreate {
 	return oc
 }
 
+// SetDescription sets the "description" field.
+func (oc *OrganizationCreate) SetDescription(s string) *OrganizationCreate {
+	oc.mutation.SetDescription(s)
+	return oc
+}
+
+// SetNillableDescription sets the "description" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableDescription(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetDescription(*s)
+	}
+	return oc
+}
+
+// SetParentOrganizationID sets the "parent_organization_id" field.
+func (oc *OrganizationCreate) SetParentOrganizationID(u uuid.UUID) *OrganizationCreate {
+	oc.mutation.SetParentOrganizationID(u)
+	return oc
+}
+
+// SetNillableParentOrganizationID sets the "parent_organization_id" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableParentOrganizationID(u *uuid.UUID) *OrganizationCreate {
+	if u != nil {
+		oc.SetParentOrganizationID(*u)
+	}
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrganizationCreate) SetID(u uuid.UUID) *OrganizationCreate {
 	oc.mutation.SetID(u)
@@ -99,19 +128,68 @@ func (oc *OrganizationCreate) SetNillableID(u *uuid.UUID) *OrganizationCreate {
 	return oc
 }
 
-// AddMembershipIDs adds the "memberships" edge to the Membership entity by IDs.
-func (oc *OrganizationCreate) AddMembershipIDs(ids ...uuid.UUID) *OrganizationCreate {
-	oc.mutation.AddMembershipIDs(ids...)
+// SetParentID sets the "parent" edge to the Organization entity by ID.
+func (oc *OrganizationCreate) SetParentID(id uuid.UUID) *OrganizationCreate {
+	oc.mutation.SetParentID(id)
 	return oc
 }
 
-// AddMemberships adds the "memberships" edges to the Membership entity.
-func (oc *OrganizationCreate) AddMemberships(m ...*Membership) *OrganizationCreate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// SetNillableParentID sets the "parent" edge to the Organization entity by ID if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableParentID(id *uuid.UUID) *OrganizationCreate {
+	if id != nil {
+		oc = oc.SetParentID(*id)
 	}
-	return oc.AddMembershipIDs(ids...)
+	return oc
+}
+
+// SetParent sets the "parent" edge to the Organization entity.
+func (oc *OrganizationCreate) SetParent(o *Organization) *OrganizationCreate {
+	return oc.SetParentID(o.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Organization entity by IDs.
+func (oc *OrganizationCreate) AddChildIDs(ids ...uuid.UUID) *OrganizationCreate {
+	oc.mutation.AddChildIDs(ids...)
+	return oc
+}
+
+// AddChildren adds the "children" edges to the Organization entity.
+func (oc *OrganizationCreate) AddChildren(o ...*Organization) *OrganizationCreate {
+	ids := make([]uuid.UUID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return oc.AddChildIDs(ids...)
+}
+
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (oc *OrganizationCreate) AddUserIDs(ids ...uuid.UUID) *OrganizationCreate {
+	oc.mutation.AddUserIDs(ids...)
+	return oc
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
+	ids := make([]uuid.UUID, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return oc.AddUserIDs(ids...)
+}
+
+// AddGroupIDs adds the "groups" edge to the Group entity by IDs.
+func (oc *OrganizationCreate) AddGroupIDs(ids ...uuid.UUID) *OrganizationCreate {
+	oc.mutation.AddGroupIDs(ids...)
+	return oc
+}
+
+// AddGroups adds the "groups" edges to the Group entity.
+func (oc *OrganizationCreate) AddGroups(g ...*Group) *OrganizationCreate {
+	ids := make([]uuid.UUID, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return oc.AddGroupIDs(ids...)
 }
 
 // AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
@@ -179,6 +257,13 @@ func (oc *OrganizationCreate) defaults() error {
 		}
 		v := organization.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := oc.mutation.ParentOrganizationID(); !ok {
+		if organization.DefaultParentOrganizationID == nil {
+			return fmt.Errorf("generated: uninitialized organization.DefaultParentOrganizationID (forgotten import generated/runtime?)")
+		}
+		v := organization.DefaultParentOrganizationID()
+		oc.mutation.SetParentOrganizationID(v)
 	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {
@@ -262,18 +347,74 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		_spec.SetField(organization.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if nodes := oc.mutation.MembershipsIDs(); len(nodes) > 0 {
+	if value, ok := oc.mutation.Description(); ok {
+		_spec.SetField(organization.FieldDescription, field.TypeString, value)
+		_node.Description = value
+	}
+	if nodes := oc.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   organization.ParentTable,
+			Columns: []string{organization.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Organization
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentOrganizationID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   organization.MembershipsTable,
-			Columns: []string{organization.MembershipsColumn},
+			Table:   organization.ChildrenTable,
+			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = oc.schemaConfig.Membership
+		edge.Schema = oc.schemaConfig.Organization
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   organization.UsersTable,
+			Columns: organization.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = oc.schemaConfig.UserOrganizations
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.GroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.GroupsTable,
+			Columns: []string{organization.GroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Group
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

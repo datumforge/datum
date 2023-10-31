@@ -32,10 +32,10 @@ const (
 	FieldLogoURL = "logo_url"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
-	// EdgeMemberships holds the string denoting the memberships edge name in mutations.
-	EdgeMemberships = "memberships"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// SettingTable is the table that holds the setting relation/edge.
@@ -45,18 +45,18 @@ const (
 	SettingInverseTable = "group_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "group_setting"
-	// MembershipsTable is the table that holds the memberships relation/edge.
-	MembershipsTable = "memberships"
-	// MembershipsInverseTable is the table name for the Membership entity.
-	// It exists in this package in order to avoid circular dependency with the "membership" package.
-	MembershipsInverseTable = "memberships"
-	// MembershipsColumn is the table column denoting the memberships relation/edge.
-	MembershipsColumn = "group_memberships"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
-	UsersTable = "user_groups"
+	UsersTable = "group_users"
 	// UsersInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UsersInverseTable = "users"
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "groups"
+	// OwnerInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OwnerInverseTable = "organizations"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "organization_groups"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -71,16 +71,27 @@ var Columns = []string{
 	FieldLogoURL,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "groups"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"organization_groups",
+}
+
 var (
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
-	UsersPrimaryKey = []string{"user_id", "group_id"}
+	UsersPrimaryKey = []string{"group_id", "user_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -161,20 +172,6 @@ func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByMembershipsCount orders the results by memberships count.
-func ByMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMembershipsStep(), opts...)
-	}
-}
-
-// ByMemberships orders the results by memberships terms.
-func ByMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByUsersCount orders the results by users count.
 func ByUsersCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -188,6 +185,13 @@ func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newSettingStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -195,17 +199,17 @@ func newSettingStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
 	)
 }
-func newMembershipsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MembershipsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MembershipsTable, MembershipsColumn),
-	)
-}
 func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UsersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2M, false, UsersTable, UsersPrimaryKey...),
+	)
+}
+func newOwnerStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 	)
 }

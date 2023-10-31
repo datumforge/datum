@@ -9,7 +9,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -105,35 +104,14 @@ func init() {
 	integration.DefaultUpdatedAt = integrationDescUpdatedAt.Default.(func() time.Time)
 	// integration.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	integration.UpdateDefaultUpdatedAt = integrationDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// integrationDescName is the schema descriptor for name field.
+	integrationDescName := integrationFields[1].Descriptor()
+	// integration.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	integration.NameValidator = integrationDescName.Validators[0].(func(string) error)
 	// integrationDescID is the schema descriptor for id field.
 	integrationDescID := integrationFields[0].Descriptor()
 	// integration.DefaultID holds the default value on creation for the id field.
 	integration.DefaultID = integrationDescID.Default.(func() uuid.UUID)
-	membershipMixin := schema.Membership{}.Mixin()
-	membershipMixinHooks0 := membershipMixin[0].Hooks()
-	membership.Hooks[0] = membershipMixinHooks0[0]
-	membershipMixinFields0 := membershipMixin[0].Fields()
-	_ = membershipMixinFields0
-	membershipFields := schema.Membership{}.Fields()
-	_ = membershipFields
-	// membershipDescCreatedAt is the schema descriptor for created_at field.
-	membershipDescCreatedAt := membershipMixinFields0[0].Descriptor()
-	// membership.DefaultCreatedAt holds the default value on creation for the created_at field.
-	membership.DefaultCreatedAt = membershipDescCreatedAt.Default.(func() time.Time)
-	// membershipDescUpdatedAt is the schema descriptor for updated_at field.
-	membershipDescUpdatedAt := membershipMixinFields0[1].Descriptor()
-	// membership.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	membership.DefaultUpdatedAt = membershipDescUpdatedAt.Default.(func() time.Time)
-	// membership.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	membership.UpdateDefaultUpdatedAt = membershipDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// membershipDescCurrent is the schema descriptor for current field.
-	membershipDescCurrent := membershipFields[1].Descriptor()
-	// membership.DefaultCurrent holds the default value on creation for the current field.
-	membership.DefaultCurrent = membershipDescCurrent.Default.(bool)
-	// membershipDescID is the schema descriptor for id field.
-	membershipDescID := membershipFields[0].Descriptor()
-	// membership.DefaultID holds the default value on creation for the id field.
-	membership.DefaultID = membershipDescID.Default.(func() uuid.UUID)
 	organizationMixin := schema.Organization{}.Mixin()
 	organizationMixinHooks0 := organizationMixin[0].Hooks()
 	organization.Hooks[0] = organizationMixinHooks0[0]
@@ -169,6 +147,10 @@ func init() {
 			return nil
 		}
 	}()
+	// organizationDescParentOrganizationID is the schema descriptor for parent_organization_id field.
+	organizationDescParentOrganizationID := organizationFields[3].Descriptor()
+	// organization.DefaultParentOrganizationID holds the default value on creation for the parent_organization_id field.
+	organization.DefaultParentOrganizationID = organizationDescParentOrganizationID.Default.(func() uuid.UUID)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationFields[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

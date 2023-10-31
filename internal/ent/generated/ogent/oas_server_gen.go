@@ -26,12 +26,6 @@ type Handler interface {
 	//
 	// POST /integrations
 	CreateIntegration(ctx context.Context, req *CreateIntegrationReq) (CreateIntegrationRes, error)
-	// CreateMembership implements createMembership operation.
-	//
-	// Creates a new Membership and persists it to storage.
-	//
-	// POST /memberships
-	CreateMembership(ctx context.Context, req *CreateMembershipReq) (CreateMembershipRes, error)
 	// CreateOrganization implements createOrganization operation.
 	//
 	// Creates a new Organization and persists it to storage.
@@ -68,12 +62,6 @@ type Handler interface {
 	//
 	// DELETE /integrations/{id}
 	DeleteIntegration(ctx context.Context, params DeleteIntegrationParams) (DeleteIntegrationRes, error)
-	// DeleteMembership implements deleteMembership operation.
-	//
-	// Deletes the Membership with the requested ID.
-	//
-	// DELETE /memberships/{id}
-	DeleteMembership(ctx context.Context, params DeleteMembershipParams) (DeleteMembershipRes, error)
 	// DeleteOrganization implements deleteOrganization operation.
 	//
 	// Deletes the Organization with the requested ID.
@@ -98,12 +86,6 @@ type Handler interface {
 	//
 	// GET /groups
 	ListGroup(ctx context.Context, params ListGroupParams) (ListGroupRes, error)
-	// ListGroupMemberships implements listGroupMemberships operation.
-	//
-	// List attached Memberships.
-	//
-	// GET /groups/{id}/memberships
-	ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (ListGroupMembershipsRes, error)
 	// ListGroupSettings implements listGroupSettings operation.
 	//
 	// List GroupSettings.
@@ -122,30 +104,36 @@ type Handler interface {
 	//
 	// GET /integrations
 	ListIntegration(ctx context.Context, params ListIntegrationParams) (ListIntegrationRes, error)
-	// ListMembership implements listMembership operation.
-	//
-	// List Memberships.
-	//
-	// GET /memberships
-	ListMembership(ctx context.Context, params ListMembershipParams) (ListMembershipRes, error)
 	// ListOrganization implements listOrganization operation.
 	//
 	// List Organizations.
 	//
 	// GET /organizations
 	ListOrganization(ctx context.Context, params ListOrganizationParams) (ListOrganizationRes, error)
+	// ListOrganizationChildren implements listOrganizationChildren operation.
+	//
+	// List attached Childrens.
+	//
+	// GET /organizations/{id}/children
+	ListOrganizationChildren(ctx context.Context, params ListOrganizationChildrenParams) (ListOrganizationChildrenRes, error)
+	// ListOrganizationGroups implements listOrganizationGroups operation.
+	//
+	// List attached Groups.
+	//
+	// GET /organizations/{id}/groups
+	ListOrganizationGroups(ctx context.Context, params ListOrganizationGroupsParams) (ListOrganizationGroupsRes, error)
 	// ListOrganizationIntegrations implements listOrganizationIntegrations operation.
 	//
 	// List attached Integrations.
 	//
 	// GET /organizations/{id}/integrations
 	ListOrganizationIntegrations(ctx context.Context, params ListOrganizationIntegrationsParams) (ListOrganizationIntegrationsRes, error)
-	// ListOrganizationMemberships implements listOrganizationMemberships operation.
+	// ListOrganizationUsers implements listOrganizationUsers operation.
 	//
-	// List attached Memberships.
+	// List attached Users.
 	//
-	// GET /organizations/{id}/memberships
-	ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (ListOrganizationMembershipsRes, error)
+	// GET /organizations/{id}/users
+	ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (ListOrganizationUsersRes, error)
 	// ListSession implements listSession operation.
 	//
 	// List Sessions.
@@ -164,12 +152,12 @@ type Handler interface {
 	//
 	// GET /users/{id}/groups
 	ListUserGroups(ctx context.Context, params ListUserGroupsParams) (ListUserGroupsRes, error)
-	// ListUserMemberships implements listUserMemberships operation.
+	// ListUserOrganizations implements listUserOrganizations operation.
 	//
-	// List attached Memberships.
+	// List attached Organizations.
 	//
-	// GET /users/{id}/memberships
-	ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (ListUserMembershipsRes, error)
+	// GET /users/{id}/organizations
+	ListUserOrganizations(ctx context.Context, params ListUserOrganizationsParams) (ListUserOrganizationsRes, error)
 	// ListUserSessions implements listUserSessions operation.
 	//
 	// List attached Sessions.
@@ -182,6 +170,12 @@ type Handler interface {
 	//
 	// GET /groups/{id}
 	ReadGroup(ctx context.Context, params ReadGroupParams) (ReadGroupRes, error)
+	// ReadGroupOwner implements readGroupOwner operation.
+	//
+	// Find the attached Organization of the Group with the given ID.
+	//
+	// GET /groups/{id}/owner
+	ReadGroupOwner(ctx context.Context, params ReadGroupOwnerParams) (ReadGroupOwnerRes, error)
 	// ReadGroupSetting implements readGroupSetting operation.
 	//
 	// Find the attached GroupSettings of the Group with the given ID.
@@ -206,42 +200,24 @@ type Handler interface {
 	//
 	// GET /integrations/{id}
 	ReadIntegration(ctx context.Context, params ReadIntegrationParams) (ReadIntegrationRes, error)
-	// ReadIntegrationOrganization implements readIntegrationOrganization operation.
+	// ReadIntegrationOwner implements readIntegrationOwner operation.
 	//
 	// Find the attached Organization of the Integration with the given ID.
 	//
-	// GET /integrations/{id}/organization
-	ReadIntegrationOrganization(ctx context.Context, params ReadIntegrationOrganizationParams) (ReadIntegrationOrganizationRes, error)
-	// ReadMembership implements readMembership operation.
-	//
-	// Finds the Membership with the requested ID and returns it.
-	//
-	// GET /memberships/{id}
-	ReadMembership(ctx context.Context, params ReadMembershipParams) (ReadMembershipRes, error)
-	// ReadMembershipGroup implements readMembershipGroup operation.
-	//
-	// Find the attached Group of the Membership with the given ID.
-	//
-	// GET /memberships/{id}/group
-	ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (ReadMembershipGroupRes, error)
-	// ReadMembershipOrganization implements readMembershipOrganization operation.
-	//
-	// Find the attached Organization of the Membership with the given ID.
-	//
-	// GET /memberships/{id}/organization
-	ReadMembershipOrganization(ctx context.Context, params ReadMembershipOrganizationParams) (ReadMembershipOrganizationRes, error)
-	// ReadMembershipUser implements readMembershipUser operation.
-	//
-	// Find the attached User of the Membership with the given ID.
-	//
-	// GET /memberships/{id}/user
-	ReadMembershipUser(ctx context.Context, params ReadMembershipUserParams) (ReadMembershipUserRes, error)
+	// GET /integrations/{id}/owner
+	ReadIntegrationOwner(ctx context.Context, params ReadIntegrationOwnerParams) (ReadIntegrationOwnerRes, error)
 	// ReadOrganization implements readOrganization operation.
 	//
 	// Finds the Organization with the requested ID and returns it.
 	//
 	// GET /organizations/{id}
 	ReadOrganization(ctx context.Context, params ReadOrganizationParams) (ReadOrganizationRes, error)
+	// ReadOrganizationParent implements readOrganizationParent operation.
+	//
+	// Find the attached Organization of the Organization with the given ID.
+	//
+	// GET /organizations/{id}/parent
+	ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (ReadOrganizationParentRes, error)
 	// ReadSession implements readSession operation.
 	//
 	// Finds the Session with the requested ID and returns it.
@@ -278,12 +254,6 @@ type Handler interface {
 	//
 	// PATCH /integrations/{id}
 	UpdateIntegration(ctx context.Context, req *UpdateIntegrationReq, params UpdateIntegrationParams) (UpdateIntegrationRes, error)
-	// UpdateMembership implements updateMembership operation.
-	//
-	// Updates a Membership and persists changes to storage.
-	//
-	// PATCH /memberships/{id}
-	UpdateMembership(ctx context.Context, req *UpdateMembershipReq, params UpdateMembershipParams) (UpdateMembershipRes, error)
 	// UpdateOrganization implements updateOrganization operation.
 	//
 	// Updates a Organization and persists changes to storage.

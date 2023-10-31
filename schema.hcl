@@ -1,83 +1,46 @@
-table "integrations" {
+table "ent_types" {
   schema = schema.main
   column "id" {
-    null = false
-    type = uuid
+    null           = false
+    type           = integer
+    auto_increment = true
   }
-  column "created_at" {
-    null = false
-    type = datetime
-  }
-  column "updated_at" {
-    null = false
-    type = datetime
-  }
-  column "created_by" {
-    null = true
-    type = integer
-  }
-  column "updated_by" {
-    null = true
-    type = integer
-  }
-  column "kind" {
+  column "type" {
     null = false
     type = text
-  }
-  column "description" {
-    null = true
-    type = text
-  }
-  column "secret_name" {
-    null = false
-    type = text
-  }
-  column "organization_integrations" {
-    null = false
-    type = uuid
   }
   primary_key {
     columns = [column.id]
   }
-  foreign_key "integrations_organizations_integrations" {
-    columns     = [column.organization_integrations]
-    ref_columns = [table.organizations.column.id]
+  index "ent_types_type_key" {
+    unique  = true
+    columns = [column.type]
+  }
+}
+table "user_groups" {
+  schema = schema.main
+  column "user_id" {
+    null = false
+    type = uuid
+  }
+  column "group_id" {
+    null = false
+    type = uuid
+  }
+  primary_key {
+    columns = [column.user_id, column.group_id]
+  }
+  foreign_key "user_groups_group_id" {
+    columns     = [column.group_id]
+    ref_columns = [table.groups.column.id]
     on_update   = NO_ACTION
     on_delete   = CASCADE
   }
-}
-table "organizations" {
-  schema = schema.main
-  column "id" {
-    null = false
-    type = uuid
-  }
-  column "created_at" {
-    null = false
-    type = datetime
-  }
-  column "updated_at" {
-    null = false
-    type = datetime
-  }
-  column "created_by" {
-    null = true
-    type = integer
-  }
-  column "updated_by" {
-    null = true
-    type = integer
-  }
-  column "name" {
-    null = false
-    type = text
-  }
-  primary_key {
-    columns = [column.id]
-  }
-  index "organizations_name_key" {
-    unique  = true
-    columns = [column.name]
+  foreign_key "user_groups_user_id" {
+    columns     = [column.user_id]
+    ref_columns = [table.users.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
   }
 }
 table "sessions" {
@@ -96,11 +59,11 @@ table "sessions" {
   }
   column "created_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "updated_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "type" {
     null = false
@@ -154,6 +117,121 @@ table "sessions" {
     columns = [column.id]
   }
 }
+table "memberships" {
+  schema = schema.main
+  column "id" {
+    null = false
+    type = uuid
+  }
+  column "created_at" {
+    null = false
+    type = datetime
+  }
+  column "updated_at" {
+    null = false
+    type = datetime
+  }
+  column "created_by" {
+    null = true
+    type = uuid
+  }
+  column "updated_by" {
+    null = true
+    type = uuid
+  }
+  column "current" {
+    null    = false
+    type    = bool
+    default = false
+  }
+  column "group_memberships" {
+    null = false
+    type = uuid
+  }
+  column "organization_memberships" {
+    null = false
+    type = uuid
+  }
+  column "user_memberships" {
+    null = false
+    type = uuid
+  }
+  primary_key {
+    columns = [column.id]
+  }
+  foreign_key "memberships_users_memberships" {
+    columns     = [column.user_memberships]
+    ref_columns = [table.users.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
+  }
+  foreign_key "memberships_organizations_memberships" {
+    columns     = [column.organization_memberships]
+    ref_columns = [table.organizations.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
+  }
+  foreign_key "memberships_groups_memberships" {
+    columns     = [column.group_memberships]
+    ref_columns = [table.groups.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
+  }
+  index "membership_organization_members_57e4e125ad3f56514a7fb2a9105c17d4" {
+    unique  = true
+    columns = [column.organization_memberships, column.user_memberships, column.group_memberships]
+  }
+}
+table "group_settings" {
+  schema = schema.main
+  column "id" {
+    null = false
+    type = uuid
+  }
+  column "created_at" {
+    null = false
+    type = datetime
+  }
+  column "updated_at" {
+    null = false
+    type = datetime
+  }
+  column "created_by" {
+    null = true
+    type = uuid
+  }
+  column "updated_by" {
+    null = true
+    type = uuid
+  }
+  column "visibility" {
+    null    = false
+    type    = text
+    default = "PUBLIC"
+  }
+  column "join_policy" {
+    null    = false
+    type    = text
+    default = "OPEN"
+  }
+  column "group_setting" {
+    null = true
+    type = uuid
+  }
+  primary_key {
+    columns = [column.id]
+  }
+  foreign_key "group_settings_groups_setting" {
+    columns     = [column.group_setting]
+    ref_columns = [table.groups.column.id]
+    on_update   = NO_ACTION
+    on_delete   = SET_NULL
+  }
+  index "group_settings_group_setting_key" {
+    unique  = true
+    columns = [column.group_setting]
+  }
+}
 table "users" {
   schema = schema.main
   column "id" {
@@ -170,11 +248,11 @@ table "users" {
   }
   column "created_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "updated_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "email" {
     null = false
@@ -234,7 +312,7 @@ table "users" {
     columns = [column.id]
   }
 }
-table "memberships" {
+table "integrations" {
   schema = schema.main
   column "id" {
     null = false
@@ -250,53 +328,88 @@ table "memberships" {
   }
   column "created_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "updated_by" {
     null = true
-    type = integer
-  }
-  column "current" {
-    null    = false
-    type    = bool
-    default = false
-  }
-  column "group_memberships" {
-    null = false
     type = uuid
   }
-  column "organization_memberships" {
+  column "name" {
     null = false
-    type = uuid
+    type = text
   }
-  column "user_memberships" {
+  column "kind" {
     null = false
+    type = text
+  }
+  column "description" {
+    null = true
+    type = text
+  }
+  column "secret_name" {
+    null = false
+    type = text
+  }
+  column "organization_integrations" {
+    null = true
     type = uuid
   }
   primary_key {
     columns = [column.id]
   }
-  foreign_key "memberships_users_memberships" {
-    columns     = [column.user_memberships]
-    ref_columns = [table.users.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
-  }
-  foreign_key "memberships_organizations_memberships" {
-    columns     = [column.organization_memberships]
+  foreign_key "integrations_organizations_integrations" {
+    columns     = [column.organization_integrations]
     ref_columns = [table.organizations.column.id]
     on_update   = NO_ACTION
     on_delete   = CASCADE
   }
-  foreign_key "memberships_groups_memberships" {
-    columns     = [column.group_memberships]
-    ref_columns = [table.groups.column.id]
-    on_update   = NO_ACTION
-    on_delete   = CASCADE
+}
+table "organizations" {
+  schema = schema.main
+  column "id" {
+    null = false
+    type = uuid
   }
-  index "membership_organization_members_57e4e125ad3f56514a7fb2a9105c17d4" {
+  column "created_at" {
+    null = false
+    type = datetime
+  }
+  column "updated_at" {
+    null = false
+    type = datetime
+  }
+  column "created_by" {
+    null = true
+    type = uuid
+  }
+  column "updated_by" {
+    null = true
+    type = uuid
+  }
+  column "name" {
+    null = false
+    type = text
+  }
+  column "description" {
+    null = true
+    type = text
+  }
+  column "parent_organization_id" {
+    null = true
+    type = uuid
+  }
+  primary_key {
+    columns = [column.id]
+  }
+  foreign_key "organizations_organizations_children" {
+    columns     = [column.parent_organization_id]
+    ref_columns = [table.organizations.column.id]
+    on_update   = NO_ACTION
+    on_delete   = SET_NULL
+  }
+  index "organizations_name_key" {
     unique  = true
-    columns = [column.organization_memberships, column.user_memberships, column.group_memberships]
+    columns = [column.name]
   }
 }
 table "groups" {
@@ -315,11 +428,11 @@ table "groups" {
   }
   column "created_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "updated_by" {
     null = true
-    type = integer
+    type = uuid
   }
   column "name" {
     null = false
@@ -334,81 +447,74 @@ table "groups" {
     null = false
     type = text
   }
+  column "organization_groups" {
+    null = true
+    type = uuid
+  }
   primary_key {
     columns = [column.id]
   }
-  index "groups_name_key" {
+  foreign_key "groups_organizations_groups" {
+    columns     = [column.organization_groups]
+    ref_columns = [table.organizations.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
+  }
+  index "group_name_organization_groups" {
     unique  = true
-    columns = [column.name]
+    columns = [column.name, column.organization_groups]
   }
 }
-table "group_settings" {
+table "group_users" {
   schema = schema.main
-  column "id" {
+  column "group_id" {
     null = false
     type = uuid
   }
-  column "created_at" {
+  column "user_id" {
     null = false
-    type = datetime
-  }
-  column "updated_at" {
-    null = false
-    type = datetime
-  }
-  column "created_by" {
-    null = true
-    type = integer
-  }
-  column "updated_by" {
-    null = true
-    type = integer
-  }
-  column "visibility" {
-    null    = false
-    type    = text
-    default = "PUBLIC"
-  }
-  column "join_policy" {
-    null    = false
-    type    = text
-    default = "OPEN"
-  }
-  column "group_setting" {
-    null = true
     type = uuid
   }
   primary_key {
-    columns = [column.id]
+    columns = [column.group_id, column.user_id]
   }
-  foreign_key "group_settings_groups_setting" {
-    columns     = [column.group_setting]
+  foreign_key "group_users_user_id" {
+    columns     = [column.user_id]
+    ref_columns = [table.users.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
+  }
+  foreign_key "group_users_group_id" {
+    columns     = [column.group_id]
     ref_columns = [table.groups.column.id]
     on_update   = NO_ACTION
-    on_delete   = SET_NULL
-  }
-  index "group_settings_group_setting_key" {
-    unique  = true
-    columns = [column.group_setting]
+    on_delete   = CASCADE
   }
 }
-table "ent_types" {
+table "user_organizations" {
   schema = schema.main
-  column "id" {
-    null           = false
-    type           = integer
-    auto_increment = true
-  }
-  column "type" {
+  column "user_id" {
     null = false
-    type = text
+    type = uuid
+  }
+  column "organization_id" {
+    null = false
+    type = uuid
   }
   primary_key {
-    columns = [column.id]
+    columns = [column.user_id, column.organization_id]
   }
-  index "ent_types_type_key" {
-    unique  = true
-    columns = [column.type]
+  foreign_key "user_organizations_organization_id" {
+    columns     = [column.organization_id]
+    ref_columns = [table.organizations.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
+  }
+  foreign_key "user_organizations_user_id" {
+    columns     = [column.user_id]
+    ref_columns = [table.users.column.id]
+    on_update   = NO_ACTION
+    on_delete   = CASCADE
   }
 }
 schema "main" {

@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
@@ -224,19 +224,19 @@ func (uc *UserCreate) SetNillableID(u *uuid.UUID) *UserCreate {
 	return uc
 }
 
-// AddMembershipIDs adds the "memberships" edge to the Membership entity by IDs.
-func (uc *UserCreate) AddMembershipIDs(ids ...uuid.UUID) *UserCreate {
-	uc.mutation.AddMembershipIDs(ids...)
+// AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
+func (uc *UserCreate) AddOrganizationIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddOrganizationIDs(ids...)
 	return uc
 }
 
-// AddMemberships adds the "memberships" edges to the Membership entity.
-func (uc *UserCreate) AddMemberships(m ...*Membership) *UserCreate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+// AddOrganizations adds the "organizations" edges to the Organization entity.
+func (uc *UserCreate) AddOrganizations(o ...*Organization) *UserCreate {
+	ids := make([]uuid.UUID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
 	}
-	return uc.AddMembershipIDs(ids...)
+	return uc.AddOrganizationIDs(ids...)
 }
 
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
@@ -487,18 +487,18 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldRecoveryCode, field.TypeString, value)
 		_node.RecoveryCode = &value
 	}
-	if nodes := uc.mutation.MembershipsIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   user.MembershipsTable,
-			Columns: []string{user.MembershipsColumn},
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = uc.schemaConfig.Membership
+		edge.Schema = uc.schemaConfig.UserOrganizations
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -524,7 +524,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if nodes := uc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   user.GroupsTable,
 			Columns: user.GroupsPrimaryKey,
 			Bidi:    false,
@@ -532,7 +532,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = uc.schemaConfig.UserGroups
+		edge.Schema = uc.schemaConfig.GroupUsers
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

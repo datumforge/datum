@@ -78,6 +78,12 @@ func (ic *IntegrationCreate) SetNillableUpdatedBy(u *uuid.UUID) *IntegrationCrea
 	return ic
 }
 
+// SetName sets the "name" field.
+func (ic *IntegrationCreate) SetName(s string) *IntegrationCreate {
+	ic.mutation.SetName(s)
+	return ic
+}
+
 // SetKind sets the "kind" field.
 func (ic *IntegrationCreate) SetKind(s string) *IntegrationCreate {
 	ic.mutation.SetKind(s)
@@ -118,15 +124,23 @@ func (ic *IntegrationCreate) SetNillableID(u *uuid.UUID) *IntegrationCreate {
 	return ic
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (ic *IntegrationCreate) SetOrganizationID(id uuid.UUID) *IntegrationCreate {
-	ic.mutation.SetOrganizationID(id)
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (ic *IntegrationCreate) SetOwnerID(id uuid.UUID) *IntegrationCreate {
+	ic.mutation.SetOwnerID(id)
 	return ic
 }
 
-// SetOrganization sets the "organization" edge to the Organization entity.
-func (ic *IntegrationCreate) SetOrganization(o *Organization) *IntegrationCreate {
-	return ic.SetOrganizationID(o.ID)
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableOwnerID(id *uuid.UUID) *IntegrationCreate {
+	if id != nil {
+		ic = ic.SetOwnerID(*id)
+	}
+	return ic
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (ic *IntegrationCreate) SetOwner(o *Organization) *IntegrationCreate {
+	return ic.SetOwnerID(o.ID)
 }
 
 // Mutation returns the IntegrationMutation object of the builder.
@@ -198,14 +212,19 @@ func (ic *IntegrationCreate) check() error {
 	if _, ok := ic.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Integration.updated_at"`)}
 	}
+	if _, ok := ic.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Integration.name"`)}
+	}
+	if v, ok := ic.mutation.Name(); ok {
+		if err := integration.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
+		}
+	}
 	if _, ok := ic.mutation.Kind(); !ok {
 		return &ValidationError{Name: "kind", err: errors.New(`generated: missing required field "Integration.kind"`)}
 	}
 	if _, ok := ic.mutation.SecretName(); !ok {
 		return &ValidationError{Name: "secret_name", err: errors.New(`generated: missing required field "Integration.secret_name"`)}
-	}
-	if _, ok := ic.mutation.OrganizationID(); !ok {
-		return &ValidationError{Name: "organization", err: errors.New(`generated: missing required edge "Integration.organization"`)}
 	}
 	return nil
 }
@@ -259,6 +278,10 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_spec.SetField(integration.FieldUpdatedBy, field.TypeUUID, value)
 		_node.UpdatedBy = value
 	}
+	if value, ok := ic.mutation.Name(); ok {
+		_spec.SetField(integration.FieldName, field.TypeString, value)
+		_node.Name = value
+	}
 	if value, ok := ic.mutation.Kind(); ok {
 		_spec.SetField(integration.FieldKind, field.TypeString, value)
 		_node.Kind = value
@@ -271,12 +294,12 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_spec.SetField(integration.FieldSecretName, field.TypeString, value)
 		_node.SecretName = value
 	}
-	if nodes := ic.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := ic.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   integration.OrganizationTable,
-			Columns: []string{integration.OrganizationColumn},
+			Table:   integration.OwnerTable,
+			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),

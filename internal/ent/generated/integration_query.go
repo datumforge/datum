@@ -21,14 +21,14 @@ import (
 // IntegrationQuery is the builder for querying Integration entities.
 type IntegrationQuery struct {
 	config
-	ctx              *QueryContext
-	order            []integration.OrderOption
-	inters           []Interceptor
-	predicates       []predicate.Integration
-	withOrganization *OrganizationQuery
-	withFKs          bool
-	modifiers        []func(*sql.Selector)
-	loadTotal        []func(context.Context, []*Integration) error
+	ctx        *QueryContext
+	order      []integration.OrderOption
+	inters     []Interceptor
+	predicates []predicate.Integration
+	withOwner  *OrganizationQuery
+	withFKs    bool
+	modifiers  []func(*sql.Selector)
+	loadTotal  []func(context.Context, []*Integration) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -65,8 +65,8 @@ func (iq *IntegrationQuery) Order(o ...integration.OrderOption) *IntegrationQuer
 	return iq
 }
 
-// QueryOrganization chains the current query on the "organization" edge.
-func (iq *IntegrationQuery) QueryOrganization() *OrganizationQuery {
+// QueryOwner chains the current query on the "owner" edge.
+func (iq *IntegrationQuery) QueryOwner() *OrganizationQuery {
 	query := (&OrganizationClient{config: iq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := iq.prepareQuery(ctx); err != nil {
@@ -79,7 +79,7 @@ func (iq *IntegrationQuery) QueryOrganization() *OrganizationQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(integration.Table, integration.FieldID, selector),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, integration.OrganizationTable, integration.OrganizationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, integration.OwnerTable, integration.OwnerColumn),
 		)
 		schemaConfig := iq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
@@ -277,26 +277,26 @@ func (iq *IntegrationQuery) Clone() *IntegrationQuery {
 		return nil
 	}
 	return &IntegrationQuery{
-		config:           iq.config,
-		ctx:              iq.ctx.Clone(),
-		order:            append([]integration.OrderOption{}, iq.order...),
-		inters:           append([]Interceptor{}, iq.inters...),
-		predicates:       append([]predicate.Integration{}, iq.predicates...),
-		withOrganization: iq.withOrganization.Clone(),
+		config:     iq.config,
+		ctx:        iq.ctx.Clone(),
+		order:      append([]integration.OrderOption{}, iq.order...),
+		inters:     append([]Interceptor{}, iq.inters...),
+		predicates: append([]predicate.Integration{}, iq.predicates...),
+		withOwner:  iq.withOwner.Clone(),
 		// clone intermediate query.
 		sql:  iq.sql.Clone(),
 		path: iq.path,
 	}
 }
 
-// WithOrganization tells the query-builder to eager-load the nodes that are connected to
-// the "organization" edge. The optional arguments are used to configure the query builder of the edge.
-func (iq *IntegrationQuery) WithOrganization(opts ...func(*OrganizationQuery)) *IntegrationQuery {
+// WithOwner tells the query-builder to eager-load the nodes that are connected to
+// the "owner" edge. The optional arguments are used to configure the query builder of the edge.
+func (iq *IntegrationQuery) WithOwner(opts ...func(*OrganizationQuery)) *IntegrationQuery {
 	query := (&OrganizationClient{config: iq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	iq.withOrganization = query
+	iq.withOwner = query
 	return iq
 }
 
@@ -380,10 +380,10 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 		withFKs     = iq.withFKs
 		_spec       = iq.querySpec()
 		loadedTypes = [1]bool{
-			iq.withOrganization != nil,
+			iq.withOwner != nil,
 		}
 	)
-	if iq.withOrganization != nil {
+	if iq.withOwner != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -412,9 +412,9 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := iq.withOrganization; query != nil {
-		if err := iq.loadOrganization(ctx, query, nodes, nil,
-			func(n *Integration, e *Organization) { n.Edges.Organization = e }); err != nil {
+	if query := iq.withOwner; query != nil {
+		if err := iq.loadOwner(ctx, query, nodes, nil,
+			func(n *Integration, e *Organization) { n.Edges.Owner = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -426,7 +426,7 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	return nodes, nil
 }
 
-func (iq *IntegrationQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*Integration, init func(*Integration), assign func(*Integration, *Organization)) error {
+func (iq *IntegrationQuery) loadOwner(ctx context.Context, query *OrganizationQuery, nodes []*Integration, init func(*Integration), assign func(*Integration, *Organization)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*Integration)
 	for i := range nodes {

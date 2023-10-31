@@ -378,14 +378,6 @@ func (s GroupSettingsUpdateVisibility) Validate() error {
 	}
 }
 
-func (s ListGroupMembershipsOKApplicationJSON) Validate() error {
-	alias := ([]GroupMembershipsList)(s)
-	if alias == nil {
-		return errors.New("nil is invalid value")
-	}
-	return nil
-}
-
 func (s ListGroupOKApplicationJSON) Validate() error {
 	alias := ([]GroupList)(s)
 	if alias == nil {
@@ -435,8 +427,16 @@ func (s ListIntegrationOKApplicationJSON) Validate() error {
 	return nil
 }
 
-func (s ListMembershipOKApplicationJSON) Validate() error {
-	alias := ([]MembershipList)(s)
+func (s ListOrganizationChildrenOKApplicationJSON) Validate() error {
+	alias := ([]OrganizationChildrenList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
+func (s ListOrganizationGroupsOKApplicationJSON) Validate() error {
+	alias := ([]OrganizationGroupsList)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}
@@ -451,16 +451,16 @@ func (s ListOrganizationIntegrationsOKApplicationJSON) Validate() error {
 	return nil
 }
 
-func (s ListOrganizationMembershipsOKApplicationJSON) Validate() error {
-	alias := ([]OrganizationMembershipsList)(s)
+func (s ListOrganizationOKApplicationJSON) Validate() error {
+	alias := ([]OrganizationList)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}
 	return nil
 }
 
-func (s ListOrganizationOKApplicationJSON) Validate() error {
-	alias := ([]OrganizationList)(s)
+func (s ListOrganizationUsersOKApplicationJSON) Validate() error {
+	alias := ([]OrganizationUsersList)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}
@@ -500,16 +500,16 @@ func (s ListUserGroupsOKApplicationJSON) Validate() error {
 	return nil
 }
 
-func (s ListUserMembershipsOKApplicationJSON) Validate() error {
-	alias := ([]UserMembershipsList)(s)
+func (s ListUserOKApplicationJSON) Validate() error {
+	alias := ([]UserList)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}
 	return nil
 }
 
-func (s ListUserOKApplicationJSON) Validate() error {
-	alias := ([]UserList)(s)
+func (s ListUserOrganizationsOKApplicationJSON) Validate() error {
+	alias := ([]UserOrganizationsList)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
 	}

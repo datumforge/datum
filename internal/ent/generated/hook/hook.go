@@ -45,18 +45,6 @@ func (f IntegrationFunc) Mutate(ctx context.Context, m generated.Mutation) (gene
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.IntegrationMutation", m)
 }
 
-// The MembershipFunc type is an adapter to allow the use of ordinary
-// function as Membership mutator.
-type MembershipFunc func(context.Context, *generated.MembershipMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f MembershipFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.MembershipMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.MembershipMutation", m)
-}
-
 // The OrganizationFunc type is an adapter to allow the use of ordinary
 // function as Organization mutator.
 type OrganizationFunc func(context.Context, *generated.OrganizationMutation) (generated.Value, error)

@@ -218,8 +218,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								break
 							}
 							switch elem[0] {
-							case 'm': // Prefix: "memberships"
-								if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+							case 'o': // Prefix: "owner"
+								if l := len("owner"); len(elem) >= l && elem[0:l] == "owner" {
 									elem = elem[l:]
 								} else {
 									break
@@ -229,7 +229,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 									// Leaf node.
 									switch r.Method {
 									case "GET":
-										s.handleListGroupMembershipsRequest([1]string{
+										s.handleReadGroupOwnerRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
@@ -339,8 +339,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/organization"
-						if l := len("/organization"); len(elem) >= l && elem[0:l] == "/organization" {
+					case '/': // Prefix: "/owner"
+						if l := len("/owner"); len(elem) >= l && elem[0:l] == "/owner" {
 							elem = elem[l:]
 						} else {
 							break
@@ -350,7 +350,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "GET":
-								s.handleReadIntegrationOrganizationRequest([1]string{
+								s.handleReadIntegrationOwnerRequest([1]string{
 									args[0],
 								}, elemIsEscaped, w, r)
 							default:
@@ -358,137 +358,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							}
 
 							return
-						}
-					}
-				}
-			case 'm': // Prefix: "memberships"
-				if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleListMembershipRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleCreateMembershipRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,POST")
-					}
-
-					return
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
-					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
-
-					if len(elem) == 0 {
-						switch r.Method {
-						case "DELETE":
-							s.handleDeleteMembershipRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "GET":
-							s.handleReadMembershipRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						case "PATCH":
-							s.handleUpdateMembershipRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "DELETE,GET,PATCH")
-						}
-
-						return
-					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							break
-						}
-						switch elem[0] {
-						case 'g': // Prefix: "group"
-							if l := len("group"); len(elem) >= l && elem[0:l] == "group" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleReadMembershipGroupRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-						case 'o': // Prefix: "organization"
-							if l := len("organization"); len(elem) >= l && elem[0:l] == "organization" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleReadMembershipOrganizationRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
-						case 'u': // Prefix: "user"
-							if l := len("user"); len(elem) >= l && elem[0:l] == "user" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "GET":
-									s.handleReadMembershipUserRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "GET")
-								}
-
-								return
-							}
 						}
 					}
 				}
@@ -560,6 +429,46 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							break
 						}
 						switch elem[0] {
+						case 'c': // Prefix: "children"
+							if l := len("children"); len(elem) >= l && elem[0:l] == "children" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleListOrganizationChildrenRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+						case 'g': // Prefix: "groups"
+							if l := len("groups"); len(elem) >= l && elem[0:l] == "groups" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleListOrganizationGroupsRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
 						case 'i': // Prefix: "integrations"
 							if l := len("integrations"); len(elem) >= l && elem[0:l] == "integrations" {
 								elem = elem[l:]
@@ -580,8 +489,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 								return
 							}
-						case 'm': // Prefix: "memberships"
-							if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+						case 'p': // Prefix: "parent"
+							if l := len("parent"); len(elem) >= l && elem[0:l] == "parent" {
 								elem = elem[l:]
 							} else {
 								break
@@ -591,7 +500,27 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								// Leaf node.
 								switch r.Method {
 								case "GET":
-									s.handleListOrganizationMembershipsRequest([1]string{
+									s.handleReadOrganizationParentRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "GET")
+								}
+
+								return
+							}
+						case 'u': // Prefix: "users"
+							if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "GET":
+									s.handleListOrganizationUsersRequest([1]string{
 										args[0],
 									}, elemIsEscaped, w, r)
 								default:
@@ -770,8 +699,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 								return
 							}
-						case 'm': // Prefix: "memberships"
-							if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+						case 'o': // Prefix: "organizations"
+							if l := len("organizations"); len(elem) >= l && elem[0:l] == "organizations" {
 								elem = elem[l:]
 							} else {
 								break
@@ -781,7 +710,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								// Leaf node.
 								switch r.Method {
 								case "GET":
-									s.handleListUserMembershipsRequest([1]string{
+									s.handleListUserOrganizationsRequest([1]string{
 										args[0],
 									}, elemIsEscaped, w, r)
 								default:
@@ -1105,8 +1034,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								break
 							}
 							switch elem[0] {
-							case 'm': // Prefix: "memberships"
-								if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+							case 'o': // Prefix: "owner"
+								if l := len("owner"); len(elem) >= l && elem[0:l] == "owner" {
 									elem = elem[l:]
 								} else {
 									break
@@ -1115,11 +1044,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								if len(elem) == 0 {
 									switch method {
 									case "GET":
-										// Leaf: ListGroupMemberships
-										r.name = "ListGroupMemberships"
-										r.summary = "List attached Memberships"
-										r.operationID = "listGroupMemberships"
-										r.pathPattern = "/groups/{id}/memberships"
+										// Leaf: ReadGroupOwner
+										r.name = "ReadGroupOwner"
+										r.summary = "Find the attached Organization"
+										r.operationID = "readGroupOwner"
+										r.pathPattern = "/groups/{id}/owner"
 										r.args = args
 										r.count = 1
 										return r, true
@@ -1252,8 +1181,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/organization"
-						if l := len("/organization"); len(elem) >= l && elem[0:l] == "/organization" {
+					case '/': // Prefix: "/owner"
+						if l := len("/owner"); len(elem) >= l && elem[0:l] == "/owner" {
 							elem = elem[l:]
 						} else {
 							break
@@ -1262,173 +1191,16 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						if len(elem) == 0 {
 							switch method {
 							case "GET":
-								// Leaf: ReadIntegrationOrganization
-								r.name = "ReadIntegrationOrganization"
+								// Leaf: ReadIntegrationOwner
+								r.name = "ReadIntegrationOwner"
 								r.summary = "Find the attached Organization"
-								r.operationID = "readIntegrationOrganization"
-								r.pathPattern = "/integrations/{id}/organization"
+								r.operationID = "readIntegrationOwner"
+								r.pathPattern = "/integrations/{id}/owner"
 								r.args = args
 								r.count = 1
 								return r, true
 							default:
 								return
-							}
-						}
-					}
-				}
-			case 'm': // Prefix: "memberships"
-				if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = "ListMembership"
-						r.summary = "List Memberships"
-						r.operationID = "listMembership"
-						r.pathPattern = "/memberships"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = "CreateMembership"
-						r.summary = "Create a new Membership"
-						r.operationID = "createMembership"
-						r.pathPattern = "/memberships"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
-				}
-				switch elem[0] {
-				case '/': // Prefix: "/"
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					// Param: "id"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
-					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
-
-					if len(elem) == 0 {
-						switch method {
-						case "DELETE":
-							r.name = "DeleteMembership"
-							r.summary = "Deletes a Membership by ID"
-							r.operationID = "deleteMembership"
-							r.pathPattern = "/memberships/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "GET":
-							r.name = "ReadMembership"
-							r.summary = "Find a Membership by ID"
-							r.operationID = "readMembership"
-							r.pathPattern = "/memberships/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						case "PATCH":
-							r.name = "UpdateMembership"
-							r.summary = "Updates a Membership"
-							r.operationID = "updateMembership"
-							r.pathPattern = "/memberships/{id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							break
-						}
-						switch elem[0] {
-						case 'g': // Prefix: "group"
-							if l := len("group"); len(elem) >= l && elem[0:l] == "group" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									// Leaf: ReadMembershipGroup
-									r.name = "ReadMembershipGroup"
-									r.summary = "Find the attached Group"
-									r.operationID = "readMembershipGroup"
-									r.pathPattern = "/memberships/{id}/group"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-						case 'o': // Prefix: "organization"
-							if l := len("organization"); len(elem) >= l && elem[0:l] == "organization" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									// Leaf: ReadMembershipOrganization
-									r.name = "ReadMembershipOrganization"
-									r.summary = "Find the attached Organization"
-									r.operationID = "readMembershipOrganization"
-									r.pathPattern = "/memberships/{id}/organization"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
-							}
-						case 'u': // Prefix: "user"
-							if l := len("user"); len(elem) >= l && elem[0:l] == "user" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "GET":
-									// Leaf: ReadMembershipUser
-									r.name = "ReadMembershipUser"
-									r.summary = "Find the attached User"
-									r.operationID = "readMembershipUser"
-									r.pathPattern = "/memberships/{id}/user"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
 							}
 						}
 					}
@@ -1521,6 +1293,50 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							break
 						}
 						switch elem[0] {
+						case 'c': // Prefix: "children"
+							if l := len("children"); len(elem) >= l && elem[0:l] == "children" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ListOrganizationChildren
+									r.name = "ListOrganizationChildren"
+									r.summary = "List attached Childrens"
+									r.operationID = "listOrganizationChildren"
+									r.pathPattern = "/organizations/{id}/children"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+						case 'g': // Prefix: "groups"
+							if l := len("groups"); len(elem) >= l && elem[0:l] == "groups" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ListOrganizationGroups
+									r.name = "ListOrganizationGroups"
+									r.summary = "List attached Groups"
+									r.operationID = "listOrganizationGroups"
+									r.pathPattern = "/organizations/{id}/groups"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
 						case 'i': // Prefix: "integrations"
 							if l := len("integrations"); len(elem) >= l && elem[0:l] == "integrations" {
 								elem = elem[l:]
@@ -1543,8 +1359,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									return
 								}
 							}
-						case 'm': // Prefix: "memberships"
-							if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+						case 'p': // Prefix: "parent"
+							if l := len("parent"); len(elem) >= l && elem[0:l] == "parent" {
 								elem = elem[l:]
 							} else {
 								break
@@ -1553,11 +1369,33 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							if len(elem) == 0 {
 								switch method {
 								case "GET":
-									// Leaf: ListOrganizationMemberships
-									r.name = "ListOrganizationMemberships"
-									r.summary = "List attached Memberships"
-									r.operationID = "listOrganizationMemberships"
-									r.pathPattern = "/organizations/{id}/memberships"
+									// Leaf: ReadOrganizationParent
+									r.name = "ReadOrganizationParent"
+									r.summary = "Find the attached Organization"
+									r.operationID = "readOrganizationParent"
+									r.pathPattern = "/organizations/{id}/parent"
+									r.args = args
+									r.count = 1
+									return r, true
+								default:
+									return
+								}
+							}
+						case 'u': // Prefix: "users"
+							if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								switch method {
+								case "GET":
+									// Leaf: ListOrganizationUsers
+									r.name = "ListOrganizationUsers"
+									r.summary = "List attached Users"
+									r.operationID = "listOrganizationUsers"
+									r.pathPattern = "/organizations/{id}/users"
 									r.args = args
 									r.count = 1
 									return r, true
@@ -1779,8 +1617,8 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									return
 								}
 							}
-						case 'm': // Prefix: "memberships"
-							if l := len("memberships"); len(elem) >= l && elem[0:l] == "memberships" {
+						case 'o': // Prefix: "organizations"
+							if l := len("organizations"); len(elem) >= l && elem[0:l] == "organizations" {
 								elem = elem[l:]
 							} else {
 								break
@@ -1789,11 +1627,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							if len(elem) == 0 {
 								switch method {
 								case "GET":
-									// Leaf: ListUserMemberships
-									r.name = "ListUserMemberships"
-									r.summary = "List attached Memberships"
-									r.operationID = "listUserMemberships"
-									r.pathPattern = "/users/{id}/memberships"
+									// Leaf: ListUserOrganizations
+									r.name = "ListUserOrganizations"
+									r.summary = "List attached Organizations"
+									r.operationID = "listUserOrganizations"
+									r.pathPattern = "/users/{id}/organizations"
 									r.args = args
 									r.count = 1
 									return r, true

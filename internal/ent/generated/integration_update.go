@@ -78,6 +78,12 @@ func (iu *IntegrationUpdate) ClearUpdatedBy() *IntegrationUpdate {
 	return iu
 }
 
+// SetName sets the "name" field.
+func (iu *IntegrationUpdate) SetName(s string) *IntegrationUpdate {
+	iu.mutation.SetName(s)
+	return iu
+}
+
 // SetDescription sets the "description" field.
 func (iu *IntegrationUpdate) SetDescription(s string) *IntegrationUpdate {
 	iu.mutation.SetDescription(s)
@@ -98,15 +104,23 @@ func (iu *IntegrationUpdate) ClearDescription() *IntegrationUpdate {
 	return iu
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (iu *IntegrationUpdate) SetOrganizationID(id uuid.UUID) *IntegrationUpdate {
-	iu.mutation.SetOrganizationID(id)
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (iu *IntegrationUpdate) SetOwnerID(id uuid.UUID) *IntegrationUpdate {
+	iu.mutation.SetOwnerID(id)
 	return iu
 }
 
-// SetOrganization sets the "organization" edge to the Organization entity.
-func (iu *IntegrationUpdate) SetOrganization(o *Organization) *IntegrationUpdate {
-	return iu.SetOrganizationID(o.ID)
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (iu *IntegrationUpdate) SetNillableOwnerID(id *uuid.UUID) *IntegrationUpdate {
+	if id != nil {
+		iu = iu.SetOwnerID(*id)
+	}
+	return iu
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (iu *IntegrationUpdate) SetOwner(o *Organization) *IntegrationUpdate {
+	return iu.SetOwnerID(o.ID)
 }
 
 // Mutation returns the IntegrationMutation object of the builder.
@@ -114,9 +128,9 @@ func (iu *IntegrationUpdate) Mutation() *IntegrationMutation {
 	return iu.mutation
 }
 
-// ClearOrganization clears the "organization" edge to the Organization entity.
-func (iu *IntegrationUpdate) ClearOrganization() *IntegrationUpdate {
-	iu.mutation.ClearOrganization()
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (iu *IntegrationUpdate) ClearOwner() *IntegrationUpdate {
+	iu.mutation.ClearOwner()
 	return iu
 }
 
@@ -164,8 +178,10 @@ func (iu *IntegrationUpdate) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iu *IntegrationUpdate) check() error {
-	if _, ok := iu.mutation.OrganizationID(); iu.mutation.OrganizationCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Integration.organization"`)
+	if v, ok := iu.mutation.Name(); ok {
+		if err := integration.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -197,18 +213,21 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if iu.mutation.UpdatedByCleared() {
 		_spec.ClearField(integration.FieldUpdatedBy, field.TypeUUID)
 	}
+	if value, ok := iu.mutation.Name(); ok {
+		_spec.SetField(integration.FieldName, field.TypeString, value)
+	}
 	if value, ok := iu.mutation.Description(); ok {
 		_spec.SetField(integration.FieldDescription, field.TypeString, value)
 	}
 	if iu.mutation.DescriptionCleared() {
 		_spec.ClearField(integration.FieldDescription, field.TypeString)
 	}
-	if iu.mutation.OrganizationCleared() {
+	if iu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   integration.OrganizationTable,
-			Columns: []string{integration.OrganizationColumn},
+			Table:   integration.OwnerTable,
+			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
@@ -217,12 +236,12 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge.Schema = iu.schemaConfig.Integration
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := iu.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   integration.OrganizationTable,
-			Columns: []string{integration.OrganizationColumn},
+			Table:   integration.OwnerTable,
+			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
@@ -302,6 +321,12 @@ func (iuo *IntegrationUpdateOne) ClearUpdatedBy() *IntegrationUpdateOne {
 	return iuo
 }
 
+// SetName sets the "name" field.
+func (iuo *IntegrationUpdateOne) SetName(s string) *IntegrationUpdateOne {
+	iuo.mutation.SetName(s)
+	return iuo
+}
+
 // SetDescription sets the "description" field.
 func (iuo *IntegrationUpdateOne) SetDescription(s string) *IntegrationUpdateOne {
 	iuo.mutation.SetDescription(s)
@@ -322,15 +347,23 @@ func (iuo *IntegrationUpdateOne) ClearDescription() *IntegrationUpdateOne {
 	return iuo
 }
 
-// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
-func (iuo *IntegrationUpdateOne) SetOrganizationID(id uuid.UUID) *IntegrationUpdateOne {
-	iuo.mutation.SetOrganizationID(id)
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (iuo *IntegrationUpdateOne) SetOwnerID(id uuid.UUID) *IntegrationUpdateOne {
+	iuo.mutation.SetOwnerID(id)
 	return iuo
 }
 
-// SetOrganization sets the "organization" edge to the Organization entity.
-func (iuo *IntegrationUpdateOne) SetOrganization(o *Organization) *IntegrationUpdateOne {
-	return iuo.SetOrganizationID(o.ID)
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (iuo *IntegrationUpdateOne) SetNillableOwnerID(id *uuid.UUID) *IntegrationUpdateOne {
+	if id != nil {
+		iuo = iuo.SetOwnerID(*id)
+	}
+	return iuo
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (iuo *IntegrationUpdateOne) SetOwner(o *Organization) *IntegrationUpdateOne {
+	return iuo.SetOwnerID(o.ID)
 }
 
 // Mutation returns the IntegrationMutation object of the builder.
@@ -338,9 +371,9 @@ func (iuo *IntegrationUpdateOne) Mutation() *IntegrationMutation {
 	return iuo.mutation
 }
 
-// ClearOrganization clears the "organization" edge to the Organization entity.
-func (iuo *IntegrationUpdateOne) ClearOrganization() *IntegrationUpdateOne {
-	iuo.mutation.ClearOrganization()
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (iuo *IntegrationUpdateOne) ClearOwner() *IntegrationUpdateOne {
+	iuo.mutation.ClearOwner()
 	return iuo
 }
 
@@ -401,8 +434,10 @@ func (iuo *IntegrationUpdateOne) defaults() error {
 
 // check runs all checks and user-defined validators on the builder.
 func (iuo *IntegrationUpdateOne) check() error {
-	if _, ok := iuo.mutation.OrganizationID(); iuo.mutation.OrganizationCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Integration.organization"`)
+	if v, ok := iuo.mutation.Name(); ok {
+		if err := integration.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -451,18 +486,21 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 	if iuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(integration.FieldUpdatedBy, field.TypeUUID)
 	}
+	if value, ok := iuo.mutation.Name(); ok {
+		_spec.SetField(integration.FieldName, field.TypeString, value)
+	}
 	if value, ok := iuo.mutation.Description(); ok {
 		_spec.SetField(integration.FieldDescription, field.TypeString, value)
 	}
 	if iuo.mutation.DescriptionCleared() {
 		_spec.ClearField(integration.FieldDescription, field.TypeString)
 	}
-	if iuo.mutation.OrganizationCleared() {
+	if iuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   integration.OrganizationTable,
-			Columns: []string{integration.OrganizationColumn},
+			Table:   integration.OwnerTable,
+			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
@@ -471,12 +509,12 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 		edge.Schema = iuo.schemaConfig.Integration
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.OrganizationIDs(); len(nodes) > 0 {
+	if nodes := iuo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   integration.OrganizationTable,
-			Columns: []string{integration.OrganizationColumn},
+			Table:   integration.OwnerTable,
+			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),

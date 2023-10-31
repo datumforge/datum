@@ -17,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -850,6 +849,20 @@ func (i *IntegrationQuery) Paginate(
 }
 
 var (
+	// IntegrationOrderFieldName orders Integration by name.
+	IntegrationOrderFieldName = &IntegrationOrderField{
+		Value: func(i *Integration) (ent.Value, error) {
+			return i.Name, nil
+		},
+		column: integration.FieldName,
+		toTerm: integration.ByName,
+		toCursor: func(i *Integration) Cursor {
+			return Cursor{
+				ID:    i.ID,
+				Value: i.Name,
+			}
+		},
+	}
 	// IntegrationOrderFieldKind orders Integration by kind.
 	IntegrationOrderFieldKind = &IntegrationOrderField{
 		Value: func(i *Integration) (ent.Value, error) {
@@ -870,6 +883,8 @@ var (
 func (f IntegrationOrderField) String() string {
 	var str string
 	switch f.column {
+	case IntegrationOrderFieldName.column:
+		str = "name"
 	case IntegrationOrderFieldKind.column:
 		str = "kind"
 	}
@@ -888,6 +903,8 @@ func (f *IntegrationOrderField) UnmarshalGQL(v interface{}) error {
 		return fmt.Errorf("IntegrationOrderField %T must be a string", v)
 	}
 	switch str {
+	case "name":
+		*f = *IntegrationOrderFieldName
 	case "kind":
 		*f = *IntegrationOrderFieldKind
 	default:
@@ -934,252 +951,6 @@ func (i *Integration) ToEdge(order *IntegrationOrder) *IntegrationEdge {
 	return &IntegrationEdge{
 		Node:   i,
 		Cursor: order.Field.toCursor(i),
-	}
-}
-
-// MembershipEdge is the edge representation of Membership.
-type MembershipEdge struct {
-	Node   *Membership `json:"node"`
-	Cursor Cursor      `json:"cursor"`
-}
-
-// MembershipConnection is the connection containing edges to Membership.
-type MembershipConnection struct {
-	Edges      []*MembershipEdge `json:"edges"`
-	PageInfo   PageInfo          `json:"pageInfo"`
-	TotalCount int               `json:"totalCount"`
-}
-
-func (c *MembershipConnection) build(nodes []*Membership, pager *membershipPager, after *Cursor, first *int, before *Cursor, last *int) {
-	c.PageInfo.HasNextPage = before != nil
-	c.PageInfo.HasPreviousPage = after != nil
-	if first != nil && *first+1 == len(nodes) {
-		c.PageInfo.HasNextPage = true
-		nodes = nodes[:len(nodes)-1]
-	} else if last != nil && *last+1 == len(nodes) {
-		c.PageInfo.HasPreviousPage = true
-		nodes = nodes[:len(nodes)-1]
-	}
-	var nodeAt func(int) *Membership
-	if last != nil {
-		n := len(nodes) - 1
-		nodeAt = func(i int) *Membership {
-			return nodes[n-i]
-		}
-	} else {
-		nodeAt = func(i int) *Membership {
-			return nodes[i]
-		}
-	}
-	c.Edges = make([]*MembershipEdge, len(nodes))
-	for i := range nodes {
-		node := nodeAt(i)
-		c.Edges[i] = &MembershipEdge{
-			Node:   node,
-			Cursor: pager.toCursor(node),
-		}
-	}
-	if l := len(c.Edges); l > 0 {
-		c.PageInfo.StartCursor = &c.Edges[0].Cursor
-		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
-	}
-	if c.TotalCount == 0 {
-		c.TotalCount = len(nodes)
-	}
-}
-
-// MembershipPaginateOption enables pagination customization.
-type MembershipPaginateOption func(*membershipPager) error
-
-// WithMembershipOrder configures pagination ordering.
-func WithMembershipOrder(order *MembershipOrder) MembershipPaginateOption {
-	if order == nil {
-		order = DefaultMembershipOrder
-	}
-	o := *order
-	return func(pager *membershipPager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
-		}
-		if o.Field == nil {
-			o.Field = DefaultMembershipOrder.Field
-		}
-		pager.order = &o
-		return nil
-	}
-}
-
-// WithMembershipFilter configures pagination filter.
-func WithMembershipFilter(filter func(*MembershipQuery) (*MembershipQuery, error)) MembershipPaginateOption {
-	return func(pager *membershipPager) error {
-		if filter == nil {
-			return errors.New("MembershipQuery filter cannot be nil")
-		}
-		pager.filter = filter
-		return nil
-	}
-}
-
-type membershipPager struct {
-	reverse bool
-	order   *MembershipOrder
-	filter  func(*MembershipQuery) (*MembershipQuery, error)
-}
-
-func newMembershipPager(opts []MembershipPaginateOption, reverse bool) (*membershipPager, error) {
-	pager := &membershipPager{reverse: reverse}
-	for _, opt := range opts {
-		if err := opt(pager); err != nil {
-			return nil, err
-		}
-	}
-	if pager.order == nil {
-		pager.order = DefaultMembershipOrder
-	}
-	return pager, nil
-}
-
-func (p *membershipPager) applyFilter(query *MembershipQuery) (*MembershipQuery, error) {
-	if p.filter != nil {
-		return p.filter(query)
-	}
-	return query, nil
-}
-
-func (p *membershipPager) toCursor(m *Membership) Cursor {
-	return p.order.Field.toCursor(m)
-}
-
-func (p *membershipPager) applyCursors(query *MembershipQuery, after, before *Cursor) (*MembershipQuery, error) {
-	direction := p.order.Direction
-	if p.reverse {
-		direction = direction.Reverse()
-	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultMembershipOrder.Field.column, p.order.Field.column, direction) {
-		query = query.Where(predicate)
-	}
-	return query, nil
-}
-
-func (p *membershipPager) applyOrder(query *MembershipQuery) *MembershipQuery {
-	direction := p.order.Direction
-	if p.reverse {
-		direction = direction.Reverse()
-	}
-	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultMembershipOrder.Field {
-		query = query.Order(DefaultMembershipOrder.Field.toTerm(direction.OrderTermOption()))
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(p.order.Field.column)
-	}
-	return query
-}
-
-func (p *membershipPager) orderExpr(query *MembershipQuery) sql.Querier {
-	direction := p.order.Direction
-	if p.reverse {
-		direction = direction.Reverse()
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(p.order.Field.column)
-	}
-	return sql.ExprFunc(func(b *sql.Builder) {
-		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultMembershipOrder.Field {
-			b.Comma().Ident(DefaultMembershipOrder.Field.column).Pad().WriteString(string(direction))
-		}
-	})
-}
-
-// Paginate executes the query and returns a relay based cursor connection to Membership.
-func (m *MembershipQuery) Paginate(
-	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...MembershipPaginateOption,
-) (*MembershipConnection, error) {
-	if err := validateFirstLast(first, last); err != nil {
-		return nil, err
-	}
-	pager, err := newMembershipPager(opts, last != nil)
-	if err != nil {
-		return nil, err
-	}
-	if m, err = pager.applyFilter(m); err != nil {
-		return nil, err
-	}
-	conn := &MembershipConnection{Edges: []*MembershipEdge{}}
-	ignoredEdges := !hasCollectedField(ctx, edgesField)
-	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
-		hasPagination := after != nil || first != nil || before != nil || last != nil
-		if hasPagination || ignoredEdges {
-			if conn.TotalCount, err = m.Clone().Count(ctx); err != nil {
-				return nil, err
-			}
-			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
-			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
-		}
-	}
-	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
-		return conn, nil
-	}
-	if m, err = pager.applyCursors(m, after, before); err != nil {
-		return nil, err
-	}
-	if limit := paginateLimit(first, last); limit != 0 {
-		m.Limit(limit)
-	}
-	if field := collectedField(ctx, edgesField, nodeField); field != nil {
-		if err := m.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
-			return nil, err
-		}
-	}
-	m = pager.applyOrder(m)
-	nodes, err := m.All(ctx)
-	if err != nil {
-		return nil, err
-	}
-	conn.build(nodes, pager, after, first, before, last)
-	return conn, nil
-}
-
-// MembershipOrderField defines the ordering field of Membership.
-type MembershipOrderField struct {
-	// Value extracts the ordering value from the given Membership.
-	Value    func(*Membership) (ent.Value, error)
-	column   string // field or computed.
-	toTerm   func(...sql.OrderTermOption) membership.OrderOption
-	toCursor func(*Membership) Cursor
-}
-
-// MembershipOrder defines the ordering of Membership.
-type MembershipOrder struct {
-	Direction OrderDirection        `json:"direction"`
-	Field     *MembershipOrderField `json:"field"`
-}
-
-// DefaultMembershipOrder is the default ordering of Membership.
-var DefaultMembershipOrder = &MembershipOrder{
-	Direction: entgql.OrderDirectionAsc,
-	Field: &MembershipOrderField{
-		Value: func(m *Membership) (ent.Value, error) {
-			return m.ID, nil
-		},
-		column: membership.FieldID,
-		toTerm: membership.ByID,
-		toCursor: func(m *Membership) Cursor {
-			return Cursor{ID: m.ID}
-		},
-	},
-}
-
-// ToEdge converts Membership into MembershipEdge.
-func (m *Membership) ToEdge(order *MembershipOrder) *MembershipEdge {
-	if order == nil {
-		order = DefaultMembershipOrder
-	}
-	return &MembershipEdge{
-		Node:   m,
-		Cursor: order.Field.toCursor(m),
 	}
 }
 

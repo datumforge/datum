@@ -214,72 +214,6 @@ func decodeDeleteIntegrationParams(args [1]string, argsEscaped bool, r *http.Req
 	return params, nil
 }
 
-// DeleteMembershipParams is parameters of deleteMembership operation.
-type DeleteMembershipParams struct {
-	// ID of the Membership.
-	ID uuid.UUID
-}
-
-func unpackDeleteMembershipParams(packed middleware.Parameters) (params DeleteMembershipParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	return params
-}
-
-func decodeDeleteMembershipParams(args [1]string, argsEscaped bool, r *http.Request) (params DeleteMembershipParams, _ error) {
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
 // DeleteOrganizationParams is parameters of deleteOrganization operation.
 type DeleteOrganizationParams struct {
 	// ID of the Organization.
@@ -629,177 +563,6 @@ func decodeListGroupParams(args [0]string, argsEscaped bool, r *http.Request) (p
 				}
 				return nil
 			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "itemsPerPage",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ListGroupMembershipsParams is parameters of listGroupMemberships operation.
-type ListGroupMembershipsParams struct {
-	// ID of the Group.
-	ID uuid.UUID
-	// What page to render.
-	Page OptInt
-	// Item count to render per page.
-	ItemsPerPage OptInt
-}
-
-func unpackListGroupMembershipsParams(packed middleware.Parameters) (params ListGroupMembershipsParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	{
-		key := middleware.ParameterKey{
-			Name: "page",
-			In:   "query",
-		}
-		if v, ok := packed[key]; ok {
-			params.Page = v.(OptInt)
-		}
-	}
-	{
-		key := middleware.ParameterKey{
-			Name: "itemsPerPage",
-			In:   "query",
-		}
-		if v, ok := packed[key]; ok {
-			params.ItemsPerPage = v.(OptInt)
-		}
-	}
-	return params
-}
-
-func decodeListGroupMembershipsParams(args [1]string, argsEscaped bool, r *http.Request) (params ListGroupMembershipsParams, _ error) {
-	q := uri.NewQueryDecoder(r.URL.Query())
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	// Decode query: page.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "page",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotPageVal int
-				if err := func() error {
-					val, err := d.DecodeValue()
-					if err != nil {
-						return err
-					}
-
-					c, err := conv.ToInt(val)
-					if err != nil {
-						return err
-					}
-
-					paramsDotPageVal = c
-					return nil
-				}(); err != nil {
-					return err
-				}
-				params.Page.SetTo(paramsDotPageVal)
-				return nil
-			}); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "page",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	// Decode query: itemsPerPage.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "itemsPerPage",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotItemsPerPageVal int
-				if err := func() error {
-					val, err := d.DecodeValue()
-					if err != nil {
-						return err
-					}
-
-					c, err := conv.ToInt(val)
-					if err != nil {
-						return err
-					}
-
-					paramsDotItemsPerPageVal = c
-					return nil
-				}(); err != nil {
-					return err
-				}
-				params.ItemsPerPage.SetTo(paramsDotItemsPerPageVal)
-				return nil
-			}); err != nil {
 				return err
 			}
 		}
@@ -1315,171 +1078,6 @@ func decodeListIntegrationParams(args [0]string, argsEscaped bool, r *http.Reque
 	return params, nil
 }
 
-// ListMembershipParams is parameters of listMembership operation.
-type ListMembershipParams struct {
-	// What page to render.
-	Page OptInt
-	// Item count to render per page.
-	ItemsPerPage OptInt
-}
-
-func unpackListMembershipParams(packed middleware.Parameters) (params ListMembershipParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "page",
-			In:   "query",
-		}
-		if v, ok := packed[key]; ok {
-			params.Page = v.(OptInt)
-		}
-	}
-	{
-		key := middleware.ParameterKey{
-			Name: "itemsPerPage",
-			In:   "query",
-		}
-		if v, ok := packed[key]; ok {
-			params.ItemsPerPage = v.(OptInt)
-		}
-	}
-	return params
-}
-
-func decodeListMembershipParams(args [0]string, argsEscaped bool, r *http.Request) (params ListMembershipParams, _ error) {
-	q := uri.NewQueryDecoder(r.URL.Query())
-	// Decode query: page.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "page",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotPageVal int
-				if err := func() error {
-					val, err := d.DecodeValue()
-					if err != nil {
-						return err
-					}
-
-					c, err := conv.ToInt(val)
-					if err != nil {
-						return err
-					}
-
-					paramsDotPageVal = c
-					return nil
-				}(); err != nil {
-					return err
-				}
-				params.Page.SetTo(paramsDotPageVal)
-				return nil
-			}); err != nil {
-				return err
-			}
-			if err := func() error {
-				if value, ok := params.Page.Get(); ok {
-					if err := func() error {
-						if err := (validate.Int{
-							MinSet:        true,
-							Min:           1,
-							MaxSet:        false,
-							Max:           0,
-							MinExclusive:  false,
-							MaxExclusive:  false,
-							MultipleOfSet: false,
-							MultipleOf:    0,
-						}).Validate(int64(value)); err != nil {
-							return errors.Wrap(err, "int")
-						}
-						return nil
-					}(); err != nil {
-						return err
-					}
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "page",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	// Decode query: itemsPerPage.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "itemsPerPage",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotItemsPerPageVal int
-				if err := func() error {
-					val, err := d.DecodeValue()
-					if err != nil {
-						return err
-					}
-
-					c, err := conv.ToInt(val)
-					if err != nil {
-						return err
-					}
-
-					paramsDotItemsPerPageVal = c
-					return nil
-				}(); err != nil {
-					return err
-				}
-				params.ItemsPerPage.SetTo(paramsDotItemsPerPageVal)
-				return nil
-			}); err != nil {
-				return err
-			}
-			if err := func() error {
-				if value, ok := params.ItemsPerPage.Get(); ok {
-					if err := func() error {
-						if err := (validate.Int{
-							MinSet:        true,
-							Min:           1,
-							MaxSet:        true,
-							Max:           255,
-							MinExclusive:  false,
-							MaxExclusive:  false,
-							MultipleOfSet: false,
-							MultipleOf:    0,
-						}).Validate(int64(value)); err != nil {
-							return errors.Wrap(err, "int")
-						}
-						return nil
-					}(); err != nil {
-						return err
-					}
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "itemsPerPage",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
 // ListOrganizationParams is parameters of listOrganization operation.
 type ListOrganizationParams struct {
 	// What page to render.
@@ -1631,6 +1229,348 @@ func decodeListOrganizationParams(args [0]string, argsEscaped bool, r *http.Requ
 				}
 				return nil
 			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "itemsPerPage",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// ListOrganizationChildrenParams is parameters of listOrganizationChildren operation.
+type ListOrganizationChildrenParams struct {
+	// ID of the Organization.
+	ID uuid.UUID
+	// What page to render.
+	Page OptInt
+	// Item count to render per page.
+	ItemsPerPage OptInt
+}
+
+func unpackListOrganizationChildrenParams(packed middleware.Parameters) (params ListOrganizationChildrenParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "page",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.Page = v.(OptInt)
+		}
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "itemsPerPage",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.ItemsPerPage = v.(OptInt)
+		}
+	}
+	return params
+}
+
+func decodeListOrganizationChildrenParams(args [1]string, argsEscaped bool, r *http.Request) (params ListOrganizationChildrenParams, _ error) {
+	q := uri.NewQueryDecoder(r.URL.Query())
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode query: page.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotPageVal int
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToInt(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotPageVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.Page.SetTo(paramsDotPageVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "page",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: itemsPerPage.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotItemsPerPageVal int
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToInt(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotItemsPerPageVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.ItemsPerPage.SetTo(paramsDotItemsPerPageVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "itemsPerPage",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// ListOrganizationGroupsParams is parameters of listOrganizationGroups operation.
+type ListOrganizationGroupsParams struct {
+	// ID of the Organization.
+	ID uuid.UUID
+	// What page to render.
+	Page OptInt
+	// Item count to render per page.
+	ItemsPerPage OptInt
+}
+
+func unpackListOrganizationGroupsParams(packed middleware.Parameters) (params ListOrganizationGroupsParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "page",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.Page = v.(OptInt)
+		}
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "itemsPerPage",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.ItemsPerPage = v.(OptInt)
+		}
+	}
+	return params
+}
+
+func decodeListOrganizationGroupsParams(args [1]string, argsEscaped bool, r *http.Request) (params ListOrganizationGroupsParams, _ error) {
+	q := uri.NewQueryDecoder(r.URL.Query())
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	// Decode query: page.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotPageVal int
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToInt(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotPageVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.Page.SetTo(paramsDotPageVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "page",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: itemsPerPage.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotItemsPerPageVal int
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToInt(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotItemsPerPageVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.ItemsPerPage.SetTo(paramsDotItemsPerPageVal)
+				return nil
+			}); err != nil {
 				return err
 			}
 		}
@@ -1816,8 +1756,8 @@ func decodeListOrganizationIntegrationsParams(args [1]string, argsEscaped bool, 
 	return params, nil
 }
 
-// ListOrganizationMembershipsParams is parameters of listOrganizationMemberships operation.
-type ListOrganizationMembershipsParams struct {
+// ListOrganizationUsersParams is parameters of listOrganizationUsers operation.
+type ListOrganizationUsersParams struct {
 	// ID of the Organization.
 	ID uuid.UUID
 	// What page to render.
@@ -1826,7 +1766,7 @@ type ListOrganizationMembershipsParams struct {
 	ItemsPerPage OptInt
 }
 
-func unpackListOrganizationMembershipsParams(packed middleware.Parameters) (params ListOrganizationMembershipsParams) {
+func unpackListOrganizationUsersParams(packed middleware.Parameters) (params ListOrganizationUsersParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -1855,7 +1795,7 @@ func unpackListOrganizationMembershipsParams(packed middleware.Parameters) (para
 	return params
 }
 
-func decodeListOrganizationMembershipsParams(args [1]string, argsEscaped bool, r *http.Request) (params ListOrganizationMembershipsParams, _ error) {
+func decodeListOrganizationUsersParams(args [1]string, argsEscaped bool, r *http.Request) (params ListOrganizationUsersParams, _ error) {
 	q := uri.NewQueryDecoder(r.URL.Query())
 	// Decode path: id.
 	if err := func() error {
@@ -2488,8 +2428,8 @@ func decodeListUserGroupsParams(args [1]string, argsEscaped bool, r *http.Reques
 	return params, nil
 }
 
-// ListUserMembershipsParams is parameters of listUserMemberships operation.
-type ListUserMembershipsParams struct {
+// ListUserOrganizationsParams is parameters of listUserOrganizations operation.
+type ListUserOrganizationsParams struct {
 	// ID of the User.
 	ID uuid.UUID
 	// What page to render.
@@ -2498,7 +2438,7 @@ type ListUserMembershipsParams struct {
 	ItemsPerPage OptInt
 }
 
-func unpackListUserMembershipsParams(packed middleware.Parameters) (params ListUserMembershipsParams) {
+func unpackListUserOrganizationsParams(packed middleware.Parameters) (params ListUserOrganizationsParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -2527,7 +2467,7 @@ func unpackListUserMembershipsParams(packed middleware.Parameters) (params ListU
 	return params
 }
 
-func decodeListUserMembershipsParams(args [1]string, argsEscaped bool, r *http.Request) (params ListUserMembershipsParams, _ error) {
+func decodeListUserOrganizationsParams(args [1]string, argsEscaped bool, r *http.Request) (params ListUserOrganizationsParams, _ error) {
 	q := uri.NewQueryDecoder(r.URL.Query())
 	// Decode path: id.
 	if err := func() error {
@@ -2896,6 +2836,72 @@ func decodeReadGroupParams(args [1]string, argsEscaped bool, r *http.Request) (p
 	return params, nil
 }
 
+// ReadGroupOwnerParams is parameters of readGroupOwner operation.
+type ReadGroupOwnerParams struct {
+	// ID of the Group.
+	ID uuid.UUID
+}
+
+func unpackReadGroupOwnerParams(packed middleware.Parameters) (params ReadGroupOwnerParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	return params
+}
+
+func decodeReadGroupOwnerParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadGroupOwnerParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // ReadGroupSettingParams is parameters of readGroupSetting operation.
 type ReadGroupSettingParams struct {
 	// ID of the Group.
@@ -3160,13 +3166,13 @@ func decodeReadIntegrationParams(args [1]string, argsEscaped bool, r *http.Reque
 	return params, nil
 }
 
-// ReadIntegrationOrganizationParams is parameters of readIntegrationOrganization operation.
-type ReadIntegrationOrganizationParams struct {
+// ReadIntegrationOwnerParams is parameters of readIntegrationOwner operation.
+type ReadIntegrationOwnerParams struct {
 	// ID of the Integration.
 	ID uuid.UUID
 }
 
-func unpackReadIntegrationOrganizationParams(packed middleware.Parameters) (params ReadIntegrationOrganizationParams) {
+func unpackReadIntegrationOwnerParams(packed middleware.Parameters) (params ReadIntegrationOwnerParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "id",
@@ -3177,271 +3183,7 @@ func unpackReadIntegrationOrganizationParams(packed middleware.Parameters) (para
 	return params
 }
 
-func decodeReadIntegrationOrganizationParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadIntegrationOrganizationParams, _ error) {
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ReadMembershipParams is parameters of readMembership operation.
-type ReadMembershipParams struct {
-	// ID of the Membership.
-	ID uuid.UUID
-}
-
-func unpackReadMembershipParams(packed middleware.Parameters) (params ReadMembershipParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	return params
-}
-
-func decodeReadMembershipParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadMembershipParams, _ error) {
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ReadMembershipGroupParams is parameters of readMembershipGroup operation.
-type ReadMembershipGroupParams struct {
-	// ID of the Membership.
-	ID uuid.UUID
-}
-
-func unpackReadMembershipGroupParams(packed middleware.Parameters) (params ReadMembershipGroupParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	return params
-}
-
-func decodeReadMembershipGroupParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadMembershipGroupParams, _ error) {
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ReadMembershipOrganizationParams is parameters of readMembershipOrganization operation.
-type ReadMembershipOrganizationParams struct {
-	// ID of the Membership.
-	ID uuid.UUID
-}
-
-func unpackReadMembershipOrganizationParams(packed middleware.Parameters) (params ReadMembershipOrganizationParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	return params
-}
-
-func decodeReadMembershipOrganizationParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadMembershipOrganizationParams, _ error) {
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ReadMembershipUserParams is parameters of readMembershipUser operation.
-type ReadMembershipUserParams struct {
-	// ID of the Membership.
-	ID uuid.UUID
-}
-
-func unpackReadMembershipUserParams(packed middleware.Parameters) (params ReadMembershipUserParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	return params
-}
-
-func decodeReadMembershipUserParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadMembershipUserParams, _ error) {
+func decodeReadIntegrationOwnerParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadIntegrationOwnerParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -3508,6 +3250,72 @@ func unpackReadOrganizationParams(packed middleware.Parameters) (params ReadOrga
 }
 
 func decodeReadOrganizationParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadOrganizationParams, _ error) {
+	// Decode path: id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToUUID(val)
+				if err != nil {
+					return err
+				}
+
+				params.ID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// ReadOrganizationParentParams is parameters of readOrganizationParent operation.
+type ReadOrganizationParentParams struct {
+	// ID of the Organization.
+	ID uuid.UUID
+}
+
+func unpackReadOrganizationParentParams(packed middleware.Parameters) (params ReadOrganizationParentParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "id",
+			In:   "path",
+		}
+		params.ID = packed[key].(uuid.UUID)
+	}
+	return params
+}
+
+func decodeReadOrganizationParentParams(args [1]string, argsEscaped bool, r *http.Request) (params ReadOrganizationParentParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]
@@ -3904,72 +3712,6 @@ func unpackUpdateIntegrationParams(packed middleware.Parameters) (params UpdateI
 }
 
 func decodeUpdateIntegrationParams(args [1]string, argsEscaped bool, r *http.Request) (params UpdateIntegrationParams, _ error) {
-	// Decode path: id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToUUID(val)
-				if err != nil {
-					return err
-				}
-
-				params.ID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// UpdateMembershipParams is parameters of updateMembership operation.
-type UpdateMembershipParams struct {
-	// ID of the Membership.
-	ID uuid.UUID
-}
-
-func unpackUpdateMembershipParams(packed middleware.Parameters) (params UpdateMembershipParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "id",
-			In:   "path",
-		}
-		params.ID = packed[key].(uuid.UUID)
-	}
-	return params
-}
-
-func decodeUpdateMembershipParams(args [1]string, argsEscaped bool, r *http.Request) (params UpdateMembershipParams, _ error) {
 	// Decode path: id.
 	if err := func() error {
 		param := args[0]

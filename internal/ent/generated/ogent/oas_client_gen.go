@@ -41,12 +41,6 @@ type Invoker interface {
 	//
 	// POST /integrations
 	CreateIntegration(ctx context.Context, request *CreateIntegrationReq) (CreateIntegrationRes, error)
-	// CreateMembership invokes createMembership operation.
-	//
-	// Creates a new Membership and persists it to storage.
-	//
-	// POST /memberships
-	CreateMembership(ctx context.Context, request *CreateMembershipReq) (CreateMembershipRes, error)
 	// CreateOrganization invokes createOrganization operation.
 	//
 	// Creates a new Organization and persists it to storage.
@@ -83,12 +77,6 @@ type Invoker interface {
 	//
 	// DELETE /integrations/{id}
 	DeleteIntegration(ctx context.Context, params DeleteIntegrationParams) (DeleteIntegrationRes, error)
-	// DeleteMembership invokes deleteMembership operation.
-	//
-	// Deletes the Membership with the requested ID.
-	//
-	// DELETE /memberships/{id}
-	DeleteMembership(ctx context.Context, params DeleteMembershipParams) (DeleteMembershipRes, error)
 	// DeleteOrganization invokes deleteOrganization operation.
 	//
 	// Deletes the Organization with the requested ID.
@@ -113,12 +101,6 @@ type Invoker interface {
 	//
 	// GET /groups
 	ListGroup(ctx context.Context, params ListGroupParams) (ListGroupRes, error)
-	// ListGroupMemberships invokes listGroupMemberships operation.
-	//
-	// List attached Memberships.
-	//
-	// GET /groups/{id}/memberships
-	ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (ListGroupMembershipsRes, error)
 	// ListGroupSettings invokes listGroupSettings operation.
 	//
 	// List GroupSettings.
@@ -137,30 +119,36 @@ type Invoker interface {
 	//
 	// GET /integrations
 	ListIntegration(ctx context.Context, params ListIntegrationParams) (ListIntegrationRes, error)
-	// ListMembership invokes listMembership operation.
-	//
-	// List Memberships.
-	//
-	// GET /memberships
-	ListMembership(ctx context.Context, params ListMembershipParams) (ListMembershipRes, error)
 	// ListOrganization invokes listOrganization operation.
 	//
 	// List Organizations.
 	//
 	// GET /organizations
 	ListOrganization(ctx context.Context, params ListOrganizationParams) (ListOrganizationRes, error)
+	// ListOrganizationChildren invokes listOrganizationChildren operation.
+	//
+	// List attached Childrens.
+	//
+	// GET /organizations/{id}/children
+	ListOrganizationChildren(ctx context.Context, params ListOrganizationChildrenParams) (ListOrganizationChildrenRes, error)
+	// ListOrganizationGroups invokes listOrganizationGroups operation.
+	//
+	// List attached Groups.
+	//
+	// GET /organizations/{id}/groups
+	ListOrganizationGroups(ctx context.Context, params ListOrganizationGroupsParams) (ListOrganizationGroupsRes, error)
 	// ListOrganizationIntegrations invokes listOrganizationIntegrations operation.
 	//
 	// List attached Integrations.
 	//
 	// GET /organizations/{id}/integrations
 	ListOrganizationIntegrations(ctx context.Context, params ListOrganizationIntegrationsParams) (ListOrganizationIntegrationsRes, error)
-	// ListOrganizationMemberships invokes listOrganizationMemberships operation.
+	// ListOrganizationUsers invokes listOrganizationUsers operation.
 	//
-	// List attached Memberships.
+	// List attached Users.
 	//
-	// GET /organizations/{id}/memberships
-	ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (ListOrganizationMembershipsRes, error)
+	// GET /organizations/{id}/users
+	ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (ListOrganizationUsersRes, error)
 	// ListSession invokes listSession operation.
 	//
 	// List Sessions.
@@ -179,12 +167,12 @@ type Invoker interface {
 	//
 	// GET /users/{id}/groups
 	ListUserGroups(ctx context.Context, params ListUserGroupsParams) (ListUserGroupsRes, error)
-	// ListUserMemberships invokes listUserMemberships operation.
+	// ListUserOrganizations invokes listUserOrganizations operation.
 	//
-	// List attached Memberships.
+	// List attached Organizations.
 	//
-	// GET /users/{id}/memberships
-	ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (ListUserMembershipsRes, error)
+	// GET /users/{id}/organizations
+	ListUserOrganizations(ctx context.Context, params ListUserOrganizationsParams) (ListUserOrganizationsRes, error)
 	// ListUserSessions invokes listUserSessions operation.
 	//
 	// List attached Sessions.
@@ -197,6 +185,12 @@ type Invoker interface {
 	//
 	// GET /groups/{id}
 	ReadGroup(ctx context.Context, params ReadGroupParams) (ReadGroupRes, error)
+	// ReadGroupOwner invokes readGroupOwner operation.
+	//
+	// Find the attached Organization of the Group with the given ID.
+	//
+	// GET /groups/{id}/owner
+	ReadGroupOwner(ctx context.Context, params ReadGroupOwnerParams) (ReadGroupOwnerRes, error)
 	// ReadGroupSetting invokes readGroupSetting operation.
 	//
 	// Find the attached GroupSettings of the Group with the given ID.
@@ -221,42 +215,24 @@ type Invoker interface {
 	//
 	// GET /integrations/{id}
 	ReadIntegration(ctx context.Context, params ReadIntegrationParams) (ReadIntegrationRes, error)
-	// ReadIntegrationOrganization invokes readIntegrationOrganization operation.
+	// ReadIntegrationOwner invokes readIntegrationOwner operation.
 	//
 	// Find the attached Organization of the Integration with the given ID.
 	//
-	// GET /integrations/{id}/organization
-	ReadIntegrationOrganization(ctx context.Context, params ReadIntegrationOrganizationParams) (ReadIntegrationOrganizationRes, error)
-	// ReadMembership invokes readMembership operation.
-	//
-	// Finds the Membership with the requested ID and returns it.
-	//
-	// GET /memberships/{id}
-	ReadMembership(ctx context.Context, params ReadMembershipParams) (ReadMembershipRes, error)
-	// ReadMembershipGroup invokes readMembershipGroup operation.
-	//
-	// Find the attached Group of the Membership with the given ID.
-	//
-	// GET /memberships/{id}/group
-	ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (ReadMembershipGroupRes, error)
-	// ReadMembershipOrganization invokes readMembershipOrganization operation.
-	//
-	// Find the attached Organization of the Membership with the given ID.
-	//
-	// GET /memberships/{id}/organization
-	ReadMembershipOrganization(ctx context.Context, params ReadMembershipOrganizationParams) (ReadMembershipOrganizationRes, error)
-	// ReadMembershipUser invokes readMembershipUser operation.
-	//
-	// Find the attached User of the Membership with the given ID.
-	//
-	// GET /memberships/{id}/user
-	ReadMembershipUser(ctx context.Context, params ReadMembershipUserParams) (ReadMembershipUserRes, error)
+	// GET /integrations/{id}/owner
+	ReadIntegrationOwner(ctx context.Context, params ReadIntegrationOwnerParams) (ReadIntegrationOwnerRes, error)
 	// ReadOrganization invokes readOrganization operation.
 	//
 	// Finds the Organization with the requested ID and returns it.
 	//
 	// GET /organizations/{id}
 	ReadOrganization(ctx context.Context, params ReadOrganizationParams) (ReadOrganizationRes, error)
+	// ReadOrganizationParent invokes readOrganizationParent operation.
+	//
+	// Find the attached Organization of the Organization with the given ID.
+	//
+	// GET /organizations/{id}/parent
+	ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (ReadOrganizationParentRes, error)
 	// ReadSession invokes readSession operation.
 	//
 	// Finds the Session with the requested ID and returns it.
@@ -293,12 +269,6 @@ type Invoker interface {
 	//
 	// PATCH /integrations/{id}
 	UpdateIntegration(ctx context.Context, request *UpdateIntegrationReq, params UpdateIntegrationParams) (UpdateIntegrationRes, error)
-	// UpdateMembership invokes updateMembership operation.
-	//
-	// Updates a Membership and persists changes to storage.
-	//
-	// PATCH /memberships/{id}
-	UpdateMembership(ctx context.Context, request *UpdateMembershipReq, params UpdateMembershipParams) (UpdateMembershipRes, error)
 	// UpdateOrganization invokes updateOrganization operation.
 	//
 	// Updates a Organization and persists changes to storage.
@@ -594,81 +564,6 @@ func (c *Client) sendCreateIntegration(ctx context.Context, request *CreateInteg
 
 	stage = "DecodeResponse"
 	result, err := decodeCreateIntegrationResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// CreateMembership invokes createMembership operation.
-//
-// Creates a new Membership and persists it to storage.
-//
-// POST /memberships
-func (c *Client) CreateMembership(ctx context.Context, request *CreateMembershipReq) (CreateMembershipRes, error) {
-	res, err := c.sendCreateMembership(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendCreateMembership(ctx context.Context, request *CreateMembershipReq) (res CreateMembershipRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("createMembership"),
-		semconv.HTTPMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/memberships"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "CreateMembership",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/memberships"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeCreateMembershipRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeCreateMembershipResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1180,96 +1075,6 @@ func (c *Client) sendDeleteIntegration(ctx context.Context, params DeleteIntegra
 	return result, nil
 }
 
-// DeleteMembership invokes deleteMembership operation.
-//
-// Deletes the Membership with the requested ID.
-//
-// DELETE /memberships/{id}
-func (c *Client) DeleteMembership(ctx context.Context, params DeleteMembershipParams) (DeleteMembershipRes, error) {
-	res, err := c.sendDeleteMembership(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendDeleteMembership(ctx context.Context, params DeleteMembershipParams) (res DeleteMembershipRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteMembership"),
-		semconv.HTTPMethodKey.String("DELETE"),
-		semconv.HTTPRouteKey.String("/memberships/{id}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "DeleteMembership",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/memberships/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "DELETE", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeDeleteMembershipResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // DeleteOrganization invokes deleteOrganization operation.
 //
 // Deletes the Organization with the requested ID.
@@ -1650,135 +1455,6 @@ func (c *Client) sendListGroup(ctx context.Context, params ListGroupParams) (res
 	return result, nil
 }
 
-// ListGroupMemberships invokes listGroupMemberships operation.
-//
-// List attached Memberships.
-//
-// GET /groups/{id}/memberships
-func (c *Client) ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (ListGroupMembershipsRes, error) {
-	res, err := c.sendListGroupMemberships(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (res ListGroupMembershipsRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listGroupMemberships"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/groups/{id}/memberships"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ListGroupMemberships",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/groups/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/memberships"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeQueryParams"
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "page" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "page",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Page.Get(); ok {
-				return e.EncodeValue(conv.IntToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "itemsPerPage" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "itemsPerPage",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.ItemsPerPage.Get(); ok {
-				return e.EncodeValue(conv.IntToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeListGroupMembershipsResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // ListGroupSettings invokes listGroupSettings operation.
 //
 // List GroupSettings.
@@ -2128,116 +1804,6 @@ func (c *Client) sendListIntegration(ctx context.Context, params ListIntegration
 	return result, nil
 }
 
-// ListMembership invokes listMembership operation.
-//
-// List Memberships.
-//
-// GET /memberships
-func (c *Client) ListMembership(ctx context.Context, params ListMembershipParams) (ListMembershipRes, error) {
-	res, err := c.sendListMembership(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendListMembership(ctx context.Context, params ListMembershipParams) (res ListMembershipRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listMembership"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ListMembership",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/memberships"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeQueryParams"
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "page" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "page",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Page.Get(); ok {
-				return e.EncodeValue(conv.IntToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "itemsPerPage" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "itemsPerPage",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.ItemsPerPage.Get(); ok {
-				return e.EncodeValue(conv.IntToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeListMembershipResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
 // ListOrganization invokes listOrganization operation.
 //
 // List Organizations.
@@ -2341,6 +1907,264 @@ func (c *Client) sendListOrganization(ctx context.Context, params ListOrganizati
 
 	stage = "DecodeResponse"
 	result, err := decodeListOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ListOrganizationChildren invokes listOrganizationChildren operation.
+//
+// List attached Childrens.
+//
+// GET /organizations/{id}/children
+func (c *Client) ListOrganizationChildren(ctx context.Context, params ListOrganizationChildrenParams) (ListOrganizationChildrenRes, error) {
+	res, err := c.sendListOrganizationChildren(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendListOrganizationChildren(ctx context.Context, params ListOrganizationChildrenParams) (res ListOrganizationChildrenRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listOrganizationChildren"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/children"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListOrganizationChildren",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/organizations/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/children"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "itemsPerPage" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ItemsPerPage.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeListOrganizationChildrenResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ListOrganizationGroups invokes listOrganizationGroups operation.
+//
+// List attached Groups.
+//
+// GET /organizations/{id}/groups
+func (c *Client) ListOrganizationGroups(ctx context.Context, params ListOrganizationGroupsParams) (ListOrganizationGroupsRes, error) {
+	res, err := c.sendListOrganizationGroups(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendListOrganizationGroups(ctx context.Context, params ListOrganizationGroupsParams) (res ListOrganizationGroupsRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listOrganizationGroups"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/groups"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListOrganizationGroups",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/organizations/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/groups"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "itemsPerPage" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ItemsPerPage.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeListOrganizationGroupsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2477,21 +2301,21 @@ func (c *Client) sendListOrganizationIntegrations(ctx context.Context, params Li
 	return result, nil
 }
 
-// ListOrganizationMemberships invokes listOrganizationMemberships operation.
+// ListOrganizationUsers invokes listOrganizationUsers operation.
 //
-// List attached Memberships.
+// List attached Users.
 //
-// GET /organizations/{id}/memberships
-func (c *Client) ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (ListOrganizationMembershipsRes, error) {
-	res, err := c.sendListOrganizationMemberships(ctx, params)
+// GET /organizations/{id}/users
+func (c *Client) ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (ListOrganizationUsersRes, error) {
+	res, err := c.sendListOrganizationUsers(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (res ListOrganizationMembershipsRes, err error) {
+func (c *Client) sendListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (res ListOrganizationUsersRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listOrganizationMemberships"),
+		otelogen.OperationID("listOrganizationUsers"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/organizations/{id}/memberships"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/users"),
 	}
 
 	// Run stopwatch.
@@ -2506,7 +2330,7 @@ func (c *Client) sendListOrganizationMemberships(ctx context.Context, params Lis
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ListOrganizationMemberships",
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListOrganizationUsers",
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -2543,7 +2367,7 @@ func (c *Client) sendListOrganizationMemberships(ctx context.Context, params Lis
 		}
 		pathParts[1] = encoded
 	}
-	pathParts[2] = "/memberships"
+	pathParts[2] = "/users"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeQueryParams"
@@ -2598,7 +2422,7 @@ func (c *Client) sendListOrganizationMemberships(ctx context.Context, params Lis
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeListOrganizationMembershipsResponse(resp)
+	result, err := decodeListOrganizationUsersResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2955,21 +2779,21 @@ func (c *Client) sendListUserGroups(ctx context.Context, params ListUserGroupsPa
 	return result, nil
 }
 
-// ListUserMemberships invokes listUserMemberships operation.
+// ListUserOrganizations invokes listUserOrganizations operation.
 //
-// List attached Memberships.
+// List attached Organizations.
 //
-// GET /users/{id}/memberships
-func (c *Client) ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (ListUserMembershipsRes, error) {
-	res, err := c.sendListUserMemberships(ctx, params)
+// GET /users/{id}/organizations
+func (c *Client) ListUserOrganizations(ctx context.Context, params ListUserOrganizationsParams) (ListUserOrganizationsRes, error) {
+	res, err := c.sendListUserOrganizations(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (res ListUserMembershipsRes, err error) {
+func (c *Client) sendListUserOrganizations(ctx context.Context, params ListUserOrganizationsParams) (res ListUserOrganizationsRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listUserMemberships"),
+		otelogen.OperationID("listUserOrganizations"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/users/{id}/memberships"),
+		semconv.HTTPRouteKey.String("/users/{id}/organizations"),
 	}
 
 	// Run stopwatch.
@@ -2984,7 +2808,7 @@ func (c *Client) sendListUserMemberships(ctx context.Context, params ListUserMem
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ListUserMemberships",
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListUserOrganizations",
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -3021,7 +2845,7 @@ func (c *Client) sendListUserMemberships(ctx context.Context, params ListUserMem
 		}
 		pathParts[1] = encoded
 	}
-	pathParts[2] = "/memberships"
+	pathParts[2] = "/organizations"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeQueryParams"
@@ -3076,7 +2900,7 @@ func (c *Client) sendListUserMemberships(ctx context.Context, params ListUserMem
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeListUserMembershipsResponse(resp)
+	result, err := decodeListUserOrganizationsResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -3296,6 +3120,97 @@ func (c *Client) sendReadGroup(ctx context.Context, params ReadGroupParams) (res
 
 	stage = "DecodeResponse"
 	result, err := decodeReadGroupResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadGroupOwner invokes readGroupOwner operation.
+//
+// Find the attached Organization of the Group with the given ID.
+//
+// GET /groups/{id}/owner
+func (c *Client) ReadGroupOwner(ctx context.Context, params ReadGroupOwnerParams) (ReadGroupOwnerRes, error) {
+	res, err := c.sendReadGroupOwner(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadGroupOwner(ctx context.Context, params ReadGroupOwnerParams) (res ReadGroupOwnerRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readGroupOwner"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/groups/{id}/owner"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadGroupOwner",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/groups/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/owner"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadGroupOwnerResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -3665,21 +3580,21 @@ func (c *Client) sendReadIntegration(ctx context.Context, params ReadIntegration
 	return result, nil
 }
 
-// ReadIntegrationOrganization invokes readIntegrationOrganization operation.
+// ReadIntegrationOwner invokes readIntegrationOwner operation.
 //
 // Find the attached Organization of the Integration with the given ID.
 //
-// GET /integrations/{id}/organization
-func (c *Client) ReadIntegrationOrganization(ctx context.Context, params ReadIntegrationOrganizationParams) (ReadIntegrationOrganizationRes, error) {
-	res, err := c.sendReadIntegrationOrganization(ctx, params)
+// GET /integrations/{id}/owner
+func (c *Client) ReadIntegrationOwner(ctx context.Context, params ReadIntegrationOwnerParams) (ReadIntegrationOwnerRes, error) {
+	res, err := c.sendReadIntegrationOwner(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendReadIntegrationOrganization(ctx context.Context, params ReadIntegrationOrganizationParams) (res ReadIntegrationOrganizationRes, err error) {
+func (c *Client) sendReadIntegrationOwner(ctx context.Context, params ReadIntegrationOwnerParams) (res ReadIntegrationOwnerRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readIntegrationOrganization"),
+		otelogen.OperationID("readIntegrationOwner"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/integrations/{id}/organization"),
+		semconv.HTTPRouteKey.String("/integrations/{id}/owner"),
 	}
 
 	// Run stopwatch.
@@ -3694,7 +3609,7 @@ func (c *Client) sendReadIntegrationOrganization(ctx context.Context, params Rea
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ReadIntegrationOrganization",
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadIntegrationOwner",
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -3731,7 +3646,7 @@ func (c *Client) sendReadIntegrationOrganization(ctx context.Context, params Rea
 		}
 		pathParts[1] = encoded
 	}
-	pathParts[2] = "/organization"
+	pathParts[2] = "/owner"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
@@ -3748,370 +3663,7 @@ func (c *Client) sendReadIntegrationOrganization(ctx context.Context, params Rea
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeReadIntegrationOrganizationResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ReadMembership invokes readMembership operation.
-//
-// Finds the Membership with the requested ID and returns it.
-//
-// GET /memberships/{id}
-func (c *Client) ReadMembership(ctx context.Context, params ReadMembershipParams) (ReadMembershipRes, error) {
-	res, err := c.sendReadMembership(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendReadMembership(ctx context.Context, params ReadMembershipParams) (res ReadMembershipRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembership"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ReadMembership",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/memberships/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeReadMembershipResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ReadMembershipGroup invokes readMembershipGroup operation.
-//
-// Find the attached Group of the Membership with the given ID.
-//
-// GET /memberships/{id}/group
-func (c *Client) ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (ReadMembershipGroupRes, error) {
-	res, err := c.sendReadMembershipGroup(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (res ReadMembershipGroupRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembershipGroup"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}/group"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ReadMembershipGroup",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/memberships/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/group"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeReadMembershipGroupResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ReadMembershipOrganization invokes readMembershipOrganization operation.
-//
-// Find the attached Organization of the Membership with the given ID.
-//
-// GET /memberships/{id}/organization
-func (c *Client) ReadMembershipOrganization(ctx context.Context, params ReadMembershipOrganizationParams) (ReadMembershipOrganizationRes, error) {
-	res, err := c.sendReadMembershipOrganization(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendReadMembershipOrganization(ctx context.Context, params ReadMembershipOrganizationParams) (res ReadMembershipOrganizationRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembershipOrganization"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}/organization"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ReadMembershipOrganization",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/memberships/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/organization"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeReadMembershipOrganizationResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ReadMembershipUser invokes readMembershipUser operation.
-//
-// Find the attached User of the Membership with the given ID.
-//
-// GET /memberships/{id}/user
-func (c *Client) ReadMembershipUser(ctx context.Context, params ReadMembershipUserParams) (ReadMembershipUserRes, error) {
-	res, err := c.sendReadMembershipUser(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendReadMembershipUser(ctx context.Context, params ReadMembershipUserParams) (res ReadMembershipUserRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembershipUser"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}/user"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "ReadMembershipUser",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/memberships/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/user"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeReadMembershipUserResponse(resp)
+	result, err := decodeReadIntegrationOwnerResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -4202,6 +3754,97 @@ func (c *Client) sendReadOrganization(ctx context.Context, params ReadOrganizati
 
 	stage = "DecodeResponse"
 	result, err := decodeReadOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ReadOrganizationParent invokes readOrganizationParent operation.
+//
+// Find the attached Organization of the Organization with the given ID.
+//
+// GET /organizations/{id}/parent
+func (c *Client) ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (ReadOrganizationParentRes, error) {
+	res, err := c.sendReadOrganizationParent(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (res ReadOrganizationParentRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readOrganizationParent"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/parent"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadOrganizationParent",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/organizations/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.UUIDToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/parent"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadOrganizationParentResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -4761,99 +4404,6 @@ func (c *Client) sendUpdateIntegration(ctx context.Context, request *UpdateInteg
 
 	stage = "DecodeResponse"
 	result, err := decodeUpdateIntegrationResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// UpdateMembership invokes updateMembership operation.
-//
-// Updates a Membership and persists changes to storage.
-//
-// PATCH /memberships/{id}
-func (c *Client) UpdateMembership(ctx context.Context, request *UpdateMembershipReq, params UpdateMembershipParams) (UpdateMembershipRes, error) {
-	res, err := c.sendUpdateMembership(ctx, request, params)
-	return res, err
-}
-
-func (c *Client) sendUpdateMembership(ctx context.Context, request *UpdateMembershipReq, params UpdateMembershipParams) (res UpdateMembershipRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("updateMembership"),
-		semconv.HTTPMethodKey.String("PATCH"),
-		semconv.HTTPRouteKey.String("/memberships/{id}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, "UpdateMembership",
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/memberships/"
-	{
-		// Encode "id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.UUIDToString(params.ID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "PATCH", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeUpdateMembershipRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeUpdateMembershipResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

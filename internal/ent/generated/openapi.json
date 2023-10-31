@@ -470,19 +470,16 @@
                     "type": "string",
                     "format": "uuid"
                   },
-                  "memberships": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uuid"
-                    }
-                  },
                   "users": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "format": "uuid"
                     }
+                  },
+                  "owner": {
+                    "type": "string",
+                    "format": "uuid"
                   }
                 },
                 "required": [
@@ -654,19 +651,16 @@
                     "type": "string",
                     "format": "uuid"
                   },
-                  "memberships": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "uuid"
-                    }
-                  },
                   "users": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "format": "uuid"
                     }
+                  },
+                  "owner": {
+                    "type": "string",
+                    "format": "uuid"
                   }
                 }
               }
@@ -700,14 +694,14 @@
         }
       }
     },
-    "/groups/{id}/memberships": {
+    "/groups/{id}/owner": {
       "get": {
         "tags": [
           "Group"
         ],
-        "summary": "List attached Memberships",
-        "description": "List attached Memberships.",
-        "operationId": "listGroupMemberships",
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the Group with the given ID",
+        "operationId": "readGroupOwner",
         "parameters": [
           {
             "name": "id",
@@ -718,34 +712,15 @@
               "type": "string",
               "format": "uuid"
             }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "result Groups list",
+            "description": "Organization attached to Group with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Group_MembershipsList"
-                  }
+                  "$ref": "#/components/schemas/Group_OwnerRead"
                 }
               }
             }
@@ -963,6 +938,9 @@
                     "type": "string",
                     "format": "uuid"
                   },
+                  "name": {
+                    "type": "string"
+                  },
                   "kind": {
                     "type": "string"
                   },
@@ -972,7 +950,7 @@
                   "secret_name": {
                     "type": "string"
                   },
-                  "organization": {
+                  "owner": {
                     "type": "string",
                     "format": "uuid"
                   }
@@ -980,9 +958,9 @@
                 "required": [
                   "created_at",
                   "updated_at",
+                  "name",
                   "kind",
-                  "secret_name",
-                  "organization"
+                  "secret_name"
                 ]
               }
             }
@@ -1132,10 +1110,13 @@
                     "type": "string",
                     "format": "uuid"
                   },
+                  "name": {
+                    "type": "string"
+                  },
                   "description": {
                     "type": "string"
                   },
-                  "organization": {
+                  "owner": {
                     "type": "string",
                     "format": "uuid"
                   }
@@ -1171,14 +1152,14 @@
         }
       }
     },
-    "/integrations/{id}/organization": {
+    "/integrations/{id}/owner": {
       "get": {
         "tags": [
           "Integration"
         ],
         "summary": "Find the attached Organization",
         "description": "Find the attached Organization of the Integration with the given ID",
-        "operationId": "readIntegrationOrganization",
+        "operationId": "readIntegrationOwner",
         "parameters": [
           {
             "name": "id",
@@ -1197,451 +1178,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Integration_OrganizationRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/memberships": {
-      "get": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "List Memberships",
-        "description": "List Memberships.",
-        "operationId": "listMembership",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Membership list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MembershipList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Create a new Membership",
-        "description": "Creates a new Membership and persists it to storage.",
-        "operationId": "createMembership",
-        "requestBody": {
-          "description": "Membership to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "updated_by": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "current": {
-                    "type": "boolean"
-                  },
-                  "organization": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "user": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "group": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                },
-                "required": [
-                  "created_at",
-                  "updated_at",
-                  "current",
-                  "organization",
-                  "user",
-                  "group"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Membership created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MembershipCreate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/memberships/{id}": {
-      "get": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Find a Membership by ID",
-        "description": "Finds the Membership with the requested ID and returns it.",
-        "operationId": "readMembership",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Membership",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Membership with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MembershipRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Deletes a Membership by ID",
-        "description": "Deletes the Membership with the requested ID.",
-        "operationId": "deleteMembership",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Membership",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Membership with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Updates a Membership",
-        "description": "Updates a Membership and persists changes to storage.",
-        "operationId": "updateMembership",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Membership",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Membership properties to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "updated_by": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "current": {
-                    "type": "boolean"
-                  },
-                  "organization": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "user": {
-                    "type": "string",
-                    "format": "uuid"
-                  },
-                  "group": {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Membership updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MembershipUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/memberships/{id}/group": {
-      "get": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Find the attached Group",
-        "description": "Find the attached Group of the Membership with the given ID",
-        "operationId": "readMembershipGroup",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Membership",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Group attached to Membership with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Membership_GroupRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/memberships/{id}/organization": {
-      "get": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Find the attached Organization",
-        "description": "Find the attached Organization of the Membership with the given ID",
-        "operationId": "readMembershipOrganization",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Membership",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Organization attached to Membership with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Membership_OrganizationRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/memberships/{id}/user": {
-      "get": {
-        "tags": [
-          "Membership"
-        ],
-        "summary": "Find the attached User",
-        "description": "Find the attached User of the Membership with the given ID",
-        "operationId": "readMembershipUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Membership",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User attached to Membership with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Membership_UserRead"
+                  "$ref": "#/components/schemas/Integration_OwnerRead"
                 }
               }
             }
@@ -1751,7 +1288,32 @@
                   "name": {
                     "type": "string"
                   },
-                  "memberships": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "parent_organization_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "parent": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "groups": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -1922,7 +1484,28 @@
                   "name": {
                     "type": "string"
                   },
-                  "memberships": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  },
+                  "groups": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -1949,6 +1532,136 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrganizationUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/children": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Childrens",
+        "description": "List attached Childrens.",
+        "operationId": "listOrganizationChildren",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_ChildrenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/groups": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Groups",
+        "description": "List attached Groups.",
+        "operationId": "listOrganizationGroups",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_GroupsList"
+                  }
                 }
               }
             }
@@ -2033,14 +1746,60 @@
         }
       }
     },
-    "/organizations/{id}/memberships": {
+    "/organizations/{id}/parent": {
       "get": {
         "tags": [
           "Organization"
         ],
-        "summary": "List attached Memberships",
-        "description": "List attached Memberships.",
-        "operationId": "listOrganizationMemberships",
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the Organization with the given ID",
+        "operationId": "readOrganizationParent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to Organization with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization_ParentRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/users": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Users",
+        "description": "List attached Users.",
+        "operationId": "listOrganizationUsers",
         "parameters": [
           {
             "name": "id",
@@ -2077,7 +1836,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Organization_MembershipsList"
+                    "$ref": "#/components/schemas/Organization_UsersList"
                   }
                 }
               }
@@ -2580,7 +2339,7 @@
                   "recovery_code": {
                     "type": "string"
                   },
-                  "memberships": {
+                  "organizations": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -2795,7 +2554,7 @@
                   "recovery_code": {
                     "type": "string"
                   },
-                  "memberships": {
+                  "organizations": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -2913,14 +2672,14 @@
         }
       }
     },
-    "/users/{id}/memberships": {
+    "/users/{id}/organizations": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "List attached Memberships",
-        "description": "List attached Memberships.",
-        "operationId": "listUserMemberships",
+        "summary": "List attached Organizations",
+        "description": "List attached Organizations.",
+        "operationId": "listUserOrganizations",
         "parameters": [
           {
             "name": "id",
@@ -2957,7 +2716,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/User_MembershipsList"
+                    "$ref": "#/components/schemas/User_OrganizationsList"
                   }
                 }
               }
@@ -3081,17 +2840,14 @@
           "setting": {
             "$ref": "#/components/schemas/GroupSettings"
           },
-          "memberships": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Membership"
-            }
-          },
           "users": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/User"
             }
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
           }
         },
         "required": [
@@ -3567,7 +3323,7 @@
           "logo_url"
         ]
       },
-      "Group_MembershipsList": {
+      "Group_OwnerRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -3590,15 +3346,22 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current"
+          "name"
         ]
       },
       "Group_SettingRead": {
@@ -3742,6 +3505,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "name": {
+            "type": "string"
+          },
           "kind": {
             "type": "string"
           },
@@ -3751,7 +3517,7 @@
           "secret_name": {
             "type": "string"
           },
-          "organization": {
+          "owner": {
             "$ref": "#/components/schemas/Organization"
           }
         },
@@ -3759,9 +3525,9 @@
           "id",
           "created_at",
           "updated_at",
+          "name",
           "kind",
-          "secret_name",
-          "organization"
+          "secret_name"
         ]
       },
       "IntegrationCreate": {
@@ -3787,6 +3553,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "name": {
+            "type": "string"
+          },
           "kind": {
             "type": "string"
           },
@@ -3801,6 +3570,7 @@
           "id",
           "created_at",
           "updated_at",
+          "name",
           "kind",
           "secret_name"
         ]
@@ -3828,6 +3598,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "name": {
+            "type": "string"
+          },
           "kind": {
             "type": "string"
           },
@@ -3842,6 +3615,7 @@
           "id",
           "created_at",
           "updated_at",
+          "name",
           "kind",
           "secret_name"
         ]
@@ -3869,6 +3643,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "name": {
+            "type": "string"
+          },
           "kind": {
             "type": "string"
           },
@@ -3883,6 +3660,7 @@
           "id",
           "created_at",
           "updated_at",
+          "name",
           "kind",
           "secret_name"
         ]
@@ -3910,6 +3688,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "name": {
+            "type": "string"
+          },
           "kind": {
             "type": "string"
           },
@@ -3924,11 +3705,12 @@
           "id",
           "created_at",
           "updated_at",
+          "name",
           "kind",
           "secret_name"
         ]
       },
-      "Integration_OrganizationRead": {
+      "Integration_OwnerRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -3953,6 +3735,13 @@
           },
           "name": {
             "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
@@ -3962,7 +3751,7 @@
           "name"
         ]
       },
-      "Membership": {
+      "Organization": {
         "type": "object",
         "properties": {
           "id": {
@@ -3985,30 +3774,52 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
           },
-          "organization": {
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parent": {
             "$ref": "#/components/schemas/Organization"
           },
-          "user": {
-            "$ref": "#/components/schemas/User"
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Organization"
+            }
           },
-          "group": {
-            "$ref": "#/components/schemas/Group"
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            }
+          },
+          "integrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Integration"
+            }
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current",
-          "organization",
-          "user",
-          "group"
+          "name"
         ]
       },
-      "MembershipCreate": {
+      "OrganizationCreate": {
         "type": "object",
         "properties": {
           "id": {
@@ -4031,18 +3842,25 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current"
+          "name"
         ]
       },
-      "MembershipList": {
+      "OrganizationList": {
         "type": "object",
         "properties": {
           "id": {
@@ -4065,18 +3883,25 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current"
+          "name"
         ]
       },
-      "MembershipRead": {
+      "OrganizationRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -4099,18 +3924,25 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current"
+          "name"
         ]
       },
-      "MembershipUpdate": {
+      "OrganizationUpdate": {
         "type": "object",
         "properties": {
           "id": {
@@ -4133,18 +3965,66 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current"
+          "name"
         ]
       },
-      "Membership_GroupRead": {
+      "Organization_ChildrenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name"
+        ]
+      },
+      "Organization_GroupsList": {
         "type": "object",
         "properties": {
           "id": {
@@ -4186,7 +4066,7 @@
           "logo_url"
         ]
       },
-      "Membership_OrganizationRead": {
+      "Organization_IntegrationsList": {
         "type": "object",
         "properties": {
           "id": {
@@ -4211,6 +4091,58 @@
           },
           "name": {
             "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "secret_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "kind",
+          "secret_name"
+        ]
+      },
+      "Organization_ParentRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "updated_by": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
@@ -4220,7 +4152,7 @@
           "name"
         ]
       },
-      "Membership_UserRead": {
+      "Organization_UsersList": {
         "type": "object",
         "properties": {
           "id": {
@@ -4286,263 +4218,6 @@
           "last_name",
           "display_name",
           "locked"
-        ]
-      },
-      "Organization": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          },
-          "memberships": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Membership"
-            }
-          },
-          "integrations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Integration"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name"
-        ]
-      },
-      "OrganizationCreate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name"
-        ]
-      },
-      "OrganizationList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name"
-        ]
-      },
-      "OrganizationRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name"
-        ]
-      },
-      "OrganizationUpdate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name"
-        ]
-      },
-      "Organization_IntegrationsList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "kind": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "secret_name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "kind",
-          "secret_name"
-        ]
-      },
-      "Organization_MembershipsList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "updated_by": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "current": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "current"
         ]
       },
       "Session": {
@@ -4945,10 +4620,10 @@
           "recovery_code": {
             "type": "string"
           },
-          "memberships": {
+          "organizations": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Membership"
+              "$ref": "#/components/schemas/Organization"
             }
           },
           "sessions": {
@@ -5289,7 +4964,7 @@
           "logo_url"
         ]
       },
-      "User_MembershipsList": {
+      "User_OrganizationsList": {
         "type": "object",
         "properties": {
           "id": {
@@ -5312,15 +4987,22 @@
             "type": "string",
             "format": "uuid"
           },
-          "current": {
-            "type": "boolean"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "current"
+          "name"
         ]
       },
       "User_SessionsList": {

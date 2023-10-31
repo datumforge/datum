@@ -24,23 +24,25 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// FieldKind holds the string denoting the kind field in the database.
 	FieldKind = "kind"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldSecretName holds the string denoting the secret_name field in the database.
 	FieldSecretName = "secret_name"
-	// EdgeOrganization holds the string denoting the organization edge name in mutations.
-	EdgeOrganization = "organization"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// Table holds the table name of the integration in the database.
 	Table = "integrations"
-	// OrganizationTable is the table that holds the organization relation/edge.
-	OrganizationTable = "integrations"
-	// OrganizationInverseTable is the table name for the Organization entity.
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "integrations"
+	// OwnerInverseTable is the table name for the Organization entity.
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
-	OrganizationInverseTable = "organizations"
-	// OrganizationColumn is the table column denoting the organization relation/edge.
-	OrganizationColumn = "organization_integrations"
+	OwnerInverseTable = "organizations"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "organization_integrations"
 )
 
 // Columns holds all SQL columns for integration fields.
@@ -50,6 +52,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
+	FieldName,
 	FieldKind,
 	FieldDescription,
 	FieldSecretName,
@@ -89,6 +92,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// NameValidator is a validator for the "name" field. It is called by the builders before save.
+	NameValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -121,6 +126,11 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
 // ByKind orders the results by the kind field.
 func ByKind(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldKind, opts...).ToFunc()
@@ -136,16 +146,16 @@ func BySecretName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSecretName, opts...).ToFunc()
 }
 
-// ByOrganizationField orders the results by organization field.
-func ByOrganizationField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOrganizationStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newOrganizationStep() *sqlgraph.Step {
+func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OrganizationInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, OrganizationTable, OrganizationColumn),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 	)
 }

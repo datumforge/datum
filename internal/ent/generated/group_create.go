@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
 )
@@ -131,21 +131,6 @@ func (gc *GroupCreate) SetSetting(g *GroupSettings) *GroupCreate {
 	return gc.SetSettingID(g.ID)
 }
 
-// AddMembershipIDs adds the "memberships" edge to the Membership entity by IDs.
-func (gc *GroupCreate) AddMembershipIDs(ids ...uuid.UUID) *GroupCreate {
-	gc.mutation.AddMembershipIDs(ids...)
-	return gc
-}
-
-// AddMemberships adds the "memberships" edges to the Membership entity.
-func (gc *GroupCreate) AddMemberships(m ...*Membership) *GroupCreate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return gc.AddMembershipIDs(ids...)
-}
-
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (gc *GroupCreate) AddUserIDs(ids ...uuid.UUID) *GroupCreate {
 	gc.mutation.AddUserIDs(ids...)
@@ -159,6 +144,25 @@ func (gc *GroupCreate) AddUsers(u ...*User) *GroupCreate {
 		ids[i] = u[i].ID
 	}
 	return gc.AddUserIDs(ids...)
+}
+
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (gc *GroupCreate) SetOwnerID(id uuid.UUID) *GroupCreate {
+	gc.mutation.SetOwnerID(id)
+	return gc
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (gc *GroupCreate) SetNillableOwnerID(id *uuid.UUID) *GroupCreate {
+	if id != nil {
+		gc = gc.SetOwnerID(*id)
+	}
+	return gc
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (gc *GroupCreate) SetOwner(o *Organization) *GroupCreate {
+	return gc.SetOwnerID(o.ID)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -337,27 +341,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := gc.mutation.MembershipsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = gc.schemaConfig.Membership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := gc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -365,10 +352,28 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = gc.schemaConfig.UserGroups
+		edge.Schema = gc.schemaConfig.GroupUsers
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = gc.schemaConfig.Group
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.organization_groups = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

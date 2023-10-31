@@ -6,7 +6,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -20,7 +19,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 6)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
@@ -75,30 +74,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			integration.FieldUpdatedAt:   {Type: field.TypeTime, Column: integration.FieldUpdatedAt},
 			integration.FieldCreatedBy:   {Type: field.TypeUUID, Column: integration.FieldCreatedBy},
 			integration.FieldUpdatedBy:   {Type: field.TypeUUID, Column: integration.FieldUpdatedBy},
+			integration.FieldName:        {Type: field.TypeString, Column: integration.FieldName},
 			integration.FieldKind:        {Type: field.TypeString, Column: integration.FieldKind},
 			integration.FieldDescription: {Type: field.TypeString, Column: integration.FieldDescription},
 			integration.FieldSecretName:  {Type: field.TypeString, Column: integration.FieldSecretName},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
-		NodeSpec: sqlgraph.NodeSpec{
-			Table:   membership.Table,
-			Columns: membership.Columns,
-			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeUUID,
-				Column: membership.FieldID,
-			},
-		},
-		Type: "Membership",
-		Fields: map[string]*sqlgraph.FieldSpec{
-			membership.FieldCreatedAt: {Type: field.TypeTime, Column: membership.FieldCreatedAt},
-			membership.FieldUpdatedAt: {Type: field.TypeTime, Column: membership.FieldUpdatedAt},
-			membership.FieldCreatedBy: {Type: field.TypeUUID, Column: membership.FieldCreatedBy},
-			membership.FieldUpdatedBy: {Type: field.TypeUUID, Column: membership.FieldUpdatedBy},
-			membership.FieldCurrent:   {Type: field.TypeBool, Column: membership.FieldCurrent},
-		},
-	}
-	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organization.Table,
 			Columns: organization.Columns,
@@ -109,14 +91,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Organization",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			organization.FieldCreatedAt: {Type: field.TypeTime, Column: organization.FieldCreatedAt},
-			organization.FieldUpdatedAt: {Type: field.TypeTime, Column: organization.FieldUpdatedAt},
-			organization.FieldCreatedBy: {Type: field.TypeUUID, Column: organization.FieldCreatedBy},
-			organization.FieldUpdatedBy: {Type: field.TypeUUID, Column: organization.FieldUpdatedBy},
-			organization.FieldName:      {Type: field.TypeString, Column: organization.FieldName},
+			organization.FieldCreatedAt:            {Type: field.TypeTime, Column: organization.FieldCreatedAt},
+			organization.FieldUpdatedAt:            {Type: field.TypeTime, Column: organization.FieldUpdatedAt},
+			organization.FieldCreatedBy:            {Type: field.TypeUUID, Column: organization.FieldCreatedBy},
+			organization.FieldUpdatedBy:            {Type: field.TypeUUID, Column: organization.FieldUpdatedBy},
+			organization.FieldName:                 {Type: field.TypeString, Column: organization.FieldName},
+			organization.FieldDescription:          {Type: field.TypeString, Column: organization.FieldDescription},
+			organization.FieldParentOrganizationID: {Type: field.TypeUUID, Column: organization.FieldParentOrganizationID},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -138,7 +122,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldIps:       {Type: field.TypeString, Column: session.FieldIps},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -179,28 +163,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"GroupSettings",
 	)
 	graph.MustAddE(
-		"memberships",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-		},
-		"Group",
-		"Membership",
-	)
-	graph.MustAddE(
 		"users",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 		},
 		"Group",
 		"User",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+		},
+		"Group",
+		"Organization",
 	)
 	graph.MustAddE(
 		"group",
@@ -215,64 +199,64 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Group",
 	)
 	graph.MustAddE(
-		"organization",
+		"owner",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   integration.OrganizationTable,
-			Columns: []string{integration.OrganizationColumn},
+			Table:   integration.OwnerTable,
+			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 		},
 		"Integration",
 		"Organization",
 	)
 	graph.MustAddE(
-		"organization",
+		"parent",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   membership.OrganizationTable,
-			Columns: []string{membership.OrganizationColumn},
+			Table:   organization.ParentTable,
+			Columns: []string{organization.ParentColumn},
 			Bidi:    false,
 		},
-		"Membership",
+		"Organization",
 		"Organization",
 	)
 	graph.MustAddE(
-		"user",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   membership.UserTable,
-			Columns: []string{membership.UserColumn},
-			Bidi:    false,
-		},
-		"Membership",
-		"User",
-	)
-	graph.MustAddE(
-		"group",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   membership.GroupTable,
-			Columns: []string{membership.GroupColumn},
-			Bidi:    false,
-		},
-		"Membership",
-		"Group",
-	)
-	graph.MustAddE(
-		"memberships",
+		"children",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   organization.MembershipsTable,
-			Columns: []string{organization.MembershipsColumn},
+			Table:   organization.ChildrenTable,
+			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 		},
 		"Organization",
-		"Membership",
+		"Organization",
+	)
+	graph.MustAddE(
+		"users",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   organization.UsersTable,
+			Columns: organization.UsersPrimaryKey,
+			Bidi:    false,
+		},
+		"Organization",
+		"User",
+	)
+	graph.MustAddE(
+		"groups",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.GroupsTable,
+			Columns: []string{organization.GroupsColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"Group",
 	)
 	graph.MustAddE(
 		"integrations",
@@ -299,16 +283,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"User",
 	)
 	graph.MustAddE(
-		"memberships",
+		"organizations",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   user.MembershipsTable,
-			Columns: []string{user.MembershipsColumn},
+			Table:   user.OrganizationsTable,
+			Columns: user.OrganizationsPrimaryKey,
 			Bidi:    false,
 		},
 		"User",
-		"Membership",
+		"Organization",
 	)
 	graph.MustAddE(
 		"sessions",
@@ -326,7 +310,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"groups",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   user.GroupsTable,
 			Columns: user.GroupsPrimaryKey,
 			Bidi:    false,
@@ -432,20 +416,6 @@ func (f *GroupFilter) WhereHasSettingWith(preds ...predicate.GroupSettings) {
 	})))
 }
 
-// WhereHasMemberships applies a predicate to check if query has an edge memberships.
-func (f *GroupFilter) WhereHasMemberships() {
-	f.Where(entql.HasEdge("memberships"))
-}
-
-// WhereHasMembershipsWith applies a predicate to check if query has an edge memberships with a given conditions (other predicates).
-func (f *GroupFilter) WhereHasMembershipsWith(preds ...predicate.Membership) {
-	f.Where(entql.HasEdgeWith("memberships", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
 // WhereHasUsers applies a predicate to check if query has an edge users.
 func (f *GroupFilter) WhereHasUsers() {
 	f.Where(entql.HasEdge("users"))
@@ -454,6 +424,20 @@ func (f *GroupFilter) WhereHasUsers() {
 // WhereHasUsersWith applies a predicate to check if query has an edge users with a given conditions (other predicates).
 func (f *GroupFilter) WhereHasUsersWith(preds ...predicate.User) {
 	f.Where(entql.HasEdgeWith("users", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *GroupFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *GroupFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -604,6 +588,11 @@ func (f *IntegrationFilter) WhereUpdatedBy(p entql.ValueP) {
 	f.Where(p.Field(integration.FieldUpdatedBy))
 }
 
+// WhereName applies the entql string predicate on the name field.
+func (f *IntegrationFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(integration.FieldName))
+}
+
 // WhereKind applies the entql string predicate on the kind field.
 func (f *IntegrationFilter) WhereKind(p entql.StringP) {
 	f.Where(p.Field(integration.FieldKind))
@@ -619,121 +608,14 @@ func (f *IntegrationFilter) WhereSecretName(p entql.StringP) {
 	f.Where(p.Field(integration.FieldSecretName))
 }
 
-// WhereHasOrganization applies a predicate to check if query has an edge organization.
-func (f *IntegrationFilter) WhereHasOrganization() {
-	f.Where(entql.HasEdge("organization"))
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *IntegrationFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
 }
 
-// WhereHasOrganizationWith applies a predicate to check if query has an edge organization with a given conditions (other predicates).
-func (f *IntegrationFilter) WhereHasOrganizationWith(preds ...predicate.Organization) {
-	f.Where(entql.HasEdgeWith("organization", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// addPredicate implements the predicateAdder interface.
-func (mq *MembershipQuery) addPredicate(pred func(s *sql.Selector)) {
-	mq.predicates = append(mq.predicates, pred)
-}
-
-// Filter returns a Filter implementation to apply filters on the MembershipQuery builder.
-func (mq *MembershipQuery) Filter() *MembershipFilter {
-	return &MembershipFilter{config: mq.config, predicateAdder: mq}
-}
-
-// addPredicate implements the predicateAdder interface.
-func (m *MembershipMutation) addPredicate(pred func(s *sql.Selector)) {
-	m.predicates = append(m.predicates, pred)
-}
-
-// Filter returns an entql.Where implementation to apply filters on the MembershipMutation builder.
-func (m *MembershipMutation) Filter() *MembershipFilter {
-	return &MembershipFilter{config: m.config, predicateAdder: m}
-}
-
-// MembershipFilter provides a generic filtering capability at runtime for MembershipQuery.
-type MembershipFilter struct {
-	predicateAdder
-	config
-}
-
-// Where applies the entql predicate on the query filter.
-func (f *MembershipFilter) Where(p entql.P) {
-	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
-			s.AddError(err)
-		}
-	})
-}
-
-// WhereID applies the entql [16]byte predicate on the id field.
-func (f *MembershipFilter) WhereID(p entql.ValueP) {
-	f.Where(p.Field(membership.FieldID))
-}
-
-// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *MembershipFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(membership.FieldCreatedAt))
-}
-
-// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *MembershipFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(membership.FieldUpdatedAt))
-}
-
-// WhereCreatedBy applies the entql [16]byte predicate on the created_by field.
-func (f *MembershipFilter) WhereCreatedBy(p entql.ValueP) {
-	f.Where(p.Field(membership.FieldCreatedBy))
-}
-
-// WhereUpdatedBy applies the entql [16]byte predicate on the updated_by field.
-func (f *MembershipFilter) WhereUpdatedBy(p entql.ValueP) {
-	f.Where(p.Field(membership.FieldUpdatedBy))
-}
-
-// WhereCurrent applies the entql bool predicate on the current field.
-func (f *MembershipFilter) WhereCurrent(p entql.BoolP) {
-	f.Where(p.Field(membership.FieldCurrent))
-}
-
-// WhereHasOrganization applies a predicate to check if query has an edge organization.
-func (f *MembershipFilter) WhereHasOrganization() {
-	f.Where(entql.HasEdge("organization"))
-}
-
-// WhereHasOrganizationWith applies a predicate to check if query has an edge organization with a given conditions (other predicates).
-func (f *MembershipFilter) WhereHasOrganizationWith(preds ...predicate.Organization) {
-	f.Where(entql.HasEdgeWith("organization", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// WhereHasUser applies a predicate to check if query has an edge user.
-func (f *MembershipFilter) WhereHasUser() {
-	f.Where(entql.HasEdge("user"))
-}
-
-// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
-func (f *MembershipFilter) WhereHasUserWith(preds ...predicate.User) {
-	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// WhereHasGroup applies a predicate to check if query has an edge group.
-func (f *MembershipFilter) WhereHasGroup() {
-	f.Where(entql.HasEdge("group"))
-}
-
-// WhereHasGroupWith applies a predicate to check if query has an edge group with a given conditions (other predicates).
-func (f *MembershipFilter) WhereHasGroupWith(preds ...predicate.Group) {
-	f.Where(entql.HasEdgeWith("group", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *IntegrationFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -769,7 +651,7 @@ type OrganizationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -805,14 +687,66 @@ func (f *OrganizationFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(organization.FieldName))
 }
 
-// WhereHasMemberships applies a predicate to check if query has an edge memberships.
-func (f *OrganizationFilter) WhereHasMemberships() {
-	f.Where(entql.HasEdge("memberships"))
+// WhereDescription applies the entql string predicate on the description field.
+func (f *OrganizationFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(organization.FieldDescription))
 }
 
-// WhereHasMembershipsWith applies a predicate to check if query has an edge memberships with a given conditions (other predicates).
-func (f *OrganizationFilter) WhereHasMembershipsWith(preds ...predicate.Membership) {
-	f.Where(entql.HasEdgeWith("memberships", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereParentOrganizationID applies the entql [16]byte predicate on the parent_organization_id field.
+func (f *OrganizationFilter) WhereParentOrganizationID(p entql.ValueP) {
+	f.Where(p.Field(organization.FieldParentOrganizationID))
+}
+
+// WhereHasParent applies a predicate to check if query has an edge parent.
+func (f *OrganizationFilter) WhereHasParent() {
+	f.Where(entql.HasEdge("parent"))
+}
+
+// WhereHasParentWith applies a predicate to check if query has an edge parent with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasParentWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("parent", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasChildren applies a predicate to check if query has an edge children.
+func (f *OrganizationFilter) WhereHasChildren() {
+	f.Where(entql.HasEdge("children"))
+}
+
+// WhereHasChildrenWith applies a predicate to check if query has an edge children with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasChildrenWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("children", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasUsers applies a predicate to check if query has an edge users.
+func (f *OrganizationFilter) WhereHasUsers() {
+	f.Where(entql.HasEdge("users"))
+}
+
+// WhereHasUsersWith applies a predicate to check if query has an edge users with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasUsersWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("users", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasGroups applies a predicate to check if query has an edge groups.
+func (f *OrganizationFilter) WhereHasGroups() {
+	f.Where(entql.HasEdge("groups"))
+}
+
+// WhereHasGroupsWith applies a predicate to check if query has an edge groups with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasGroupsWith(preds ...predicate.Group) {
+	f.Where(entql.HasEdgeWith("groups", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -862,7 +796,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -961,7 +895,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1047,14 +981,14 @@ func (f *UserFilter) WhereRecoveryCode(p entql.StringP) {
 	f.Where(p.Field(user.FieldRecoveryCode))
 }
 
-// WhereHasMemberships applies a predicate to check if query has an edge memberships.
-func (f *UserFilter) WhereHasMemberships() {
-	f.Where(entql.HasEdge("memberships"))
+// WhereHasOrganizations applies a predicate to check if query has an edge organizations.
+func (f *UserFilter) WhereHasOrganizations() {
+	f.Where(entql.HasEdge("organizations"))
 }
 
-// WhereHasMembershipsWith applies a predicate to check if query has an edge memberships with a given conditions (other predicates).
-func (f *UserFilter) WhereHasMembershipsWith(preds ...predicate.Membership) {
-	f.Where(entql.HasEdgeWith("memberships", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasOrganizationsWith applies a predicate to check if query has an edge organizations with a given conditions (other predicates).
+func (f *UserFilter) WhereHasOrganizationsWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("organizations", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

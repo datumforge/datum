@@ -40,15 +40,6 @@ func (UnimplementedHandler) CreateIntegration(ctx context.Context, req *CreateIn
 	return r, ht.ErrNotImplemented
 }
 
-// CreateMembership implements createMembership operation.
-//
-// Creates a new Membership and persists it to storage.
-//
-// POST /memberships
-func (UnimplementedHandler) CreateMembership(ctx context.Context, req *CreateMembershipReq) (r CreateMembershipRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // CreateOrganization implements createOrganization operation.
 //
 // Creates a new Organization and persists it to storage.
@@ -103,15 +94,6 @@ func (UnimplementedHandler) DeleteIntegration(ctx context.Context, params Delete
 	return r, ht.ErrNotImplemented
 }
 
-// DeleteMembership implements deleteMembership operation.
-//
-// Deletes the Membership with the requested ID.
-//
-// DELETE /memberships/{id}
-func (UnimplementedHandler) DeleteMembership(ctx context.Context, params DeleteMembershipParams) (r DeleteMembershipRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // DeleteOrganization implements deleteOrganization operation.
 //
 // Deletes the Organization with the requested ID.
@@ -148,15 +130,6 @@ func (UnimplementedHandler) ListGroup(ctx context.Context, params ListGroupParam
 	return r, ht.ErrNotImplemented
 }
 
-// ListGroupMemberships implements listGroupMemberships operation.
-//
-// List attached Memberships.
-//
-// GET /groups/{id}/memberships
-func (UnimplementedHandler) ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (r ListGroupMembershipsRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ListGroupSettings implements listGroupSettings operation.
 //
 // List GroupSettings.
@@ -184,21 +157,30 @@ func (UnimplementedHandler) ListIntegration(ctx context.Context, params ListInte
 	return r, ht.ErrNotImplemented
 }
 
-// ListMembership implements listMembership operation.
-//
-// List Memberships.
-//
-// GET /memberships
-func (UnimplementedHandler) ListMembership(ctx context.Context, params ListMembershipParams) (r ListMembershipRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ListOrganization implements listOrganization operation.
 //
 // List Organizations.
 //
 // GET /organizations
 func (UnimplementedHandler) ListOrganization(ctx context.Context, params ListOrganizationParams) (r ListOrganizationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListOrganizationChildren implements listOrganizationChildren operation.
+//
+// List attached Childrens.
+//
+// GET /organizations/{id}/children
+func (UnimplementedHandler) ListOrganizationChildren(ctx context.Context, params ListOrganizationChildrenParams) (r ListOrganizationChildrenRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListOrganizationGroups implements listOrganizationGroups operation.
+//
+// List attached Groups.
+//
+// GET /organizations/{id}/groups
+func (UnimplementedHandler) ListOrganizationGroups(ctx context.Context, params ListOrganizationGroupsParams) (r ListOrganizationGroupsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -211,12 +193,12 @@ func (UnimplementedHandler) ListOrganizationIntegrations(ctx context.Context, pa
 	return r, ht.ErrNotImplemented
 }
 
-// ListOrganizationMemberships implements listOrganizationMemberships operation.
+// ListOrganizationUsers implements listOrganizationUsers operation.
 //
-// List attached Memberships.
+// List attached Users.
 //
-// GET /organizations/{id}/memberships
-func (UnimplementedHandler) ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (r ListOrganizationMembershipsRes, _ error) {
+// GET /organizations/{id}/users
+func (UnimplementedHandler) ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (r ListOrganizationUsersRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -247,12 +229,12 @@ func (UnimplementedHandler) ListUserGroups(ctx context.Context, params ListUserG
 	return r, ht.ErrNotImplemented
 }
 
-// ListUserMemberships implements listUserMemberships operation.
+// ListUserOrganizations implements listUserOrganizations operation.
 //
-// List attached Memberships.
+// List attached Organizations.
 //
-// GET /users/{id}/memberships
-func (UnimplementedHandler) ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (r ListUserMembershipsRes, _ error) {
+// GET /users/{id}/organizations
+func (UnimplementedHandler) ListUserOrganizations(ctx context.Context, params ListUserOrganizationsParams) (r ListUserOrganizationsRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -271,6 +253,15 @@ func (UnimplementedHandler) ListUserSessions(ctx context.Context, params ListUse
 //
 // GET /groups/{id}
 func (UnimplementedHandler) ReadGroup(ctx context.Context, params ReadGroupParams) (r ReadGroupRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadGroupOwner implements readGroupOwner operation.
+//
+// Find the attached Organization of the Group with the given ID.
+//
+// GET /groups/{id}/owner
+func (UnimplementedHandler) ReadGroupOwner(ctx context.Context, params ReadGroupOwnerParams) (r ReadGroupOwnerRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -310,48 +301,12 @@ func (UnimplementedHandler) ReadIntegration(ctx context.Context, params ReadInte
 	return r, ht.ErrNotImplemented
 }
 
-// ReadIntegrationOrganization implements readIntegrationOrganization operation.
+// ReadIntegrationOwner implements readIntegrationOwner operation.
 //
 // Find the attached Organization of the Integration with the given ID.
 //
-// GET /integrations/{id}/organization
-func (UnimplementedHandler) ReadIntegrationOrganization(ctx context.Context, params ReadIntegrationOrganizationParams) (r ReadIntegrationOrganizationRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadMembership implements readMembership operation.
-//
-// Finds the Membership with the requested ID and returns it.
-//
-// GET /memberships/{id}
-func (UnimplementedHandler) ReadMembership(ctx context.Context, params ReadMembershipParams) (r ReadMembershipRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadMembershipGroup implements readMembershipGroup operation.
-//
-// Find the attached Group of the Membership with the given ID.
-//
-// GET /memberships/{id}/group
-func (UnimplementedHandler) ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (r ReadMembershipGroupRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadMembershipOrganization implements readMembershipOrganization operation.
-//
-// Find the attached Organization of the Membership with the given ID.
-//
-// GET /memberships/{id}/organization
-func (UnimplementedHandler) ReadMembershipOrganization(ctx context.Context, params ReadMembershipOrganizationParams) (r ReadMembershipOrganizationRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ReadMembershipUser implements readMembershipUser operation.
-//
-// Find the attached User of the Membership with the given ID.
-//
-// GET /memberships/{id}/user
-func (UnimplementedHandler) ReadMembershipUser(ctx context.Context, params ReadMembershipUserParams) (r ReadMembershipUserRes, _ error) {
+// GET /integrations/{id}/owner
+func (UnimplementedHandler) ReadIntegrationOwner(ctx context.Context, params ReadIntegrationOwnerParams) (r ReadIntegrationOwnerRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -361,6 +316,15 @@ func (UnimplementedHandler) ReadMembershipUser(ctx context.Context, params ReadM
 //
 // GET /organizations/{id}
 func (UnimplementedHandler) ReadOrganization(ctx context.Context, params ReadOrganizationParams) (r ReadOrganizationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ReadOrganizationParent implements readOrganizationParent operation.
+//
+// Find the attached Organization of the Organization with the given ID.
+//
+// GET /organizations/{id}/parent
+func (UnimplementedHandler) ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (r ReadOrganizationParentRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -415,15 +379,6 @@ func (UnimplementedHandler) UpdateGroupSettings(ctx context.Context, req *Update
 //
 // PATCH /integrations/{id}
 func (UnimplementedHandler) UpdateIntegration(ctx context.Context, req *UpdateIntegrationReq, params UpdateIntegrationParams) (r UpdateIntegrationRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UpdateMembership implements updateMembership operation.
-//
-// Updates a Membership and persists changes to storage.
-//
-// PATCH /memberships/{id}
-func (UnimplementedHandler) UpdateMembership(ctx context.Context, req *UpdateMembershipReq, params UpdateMembershipParams) (r UpdateMembershipRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

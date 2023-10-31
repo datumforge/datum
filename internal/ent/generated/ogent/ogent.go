@@ -10,7 +10,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -49,8 +48,10 @@ func (h *OgentHandler) CreateGroup(ctx context.Context, req *CreateGroupReq) (Cr
 	b.SetLogoURL(req.LogoURL)
 	// Add all edges.
 	b.SetSettingID(req.Setting)
-	b.AddMembershipIDs(req.Memberships...)
 	b.AddUserIDs(req.Users...)
+	if v, ok := req.Owner.Get(); ok {
+		b.SetOwnerID(v)
+	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
 	if err != nil {
@@ -134,11 +135,11 @@ func (h *OgentHandler) UpdateGroup(ctx context.Context, req *UpdateGroupReq, par
 	if v, ok := req.Setting.Get(); ok {
 		b.SetSettingID(v)
 	}
-	if req.Memberships != nil {
-		b.ClearMemberships().AddMembershipIDs(req.Memberships...)
-	}
 	if req.Users != nil {
 		b.ClearUsers().AddUserIDs(req.Users...)
+	}
+	if v, ok := req.Owner.Get(); ok {
+		b.SetOwnerID(v)
 	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -260,42 +261,6 @@ func (h *OgentHandler) ReadGroupSetting(ctx context.Context, params ReadGroupSet
 	return NewGroupSettingRead(e), nil
 }
 
-// ListGroupMemberships handles GET /groups/{id}/memberships requests.
-func (h *OgentHandler) ListGroupMemberships(ctx context.Context, params ListGroupMembershipsParams) (ListGroupMembershipsRes, error) {
-	q := h.client.Group.Query().Where(group.IDEQ(params.ID)).QueryMemberships()
-	page := 1
-	if v, ok := params.Page.Get(); ok {
-		page = v
-	}
-	itemsPerPage := 30
-	if v, ok := params.ItemsPerPage.Get(); ok {
-		itemsPerPage = v
-	}
-	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
-	es, err := q.All(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	r := NewGroupMembershipsLists(es)
-	return (*ListGroupMembershipsOKApplicationJSON)(&r), nil
-}
-
 // ListGroupUsers handles GET /groups/{id}/users requests.
 func (h *OgentHandler) ListGroupUsers(ctx context.Context, params ListGroupUsersParams) (ListGroupUsersRes, error) {
 	q := h.client.Group.Query().Where(group.IDEQ(params.ID)).QueryUsers()
@@ -330,6 +295,32 @@ func (h *OgentHandler) ListGroupUsers(ctx context.Context, params ListGroupUsers
 	}
 	r := NewGroupUsersLists(es)
 	return (*ListGroupUsersOKApplicationJSON)(&r), nil
+}
+
+// ReadGroupOwner handles GET /groups/{id}/owner requests.
+func (h *OgentHandler) ReadGroupOwner(ctx context.Context, params ReadGroupOwnerParams) (ReadGroupOwnerRes, error) {
+	q := h.client.Group.Query().Where(group.IDEQ(params.ID)).QueryOwner()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewGroupOwnerRead(e), nil
 }
 
 // CreateGroupSettings handles POST /group-settings-slice requests.
@@ -562,13 +553,16 @@ func (h *OgentHandler) CreateIntegration(ctx context.Context, req *CreateIntegra
 	if v, ok := req.UpdatedBy.Get(); ok {
 		b.SetUpdatedBy(v)
 	}
+	b.SetName(req.Name)
 	b.SetKind(req.Kind)
 	if v, ok := req.Description.Get(); ok {
 		b.SetDescription(v)
 	}
 	b.SetSecretName(req.SecretName)
 	// Add all edges.
-	b.SetOrganizationID(req.Organization)
+	if v, ok := req.Owner.Get(); ok {
+		b.SetOwnerID(v)
+	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
 	if err != nil {
@@ -639,12 +633,15 @@ func (h *OgentHandler) UpdateIntegration(ctx context.Context, req *UpdateIntegra
 	if v, ok := req.UpdatedBy.Get(); ok {
 		b.SetUpdatedBy(v)
 	}
+	if v, ok := req.Name.Get(); ok {
+		b.SetName(v)
+	}
 	if v, ok := req.Description.Get(); ok {
 		b.SetDescription(v)
 	}
 	// Add all edges.
-	if v, ok := req.Organization.Get(); ok {
-		b.SetOrganizationID(v)
+	if v, ok := req.Owner.Get(); ok {
+		b.SetOwnerID(v)
 	}
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -740,9 +737,9 @@ func (h *OgentHandler) ListIntegration(ctx context.Context, params ListIntegrati
 	return (*ListIntegrationOKApplicationJSON)(&r), nil
 }
 
-// ReadIntegrationOrganization handles GET /integrations/{id}/organization requests.
-func (h *OgentHandler) ReadIntegrationOrganization(ctx context.Context, params ReadIntegrationOrganizationParams) (ReadIntegrationOrganizationRes, error) {
-	q := h.client.Integration.Query().Where(integration.IDEQ(params.ID)).QueryOrganization()
+// ReadIntegrationOwner handles GET /integrations/{id}/owner requests.
+func (h *OgentHandler) ReadIntegrationOwner(ctx context.Context, params ReadIntegrationOwnerParams) (ReadIntegrationOwnerRes, error) {
+	q := h.client.Integration.Query().Where(integration.IDEQ(params.ID)).QueryOwner()
 	e, err := q.Only(ctx)
 	if err != nil {
 		switch {
@@ -763,279 +760,7 @@ func (h *OgentHandler) ReadIntegrationOrganization(ctx context.Context, params R
 			return nil, err
 		}
 	}
-	return NewIntegrationOrganizationRead(e), nil
-}
-
-// CreateMembership handles POST /memberships requests.
-func (h *OgentHandler) CreateMembership(ctx context.Context, req *CreateMembershipReq) (CreateMembershipRes, error) {
-	b := h.client.Membership.Create()
-	// Add all fields.
-	b.SetCreatedAt(req.CreatedAt)
-	b.SetUpdatedAt(req.UpdatedAt)
-	if v, ok := req.CreatedBy.Get(); ok {
-		b.SetCreatedBy(v)
-	}
-	if v, ok := req.UpdatedBy.Get(); ok {
-		b.SetUpdatedBy(v)
-	}
-	b.SetCurrent(req.Current)
-	// Add all edges.
-	b.SetOrganizationID(req.Organization)
-	b.SetUserID(req.User)
-	b.SetGroupID(req.Group)
-	// Persist to storage.
-	e, err := b.Save(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsConstraintError(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	// Reload the entity to attach all eager-loaded edges.
-	q := h.client.Membership.Query().Where(membership.ID(e.ID))
-	e, err = q.Only(ctx)
-	if err != nil {
-		// This should never happen.
-		return nil, err
-	}
-	return NewMembershipCreate(e), nil
-}
-
-// ReadMembership handles GET /memberships/{id} requests.
-func (h *OgentHandler) ReadMembership(ctx context.Context, params ReadMembershipParams) (ReadMembershipRes, error) {
-	q := h.client.Membership.Query().Where(membership.IDEQ(params.ID))
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewMembershipRead(e), nil
-}
-
-// UpdateMembership handles PATCH /memberships/{id} requests.
-func (h *OgentHandler) UpdateMembership(ctx context.Context, req *UpdateMembershipReq, params UpdateMembershipParams) (UpdateMembershipRes, error) {
-	b := h.client.Membership.UpdateOneID(params.ID)
-	// Add all fields.
-	if v, ok := req.UpdatedAt.Get(); ok {
-		b.SetUpdatedAt(v)
-	}
-	if v, ok := req.CreatedBy.Get(); ok {
-		b.SetCreatedBy(v)
-	}
-	if v, ok := req.UpdatedBy.Get(); ok {
-		b.SetUpdatedBy(v)
-	}
-	if v, ok := req.Current.Get(); ok {
-		b.SetCurrent(v)
-	}
-	// Add all edges.
-	if v, ok := req.Organization.Get(); ok {
-		b.SetOrganizationID(v)
-	}
-	if v, ok := req.User.Get(); ok {
-		b.SetUserID(v)
-	}
-	if v, ok := req.Group.Get(); ok {
-		b.SetGroupID(v)
-	}
-	// Persist to storage.
-	e, err := b.Save(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsConstraintError(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	// Reload the entity to attach all eager-loaded edges.
-	q := h.client.Membership.Query().Where(membership.ID(e.ID))
-	e, err = q.Only(ctx)
-	if err != nil {
-		// This should never happen.
-		return nil, err
-	}
-	return NewMembershipUpdate(e), nil
-}
-
-// DeleteMembership handles DELETE /memberships/{id} requests.
-func (h *OgentHandler) DeleteMembership(ctx context.Context, params DeleteMembershipParams) (DeleteMembershipRes, error) {
-	err := h.client.Membership.DeleteOneID(params.ID).Exec(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsConstraintError(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return new(DeleteMembershipNoContent), nil
-
-}
-
-// ListMembership handles GET /memberships requests.
-func (h *OgentHandler) ListMembership(ctx context.Context, params ListMembershipParams) (ListMembershipRes, error) {
-	q := h.client.Membership.Query()
-	page := 1
-	if v, ok := params.Page.Get(); ok {
-		page = v
-	}
-	itemsPerPage := 30
-	if v, ok := params.ItemsPerPage.Get(); ok {
-		itemsPerPage = v
-	}
-	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
-
-	es, err := q.All(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	r := NewMembershipLists(es)
-	return (*ListMembershipOKApplicationJSON)(&r), nil
-}
-
-// ReadMembershipOrganization handles GET /memberships/{id}/organization requests.
-func (h *OgentHandler) ReadMembershipOrganization(ctx context.Context, params ReadMembershipOrganizationParams) (ReadMembershipOrganizationRes, error) {
-	q := h.client.Membership.Query().Where(membership.IDEQ(params.ID)).QueryOrganization()
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewMembershipOrganizationRead(e), nil
-}
-
-// ReadMembershipUser handles GET /memberships/{id}/user requests.
-func (h *OgentHandler) ReadMembershipUser(ctx context.Context, params ReadMembershipUserParams) (ReadMembershipUserRes, error) {
-	q := h.client.Membership.Query().Where(membership.IDEQ(params.ID)).QueryUser()
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewMembershipUserRead(e), nil
-}
-
-// ReadMembershipGroup handles GET /memberships/{id}/group requests.
-func (h *OgentHandler) ReadMembershipGroup(ctx context.Context, params ReadMembershipGroupParams) (ReadMembershipGroupRes, error) {
-	q := h.client.Membership.Query().Where(membership.IDEQ(params.ID)).QueryGroup()
-	e, err := q.Only(ctx)
-	if err != nil {
-		switch {
-		case generated.IsNotFound(err):
-			return &R404{
-				Code:   http.StatusNotFound,
-				Status: http.StatusText(http.StatusNotFound),
-				Errors: rawError(err),
-			}, nil
-		case generated.IsNotSingular(err):
-			return &R409{
-				Code:   http.StatusConflict,
-				Status: http.StatusText(http.StatusConflict),
-				Errors: rawError(err),
-			}, nil
-		default:
-			// Let the server handle the error.
-			return nil, err
-		}
-	}
-	return NewMembershipGroupRead(e), nil
+	return NewIntegrationOwnerRead(e), nil
 }
 
 // CreateOrganization handles POST /organizations requests.
@@ -1051,8 +776,19 @@ func (h *OgentHandler) CreateOrganization(ctx context.Context, req *CreateOrgani
 		b.SetUpdatedBy(v)
 	}
 	b.SetName(req.Name)
+	if v, ok := req.Description.Get(); ok {
+		b.SetDescription(v)
+	}
+	if v, ok := req.ParentOrganizationID.Get(); ok {
+		b.SetParentOrganizationID(v)
+	}
 	// Add all edges.
-	b.AddMembershipIDs(req.Memberships...)
+	if v, ok := req.Parent.Get(); ok {
+		b.SetParentID(v)
+	}
+	b.AddChildIDs(req.Children...)
+	b.AddUserIDs(req.Users...)
+	b.AddGroupIDs(req.Groups...)
 	b.AddIntegrationIDs(req.Integrations...)
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -1127,9 +863,18 @@ func (h *OgentHandler) UpdateOrganization(ctx context.Context, req *UpdateOrgani
 	if v, ok := req.Name.Get(); ok {
 		b.SetName(v)
 	}
+	if v, ok := req.Description.Get(); ok {
+		b.SetDescription(v)
+	}
 	// Add all edges.
-	if req.Memberships != nil {
-		b.ClearMemberships().AddMembershipIDs(req.Memberships...)
+	if req.Children != nil {
+		b.ClearChildren().AddChildIDs(req.Children...)
+	}
+	if req.Users != nil {
+		b.ClearUsers().AddUserIDs(req.Users...)
+	}
+	if req.Groups != nil {
+		b.ClearGroups().AddGroupIDs(req.Groups...)
 	}
 	if req.Integrations != nil {
 		b.ClearIntegrations().AddIntegrationIDs(req.Integrations...)
@@ -1228,9 +973,35 @@ func (h *OgentHandler) ListOrganization(ctx context.Context, params ListOrganiza
 	return (*ListOrganizationOKApplicationJSON)(&r), nil
 }
 
-// ListOrganizationMemberships handles GET /organizations/{id}/memberships requests.
-func (h *OgentHandler) ListOrganizationMemberships(ctx context.Context, params ListOrganizationMembershipsParams) (ListOrganizationMembershipsRes, error) {
-	q := h.client.Organization.Query().Where(organization.IDEQ(params.ID)).QueryMemberships()
+// ReadOrganizationParent handles GET /organizations/{id}/parent requests.
+func (h *OgentHandler) ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (ReadOrganizationParentRes, error) {
+	q := h.client.Organization.Query().Where(organization.IDEQ(params.ID)).QueryParent()
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewOrganizationParentRead(e), nil
+}
+
+// ListOrganizationChildren handles GET /organizations/{id}/children requests.
+func (h *OgentHandler) ListOrganizationChildren(ctx context.Context, params ListOrganizationChildrenParams) (ListOrganizationChildrenRes, error) {
+	q := h.client.Organization.Query().Where(organization.IDEQ(params.ID)).QueryChildren()
 	page := 1
 	if v, ok := params.Page.Get(); ok {
 		page = v
@@ -1260,8 +1031,80 @@ func (h *OgentHandler) ListOrganizationMemberships(ctx context.Context, params L
 			return nil, err
 		}
 	}
-	r := NewOrganizationMembershipsLists(es)
-	return (*ListOrganizationMembershipsOKApplicationJSON)(&r), nil
+	r := NewOrganizationChildrenLists(es)
+	return (*ListOrganizationChildrenOKApplicationJSON)(&r), nil
+}
+
+// ListOrganizationUsers handles GET /organizations/{id}/users requests.
+func (h *OgentHandler) ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (ListOrganizationUsersRes, error) {
+	q := h.client.Organization.Query().Where(organization.IDEQ(params.ID)).QueryUsers()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewOrganizationUsersLists(es)
+	return (*ListOrganizationUsersOKApplicationJSON)(&r), nil
+}
+
+// ListOrganizationGroups handles GET /organizations/{id}/groups requests.
+func (h *OgentHandler) ListOrganizationGroups(ctx context.Context, params ListOrganizationGroupsParams) (ListOrganizationGroupsRes, error) {
+	q := h.client.Organization.Query().Where(organization.IDEQ(params.ID)).QueryGroups()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewOrganizationGroupsLists(es)
+	return (*ListOrganizationGroupsOKApplicationJSON)(&r), nil
 }
 
 // ListOrganizationIntegrations handles GET /organizations/{id}/integrations requests.
@@ -1562,7 +1405,7 @@ func (h *OgentHandler) CreateUser(ctx context.Context, req *CreateUserReq) (Crea
 		b.SetRecoveryCode(v)
 	}
 	// Add all edges.
-	b.AddMembershipIDs(req.Memberships...)
+	b.AddOrganizationIDs(req.Organizations...)
 	b.AddSessionIDs(req.Sessions...)
 	b.AddGroupIDs(req.Groups...)
 	// Persist to storage.
@@ -1669,8 +1512,8 @@ func (h *OgentHandler) UpdateUser(ctx context.Context, req *UpdateUserReq, param
 		b.SetRecoveryCode(v)
 	}
 	// Add all edges.
-	if req.Memberships != nil {
-		b.ClearMemberships().AddMembershipIDs(req.Memberships...)
+	if req.Organizations != nil {
+		b.ClearOrganizations().AddOrganizationIDs(req.Organizations...)
 	}
 	if req.Sessions != nil {
 		b.ClearSessions().AddSessionIDs(req.Sessions...)
@@ -1772,9 +1615,9 @@ func (h *OgentHandler) ListUser(ctx context.Context, params ListUserParams) (Lis
 	return (*ListUserOKApplicationJSON)(&r), nil
 }
 
-// ListUserMemberships handles GET /users/{id}/memberships requests.
-func (h *OgentHandler) ListUserMemberships(ctx context.Context, params ListUserMembershipsParams) (ListUserMembershipsRes, error) {
-	q := h.client.User.Query().Where(user.IDEQ(params.ID)).QueryMemberships()
+// ListUserOrganizations handles GET /users/{id}/organizations requests.
+func (h *OgentHandler) ListUserOrganizations(ctx context.Context, params ListUserOrganizationsParams) (ListUserOrganizationsRes, error) {
+	q := h.client.User.Query().Where(user.IDEQ(params.ID)).QueryOrganizations()
 	page := 1
 	if v, ok := params.Page.Get(); ok {
 		page = v
@@ -1804,8 +1647,8 @@ func (h *OgentHandler) ListUserMemberships(ctx context.Context, params ListUserM
 			return nil, err
 		}
 	}
-	r := NewUserMembershipsLists(es)
-	return (*ListUserMembershipsOKApplicationJSON)(&r), nil
+	r := NewUserOrganizationsLists(es)
+	return (*ListUserOrganizationsOKApplicationJSON)(&r), nil
 }
 
 // ListUserSessions handles GET /users/{id}/sessions requests.

@@ -27,6 +27,8 @@ type Integration struct {
 	CreatedBy uuid.UUID `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Kind holds the value of the "kind" field.
 	Kind string `json:"kind,omitempty"`
 	// Description holds the value of the "description" field.
@@ -42,8 +44,8 @@ type Integration struct {
 
 // IntegrationEdges holds the relations/edges for other nodes in the graph.
 type IntegrationEdges struct {
-	// Organization holds the value of the organization edge.
-	Organization *Organization `json:"organization,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -51,17 +53,17 @@ type IntegrationEdges struct {
 	totalCount [1]map[string]int
 }
 
-// OrganizationOrErr returns the Organization value or an error if the edge
+// OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e IntegrationEdges) OrganizationOrErr() (*Organization, error) {
+func (e IntegrationEdges) OwnerOrErr() (*Organization, error) {
 	if e.loadedTypes[0] {
-		if e.Organization == nil {
+		if e.Owner == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: organization.Label}
 		}
-		return e.Organization, nil
+		return e.Owner, nil
 	}
-	return nil, &NotLoadedError{edge: "organization"}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -69,7 +71,7 @@ func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case integration.FieldKind, integration.FieldDescription, integration.FieldSecretName:
+		case integration.FieldName, integration.FieldKind, integration.FieldDescription, integration.FieldSecretName:
 			values[i] = new(sql.NullString)
 		case integration.FieldCreatedAt, integration.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -122,6 +124,12 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 			} else if value != nil {
 				i.UpdatedBy = *value
 			}
+		case integration.FieldName:
+			if value, ok := values[j].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[j])
+			} else if value.Valid {
+				i.Name = value.String
+			}
 		case integration.FieldKind:
 			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field kind", values[j])
@@ -160,9 +168,9 @@ func (i *Integration) Value(name string) (ent.Value, error) {
 	return i.selectValues.Get(name)
 }
 
-// QueryOrganization queries the "organization" edge of the Integration entity.
-func (i *Integration) QueryOrganization() *OrganizationQuery {
-	return NewIntegrationClient(i.config).QueryOrganization(i)
+// QueryOwner queries the "owner" edge of the Integration entity.
+func (i *Integration) QueryOwner() *OrganizationQuery {
+	return NewIntegrationClient(i.config).QueryOwner(i)
 }
 
 // Update returns a builder for updating this Integration.
@@ -199,6 +207,9 @@ func (i *Integration) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(fmt.Sprintf("%v", i.UpdatedBy))
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(i.Name)
 	builder.WriteString(", ")
 	builder.WriteString("kind=")
 	builder.WriteString(i.Kind)

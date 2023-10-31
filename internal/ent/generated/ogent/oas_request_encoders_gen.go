@@ -53,20 +53,6 @@ func encodeCreateIntegrationRequest(
 	return nil
 }
 
-func encodeCreateMembershipRequest(
-	req *CreateMembershipReq,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
 func encodeCreateOrganizationRequest(
 	req *CreateOrganizationReq,
 	r *http.Request,
@@ -139,20 +125,6 @@ func encodeUpdateGroupSettingsRequest(
 
 func encodeUpdateIntegrationRequest(
 	req *UpdateIntegrationReq,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeUpdateMembershipRequest(
-	req *UpdateMembershipReq,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

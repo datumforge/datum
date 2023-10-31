@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -32,9 +31,6 @@ func (n *GroupSettings) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Integration) IsNode() {}
-
-// IsNode implements the Node interface check for GQLGen.
-func (n *Membership) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Organization) IsNode() {}
@@ -131,18 +127,6 @@ func (c *Client) noder(ctx context.Context, table string, id uuid.UUID) (Noder, 
 		query := c.Integration.Query().
 			Where(integration.ID(id))
 		query, err := query.CollectFields(ctx, "Integration")
-		if err != nil {
-			return nil, err
-		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case membership.Table:
-		query := c.Membership.Query().
-			Where(membership.ID(id))
-		query, err := query.CollectFields(ctx, "Membership")
 		if err != nil {
 			return nil, err
 		}
@@ -296,22 +280,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []uuid.UUID) ([]N
 		query := c.Integration.Query().
 			Where(integration.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Integration")
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case membership.Table:
-		query := c.Membership.Query().
-			Where(membership.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "Membership")
 		if err != nil {
 			return nil, err
 		}

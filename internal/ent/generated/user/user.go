@@ -46,21 +46,19 @@ const (
 	FieldSuspendedAt = "suspended_at"
 	// FieldRecoveryCode holds the string denoting the recovery_code field in the database.
 	FieldRecoveryCode = "recovery_code"
-	// EdgeMemberships holds the string denoting the memberships edge name in mutations.
-	EdgeMemberships = "memberships"
+	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
+	EdgeOrganizations = "organizations"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// MembershipsTable is the table that holds the memberships relation/edge.
-	MembershipsTable = "memberships"
-	// MembershipsInverseTable is the table name for the Membership entity.
-	// It exists in this package in order to avoid circular dependency with the "membership" package.
-	MembershipsInverseTable = "memberships"
-	// MembershipsColumn is the table column denoting the memberships relation/edge.
-	MembershipsColumn = "user_memberships"
+	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
+	OrganizationsTable = "user_organizations"
+	// OrganizationsInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrganizationsInverseTable = "organizations"
 	// SessionsTable is the table that holds the sessions relation/edge.
 	SessionsTable = "sessions"
 	// SessionsInverseTable is the table name for the Session entity.
@@ -69,7 +67,7 @@ const (
 	// SessionsColumn is the table column denoting the sessions relation/edge.
 	SessionsColumn = "user_sessions"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
-	GroupsTable = "user_groups"
+	GroupsTable = "group_users"
 	// GroupsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
@@ -96,9 +94,12 @@ var Columns = []string{
 }
 
 var (
+	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
+	// primary key for the organizations relation (M2M).
+	OrganizationsPrimaryKey = []string{"user_id", "organization_id"}
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
-	GroupsPrimaryKey = []string{"user_id", "group_id"}
+	GroupsPrimaryKey = []string{"group_id", "user_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -228,17 +229,17 @@ func ByRecoveryCode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRecoveryCode, opts...).ToFunc()
 }
 
-// ByMembershipsCount orders the results by memberships count.
-func ByMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByOrganizationsCount orders the results by organizations count.
+func ByOrganizationsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMembershipsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newOrganizationsStep(), opts...)
 	}
 }
 
-// ByMemberships orders the results by memberships terms.
-func ByMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByOrganizations orders the results by organizations terms.
+func ByOrganizations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -269,11 +270,11 @@ func ByGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-func newMembershipsStep() *sqlgraph.Step {
+func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MembershipsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MembershipsTable, MembershipsColumn),
+		sqlgraph.To(OrganizationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, OrganizationsTable, OrganizationsPrimaryKey...),
 	)
 }
 func newSessionsStep() *sqlgraph.Step {
@@ -287,6 +288,6 @@ func newGroupsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GroupsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, GroupsTable, GroupsPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2M, true, GroupsTable, GroupsPrimaryKey...),
 	)
 }

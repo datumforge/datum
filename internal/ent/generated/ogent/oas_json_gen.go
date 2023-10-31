@@ -61,16 +61,6 @@ func (s *CreateGroupReq) encodeFields(e *jx.Encoder) {
 		json.EncodeUUID(e, s.Setting)
 	}
 	{
-		if s.Memberships != nil {
-			e.FieldStart("memberships")
-			e.ArrStart()
-			for _, elem := range s.Memberships {
-				json.EncodeUUID(e, elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
 		if s.Users != nil {
 			e.FieldStart("users")
 			e.ArrStart()
@@ -78,6 +68,12 @@ func (s *CreateGroupReq) encodeFields(e *jx.Encoder) {
 				json.EncodeUUID(e, elem)
 			}
 			e.ArrEnd()
+		}
+	}
+	{
+		if s.Owner.Set {
+			e.FieldStart("owner")
+			s.Owner.Encode(e)
 		}
 	}
 }
@@ -91,8 +87,8 @@ var jsonFieldsNameOfCreateGroupReq = [10]string{
 	5: "description",
 	6: "logo_url",
 	7: "setting",
-	8: "memberships",
-	9: "users",
+	8: "users",
+	9: "owner",
 }
 
 // Decode decodes CreateGroupReq from json.
@@ -196,25 +192,6 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"setting\"")
 			}
-		case "memberships":
-			if err := func() error {
-				s.Memberships = make([]uuid.UUID, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
-					if err != nil {
-						return err
-					}
-					s.Memberships = append(s.Memberships, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"memberships\"")
-			}
 		case "users":
 			if err := func() error {
 				s.Users = make([]uuid.UUID, 0)
@@ -233,6 +210,16 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"users\"")
+			}
+		case "owner":
+			if err := func() error {
+				s.Owner.Reset()
+				if err := s.Owner.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"owner\"")
 			}
 		default:
 			return d.Skip()
@@ -600,6 +587,10 @@ func (s *CreateIntegrationReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
 		e.FieldStart("kind")
 		e.Str(s.Kind)
 	}
@@ -614,20 +605,23 @@ func (s *CreateIntegrationReq) encodeFields(e *jx.Encoder) {
 		e.Str(s.SecretName)
 	}
 	{
-		e.FieldStart("organization")
-		json.EncodeUUID(e, s.Organization)
+		if s.Owner.Set {
+			e.FieldStart("owner")
+			s.Owner.Encode(e)
+		}
 	}
 }
 
-var jsonFieldsNameOfCreateIntegrationReq = [8]string{
+var jsonFieldsNameOfCreateIntegrationReq = [9]string{
 	0: "created_at",
 	1: "updated_at",
 	2: "created_by",
 	3: "updated_by",
-	4: "kind",
-	5: "description",
-	6: "secret_name",
-	7: "organization",
+	4: "name",
+	5: "kind",
+	6: "description",
+	7: "secret_name",
+	8: "owner",
 }
 
 // Decode decodes CreateIntegrationReq from json.
@@ -635,442 +629,7 @@ func (s *CreateIntegrationReq) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode CreateIntegrationReq to nil")
 	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "created_at":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "kind":
-			requiredBitSet[0] |= 1 << 4
-			if err := func() error {
-				v, err := d.Str()
-				s.Kind = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"kind\"")
-			}
-		case "description":
-			if err := func() error {
-				s.Description.Reset()
-				if err := s.Description.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"description\"")
-			}
-		case "secret_name":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.SecretName = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"secret_name\"")
-			}
-		case "organization":
-			requiredBitSet[0] |= 1 << 7
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.Organization = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"organization\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode CreateIntegrationReq")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b11010011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfCreateIntegrationReq) {
-					name = jsonFieldsNameOfCreateIntegrationReq[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *CreateIntegrationReq) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *CreateIntegrationReq) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *CreateMembershipReq) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *CreateMembershipReq) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
-	}
-	{
-		e.FieldStart("organization")
-		json.EncodeUUID(e, s.Organization)
-	}
-	{
-		e.FieldStart("user")
-		json.EncodeUUID(e, s.User)
-	}
-	{
-		e.FieldStart("group")
-		json.EncodeUUID(e, s.Group)
-	}
-}
-
-var jsonFieldsNameOfCreateMembershipReq = [8]string{
-	0: "created_at",
-	1: "updated_at",
-	2: "created_by",
-	3: "updated_by",
-	4: "current",
-	5: "organization",
-	6: "user",
-	7: "group",
-}
-
-// Decode decodes CreateMembershipReq from json.
-func (s *CreateMembershipReq) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode CreateMembershipReq to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "created_at":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "current":
-			requiredBitSet[0] |= 1 << 4
-			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
-			}
-		case "organization":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.Organization = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"organization\"")
-			}
-		case "user":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.User = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"user\"")
-			}
-		case "group":
-			requiredBitSet[0] |= 1 << 7
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.Group = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"group\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode CreateMembershipReq")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b11110011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfCreateMembershipReq) {
-					name = jsonFieldsNameOfCreateMembershipReq[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *CreateMembershipReq) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *CreateMembershipReq) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *CreateOrganizationReq) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *CreateOrganizationReq) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("name")
-		e.Str(s.Name)
-	}
-	{
-		if s.Memberships != nil {
-			e.FieldStart("memberships")
-			e.ArrStart()
-			for _, elem := range s.Memberships {
-				json.EncodeUUID(e, elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
-		if s.Integrations != nil {
-			e.FieldStart("integrations")
-			e.ArrStart()
-			for _, elem := range s.Integrations {
-				json.EncodeUUID(e, elem)
-			}
-			e.ArrEnd()
-		}
-	}
-}
-
-var jsonFieldsNameOfCreateOrganizationReq = [7]string{
-	0: "created_at",
-	1: "updated_at",
-	2: "created_by",
-	3: "updated_by",
-	4: "name",
-	5: "memberships",
-	6: "integrations",
-}
-
-// Decode decodes CreateOrganizationReq from json.
-func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode CreateOrganizationReq to nil")
-	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -1130,9 +689,313 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
-		case "memberships":
+		case "kind":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				s.Memberships = make([]uuid.UUID, 0)
+				v, err := d.Str()
+				s.Kind = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"kind\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "secret_name":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.SecretName = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"secret_name\"")
+			}
+		case "owner":
+			if err := func() error {
+				s.Owner.Reset()
+				if err := s.Owner.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"owner\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode CreateIntegrationReq")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b10110011,
+		0b00000000,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfCreateIntegrationReq) {
+					name = jsonFieldsNameOfCreateIntegrationReq[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *CreateIntegrationReq) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *CreateIntegrationReq) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *CreateOrganizationReq) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *CreateOrganizationReq) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		if s.CreatedBy.Set {
+			e.FieldStart("created_by")
+			s.CreatedBy.Encode(e)
+		}
+	}
+	{
+		if s.UpdatedBy.Set {
+			e.FieldStart("updated_by")
+			s.UpdatedBy.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
+	{
+		if s.Parent.Set {
+			e.FieldStart("parent")
+			s.Parent.Encode(e)
+		}
+	}
+	{
+		if s.Children != nil {
+			e.FieldStart("children")
+			e.ArrStart()
+			for _, elem := range s.Children {
+				json.EncodeUUID(e, elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Users != nil {
+			e.FieldStart("users")
+			e.ArrStart()
+			for _, elem := range s.Users {
+				json.EncodeUUID(e, elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Groups != nil {
+			e.FieldStart("groups")
+			e.ArrStart()
+			for _, elem := range s.Groups {
+				json.EncodeUUID(e, elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Integrations != nil {
+			e.FieldStart("integrations")
+			e.ArrStart()
+			for _, elem := range s.Integrations {
+				json.EncodeUUID(e, elem)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfCreateOrganizationReq = [12]string{
+	0:  "created_at",
+	1:  "updated_at",
+	2:  "created_by",
+	3:  "updated_by",
+	4:  "name",
+	5:  "description",
+	6:  "parent_organization_id",
+	7:  "parent",
+	8:  "children",
+	9:  "users",
+	10: "groups",
+	11: "integrations",
+}
+
+// Decode decodes CreateOrganizationReq from json.
+func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode CreateOrganizationReq to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "created_at":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "created_by":
+			if err := func() error {
+				s.CreatedBy.Reset()
+				if err := s.CreatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_by\"")
+			}
+		case "updated_by":
+			if err := func() error {
+				s.UpdatedBy.Reset()
+				if err := s.UpdatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_by\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
+			}
+		case "parent":
+			if err := func() error {
+				s.Parent.Reset()
+				if err := s.Parent.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent\"")
+			}
+		case "children":
+			if err := func() error {
+				s.Children = make([]uuid.UUID, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
 					var elem uuid.UUID
 					v, err := json.DecodeUUID(d)
@@ -1140,14 +1003,52 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 					if err != nil {
 						return err
 					}
-					s.Memberships = append(s.Memberships, elem)
+					s.Children = append(s.Children, elem)
 					return nil
 				}); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"memberships\"")
+				return errors.Wrap(err, "decode field \"children\"")
+			}
+		case "users":
+			if err := func() error {
+				s.Users = make([]uuid.UUID, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem uuid.UUID
+					v, err := json.DecodeUUID(d)
+					elem = v
+					if err != nil {
+						return err
+					}
+					s.Users = append(s.Users, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"users\"")
+			}
+		case "groups":
+			if err := func() error {
+				s.Groups = make([]uuid.UUID, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem uuid.UUID
+					v, err := json.DecodeUUID(d)
+					elem = v
+					if err != nil {
+						return err
+					}
+					s.Groups = append(s.Groups, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"groups\"")
 			}
 		case "integrations":
 			if err := func() error {
@@ -1177,8 +1078,9 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00010011,
+		0b00000000,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1600,10 +1502,10 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Memberships != nil {
-			e.FieldStart("memberships")
+		if s.Organizations != nil {
+			e.FieldStart("organizations")
 			e.ArrStart()
-			for _, elem := range s.Memberships {
+			for _, elem := range s.Organizations {
 				json.EncodeUUID(e, elem)
 			}
 			e.ArrEnd()
@@ -1647,7 +1549,7 @@ var jsonFieldsNameOfCreateUserReq = [18]string{
 	12: "silenced_at",
 	13: "suspended_at",
 	14: "recovery_code",
-	15: "memberships",
+	15: "organizations",
 	16: "sessions",
 	17: "groups",
 }
@@ -1825,9 +1727,9 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"recovery_code\"")
 			}
-		case "memberships":
+		case "organizations":
 			if err := func() error {
-				s.Memberships = make([]uuid.UUID, 0)
+				s.Organizations = make([]uuid.UUID, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
 					var elem uuid.UUID
 					v, err := json.DecodeUUID(d)
@@ -1835,14 +1737,14 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 					if err != nil {
 						return err
 					}
-					s.Memberships = append(s.Memberships, elem)
+					s.Organizations = append(s.Organizations, elem)
 					return nil
 				}); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"memberships\"")
+				return errors.Wrap(err, "decode field \"organizations\"")
 			}
 		case "sessions":
 			if err := func() error {
@@ -2371,14 +2273,14 @@ func (s *GroupList) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *GroupMembershipsList) Encode(e *jx.Encoder) {
+func (s *GroupOwnerRead) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *GroupMembershipsList) encodeFields(e *jx.Encoder) {
+func (s *GroupOwnerRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
 		json.EncodeUUID(e, s.ID)
@@ -2404,24 +2306,38 @@ func (s *GroupMembershipsList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
 	}
 }
 
-var jsonFieldsNameOfGroupMembershipsList = [6]string{
+var jsonFieldsNameOfGroupOwnerRead = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "current",
+	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
-// Decode decodes GroupMembershipsList from json.
-func (s *GroupMembershipsList) Decode(d *jx.Decoder) error {
+// Decode decodes GroupOwnerRead from json.
+func (s *GroupOwnerRead) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode GroupMembershipsList to nil")
+		return errors.New("invalid: unable to decode GroupOwnerRead to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -2483,24 +2399,44 @@ func (s *GroupMembershipsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "current":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
+				v, err := d.Str()
+				s.Name = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
 			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode GroupMembershipsList")
+		return errors.Wrap(err, "decode GroupOwnerRead")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -2517,8 +2453,8 @@ func (s *GroupMembershipsList) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfGroupMembershipsList) {
-					name = jsonFieldsNameOfGroupMembershipsList[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfGroupOwnerRead) {
+					name = jsonFieldsNameOfGroupOwnerRead[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -2539,14 +2475,14 @@ func (s *GroupMembershipsList) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *GroupMembershipsList) MarshalJSON() ([]byte, error) {
+func (s *GroupOwnerRead) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *GroupMembershipsList) UnmarshalJSON(data []byte) error {
+func (s *GroupOwnerRead) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -4960,6 +4896,10 @@ func (s *IntegrationCreate) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
 		e.FieldStart("kind")
 		e.Str(s.Kind)
 	}
@@ -4975,15 +4915,16 @@ func (s *IntegrationCreate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfIntegrationCreate = [8]string{
+var jsonFieldsNameOfIntegrationCreate = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "kind",
-	6: "description",
-	7: "secret_name",
+	5: "name",
+	6: "kind",
+	7: "description",
+	8: "secret_name",
 }
 
 // Decode decodes IntegrationCreate from json.
@@ -4991,7 +4932,7 @@ func (s *IntegrationCreate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode IntegrationCreate to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -5051,8 +4992,20 @@ func (s *IntegrationCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "kind":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Kind = string(v)
@@ -5074,7 +5027,7 @@ func (s *IntegrationCreate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "secret_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.SecretName = string(v)
@@ -5094,8 +5047,9 @@ func (s *IntegrationCreate) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b10100111,
+	for i, mask := range [2]uint8{
+		0b01100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5175,6 +5129,10 @@ func (s *IntegrationList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
 		e.FieldStart("kind")
 		e.Str(s.Kind)
 	}
@@ -5190,15 +5148,16 @@ func (s *IntegrationList) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfIntegrationList = [8]string{
+var jsonFieldsNameOfIntegrationList = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "kind",
-	6: "description",
-	7: "secret_name",
+	5: "name",
+	6: "kind",
+	7: "description",
+	8: "secret_name",
 }
 
 // Decode decodes IntegrationList from json.
@@ -5206,7 +5165,7 @@ func (s *IntegrationList) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode IntegrationList to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -5266,8 +5225,20 @@ func (s *IntegrationList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "kind":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Kind = string(v)
@@ -5289,7 +5260,7 @@ func (s *IntegrationList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "secret_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.SecretName = string(v)
@@ -5309,8 +5280,9 @@ func (s *IntegrationList) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b10100111,
+	for i, mask := range [2]uint8{
+		0b01100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5357,14 +5329,14 @@ func (s *IntegrationList) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *IntegrationOrganizationRead) Encode(e *jx.Encoder) {
+func (s *IntegrationOwnerRead) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *IntegrationOrganizationRead) encodeFields(e *jx.Encoder) {
+func (s *IntegrationOwnerRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
 		json.EncodeUUID(e, s.ID)
@@ -5393,21 +5365,35 @@ func (s *IntegrationOrganizationRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfIntegrationOrganizationRead = [6]string{
+var jsonFieldsNameOfIntegrationOwnerRead = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
 	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
-// Decode decodes IntegrationOrganizationRead from json.
-func (s *IntegrationOrganizationRead) Decode(d *jx.Decoder) error {
+// Decode decodes IntegrationOwnerRead from json.
+func (s *IntegrationOwnerRead) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode IntegrationOrganizationRead to nil")
+		return errors.New("invalid: unable to decode IntegrationOwnerRead to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -5481,12 +5467,32 @@ func (s *IntegrationOrganizationRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
+			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode IntegrationOrganizationRead")
+		return errors.Wrap(err, "decode IntegrationOwnerRead")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -5503,8 +5509,8 @@ func (s *IntegrationOrganizationRead) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfIntegrationOrganizationRead) {
-					name = jsonFieldsNameOfIntegrationOrganizationRead[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfIntegrationOwnerRead) {
+					name = jsonFieldsNameOfIntegrationOwnerRead[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -5525,14 +5531,14 @@ func (s *IntegrationOrganizationRead) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *IntegrationOrganizationRead) MarshalJSON() ([]byte, error) {
+func (s *IntegrationOwnerRead) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *IntegrationOrganizationRead) UnmarshalJSON(data []byte) error {
+func (s *IntegrationOwnerRead) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -5571,6 +5577,10 @@ func (s *IntegrationRead) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
 		e.FieldStart("kind")
 		e.Str(s.Kind)
 	}
@@ -5586,15 +5596,16 @@ func (s *IntegrationRead) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfIntegrationRead = [8]string{
+var jsonFieldsNameOfIntegrationRead = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "kind",
-	6: "description",
-	7: "secret_name",
+	5: "name",
+	6: "kind",
+	7: "description",
+	8: "secret_name",
 }
 
 // Decode decodes IntegrationRead from json.
@@ -5602,7 +5613,7 @@ func (s *IntegrationRead) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode IntegrationRead to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -5662,8 +5673,20 @@ func (s *IntegrationRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "kind":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Kind = string(v)
@@ -5685,7 +5708,7 @@ func (s *IntegrationRead) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "secret_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.SecretName = string(v)
@@ -5705,8 +5728,9 @@ func (s *IntegrationRead) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b10100111,
+	for i, mask := range [2]uint8{
+		0b01100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5786,6 +5810,10 @@ func (s *IntegrationUpdate) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
 		e.FieldStart("kind")
 		e.Str(s.Kind)
 	}
@@ -5801,15 +5829,16 @@ func (s *IntegrationUpdate) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfIntegrationUpdate = [8]string{
+var jsonFieldsNameOfIntegrationUpdate = [9]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "kind",
-	6: "description",
-	7: "secret_name",
+	5: "name",
+	6: "kind",
+	7: "description",
+	8: "secret_name",
 }
 
 // Decode decodes IntegrationUpdate from json.
@@ -5817,7 +5846,7 @@ func (s *IntegrationUpdate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode IntegrationUpdate to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -5877,8 +5906,20 @@ func (s *IntegrationUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "kind":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Kind = string(v)
@@ -5900,7 +5941,7 @@ func (s *IntegrationUpdate) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "secret_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.SecretName = string(v)
@@ -5920,8 +5961,9 @@ func (s *IntegrationUpdate) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b10100111,
+	for i, mask := range [2]uint8{
+		0b01100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -5963,56 +6005,6 @@ func (s *IntegrationUpdate) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *IntegrationUpdate) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes ListGroupMembershipsOKApplicationJSON as json.
-func (s ListGroupMembershipsOKApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := []GroupMembershipsList(s)
-
-	e.ArrStart()
-	for _, elem := range unwrapped {
-		elem.Encode(e)
-	}
-	e.ArrEnd()
-}
-
-// Decode decodes ListGroupMembershipsOKApplicationJSON from json.
-func (s *ListGroupMembershipsOKApplicationJSON) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode ListGroupMembershipsOKApplicationJSON to nil")
-	}
-	var unwrapped []GroupMembershipsList
-	if err := func() error {
-		unwrapped = make([]GroupMembershipsList, 0)
-		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem GroupMembershipsList
-			if err := elem.Decode(d); err != nil {
-				return err
-			}
-			unwrapped = append(unwrapped, elem)
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = ListGroupMembershipsOKApplicationJSON(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s ListGroupMembershipsOKApplicationJSON) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ListGroupMembershipsOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -6217,9 +6209,9 @@ func (s *ListIntegrationOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes ListMembershipOKApplicationJSON as json.
-func (s ListMembershipOKApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := []MembershipList(s)
+// Encode encodes ListOrganizationChildrenOKApplicationJSON as json.
+func (s ListOrganizationChildrenOKApplicationJSON) Encode(e *jx.Encoder) {
+	unwrapped := []OrganizationChildrenList(s)
 
 	e.ArrStart()
 	for _, elem := range unwrapped {
@@ -6228,16 +6220,16 @@ func (s ListMembershipOKApplicationJSON) Encode(e *jx.Encoder) {
 	e.ArrEnd()
 }
 
-// Decode decodes ListMembershipOKApplicationJSON from json.
-func (s *ListMembershipOKApplicationJSON) Decode(d *jx.Decoder) error {
+// Decode decodes ListOrganizationChildrenOKApplicationJSON from json.
+func (s *ListOrganizationChildrenOKApplicationJSON) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode ListMembershipOKApplicationJSON to nil")
+		return errors.New("invalid: unable to decode ListOrganizationChildrenOKApplicationJSON to nil")
 	}
-	var unwrapped []MembershipList
+	var unwrapped []OrganizationChildrenList
 	if err := func() error {
-		unwrapped = make([]MembershipList, 0)
+		unwrapped = make([]OrganizationChildrenList, 0)
 		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem MembershipList
+			var elem OrganizationChildrenList
 			if err := elem.Decode(d); err != nil {
 				return err
 			}
@@ -6250,19 +6242,69 @@ func (s *ListMembershipOKApplicationJSON) Decode(d *jx.Decoder) error {
 	}(); err != nil {
 		return errors.Wrap(err, "alias")
 	}
-	*s = ListMembershipOKApplicationJSON(unwrapped)
+	*s = ListOrganizationChildrenOKApplicationJSON(unwrapped)
 	return nil
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s ListMembershipOKApplicationJSON) MarshalJSON() ([]byte, error) {
+func (s ListOrganizationChildrenOKApplicationJSON) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ListMembershipOKApplicationJSON) UnmarshalJSON(data []byte) error {
+func (s *ListOrganizationChildrenOKApplicationJSON) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ListOrganizationGroupsOKApplicationJSON as json.
+func (s ListOrganizationGroupsOKApplicationJSON) Encode(e *jx.Encoder) {
+	unwrapped := []OrganizationGroupsList(s)
+
+	e.ArrStart()
+	for _, elem := range unwrapped {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+}
+
+// Decode decodes ListOrganizationGroupsOKApplicationJSON from json.
+func (s *ListOrganizationGroupsOKApplicationJSON) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ListOrganizationGroupsOKApplicationJSON to nil")
+	}
+	var unwrapped []OrganizationGroupsList
+	if err := func() error {
+		unwrapped = make([]OrganizationGroupsList, 0)
+		if err := d.Arr(func(d *jx.Decoder) error {
+			var elem OrganizationGroupsList
+			if err := elem.Decode(d); err != nil {
+				return err
+			}
+			unwrapped = append(unwrapped, elem)
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = ListOrganizationGroupsOKApplicationJSON(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ListOrganizationGroupsOKApplicationJSON) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ListOrganizationGroupsOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -6317,56 +6359,6 @@ func (s *ListOrganizationIntegrationsOKApplicationJSON) UnmarshalJSON(data []byt
 	return s.Decode(d)
 }
 
-// Encode encodes ListOrganizationMembershipsOKApplicationJSON as json.
-func (s ListOrganizationMembershipsOKApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := []OrganizationMembershipsList(s)
-
-	e.ArrStart()
-	for _, elem := range unwrapped {
-		elem.Encode(e)
-	}
-	e.ArrEnd()
-}
-
-// Decode decodes ListOrganizationMembershipsOKApplicationJSON from json.
-func (s *ListOrganizationMembershipsOKApplicationJSON) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode ListOrganizationMembershipsOKApplicationJSON to nil")
-	}
-	var unwrapped []OrganizationMembershipsList
-	if err := func() error {
-		unwrapped = make([]OrganizationMembershipsList, 0)
-		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem OrganizationMembershipsList
-			if err := elem.Decode(d); err != nil {
-				return err
-			}
-			unwrapped = append(unwrapped, elem)
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = ListOrganizationMembershipsOKApplicationJSON(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s ListOrganizationMembershipsOKApplicationJSON) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ListOrganizationMembershipsOKApplicationJSON) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes ListOrganizationOKApplicationJSON as json.
 func (s ListOrganizationOKApplicationJSON) Encode(e *jx.Encoder) {
 	unwrapped := []OrganizationList(s)
@@ -6413,6 +6405,56 @@ func (s ListOrganizationOKApplicationJSON) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ListOrganizationOKApplicationJSON) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ListOrganizationUsersOKApplicationJSON as json.
+func (s ListOrganizationUsersOKApplicationJSON) Encode(e *jx.Encoder) {
+	unwrapped := []OrganizationUsersList(s)
+
+	e.ArrStart()
+	for _, elem := range unwrapped {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+}
+
+// Decode decodes ListOrganizationUsersOKApplicationJSON from json.
+func (s *ListOrganizationUsersOKApplicationJSON) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ListOrganizationUsersOKApplicationJSON to nil")
+	}
+	var unwrapped []OrganizationUsersList
+	if err := func() error {
+		unwrapped = make([]OrganizationUsersList, 0)
+		if err := d.Arr(func(d *jx.Decoder) error {
+			var elem OrganizationUsersList
+			if err := elem.Decode(d); err != nil {
+				return err
+			}
+			unwrapped = append(unwrapped, elem)
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = ListOrganizationUsersOKApplicationJSON(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ListOrganizationUsersOKApplicationJSON) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ListOrganizationUsersOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -6517,56 +6559,6 @@ func (s *ListUserGroupsOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes ListUserMembershipsOKApplicationJSON as json.
-func (s ListUserMembershipsOKApplicationJSON) Encode(e *jx.Encoder) {
-	unwrapped := []UserMembershipsList(s)
-
-	e.ArrStart()
-	for _, elem := range unwrapped {
-		elem.Encode(e)
-	}
-	e.ArrEnd()
-}
-
-// Decode decodes ListUserMembershipsOKApplicationJSON from json.
-func (s *ListUserMembershipsOKApplicationJSON) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode ListUserMembershipsOKApplicationJSON to nil")
-	}
-	var unwrapped []UserMembershipsList
-	if err := func() error {
-		unwrapped = make([]UserMembershipsList, 0)
-		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem UserMembershipsList
-			if err := elem.Decode(d); err != nil {
-				return err
-			}
-			unwrapped = append(unwrapped, elem)
-			return nil
-		}); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = ListUserMembershipsOKApplicationJSON(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s ListUserMembershipsOKApplicationJSON) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *ListUserMembershipsOKApplicationJSON) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes ListUserOKApplicationJSON as json.
 func (s ListUserOKApplicationJSON) Encode(e *jx.Encoder) {
 	unwrapped := []UserList(s)
@@ -6617,6 +6609,56 @@ func (s *ListUserOKApplicationJSON) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes ListUserOrganizationsOKApplicationJSON as json.
+func (s ListUserOrganizationsOKApplicationJSON) Encode(e *jx.Encoder) {
+	unwrapped := []UserOrganizationsList(s)
+
+	e.ArrStart()
+	for _, elem := range unwrapped {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+}
+
+// Decode decodes ListUserOrganizationsOKApplicationJSON from json.
+func (s *ListUserOrganizationsOKApplicationJSON) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ListUserOrganizationsOKApplicationJSON to nil")
+	}
+	var unwrapped []UserOrganizationsList
+	if err := func() error {
+		unwrapped = make([]UserOrganizationsList, 0)
+		if err := d.Arr(func(d *jx.Decoder) error {
+			var elem UserOrganizationsList
+			if err := elem.Decode(d); err != nil {
+				return err
+			}
+			unwrapped = append(unwrapped, elem)
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = ListUserOrganizationsOKApplicationJSON(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ListUserOrganizationsOKApplicationJSON) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ListUserOrganizationsOKApplicationJSON) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes ListUserSessionsOKApplicationJSON as json.
 func (s ListUserSessionsOKApplicationJSON) Encode(e *jx.Encoder) {
 	unwrapped := []UserSessionsList(s)
@@ -6663,1461 +6705,6 @@ func (s ListUserSessionsOKApplicationJSON) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ListUserSessionsOKApplicationJSON) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipCreate) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipCreate) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
-	}
-}
-
-var jsonFieldsNameOfMembershipCreate = [6]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "created_by",
-	4: "updated_by",
-	5: "current",
-}
-
-// Decode decodes MembershipCreate from json.
-func (s *MembershipCreate) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipCreate to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "current":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipCreate")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00100111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipCreate) {
-					name = jsonFieldsNameOfMembershipCreate[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipCreate) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipCreate) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipGroupRead) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipGroupRead) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("name")
-		e.Str(s.Name)
-	}
-	{
-		e.FieldStart("description")
-		e.Str(s.Description)
-	}
-	{
-		e.FieldStart("logo_url")
-		e.Str(s.LogoURL)
-	}
-}
-
-var jsonFieldsNameOfMembershipGroupRead = [8]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "created_by",
-	4: "updated_by",
-	5: "name",
-	6: "description",
-	7: "logo_url",
-}
-
-// Decode decodes MembershipGroupRead from json.
-func (s *MembershipGroupRead) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipGroupRead to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "name":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Str()
-				s.Name = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"name\"")
-			}
-		case "description":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.Description = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"description\"")
-			}
-		case "logo_url":
-			requiredBitSet[0] |= 1 << 7
-			if err := func() error {
-				v, err := d.Str()
-				s.LogoURL = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"logo_url\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipGroupRead")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b11100111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipGroupRead) {
-					name = jsonFieldsNameOfMembershipGroupRead[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipGroupRead) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipGroupRead) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipList) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipList) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
-	}
-}
-
-var jsonFieldsNameOfMembershipList = [6]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "created_by",
-	4: "updated_by",
-	5: "current",
-}
-
-// Decode decodes MembershipList from json.
-func (s *MembershipList) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipList to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "current":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipList")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00100111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipList) {
-					name = jsonFieldsNameOfMembershipList[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipList) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipList) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipOrganizationRead) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipOrganizationRead) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("name")
-		e.Str(s.Name)
-	}
-}
-
-var jsonFieldsNameOfMembershipOrganizationRead = [6]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "created_by",
-	4: "updated_by",
-	5: "name",
-}
-
-// Decode decodes MembershipOrganizationRead from json.
-func (s *MembershipOrganizationRead) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipOrganizationRead to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "name":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Str()
-				s.Name = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"name\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipOrganizationRead")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00100111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipOrganizationRead) {
-					name = jsonFieldsNameOfMembershipOrganizationRead[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipOrganizationRead) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipOrganizationRead) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipRead) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipRead) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
-	}
-}
-
-var jsonFieldsNameOfMembershipRead = [6]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "created_by",
-	4: "updated_by",
-	5: "current",
-}
-
-// Decode decodes MembershipRead from json.
-func (s *MembershipRead) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipRead to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "current":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipRead")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00100111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipRead) {
-					name = jsonFieldsNameOfMembershipRead[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipRead) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipRead) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipUpdate) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipUpdate) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
-	}
-}
-
-var jsonFieldsNameOfMembershipUpdate = [6]string{
-	0: "id",
-	1: "created_at",
-	2: "updated_at",
-	3: "created_by",
-	4: "updated_by",
-	5: "current",
-}
-
-// Decode decodes MembershipUpdate from json.
-func (s *MembershipUpdate) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipUpdate to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "current":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipUpdate")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00100111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipUpdate) {
-					name = jsonFieldsNameOfMembershipUpdate[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipUpdate) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipUpdate) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *MembershipUserRead) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *MembershipUserRead) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
-	}
-	{
-		e.FieldStart("created_at")
-		json.EncodeDateTime(e, s.CreatedAt)
-	}
-	{
-		e.FieldStart("updated_at")
-		json.EncodeDateTime(e, s.UpdatedAt)
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		e.FieldStart("email")
-		e.Str(s.Email)
-	}
-	{
-		e.FieldStart("first_name")
-		e.Str(s.FirstName)
-	}
-	{
-		e.FieldStart("last_name")
-		e.Str(s.LastName)
-	}
-	{
-		e.FieldStart("display_name")
-		e.Str(s.DisplayName)
-	}
-	{
-		e.FieldStart("locked")
-		e.Bool(s.Locked)
-	}
-	{
-		if s.AvatarRemoteURL.Set {
-			e.FieldStart("avatar_remote_url")
-			s.AvatarRemoteURL.Encode(e)
-		}
-	}
-	{
-		if s.AvatarLocalFile.Set {
-			e.FieldStart("avatar_local_file")
-			s.AvatarLocalFile.Encode(e)
-		}
-	}
-	{
-		if s.AvatarUpdatedAt.Set {
-			e.FieldStart("avatar_updated_at")
-			s.AvatarUpdatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.SilencedAt.Set {
-			e.FieldStart("silenced_at")
-			s.SilencedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.SuspendedAt.Set {
-			e.FieldStart("suspended_at")
-			s.SuspendedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-}
-
-var jsonFieldsNameOfMembershipUserRead = [15]string{
-	0:  "id",
-	1:  "created_at",
-	2:  "updated_at",
-	3:  "created_by",
-	4:  "updated_by",
-	5:  "email",
-	6:  "first_name",
-	7:  "last_name",
-	8:  "display_name",
-	9:  "locked",
-	10: "avatar_remote_url",
-	11: "avatar_local_file",
-	12: "avatar_updated_at",
-	13: "silenced_at",
-	14: "suspended_at",
-}
-
-// Decode decodes MembershipUserRead from json.
-func (s *MembershipUserRead) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MembershipUserRead to nil")
-	}
-	var requiredBitSet [2]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "id":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"id\"")
-			}
-		case "created_at":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.CreatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_at\"")
-			}
-		case "updated_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.UpdatedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "email":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Str()
-				s.Email = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"email\"")
-			}
-		case "first_name":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.FirstName = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"first_name\"")
-			}
-		case "last_name":
-			requiredBitSet[0] |= 1 << 7
-			if err := func() error {
-				v, err := d.Str()
-				s.LastName = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"last_name\"")
-			}
-		case "display_name":
-			requiredBitSet[1] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.DisplayName = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"display_name\"")
-			}
-		case "locked":
-			requiredBitSet[1] |= 1 << 1
-			if err := func() error {
-				v, err := d.Bool()
-				s.Locked = bool(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"locked\"")
-			}
-		case "avatar_remote_url":
-			if err := func() error {
-				s.AvatarRemoteURL.Reset()
-				if err := s.AvatarRemoteURL.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"avatar_remote_url\"")
-			}
-		case "avatar_local_file":
-			if err := func() error {
-				s.AvatarLocalFile.Reset()
-				if err := s.AvatarLocalFile.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"avatar_local_file\"")
-			}
-		case "avatar_updated_at":
-			if err := func() error {
-				s.AvatarUpdatedAt.Reset()
-				if err := s.AvatarUpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"avatar_updated_at\"")
-			}
-		case "silenced_at":
-			if err := func() error {
-				s.SilencedAt.Reset()
-				if err := s.SilencedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"silenced_at\"")
-			}
-		case "suspended_at":
-			if err := func() error {
-				s.SuspendedAt.Reset()
-				if err := s.SuspendedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"suspended_at\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode MembershipUserRead")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [2]uint8{
-		0b11100111,
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfMembershipUserRead) {
-					name = jsonFieldsNameOfMembershipUserRead[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *MembershipUserRead) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MembershipUserRead) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -8329,6 +6916,221 @@ func (s *OptUpdateGroupSettingsReqVisibility) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
+func (s *OrganizationChildrenList) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *OrganizationChildrenList) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		json.EncodeUUID(e, s.ID)
+	}
+	{
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		if s.CreatedBy.Set {
+			e.FieldStart("created_by")
+			s.CreatedBy.Encode(e)
+		}
+	}
+	{
+		if s.UpdatedBy.Set {
+			e.FieldStart("updated_by")
+			s.UpdatedBy.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfOrganizationChildrenList = [8]string{
+	0: "id",
+	1: "created_at",
+	2: "updated_at",
+	3: "created_by",
+	4: "updated_by",
+	5: "name",
+	6: "description",
+	7: "parent_organization_id",
+}
+
+// Decode decodes OrganizationChildrenList from json.
+func (s *OrganizationChildrenList) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode OrganizationChildrenList to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.ID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "created_by":
+			if err := func() error {
+				s.CreatedBy.Reset()
+				if err := s.CreatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_by\"")
+			}
+		case "updated_by":
+			if err := func() error {
+				s.UpdatedBy.Reset()
+				if err := s.UpdatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_by\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode OrganizationChildrenList")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00100111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfOrganizationChildrenList) {
+					name = jsonFieldsNameOfOrganizationChildrenList[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *OrganizationChildrenList) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OrganizationChildrenList) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
 func (s *OrganizationCreate) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
@@ -8365,15 +7167,29 @@ func (s *OrganizationCreate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfOrganizationCreate = [6]string{
+var jsonFieldsNameOfOrganizationCreate = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
 	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
 // Decode decodes OrganizationCreate from json.
@@ -8453,6 +7269,26 @@ func (s *OrganizationCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -8510,14 +7346,14 @@ func (s *OrganizationCreate) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *OrganizationIntegrationsList) Encode(e *jx.Encoder) {
+func (s *OrganizationGroupsList) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *OrganizationIntegrationsList) encodeFields(e *jx.Encoder) {
+func (s *OrganizationGroupsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
 		json.EncodeUUID(e, s.ID)
@@ -8543,36 +7379,34 @@ func (s *OrganizationIntegrationsList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("kind")
-		e.Str(s.Kind)
+		e.FieldStart("name")
+		e.Str(s.Name)
 	}
 	{
-		if s.Description.Set {
-			e.FieldStart("description")
-			s.Description.Encode(e)
-		}
+		e.FieldStart("description")
+		e.Str(s.Description)
 	}
 	{
-		e.FieldStart("secret_name")
-		e.Str(s.SecretName)
+		e.FieldStart("logo_url")
+		e.Str(s.LogoURL)
 	}
 }
 
-var jsonFieldsNameOfOrganizationIntegrationsList = [8]string{
+var jsonFieldsNameOfOrganizationGroupsList = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "kind",
+	5: "name",
 	6: "description",
-	7: "secret_name",
+	7: "logo_url",
 }
 
-// Decode decodes OrganizationIntegrationsList from json.
-func (s *OrganizationIntegrationsList) Decode(d *jx.Decoder) error {
+// Decode decodes OrganizationGroupsList from json.
+func (s *OrganizationGroupsList) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode OrganizationIntegrationsList to nil")
+		return errors.New("invalid: unable to decode OrganizationGroupsList to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -8634,8 +7468,242 @@ func (s *OrganizationIntegrationsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "kind":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.Description = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "logo_url":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.LogoURL = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"logo_url\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode OrganizationGroupsList")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b11100111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfOrganizationGroupsList) {
+					name = jsonFieldsNameOfOrganizationGroupsList[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *OrganizationGroupsList) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OrganizationGroupsList) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *OrganizationIntegrationsList) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *OrganizationIntegrationsList) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		json.EncodeUUID(e, s.ID)
+	}
+	{
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		if s.CreatedBy.Set {
+			e.FieldStart("created_by")
+			s.CreatedBy.Encode(e)
+		}
+	}
+	{
+		if s.UpdatedBy.Set {
+			e.FieldStart("updated_by")
+			s.UpdatedBy.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		e.FieldStart("kind")
+		e.Str(s.Kind)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("secret_name")
+		e.Str(s.SecretName)
+	}
+}
+
+var jsonFieldsNameOfOrganizationIntegrationsList = [9]string{
+	0: "id",
+	1: "created_at",
+	2: "updated_at",
+	3: "created_by",
+	4: "updated_by",
+	5: "name",
+	6: "kind",
+	7: "description",
+	8: "secret_name",
+}
+
+// Decode decodes OrganizationIntegrationsList from json.
+func (s *OrganizationIntegrationsList) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode OrganizationIntegrationsList to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.ID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "created_by":
+			if err := func() error {
+				s.CreatedBy.Reset()
+				if err := s.CreatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_by\"")
+			}
+		case "updated_by":
+			if err := func() error {
+				s.UpdatedBy.Reset()
+				if err := s.UpdatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_by\"")
+			}
+		case "name":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "kind":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
 				s.Kind = string(v)
@@ -8657,7 +7725,7 @@ func (s *OrganizationIntegrationsList) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
 		case "secret_name":
-			requiredBitSet[0] |= 1 << 7
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Str()
 				s.SecretName = string(v)
@@ -8677,8 +7745,9 @@ func (s *OrganizationIntegrationsList) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b10100111,
+	for i, mask := range [2]uint8{
+		0b01100111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -8761,15 +7830,29 @@ func (s *OrganizationList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfOrganizationList = [6]string{
+var jsonFieldsNameOfOrganizationList = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
 	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
 // Decode decodes OrganizationList from json.
@@ -8849,6 +7932,26 @@ func (s *OrganizationList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -8906,14 +8009,14 @@ func (s *OrganizationList) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *OrganizationMembershipsList) Encode(e *jx.Encoder) {
+func (s *OrganizationParentRead) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *OrganizationMembershipsList) encodeFields(e *jx.Encoder) {
+func (s *OrganizationParentRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
 		json.EncodeUUID(e, s.ID)
@@ -8939,24 +8042,38 @@ func (s *OrganizationMembershipsList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
 	}
 }
 
-var jsonFieldsNameOfOrganizationMembershipsList = [6]string{
+var jsonFieldsNameOfOrganizationParentRead = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "current",
+	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
-// Decode decodes OrganizationMembershipsList from json.
-func (s *OrganizationMembershipsList) Decode(d *jx.Decoder) error {
+// Decode decodes OrganizationParentRead from json.
+func (s *OrganizationParentRead) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode OrganizationMembershipsList to nil")
+		return errors.New("invalid: unable to decode OrganizationParentRead to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -9018,24 +8135,44 @@ func (s *OrganizationMembershipsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "current":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
+				v, err := d.Str()
+				s.Name = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
 			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode OrganizationMembershipsList")
+		return errors.Wrap(err, "decode OrganizationParentRead")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -9052,8 +8189,8 @@ func (s *OrganizationMembershipsList) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfOrganizationMembershipsList) {
-					name = jsonFieldsNameOfOrganizationMembershipsList[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfOrganizationParentRead) {
+					name = jsonFieldsNameOfOrganizationParentRead[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -9074,14 +8211,14 @@ func (s *OrganizationMembershipsList) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *OrganizationMembershipsList) MarshalJSON() ([]byte, error) {
+func (s *OrganizationParentRead) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OrganizationMembershipsList) UnmarshalJSON(data []byte) error {
+func (s *OrganizationParentRead) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -9123,15 +8260,29 @@ func (s *OrganizationRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfOrganizationRead = [6]string{
+var jsonFieldsNameOfOrganizationRead = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
 	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
 // Decode decodes OrganizationRead from json.
@@ -9210,6 +8361,26 @@ func (s *OrganizationRead) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
 			}
 		default:
 			return d.Skip()
@@ -9304,15 +8475,29 @@ func (s *OrganizationUpdate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("name")
 		e.Str(s.Name)
 	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfOrganizationUpdate = [6]string{
+var jsonFieldsNameOfOrganizationUpdate = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
 	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
 // Decode decodes OrganizationUpdate from json.
@@ -9392,6 +8577,26 @@ func (s *OrganizationUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -9444,6 +8649,341 @@ func (s *OrganizationUpdate) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OrganizationUpdate) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *OrganizationUsersList) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *OrganizationUsersList) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("id")
+		json.EncodeUUID(e, s.ID)
+	}
+	{
+		e.FieldStart("created_at")
+		json.EncodeDateTime(e, s.CreatedAt)
+	}
+	{
+		e.FieldStart("updated_at")
+		json.EncodeDateTime(e, s.UpdatedAt)
+	}
+	{
+		if s.CreatedBy.Set {
+			e.FieldStart("created_by")
+			s.CreatedBy.Encode(e)
+		}
+	}
+	{
+		if s.UpdatedBy.Set {
+			e.FieldStart("updated_by")
+			s.UpdatedBy.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("email")
+		e.Str(s.Email)
+	}
+	{
+		e.FieldStart("first_name")
+		e.Str(s.FirstName)
+	}
+	{
+		e.FieldStart("last_name")
+		e.Str(s.LastName)
+	}
+	{
+		e.FieldStart("display_name")
+		e.Str(s.DisplayName)
+	}
+	{
+		e.FieldStart("locked")
+		e.Bool(s.Locked)
+	}
+	{
+		if s.AvatarRemoteURL.Set {
+			e.FieldStart("avatar_remote_url")
+			s.AvatarRemoteURL.Encode(e)
+		}
+	}
+	{
+		if s.AvatarLocalFile.Set {
+			e.FieldStart("avatar_local_file")
+			s.AvatarLocalFile.Encode(e)
+		}
+	}
+	{
+		if s.AvatarUpdatedAt.Set {
+			e.FieldStart("avatar_updated_at")
+			s.AvatarUpdatedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.SilencedAt.Set {
+			e.FieldStart("silenced_at")
+			s.SilencedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		if s.SuspendedAt.Set {
+			e.FieldStart("suspended_at")
+			s.SuspendedAt.Encode(e, json.EncodeDateTime)
+		}
+	}
+}
+
+var jsonFieldsNameOfOrganizationUsersList = [15]string{
+	0:  "id",
+	1:  "created_at",
+	2:  "updated_at",
+	3:  "created_by",
+	4:  "updated_by",
+	5:  "email",
+	6:  "first_name",
+	7:  "last_name",
+	8:  "display_name",
+	9:  "locked",
+	10: "avatar_remote_url",
+	11: "avatar_local_file",
+	12: "avatar_updated_at",
+	13: "silenced_at",
+	14: "suspended_at",
+}
+
+// Decode decodes OrganizationUsersList from json.
+func (s *OrganizationUsersList) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode OrganizationUsersList to nil")
+	}
+	var requiredBitSet [2]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "id":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := json.DecodeUUID(d)
+				s.ID = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"id\"")
+			}
+		case "created_at":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.CreatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_at\"")
+			}
+		case "updated_at":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.UpdatedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_at\"")
+			}
+		case "created_by":
+			if err := func() error {
+				s.CreatedBy.Reset()
+				if err := s.CreatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"created_by\"")
+			}
+		case "updated_by":
+			if err := func() error {
+				s.UpdatedBy.Reset()
+				if err := s.UpdatedBy.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"updated_by\"")
+			}
+		case "email":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Email = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"email\"")
+			}
+		case "first_name":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.FirstName = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"first_name\"")
+			}
+		case "last_name":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.LastName = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_name\"")
+			}
+		case "display_name":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.DisplayName = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"display_name\"")
+			}
+		case "locked":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Bool()
+				s.Locked = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"locked\"")
+			}
+		case "avatar_remote_url":
+			if err := func() error {
+				s.AvatarRemoteURL.Reset()
+				if err := s.AvatarRemoteURL.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"avatar_remote_url\"")
+			}
+		case "avatar_local_file":
+			if err := func() error {
+				s.AvatarLocalFile.Reset()
+				if err := s.AvatarLocalFile.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"avatar_local_file\"")
+			}
+		case "avatar_updated_at":
+			if err := func() error {
+				s.AvatarUpdatedAt.Reset()
+				if err := s.AvatarUpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"avatar_updated_at\"")
+			}
+		case "silenced_at":
+			if err := func() error {
+				s.SilencedAt.Reset()
+				if err := s.SilencedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"silenced_at\"")
+			}
+		case "suspended_at":
+			if err := func() error {
+				s.SuspendedAt.Reset()
+				if err := s.SuspendedAt.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"suspended_at\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode OrganizationUsersList")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [2]uint8{
+		0b11100111,
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfOrganizationUsersList) {
+					name = jsonFieldsNameOfOrganizationUsersList[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *OrganizationUsersList) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OrganizationUsersList) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -11519,16 +11059,6 @@ func (s *UpdateGroupReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Memberships != nil {
-			e.FieldStart("memberships")
-			e.ArrStart()
-			for _, elem := range s.Memberships {
-				json.EncodeUUID(e, elem)
-			}
-			e.ArrEnd()
-		}
-	}
-	{
 		if s.Users != nil {
 			e.FieldStart("users")
 			e.ArrStart()
@@ -11536,6 +11066,12 @@ func (s *UpdateGroupReq) encodeFields(e *jx.Encoder) {
 				json.EncodeUUID(e, elem)
 			}
 			e.ArrEnd()
+		}
+	}
+	{
+		if s.Owner.Set {
+			e.FieldStart("owner")
+			s.Owner.Encode(e)
 		}
 	}
 }
@@ -11548,8 +11084,8 @@ var jsonFieldsNameOfUpdateGroupReq = [9]string{
 	4: "description",
 	5: "logo_url",
 	6: "setting",
-	7: "memberships",
-	8: "users",
+	7: "users",
+	8: "owner",
 }
 
 // Decode decodes UpdateGroupReq from json.
@@ -11630,25 +11166,6 @@ func (s *UpdateGroupReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"setting\"")
 			}
-		case "memberships":
-			if err := func() error {
-				s.Memberships = make([]uuid.UUID, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
-					if err != nil {
-						return err
-					}
-					s.Memberships = append(s.Memberships, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"memberships\"")
-			}
 		case "users":
 			if err := func() error {
 				s.Users = make([]uuid.UUID, 0)
@@ -11667,6 +11184,16 @@ func (s *UpdateGroupReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"users\"")
+			}
+		case "owner":
+			if err := func() error {
+				s.Owner.Reset()
+				if err := s.Owner.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"owner\"")
 			}
 		default:
 			return d.Skip()
@@ -11953,25 +11480,32 @@ func (s *UpdateIntegrationReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
+		if s.Name.Set {
+			e.FieldStart("name")
+			s.Name.Encode(e)
+		}
+	}
+	{
 		if s.Description.Set {
 			e.FieldStart("description")
 			s.Description.Encode(e)
 		}
 	}
 	{
-		if s.Organization.Set {
-			e.FieldStart("organization")
-			s.Organization.Encode(e)
+		if s.Owner.Set {
+			e.FieldStart("owner")
+			s.Owner.Encode(e)
 		}
 	}
 }
 
-var jsonFieldsNameOfUpdateIntegrationReq = [5]string{
+var jsonFieldsNameOfUpdateIntegrationReq = [6]string{
 	0: "updated_at",
 	1: "created_by",
 	2: "updated_by",
-	3: "description",
-	4: "organization",
+	3: "name",
+	4: "description",
+	5: "owner",
 }
 
 // Decode decodes UpdateIntegrationReq from json.
@@ -12012,6 +11546,16 @@ func (s *UpdateIntegrationReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
+		case "name":
+			if err := func() error {
+				s.Name.Reset()
+				if err := s.Name.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
 		case "description":
 			if err := func() error {
 				s.Description.Reset()
@@ -12022,15 +11566,15 @@ func (s *UpdateIntegrationReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
-		case "organization":
+		case "owner":
 			if err := func() error {
-				s.Organization.Reset()
-				if err := s.Organization.Decode(d); err != nil {
+				s.Owner.Reset()
+				if err := s.Owner.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"organization\"")
+				return errors.Wrap(err, "decode field \"owner\"")
 			}
 		default:
 			return d.Skip()
@@ -12052,171 +11596,6 @@ func (s *UpdateIntegrationReq) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *UpdateIntegrationReq) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *UpdateMembershipReq) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *UpdateMembershipReq) encodeFields(e *jx.Encoder) {
-	{
-		if s.UpdatedAt.Set {
-			e.FieldStart("updated_at")
-			s.UpdatedAt.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		if s.CreatedBy.Set {
-			e.FieldStart("created_by")
-			s.CreatedBy.Encode(e)
-		}
-	}
-	{
-		if s.UpdatedBy.Set {
-			e.FieldStart("updated_by")
-			s.UpdatedBy.Encode(e)
-		}
-	}
-	{
-		if s.Current.Set {
-			e.FieldStart("current")
-			s.Current.Encode(e)
-		}
-	}
-	{
-		if s.Organization.Set {
-			e.FieldStart("organization")
-			s.Organization.Encode(e)
-		}
-	}
-	{
-		if s.User.Set {
-			e.FieldStart("user")
-			s.User.Encode(e)
-		}
-	}
-	{
-		if s.Group.Set {
-			e.FieldStart("group")
-			s.Group.Encode(e)
-		}
-	}
-}
-
-var jsonFieldsNameOfUpdateMembershipReq = [7]string{
-	0: "updated_at",
-	1: "created_by",
-	2: "updated_by",
-	3: "current",
-	4: "organization",
-	5: "user",
-	6: "group",
-}
-
-// Decode decodes UpdateMembershipReq from json.
-func (s *UpdateMembershipReq) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode UpdateMembershipReq to nil")
-	}
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "updated_at":
-			if err := func() error {
-				s.UpdatedAt.Reset()
-				if err := s.UpdatedAt.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_at\"")
-			}
-		case "created_by":
-			if err := func() error {
-				s.CreatedBy.Reset()
-				if err := s.CreatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"created_by\"")
-			}
-		case "updated_by":
-			if err := func() error {
-				s.UpdatedBy.Reset()
-				if err := s.UpdatedBy.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"updated_by\"")
-			}
-		case "current":
-			if err := func() error {
-				s.Current.Reset()
-				if err := s.Current.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
-			}
-		case "organization":
-			if err := func() error {
-				s.Organization.Reset()
-				if err := s.Organization.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"organization\"")
-			}
-		case "user":
-			if err := func() error {
-				s.User.Reset()
-				if err := s.User.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"user\"")
-			}
-		case "group":
-			if err := func() error {
-				s.Group.Reset()
-				if err := s.Group.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"group\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode UpdateMembershipReq")
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *UpdateMembershipReq) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *UpdateMembershipReq) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -12255,10 +11634,42 @@ func (s *UpdateOrganizationReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Memberships != nil {
-			e.FieldStart("memberships")
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.Parent.Set {
+			e.FieldStart("parent")
+			s.Parent.Encode(e)
+		}
+	}
+	{
+		if s.Children != nil {
+			e.FieldStart("children")
 			e.ArrStart()
-			for _, elem := range s.Memberships {
+			for _, elem := range s.Children {
+				json.EncodeUUID(e, elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Users != nil {
+			e.FieldStart("users")
+			e.ArrStart()
+			for _, elem := range s.Users {
+				json.EncodeUUID(e, elem)
+			}
+			e.ArrEnd()
+		}
+	}
+	{
+		if s.Groups != nil {
+			e.FieldStart("groups")
+			e.ArrStart()
+			for _, elem := range s.Groups {
 				json.EncodeUUID(e, elem)
 			}
 			e.ArrEnd()
@@ -12276,13 +11687,17 @@ func (s *UpdateOrganizationReq) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfUpdateOrganizationReq = [6]string{
+var jsonFieldsNameOfUpdateOrganizationReq = [10]string{
 	0: "updated_at",
 	1: "created_by",
 	2: "updated_by",
 	3: "name",
-	4: "memberships",
-	5: "integrations",
+	4: "description",
+	5: "parent",
+	6: "children",
+	7: "users",
+	8: "groups",
+	9: "integrations",
 }
 
 // Decode decodes UpdateOrganizationReq from json.
@@ -12333,9 +11748,29 @@ func (s *UpdateOrganizationReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
-		case "memberships":
+		case "description":
 			if err := func() error {
-				s.Memberships = make([]uuid.UUID, 0)
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent":
+			if err := func() error {
+				s.Parent.Reset()
+				if err := s.Parent.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent\"")
+			}
+		case "children":
+			if err := func() error {
+				s.Children = make([]uuid.UUID, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
 					var elem uuid.UUID
 					v, err := json.DecodeUUID(d)
@@ -12343,14 +11778,52 @@ func (s *UpdateOrganizationReq) Decode(d *jx.Decoder) error {
 					if err != nil {
 						return err
 					}
-					s.Memberships = append(s.Memberships, elem)
+					s.Children = append(s.Children, elem)
 					return nil
 				}); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"memberships\"")
+				return errors.Wrap(err, "decode field \"children\"")
+			}
+		case "users":
+			if err := func() error {
+				s.Users = make([]uuid.UUID, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem uuid.UUID
+					v, err := json.DecodeUUID(d)
+					elem = v
+					if err != nil {
+						return err
+					}
+					s.Users = append(s.Users, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"users\"")
+			}
+		case "groups":
+			if err := func() error {
+				s.Groups = make([]uuid.UUID, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem uuid.UUID
+					v, err := json.DecodeUUID(d)
+					elem = v
+					if err != nil {
+						return err
+					}
+					s.Groups = append(s.Groups, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"groups\"")
 			}
 		case "integrations":
 			if err := func() error {
@@ -12654,10 +12127,10 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		if s.Memberships != nil {
-			e.FieldStart("memberships")
+		if s.Organizations != nil {
+			e.FieldStart("organizations")
 			e.ArrStart()
-			for _, elem := range s.Memberships {
+			for _, elem := range s.Organizations {
 				json.EncodeUUID(e, elem)
 			}
 			e.ArrEnd()
@@ -12700,7 +12173,7 @@ var jsonFieldsNameOfUpdateUserReq = [17]string{
 	11: "silenced_at",
 	12: "suspended_at",
 	13: "recovery_code",
-	14: "memberships",
+	14: "organizations",
 	15: "sessions",
 	16: "groups",
 }
@@ -12853,9 +12326,9 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"recovery_code\"")
 			}
-		case "memberships":
+		case "organizations":
 			if err := func() error {
-				s.Memberships = make([]uuid.UUID, 0)
+				s.Organizations = make([]uuid.UUID, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
 					var elem uuid.UUID
 					v, err := json.DecodeUUID(d)
@@ -12863,14 +12336,14 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 					if err != nil {
 						return err
 					}
-					s.Memberships = append(s.Memberships, elem)
+					s.Organizations = append(s.Organizations, elem)
 					return nil
 				}); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"memberships\"")
+				return errors.Wrap(err, "decode field \"organizations\"")
 			}
 		case "sessions":
 			if err := func() error {
@@ -13820,14 +13293,14 @@ func (s *UserList) UnmarshalJSON(data []byte) error {
 }
 
 // Encode implements json.Marshaler.
-func (s *UserMembershipsList) Encode(e *jx.Encoder) {
+func (s *UserOrganizationsList) Encode(e *jx.Encoder) {
 	e.ObjStart()
 	s.encodeFields(e)
 	e.ObjEnd()
 }
 
 // encodeFields encodes fields.
-func (s *UserMembershipsList) encodeFields(e *jx.Encoder) {
+func (s *UserOrganizationsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
 		json.EncodeUUID(e, s.ID)
@@ -13853,24 +13326,38 @@ func (s *UserMembershipsList) encodeFields(e *jx.Encoder) {
 		}
 	}
 	{
-		e.FieldStart("current")
-		e.Bool(s.Current)
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		if s.Description.Set {
+			e.FieldStart("description")
+			s.Description.Encode(e)
+		}
+	}
+	{
+		if s.ParentOrganizationID.Set {
+			e.FieldStart("parent_organization_id")
+			s.ParentOrganizationID.Encode(e)
+		}
 	}
 }
 
-var jsonFieldsNameOfUserMembershipsList = [6]string{
+var jsonFieldsNameOfUserOrganizationsList = [8]string{
 	0: "id",
 	1: "created_at",
 	2: "updated_at",
 	3: "created_by",
 	4: "updated_by",
-	5: "current",
+	5: "name",
+	6: "description",
+	7: "parent_organization_id",
 }
 
-// Decode decodes UserMembershipsList from json.
-func (s *UserMembershipsList) Decode(d *jx.Decoder) error {
+// Decode decodes UserOrganizationsList from json.
+func (s *UserOrganizationsList) Decode(d *jx.Decoder) error {
 	if s == nil {
-		return errors.New("invalid: unable to decode UserMembershipsList to nil")
+		return errors.New("invalid: unable to decode UserOrganizationsList to nil")
 	}
 	var requiredBitSet [1]uint8
 
@@ -13932,24 +13419,44 @@ func (s *UserMembershipsList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated_by\"")
 			}
-		case "current":
+		case "name":
 			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
-				v, err := d.Bool()
-				s.Current = bool(v)
+				v, err := d.Str()
+				s.Name = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"current\"")
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "description":
+			if err := func() error {
+				s.Description.Reset()
+				if err := s.Description.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "parent_organization_id":
+			if err := func() error {
+				s.ParentOrganizationID.Reset()
+				if err := s.ParentOrganizationID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"parent_organization_id\"")
 			}
 		default:
 			return d.Skip()
 		}
 		return nil
 	}); err != nil {
-		return errors.Wrap(err, "decode UserMembershipsList")
+		return errors.Wrap(err, "decode UserOrganizationsList")
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
@@ -13966,8 +13473,8 @@ func (s *UserMembershipsList) Decode(d *jx.Decoder) error {
 				bitIdx := bits.TrailingZeros8(result)
 				fieldIdx := i*8 + bitIdx
 				var name string
-				if fieldIdx < len(jsonFieldsNameOfUserMembershipsList) {
-					name = jsonFieldsNameOfUserMembershipsList[fieldIdx]
+				if fieldIdx < len(jsonFieldsNameOfUserOrganizationsList) {
+					name = jsonFieldsNameOfUserOrganizationsList[fieldIdx]
 				} else {
 					name = strconv.Itoa(fieldIdx)
 				}
@@ -13988,14 +13495,14 @@ func (s *UserMembershipsList) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s *UserMembershipsList) MarshalJSON() ([]byte, error) {
+func (s *UserOrganizationsList) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *UserMembershipsList) UnmarshalJSON(data []byte) error {
+func (s *UserOrganizationsList) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

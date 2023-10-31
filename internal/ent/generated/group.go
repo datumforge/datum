@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/google/uuid"
 )
 
@@ -35,26 +36,26 @@ type Group struct {
 	LogoURL string `json:"logo_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
-	Edges        GroupEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges               GroupEdges `json:"edges"`
+	organization_groups *uuid.UUID
+	selectValues        sql.SelectValues
 }
 
 // GroupEdges holds the relations/edges for other nodes in the graph.
 type GroupEdges struct {
 	// Setting holds the value of the setting edge.
 	Setting *GroupSettings `json:"setting,omitempty"`
-	// Memberships holds the value of the memberships edge.
-	Memberships []*Membership `json:"memberships,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
 	totalCount [3]map[string]int
 
-	namedMemberships map[string][]*Membership
-	namedUsers       map[string][]*User
+	namedUsers map[string][]*User
 }
 
 // SettingOrErr returns the Setting value or an error if the edge
@@ -70,22 +71,26 @@ func (e GroupEdges) SettingOrErr() (*GroupSettings, error) {
 	return nil, &NotLoadedError{edge: "setting"}
 }
 
-// MembershipsOrErr returns the Memberships value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) MembershipsOrErr() ([]*Membership, error) {
-	if e.loadedTypes[1] {
-		return e.Memberships, nil
-	}
-	return nil, &NotLoadedError{edge: "memberships"}
-}
-
 // UsersOrErr returns the Users value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[1] {
 		return e.Users, nil
 	}
 	return nil, &NotLoadedError{edge: "users"}
+}
+
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e GroupEdges) OwnerOrErr() (*Organization, error) {
+	if e.loadedTypes[2] {
+		if e.Owner == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Owner, nil
+	}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -99,6 +104,8 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy:
 			values[i] = new(uuid.UUID)
+		case group.ForeignKeys[0]: // organization_groups
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -162,6 +169,13 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gr.LogoURL = value.String
 			}
+		case group.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_groups", values[i])
+			} else if value.Valid {
+				gr.organization_groups = new(uuid.UUID)
+				*gr.organization_groups = *value.S.(*uuid.UUID)
+			}
 		default:
 			gr.selectValues.Set(columns[i], values[i])
 		}
@@ -180,14 +194,14 @@ func (gr *Group) QuerySetting() *GroupSettingsQuery {
 	return NewGroupClient(gr.config).QuerySetting(gr)
 }
 
-// QueryMemberships queries the "memberships" edge of the Group entity.
-func (gr *Group) QueryMemberships() *MembershipQuery {
-	return NewGroupClient(gr.config).QueryMemberships(gr)
-}
-
 // QueryUsers queries the "users" edge of the Group entity.
 func (gr *Group) QueryUsers() *UserQuery {
 	return NewGroupClient(gr.config).QueryUsers(gr)
+}
+
+// QueryOwner queries the "owner" edge of the Group entity.
+func (gr *Group) QueryOwner() *OrganizationQuery {
+	return NewGroupClient(gr.config).QueryOwner(gr)
 }
 
 // Update returns a builder for updating this Group.
@@ -235,30 +249,6 @@ func (gr *Group) String() string {
 	builder.WriteString(gr.LogoURL)
 	builder.WriteByte(')')
 	return builder.String()
-}
-
-// NamedMemberships returns the Memberships named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (gr *Group) NamedMemberships(name string) ([]*Membership, error) {
-	if gr.Edges.namedMemberships == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := gr.Edges.namedMemberships[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (gr *Group) appendNamedMemberships(name string, edges ...*Membership) {
-	if gr.Edges.namedMemberships == nil {
-		gr.Edges.namedMemberships = make(map[string][]*Membership)
-	}
-	if len(edges) == 0 {
-		gr.Edges.namedMemberships[name] = []*Membership{}
-	} else {
-		gr.Edges.namedMemberships[name] = append(gr.Edges.namedMemberships[name], edges...)
-	}
 }
 
 // NamedUsers returns the Users named value or an error if the edge was not

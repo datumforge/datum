@@ -13,10 +13,6 @@ type CreateIntegrationRes interface {
 	createIntegrationRes()
 }
 
-type CreateMembershipRes interface {
-	createMembershipRes()
-}
-
 type CreateOrganizationRes interface {
 	createOrganizationRes()
 }
@@ -41,10 +37,6 @@ type DeleteIntegrationRes interface {
 	deleteIntegrationRes()
 }
 
-type DeleteMembershipRes interface {
-	deleteMembershipRes()
-}
-
 type DeleteOrganizationRes interface {
 	deleteOrganizationRes()
 }
@@ -55,10 +47,6 @@ type DeleteSessionRes interface {
 
 type DeleteUserRes interface {
 	deleteUserRes()
-}
-
-type ListGroupMembershipsRes interface {
-	listGroupMembershipsRes()
 }
 
 type ListGroupRes interface {
@@ -77,20 +65,24 @@ type ListIntegrationRes interface {
 	listIntegrationRes()
 }
 
-type ListMembershipRes interface {
-	listMembershipRes()
+type ListOrganizationChildrenRes interface {
+	listOrganizationChildrenRes()
+}
+
+type ListOrganizationGroupsRes interface {
+	listOrganizationGroupsRes()
 }
 
 type ListOrganizationIntegrationsRes interface {
 	listOrganizationIntegrationsRes()
 }
 
-type ListOrganizationMembershipsRes interface {
-	listOrganizationMembershipsRes()
-}
-
 type ListOrganizationRes interface {
 	listOrganizationRes()
+}
+
+type ListOrganizationUsersRes interface {
+	listOrganizationUsersRes()
 }
 
 type ListSessionRes interface {
@@ -101,8 +93,8 @@ type ListUserGroupsRes interface {
 	listUserGroupsRes()
 }
 
-type ListUserMembershipsRes interface {
-	listUserMembershipsRes()
+type ListUserOrganizationsRes interface {
+	listUserOrganizationsRes()
 }
 
 type ListUserRes interface {
@@ -111,6 +103,10 @@ type ListUserRes interface {
 
 type ListUserSessionsRes interface {
 	listUserSessionsRes()
+}
+
+type ReadGroupOwnerRes interface {
+	readGroupOwnerRes()
 }
 
 type ReadGroupRes interface {
@@ -129,28 +125,16 @@ type ReadGroupSettingsRes interface {
 	readGroupSettingsRes()
 }
 
-type ReadIntegrationOrganizationRes interface {
-	readIntegrationOrganizationRes()
+type ReadIntegrationOwnerRes interface {
+	readIntegrationOwnerRes()
 }
 
 type ReadIntegrationRes interface {
 	readIntegrationRes()
 }
 
-type ReadMembershipGroupRes interface {
-	readMembershipGroupRes()
-}
-
-type ReadMembershipOrganizationRes interface {
-	readMembershipOrganizationRes()
-}
-
-type ReadMembershipRes interface {
-	readMembershipRes()
-}
-
-type ReadMembershipUserRes interface {
-	readMembershipUserRes()
+type ReadOrganizationParentRes interface {
+	readOrganizationParentRes()
 }
 
 type ReadOrganizationRes interface {
@@ -179,10 +163,6 @@ type UpdateGroupSettingsRes interface {
 
 type UpdateIntegrationRes interface {
 	updateIntegrationRes()
-}
-
-type UpdateMembershipRes interface {
-	updateMembershipRes()
 }
 
 type UpdateOrganizationRes interface {

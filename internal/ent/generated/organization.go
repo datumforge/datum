@@ -28,6 +28,10 @@ type Organization struct {
 	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// An optional description of the Organization
+	Description string `json:"description,omitempty"`
+	// The ID of the parent organization for the organization.
+	ParentOrganizationID uuid.UUID `json:"parent_organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -36,33 +40,72 @@ type Organization struct {
 
 // OrganizationEdges holds the relations/edges for other nodes in the graph.
 type OrganizationEdges struct {
-	// Memberships holds the value of the memberships edge.
-	Memberships []*Membership `json:"memberships,omitempty"`
+	// Parent holds the value of the parent edge.
+	Parent *Organization `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Organization `json:"children,omitempty"`
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
+	// Groups holds the value of the groups edge.
+	Groups []*Group `json:"groups,omitempty"`
 	// Integrations holds the value of the integrations edge.
 	Integrations []*Integration `json:"integrations,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [5]map[string]int
 
-	namedMemberships  map[string][]*Membership
+	namedChildren     map[string][]*Organization
+	namedUsers        map[string][]*User
+	namedGroups       map[string][]*Group
 	namedIntegrations map[string][]*Integration
 }
 
-// MembershipsOrErr returns the Memberships value or an error if the edge
-// was not loaded in eager-loading.
-func (e OrganizationEdges) MembershipsOrErr() ([]*Membership, error) {
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrganizationEdges) ParentOrErr() (*Organization, error) {
 	if e.loadedTypes[0] {
-		return e.Memberships, nil
+		if e.Parent == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Parent, nil
 	}
-	return nil, &NotLoadedError{edge: "memberships"}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) ChildrenOrErr() ([]*Organization, error) {
+	if e.loadedTypes[1] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[2] {
+		return e.Users, nil
+	}
+	return nil, &NotLoadedError{edge: "users"}
+}
+
+// GroupsOrErr returns the Groups value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) GroupsOrErr() ([]*Group, error) {
+	if e.loadedTypes[3] {
+		return e.Groups, nil
+	}
+	return nil, &NotLoadedError{edge: "groups"}
 }
 
 // IntegrationsOrErr returns the Integrations value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[4] {
 		return e.Integrations, nil
 	}
 	return nil, &NotLoadedError{edge: "integrations"}
@@ -73,11 +116,11 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organization.FieldName:
+		case organization.FieldName, organization.FieldDescription:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy:
+		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldParentOrganizationID:
 			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -130,6 +173,18 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.Name = value.String
 			}
+		case organization.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				o.Description = value.String
+			}
+		case organization.FieldParentOrganizationID:
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field parent_organization_id", values[i])
+			} else if value != nil {
+				o.ParentOrganizationID = *value
+			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
 		}
@@ -143,9 +198,24 @@ func (o *Organization) Value(name string) (ent.Value, error) {
 	return o.selectValues.Get(name)
 }
 
-// QueryMemberships queries the "memberships" edge of the Organization entity.
-func (o *Organization) QueryMemberships() *MembershipQuery {
-	return NewOrganizationClient(o.config).QueryMemberships(o)
+// QueryParent queries the "parent" edge of the Organization entity.
+func (o *Organization) QueryParent() *OrganizationQuery {
+	return NewOrganizationClient(o.config).QueryParent(o)
+}
+
+// QueryChildren queries the "children" edge of the Organization entity.
+func (o *Organization) QueryChildren() *OrganizationQuery {
+	return NewOrganizationClient(o.config).QueryChildren(o)
+}
+
+// QueryUsers queries the "users" edge of the Organization entity.
+func (o *Organization) QueryUsers() *UserQuery {
+	return NewOrganizationClient(o.config).QueryUsers(o)
+}
+
+// QueryGroups queries the "groups" edge of the Organization entity.
+func (o *Organization) QueryGroups() *GroupQuery {
+	return NewOrganizationClient(o.config).QueryGroups(o)
 }
 
 // QueryIntegrations queries the "integrations" edge of the Organization entity.
@@ -190,31 +260,85 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(o.Name)
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(o.Description)
+	builder.WriteString(", ")
+	builder.WriteString("parent_organization_id=")
+	builder.WriteString(fmt.Sprintf("%v", o.ParentOrganizationID))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// NamedMemberships returns the Memberships named value or an error if the edge was not
+// NamedChildren returns the Children named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (o *Organization) NamedMemberships(name string) ([]*Membership, error) {
-	if o.Edges.namedMemberships == nil {
+func (o *Organization) NamedChildren(name string) ([]*Organization, error) {
+	if o.Edges.namedChildren == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := o.Edges.namedMemberships[name]
+	nodes, ok := o.Edges.namedChildren[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (o *Organization) appendNamedMemberships(name string, edges ...*Membership) {
-	if o.Edges.namedMemberships == nil {
-		o.Edges.namedMemberships = make(map[string][]*Membership)
+func (o *Organization) appendNamedChildren(name string, edges ...*Organization) {
+	if o.Edges.namedChildren == nil {
+		o.Edges.namedChildren = make(map[string][]*Organization)
 	}
 	if len(edges) == 0 {
-		o.Edges.namedMemberships[name] = []*Membership{}
+		o.Edges.namedChildren[name] = []*Organization{}
 	} else {
-		o.Edges.namedMemberships[name] = append(o.Edges.namedMemberships[name], edges...)
+		o.Edges.namedChildren[name] = append(o.Edges.namedChildren[name], edges...)
+	}
+}
+
+// NamedUsers returns the Users named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedUsers(name string) ([]*User, error) {
+	if o.Edges.namedUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedUsers(name string, edges ...*User) {
+	if o.Edges.namedUsers == nil {
+		o.Edges.namedUsers = make(map[string][]*User)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedUsers[name] = []*User{}
+	} else {
+		o.Edges.namedUsers[name] = append(o.Edges.namedUsers[name], edges...)
+	}
+}
+
+// NamedGroups returns the Groups named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedGroups(name string) ([]*Group, error) {
+	if o.Edges.namedGroups == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedGroups[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedGroups(name string, edges ...*Group) {
+	if o.Edges.namedGroups == nil {
+		o.Edges.namedGroups = make(map[string][]*Group)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedGroups[name] = []*Group{}
+	} else {
+		o.Edges.namedGroups[name] = append(o.Edges.namedGroups[name], edges...)
 	}
 }
 

@@ -38,11 +38,6 @@ func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[u
 	return r.client.Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))
 }
 
-// Memberships is the resolver for the memberships field.
-func (r *queryResolver) Memberships(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, where *generated.MembershipWhereInput) (*generated.MembershipConnection, error) {
-	return r.client.Membership.Query().Paginate(ctx, after, first, before, last, generated.WithMembershipFilter(where.Filter))
-}
-
 // Organizations is the resolver for the organizations field.
 func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error) {
 	return r.client.Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))

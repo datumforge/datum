@@ -338,112 +338,6 @@ func (s *Server) handleCreateIntegrationRequest(args [0]string, argsEscaped bool
 	}
 }
 
-// handleCreateMembershipRequest handles createMembership operation.
-//
-// Creates a new Membership and persists it to storage.
-//
-// POST /memberships
-func (s *Server) handleCreateMembershipRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("createMembership"),
-		semconv.HTTPMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/memberships"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "CreateMembership",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "CreateMembership",
-			ID:   "createMembership",
-		}
-	)
-	request, close, err := s.decodeCreateMembershipRequest(r)
-	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeRequest", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
-
-	var response CreateMembershipRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "CreateMembership",
-			OperationSummary: "Create a new Membership",
-			OperationID:      "createMembership",
-			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
-		}
-
-		type (
-			Request  = *CreateMembershipReq
-			Params   = struct{}
-			Response = CreateMembershipRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			nil,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.CreateMembership(ctx, request)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.CreateMembership(ctx, request)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeCreateMembershipResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
 // handleCreateOrganizationRequest handles createOrganization operation.
 //
 // Creates a new Organization and persists it to storage.
@@ -1080,112 +974,6 @@ func (s *Server) handleDeleteIntegrationRequest(args [1]string, argsEscaped bool
 	}
 }
 
-// handleDeleteMembershipRequest handles deleteMembership operation.
-//
-// Deletes the Membership with the requested ID.
-//
-// DELETE /memberships/{id}
-func (s *Server) handleDeleteMembershipRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deleteMembership"),
-		semconv.HTTPMethodKey.String("DELETE"),
-		semconv.HTTPRouteKey.String("/memberships/{id}"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "DeleteMembership",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "DeleteMembership",
-			ID:   "deleteMembership",
-		}
-	)
-	params, err := decodeDeleteMembershipParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response DeleteMembershipRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "DeleteMembership",
-			OperationSummary: "Deletes a Membership by ID",
-			OperationID:      "deleteMembership",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = DeleteMembershipParams
-			Response = DeleteMembershipRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackDeleteMembershipParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.DeleteMembership(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.DeleteMembership(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeDeleteMembershipResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
 // handleDeleteOrganizationRequest handles deleteOrganization operation.
 //
 // Deletes the Organization with the requested ID.
@@ -1614,120 +1402,6 @@ func (s *Server) handleListGroupRequest(args [0]string, argsEscaped bool, w http
 	}
 }
 
-// handleListGroupMembershipsRequest handles listGroupMemberships operation.
-//
-// List attached Memberships.
-//
-// GET /groups/{id}/memberships
-func (s *Server) handleListGroupMembershipsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listGroupMemberships"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/groups/{id}/memberships"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListGroupMemberships",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "ListGroupMemberships",
-			ID:   "listGroupMemberships",
-		}
-	)
-	params, err := decodeListGroupMembershipsParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response ListGroupMembershipsRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "ListGroupMemberships",
-			OperationSummary: "List attached Memberships",
-			OperationID:      "listGroupMemberships",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-				{
-					Name: "page",
-					In:   "query",
-				}: params.Page,
-				{
-					Name: "itemsPerPage",
-					In:   "query",
-				}: params.ItemsPerPage,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = ListGroupMembershipsParams
-			Response = ListGroupMembershipsRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackListGroupMembershipsParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ListGroupMemberships(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.ListGroupMemberships(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeListGroupMembershipsResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
 // handleListGroupSettingsRequest handles listGroupSettings operation.
 //
 // List GroupSettings.
@@ -2062,116 +1736,6 @@ func (s *Server) handleListIntegrationRequest(args [0]string, argsEscaped bool, 
 	}
 }
 
-// handleListMembershipRequest handles listMembership operation.
-//
-// List Memberships.
-//
-// GET /memberships
-func (s *Server) handleListMembershipRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listMembership"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListMembership",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "ListMembership",
-			ID:   "listMembership",
-		}
-	)
-	params, err := decodeListMembershipParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response ListMembershipRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "ListMembership",
-			OperationSummary: "List Memberships",
-			OperationID:      "listMembership",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "page",
-					In:   "query",
-				}: params.Page,
-				{
-					Name: "itemsPerPage",
-					In:   "query",
-				}: params.ItemsPerPage,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = ListMembershipParams
-			Response = ListMembershipRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackListMembershipParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ListMembership(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.ListMembership(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeListMembershipResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
 // handleListOrganizationRequest handles listOrganization operation.
 //
 // List Organizations.
@@ -2274,6 +1838,234 @@ func (s *Server) handleListOrganizationRequest(args [0]string, argsEscaped bool,
 	}
 
 	if err := encodeListOrganizationResponse(response, w, span); err != nil {
+		recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleListOrganizationChildrenRequest handles listOrganizationChildren operation.
+//
+// List attached Childrens.
+//
+// GET /organizations/{id}/children
+func (s *Server) handleListOrganizationChildrenRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listOrganizationChildren"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/children"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListOrganizationChildren",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "ListOrganizationChildren",
+			ID:   "listOrganizationChildren",
+		}
+	)
+	params, err := decodeListOrganizationChildrenParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ListOrganizationChildrenRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "ListOrganizationChildren",
+			OperationSummary: "List attached Childrens",
+			OperationID:      "listOrganizationChildren",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+				{
+					Name: "page",
+					In:   "query",
+				}: params.Page,
+				{
+					Name: "itemsPerPage",
+					In:   "query",
+				}: params.ItemsPerPage,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ListOrganizationChildrenParams
+			Response = ListOrganizationChildrenRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackListOrganizationChildrenParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ListOrganizationChildren(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ListOrganizationChildren(ctx, params)
+	}
+	if err != nil {
+		recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeListOrganizationChildrenResponse(response, w, span); err != nil {
+		recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleListOrganizationGroupsRequest handles listOrganizationGroups operation.
+//
+// List attached Groups.
+//
+// GET /organizations/{id}/groups
+func (s *Server) handleListOrganizationGroupsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listOrganizationGroups"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/groups"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListOrganizationGroups",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "ListOrganizationGroups",
+			ID:   "listOrganizationGroups",
+		}
+	)
+	params, err := decodeListOrganizationGroupsParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ListOrganizationGroupsRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "ListOrganizationGroups",
+			OperationSummary: "List attached Groups",
+			OperationID:      "listOrganizationGroups",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+				{
+					Name: "page",
+					In:   "query",
+				}: params.Page,
+				{
+					Name: "itemsPerPage",
+					In:   "query",
+				}: params.ItemsPerPage,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ListOrganizationGroupsParams
+			Response = ListOrganizationGroupsRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackListOrganizationGroupsParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ListOrganizationGroups(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ListOrganizationGroups(ctx, params)
+	}
+	if err != nil {
+		recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeListOrganizationGroupsResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2396,20 +2188,20 @@ func (s *Server) handleListOrganizationIntegrationsRequest(args [1]string, argsE
 	}
 }
 
-// handleListOrganizationMembershipsRequest handles listOrganizationMemberships operation.
+// handleListOrganizationUsersRequest handles listOrganizationUsers operation.
 //
-// List attached Memberships.
+// List attached Users.
 //
-// GET /organizations/{id}/memberships
-func (s *Server) handleListOrganizationMembershipsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /organizations/{id}/users
+func (s *Server) handleListOrganizationUsersRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listOrganizationMemberships"),
+		otelogen.OperationID("listOrganizationUsers"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/organizations/{id}/memberships"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/users"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListOrganizationMemberships",
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListOrganizationUsers",
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2434,11 +2226,11 @@ func (s *Server) handleListOrganizationMembershipsRequest(args [1]string, argsEs
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: "ListOrganizationMemberships",
-			ID:   "listOrganizationMemberships",
+			Name: "ListOrganizationUsers",
+			ID:   "listOrganizationUsers",
 		}
 	)
-	params, err := decodeListOrganizationMembershipsParams(args, argsEscaped, r)
+	params, err := decodeListOrganizationUsersParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -2449,13 +2241,13 @@ func (s *Server) handleListOrganizationMembershipsRequest(args [1]string, argsEs
 		return
 	}
 
-	var response ListOrganizationMembershipsRes
+	var response ListOrganizationUsersRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    "ListOrganizationMemberships",
-			OperationSummary: "List attached Memberships",
-			OperationID:      "listOrganizationMemberships",
+			OperationName:    "ListOrganizationUsers",
+			OperationSummary: "List attached Users",
+			OperationID:      "listOrganizationUsers",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
@@ -2476,8 +2268,8 @@ func (s *Server) handleListOrganizationMembershipsRequest(args [1]string, argsEs
 
 		type (
 			Request  = struct{}
-			Params   = ListOrganizationMembershipsParams
-			Response = ListOrganizationMembershipsRes
+			Params   = ListOrganizationUsersParams
+			Response = ListOrganizationUsersRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2486,14 +2278,14 @@ func (s *Server) handleListOrganizationMembershipsRequest(args [1]string, argsEs
 		](
 			m,
 			mreq,
-			unpackListOrganizationMembershipsParams,
+			unpackListOrganizationUsersParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ListOrganizationMemberships(ctx, params)
+				response, err = s.h.ListOrganizationUsers(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.ListOrganizationMemberships(ctx, params)
+		response, err = s.h.ListOrganizationUsers(ctx, params)
 	}
 	if err != nil {
 		recordError("Internal", err)
@@ -2501,7 +2293,7 @@ func (s *Server) handleListOrganizationMembershipsRequest(args [1]string, argsEs
 		return
 	}
 
-	if err := encodeListOrganizationMembershipsResponse(response, w, span); err != nil {
+	if err := encodeListOrganizationUsersResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2844,20 +2636,20 @@ func (s *Server) handleListUserGroupsRequest(args [1]string, argsEscaped bool, w
 	}
 }
 
-// handleListUserMembershipsRequest handles listUserMemberships operation.
+// handleListUserOrganizationsRequest handles listUserOrganizations operation.
 //
-// List attached Memberships.
+// List attached Organizations.
 //
-// GET /users/{id}/memberships
-func (s *Server) handleListUserMembershipsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /users/{id}/organizations
+func (s *Server) handleListUserOrganizationsRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("listUserMemberships"),
+		otelogen.OperationID("listUserOrganizations"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/users/{id}/memberships"),
+		semconv.HTTPRouteKey.String("/users/{id}/organizations"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListUserMemberships",
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ListUserOrganizations",
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2882,11 +2674,11 @@ func (s *Server) handleListUserMembershipsRequest(args [1]string, argsEscaped bo
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: "ListUserMemberships",
-			ID:   "listUserMemberships",
+			Name: "ListUserOrganizations",
+			ID:   "listUserOrganizations",
 		}
 	)
-	params, err := decodeListUserMembershipsParams(args, argsEscaped, r)
+	params, err := decodeListUserOrganizationsParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -2897,13 +2689,13 @@ func (s *Server) handleListUserMembershipsRequest(args [1]string, argsEscaped bo
 		return
 	}
 
-	var response ListUserMembershipsRes
+	var response ListUserOrganizationsRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    "ListUserMemberships",
-			OperationSummary: "List attached Memberships",
-			OperationID:      "listUserMemberships",
+			OperationName:    "ListUserOrganizations",
+			OperationSummary: "List attached Organizations",
+			OperationID:      "listUserOrganizations",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
@@ -2924,8 +2716,8 @@ func (s *Server) handleListUserMembershipsRequest(args [1]string, argsEscaped bo
 
 		type (
 			Request  = struct{}
-			Params   = ListUserMembershipsParams
-			Response = ListUserMembershipsRes
+			Params   = ListUserOrganizationsParams
+			Response = ListUserOrganizationsRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2934,14 +2726,14 @@ func (s *Server) handleListUserMembershipsRequest(args [1]string, argsEscaped bo
 		](
 			m,
 			mreq,
-			unpackListUserMembershipsParams,
+			unpackListUserOrganizationsParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ListUserMemberships(ctx, params)
+				response, err = s.h.ListUserOrganizations(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.ListUserMemberships(ctx, params)
+		response, err = s.h.ListUserOrganizations(ctx, params)
 	}
 	if err != nil {
 		recordError("Internal", err)
@@ -2949,7 +2741,7 @@ func (s *Server) handleListUserMembershipsRequest(args [1]string, argsEscaped bo
 		return
 	}
 
-	if err := encodeListUserMembershipsResponse(response, w, span); err != nil {
+	if err := encodeListUserOrganizationsResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -3170,6 +2962,112 @@ func (s *Server) handleReadGroupRequest(args [1]string, argsEscaped bool, w http
 	}
 
 	if err := encodeReadGroupResponse(response, w, span); err != nil {
+		recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleReadGroupOwnerRequest handles readGroupOwner operation.
+//
+// Find the attached Organization of the Group with the given ID.
+//
+// GET /groups/{id}/owner
+func (s *Server) handleReadGroupOwnerRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readGroupOwner"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/groups/{id}/owner"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadGroupOwner",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "ReadGroupOwner",
+			ID:   "readGroupOwner",
+		}
+	)
+	params, err := decodeReadGroupOwnerParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ReadGroupOwnerRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "ReadGroupOwner",
+			OperationSummary: "Find the attached Organization",
+			OperationID:      "readGroupOwner",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ReadGroupOwnerParams
+			Response = ReadGroupOwnerRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackReadGroupOwnerParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ReadGroupOwner(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ReadGroupOwner(ctx, params)
+	}
+	if err != nil {
+		recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeReadGroupOwnerResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -3602,20 +3500,20 @@ func (s *Server) handleReadIntegrationRequest(args [1]string, argsEscaped bool, 
 	}
 }
 
-// handleReadIntegrationOrganizationRequest handles readIntegrationOrganization operation.
+// handleReadIntegrationOwnerRequest handles readIntegrationOwner operation.
 //
 // Find the attached Organization of the Integration with the given ID.
 //
-// GET /integrations/{id}/organization
-func (s *Server) handleReadIntegrationOrganizationRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /integrations/{id}/owner
+func (s *Server) handleReadIntegrationOwnerRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readIntegrationOrganization"),
+		otelogen.OperationID("readIntegrationOwner"),
 		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/integrations/{id}/organization"),
+		semconv.HTTPRouteKey.String("/integrations/{id}/owner"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadIntegrationOrganization",
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadIntegrationOwner",
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -3640,11 +3538,11 @@ func (s *Server) handleReadIntegrationOrganizationRequest(args [1]string, argsEs
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: "ReadIntegrationOrganization",
-			ID:   "readIntegrationOrganization",
+			Name: "ReadIntegrationOwner",
+			ID:   "readIntegrationOwner",
 		}
 	)
-	params, err := decodeReadIntegrationOrganizationParams(args, argsEscaped, r)
+	params, err := decodeReadIntegrationOwnerParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -3655,13 +3553,13 @@ func (s *Server) handleReadIntegrationOrganizationRequest(args [1]string, argsEs
 		return
 	}
 
-	var response ReadIntegrationOrganizationRes
+	var response ReadIntegrationOwnerRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    "ReadIntegrationOrganization",
+			OperationName:    "ReadIntegrationOwner",
 			OperationSummary: "Find the attached Organization",
-			OperationID:      "readIntegrationOrganization",
+			OperationID:      "readIntegrationOwner",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
@@ -3674,8 +3572,8 @@ func (s *Server) handleReadIntegrationOrganizationRequest(args [1]string, argsEs
 
 		type (
 			Request  = struct{}
-			Params   = ReadIntegrationOrganizationParams
-			Response = ReadIntegrationOrganizationRes
+			Params   = ReadIntegrationOwnerParams
+			Response = ReadIntegrationOwnerRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -3684,14 +3582,14 @@ func (s *Server) handleReadIntegrationOrganizationRequest(args [1]string, argsEs
 		](
 			m,
 			mreq,
-			unpackReadIntegrationOrganizationParams,
+			unpackReadIntegrationOwnerParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ReadIntegrationOrganization(ctx, params)
+				response, err = s.h.ReadIntegrationOwner(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.ReadIntegrationOrganization(ctx, params)
+		response, err = s.h.ReadIntegrationOwner(ctx, params)
 	}
 	if err != nil {
 		recordError("Internal", err)
@@ -3699,431 +3597,7 @@ func (s *Server) handleReadIntegrationOrganizationRequest(args [1]string, argsEs
 		return
 	}
 
-	if err := encodeReadIntegrationOrganizationResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleReadMembershipRequest handles readMembership operation.
-//
-// Finds the Membership with the requested ID and returns it.
-//
-// GET /memberships/{id}
-func (s *Server) handleReadMembershipRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembership"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadMembership",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "ReadMembership",
-			ID:   "readMembership",
-		}
-	)
-	params, err := decodeReadMembershipParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response ReadMembershipRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "ReadMembership",
-			OperationSummary: "Find a Membership by ID",
-			OperationID:      "readMembership",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = ReadMembershipParams
-			Response = ReadMembershipRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackReadMembershipParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ReadMembership(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.ReadMembership(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeReadMembershipResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleReadMembershipGroupRequest handles readMembershipGroup operation.
-//
-// Find the attached Group of the Membership with the given ID.
-//
-// GET /memberships/{id}/group
-func (s *Server) handleReadMembershipGroupRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembershipGroup"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}/group"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadMembershipGroup",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "ReadMembershipGroup",
-			ID:   "readMembershipGroup",
-		}
-	)
-	params, err := decodeReadMembershipGroupParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response ReadMembershipGroupRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "ReadMembershipGroup",
-			OperationSummary: "Find the attached Group",
-			OperationID:      "readMembershipGroup",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = ReadMembershipGroupParams
-			Response = ReadMembershipGroupRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackReadMembershipGroupParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ReadMembershipGroup(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.ReadMembershipGroup(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeReadMembershipGroupResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleReadMembershipOrganizationRequest handles readMembershipOrganization operation.
-//
-// Find the attached Organization of the Membership with the given ID.
-//
-// GET /memberships/{id}/organization
-func (s *Server) handleReadMembershipOrganizationRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembershipOrganization"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}/organization"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadMembershipOrganization",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "ReadMembershipOrganization",
-			ID:   "readMembershipOrganization",
-		}
-	)
-	params, err := decodeReadMembershipOrganizationParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response ReadMembershipOrganizationRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "ReadMembershipOrganization",
-			OperationSummary: "Find the attached Organization",
-			OperationID:      "readMembershipOrganization",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = ReadMembershipOrganizationParams
-			Response = ReadMembershipOrganizationRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackReadMembershipOrganizationParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ReadMembershipOrganization(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.ReadMembershipOrganization(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeReadMembershipOrganizationResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleReadMembershipUserRequest handles readMembershipUser operation.
-//
-// Find the attached User of the Membership with the given ID.
-//
-// GET /memberships/{id}/user
-func (s *Server) handleReadMembershipUserRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("readMembershipUser"),
-		semconv.HTTPMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/memberships/{id}/user"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadMembershipUser",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "ReadMembershipUser",
-			ID:   "readMembershipUser",
-		}
-	)
-	params, err := decodeReadMembershipUserParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response ReadMembershipUserRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "ReadMembershipUser",
-			OperationSummary: "Find the attached User",
-			OperationID:      "readMembershipUser",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = ReadMembershipUserParams
-			Response = ReadMembershipUserRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackReadMembershipUserParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.ReadMembershipUser(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.ReadMembershipUser(ctx, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeReadMembershipUserResponse(response, w, span); err != nil {
+	if err := encodeReadIntegrationOwnerResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -4230,6 +3704,112 @@ func (s *Server) handleReadOrganizationRequest(args [1]string, argsEscaped bool,
 	}
 
 	if err := encodeReadOrganizationResponse(response, w, span); err != nil {
+		recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleReadOrganizationParentRequest handles readOrganizationParent operation.
+//
+// Find the attached Organization of the Organization with the given ID.
+//
+// GET /organizations/{id}/parent
+func (s *Server) handleReadOrganizationParentRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readOrganizationParent"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/organizations/{id}/parent"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ReadOrganizationParent",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "ReadOrganizationParent",
+			ID:   "readOrganizationParent",
+		}
+	)
+	params, err := decodeReadOrganizationParentParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ReadOrganizationParentRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "ReadOrganizationParent",
+			OperationSummary: "Find the attached Organization",
+			OperationID:      "readOrganizationParent",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "id",
+					In:   "path",
+				}: params.ID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ReadOrganizationParentParams
+			Response = ReadOrganizationParentRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackReadOrganizationParentParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ReadOrganizationParent(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ReadOrganizationParent(ctx, params)
+	}
+	if err != nil {
+		recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeReadOrganizationParentResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -4911,127 +4491,6 @@ func (s *Server) handleUpdateIntegrationRequest(args [1]string, argsEscaped bool
 	}
 
 	if err := encodeUpdateIntegrationResponse(response, w, span); err != nil {
-		recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleUpdateMembershipRequest handles updateMembership operation.
-//
-// Updates a Membership and persists changes to storage.
-//
-// PATCH /memberships/{id}
-func (s *Server) handleUpdateMembershipRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("updateMembership"),
-		semconv.HTTPMethodKey.String("PATCH"),
-		semconv.HTTPRouteKey.String("/memberships/{id}"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), "UpdateMembership",
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	s.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			s.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: "UpdateMembership",
-			ID:   "updateMembership",
-		}
-	)
-	params, err := decodeUpdateMembershipParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	request, close, err := s.decodeUpdateMembershipRequest(r)
-	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		recordError("DecodeRequest", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
-
-	var response UpdateMembershipRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    "UpdateMembership",
-			OperationSummary: "Updates a Membership",
-			OperationID:      "updateMembership",
-			Body:             request,
-			Params: middleware.Parameters{
-				{
-					Name: "id",
-					In:   "path",
-				}: params.ID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = *UpdateMembershipReq
-			Params   = UpdateMembershipParams
-			Response = UpdateMembershipRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackUpdateMembershipParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.UpdateMembership(ctx, request, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.UpdateMembership(ctx, request, params)
-	}
-	if err != nil {
-		recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeUpdateMembershipResponse(response, w, span); err != nil {
 		recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

@@ -11,7 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -155,33 +154,6 @@ func (f TraverseIntegration) Traverse(ctx context.Context, q generated.Query) er
 	return fmt.Errorf("unexpected query type %T. expect *generated.IntegrationQuery", q)
 }
 
-// The MembershipFunc type is an adapter to allow the use of ordinary function as a Querier.
-type MembershipFunc func(context.Context, *generated.MembershipQuery) (generated.Value, error)
-
-// Query calls f(ctx, q).
-func (f MembershipFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.MembershipQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.MembershipQuery", q)
-}
-
-// The TraverseMembership type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseMembership func(context.Context, *generated.MembershipQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseMembership) Intercept(next generated.Querier) generated.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseMembership) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.MembershipQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.MembershipQuery", q)
-}
-
 // The OrganizationFunc type is an adapter to allow the use of ordinary function as a Querier.
 type OrganizationFunc func(context.Context, *generated.OrganizationQuery) (generated.Value, error)
 
@@ -272,8 +244,6 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.GroupSettingsQuery, predicate.GroupSettings, groupsettings.OrderOption]{typ: generated.TypeGroupSettings, tq: q}, nil
 	case *generated.IntegrationQuery:
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
-	case *generated.MembershipQuery:
-		return &query[*generated.MembershipQuery, predicate.Membership, membership.OrderOption]{typ: generated.TypeMembership, tq: q}, nil
 	case *generated.OrganizationQuery:
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.SessionQuery:

@@ -83,6 +83,16 @@ func Name(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldName, v))
 }
 
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldDescription, v))
+}
+
+// ParentOrganizationID applies equality check predicate on the "parent_organization_id" field. It's identical to ParentOrganizationIDEQ.
+func ParentOrganizationID(v uuid.UUID) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldParentOrganizationID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldCreatedAt, v))
@@ -328,27 +338,219 @@ func NameContainsFold(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldContainsFold(FieldName, v))
 }
 
-// HasMemberships applies the HasEdge predicate on the "memberships" edge.
-func HasMemberships() predicate.Organization {
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.Organization {
+	return predicate.Organization(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.Organization {
+	return predicate.Organization(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldDescription))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// ParentOrganizationIDEQ applies the EQ predicate on the "parent_organization_id" field.
+func ParentOrganizationIDEQ(v uuid.UUID) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDNEQ applies the NEQ predicate on the "parent_organization_id" field.
+func ParentOrganizationIDNEQ(v uuid.UUID) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDIn applies the In predicate on the "parent_organization_id" field.
+func ParentOrganizationIDIn(vs ...uuid.UUID) predicate.Organization {
+	return predicate.Organization(sql.FieldIn(FieldParentOrganizationID, vs...))
+}
+
+// ParentOrganizationIDNotIn applies the NotIn predicate on the "parent_organization_id" field.
+func ParentOrganizationIDNotIn(vs ...uuid.UUID) predicate.Organization {
+	return predicate.Organization(sql.FieldNotIn(FieldParentOrganizationID, vs...))
+}
+
+// ParentOrganizationIDIsNil applies the IsNil predicate on the "parent_organization_id" field.
+func ParentOrganizationIDIsNil() predicate.Organization {
+	return predicate.Organization(sql.FieldIsNull(FieldParentOrganizationID))
+}
+
+// ParentOrganizationIDNotNil applies the NotNil predicate on the "parent_organization_id" field.
+func ParentOrganizationIDNotNil() predicate.Organization {
+	return predicate.Organization(sql.FieldNotNull(FieldParentOrganizationID))
+}
+
+// HasParent applies the HasEdge predicate on the "parent" edge.
+func HasParent() predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, MembershipsTable, MembershipsColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Organization
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasMembershipsWith applies the HasEdge predicate on the "memberships" edge with a given conditions (other predicates).
-func HasMembershipsWith(preds ...predicate.Membership) predicate.Organization {
+// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
+func HasParentWith(preds ...predicate.Organization) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
-		step := newMembershipsStep()
+		step := newParentStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Membership
-		step.Edge.Schema = schemaConfig.Membership
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Organization
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasChildren applies the HasEdge predicate on the "children" edge.
+func HasChildren() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Organization
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasChildrenWith applies the HasEdge predicate on the "children" edge with a given conditions (other predicates).
+func HasChildrenWith(preds ...predicate.Organization) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newChildrenStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Organization
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUsers applies the HasEdge predicate on the "users" edge.
+func HasUsers() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.UserOrganizations
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUsersWith applies the HasEdge predicate on the "users" edge with a given conditions (other predicates).
+func HasUsersWith(preds ...predicate.User) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newUsersStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.UserOrganizations
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasGroups applies the HasEdge predicate on the "groups" edge.
+func HasGroups() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, GroupsTable, GroupsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.Group
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasGroupsWith applies the HasEdge predicate on the "groups" edge with a given conditions (other predicates).
+func HasGroupsWith(preds ...predicate.Group) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newGroupsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Group
+		step.Edge.Schema = schemaConfig.Group
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

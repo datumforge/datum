@@ -26,19 +26,42 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
-	// EdgeMemberships holds the string denoting the memberships edge name in mutations.
-	EdgeMemberships = "memberships"
+	// FieldDescription holds the string denoting the description field in the database.
+	FieldDescription = "description"
+	// FieldParentOrganizationID holds the string denoting the parent_organization_id field in the database.
+	FieldParentOrganizationID = "parent_organization_id"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
+	// EdgeUsers holds the string denoting the users edge name in mutations.
+	EdgeUsers = "users"
+	// EdgeGroups holds the string denoting the groups edge name in mutations.
+	EdgeGroups = "groups"
 	// EdgeIntegrations holds the string denoting the integrations edge name in mutations.
 	EdgeIntegrations = "integrations"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
-	// MembershipsTable is the table that holds the memberships relation/edge.
-	MembershipsTable = "memberships"
-	// MembershipsInverseTable is the table name for the Membership entity.
-	// It exists in this package in order to avoid circular dependency with the "membership" package.
-	MembershipsInverseTable = "memberships"
-	// MembershipsColumn is the table column denoting the memberships relation/edge.
-	MembershipsColumn = "organization_memberships"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "organizations"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "parent_organization_id"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "organizations"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "parent_organization_id"
+	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
+	UsersTable = "user_organizations"
+	// UsersInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UsersInverseTable = "users"
+	// GroupsTable is the table that holds the groups relation/edge.
+	GroupsTable = "groups"
+	// GroupsInverseTable is the table name for the Group entity.
+	// It exists in this package in order to avoid circular dependency with the "group" package.
+	GroupsInverseTable = "groups"
+	// GroupsColumn is the table column denoting the groups relation/edge.
+	GroupsColumn = "organization_groups"
 	// IntegrationsTable is the table that holds the integrations relation/edge.
 	IntegrationsTable = "integrations"
 	// IntegrationsInverseTable is the table name for the Integration entity.
@@ -56,7 +79,15 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldName,
+	FieldDescription,
+	FieldParentOrganizationID,
 }
+
+var (
+	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
+	// primary key for the users relation (M2M).
+	UsersPrimaryKey = []string{"user_id", "organization_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -83,6 +114,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultParentOrganizationID holds the default value on creation for the "parent_organization_id" field.
+	DefaultParentOrganizationID func() uuid.UUID
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -120,17 +153,62 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
-// ByMembershipsCount orders the results by memberships count.
-func ByMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByDescription orders the results by the description field.
+func ByDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDescription, opts...).ToFunc()
+}
+
+// ByParentOrganizationID orders the results by the parent_organization_id field.
+func ByParentOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldParentOrganizationID, opts...).ToFunc()
+}
+
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newMembershipsStep(), opts...)
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
 	}
 }
 
-// ByMemberships orders the results by memberships terms.
-func ByMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByUsersCount orders the results by users count.
+func ByUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUsersStep(), opts...)
+	}
+}
+
+// ByUsers orders the results by users terms.
+func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByGroupsCount orders the results by groups count.
+func ByGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newGroupsStep(), opts...)
+	}
+}
+
+// ByGroups orders the results by groups terms.
+func ByGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -147,11 +225,32 @@ func ByIntegrations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newIntegrationsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-func newMembershipsStep() *sqlgraph.Step {
+func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(MembershipsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, MembershipsTable, MembershipsColumn),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+	)
+}
+func newUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
+	)
+}
+func newGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(GroupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, GroupsTable, GroupsColumn),
 	)
 }
 func newIntegrationsStep() *sqlgraph.Step {

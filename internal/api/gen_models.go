@@ -43,24 +43,6 @@ type IntegrationUpdatePayload struct {
 	Integration *generated.Integration `json:"integration"`
 }
 
-// Return response for createMembership mutation
-type MembershipCreatePayload struct {
-	// Created membership
-	Membership *generated.Membership `json:"membership"`
-}
-
-// Return response for deleteMembership mutation
-type MembershipDeletePayload struct {
-	// Deleted membership ID
-	DeletedID uuid.UUID `json:"deletedID"`
-}
-
-// Return response for updateMembership mutation
-type MembershipUpdatePayload struct {
-	// Updated membership
-	Membership *generated.Membership `json:"membership"`
-}
-
 // Return response for createOrganization mutation
 type OrganizationCreatePayload struct {
 	// Created organization

@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
-	"github.com/datumforge/datum/internal/ent/generated/membership"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/google/uuid"
@@ -117,21 +117,6 @@ func (gu *GroupUpdate) SetSetting(g *GroupSettings) *GroupUpdate {
 	return gu.SetSettingID(g.ID)
 }
 
-// AddMembershipIDs adds the "memberships" edge to the Membership entity by IDs.
-func (gu *GroupUpdate) AddMembershipIDs(ids ...uuid.UUID) *GroupUpdate {
-	gu.mutation.AddMembershipIDs(ids...)
-	return gu
-}
-
-// AddMemberships adds the "memberships" edges to the Membership entity.
-func (gu *GroupUpdate) AddMemberships(m ...*Membership) *GroupUpdate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return gu.AddMembershipIDs(ids...)
-}
-
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (gu *GroupUpdate) AddUserIDs(ids ...uuid.UUID) *GroupUpdate {
 	gu.mutation.AddUserIDs(ids...)
@@ -147,6 +132,25 @@ func (gu *GroupUpdate) AddUsers(u ...*User) *GroupUpdate {
 	return gu.AddUserIDs(ids...)
 }
 
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (gu *GroupUpdate) SetOwnerID(id uuid.UUID) *GroupUpdate {
+	gu.mutation.SetOwnerID(id)
+	return gu
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (gu *GroupUpdate) SetNillableOwnerID(id *uuid.UUID) *GroupUpdate {
+	if id != nil {
+		gu = gu.SetOwnerID(*id)
+	}
+	return gu
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (gu *GroupUpdate) SetOwner(o *Organization) *GroupUpdate {
+	return gu.SetOwnerID(o.ID)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (gu *GroupUpdate) Mutation() *GroupMutation {
 	return gu.mutation
@@ -156,27 +160,6 @@ func (gu *GroupUpdate) Mutation() *GroupMutation {
 func (gu *GroupUpdate) ClearSetting() *GroupUpdate {
 	gu.mutation.ClearSetting()
 	return gu
-}
-
-// ClearMemberships clears all "memberships" edges to the Membership entity.
-func (gu *GroupUpdate) ClearMemberships() *GroupUpdate {
-	gu.mutation.ClearMemberships()
-	return gu
-}
-
-// RemoveMembershipIDs removes the "memberships" edge to Membership entities by IDs.
-func (gu *GroupUpdate) RemoveMembershipIDs(ids ...uuid.UUID) *GroupUpdate {
-	gu.mutation.RemoveMembershipIDs(ids...)
-	return gu
-}
-
-// RemoveMemberships removes "memberships" edges to Membership entities.
-func (gu *GroupUpdate) RemoveMemberships(m ...*Membership) *GroupUpdate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return gu.RemoveMembershipIDs(ids...)
 }
 
 // ClearUsers clears all "users" edges to the User entity.
@@ -198,6 +181,12 @@ func (gu *GroupUpdate) RemoveUsers(u ...*User) *GroupUpdate {
 		ids[i] = u[i].ID
 	}
 	return gu.RemoveUserIDs(ids...)
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (gu *GroupUpdate) ClearOwner() *GroupUpdate {
+	gu.mutation.ClearOwner()
+	return gu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -327,58 +316,10 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if gu.mutation.MembershipsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = gu.schemaConfig.Membership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gu.mutation.RemovedMembershipsIDs(); len(nodes) > 0 && !gu.mutation.MembershipsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = gu.schemaConfig.Membership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gu.mutation.MembershipsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = gu.schemaConfig.Membership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if gu.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -386,13 +327,13 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = gu.schemaConfig.UserGroups
+		edge.Schema = gu.schemaConfig.GroupUsers
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := gu.mutation.RemovedUsersIDs(); len(nodes) > 0 && !gu.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -400,7 +341,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = gu.schemaConfig.UserGroups
+		edge.Schema = gu.schemaConfig.GroupUsers
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -409,7 +350,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if nodes := gu.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -417,7 +358,38 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = gu.schemaConfig.UserGroups
+		edge.Schema = gu.schemaConfig.GroupUsers
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if gu.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = gu.schemaConfig.Group
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = gu.schemaConfig.Group
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -528,21 +500,6 @@ func (guo *GroupUpdateOne) SetSetting(g *GroupSettings) *GroupUpdateOne {
 	return guo.SetSettingID(g.ID)
 }
 
-// AddMembershipIDs adds the "memberships" edge to the Membership entity by IDs.
-func (guo *GroupUpdateOne) AddMembershipIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	guo.mutation.AddMembershipIDs(ids...)
-	return guo
-}
-
-// AddMemberships adds the "memberships" edges to the Membership entity.
-func (guo *GroupUpdateOne) AddMemberships(m ...*Membership) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return guo.AddMembershipIDs(ids...)
-}
-
 // AddUserIDs adds the "users" edge to the User entity by IDs.
 func (guo *GroupUpdateOne) AddUserIDs(ids ...uuid.UUID) *GroupUpdateOne {
 	guo.mutation.AddUserIDs(ids...)
@@ -558,6 +515,25 @@ func (guo *GroupUpdateOne) AddUsers(u ...*User) *GroupUpdateOne {
 	return guo.AddUserIDs(ids...)
 }
 
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (guo *GroupUpdateOne) SetOwnerID(id uuid.UUID) *GroupUpdateOne {
+	guo.mutation.SetOwnerID(id)
+	return guo
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableOwnerID(id *uuid.UUID) *GroupUpdateOne {
+	if id != nil {
+		guo = guo.SetOwnerID(*id)
+	}
+	return guo
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (guo *GroupUpdateOne) SetOwner(o *Organization) *GroupUpdateOne {
+	return guo.SetOwnerID(o.ID)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (guo *GroupUpdateOne) Mutation() *GroupMutation {
 	return guo.mutation
@@ -567,27 +543,6 @@ func (guo *GroupUpdateOne) Mutation() *GroupMutation {
 func (guo *GroupUpdateOne) ClearSetting() *GroupUpdateOne {
 	guo.mutation.ClearSetting()
 	return guo
-}
-
-// ClearMemberships clears all "memberships" edges to the Membership entity.
-func (guo *GroupUpdateOne) ClearMemberships() *GroupUpdateOne {
-	guo.mutation.ClearMemberships()
-	return guo
-}
-
-// RemoveMembershipIDs removes the "memberships" edge to Membership entities by IDs.
-func (guo *GroupUpdateOne) RemoveMembershipIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	guo.mutation.RemoveMembershipIDs(ids...)
-	return guo
-}
-
-// RemoveMemberships removes "memberships" edges to Membership entities.
-func (guo *GroupUpdateOne) RemoveMemberships(m ...*Membership) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
-	}
-	return guo.RemoveMembershipIDs(ids...)
 }
 
 // ClearUsers clears all "users" edges to the User entity.
@@ -609,6 +564,12 @@ func (guo *GroupUpdateOne) RemoveUsers(u ...*User) *GroupUpdateOne {
 		ids[i] = u[i].ID
 	}
 	return guo.RemoveUserIDs(ids...)
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (guo *GroupUpdateOne) ClearOwner() *GroupUpdateOne {
+	guo.mutation.ClearOwner()
+	return guo
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -768,58 +729,10 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if guo.mutation.MembershipsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = guo.schemaConfig.Membership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := guo.mutation.RemovedMembershipsIDs(); len(nodes) > 0 && !guo.mutation.MembershipsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = guo.schemaConfig.Membership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := guo.mutation.MembershipsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.MembershipsTable,
-			Columns: []string{group.MembershipsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(membership.FieldID, field.TypeUUID),
-			},
-		}
-		edge.Schema = guo.schemaConfig.Membership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if guo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -827,13 +740,13 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = guo.schemaConfig.UserGroups
+		edge.Schema = guo.schemaConfig.GroupUsers
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := guo.mutation.RemovedUsersIDs(); len(nodes) > 0 && !guo.mutation.UsersCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -841,7 +754,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = guo.schemaConfig.UserGroups
+		edge.Schema = guo.schemaConfig.GroupUsers
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -850,7 +763,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	if nodes := guo.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -858,7 +771,38 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
 			},
 		}
-		edge.Schema = guo.schemaConfig.UserGroups
+		edge.Schema = guo.schemaConfig.GroupUsers
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = guo.schemaConfig.Group
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+			},
+		}
+		edge.Schema = guo.schemaConfig.Group
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -18,8 +18,6 @@ type Tx struct {
 	GroupSettings *GroupSettingsClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
-	// Membership is the client for interacting with the Membership builders.
-	Membership *MembershipClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// Session is the client for interacting with the Session builders.
@@ -160,7 +158,6 @@ func (tx *Tx) init() {
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupSettings = NewGroupSettingsClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
-	tx.Membership = NewMembershipClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.User = NewUserClient(tx.config)

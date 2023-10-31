@@ -306,36 +306,38 @@ func (gr *GroupUpdate) Elem() GroupUpdate {
 	return *gr
 }
 
-func NewGroupMembershipsList(e *generated.Membership) *GroupMembershipsList {
+func NewGroupOwnerRead(e *generated.Organization) *GroupOwnerRead {
 	if e == nil {
 		return nil
 	}
-	var ret GroupMembershipsList
+	var ret GroupOwnerRead
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewGroupMembershipsLists(es []*generated.Membership) []GroupMembershipsList {
+func NewGroupOwnerReads(es []*generated.Organization) []GroupOwnerRead {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]GroupMembershipsList, len(es))
+	r := make([]GroupOwnerRead, len(es))
 	for i, e := range es {
-		r[i] = NewGroupMembershipsList(e).Elem()
+		r[i] = NewGroupOwnerRead(e).Elem()
 	}
 	return r
 }
 
-func (m *GroupMembershipsList) Elem() GroupMembershipsList {
-	if m == nil {
-		return GroupMembershipsList{}
+func (o *GroupOwnerRead) Elem() GroupOwnerRead {
+	if o == nil {
+		return GroupOwnerRead{}
 	}
-	return *m
+	return *o
 }
 
 func NewGroupSettingRead(e *generated.GroupSettings) *GroupSettingRead {
@@ -437,6 +439,7 @@ func NewIntegrationCreate(e *generated.Integration) *IntegrationCreate {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
@@ -471,6 +474,7 @@ func NewIntegrationList(e *generated.Integration) *IntegrationList {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
@@ -505,6 +509,7 @@ func NewIntegrationRead(e *generated.Integration) *IntegrationRead {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
@@ -539,6 +544,7 @@ func NewIntegrationUpdate(e *generated.Integration) *IntegrationUpdate {
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
 	ret.SecretName = e.SecretName
@@ -563,171 +569,215 @@ func (i *IntegrationUpdate) Elem() IntegrationUpdate {
 	return *i
 }
 
-func NewIntegrationOrganizationRead(e *generated.Organization) *IntegrationOrganizationRead {
+func NewIntegrationOwnerRead(e *generated.Organization) *IntegrationOwnerRead {
 	if e == nil {
 		return nil
 	}
-	var ret IntegrationOrganizationRead
+	var ret IntegrationOwnerRead
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
 	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewIntegrationOrganizationReads(es []*generated.Organization) []IntegrationOrganizationRead {
+func NewIntegrationOwnerReads(es []*generated.Organization) []IntegrationOwnerRead {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]IntegrationOrganizationRead, len(es))
+	r := make([]IntegrationOwnerRead, len(es))
 	for i, e := range es {
-		r[i] = NewIntegrationOrganizationRead(e).Elem()
+		r[i] = NewIntegrationOwnerRead(e).Elem()
 	}
 	return r
 }
 
-func (o *IntegrationOrganizationRead) Elem() IntegrationOrganizationRead {
+func (o *IntegrationOwnerRead) Elem() IntegrationOwnerRead {
 	if o == nil {
-		return IntegrationOrganizationRead{}
+		return IntegrationOwnerRead{}
 	}
 	return *o
 }
 
-func NewMembershipCreate(e *generated.Membership) *MembershipCreate {
+func NewOrganizationCreate(e *generated.Organization) *OrganizationCreate {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipCreate
+	var ret OrganizationCreate
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewMembershipCreates(es []*generated.Membership) []MembershipCreate {
+func NewOrganizationCreates(es []*generated.Organization) []OrganizationCreate {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipCreate, len(es))
+	r := make([]OrganizationCreate, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipCreate(e).Elem()
+		r[i] = NewOrganizationCreate(e).Elem()
 	}
 	return r
 }
 
-func (m *MembershipCreate) Elem() MembershipCreate {
-	if m == nil {
-		return MembershipCreate{}
+func (o *OrganizationCreate) Elem() OrganizationCreate {
+	if o == nil {
+		return OrganizationCreate{}
 	}
-	return *m
+	return *o
 }
 
-func NewMembershipList(e *generated.Membership) *MembershipList {
+func NewOrganizationList(e *generated.Organization) *OrganizationList {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipList
+	var ret OrganizationList
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewMembershipLists(es []*generated.Membership) []MembershipList {
+func NewOrganizationLists(es []*generated.Organization) []OrganizationList {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipList, len(es))
+	r := make([]OrganizationList, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipList(e).Elem()
+		r[i] = NewOrganizationList(e).Elem()
 	}
 	return r
 }
 
-func (m *MembershipList) Elem() MembershipList {
-	if m == nil {
-		return MembershipList{}
+func (o *OrganizationList) Elem() OrganizationList {
+	if o == nil {
+		return OrganizationList{}
 	}
-	return *m
+	return *o
 }
 
-func NewMembershipRead(e *generated.Membership) *MembershipRead {
+func NewOrganizationRead(e *generated.Organization) *OrganizationRead {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipRead
+	var ret OrganizationRead
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewMembershipReads(es []*generated.Membership) []MembershipRead {
+func NewOrganizationReads(es []*generated.Organization) []OrganizationRead {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipRead, len(es))
+	r := make([]OrganizationRead, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipRead(e).Elem()
+		r[i] = NewOrganizationRead(e).Elem()
 	}
 	return r
 }
 
-func (m *MembershipRead) Elem() MembershipRead {
-	if m == nil {
-		return MembershipRead{}
+func (o *OrganizationRead) Elem() OrganizationRead {
+	if o == nil {
+		return OrganizationRead{}
 	}
-	return *m
+	return *o
 }
 
-func NewMembershipUpdate(e *generated.Membership) *MembershipUpdate {
+func NewOrganizationUpdate(e *generated.Organization) *OrganizationUpdate {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipUpdate
+	var ret OrganizationUpdate
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewMembershipUpdates(es []*generated.Membership) []MembershipUpdate {
+func NewOrganizationUpdates(es []*generated.Organization) []OrganizationUpdate {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipUpdate, len(es))
+	r := make([]OrganizationUpdate, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipUpdate(e).Elem()
+		r[i] = NewOrganizationUpdate(e).Elem()
 	}
 	return r
 }
 
-func (m *MembershipUpdate) Elem() MembershipUpdate {
-	if m == nil {
-		return MembershipUpdate{}
+func (o *OrganizationUpdate) Elem() OrganizationUpdate {
+	if o == nil {
+		return OrganizationUpdate{}
 	}
-	return *m
+	return *o
 }
 
-func NewMembershipGroupRead(e *generated.Group) *MembershipGroupRead {
+func NewOrganizationChildrenList(e *generated.Organization) *OrganizationChildrenList {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipGroupRead
+	var ret OrganizationChildrenList
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptUUID(e.CreatedBy)
+	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	return &ret
+}
+
+func NewOrganizationChildrenLists(es []*generated.Organization) []OrganizationChildrenList {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]OrganizationChildrenList, len(es))
+	for i, e := range es {
+		r[i] = NewOrganizationChildrenList(e).Elem()
+	}
+	return r
+}
+
+func (o *OrganizationChildrenList) Elem() OrganizationChildrenList {
+	if o == nil {
+		return OrganizationChildrenList{}
+	}
+	return *o
+}
+
+func NewOrganizationGroupsList(e *generated.Group) *OrganizationGroupsList {
+	if e == nil {
+		return nil
+	}
+	var ret OrganizationGroupsList
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
@@ -739,61 +789,98 @@ func NewMembershipGroupRead(e *generated.Group) *MembershipGroupRead {
 	return &ret
 }
 
-func NewMembershipGroupReads(es []*generated.Group) []MembershipGroupRead {
+func NewOrganizationGroupsLists(es []*generated.Group) []OrganizationGroupsList {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipGroupRead, len(es))
+	r := make([]OrganizationGroupsList, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipGroupRead(e).Elem()
+		r[i] = NewOrganizationGroupsList(e).Elem()
 	}
 	return r
 }
 
-func (gr *MembershipGroupRead) Elem() MembershipGroupRead {
+func (gr *OrganizationGroupsList) Elem() OrganizationGroupsList {
 	if gr == nil {
-		return MembershipGroupRead{}
+		return OrganizationGroupsList{}
 	}
 	return *gr
 }
 
-func NewMembershipOrganizationRead(e *generated.Organization) *MembershipOrganizationRead {
+func NewOrganizationIntegrationsList(e *generated.Integration) *OrganizationIntegrationsList {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipOrganizationRead
+	var ret OrganizationIntegrationsList
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
 	ret.Name = e.Name
+	ret.Kind = e.Kind
+	ret.Description = NewOptString(e.Description)
+	ret.SecretName = e.SecretName
 	return &ret
 }
 
-func NewMembershipOrganizationReads(es []*generated.Organization) []MembershipOrganizationRead {
+func NewOrganizationIntegrationsLists(es []*generated.Integration) []OrganizationIntegrationsList {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipOrganizationRead, len(es))
+	r := make([]OrganizationIntegrationsList, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipOrganizationRead(e).Elem()
+		r[i] = NewOrganizationIntegrationsList(e).Elem()
 	}
 	return r
 }
 
-func (o *MembershipOrganizationRead) Elem() MembershipOrganizationRead {
+func (i *OrganizationIntegrationsList) Elem() OrganizationIntegrationsList {
+	if i == nil {
+		return OrganizationIntegrationsList{}
+	}
+	return *i
+}
+
+func NewOrganizationParentRead(e *generated.Organization) *OrganizationParentRead {
+	if e == nil {
+		return nil
+	}
+	var ret OrganizationParentRead
+	ret.ID = e.ID
+	ret.CreatedAt = e.CreatedAt
+	ret.UpdatedAt = e.UpdatedAt
+	ret.CreatedBy = NewOptUUID(e.CreatedBy)
+	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	return &ret
+}
+
+func NewOrganizationParentReads(es []*generated.Organization) []OrganizationParentRead {
+	if len(es) == 0 {
+		return nil
+	}
+	r := make([]OrganizationParentRead, len(es))
+	for i, e := range es {
+		r[i] = NewOrganizationParentRead(e).Elem()
+	}
+	return r
+}
+
+func (o *OrganizationParentRead) Elem() OrganizationParentRead {
 	if o == nil {
-		return MembershipOrganizationRead{}
+		return OrganizationParentRead{}
 	}
 	return *o
 }
 
-func NewMembershipUserRead(e *generated.User) *MembershipUserRead {
+func NewOrganizationUsersList(e *generated.User) *OrganizationUsersList {
 	if e == nil {
 		return nil
 	}
-	var ret MembershipUserRead
+	var ret OrganizationUsersList
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
@@ -827,216 +914,22 @@ func NewMembershipUserRead(e *generated.User) *MembershipUserRead {
 	return &ret
 }
 
-func NewMembershipUserReads(es []*generated.User) []MembershipUserRead {
+func NewOrganizationUsersLists(es []*generated.User) []OrganizationUsersList {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]MembershipUserRead, len(es))
+	r := make([]OrganizationUsersList, len(es))
 	for i, e := range es {
-		r[i] = NewMembershipUserRead(e).Elem()
+		r[i] = NewOrganizationUsersList(e).Elem()
 	}
 	return r
 }
 
-func (u *MembershipUserRead) Elem() MembershipUserRead {
+func (u *OrganizationUsersList) Elem() OrganizationUsersList {
 	if u == nil {
-		return MembershipUserRead{}
+		return OrganizationUsersList{}
 	}
 	return *u
-}
-
-func NewOrganizationCreate(e *generated.Organization) *OrganizationCreate {
-	if e == nil {
-		return nil
-	}
-	var ret OrganizationCreate
-	ret.ID = e.ID
-	ret.CreatedAt = e.CreatedAt
-	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewOrganizationCreates(es []*generated.Organization) []OrganizationCreate {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]OrganizationCreate, len(es))
-	for i, e := range es {
-		r[i] = NewOrganizationCreate(e).Elem()
-	}
-	return r
-}
-
-func (o *OrganizationCreate) Elem() OrganizationCreate {
-	if o == nil {
-		return OrganizationCreate{}
-	}
-	return *o
-}
-
-func NewOrganizationList(e *generated.Organization) *OrganizationList {
-	if e == nil {
-		return nil
-	}
-	var ret OrganizationList
-	ret.ID = e.ID
-	ret.CreatedAt = e.CreatedAt
-	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewOrganizationLists(es []*generated.Organization) []OrganizationList {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]OrganizationList, len(es))
-	for i, e := range es {
-		r[i] = NewOrganizationList(e).Elem()
-	}
-	return r
-}
-
-func (o *OrganizationList) Elem() OrganizationList {
-	if o == nil {
-		return OrganizationList{}
-	}
-	return *o
-}
-
-func NewOrganizationRead(e *generated.Organization) *OrganizationRead {
-	if e == nil {
-		return nil
-	}
-	var ret OrganizationRead
-	ret.ID = e.ID
-	ret.CreatedAt = e.CreatedAt
-	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewOrganizationReads(es []*generated.Organization) []OrganizationRead {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]OrganizationRead, len(es))
-	for i, e := range es {
-		r[i] = NewOrganizationRead(e).Elem()
-	}
-	return r
-}
-
-func (o *OrganizationRead) Elem() OrganizationRead {
-	if o == nil {
-		return OrganizationRead{}
-	}
-	return *o
-}
-
-func NewOrganizationUpdate(e *generated.Organization) *OrganizationUpdate {
-	if e == nil {
-		return nil
-	}
-	var ret OrganizationUpdate
-	ret.ID = e.ID
-	ret.CreatedAt = e.CreatedAt
-	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Name = e.Name
-	return &ret
-}
-
-func NewOrganizationUpdates(es []*generated.Organization) []OrganizationUpdate {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]OrganizationUpdate, len(es))
-	for i, e := range es {
-		r[i] = NewOrganizationUpdate(e).Elem()
-	}
-	return r
-}
-
-func (o *OrganizationUpdate) Elem() OrganizationUpdate {
-	if o == nil {
-		return OrganizationUpdate{}
-	}
-	return *o
-}
-
-func NewOrganizationIntegrationsList(e *generated.Integration) *OrganizationIntegrationsList {
-	if e == nil {
-		return nil
-	}
-	var ret OrganizationIntegrationsList
-	ret.ID = e.ID
-	ret.CreatedAt = e.CreatedAt
-	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Kind = e.Kind
-	ret.Description = NewOptString(e.Description)
-	ret.SecretName = e.SecretName
-	return &ret
-}
-
-func NewOrganizationIntegrationsLists(es []*generated.Integration) []OrganizationIntegrationsList {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]OrganizationIntegrationsList, len(es))
-	for i, e := range es {
-		r[i] = NewOrganizationIntegrationsList(e).Elem()
-	}
-	return r
-}
-
-func (i *OrganizationIntegrationsList) Elem() OrganizationIntegrationsList {
-	if i == nil {
-		return OrganizationIntegrationsList{}
-	}
-	return *i
-}
-
-func NewOrganizationMembershipsList(e *generated.Membership) *OrganizationMembershipsList {
-	if e == nil {
-		return nil
-	}
-	var ret OrganizationMembershipsList
-	ret.ID = e.ID
-	ret.CreatedAt = e.CreatedAt
-	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
-	return &ret
-}
-
-func NewOrganizationMembershipsLists(es []*generated.Membership) []OrganizationMembershipsList {
-	if len(es) == 0 {
-		return nil
-	}
-	r := make([]OrganizationMembershipsList, len(es))
-	for i, e := range es {
-		r[i] = NewOrganizationMembershipsList(e).Elem()
-	}
-	return r
-}
-
-func (m *OrganizationMembershipsList) Elem() OrganizationMembershipsList {
-	if m == nil {
-		return OrganizationMembershipsList{}
-	}
-	return *m
 }
 
 func NewSessionCreate(e *generated.Session) *SessionCreate {
@@ -1497,36 +1390,38 @@ func (gr *UserGroupsList) Elem() UserGroupsList {
 	return *gr
 }
 
-func NewUserMembershipsList(e *generated.Membership) *UserMembershipsList {
+func NewUserOrganizationsList(e *generated.Organization) *UserOrganizationsList {
 	if e == nil {
 		return nil
 	}
-	var ret UserMembershipsList
+	var ret UserOrganizationsList
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
 	ret.CreatedBy = NewOptUUID(e.CreatedBy)
 	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
-	ret.Current = e.Current
+	ret.Name = e.Name
+	ret.Description = NewOptString(e.Description)
+	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
 	return &ret
 }
 
-func NewUserMembershipsLists(es []*generated.Membership) []UserMembershipsList {
+func NewUserOrganizationsLists(es []*generated.Organization) []UserOrganizationsList {
 	if len(es) == 0 {
 		return nil
 	}
-	r := make([]UserMembershipsList, len(es))
+	r := make([]UserOrganizationsList, len(es))
 	for i, e := range es {
-		r[i] = NewUserMembershipsList(e).Elem()
+		r[i] = NewUserOrganizationsList(e).Elem()
 	}
 	return r
 }
 
-func (m *UserMembershipsList) Elem() UserMembershipsList {
-	if m == nil {
-		return UserMembershipsList{}
+func (o *UserOrganizationsList) Elem() UserOrganizationsList {
+	if o == nil {
+		return UserOrganizationsList{}
 	}
-	return *m
+	return *o
 }
 
 func NewUserSessionsList(e *generated.Session) *UserSessionsList {

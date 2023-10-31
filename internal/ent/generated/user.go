@@ -56,8 +56,8 @@ type User struct {
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Memberships holds the value of the memberships edge.
-	Memberships []*Membership `json:"memberships,omitempty"`
+	// Organizations holds the value of the organizations edge.
+	Organizations []*Organization `json:"organizations,omitempty"`
 	// Sessions holds the value of the sessions edge.
 	Sessions []*Session `json:"sessions,omitempty"`
 	// Groups holds the value of the groups edge.
@@ -68,18 +68,18 @@ type UserEdges struct {
 	// totalCount holds the count of the edges above.
 	totalCount [3]map[string]int
 
-	namedMemberships map[string][]*Membership
-	namedSessions    map[string][]*Session
-	namedGroups      map[string][]*Group
+	namedOrganizations map[string][]*Organization
+	namedSessions      map[string][]*Session
+	namedGroups        map[string][]*Group
 }
 
-// MembershipsOrErr returns the Memberships value or an error if the edge
+// OrganizationsOrErr returns the Organizations value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) MembershipsOrErr() ([]*Membership, error) {
+func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
 	if e.loadedTypes[0] {
-		return e.Memberships, nil
+		return e.Organizations, nil
 	}
-	return nil, &NotLoadedError{edge: "memberships"}
+	return nil, &NotLoadedError{edge: "organizations"}
 }
 
 // SessionsOrErr returns the Sessions value or an error if the edge
@@ -243,9 +243,9 @@ func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
 }
 
-// QueryMemberships queries the "memberships" edge of the User entity.
-func (u *User) QueryMemberships() *MembershipQuery {
-	return NewUserClient(u.config).QueryMemberships(u)
+// QueryOrganizations queries the "organizations" edge of the User entity.
+func (u *User) QueryOrganizations() *OrganizationQuery {
+	return NewUserClient(u.config).QueryOrganizations(u)
 }
 
 // QuerySessions queries the "sessions" edge of the User entity.
@@ -338,27 +338,27 @@ func (u *User) String() string {
 	return builder.String()
 }
 
-// NamedMemberships returns the Memberships named value or an error if the edge was not
+// NamedOrganizations returns the Organizations named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (u *User) NamedMemberships(name string) ([]*Membership, error) {
-	if u.Edges.namedMemberships == nil {
+func (u *User) NamedOrganizations(name string) ([]*Organization, error) {
+	if u.Edges.namedOrganizations == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := u.Edges.namedMemberships[name]
+	nodes, ok := u.Edges.namedOrganizations[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (u *User) appendNamedMemberships(name string, edges ...*Membership) {
-	if u.Edges.namedMemberships == nil {
-		u.Edges.namedMemberships = make(map[string][]*Membership)
+func (u *User) appendNamedOrganizations(name string, edges ...*Organization) {
+	if u.Edges.namedOrganizations == nil {
+		u.Edges.namedOrganizations = make(map[string][]*Organization)
 	}
 	if len(edges) == 0 {
-		u.Edges.namedMemberships[name] = []*Membership{}
+		u.Edges.namedOrganizations[name] = []*Organization{}
 	} else {
-		u.Edges.namedMemberships[name] = append(u.Edges.namedMemberships[name], edges...)
+		u.Edges.namedOrganizations[name] = append(u.Edges.namedOrganizations[name], edges...)
 	}
 }
 

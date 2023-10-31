@@ -29,6 +29,8 @@ func main() {
 		schema.WithMigrationMode(schema.ModeReplay), // provide migration mode
 		schema.WithDialect(dialect.SQLite),          // Ent dialect to use
 		schema.WithFormatter(atlas.DefaultFormatter),
+		schema.WithDropColumn(true),
+		schema.WithDropIndex(true),
 	}
 	if len(os.Args) != 2 {
 		log.Fatalln("migration name is required. Use: 'go run -mod=mod db/create_migration.go <name>'")

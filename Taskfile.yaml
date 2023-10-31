@@ -53,8 +53,6 @@ tasks:
         echo "If there is no schema to generate, this will not create a file (hint: name it your branch name if you're not sure) - enter the name of the migration:"
         read migration;
         go run db/create_migrations.go ${migration};
-      - "rm -f schema.hcl"
-      - "atlas schema inspect -u "file://db/migrations" --dev-url "sqlite://dev?mode=memory" > schema.hcl"
   atlas:lint:
     - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
   atlas:migrate:

@@ -29,7 +29,10 @@ func (Organization) Fields() []ent.Field {
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("name").Unique().
 			MaxLen(orgNameMaxLen).
-			NotEmpty(),
+			NotEmpty().
+			Annotations(
+				entgql.OrderField("name"),
+			),
 	}
 }
 
@@ -46,6 +49,7 @@ func (Organization) Edges() []ent.Edge {
 func (Organization) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
+		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }

@@ -46,13 +46,26 @@ func (User) Fields() []ent.Field {
 				return err
 			}),
 		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
-		field.String("first_name").NotEmpty().MaxLen(nameMaxLen),
-		field.String("last_name").NotEmpty().MaxLen(nameMaxLen),
+		field.String("first_name").
+			NotEmpty().
+			MaxLen(nameMaxLen).
+			Annotations(
+				entgql.OrderField("first_name"),
+			),
+		field.String("last_name").
+			NotEmpty().
+			MaxLen(nameMaxLen).
+			Annotations(
+				entgql.OrderField("last_name"),
+			),
 		field.String("display_name").
 			Comment("The user's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
 			NotEmpty().
-			Default("unknown"),
+			Default("unknown").
+			Annotations(
+				entgql.OrderField("display_name"),
+			),
 		field.Bool("locked").
 			Comment("user account is locked if unconfirmed or explicitly locked").
 			Default(false),
@@ -151,6 +164,7 @@ func (User) Edges() []ent.Edge {
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
+		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }

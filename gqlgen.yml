@@ -91,3 +91,6 @@ models:
   UUID:
     model:
       - github.com/99designs/gqlgen/graphql.UUID
+  Node:
+    model:
+      - github.com/datumforge/datum/internal/ent/generated.Noder

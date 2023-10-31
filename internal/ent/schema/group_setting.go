@@ -44,6 +44,7 @@ func (GroupSettings) Edges() []ent.Edge {
 func (GroupSettings) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
+		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }

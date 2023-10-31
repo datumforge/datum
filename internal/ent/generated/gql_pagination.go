@@ -5,6 +5,9 @@ package generated
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"strconv"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -305,6 +308,53 @@ func (gr *GroupQuery) Paginate(
 	}
 	conn.build(nodes, pager, after, first, before, last)
 	return conn, nil
+}
+
+var (
+	// GroupOrderFieldName orders Group by name.
+	GroupOrderFieldName = &GroupOrderField{
+		Value: func(gr *Group) (ent.Value, error) {
+			return gr.Name, nil
+		},
+		column: group.FieldName,
+		toTerm: group.ByName,
+		toCursor: func(gr *Group) Cursor {
+			return Cursor{
+				ID:    gr.ID,
+				Value: gr.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f GroupOrderField) String() string {
+	var str string
+	switch f.column {
+	case GroupOrderFieldName.column:
+		str = "name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f GroupOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *GroupOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("GroupOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *GroupOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid GroupOrderField", str)
+	}
+	return nil
 }
 
 // GroupOrderField defines the ordering field of Group.
@@ -799,6 +849,53 @@ func (i *IntegrationQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// IntegrationOrderFieldKind orders Integration by kind.
+	IntegrationOrderFieldKind = &IntegrationOrderField{
+		Value: func(i *Integration) (ent.Value, error) {
+			return i.Kind, nil
+		},
+		column: integration.FieldKind,
+		toTerm: integration.ByKind,
+		toCursor: func(i *Integration) Cursor {
+			return Cursor{
+				ID:    i.ID,
+				Value: i.Kind,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f IntegrationOrderField) String() string {
+	var str string
+	switch f.column {
+	case IntegrationOrderFieldKind.column:
+		str = "kind"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f IntegrationOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *IntegrationOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("IntegrationOrderField %T must be a string", v)
+	}
+	switch str {
+	case "kind":
+		*f = *IntegrationOrderFieldKind
+	default:
+		return fmt.Errorf("%s is not a valid IntegrationOrderField", str)
+	}
+	return nil
+}
+
 // IntegrationOrderField defines the ordering field of Integration.
 type IntegrationOrderField struct {
 	// Value extracts the ordering value from the given Integration.
@@ -1291,6 +1388,53 @@ func (o *OrganizationQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// OrganizationOrderFieldName orders Organization by name.
+	OrganizationOrderFieldName = &OrganizationOrderField{
+		Value: func(o *Organization) (ent.Value, error) {
+			return o.Name, nil
+		},
+		column: organization.FieldName,
+		toTerm: organization.ByName,
+		toCursor: func(o *Organization) Cursor {
+			return Cursor{
+				ID:    o.ID,
+				Value: o.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f OrganizationOrderField) String() string {
+	var str string
+	switch f.column {
+	case OrganizationOrderFieldName.column:
+		str = "name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f OrganizationOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *OrganizationOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("OrganizationOrderField %T must be a string", v)
+	}
+	switch str {
+	case "name":
+		*f = *OrganizationOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid OrganizationOrderField", str)
+	}
+	return nil
+}
+
 // OrganizationOrderField defines the ordering field of Organization.
 type OrganizationOrderField struct {
 	// Value extracts the ordering value from the given Organization.
@@ -1781,6 +1925,89 @@ func (u *UserQuery) Paginate(
 	}
 	conn.build(nodes, pager, after, first, before, last)
 	return conn, nil
+}
+
+var (
+	// UserOrderFieldFirstName orders User by first_name.
+	UserOrderFieldFirstName = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.FirstName, nil
+		},
+		column: user.FieldFirstName,
+		toTerm: user.ByFirstName,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.FirstName,
+			}
+		},
+	}
+	// UserOrderFieldLastName orders User by last_name.
+	UserOrderFieldLastName = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.LastName, nil
+		},
+		column: user.FieldLastName,
+		toTerm: user.ByLastName,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.LastName,
+			}
+		},
+	}
+	// UserOrderFieldDisplayName orders User by display_name.
+	UserOrderFieldDisplayName = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.DisplayName, nil
+		},
+		column: user.FieldDisplayName,
+		toTerm: user.ByDisplayName,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.DisplayName,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f UserOrderField) String() string {
+	var str string
+	switch f.column {
+	case UserOrderFieldFirstName.column:
+		str = "first_name"
+	case UserOrderFieldLastName.column:
+		str = "last_name"
+	case UserOrderFieldDisplayName.column:
+		str = "display_name"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f UserOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *UserOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("UserOrderField %T must be a string", v)
+	}
+	switch str {
+	case "first_name":
+		*f = *UserOrderFieldFirstName
+	case "last_name":
+		*f = *UserOrderFieldLastName
+	case "display_name":
+		*f = *UserOrderFieldDisplayName
+	default:
+		return fmt.Errorf("%s is not a valid UserOrderField", str)
+	}
+	return nil
 }
 
 // UserOrderField defines the ordering field of User.

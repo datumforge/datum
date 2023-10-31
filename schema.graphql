@@ -166,6 +166,17 @@ type GroupEdge {
 	"""A cursor for use in pagination."""
 	cursor: Cursor!
 }
+"""Ordering options for Group connections"""
+input GroupOrder {
+	"""The ordering direction."""
+	direction: OrderDirection! = ASC
+	"""The field by which to order Groups."""
+	field: GroupOrderField!
+}
+"""Properties by which Group connections can be ordered."""
+enum GroupOrderField {
+	name
+}
 type GroupSettings implements Node {
 	id: ID!
 	createdAt: Time!
@@ -174,6 +185,22 @@ type GroupSettings implements Node {
 	updatedBy: UUID
 	visibility: GroupSettingsVisibility!
 	joinPolicy: GroupSettingsJoinPolicy!
+}
+"""A connection to a list of items."""
+type GroupSettingsConnection {
+	"""A list of edges."""
+	edges: [GroupSettingsEdge]
+	"""Information to aid in pagination."""
+	pageInfo: PageInfo!
+	"""Identifies the total count of items in the connection."""
+	totalCount: Int!
+}
+"""An edge in a connection."""
+type GroupSettingsEdge {
+	"""The item at the end of the edge."""
+	node: GroupSettings
+	"""A cursor for use in pagination."""
+	cursor: Cursor!
 }
 """GroupSettingsJoinPolicy is enum for the field join_policy"""
 enum GroupSettingsJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsettings.JoinPolicy") {
@@ -352,6 +379,15 @@ type Integration implements Node {
 	secretName: String!
 	organization: Organization!
 }
+"""A connection to a list of items."""
+type IntegrationConnection {
+	"""A list of edges."""
+	edges: [IntegrationEdge]
+	"""Information to aid in pagination."""
+	pageInfo: PageInfo!
+	"""Identifies the total count of items in the connection."""
+	totalCount: Int!
+}
 """Return response for createIntegration mutation"""
 type IntegrationCreatePayload {
 	"""Created integration"""
@@ -361,6 +397,24 @@ type IntegrationCreatePayload {
 type IntegrationDeletePayload {
 	"""Deleted integration ID"""
 	deletedID: ID!
+}
+"""An edge in a connection."""
+type IntegrationEdge {
+	"""The item at the end of the edge."""
+	node: Integration
+	"""A cursor for use in pagination."""
+	cursor: Cursor!
+}
+"""Ordering options for Integration connections"""
+input IntegrationOrder {
+	"""The ordering direction."""
+	direction: OrderDirection! = ASC
+	"""The field by which to order Integrations."""
+	field: IntegrationOrderField!
+}
+"""Properties by which Integration connections can be ordered."""
+enum IntegrationOrderField {
+	kind
 }
 """Return response for updateIntegration mutation"""
 type IntegrationUpdatePayload {
@@ -483,6 +537,15 @@ type Membership implements Node {
 	user: User!
 	group: Group!
 }
+"""A connection to a list of items."""
+type MembershipConnection {
+	"""A list of edges."""
+	edges: [MembershipEdge]
+	"""Information to aid in pagination."""
+	pageInfo: PageInfo!
+	"""Identifies the total count of items in the connection."""
+	totalCount: Int!
+}
 """Return response for createMembership mutation"""
 type MembershipCreatePayload {
 	"""Created membership"""
@@ -492,6 +555,13 @@ type MembershipCreatePayload {
 type MembershipDeletePayload {
 	"""Deleted membership ID"""
 	deletedID: ID!
+}
+"""An edge in a connection."""
+type MembershipEdge {
+	"""The item at the end of the edge."""
+	node: Membership
+	"""A cursor for use in pagination."""
+	cursor: Cursor!
 }
 """Return response for updateMembership mutation"""
 type MembershipUpdatePayload {
@@ -703,6 +773,15 @@ type Organization implements Node {
 	memberships: [Membership!]
 	integrations: [Integration!]
 }
+"""A connection to a list of items."""
+type OrganizationConnection {
+	"""A list of edges."""
+	edges: [OrganizationEdge]
+	"""Information to aid in pagination."""
+	pageInfo: PageInfo!
+	"""Identifies the total count of items in the connection."""
+	totalCount: Int!
+}
 """Return response for createOrganization mutation"""
 type OrganizationCreatePayload {
 	"""Created organization"""
@@ -712,6 +791,24 @@ type OrganizationCreatePayload {
 type OrganizationDeletePayload {
 	"""Deleted organization ID"""
 	deletedID: ID!
+}
+"""An edge in a connection."""
+type OrganizationEdge {
+	"""The item at the end of the edge."""
+	node: Organization
+	"""A cursor for use in pagination."""
+	cursor: Cursor!
+}
+"""Ordering options for Organization connections"""
+input OrganizationOrder {
+	"""The ordering direction."""
+	direction: OrderDirection! = ASC
+	"""The field by which to order Organizations."""
+	field: OrganizationOrderField!
+}
+"""Properties by which Organization connections can be ordered."""
+enum OrganizationOrderField {
+	name
 }
 """Return response for updateOrganization mutation"""
 type OrganizationUpdatePayload {
@@ -834,15 +931,117 @@ type Query {
 		"""Returns the last _n_ elements from the list."""
 		last: Int
 
+		"""Ordering options for Groups returned from the connection."""
+		orderBy: GroupOrder
+
 		"""Filtering options for Groups returned from the connection."""
 		where: GroupWhereInput
 	): GroupConnection!
-	groupSettingsSlice: [GroupSettings!]!
-	integrations: [Integration!]!
-	memberships: [Membership!]!
-	organizations: [Organization!]!
-	sessions: [Session!]!
-	users: [User!]!
+	groupSettingsSlice(
+		"""Returns the elements in the list that come after the specified cursor."""
+		after: Cursor
+
+		"""Returns the first _n_ elements from the list."""
+		first: Int
+
+		"""Returns the elements in the list that come before the specified cursor."""
+		before: Cursor
+
+		"""Returns the last _n_ elements from the list."""
+		last: Int
+
+		"""Filtering options for GroupSettingsSlice returned from the connection."""
+		where: GroupSettingsWhereInput
+	): GroupSettingsConnection!
+	integrations(
+		"""Returns the elements in the list that come after the specified cursor."""
+		after: Cursor
+
+		"""Returns the first _n_ elements from the list."""
+		first: Int
+
+		"""Returns the elements in the list that come before the specified cursor."""
+		before: Cursor
+
+		"""Returns the last _n_ elements from the list."""
+		last: Int
+
+		"""Ordering options for Integrations returned from the connection."""
+		orderBy: IntegrationOrder
+
+		"""Filtering options for Integrations returned from the connection."""
+		where: IntegrationWhereInput
+	): IntegrationConnection!
+	memberships(
+		"""Returns the elements in the list that come after the specified cursor."""
+		after: Cursor
+
+		"""Returns the first _n_ elements from the list."""
+		first: Int
+
+		"""Returns the elements in the list that come before the specified cursor."""
+		before: Cursor
+
+		"""Returns the last _n_ elements from the list."""
+		last: Int
+
+		"""Filtering options for Memberships returned from the connection."""
+		where: MembershipWhereInput
+	): MembershipConnection!
+	organizations(
+		"""Returns the elements in the list that come after the specified cursor."""
+		after: Cursor
+
+		"""Returns the first _n_ elements from the list."""
+		first: Int
+
+		"""Returns the elements in the list that come before the specified cursor."""
+		before: Cursor
+
+		"""Returns the last _n_ elements from the list."""
+		last: Int
+
+		"""Ordering options for Organizations returned from the connection."""
+		orderBy: OrganizationOrder
+
+		"""Filtering options for Organizations returned from the connection."""
+		where: OrganizationWhereInput
+	): OrganizationConnection!
+	sessions(
+		"""Returns the elements in the list that come after the specified cursor."""
+		after: Cursor
+
+		"""Returns the first _n_ elements from the list."""
+		first: Int
+
+		"""Returns the elements in the list that come before the specified cursor."""
+		before: Cursor
+
+		"""Returns the last _n_ elements from the list."""
+		last: Int
+
+		"""Filtering options for Sessions returned from the connection."""
+		where: SessionWhereInput
+	): SessionConnection!
+	users(
+		"""Returns the elements in the list that come after the specified cursor."""
+		after: Cursor
+
+		"""Returns the first _n_ elements from the list."""
+		first: Int
+
+		"""Returns the elements in the list that come before the specified cursor."""
+		before: Cursor
+
+		"""Returns the last _n_ elements from the list."""
+		last: Int
+
+		"""Ordering options for Users returned from the connection."""
+		orderBy: UserOrder
+
+		"""Filtering options for Users returned from the connection."""
+		where: UserWhereInput
+	): UserConnection!
 	"""Look up group by ID"""
 	group(
 		"""ID of the group"""
@@ -894,6 +1093,15 @@ type Session implements Node {
 	"""Sessions belong to users"""
 	users: User
 }
+"""A connection to a list of items."""
+type SessionConnection {
+	"""A list of edges."""
+	edges: [SessionEdge]
+	"""Information to aid in pagination."""
+	pageInfo: PageInfo!
+	"""Identifies the total count of items in the connection."""
+	totalCount: Int!
+}
 """Return response for createSession mutation"""
 type SessionCreatePayload {
 	"""Created session"""
@@ -903,6 +1111,13 @@ type SessionCreatePayload {
 type SessionDeletePayload {
 	"""Deleted session ID"""
 	deletedID: ID!
+}
+"""An edge in a connection."""
+type SessionEdge {
+	"""The item at the end of the edge."""
+	node: Session
+	"""A cursor for use in pagination."""
+	cursor: Cursor!
 }
 """SessionType is enum for the field type"""
 enum SessionType @goModel(model: "github.com/datumforge/datum/internal/ent/generated/session.Type") {
@@ -1205,6 +1420,15 @@ type User implements Node {
 	sessions: [Session!]
 	groups: [Group!]
 }
+"""A connection to a list of items."""
+type UserConnection {
+	"""A list of edges."""
+	edges: [UserEdge]
+	"""Information to aid in pagination."""
+	pageInfo: PageInfo!
+	"""Identifies the total count of items in the connection."""
+	totalCount: Int!
+}
 """Return response for createUser mutation"""
 type UserCreatePayload {
 	"""Created user"""
@@ -1214,6 +1438,26 @@ type UserCreatePayload {
 type UserDeletePayload {
 	"""Deleted user ID"""
 	deletedID: ID!
+}
+"""An edge in a connection."""
+type UserEdge {
+	"""The item at the end of the edge."""
+	node: User
+	"""A cursor for use in pagination."""
+	cursor: Cursor!
+}
+"""Ordering options for User connections"""
+input UserOrder {
+	"""The ordering direction."""
+	direction: OrderDirection! = ASC
+	"""The field by which to order Users."""
+	field: UserOrderField!
+}
+"""Properties by which User connections can be ordered."""
+enum UserOrderField {
+	first_name
+	last_name
+	display_name
 }
 """Return response for updateUser mutation"""
 type UserUpdatePayload {

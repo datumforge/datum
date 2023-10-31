@@ -24,38 +24,38 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []uuid.UUID) ([]generated
 }
 
 // Groups is the resolver for the groups field.
-func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
+func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
 	panic(fmt.Errorf("not implemented: Groups - groups"))
 }
 
 // GroupSettingsSlice is the resolver for the groupSettingsSlice field.
-func (r *queryResolver) GroupSettingsSlice(ctx context.Context) ([]*generated.GroupSettings, error) {
+func (r *queryResolver) GroupSettingsSlice(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, where *generated.GroupSettingsWhereInput) (*generated.GroupSettingsConnection, error) {
 	panic(fmt.Errorf("not implemented: GroupSettingsSlice - groupSettingsSlice"))
 }
 
 // Integrations is the resolver for the integrations field.
-func (r *queryResolver) Integrations(ctx context.Context) ([]*generated.Integration, error) {
-	return r.client.Integration.Query().AllX(ctx), nil
+func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) (*generated.IntegrationConnection, error) {
+	return r.client.Integration.Query().Paginate(ctx, after, first, before, last, generated.WithIntegrationOrder(orderBy), generated.WithIntegrationFilter(where.Filter))
 }
 
 // Memberships is the resolver for the memberships field.
-func (r *queryResolver) Memberships(ctx context.Context) ([]*generated.Membership, error) {
-	return r.client.Membership.Query().AllX(ctx), nil
+func (r *queryResolver) Memberships(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, where *generated.MembershipWhereInput) (*generated.MembershipConnection, error) {
+	return r.client.Membership.Query().Paginate(ctx, after, first, before, last, generated.WithMembershipFilter(where.Filter))
 }
 
 // Organizations is the resolver for the organizations field.
-func (r *queryResolver) Organizations(ctx context.Context) ([]*generated.Organization, error) {
-	return r.client.Organization.Query().AllX(ctx), nil
+func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error) {
+	return r.client.Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))
 }
 
 // Sessions is the resolver for the sessions field.
-func (r *queryResolver) Sessions(ctx context.Context) ([]*generated.Session, error) {
-	return r.client.Session.Query().AllX(ctx), nil
+func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, where *generated.SessionWhereInput) (*generated.SessionConnection, error) {
+	return r.client.Session.Query().Paginate(ctx, after, first, before, last, generated.WithSessionFilter(where.Filter))
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*generated.User, error) {
-	return r.client.User.Query().AllX(ctx), nil
+func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[uuid.UUID], first *int, before *entgql.Cursor[uuid.UUID], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
+	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 
 // Query returns QueryResolver implementation.

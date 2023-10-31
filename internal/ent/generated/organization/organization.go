@@ -114,8 +114,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
-	// DefaultParentOrganizationID holds the default value on creation for the "parent_organization_id" field.
-	DefaultParentOrganizationID func() uuid.UUID
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )

@@ -147,10 +147,6 @@ func init() {
 			return nil
 		}
 	}()
-	// organizationDescParentOrganizationID is the schema descriptor for parent_organization_id field.
-	organizationDescParentOrganizationID := organizationFields[3].Descriptor()
-	// organization.DefaultParentOrganizationID holds the default value on creation for the parent_organization_id field.
-	organization.DefaultParentOrganizationID = organizationDescParentOrganizationID.Default.(func() uuid.UUID)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationFields[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

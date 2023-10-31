@@ -772,6 +772,13 @@ input OrganizationWhereInput {
 	updatedByLTE: UUID
 	updatedByIsNil: Boolean
 	updatedByNotNil: Boolean
+	"""parent_organization_id field predicates"""
+	parentOrganizationID: ID
+	parentOrganizationIDNEQ: ID
+	parentOrganizationIDIn: [ID!]
+	parentOrganizationIDNotIn: [ID!]
+	parentOrganizationIDIsNil: Boolean
+	parentOrganizationIDNotNil: Boolean
 	"""parent edge predicates"""
 	hasParent: Boolean
 	hasParentWith: [OrganizationWhereInput!]

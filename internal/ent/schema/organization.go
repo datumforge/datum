@@ -40,7 +40,7 @@ func (Organization) Fields() []ent.Field {
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
 			),
-		field.UUID("parent_organization_id", uuid.UUID{}).
+		field.UUID("parent_organization_id", uuid.UUID{}).Optional().Immutable().
 			Comment("The ID of the parent organization for the organization.").
 			Annotations(
 				entgql.Type("ID"),

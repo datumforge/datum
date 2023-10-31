@@ -651,6 +651,13 @@ type OrganizationWhereInput struct {
 	UpdatedByLte    *uuid.UUID  `json:"updatedByLTE,omitempty"`
 	UpdatedByIsNil  *bool       `json:"updatedByIsNil,omitempty"`
 	UpdatedByNotNil *bool       `json:"updatedByNotNil,omitempty"`
+	// parent_organization_id field predicates
+	ParentOrganizationID       *string  `json:"parentOrganizationID,omitempty"`
+	ParentOrganizationIDNeq    *string  `json:"parentOrganizationIDNEQ,omitempty"`
+	ParentOrganizationIDIn     []string `json:"parentOrganizationIDIn,omitempty"`
+	ParentOrganizationIDNotIn  []string `json:"parentOrganizationIDNotIn,omitempty"`
+	ParentOrganizationIDIsNil  *bool    `json:"parentOrganizationIDIsNil,omitempty"`
+	ParentOrganizationIDNotNil *bool    `json:"parentOrganizationIDNotNil,omitempty"`
 	// parent edge predicates
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`

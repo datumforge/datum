@@ -1308,6 +1308,14 @@ type OrganizationWhereInput struct {
 	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
 	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
 
+	// "parent_organization_id" field predicates.
+	ParentOrganizationID       *uuid.UUID  `json:"parentOrganizationID,omitempty"`
+	ParentOrganizationIDNEQ    *uuid.UUID  `json:"parentOrganizationIDNEQ,omitempty"`
+	ParentOrganizationIDIn     []uuid.UUID `json:"parentOrganizationIDIn,omitempty"`
+	ParentOrganizationIDNotIn  []uuid.UUID `json:"parentOrganizationIDNotIn,omitempty"`
+	ParentOrganizationIDIsNil  bool        `json:"parentOrganizationIDIsNil,omitempty"`
+	ParentOrganizationIDNotNil bool        `json:"parentOrganizationIDNotNil,omitempty"`
+
 	// "parent" edge predicates.
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -1531,6 +1539,24 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, organization.UpdatedByNotNil())
+	}
+	if i.ParentOrganizationID != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDEQ(*i.ParentOrganizationID))
+	}
+	if i.ParentOrganizationIDNEQ != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDNEQ(*i.ParentOrganizationIDNEQ))
+	}
+	if len(i.ParentOrganizationIDIn) > 0 {
+		predicates = append(predicates, organization.ParentOrganizationIDIn(i.ParentOrganizationIDIn...))
+	}
+	if len(i.ParentOrganizationIDNotIn) > 0 {
+		predicates = append(predicates, organization.ParentOrganizationIDNotIn(i.ParentOrganizationIDNotIn...))
+	}
+	if i.ParentOrganizationIDIsNil {
+		predicates = append(predicates, organization.ParentOrganizationIDIsNil())
+	}
+	if i.ParentOrganizationIDNotNil {
+		predicates = append(predicates, organization.ParentOrganizationIDNotNil())
 	}
 
 	if i.HasParent != nil {

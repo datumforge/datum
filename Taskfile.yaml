@@ -45,8 +45,8 @@ tasks:
     aliases: [atlas]
     cmds:
       - task: atlas:create
-      - task: atlas:lint
       - task: atlas:migrate
+      - task: atlas:lint
   atlas:create:
     cmds:
       - |

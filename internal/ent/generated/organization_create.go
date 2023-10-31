@@ -258,13 +258,6 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := oc.mutation.ParentOrganizationID(); !ok {
-		if organization.DefaultParentOrganizationID == nil {
-			return fmt.Errorf("generated: uninitialized organization.DefaultParentOrganizationID (forgotten import generated/runtime?)")
-		}
-		v := organization.DefaultParentOrganizationID()
-		oc.mutation.SetParentOrganizationID(v)
-	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized organization.DefaultID (forgotten import generated/runtime?)")

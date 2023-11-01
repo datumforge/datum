@@ -58,6 +58,7 @@ func main() {
 			gen.FeatureIntercept,
 		},
 	},
+		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
 			ogent,
 			oas,

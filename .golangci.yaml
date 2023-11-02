@@ -22,7 +22,7 @@ linters:
     - staticcheck
     - typecheck
     - unused
-
+    - gosec
     - bodyclose
     - noctx
 

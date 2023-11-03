@@ -1,3 +1,4 @@
+// Package nanox provides a ID interface based on go-nanoid
 package nanox
 
 import (
@@ -10,10 +11,16 @@ import (
 	"github.com/jaevor/go-nanoid"
 )
 
+const (
+	idLength = 21
+)
+
+// ID is a string based on the go-nanoid implementation
 type ID string
 
+// GetNewID returns an ID based on go-nanoid
 func GetNewID() (ID, error) {
-	canonicID, err := nanoid.Standard(21)
+	canonicID, err := nanoid.Standard(idLength)
 	if err != nil {
 		return "", err
 	}
@@ -21,39 +28,42 @@ func GetNewID() (ID, error) {
 	return ID(canonicID()), nil
 }
 
+// MustGetNewID returns an ID
 func MustGetNewID() ID {
 	v, err := GetNewID()
 	if err != nil {
 		panic(err)
 	}
+
 	return v
 }
 
-// MarshalGQL implements the graphql.Marshaler interface
+// MarshalID implements the graphql.Marshaler interface
 func MarshalID(u ID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
 		_, _ = io.WriteString(w, strconv.Quote(string(u)))
 	})
 }
 
-// UnmarshalGQL implements the graphql.Unmarshaler interface
-func (u *ID) UnmarshalGQL(v interface{}) error {
+// UnmarshalID implements the graphql.Unmarshaler interface
+func (u *ID) UnmarshalID(v interface{}) error {
 	return u.Scan(v)
 }
 
-func (p *ID) Scan(v any) error {
+// Scan checks the type of the provided ID
+func (u *ID) Scan(v any) error {
 	if v == nil {
-		*p = ID("")
+		*u = ID("")
 		return nil
 	}
 
 	switch src := v.(type) {
 	case string:
-		*p = ID(src)
+		*u = ID(src)
 	case []byte:
-		*p = ID(string(src))
+		*u = ID(string(src))
 	case ID:
-		*p = src
+		*u = src
 	default:
 		return ErrUnsupportedType
 	}
@@ -66,6 +76,7 @@ func (u ID) Value() (driver.Value, error) {
 	return string(u), nil
 }
 
+// IsValid checks if the ID provided is not empty
 func (u ID) IsValid() bool {
 	return u != ""
 }

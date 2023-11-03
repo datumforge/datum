@@ -32,10 +32,9 @@ type Server struct {
 	writeTimeout      time.Duration
 	idleTimeout       time.Duration
 	readHeaderTimeout time.Duration
-	certFile          string
-	certKey           string
 }
 
+// HTTPSConfig contains HTTPS server settings
 type HTTPSConfig struct {
 	tlsConfig *tls.Config
 	certFile  string

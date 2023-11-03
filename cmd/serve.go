@@ -153,6 +153,7 @@ func serve(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+
 		serverConfig = serverConfig.WithTLSDefaults().
 			WithTLSCerts(certFile, certKey)
 	}

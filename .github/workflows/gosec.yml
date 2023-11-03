@@ -19,7 +19,7 @@ jobs:
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
-            golangci_lint_flags: "--config=.golangci.yml"
+            golangci_lint_flags: "--config=.golangci.yaml"
             go_version: "1.21.1"
             github_token: ${{ secrets.GITHUB_TOKEN }}
             level: warning

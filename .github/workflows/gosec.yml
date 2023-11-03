@@ -1,0 +1,36 @@
+name: Run Gosec
+on:
+  push:
+
+jobs:
+  Gosec:
+    permissions:
+      security-events: write
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+            golangci_lint_flags: "--config=.golangci.yml"
+            go_version: "1.21.1"
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            level: warning
+            reporter: github-pr-review
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          # we let the report trigger content trigger a failure using the GitHub Security features.
+          args: '-no-fail -exclude-generated -fmt sarif -out results.sarif ./...'
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: results.sarif

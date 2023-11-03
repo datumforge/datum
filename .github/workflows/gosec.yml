@@ -24,7 +24,7 @@ jobs:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             level: warning
             reporter: github-pr-review
-            golangci_lint_version: "1.55.1"
+            golangci_lint_version: "latest"
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:

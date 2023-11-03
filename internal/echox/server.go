@@ -71,8 +71,12 @@ func NewServer(logger *zap.Logger, cfg Config) (*Server, error) {
 	if s.https {
 		s.httpsConfig = HTTPSConfig{
 			tlsConfig: cfg.TLSConfig.TLSConfig,
-			certFile:  cfg.TLSConfig.CertFile,
-			certKey:   cfg.TLSConfig.CertKey,
+		}
+
+		// add the cert files if not using autocert
+		if !cfg.TLSConfig.AutoCert {
+			s.httpsConfig.certFile = cfg.TLSConfig.CertFile
+			s.httpsConfig.certKey = cfg.TLSConfig.CertKey
 		}
 	}
 

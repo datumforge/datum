@@ -203,3 +203,11 @@ func (c Config) WithTLSConfig() Config {
 
 	return c
 }
+
+// WithTLSCerts sets the TLS Cert and Key locations
+func (c Config) WithTLSCerts(certFile, certKey string) Config {
+	c.TLSConfig.CertFile = certFile
+	c.TLSConfig.CertKey = certKey
+
+	return c
+}

@@ -149,7 +149,12 @@ func serve(ctx context.Context) error {
 		WithHTTPS(httpsEnabled)
 
 	if httpsEnabled {
-		serverConfig = serverConfig.WithTLSDefaults()
+		certFile, certKey, err := getCertFiles()
+		if err != nil {
+			return err
+		}
+		serverConfig = serverConfig.WithTLSDefaults().
+			WithTLSCerts(certFile, certKey)
 	}
 
 	srv, err := echox.NewServer(logger.Desugar(), serverConfig)

@@ -19,11 +19,12 @@ jobs:
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
-            golangci_lint_flags: "--config=.golangci.yaml"
+            golangci_lint_flags: "--config=.golangci.yaml --timeout=10m"
             go_version: "1.21.1"
             github_token: ${{ secrets.GITHUB_TOKEN }}
             level: warning
             reporter: github-pr-review
+            golangci_lint_version: "1.55.1"
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:

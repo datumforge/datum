@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/acme"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 var (
@@ -23,6 +25,16 @@ var (
 	DefaultCertFile = "server.crt"
 	// DefaultKeyFile is the default key file location
 	DefaultKeyFile = "server.key"
+	// DefaultTLSConfig
+	DefaultTLSConfig = &tls.Config{
+		MinVersion:               tls.VersionTLS12,
+		CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+		PreferServerCipherSuites: true,
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+		},
+	}
 )
 
 // Config is used to configure a new echo server
@@ -65,11 +77,14 @@ type Config struct {
 
 // TLSConfig contains config options for the https server
 type TLSConfig struct {
-	// TLSConfig
+	// TLSConfig contains the tls settings
 	TLSConfig *tls.Config
-
+	// AutoCert generate with letsencrypt
+	AutoCert bool
+	// CertFile location for the TLS server
 	CertFile string
-	CertKey  string
+	// CertKey file location for the TLS erver
+	CertKey string
 }
 
 // WithDefaults creates a new config with defaults set if not already defined.
@@ -78,6 +93,7 @@ func (c Config) WithDefaults() Config {
 		if c.HTTPS {
 			// use 443 for secure servers as the default port
 			c.Listen = ":443"
+			c.TLSConfig.TLSConfig = &tls.Config{}
 		} else {
 			c.Listen = ":8080"
 		}
@@ -108,7 +124,7 @@ func (c Config) WithDefaults() Config {
 
 // WithTLSDefaults sets tls default settings
 func (c Config) WithTLSDefaults() Config {
-	c.WithTLSConfig()
+	c.WithDefaultTLSConfig()
 	c.TLSConfig.CertFile = DefaultCertFile
 	c.TLSConfig.CertKey = DefaultKeyFile
 
@@ -185,19 +201,9 @@ func (c Config) WithMiddleware(mdw ...echo.MiddlewareFunc) Config {
 	return c
 }
 
-// WithTLSConfig sets the TLS Configuration
-func (c Config) WithTLSConfig() Config {
-	cfg := &tls.Config{
-		MinVersion:               tls.VersionTLS12,
-		CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
-		PreferServerCipherSuites: true,
-		CipherSuites: []uint16{
-			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-		},
-	}
-
-	c.TLSConfig.TLSConfig = cfg
+// WithDefaultTLSConfig sets the default TLS Configuration
+func (c Config) WithDefaultTLSConfig() Config {
+	c.TLSConfig.TLSConfig = DefaultTLSConfig
 
 	return c
 }
@@ -206,6 +212,23 @@ func (c Config) WithTLSConfig() Config {
 func (c Config) WithTLSCerts(certFile, certKey string) Config {
 	c.TLSConfig.CertFile = certFile
 	c.TLSConfig.CertKey = certKey
+
+	return c
+}
+
+// WithAutoCert ...
+func (c Config) WithAutoCert(host string) Config {
+	autoTLSManager := autocert.Manager{
+		Prompt: autocert.AcceptTOS,
+		// Cache certificates to avoid issues with rate limits (https://letsencrypt.org/docs/rate-limits)
+		Cache:      autocert.DirCache("/var/www/.cache"),
+		HostPolicy: autocert.HostWhitelist(host),
+	}
+
+	c.TLSConfig.TLSConfig = DefaultTLSConfig
+
+	c.TLSConfig.TLSConfig.GetCertificate = autoTLSManager.GetCertificate
+	c.TLSConfig.TLSConfig.NextProtos = []string{acme.ALPNProto}
 
 	return c
 }

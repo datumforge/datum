@@ -57,6 +57,9 @@ func init() {
 	serveCmd.Flags().String("ssl-key", "", "ssl key file location")
 	viperBindFlag("server.ssl-key", serveCmd.Flags().Lookup("ssl-key"))
 
+	serveCmd.Flags().Bool("auto-cert", false, "automatically generate tls cert")
+	viperBindFlag("server.auto-cert", serveCmd.Flags().Lookup("auto-cert"))
+
 	serveCmd.Flags().Duration("shutdown-grace-period", echox.DefaultShutdownGracePeriod, "server shutdown grace period")
 	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
 
@@ -149,13 +152,18 @@ func serve(ctx context.Context) error {
 		WithHTTPS(httpsEnabled)
 
 	if httpsEnabled {
-		certFile, certKey, err := getCertFiles()
-		if err != nil {
-			return err
-		}
+		serverConfig = serverConfig.WithTLSDefaults()
 
-		serverConfig = serverConfig.WithTLSDefaults().
-			WithTLSCerts(certFile, certKey)
+		if viper.GetBool("server.auto-cert") {
+			serverConfig = serverConfig.WithAutoCert("*.datum.net")
+		} else {
+			certFile, certKey, err := getCertFiles()
+			if err != nil {
+				return err
+			}
+
+			serverConfig = serverConfig.WithTLSCerts(certFile, certKey)
+		}
 	}
 
 	srv, err := echox.NewServer(logger.Desugar(), serverConfig)

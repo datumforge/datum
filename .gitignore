@@ -21,6 +21,8 @@ go.work
 datum.db
 backup.db
 datum
+server.crt 
+server.key 
 
 # Packages
 *.7z

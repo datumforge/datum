@@ -25,7 +25,7 @@ var (
 	DefaultCertFile = "server.crt"
 	// DefaultKeyFile is the default key file location
 	DefaultKeyFile = "server.key"
-	// DefaultTLSConfig
+	// DefaultTLSConfig is the default TLS config used when HTTPS is enabled
 	DefaultTLSConfig = &tls.Config{
 		MinVersion:               tls.VersionTLS12,
 		CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
@@ -72,18 +72,19 @@ type Config struct {
 	// Middleware includes the provided middleware when echo is initialized.
 	Middleware []echo.MiddlewareFunc
 
+	// TLSConfig contains the settings for running an HTTPS server.
 	TLSConfig TLSConfig
 }
 
-// TLSConfig contains config options for the https server
+// TLSConfig contains config options for the HTTPS server
 type TLSConfig struct {
 	// TLSConfig contains the tls settings
 	TLSConfig *tls.Config
-	// AutoCert generate with letsencrypt
+	// AutoCert generates the cert with letsencrypt, this does not work on localhost
 	AutoCert bool
 	// CertFile location for the TLS server
 	CertFile string
-	// CertKey file location for the TLS erver
+	// CertKey file location for the TLS server
 	CertKey string
 }
 
@@ -93,7 +94,7 @@ func (c Config) WithDefaults() Config {
 		if c.HTTPS {
 			// use 443 for secure servers as the default port
 			c.Listen = ":443"
-			c.TLSConfig.TLSConfig = &tls.Config{}
+			c.TLSConfig.TLSConfig = DefaultTLSConfig
 		} else {
 			c.Listen = ":8080"
 		}
@@ -122,7 +123,7 @@ func (c Config) WithDefaults() Config {
 	return c
 }
 
-// WithTLSDefaults sets tls default settings
+// WithTLSDefaults sets tls default settings assuming a default cert and key file location.
 func (c Config) WithTLSDefaults() Config {
 	c.WithDefaultTLSConfig()
 	c.TLSConfig.CertFile = DefaultCertFile
@@ -216,7 +217,7 @@ func (c Config) WithTLSCerts(certFile, certKey string) Config {
 	return c
 }
 
-// WithAutoCert ...
+// WithAutoCert generates a letsencrypt certificate, a valid host must be provided
 func (c Config) WithAutoCert(host string) Config {
 	autoTLSManager := autocert.Manager{
 		Prompt: autocert.AcceptTOS,

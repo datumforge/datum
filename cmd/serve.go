@@ -60,6 +60,9 @@ func init() {
 	serveCmd.Flags().Bool("auto-cert", false, "automatically generate tls cert")
 	viperBindFlag("server.auto-cert", serveCmd.Flags().Lookup("auto-cert"))
 
+	serveCmd.Flags().String("cert-host", "*.datum.net", "host to use to generate tls cert")
+	viperBindFlag("server.cert-host", serveCmd.Flags().Lookup("cert-host"))
+
 	serveCmd.Flags().Duration("shutdown-grace-period", echox.DefaultShutdownGracePeriod, "server shutdown grace period")
 	viperBindFlag("server.shutdown-grace-period", serveCmd.Flags().Lookup("shutdown-grace-period"))
 
@@ -155,7 +158,7 @@ func serve(ctx context.Context) error {
 		serverConfig = serverConfig.WithTLSDefaults()
 
 		if viper.GetBool("server.auto-cert") {
-			serverConfig = serverConfig.WithAutoCert("*.datum.net")
+			serverConfig = serverConfig.WithAutoCert(viper.GetString("server.cert-host"))
 		} else {
 			certFile, certKey, err := getCertFiles()
 			if err != nil {

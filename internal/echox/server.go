@@ -19,14 +19,18 @@ import (
 
 // Server implements the HTTPS Server
 type Server struct {
-	debug             bool
-	dev               bool
-	listen            string
-	https             bool
-	httpsConfig       HTTPSConfig
-	logger            *zap.Logger
-	middleware        []echo.MiddlewareFunc
-	handlers          []handler
+	debug       bool
+	dev         bool
+	listen      string
+	https       bool
+	httpsConfig HTTPSConfig
+	logger      *zap.Logger
+	middleware  []echo.MiddlewareFunc
+	handlers    []handler
+	timeouts    serverTimeouts
+}
+
+type serverTimeouts struct {
 	shutdownTimeout   time.Duration
 	readTimeout       time.Duration
 	writeTimeout      time.Duration
@@ -46,18 +50,22 @@ func NewServer(logger *zap.Logger, cfg Config) (*Server, error) {
 	// setup echo server
 	cfg = cfg.WithDefaults()
 
-	s := &Server{
-		debug:             cfg.Debug,
-		dev:               cfg.Dev,
-		https:             cfg.HTTPS,
-		listen:            cfg.Listen,
-		logger:            logger.Named("echox"),
-		middleware:        cfg.Middleware,
+	t := serverTimeouts{
 		shutdownTimeout:   cfg.ShutdownGracePeriod,
 		readTimeout:       cfg.ReadTimeout,
 		writeTimeout:      cfg.WriteTimeout,
 		idleTimeout:       cfg.IdleTimeout,
 		readHeaderTimeout: cfg.ReadHeaderTimeout,
+	}
+
+	s := &Server{
+		debug:      cfg.Debug,
+		dev:        cfg.Dev,
+		https:      cfg.HTTPS,
+		listen:     cfg.Listen,
+		logger:     logger.Named("echox"),
+		middleware: cfg.Middleware,
+		timeouts:   t,
 	}
 
 	if s.https {
@@ -114,6 +122,15 @@ func (s *Server) Handler() http.Handler {
 	return srv
 }
 
+func (s *Server) defaultServer() *http.Server {
+	return &http.Server{
+		ReadTimeout:       s.timeouts.readTimeout,
+		WriteTimeout:      s.timeouts.writeTimeout,
+		IdleTimeout:       s.timeouts.idleTimeout,
+		ReadHeaderTimeout: s.timeouts.readHeaderTimeout,
+	}
+}
+
 // ServeHTTPWithContext serves an http server on the provided listener.
 // Serve blocks until SIGINT or SIGTERM are signalled,
 // or if the http serve fails.
@@ -123,13 +140,8 @@ func (s *Server) ServeHTTPWithContext(ctx context.Context, listener net.Listener
 
 	logger.Info("starting server")
 
-	srv := &http.Server{
-		Handler:           s.Handler(),
-		ReadTimeout:       s.readTimeout,
-		WriteTimeout:      s.writeTimeout,
-		IdleTimeout:       s.idleTimeout,
-		ReadHeaderTimeout: s.readHeaderTimeout,
-	}
+	srv := s.defaultServer()
+	srv.Handler = s.Handler()
 
 	var (
 		exit = make(chan error, 1)
@@ -168,7 +180,7 @@ func (s *Server) ServeHTTPWithContext(ctx context.Context, listener net.Listener
 		ctx = context.Background()
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, s.shutdownTimeout)
+	ctx, cancel := context.WithTimeout(ctx, s.timeouts.shutdownTimeout)
 	defer cancel()
 
 	if err = srv.Shutdown(ctx); err != nil {
@@ -189,15 +201,11 @@ func (s *Server) ServeHTTPSWithContext(ctx context.Context, listener net.Listene
 
 	logger.Info("starting https server")
 
-	srv := &http.Server{
-		Handler:           s.Handler(),
-		TLSConfig:         s.httpsConfig.tlsConfig,
-		TLSNextProto:      make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
-		ReadTimeout:       s.readTimeout,
-		WriteTimeout:      s.writeTimeout,
-		IdleTimeout:       s.idleTimeout,
-		ReadHeaderTimeout: s.readHeaderTimeout,
-	}
+	srv := s.defaultServer()
+
+	srv.Handler = s.Handler()
+	srv.TLSConfig = s.httpsConfig.tlsConfig
+	srv.TLSNextProto = make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0)
 
 	var (
 		exit = make(chan error, 1)
@@ -236,7 +244,7 @@ func (s *Server) ServeHTTPSWithContext(ctx context.Context, listener net.Listene
 		ctx = context.Background()
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, s.shutdownTimeout)
+	ctx, cancel := context.WithTimeout(ctx, s.timeouts.shutdownTimeout)
 	defer cancel()
 
 	if err = srv.Shutdown(ctx); err != nil {

@@ -90,14 +90,12 @@ type TLSConfig struct {
 
 // WithDefaults creates a new config with defaults set if not already defined.
 func (c Config) WithDefaults() Config {
-	if c.Listen == "" {
-		if c.HTTPS {
-			// use 443 for secure servers as the default port
-			c.Listen = ":443"
-			c.TLSConfig.TLSConfig = DefaultTLSConfig
-		} else {
-			c.Listen = ":8080"
-		}
+	if c.HTTPS {
+		// use 443 for secure servers as the default port
+		c.Listen = ":443"
+		c.TLSConfig.TLSConfig = DefaultTLSConfig
+	} else {
+		c.Listen = ":8080"
 	}
 
 	if c.ShutdownGracePeriod <= 0 {

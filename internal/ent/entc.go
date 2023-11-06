@@ -33,8 +33,6 @@ func main() {
 		log.Fatalf("creating ogent extension: %v", err)
 	}
 
-	ogent.Options()
-
 	gqlExt, err := entgql.NewExtension(
 		// Tell Ent to generate a GraphQL schema for
 		// the Ent schema in a file named ent.graphql.

@@ -10,7 +10,7 @@ require (
 	github.com/99designs/gqlgen v0.17.40
 	github.com/Yamashou/gqlgenc v0.15.1
 	github.com/brpaz/echozap v1.1.3
-	github.com/go-faster/errors v0.6.1
+	github.com/go-faster/errors v0.7.0
 	github.com/go-faster/jx v1.1.0
 	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/google/uuid v1.4.0

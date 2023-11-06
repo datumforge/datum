@@ -5,7 +5,11 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 
-	"github.com/datumforge/datum/internal/nanox"
+	"github.com/jaevor/go-nanoid"
+)
+
+const (
+	idLength = 21
 )
 
 var _ ent.Mixin = (*IDMixin)(nil)
@@ -21,6 +25,26 @@ func (IDMixin) Fields() []ent.Field {
 		field.String("id").
 			Unique().
 			Immutable().
-			DefaultFunc(nanox.MustGetNewID),
+			DefaultFunc(mustGetNewID),
 	}
+}
+
+// getNewID returns an ID based on go-nanoid
+func getNewID() (string, error) {
+	canonicID, err := nanoid.Standard(idLength)
+	if err != nil {
+		return "", err
+	}
+
+	return canonicID(), nil
+}
+
+// mustGetNewID returns an ID
+func mustGetNewID() string {
+	v, err := getNewID()
+	if err != nil {
+		panic(err)
+	}
+
+	return v
 }

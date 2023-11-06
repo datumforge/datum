@@ -205,8 +205,8 @@ func (s *Server) ServeHTTPSWithContext(ctx context.Context, listener net.Listene
 
 	logger.Info("starting https server")
 
+	// TODO: Add ability to do HTTPS Redirect with middleware.HTTPSRedirect()
 	srv := s.defaultServer()
-
 	srv.Handler = s.Handler()
 	srv.TLSConfig = s.httpsConfig.tlsConfig
 	srv.TLSNextProto = make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0)

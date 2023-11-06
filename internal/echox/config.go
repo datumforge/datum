@@ -94,7 +94,8 @@ func (c Config) WithDefaults() Config {
 		// use 443 for secure servers as the default port
 		c.Listen = ":443"
 		c.TLSConfig.TLSConfig = DefaultTLSConfig
-	} else {
+	} else if c.Listen == "" {
+		// set default port if none is provided
 		c.Listen = ":8080"
 	}
 

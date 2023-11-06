@@ -3314,7 +3314,6 @@ type OrganizationDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/scalers.graphql", Input: `scalar UUID`, BuiltIn: false},
 	{Name: "../../schema/session.graphql", Input: `extend type Query {
     """
     Look up session by ID

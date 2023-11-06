@@ -15,8 +15,6 @@ import (
 	"entgo.io/ent/entc/gen"
 	"github.com/hedwigz/entviz"
 	"github.com/ogen-go/ogen"
-
-	_ "github.com/datumforge/datum/internal/nanox"
 )
 
 func main() {

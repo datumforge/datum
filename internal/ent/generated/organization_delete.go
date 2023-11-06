@@ -42,7 +42,7 @@ func (od *OrganizationDelete) ExecX(ctx context.Context) int {
 }
 
 func (od *OrganizationDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	_spec.Node.Schema = od.schemaConfig.Organization
 	ctx = internal.NewSchemaConfigContext(ctx, od.schemaConfig)
 	if ps := od.mutation.predicates; len(ps) > 0 {

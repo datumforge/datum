@@ -13,7 +13,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -114,8 +113,8 @@ func (gsq *GroupSettingsQuery) FirstX(ctx context.Context) *GroupSettings {
 
 // FirstID returns the first GroupSettings ID from the query.
 // Returns a *NotFoundError when no GroupSettings ID was found.
-func (gsq *GroupSettingsQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (gsq *GroupSettingsQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = gsq.Limit(1).IDs(setContextOp(ctx, gsq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -127,7 +126,7 @@ func (gsq *GroupSettingsQuery) FirstID(ctx context.Context) (id uuid.UUID, err e
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (gsq *GroupSettingsQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (gsq *GroupSettingsQuery) FirstIDX(ctx context.Context) string {
 	id, err := gsq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -165,8 +164,8 @@ func (gsq *GroupSettingsQuery) OnlyX(ctx context.Context) *GroupSettings {
 // OnlyID is like Only, but returns the only GroupSettings ID in the query.
 // Returns a *NotSingularError when more than one GroupSettings ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (gsq *GroupSettingsQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (gsq *GroupSettingsQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = gsq.Limit(2).IDs(setContextOp(ctx, gsq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -182,7 +181,7 @@ func (gsq *GroupSettingsQuery) OnlyID(ctx context.Context) (id uuid.UUID, err er
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (gsq *GroupSettingsQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (gsq *GroupSettingsQuery) OnlyIDX(ctx context.Context) string {
 	id, err := gsq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -210,7 +209,7 @@ func (gsq *GroupSettingsQuery) AllX(ctx context.Context) []*GroupSettings {
 }
 
 // IDs executes the query and returns a list of GroupSettings IDs.
-func (gsq *GroupSettingsQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+func (gsq *GroupSettingsQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if gsq.ctx.Unique == nil && gsq.path != nil {
 		gsq.Unique(true)
 	}
@@ -222,7 +221,7 @@ func (gsq *GroupSettingsQuery) IDs(ctx context.Context) (ids []uuid.UUID, err er
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (gsq *GroupSettingsQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (gsq *GroupSettingsQuery) IDsX(ctx context.Context) []string {
 	ids, err := gsq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -427,8 +426,8 @@ func (gsq *GroupSettingsQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 }
 
 func (gsq *GroupSettingsQuery) loadGroup(ctx context.Context, query *GroupQuery, nodes []*GroupSettings, init func(*GroupSettings), assign func(*GroupSettings, *Group)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*GroupSettings)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*GroupSettings)
 	for i := range nodes {
 		if nodes[i].group_setting == nil {
 			continue
@@ -474,7 +473,7 @@ func (gsq *GroupSettingsQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (gsq *GroupSettingsQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(groupsettings.Table, groupsettings.Columns, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(groupsettings.Table, groupsettings.Columns, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString))
 	_spec.From = gsq.sql
 	if unique := gsq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

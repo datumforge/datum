@@ -42,7 +42,7 @@ func (id *IntegrationDelete) ExecX(ctx context.Context) int {
 }
 
 func (id *IntegrationDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(integration.Table, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(integration.Table, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString))
 	_spec.Node.Schema = id.schemaConfig.Integration
 	ctx = internal.NewSchemaConfigContext(ctx, id.schemaConfig)
 	if ps := id.mutation.predicates; len(ps) > 0 {

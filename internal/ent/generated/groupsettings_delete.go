@@ -42,7 +42,7 @@ func (gsd *GroupSettingsDelete) ExecX(ctx context.Context) int {
 }
 
 func (gsd *GroupSettingsDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(groupsettings.Table, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(groupsettings.Table, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString))
 	_spec.Node.Schema = gsd.schemaConfig.GroupSettings
 	ctx = internal.NewSchemaConfigContext(ctx, gsd.schemaConfig)
 	if ps := gsd.mutation.predicates; len(ps) > 0 {

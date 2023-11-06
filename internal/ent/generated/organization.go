@@ -10,28 +10,27 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/google/uuid"
 )
 
 // Organization is the model entity for the Organization schema.
 type Organization struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy uuid.UUID `json:"created_by,omitempty"`
+	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// An optional description of the Organization
 	Description string `json:"description,omitempty"`
 	// The ID of the parent organization for the organization.
-	ParentOrganizationID uuid.UUID `json:"parent_organization_id,omitempty"`
+	ParentOrganizationID string `json:"parent_organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -116,12 +115,10 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organization.FieldName, organization.FieldDescription:
+		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldName, organization.FieldDescription, organization.FieldParentOrganizationID:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldParentOrganizationID:
-			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -138,10 +135,10 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case organization.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				o.ID = *value
+			} else if value.Valid {
+				o.ID = value.String
 			}
 		case organization.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -156,16 +153,16 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				o.UpdatedAt = value.Time
 			}
 		case organization.FieldCreatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value != nil {
-				o.CreatedBy = *value
+			} else if value.Valid {
+				o.CreatedBy = value.String
 			}
 		case organization.FieldUpdatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value != nil {
-				o.UpdatedBy = *value
+			} else if value.Valid {
+				o.UpdatedBy = value.String
 			}
 		case organization.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -180,10 +177,10 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				o.Description = value.String
 			}
 		case organization.FieldParentOrganizationID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_organization_id", values[i])
-			} else if value != nil {
-				o.ParentOrganizationID = *value
+			} else if value.Valid {
+				o.ParentOrganizationID = value.String
 			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
@@ -253,10 +250,10 @@ func (o *Organization) String() string {
 	builder.WriteString(o.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", o.CreatedBy))
+	builder.WriteString(o.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", o.UpdatedBy))
+	builder.WriteString(o.UpdatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(o.Name)
@@ -265,7 +262,7 @@ func (o *Organization) String() string {
 	builder.WriteString(o.Description)
 	builder.WriteString(", ")
 	builder.WriteString("parent_organization_id=")
-	builder.WriteString(fmt.Sprintf("%v", o.ParentOrganizationID))
+	builder.WriteString(o.ParentOrganizationID)
 	builder.WriteByte(')')
 	return builder.String()
 }

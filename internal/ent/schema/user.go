@@ -13,8 +13,6 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
-
-	"github.com/google/uuid"
 )
 
 const (
@@ -32,6 +30,7 @@ func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.BaseMixin{},
+		mixin.IDMixin{},
 	}
 }
 
@@ -45,7 +44,6 @@ func (User) Fields() []ent.Field {
 				_, err := mail.ParseAddress(email)
 				return err
 			}),
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("first_name").
 			NotEmpty().
 			MaxLen(nameMaxLen).

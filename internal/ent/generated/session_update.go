@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -39,15 +38,15 @@ func (su *SessionUpdate) SetUpdatedAt(t time.Time) *SessionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (su *SessionUpdate) SetCreatedBy(u uuid.UUID) *SessionUpdate {
-	su.mutation.SetCreatedBy(u)
+func (su *SessionUpdate) SetCreatedBy(s string) *SessionUpdate {
+	su.mutation.SetCreatedBy(s)
 	return su
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableCreatedBy(u *uuid.UUID) *SessionUpdate {
-	if u != nil {
-		su.SetCreatedBy(*u)
+func (su *SessionUpdate) SetNillableCreatedBy(s *string) *SessionUpdate {
+	if s != nil {
+		su.SetCreatedBy(*s)
 	}
 	return su
 }
@@ -59,15 +58,15 @@ func (su *SessionUpdate) ClearCreatedBy() *SessionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (su *SessionUpdate) SetUpdatedBy(u uuid.UUID) *SessionUpdate {
-	su.mutation.SetUpdatedBy(u)
+func (su *SessionUpdate) SetUpdatedBy(s string) *SessionUpdate {
+	su.mutation.SetUpdatedBy(s)
 	return su
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableUpdatedBy(u *uuid.UUID) *SessionUpdate {
-	if u != nil {
-		su.SetUpdatedBy(*u)
+func (su *SessionUpdate) SetNillableUpdatedBy(s *string) *SessionUpdate {
+	if s != nil {
+		su.SetUpdatedBy(*s)
 	}
 	return su
 }
@@ -111,13 +110,13 @@ func (su *SessionUpdate) SetIps(s string) *SessionUpdate {
 }
 
 // SetUsersID sets the "users" edge to the User entity by ID.
-func (su *SessionUpdate) SetUsersID(id uuid.UUID) *SessionUpdate {
+func (su *SessionUpdate) SetUsersID(id string) *SessionUpdate {
 	su.mutation.SetUsersID(id)
 	return su
 }
 
 // SetNillableUsersID sets the "users" edge to the User entity by ID if the given value is not nil.
-func (su *SessionUpdate) SetNillableUsersID(id *uuid.UUID) *SessionUpdate {
+func (su *SessionUpdate) SetNillableUsersID(id *string) *SessionUpdate {
 	if id != nil {
 		su = su.SetUsersID(*id)
 	}
@@ -183,7 +182,7 @@ func (su *SessionUpdate) defaults() error {
 }
 
 func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeString))
 	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -195,16 +194,16 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := su.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(session.FieldCreatedBy, field.TypeString, value)
 	}
 	if su.mutation.CreatedByCleared() {
-		_spec.ClearField(session.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(session.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := su.mutation.UpdatedBy(); ok {
-		_spec.SetField(session.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(session.FieldUpdatedBy, field.TypeString, value)
 	}
 	if su.mutation.UpdatedByCleared() {
-		_spec.ClearField(session.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(session.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := su.mutation.Disabled(); ok {
 		_spec.SetField(session.FieldDisabled, field.TypeBool, value)
@@ -226,7 +225,7 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{session.UsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = su.schemaConfig.Session
@@ -240,7 +239,7 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{session.UsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = su.schemaConfig.Session
@@ -278,15 +277,15 @@ func (suo *SessionUpdateOne) SetUpdatedAt(t time.Time) *SessionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (suo *SessionUpdateOne) SetCreatedBy(u uuid.UUID) *SessionUpdateOne {
-	suo.mutation.SetCreatedBy(u)
+func (suo *SessionUpdateOne) SetCreatedBy(s string) *SessionUpdateOne {
+	suo.mutation.SetCreatedBy(s)
 	return suo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *SessionUpdateOne {
-	if u != nil {
-		suo.SetCreatedBy(*u)
+func (suo *SessionUpdateOne) SetNillableCreatedBy(s *string) *SessionUpdateOne {
+	if s != nil {
+		suo.SetCreatedBy(*s)
 	}
 	return suo
 }
@@ -298,15 +297,15 @@ func (suo *SessionUpdateOne) ClearCreatedBy() *SessionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (suo *SessionUpdateOne) SetUpdatedBy(u uuid.UUID) *SessionUpdateOne {
-	suo.mutation.SetUpdatedBy(u)
+func (suo *SessionUpdateOne) SetUpdatedBy(s string) *SessionUpdateOne {
+	suo.mutation.SetUpdatedBy(s)
 	return suo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *SessionUpdateOne {
-	if u != nil {
-		suo.SetUpdatedBy(*u)
+func (suo *SessionUpdateOne) SetNillableUpdatedBy(s *string) *SessionUpdateOne {
+	if s != nil {
+		suo.SetUpdatedBy(*s)
 	}
 	return suo
 }
@@ -350,13 +349,13 @@ func (suo *SessionUpdateOne) SetIps(s string) *SessionUpdateOne {
 }
 
 // SetUsersID sets the "users" edge to the User entity by ID.
-func (suo *SessionUpdateOne) SetUsersID(id uuid.UUID) *SessionUpdateOne {
+func (suo *SessionUpdateOne) SetUsersID(id string) *SessionUpdateOne {
 	suo.mutation.SetUsersID(id)
 	return suo
 }
 
 // SetNillableUsersID sets the "users" edge to the User entity by ID if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUsersID(id *uuid.UUID) *SessionUpdateOne {
+func (suo *SessionUpdateOne) SetNillableUsersID(id *string) *SessionUpdateOne {
 	if id != nil {
 		suo = suo.SetUsersID(*id)
 	}
@@ -435,7 +434,7 @@ func (suo *SessionUpdateOne) defaults() error {
 }
 
 func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err error) {
-	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeString))
 	id, ok := suo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`generated: missing "Session.id" for update`)}
@@ -464,16 +463,16 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := suo.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(session.FieldCreatedBy, field.TypeString, value)
 	}
 	if suo.mutation.CreatedByCleared() {
-		_spec.ClearField(session.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(session.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := suo.mutation.UpdatedBy(); ok {
-		_spec.SetField(session.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(session.FieldUpdatedBy, field.TypeString, value)
 	}
 	if suo.mutation.UpdatedByCleared() {
-		_spec.ClearField(session.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(session.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := suo.mutation.Disabled(); ok {
 		_spec.SetField(session.FieldDisabled, field.TypeBool, value)
@@ -495,7 +494,7 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 			Columns: []string{session.UsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = suo.schemaConfig.Session
@@ -509,7 +508,7 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 			Columns: []string{session.UsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = suo.schemaConfig.Session

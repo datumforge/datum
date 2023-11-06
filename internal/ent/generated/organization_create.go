@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 // OrganizationCreate is the builder for creating a Organization entity.
@@ -53,29 +52,29 @@ func (oc *OrganizationCreate) SetNillableUpdatedAt(t *time.Time) *OrganizationCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (oc *OrganizationCreate) SetCreatedBy(u uuid.UUID) *OrganizationCreate {
-	oc.mutation.SetCreatedBy(u)
+func (oc *OrganizationCreate) SetCreatedBy(s string) *OrganizationCreate {
+	oc.mutation.SetCreatedBy(s)
 	return oc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableCreatedBy(u *uuid.UUID) *OrganizationCreate {
-	if u != nil {
-		oc.SetCreatedBy(*u)
+func (oc *OrganizationCreate) SetNillableCreatedBy(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetCreatedBy(*s)
 	}
 	return oc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (oc *OrganizationCreate) SetUpdatedBy(u uuid.UUID) *OrganizationCreate {
-	oc.mutation.SetUpdatedBy(u)
+func (oc *OrganizationCreate) SetUpdatedBy(s string) *OrganizationCreate {
+	oc.mutation.SetUpdatedBy(s)
 	return oc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableUpdatedBy(u *uuid.UUID) *OrganizationCreate {
-	if u != nil {
-		oc.SetUpdatedBy(*u)
+func (oc *OrganizationCreate) SetNillableUpdatedBy(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetUpdatedBy(*s)
 	}
 	return oc
 }
@@ -101,41 +100,41 @@ func (oc *OrganizationCreate) SetNillableDescription(s *string) *OrganizationCre
 }
 
 // SetParentOrganizationID sets the "parent_organization_id" field.
-func (oc *OrganizationCreate) SetParentOrganizationID(u uuid.UUID) *OrganizationCreate {
-	oc.mutation.SetParentOrganizationID(u)
+func (oc *OrganizationCreate) SetParentOrganizationID(s string) *OrganizationCreate {
+	oc.mutation.SetParentOrganizationID(s)
 	return oc
 }
 
 // SetNillableParentOrganizationID sets the "parent_organization_id" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableParentOrganizationID(u *uuid.UUID) *OrganizationCreate {
-	if u != nil {
-		oc.SetParentOrganizationID(*u)
+func (oc *OrganizationCreate) SetNillableParentOrganizationID(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetParentOrganizationID(*s)
 	}
 	return oc
 }
 
 // SetID sets the "id" field.
-func (oc *OrganizationCreate) SetID(u uuid.UUID) *OrganizationCreate {
-	oc.mutation.SetID(u)
+func (oc *OrganizationCreate) SetID(s string) *OrganizationCreate {
+	oc.mutation.SetID(s)
 	return oc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableID(u *uuid.UUID) *OrganizationCreate {
-	if u != nil {
-		oc.SetID(*u)
+func (oc *OrganizationCreate) SetNillableID(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetID(*s)
 	}
 	return oc
 }
 
 // SetParentID sets the "parent" edge to the Organization entity by ID.
-func (oc *OrganizationCreate) SetParentID(id uuid.UUID) *OrganizationCreate {
+func (oc *OrganizationCreate) SetParentID(id string) *OrganizationCreate {
 	oc.mutation.SetParentID(id)
 	return oc
 }
 
 // SetNillableParentID sets the "parent" edge to the Organization entity by ID if the given value is not nil.
-func (oc *OrganizationCreate) SetNillableParentID(id *uuid.UUID) *OrganizationCreate {
+func (oc *OrganizationCreate) SetNillableParentID(id *string) *OrganizationCreate {
 	if id != nil {
 		oc = oc.SetParentID(*id)
 	}
@@ -148,14 +147,14 @@ func (oc *OrganizationCreate) SetParent(o *Organization) *OrganizationCreate {
 }
 
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
-func (oc *OrganizationCreate) AddChildIDs(ids ...uuid.UUID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddChildIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddChildIDs(ids...)
 	return oc
 }
 
 // AddChildren adds the "children" edges to the Organization entity.
 func (oc *OrganizationCreate) AddChildren(o ...*Organization) *OrganizationCreate {
-	ids := make([]uuid.UUID, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -163,14 +162,14 @@ func (oc *OrganizationCreate) AddChildren(o ...*Organization) *OrganizationCreat
 }
 
 // AddUserIDs adds the "users" edge to the User entity by IDs.
-func (oc *OrganizationCreate) AddUserIDs(ids ...uuid.UUID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddUserIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddUserIDs(ids...)
 	return oc
 }
 
 // AddUsers adds the "users" edges to the User entity.
 func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -178,14 +177,14 @@ func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (oc *OrganizationCreate) AddGroupIDs(ids ...uuid.UUID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddGroupIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddGroupIDs(ids...)
 	return oc
 }
 
 // AddGroups adds the "groups" edges to the Group entity.
 func (oc *OrganizationCreate) AddGroups(g ...*Group) *OrganizationCreate {
-	ids := make([]uuid.UUID, len(g))
+	ids := make([]string, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -193,14 +192,14 @@ func (oc *OrganizationCreate) AddGroups(g ...*Group) *OrganizationCreate {
 }
 
 // AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
-func (oc *OrganizationCreate) AddIntegrationIDs(ids ...uuid.UUID) *OrganizationCreate {
+func (oc *OrganizationCreate) AddIntegrationIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddIntegrationIDs(ids...)
 	return oc
 }
 
 // AddIntegrations adds the "integrations" edges to the Integration entity.
 func (oc *OrganizationCreate) AddIntegrations(i ...*Integration) *OrganizationCreate {
-	ids := make([]uuid.UUID, len(i))
+	ids := make([]string, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -299,10 +298,10 @@ func (oc *OrganizationCreate) sqlSave(ctx context.Context) (*Organization, error
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Organization.ID type: %T", _spec.ID.Value)
 		}
 	}
 	oc.mutation.id = &_node.ID
@@ -313,12 +312,12 @@ func (oc *OrganizationCreate) sqlSave(ctx context.Context) (*Organization, error
 func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Organization{config: oc.config}
-		_spec = sqlgraph.NewCreateSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(organization.Table, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	)
 	_spec.Schema = oc.schemaConfig.Organization
 	if id, ok := oc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := oc.mutation.CreatedAt(); ok {
 		_spec.SetField(organization.FieldCreatedAt, field.TypeTime, value)
@@ -329,11 +328,11 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		_node.UpdatedAt = value
 	}
 	if value, ok := oc.mutation.CreatedBy(); ok {
-		_spec.SetField(organization.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(organization.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := oc.mutation.UpdatedBy(); ok {
-		_spec.SetField(organization.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(organization.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := oc.mutation.Name(); ok {
@@ -352,7 +351,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = oc.schemaConfig.Organization
@@ -370,7 +369,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = oc.schemaConfig.Organization
@@ -387,7 +386,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = oc.schemaConfig.UserOrganizations
@@ -404,7 +403,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = oc.schemaConfig.Group
@@ -421,7 +420,7 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = oc.schemaConfig.Integration

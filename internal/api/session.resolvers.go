@@ -9,7 +9,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/google/uuid"
 )
 
 // CreateSession is the resolver for the createSession field.
@@ -29,7 +28,7 @@ func (r *mutationResolver) CreateSession(ctx context.Context, input generated.Cr
 }
 
 // UpdateSession is the resolver for the updateSession field.
-func (r *mutationResolver) UpdateSession(ctx context.Context, id uuid.UUID, input generated.UpdateSessionInput) (*SessionUpdatePayload, error) {
+func (r *mutationResolver) UpdateSession(ctx context.Context, id string, input generated.UpdateSessionInput) (*SessionUpdatePayload, error) {
 	// TODO - add permissions checks
 
 	sess, err := r.client.Session.Get(ctx, id)
@@ -56,7 +55,7 @@ func (r *mutationResolver) UpdateSession(ctx context.Context, id uuid.UUID, inpu
 }
 
 // DeleteSession is the resolver for the deleteSession field.
-func (r *mutationResolver) DeleteSession(ctx context.Context, id uuid.UUID) (*SessionDeletePayload, error) {
+func (r *mutationResolver) DeleteSession(ctx context.Context, id string) (*SessionDeletePayload, error) {
 	// TODO - add permissions checks
 
 	if err := r.client.Session.DeleteOneID(id).Exec(ctx); err != nil {
@@ -72,7 +71,7 @@ func (r *mutationResolver) DeleteSession(ctx context.Context, id uuid.UUID) (*Se
 }
 
 // Session is the resolver for the session field.
-func (r *queryResolver) Session(ctx context.Context, id uuid.UUID) (*generated.Session, error) {
+func (r *queryResolver) Session(ctx context.Context, id string) (*generated.Session, error) {
 	// TODO - add permissions checks
 
 	sess, err := r.client.Session.Get(ctx, id)

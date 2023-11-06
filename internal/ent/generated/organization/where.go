@@ -8,54 +8,63 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uuid.UUID) predicate.Organization {
+func ID(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uuid.UUID) predicate.Organization {
+func IDEQ(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uuid.UUID) predicate.Organization {
+func IDNEQ(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uuid.UUID) predicate.Organization {
+func IDIn(ids ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uuid.UUID) predicate.Organization {
+func IDNotIn(ids ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uuid.UUID) predicate.Organization {
+func IDGT(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uuid.UUID) predicate.Organization {
+func IDGTE(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uuid.UUID) predicate.Organization {
+func IDLT(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uuid.UUID) predicate.Organization {
+func IDLTE(id string) predicate.Organization {
 	return predicate.Organization(sql.FieldLTE(FieldID, id))
+}
+
+// IDEqualFold applies the EqualFold predicate on the ID field.
+func IDEqualFold(id string) predicate.Organization {
+	return predicate.Organization(sql.FieldEqualFold(FieldID, id))
+}
+
+// IDContainsFold applies the ContainsFold predicate on the ID field.
+func IDContainsFold(id string) predicate.Organization {
+	return predicate.Organization(sql.FieldContainsFold(FieldID, id))
 }
 
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
@@ -69,12 +78,12 @@ func UpdatedAt(v time.Time) predicate.Organization {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uuid.UUID) predicate.Organization {
+func CreatedBy(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uuid.UUID) predicate.Organization {
+func UpdatedBy(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
@@ -89,7 +98,7 @@ func Description(v string) predicate.Organization {
 }
 
 // ParentOrganizationID applies equality check predicate on the "parent_organization_id" field. It's identical to ParentOrganizationIDEQ.
-func ParentOrganizationID(v uuid.UUID) predicate.Organization {
+func ParentOrganizationID(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldParentOrganizationID, v))
 }
 
@@ -174,43 +183,58 @@ func UpdatedAtLTE(v time.Time) predicate.Organization {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uuid.UUID) predicate.Organization {
+func CreatedByEQ(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uuid.UUID) predicate.Organization {
+func CreatedByNEQ(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uuid.UUID) predicate.Organization {
+func CreatedByIn(vs ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uuid.UUID) predicate.Organization {
+func CreatedByNotIn(vs ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uuid.UUID) predicate.Organization {
+func CreatedByGT(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uuid.UUID) predicate.Organization {
+func CreatedByGTE(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uuid.UUID) predicate.Organization {
+func CreatedByLT(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uuid.UUID) predicate.Organization {
+func CreatedByLTE(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldLTE(FieldCreatedBy, v))
+}
+
+// CreatedByContains applies the Contains predicate on the "created_by" field.
+func CreatedByContains(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContains(FieldCreatedBy, v))
+}
+
+// CreatedByHasPrefix applies the HasPrefix predicate on the "created_by" field.
+func CreatedByHasPrefix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasPrefix(FieldCreatedBy, v))
+}
+
+// CreatedByHasSuffix applies the HasSuffix predicate on the "created_by" field.
+func CreatedByHasSuffix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasSuffix(FieldCreatedBy, v))
 }
 
 // CreatedByIsNil applies the IsNil predicate on the "created_by" field.
@@ -223,44 +247,69 @@ func CreatedByNotNil() predicate.Organization {
 	return predicate.Organization(sql.FieldNotNull(FieldCreatedBy))
 }
 
+// CreatedByEqualFold applies the EqualFold predicate on the "created_by" field.
+func CreatedByEqualFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEqualFold(FieldCreatedBy, v))
+}
+
+// CreatedByContainsFold applies the ContainsFold predicate on the "created_by" field.
+func CreatedByContainsFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContainsFold(FieldCreatedBy, v))
+}
+
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uuid.UUID) predicate.Organization {
+func UpdatedByEQ(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uuid.UUID) predicate.Organization {
+func UpdatedByNEQ(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uuid.UUID) predicate.Organization {
+func UpdatedByIn(vs ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uuid.UUID) predicate.Organization {
+func UpdatedByNotIn(vs ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uuid.UUID) predicate.Organization {
+func UpdatedByGT(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uuid.UUID) predicate.Organization {
+func UpdatedByGTE(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uuid.UUID) predicate.Organization {
+func UpdatedByLT(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uuid.UUID) predicate.Organization {
+func UpdatedByLTE(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldLTE(FieldUpdatedBy, v))
+}
+
+// UpdatedByContains applies the Contains predicate on the "updated_by" field.
+func UpdatedByContains(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContains(FieldUpdatedBy, v))
+}
+
+// UpdatedByHasPrefix applies the HasPrefix predicate on the "updated_by" field.
+func UpdatedByHasPrefix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasPrefix(FieldUpdatedBy, v))
+}
+
+// UpdatedByHasSuffix applies the HasSuffix predicate on the "updated_by" field.
+func UpdatedByHasSuffix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasSuffix(FieldUpdatedBy, v))
 }
 
 // UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
@@ -271,6 +320,16 @@ func UpdatedByIsNil() predicate.Organization {
 // UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
 func UpdatedByNotNil() predicate.Organization {
 	return predicate.Organization(sql.FieldNotNull(FieldUpdatedBy))
+}
+
+// UpdatedByEqualFold applies the EqualFold predicate on the "updated_by" field.
+func UpdatedByEqualFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEqualFold(FieldUpdatedBy, v))
+}
+
+// UpdatedByContainsFold applies the ContainsFold predicate on the "updated_by" field.
+func UpdatedByContainsFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContainsFold(FieldUpdatedBy, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.
@@ -414,23 +473,58 @@ func DescriptionContainsFold(v string) predicate.Organization {
 }
 
 // ParentOrganizationIDEQ applies the EQ predicate on the "parent_organization_id" field.
-func ParentOrganizationIDEQ(v uuid.UUID) predicate.Organization {
+func ParentOrganizationIDEQ(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldParentOrganizationID, v))
 }
 
 // ParentOrganizationIDNEQ applies the NEQ predicate on the "parent_organization_id" field.
-func ParentOrganizationIDNEQ(v uuid.UUID) predicate.Organization {
+func ParentOrganizationIDNEQ(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldNEQ(FieldParentOrganizationID, v))
 }
 
 // ParentOrganizationIDIn applies the In predicate on the "parent_organization_id" field.
-func ParentOrganizationIDIn(vs ...uuid.UUID) predicate.Organization {
+func ParentOrganizationIDIn(vs ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldIn(FieldParentOrganizationID, vs...))
 }
 
 // ParentOrganizationIDNotIn applies the NotIn predicate on the "parent_organization_id" field.
-func ParentOrganizationIDNotIn(vs ...uuid.UUID) predicate.Organization {
+func ParentOrganizationIDNotIn(vs ...string) predicate.Organization {
 	return predicate.Organization(sql.FieldNotIn(FieldParentOrganizationID, vs...))
+}
+
+// ParentOrganizationIDGT applies the GT predicate on the "parent_organization_id" field.
+func ParentOrganizationIDGT(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldGT(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDGTE applies the GTE predicate on the "parent_organization_id" field.
+func ParentOrganizationIDGTE(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldGTE(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDLT applies the LT predicate on the "parent_organization_id" field.
+func ParentOrganizationIDLT(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldLT(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDLTE applies the LTE predicate on the "parent_organization_id" field.
+func ParentOrganizationIDLTE(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldLTE(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDContains applies the Contains predicate on the "parent_organization_id" field.
+func ParentOrganizationIDContains(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContains(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDHasPrefix applies the HasPrefix predicate on the "parent_organization_id" field.
+func ParentOrganizationIDHasPrefix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasPrefix(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDHasSuffix applies the HasSuffix predicate on the "parent_organization_id" field.
+func ParentOrganizationIDHasSuffix(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldHasSuffix(FieldParentOrganizationID, v))
 }
 
 // ParentOrganizationIDIsNil applies the IsNil predicate on the "parent_organization_id" field.
@@ -441,6 +535,16 @@ func ParentOrganizationIDIsNil() predicate.Organization {
 // ParentOrganizationIDNotNil applies the NotNil predicate on the "parent_organization_id" field.
 func ParentOrganizationIDNotNil() predicate.Organization {
 	return predicate.Organization(sql.FieldNotNull(FieldParentOrganizationID))
+}
+
+// ParentOrganizationIDEqualFold applies the EqualFold predicate on the "parent_organization_id" field.
+func ParentOrganizationIDEqualFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldEqualFold(FieldParentOrganizationID, v))
+}
+
+// ParentOrganizationIDContainsFold applies the ContainsFold predicate on the "parent_organization_id" field.
+func ParentOrganizationIDContainsFold(v string) predicate.Organization {
+	return predicate.Organization(sql.FieldContainsFold(FieldParentOrganizationID, v))
 }
 
 // HasParent applies the HasEdge predicate on the "parent" edge.

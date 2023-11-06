@@ -11,22 +11,21 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 // Session is the model entity for the Session schema.
 type Session struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy uuid.UUID `json:"created_by,omitempty"`
+	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// Sessions can derrive from the local (password auth), oauth, or app_password
 	Type session.Type `json:"type,omitempty"`
 	// The session may be disabled by the user or by automatic security policy
@@ -40,8 +39,8 @@ type Session struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SessionQuery when eager-loading is set.
 	Edges         SessionEdges `json:"edges"`
-	session_users *uuid.UUID
-	user_sessions *uuid.UUID
+	session_users *string
+	user_sessions *string
 	selectValues  sql.SelectValues
 }
 
@@ -76,16 +75,14 @@ func (*Session) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case session.FieldDisabled:
 			values[i] = new(sql.NullBool)
-		case session.FieldType, session.FieldToken, session.FieldUserAgent, session.FieldIps:
+		case session.FieldID, session.FieldCreatedBy, session.FieldUpdatedBy, session.FieldType, session.FieldToken, session.FieldUserAgent, session.FieldIps:
 			values[i] = new(sql.NullString)
 		case session.FieldCreatedAt, session.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case session.FieldID, session.FieldCreatedBy, session.FieldUpdatedBy:
-			values[i] = new(uuid.UUID)
 		case session.ForeignKeys[0]: // session_users
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+			values[i] = new(sql.NullString)
 		case session.ForeignKeys[1]: // user_sessions
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -102,10 +99,10 @@ func (s *Session) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case session.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				s.ID = *value
+			} else if value.Valid {
+				s.ID = value.String
 			}
 		case session.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -120,16 +117,16 @@ func (s *Session) assignValues(columns []string, values []any) error {
 				s.UpdatedAt = value.Time
 			}
 		case session.FieldCreatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value != nil {
-				s.CreatedBy = *value
+			} else if value.Valid {
+				s.CreatedBy = value.String
 			}
 		case session.FieldUpdatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value != nil {
-				s.UpdatedBy = *value
+			} else if value.Valid {
+				s.UpdatedBy = value.String
 			}
 		case session.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -162,18 +159,18 @@ func (s *Session) assignValues(columns []string, values []any) error {
 				s.Ips = value.String
 			}
 		case session.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field session_users", values[i])
 			} else if value.Valid {
-				s.session_users = new(uuid.UUID)
-				*s.session_users = *value.S.(*uuid.UUID)
+				s.session_users = new(string)
+				*s.session_users = value.String
 			}
 		case session.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field user_sessions", values[i])
 			} else if value.Valid {
-				s.user_sessions = new(uuid.UUID)
-				*s.user_sessions = *value.S.(*uuid.UUID)
+				s.user_sessions = new(string)
+				*s.user_sessions = value.String
 			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
@@ -223,10 +220,10 @@ func (s *Session) String() string {
 	builder.WriteString(s.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", s.CreatedBy))
+	builder.WriteString(s.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", s.UpdatedBy))
+	builder.WriteString(s.UpdatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
 	builder.WriteString(fmt.Sprintf("%v", s.Type))

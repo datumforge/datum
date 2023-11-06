@@ -11,8 +11,9 @@ models:
     model: github.com/99designs/gqlgen/graphql.Time
   Byte:
     model: github.com/99designs/gqlgen/graphql.Byte
-  UUID:
-    model: github.com/99designs/gqlgen/graphql.UUID
+  ID:
+    model:
+      -  github.com/99designs/gqlgen/graphql.String
 schema: ["schema.graphql" ]
 query: ["query/*.graphql"]
 generate:

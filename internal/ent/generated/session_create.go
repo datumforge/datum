@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 // SessionCreate is the builder for creating a Session entity.
@@ -51,29 +50,29 @@ func (sc *SessionCreate) SetNillableUpdatedAt(t *time.Time) *SessionCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (sc *SessionCreate) SetCreatedBy(u uuid.UUID) *SessionCreate {
-	sc.mutation.SetCreatedBy(u)
+func (sc *SessionCreate) SetCreatedBy(s string) *SessionCreate {
+	sc.mutation.SetCreatedBy(s)
 	return sc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableCreatedBy(u *uuid.UUID) *SessionCreate {
-	if u != nil {
-		sc.SetCreatedBy(*u)
+func (sc *SessionCreate) SetNillableCreatedBy(s *string) *SessionCreate {
+	if s != nil {
+		sc.SetCreatedBy(*s)
 	}
 	return sc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (sc *SessionCreate) SetUpdatedBy(u uuid.UUID) *SessionCreate {
-	sc.mutation.SetUpdatedBy(u)
+func (sc *SessionCreate) SetUpdatedBy(s string) *SessionCreate {
+	sc.mutation.SetUpdatedBy(s)
 	return sc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableUpdatedBy(u *uuid.UUID) *SessionCreate {
-	if u != nil {
-		sc.SetUpdatedBy(*u)
+func (sc *SessionCreate) SetNillableUpdatedBy(s *string) *SessionCreate {
+	if s != nil {
+		sc.SetUpdatedBy(*s)
 	}
 	return sc
 }
@@ -125,27 +124,27 @@ func (sc *SessionCreate) SetIps(s string) *SessionCreate {
 }
 
 // SetID sets the "id" field.
-func (sc *SessionCreate) SetID(u uuid.UUID) *SessionCreate {
-	sc.mutation.SetID(u)
+func (sc *SessionCreate) SetID(s string) *SessionCreate {
+	sc.mutation.SetID(s)
 	return sc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableID(u *uuid.UUID) *SessionCreate {
-	if u != nil {
-		sc.SetID(*u)
+func (sc *SessionCreate) SetNillableID(s *string) *SessionCreate {
+	if s != nil {
+		sc.SetID(*s)
 	}
 	return sc
 }
 
 // SetUsersID sets the "users" edge to the User entity by ID.
-func (sc *SessionCreate) SetUsersID(id uuid.UUID) *SessionCreate {
+func (sc *SessionCreate) SetUsersID(id string) *SessionCreate {
 	sc.mutation.SetUsersID(id)
 	return sc
 }
 
 // SetNillableUsersID sets the "users" edge to the User entity by ID if the given value is not nil.
-func (sc *SessionCreate) SetNillableUsersID(id *uuid.UUID) *SessionCreate {
+func (sc *SessionCreate) SetNillableUsersID(id *string) *SessionCreate {
 	if id != nil {
 		sc = sc.SetUsersID(*id)
 	}
@@ -270,10 +269,10 @@ func (sc *SessionCreate) sqlSave(ctx context.Context) (*Session, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Session.ID type: %T", _spec.ID.Value)
 		}
 	}
 	sc.mutation.id = &_node.ID
@@ -284,12 +283,12 @@ func (sc *SessionCreate) sqlSave(ctx context.Context) (*Session, error) {
 func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Session{config: sc.config}
-		_spec = sqlgraph.NewCreateSpec(session.Table, sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(session.Table, sqlgraph.NewFieldSpec(session.FieldID, field.TypeString))
 	)
 	_spec.Schema = sc.schemaConfig.Session
 	if id, ok := sc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := sc.mutation.CreatedAt(); ok {
 		_spec.SetField(session.FieldCreatedAt, field.TypeTime, value)
@@ -300,11 +299,11 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := sc.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(session.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := sc.mutation.UpdatedBy(); ok {
-		_spec.SetField(session.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(session.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := sc.mutation.GetType(); ok {
@@ -335,7 +334,7 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 			Columns: []string{session.UsersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = sc.schemaConfig.Session

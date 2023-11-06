@@ -12,8 +12,8 @@ func NewGroupCreate(e *generated.Group) *GroupCreate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -46,8 +46,8 @@ func NewGroupList(e *generated.Group) *GroupList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -80,8 +80,8 @@ func NewGroupRead(e *generated.Group) *GroupRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -114,8 +114,8 @@ func NewGroupSettingsCreate(e *generated.GroupSettings) *GroupSettingsCreate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Visibility = GroupSettingsCreateVisibility(e.Visibility)
 	ret.JoinPolicy = GroupSettingsCreateJoinPolicy(e.JoinPolicy)
 	return &ret
@@ -147,8 +147,8 @@ func NewGroupSettingsList(e *generated.GroupSettings) *GroupSettingsList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Visibility = GroupSettingsListVisibility(e.Visibility)
 	ret.JoinPolicy = GroupSettingsListJoinPolicy(e.JoinPolicy)
 	return &ret
@@ -180,8 +180,8 @@ func NewGroupSettingsRead(e *generated.GroupSettings) *GroupSettingsRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Visibility = GroupSettingsReadVisibility(e.Visibility)
 	ret.JoinPolicy = GroupSettingsReadJoinPolicy(e.JoinPolicy)
 	return &ret
@@ -213,8 +213,8 @@ func NewGroupSettingsUpdate(e *generated.GroupSettings) *GroupSettingsUpdate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Visibility = GroupSettingsUpdateVisibility(e.Visibility)
 	ret.JoinPolicy = GroupSettingsUpdateJoinPolicy(e.JoinPolicy)
 	return &ret
@@ -246,8 +246,8 @@ func NewGroupSettingsGroupRead(e *generated.Group) *GroupSettingsGroupRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -280,8 +280,8 @@ func NewGroupUpdate(e *generated.Group) *GroupUpdate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -314,11 +314,11 @@ func NewGroupOwnerRead(e *generated.Organization) *GroupOwnerRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -348,8 +348,8 @@ func NewGroupSettingRead(e *generated.GroupSettings) *GroupSettingRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Visibility = GroupSettingReadVisibility(e.Visibility)
 	ret.JoinPolicy = GroupSettingReadJoinPolicy(e.JoinPolicy)
 	return &ret
@@ -381,8 +381,8 @@ func NewGroupUsersList(e *generated.User) *GroupUsersList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -437,8 +437,8 @@ func NewIntegrationCreate(e *generated.Integration) *IntegrationCreate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
@@ -472,8 +472,8 @@ func NewIntegrationList(e *generated.Integration) *IntegrationList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
@@ -507,8 +507,8 @@ func NewIntegrationRead(e *generated.Integration) *IntegrationRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
@@ -542,8 +542,8 @@ func NewIntegrationUpdate(e *generated.Integration) *IntegrationUpdate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
@@ -577,11 +577,11 @@ func NewIntegrationOwnerRead(e *generated.Organization) *IntegrationOwnerRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -611,11 +611,11 @@ func NewOrganizationCreate(e *generated.Organization) *OrganizationCreate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -645,11 +645,11 @@ func NewOrganizationList(e *generated.Organization) *OrganizationList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -679,11 +679,11 @@ func NewOrganizationRead(e *generated.Organization) *OrganizationRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -713,11 +713,11 @@ func NewOrganizationUpdate(e *generated.Organization) *OrganizationUpdate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -747,11 +747,11 @@ func NewOrganizationChildrenList(e *generated.Organization) *OrganizationChildre
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -781,8 +781,8 @@ func NewOrganizationGroupsList(e *generated.Group) *OrganizationGroupsList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -815,8 +815,8 @@ func NewOrganizationIntegrationsList(e *generated.Integration) *OrganizationInte
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Kind = e.Kind
 	ret.Description = NewOptString(e.Description)
@@ -850,11 +850,11 @@ func NewOrganizationParentRead(e *generated.Organization) *OrganizationParentRea
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -884,8 +884,8 @@ func NewOrganizationUsersList(e *generated.User) *OrganizationUsersList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -940,8 +940,8 @@ func NewSessionCreate(e *generated.Session) *SessionCreate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Type = SessionCreateType(e.Type)
 	ret.Disabled = e.Disabled
 	ret.Token = e.Token
@@ -976,8 +976,8 @@ func NewSessionList(e *generated.Session) *SessionList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Type = SessionListType(e.Type)
 	ret.Disabled = e.Disabled
 	ret.Token = e.Token
@@ -1012,8 +1012,8 @@ func NewSessionRead(e *generated.Session) *SessionRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Type = SessionReadType(e.Type)
 	ret.Disabled = e.Disabled
 	ret.Token = e.Token
@@ -1048,8 +1048,8 @@ func NewSessionUpdate(e *generated.Session) *SessionUpdate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Type = SessionUpdateType(e.Type)
 	ret.Disabled = e.Disabled
 	ret.Token = e.Token
@@ -1084,8 +1084,8 @@ func NewSessionUsersRead(e *generated.User) *SessionUsersRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1140,8 +1140,8 @@ func NewUserCreate(e *generated.User) *UserCreate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1196,8 +1196,8 @@ func NewUserList(e *generated.User) *UserList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1252,8 +1252,8 @@ func NewUserRead(e *generated.User) *UserRead {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1308,8 +1308,8 @@ func NewUserUpdate(e *generated.User) *UserUpdate {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Email = e.Email
 	ret.FirstName = e.FirstName
 	ret.LastName = e.LastName
@@ -1364,8 +1364,8 @@ func NewUserGroupsList(e *generated.Group) *UserGroupsList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = e.Description
 	ret.LogoURL = e.LogoURL
@@ -1398,11 +1398,11 @@ func NewUserOrganizationsList(e *generated.Organization) *UserOrganizationsList 
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Name = e.Name
 	ret.Description = NewOptString(e.Description)
-	ret.ParentOrganizationID = NewOptUUID(e.ParentOrganizationID)
+	ret.ParentOrganizationID = NewOptString(e.ParentOrganizationID)
 	return &ret
 }
 
@@ -1432,8 +1432,8 @@ func NewUserSessionsList(e *generated.Session) *UserSessionsList {
 	ret.ID = e.ID
 	ret.CreatedAt = e.CreatedAt
 	ret.UpdatedAt = e.UpdatedAt
-	ret.CreatedBy = NewOptUUID(e.CreatedBy)
-	ret.UpdatedBy = NewOptUUID(e.UpdatedBy)
+	ret.CreatedBy = NewOptString(e.CreatedBy)
+	ret.UpdatedBy = NewOptString(e.UpdatedBy)
 	ret.Type = UserSessionsListType(e.Type)
 	ret.Disabled = e.Disabled
 	ret.Token = e.Token

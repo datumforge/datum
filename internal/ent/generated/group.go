@@ -12,22 +12,21 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/google/uuid"
 )
 
 // Group is the model entity for the Group schema.
 type Group struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy uuid.UUID `json:"created_by,omitempty"`
+	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
@@ -37,7 +36,7 @@ type Group struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
 	Edges               GroupEdges `json:"edges"`
-	organization_groups *uuid.UUID
+	organization_groups *string
 	selectValues        sql.SelectValues
 }
 
@@ -98,14 +97,12 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldName, group.FieldDescription, group.FieldLogoURL:
+		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldName, group.FieldDescription, group.FieldLogoURL:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy:
-			values[i] = new(uuid.UUID)
 		case group.ForeignKeys[0]: // organization_groups
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -122,10 +119,10 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case group.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				gr.ID = *value
+			} else if value.Valid {
+				gr.ID = value.String
 			}
 		case group.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -140,16 +137,16 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 				gr.UpdatedAt = value.Time
 			}
 		case group.FieldCreatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value != nil {
-				gr.CreatedBy = *value
+			} else if value.Valid {
+				gr.CreatedBy = value.String
 			}
 		case group.FieldUpdatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value != nil {
-				gr.UpdatedBy = *value
+			} else if value.Valid {
+				gr.UpdatedBy = value.String
 			}
 		case group.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -170,11 +167,11 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 				gr.LogoURL = value.String
 			}
 		case group.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_groups", values[i])
 			} else if value.Valid {
-				gr.organization_groups = new(uuid.UUID)
-				*gr.organization_groups = *value.S.(*uuid.UUID)
+				gr.organization_groups = new(string)
+				*gr.organization_groups = value.String
 			}
 		default:
 			gr.selectValues.Set(columns[i], values[i])
@@ -234,10 +231,10 @@ func (gr *Group) String() string {
 	builder.WriteString(gr.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", gr.CreatedBy))
+	builder.WriteString(gr.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", gr.UpdatedBy))
+	builder.WriteString(gr.UpdatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(gr.Name)

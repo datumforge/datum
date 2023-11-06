@@ -3,6 +3,10 @@ linters-settings:
     local-prefixes: github.com/datumforge/datum
   gofumpt:
     extra-rules: true
+  gosec:
+    exclude-generated: true
+  revive:
+    ignore-generated-header: true
 
 run:
   skip-files:

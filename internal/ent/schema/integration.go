@@ -8,8 +8,6 @@ import (
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
-
-	"github.com/google/uuid"
 )
 
 // Integration maps configured integrations (github, slack, etc.) to organizations
@@ -20,8 +18,6 @@ type Integration struct {
 // Fields of the Integration
 func (Integration) Fields() []ent.Field {
 	return []ent.Field{
-		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("name").
 			NotEmpty().
 			Annotations(
@@ -57,5 +53,6 @@ func (Integration) Annotations() []schema.Annotation {
 func (Integration) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
+		mixin.IDMixin{},
 	}
 }

@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -39,15 +38,15 @@ func (gsu *GroupSettingsUpdate) SetUpdatedAt(t time.Time) *GroupSettingsUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gsu *GroupSettingsUpdate) SetCreatedBy(u uuid.UUID) *GroupSettingsUpdate {
-	gsu.mutation.SetCreatedBy(u)
+func (gsu *GroupSettingsUpdate) SetCreatedBy(s string) *GroupSettingsUpdate {
+	gsu.mutation.SetCreatedBy(s)
 	return gsu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsu *GroupSettingsUpdate) SetNillableCreatedBy(u *uuid.UUID) *GroupSettingsUpdate {
-	if u != nil {
-		gsu.SetCreatedBy(*u)
+func (gsu *GroupSettingsUpdate) SetNillableCreatedBy(s *string) *GroupSettingsUpdate {
+	if s != nil {
+		gsu.SetCreatedBy(*s)
 	}
 	return gsu
 }
@@ -59,15 +58,15 @@ func (gsu *GroupSettingsUpdate) ClearCreatedBy() *GroupSettingsUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gsu *GroupSettingsUpdate) SetUpdatedBy(u uuid.UUID) *GroupSettingsUpdate {
-	gsu.mutation.SetUpdatedBy(u)
+func (gsu *GroupSettingsUpdate) SetUpdatedBy(s string) *GroupSettingsUpdate {
+	gsu.mutation.SetUpdatedBy(s)
 	return gsu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gsu *GroupSettingsUpdate) SetNillableUpdatedBy(u *uuid.UUID) *GroupSettingsUpdate {
-	if u != nil {
-		gsu.SetUpdatedBy(*u)
+func (gsu *GroupSettingsUpdate) SetNillableUpdatedBy(s *string) *GroupSettingsUpdate {
+	if s != nil {
+		gsu.SetUpdatedBy(*s)
 	}
 	return gsu
 }
@@ -107,13 +106,13 @@ func (gsu *GroupSettingsUpdate) SetNillableJoinPolicy(gp *groupsettings.JoinPoli
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (gsu *GroupSettingsUpdate) SetGroupID(id uuid.UUID) *GroupSettingsUpdate {
+func (gsu *GroupSettingsUpdate) SetGroupID(id string) *GroupSettingsUpdate {
 	gsu.mutation.SetGroupID(id)
 	return gsu
 }
 
 // SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gsu *GroupSettingsUpdate) SetNillableGroupID(id *uuid.UUID) *GroupSettingsUpdate {
+func (gsu *GroupSettingsUpdate) SetNillableGroupID(id *string) *GroupSettingsUpdate {
 	if id != nil {
 		gsu = gsu.SetGroupID(*id)
 	}
@@ -197,7 +196,7 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if err := gsu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(groupsettings.Table, groupsettings.Columns, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(groupsettings.Table, groupsettings.Columns, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString))
 	if ps := gsu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -209,16 +208,16 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 		_spec.SetField(groupsettings.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := gsu.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeString, value)
 	}
 	if gsu.mutation.CreatedByCleared() {
-		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := gsu.mutation.UpdatedBy(); ok {
-		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeString, value)
 	}
 	if gsu.mutation.UpdatedByCleared() {
-		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := gsu.mutation.Visibility(); ok {
 		_spec.SetField(groupsettings.FieldVisibility, field.TypeEnum, value)
@@ -234,7 +233,7 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{groupsettings.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gsu.schemaConfig.GroupSettings
@@ -248,7 +247,7 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 			Columns: []string{groupsettings.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gsu.schemaConfig.GroupSettings
@@ -286,15 +285,15 @@ func (gsuo *GroupSettingsUpdateOne) SetUpdatedAt(t time.Time) *GroupSettingsUpda
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gsuo *GroupSettingsUpdateOne) SetCreatedBy(u uuid.UUID) *GroupSettingsUpdateOne {
-	gsuo.mutation.SetCreatedBy(u)
+func (gsuo *GroupSettingsUpdateOne) SetCreatedBy(s string) *GroupSettingsUpdateOne {
+	gsuo.mutation.SetCreatedBy(s)
 	return gsuo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsuo *GroupSettingsUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *GroupSettingsUpdateOne {
-	if u != nil {
-		gsuo.SetCreatedBy(*u)
+func (gsuo *GroupSettingsUpdateOne) SetNillableCreatedBy(s *string) *GroupSettingsUpdateOne {
+	if s != nil {
+		gsuo.SetCreatedBy(*s)
 	}
 	return gsuo
 }
@@ -306,15 +305,15 @@ func (gsuo *GroupSettingsUpdateOne) ClearCreatedBy() *GroupSettingsUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gsuo *GroupSettingsUpdateOne) SetUpdatedBy(u uuid.UUID) *GroupSettingsUpdateOne {
-	gsuo.mutation.SetUpdatedBy(u)
+func (gsuo *GroupSettingsUpdateOne) SetUpdatedBy(s string) *GroupSettingsUpdateOne {
+	gsuo.mutation.SetUpdatedBy(s)
 	return gsuo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gsuo *GroupSettingsUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *GroupSettingsUpdateOne {
-	if u != nil {
-		gsuo.SetUpdatedBy(*u)
+func (gsuo *GroupSettingsUpdateOne) SetNillableUpdatedBy(s *string) *GroupSettingsUpdateOne {
+	if s != nil {
+		gsuo.SetUpdatedBy(*s)
 	}
 	return gsuo
 }
@@ -354,13 +353,13 @@ func (gsuo *GroupSettingsUpdateOne) SetNillableJoinPolicy(gp *groupsettings.Join
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (gsuo *GroupSettingsUpdateOne) SetGroupID(id uuid.UUID) *GroupSettingsUpdateOne {
+func (gsuo *GroupSettingsUpdateOne) SetGroupID(id string) *GroupSettingsUpdateOne {
 	gsuo.mutation.SetGroupID(id)
 	return gsuo
 }
 
 // SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gsuo *GroupSettingsUpdateOne) SetNillableGroupID(id *uuid.UUID) *GroupSettingsUpdateOne {
+func (gsuo *GroupSettingsUpdateOne) SetNillableGroupID(id *string) *GroupSettingsUpdateOne {
 	if id != nil {
 		gsuo = gsuo.SetGroupID(*id)
 	}
@@ -457,7 +456,7 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 	if err := gsuo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(groupsettings.Table, groupsettings.Columns, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(groupsettings.Table, groupsettings.Columns, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString))
 	id, ok := gsuo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`generated: missing "GroupSettings.id" for update`)}
@@ -486,16 +485,16 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 		_spec.SetField(groupsettings.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := gsuo.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeString, value)
 	}
 	if gsuo.mutation.CreatedByCleared() {
-		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(groupsettings.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := gsuo.mutation.UpdatedBy(); ok {
-		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeString, value)
 	}
 	if gsuo.mutation.UpdatedByCleared() {
-		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(groupsettings.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := gsuo.mutation.Visibility(); ok {
 		_spec.SetField(groupsettings.FieldVisibility, field.TypeEnum, value)
@@ -511,7 +510,7 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 			Columns: []string{groupsettings.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gsuo.schemaConfig.GroupSettings
@@ -525,7 +524,7 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 			Columns: []string{groupsettings.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gsuo.schemaConfig.GroupSettings

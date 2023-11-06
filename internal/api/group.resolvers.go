@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/google/uuid"
 )
 
 // CreateGroup is the resolver for the createGroup field.
@@ -18,17 +17,17 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 }
 
 // UpdateGroup is the resolver for the updateGroup field.
-func (r *mutationResolver) UpdateGroup(ctx context.Context, id uuid.UUID, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
+func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
 	panic(fmt.Errorf("not implemented: UpdateGroup - updateGroup"))
 }
 
 // DeleteGroup is the resolver for the deleteGroup field.
-func (r *mutationResolver) DeleteGroup(ctx context.Context, id uuid.UUID) (*GroupDeletePayload, error) {
+func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDeletePayload, error) {
 	panic(fmt.Errorf("not implemented: DeleteGroup - deleteGroup"))
 }
 
 // Group is the resolver for the group field.
-func (r *queryResolver) Group(ctx context.Context, id uuid.UUID) (*generated.Group, error) {
+func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
 	panic(fmt.Errorf("not implemented: Group - group"))
 }
 

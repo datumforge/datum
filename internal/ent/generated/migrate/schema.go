@@ -10,15 +10,15 @@ import (
 var (
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "updated_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "logo_url", Type: field.TypeString},
-		{Name: "organization_groups", Type: field.TypeUUID, Nullable: true},
+		{Name: "organization_groups", Type: field.TypeString, Nullable: true},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -43,14 +43,14 @@ var (
 	}
 	// GroupSettingsColumns holds the columns for the "group_settings" table.
 	GroupSettingsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "updated_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
 		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "OPEN"},
-		{Name: "group_setting", Type: field.TypeUUID, Unique: true, Nullable: true},
+		{Name: "group_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// GroupSettingsTable holds the schema information for the "group_settings" table.
 	GroupSettingsTable = &schema.Table{
@@ -68,16 +68,16 @@ var (
 	}
 	// IntegrationsColumns holds the columns for the "integrations" table.
 	IntegrationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "updated_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "kind", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "secret_name", Type: field.TypeString},
-		{Name: "organization_integrations", Type: field.TypeUUID, Nullable: true},
+		{Name: "organization_integrations", Type: field.TypeString, Nullable: true},
 	}
 	// IntegrationsTable holds the schema information for the "integrations" table.
 	IntegrationsTable = &schema.Table{
@@ -95,14 +95,14 @@ var (
 	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "updated_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Unique: true, Size: 160},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "parent_organization_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
 	OrganizationsTable = &schema.Table{
@@ -120,18 +120,18 @@ var (
 	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "updated_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"local", "oauth", "app_password"}},
 		{Name: "disabled", Type: field.TypeBool},
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "user_agent", Type: field.TypeString, Nullable: true},
 		{Name: "ips", Type: field.TypeString},
-		{Name: "session_users", Type: field.TypeUUID, Nullable: true},
-		{Name: "user_sessions", Type: field.TypeUUID, Nullable: true},
+		{Name: "session_users", Type: field.TypeString, Nullable: true},
+		{Name: "user_sessions", Type: field.TypeString, Nullable: true},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.
 	SessionsTable = &schema.Table{
@@ -162,11 +162,11 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID, Unique: true},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeUUID, Nullable: true},
-		{Name: "updated_by", Type: field.TypeUUID, Nullable: true},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},
@@ -194,8 +194,8 @@ var (
 	}
 	// GroupUsersColumns holds the columns for the "group_users" table.
 	GroupUsersColumns = []*schema.Column{
-		{Name: "group_id", Type: field.TypeUUID},
-		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "group_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
 	}
 	// GroupUsersTable holds the schema information for the "group_users" table.
 	GroupUsersTable = &schema.Table{
@@ -219,8 +219,8 @@ var (
 	}
 	// UserOrganizationsColumns holds the columns for the "user_organizations" table.
 	UserOrganizationsColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeUUID},
-		{Name: "organization_id", Type: field.TypeUUID},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "organization_id", Type: field.TypeString},
 	}
 	// UserOrganizationsTable holds the schema information for the "user_organizations" table.
 	UserOrganizationsTable = &schema.Table{

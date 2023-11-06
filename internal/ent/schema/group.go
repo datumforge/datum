@@ -9,8 +9,6 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
-
-	"github.com/google/uuid"
 )
 
 // Group holds the schema definition for the Group entity.
@@ -23,13 +21,13 @@ func (Group) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.BaseMixin{},
+		mixin.IDMixin{},
 	}
 }
 
 // Fields of the Group.
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.String("name").
 			NotEmpty().
 			Annotations(

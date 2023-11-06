@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/google/uuid"
 )
 
 // IntegrationCreate is the builder for creating a Integration entity.
@@ -51,29 +50,29 @@ func (ic *IntegrationCreate) SetNillableUpdatedAt(t *time.Time) *IntegrationCrea
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (ic *IntegrationCreate) SetCreatedBy(u uuid.UUID) *IntegrationCreate {
-	ic.mutation.SetCreatedBy(u)
+func (ic *IntegrationCreate) SetCreatedBy(s string) *IntegrationCreate {
+	ic.mutation.SetCreatedBy(s)
 	return ic
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableCreatedBy(u *uuid.UUID) *IntegrationCreate {
-	if u != nil {
-		ic.SetCreatedBy(*u)
+func (ic *IntegrationCreate) SetNillableCreatedBy(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetCreatedBy(*s)
 	}
 	return ic
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (ic *IntegrationCreate) SetUpdatedBy(u uuid.UUID) *IntegrationCreate {
-	ic.mutation.SetUpdatedBy(u)
+func (ic *IntegrationCreate) SetUpdatedBy(s string) *IntegrationCreate {
+	ic.mutation.SetUpdatedBy(s)
 	return ic
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableUpdatedBy(u *uuid.UUID) *IntegrationCreate {
-	if u != nil {
-		ic.SetUpdatedBy(*u)
+func (ic *IntegrationCreate) SetNillableUpdatedBy(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetUpdatedBy(*s)
 	}
 	return ic
 }
@@ -111,27 +110,27 @@ func (ic *IntegrationCreate) SetSecretName(s string) *IntegrationCreate {
 }
 
 // SetID sets the "id" field.
-func (ic *IntegrationCreate) SetID(u uuid.UUID) *IntegrationCreate {
-	ic.mutation.SetID(u)
+func (ic *IntegrationCreate) SetID(s string) *IntegrationCreate {
+	ic.mutation.SetID(s)
 	return ic
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableID(u *uuid.UUID) *IntegrationCreate {
-	if u != nil {
-		ic.SetID(*u)
+func (ic *IntegrationCreate) SetNillableID(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetID(*s)
 	}
 	return ic
 }
 
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (ic *IntegrationCreate) SetOwnerID(id uuid.UUID) *IntegrationCreate {
+func (ic *IntegrationCreate) SetOwnerID(id string) *IntegrationCreate {
 	ic.mutation.SetOwnerID(id)
 	return ic
 }
 
 // SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (ic *IntegrationCreate) SetNillableOwnerID(id *uuid.UUID) *IntegrationCreate {
+func (ic *IntegrationCreate) SetNillableOwnerID(id *string) *IntegrationCreate {
 	if id != nil {
 		ic = ic.SetOwnerID(*id)
 	}
@@ -241,10 +240,10 @@ func (ic *IntegrationCreate) sqlSave(ctx context.Context) (*Integration, error) 
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Integration.ID type: %T", _spec.ID.Value)
 		}
 	}
 	ic.mutation.id = &_node.ID
@@ -255,12 +254,12 @@ func (ic *IntegrationCreate) sqlSave(ctx context.Context) (*Integration, error) 
 func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Integration{config: ic.config}
-		_spec = sqlgraph.NewCreateSpec(integration.Table, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(integration.Table, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString))
 	)
 	_spec.Schema = ic.schemaConfig.Integration
 	if id, ok := ic.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := ic.mutation.CreatedAt(); ok {
 		_spec.SetField(integration.FieldCreatedAt, field.TypeTime, value)
@@ -271,11 +270,11 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := ic.mutation.CreatedBy(); ok {
-		_spec.SetField(integration.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(integration.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := ic.mutation.UpdatedBy(); ok {
-		_spec.SetField(integration.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(integration.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := ic.mutation.Name(); ok {
@@ -302,7 +301,7 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 			Columns: []string{integration.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ic.schemaConfig.Integration

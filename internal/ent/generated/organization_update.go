@@ -16,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -41,15 +40,15 @@ func (ou *OrganizationUpdate) SetUpdatedAt(t time.Time) *OrganizationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (ou *OrganizationUpdate) SetCreatedBy(u uuid.UUID) *OrganizationUpdate {
-	ou.mutation.SetCreatedBy(u)
+func (ou *OrganizationUpdate) SetCreatedBy(s string) *OrganizationUpdate {
+	ou.mutation.SetCreatedBy(s)
 	return ou
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillableCreatedBy(u *uuid.UUID) *OrganizationUpdate {
-	if u != nil {
-		ou.SetCreatedBy(*u)
+func (ou *OrganizationUpdate) SetNillableCreatedBy(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetCreatedBy(*s)
 	}
 	return ou
 }
@@ -61,15 +60,15 @@ func (ou *OrganizationUpdate) ClearCreatedBy() *OrganizationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (ou *OrganizationUpdate) SetUpdatedBy(u uuid.UUID) *OrganizationUpdate {
-	ou.mutation.SetUpdatedBy(u)
+func (ou *OrganizationUpdate) SetUpdatedBy(s string) *OrganizationUpdate {
+	ou.mutation.SetUpdatedBy(s)
 	return ou
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillableUpdatedBy(u *uuid.UUID) *OrganizationUpdate {
-	if u != nil {
-		ou.SetUpdatedBy(*u)
+func (ou *OrganizationUpdate) SetNillableUpdatedBy(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetUpdatedBy(*s)
 	}
 	return ou
 }
@@ -107,14 +106,14 @@ func (ou *OrganizationUpdate) ClearDescription() *OrganizationUpdate {
 }
 
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
-func (ou *OrganizationUpdate) AddChildIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddChildIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddChildIDs(ids...)
 	return ou
 }
 
 // AddChildren adds the "children" edges to the Organization entity.
 func (ou *OrganizationUpdate) AddChildren(o ...*Organization) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -122,14 +121,14 @@ func (ou *OrganizationUpdate) AddChildren(o ...*Organization) *OrganizationUpdat
 }
 
 // AddUserIDs adds the "users" edge to the User entity by IDs.
-func (ou *OrganizationUpdate) AddUserIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddUserIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddUserIDs(ids...)
 	return ou
 }
 
 // AddUsers adds the "users" edges to the User entity.
 func (ou *OrganizationUpdate) AddUsers(u ...*User) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -137,14 +136,14 @@ func (ou *OrganizationUpdate) AddUsers(u ...*User) *OrganizationUpdate {
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (ou *OrganizationUpdate) AddGroupIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddGroupIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddGroupIDs(ids...)
 	return ou
 }
 
 // AddGroups adds the "groups" edges to the Group entity.
 func (ou *OrganizationUpdate) AddGroups(g ...*Group) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(g))
+	ids := make([]string, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -152,14 +151,14 @@ func (ou *OrganizationUpdate) AddGroups(g ...*Group) *OrganizationUpdate {
 }
 
 // AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
-func (ou *OrganizationUpdate) AddIntegrationIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) AddIntegrationIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddIntegrationIDs(ids...)
 	return ou
 }
 
 // AddIntegrations adds the "integrations" edges to the Integration entity.
 func (ou *OrganizationUpdate) AddIntegrations(i ...*Integration) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(i))
+	ids := make([]string, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -178,14 +177,14 @@ func (ou *OrganizationUpdate) ClearChildren() *OrganizationUpdate {
 }
 
 // RemoveChildIDs removes the "children" edge to Organization entities by IDs.
-func (ou *OrganizationUpdate) RemoveChildIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveChildIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.RemoveChildIDs(ids...)
 	return ou
 }
 
 // RemoveChildren removes "children" edges to Organization entities.
 func (ou *OrganizationUpdate) RemoveChildren(o ...*Organization) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -199,14 +198,14 @@ func (ou *OrganizationUpdate) ClearUsers() *OrganizationUpdate {
 }
 
 // RemoveUserIDs removes the "users" edge to User entities by IDs.
-func (ou *OrganizationUpdate) RemoveUserIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveUserIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.RemoveUserIDs(ids...)
 	return ou
 }
 
 // RemoveUsers removes "users" edges to User entities.
 func (ou *OrganizationUpdate) RemoveUsers(u ...*User) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -220,14 +219,14 @@ func (ou *OrganizationUpdate) ClearGroups() *OrganizationUpdate {
 }
 
 // RemoveGroupIDs removes the "groups" edge to Group entities by IDs.
-func (ou *OrganizationUpdate) RemoveGroupIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveGroupIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.RemoveGroupIDs(ids...)
 	return ou
 }
 
 // RemoveGroups removes "groups" edges to Group entities.
 func (ou *OrganizationUpdate) RemoveGroups(g ...*Group) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(g))
+	ids := make([]string, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -241,14 +240,14 @@ func (ou *OrganizationUpdate) ClearIntegrations() *OrganizationUpdate {
 }
 
 // RemoveIntegrationIDs removes the "integrations" edge to Integration entities by IDs.
-func (ou *OrganizationUpdate) RemoveIntegrationIDs(ids ...uuid.UUID) *OrganizationUpdate {
+func (ou *OrganizationUpdate) RemoveIntegrationIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.RemoveIntegrationIDs(ids...)
 	return ou
 }
 
 // RemoveIntegrations removes "integrations" edges to Integration entities.
 func (ou *OrganizationUpdate) RemoveIntegrations(i ...*Integration) *OrganizationUpdate {
-	ids := make([]uuid.UUID, len(i))
+	ids := make([]string, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -311,7 +310,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := ou.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	if ps := ou.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -323,16 +322,16 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := ou.mutation.CreatedBy(); ok {
-		_spec.SetField(organization.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(organization.FieldCreatedBy, field.TypeString, value)
 	}
 	if ou.mutation.CreatedByCleared() {
-		_spec.ClearField(organization.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(organization.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := ou.mutation.UpdatedBy(); ok {
-		_spec.SetField(organization.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(organization.FieldUpdatedBy, field.TypeString, value)
 	}
 	if ou.mutation.UpdatedByCleared() {
-		_spec.ClearField(organization.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(organization.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := ou.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
@@ -351,7 +350,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Organization
@@ -365,7 +364,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Organization
@@ -382,7 +381,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Organization
@@ -399,7 +398,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.UserOrganizations
@@ -413,7 +412,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.UserOrganizations
@@ -430,7 +429,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.UserOrganizations
@@ -447,7 +446,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Group
@@ -461,7 +460,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Group
@@ -478,7 +477,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Group
@@ -495,7 +494,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Integration
@@ -509,7 +508,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Integration
@@ -526,7 +525,7 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ou.schemaConfig.Integration
@@ -564,15 +563,15 @@ func (ouo *OrganizationUpdateOne) SetUpdatedAt(t time.Time) *OrganizationUpdateO
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (ouo *OrganizationUpdateOne) SetCreatedBy(u uuid.UUID) *OrganizationUpdateOne {
-	ouo.mutation.SetCreatedBy(u)
+func (ouo *OrganizationUpdateOne) SetCreatedBy(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetCreatedBy(s)
 	return ouo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *OrganizationUpdateOne {
-	if u != nil {
-		ouo.SetCreatedBy(*u)
+func (ouo *OrganizationUpdateOne) SetNillableCreatedBy(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetCreatedBy(*s)
 	}
 	return ouo
 }
@@ -584,15 +583,15 @@ func (ouo *OrganizationUpdateOne) ClearCreatedBy() *OrganizationUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (ouo *OrganizationUpdateOne) SetUpdatedBy(u uuid.UUID) *OrganizationUpdateOne {
-	ouo.mutation.SetUpdatedBy(u)
+func (ouo *OrganizationUpdateOne) SetUpdatedBy(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetUpdatedBy(s)
 	return ouo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *OrganizationUpdateOne {
-	if u != nil {
-		ouo.SetUpdatedBy(*u)
+func (ouo *OrganizationUpdateOne) SetNillableUpdatedBy(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetUpdatedBy(*s)
 	}
 	return ouo
 }
@@ -630,14 +629,14 @@ func (ouo *OrganizationUpdateOne) ClearDescription() *OrganizationUpdateOne {
 }
 
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
-func (ouo *OrganizationUpdateOne) AddChildIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddChildIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddChildIDs(ids...)
 	return ouo
 }
 
 // AddChildren adds the "children" edges to the Organization entity.
 func (ouo *OrganizationUpdateOne) AddChildren(o ...*Organization) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -645,14 +644,14 @@ func (ouo *OrganizationUpdateOne) AddChildren(o ...*Organization) *OrganizationU
 }
 
 // AddUserIDs adds the "users" edge to the User entity by IDs.
-func (ouo *OrganizationUpdateOne) AddUserIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddUserIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddUserIDs(ids...)
 	return ouo
 }
 
 // AddUsers adds the "users" edges to the User entity.
 func (ouo *OrganizationUpdateOne) AddUsers(u ...*User) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -660,14 +659,14 @@ func (ouo *OrganizationUpdateOne) AddUsers(u ...*User) *OrganizationUpdateOne {
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (ouo *OrganizationUpdateOne) AddGroupIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddGroupIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddGroupIDs(ids...)
 	return ouo
 }
 
 // AddGroups adds the "groups" edges to the Group entity.
 func (ouo *OrganizationUpdateOne) AddGroups(g ...*Group) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(g))
+	ids := make([]string, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -675,14 +674,14 @@ func (ouo *OrganizationUpdateOne) AddGroups(g ...*Group) *OrganizationUpdateOne 
 }
 
 // AddIntegrationIDs adds the "integrations" edge to the Integration entity by IDs.
-func (ouo *OrganizationUpdateOne) AddIntegrationIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) AddIntegrationIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddIntegrationIDs(ids...)
 	return ouo
 }
 
 // AddIntegrations adds the "integrations" edges to the Integration entity.
 func (ouo *OrganizationUpdateOne) AddIntegrations(i ...*Integration) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(i))
+	ids := make([]string, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -701,14 +700,14 @@ func (ouo *OrganizationUpdateOne) ClearChildren() *OrganizationUpdateOne {
 }
 
 // RemoveChildIDs removes the "children" edge to Organization entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveChildIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveChildIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.RemoveChildIDs(ids...)
 	return ouo
 }
 
 // RemoveChildren removes "children" edges to Organization entities.
 func (ouo *OrganizationUpdateOne) RemoveChildren(o ...*Organization) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -722,14 +721,14 @@ func (ouo *OrganizationUpdateOne) ClearUsers() *OrganizationUpdateOne {
 }
 
 // RemoveUserIDs removes the "users" edge to User entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveUserIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveUserIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.RemoveUserIDs(ids...)
 	return ouo
 }
 
 // RemoveUsers removes "users" edges to User entities.
 func (ouo *OrganizationUpdateOne) RemoveUsers(u ...*User) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -743,14 +742,14 @@ func (ouo *OrganizationUpdateOne) ClearGroups() *OrganizationUpdateOne {
 }
 
 // RemoveGroupIDs removes the "groups" edge to Group entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveGroupIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveGroupIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.RemoveGroupIDs(ids...)
 	return ouo
 }
 
 // RemoveGroups removes "groups" edges to Group entities.
 func (ouo *OrganizationUpdateOne) RemoveGroups(g ...*Group) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(g))
+	ids := make([]string, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -764,14 +763,14 @@ func (ouo *OrganizationUpdateOne) ClearIntegrations() *OrganizationUpdateOne {
 }
 
 // RemoveIntegrationIDs removes the "integrations" edge to Integration entities by IDs.
-func (ouo *OrganizationUpdateOne) RemoveIntegrationIDs(ids ...uuid.UUID) *OrganizationUpdateOne {
+func (ouo *OrganizationUpdateOne) RemoveIntegrationIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.RemoveIntegrationIDs(ids...)
 	return ouo
 }
 
 // RemoveIntegrations removes "integrations" edges to Integration entities.
 func (ouo *OrganizationUpdateOne) RemoveIntegrations(i ...*Integration) *OrganizationUpdateOne {
-	ids := make([]uuid.UUID, len(i))
+	ids := make([]string, len(i))
 	for j := range i {
 		ids[j] = i[j].ID
 	}
@@ -847,7 +846,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	if err := ouo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	id, ok := ouo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`generated: missing "Organization.id" for update`)}
@@ -876,16 +875,16 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := ouo.mutation.CreatedBy(); ok {
-		_spec.SetField(organization.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(organization.FieldCreatedBy, field.TypeString, value)
 	}
 	if ouo.mutation.CreatedByCleared() {
-		_spec.ClearField(organization.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(organization.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := ouo.mutation.UpdatedBy(); ok {
-		_spec.SetField(organization.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(organization.FieldUpdatedBy, field.TypeString, value)
 	}
 	if ouo.mutation.UpdatedByCleared() {
-		_spec.ClearField(organization.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(organization.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := ouo.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
@@ -904,7 +903,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Organization
@@ -918,7 +917,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Organization
@@ -935,7 +934,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Organization
@@ -952,7 +951,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.UserOrganizations
@@ -966,7 +965,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.UserOrganizations
@@ -983,7 +982,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: organization.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.UserOrganizations
@@ -1000,7 +999,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Group
@@ -1014,7 +1013,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Group
@@ -1031,7 +1030,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Group
@@ -1048,7 +1047,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Integration
@@ -1062,7 +1061,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Integration
@@ -1079,7 +1078,7 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.IntegrationsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Integration

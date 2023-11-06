@@ -9,7 +9,6 @@ import (
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
-	"github.com/google/uuid"
 
 	"github.com/ogen-go/ogen/json"
 	"github.com/ogen-go/ogen/validate"
@@ -58,14 +57,14 @@ func (s *CreateGroupReq) encodeFields(e *jx.Encoder) {
 	}
 	{
 		e.FieldStart("setting")
-		json.EncodeUUID(e, s.Setting)
+		e.Str(s.Setting)
 	}
 	{
 		if s.Users != nil {
 			e.FieldStart("users")
 			e.ArrStart()
 			for _, elem := range s.Users {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -183,8 +182,8 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 		case "setting":
 			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.Setting = v
+				v, err := d.Str()
+				s.Setting = string(v)
 				if err != nil {
 					return err
 				}
@@ -194,11 +193,11 @@ func (s *CreateGroupReq) Decode(d *jx.Decoder) error {
 			}
 		case "users":
 			if err := func() error {
-				s.Users = make([]uuid.UUID, 0)
+				s.Users = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -846,7 +845,7 @@ func (s *CreateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("children")
 			e.ArrStart()
 			for _, elem := range s.Children {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -856,7 +855,7 @@ func (s *CreateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("users")
 			e.ArrStart()
 			for _, elem := range s.Users {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -866,7 +865,7 @@ func (s *CreateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("groups")
 			e.ArrStart()
 			for _, elem := range s.Groups {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -876,7 +875,7 @@ func (s *CreateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("integrations")
 			e.ArrStart()
 			for _, elem := range s.Integrations {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -995,11 +994,11 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "children":
 			if err := func() error {
-				s.Children = make([]uuid.UUID, 0)
+				s.Children = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1014,11 +1013,11 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "users":
 			if err := func() error {
-				s.Users = make([]uuid.UUID, 0)
+				s.Users = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1033,11 +1032,11 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "groups":
 			if err := func() error {
-				s.Groups = make([]uuid.UUID, 0)
+				s.Groups = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1052,11 +1051,11 @@ func (s *CreateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "integrations":
 			if err := func() error {
-				s.Integrations = make([]uuid.UUID, 0)
+				s.Integrations = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1506,7 +1505,7 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("organizations")
 			e.ArrStart()
 			for _, elem := range s.Organizations {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -1516,7 +1515,7 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("sessions")
 			e.ArrStart()
 			for _, elem := range s.Sessions {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -1526,7 +1525,7 @@ func (s *CreateUserReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("groups")
 			e.ArrStart()
 			for _, elem := range s.Groups {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -1729,11 +1728,11 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}
 		case "organizations":
 			if err := func() error {
-				s.Organizations = make([]uuid.UUID, 0)
+				s.Organizations = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1748,11 +1747,11 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}
 		case "sessions":
 			if err := func() error {
-				s.Sessions = make([]uuid.UUID, 0)
+				s.Sessions = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1767,11 +1766,11 @@ func (s *CreateUserReq) Decode(d *jx.Decoder) error {
 			}
 		case "groups":
 			if err := func() error {
-				s.Groups = make([]uuid.UUID, 0)
+				s.Groups = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -1853,7 +1852,7 @@ func (s *GroupCreate) Encode(e *jx.Encoder) {
 func (s *GroupCreate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -1912,8 +1911,8 @@ func (s *GroupCreate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -2068,7 +2067,7 @@ func (s *GroupList) Encode(e *jx.Encoder) {
 func (s *GroupList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -2127,8 +2126,8 @@ func (s *GroupList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -2283,7 +2282,7 @@ func (s *GroupOwnerRead) Encode(e *jx.Encoder) {
 func (s *GroupOwnerRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -2346,8 +2345,8 @@ func (s *GroupOwnerRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -2498,7 +2497,7 @@ func (s *GroupRead) Encode(e *jx.Encoder) {
 func (s *GroupRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -2557,8 +2556,8 @@ func (s *GroupRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -2713,7 +2712,7 @@ func (s *GroupSettingRead) Encode(e *jx.Encoder) {
 func (s *GroupSettingRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -2768,8 +2767,8 @@ func (s *GroupSettingRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -2992,7 +2991,7 @@ func (s *GroupSettingsCreate) Encode(e *jx.Encoder) {
 func (s *GroupSettingsCreate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -3047,8 +3046,8 @@ func (s *GroupSettingsCreate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -3271,7 +3270,7 @@ func (s *GroupSettingsGroupRead) Encode(e *jx.Encoder) {
 func (s *GroupSettingsGroupRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -3330,8 +3329,8 @@ func (s *GroupSettingsGroupRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -3486,7 +3485,7 @@ func (s *GroupSettingsList) Encode(e *jx.Encoder) {
 func (s *GroupSettingsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -3541,8 +3540,8 @@ func (s *GroupSettingsList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -3765,7 +3764,7 @@ func (s *GroupSettingsRead) Encode(e *jx.Encoder) {
 func (s *GroupSettingsRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -3820,8 +3819,8 @@ func (s *GroupSettingsRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -4044,7 +4043,7 @@ func (s *GroupSettingsUpdate) Encode(e *jx.Encoder) {
 func (s *GroupSettingsUpdate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -4099,8 +4098,8 @@ func (s *GroupSettingsUpdate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -4323,7 +4322,7 @@ func (s *GroupUpdate) Encode(e *jx.Encoder) {
 func (s *GroupUpdate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -4382,8 +4381,8 @@ func (s *GroupUpdate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -4538,7 +4537,7 @@ func (s *GroupUsersList) Encode(e *jx.Encoder) {
 func (s *GroupUsersList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -4642,8 +4641,8 @@ func (s *GroupUsersList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -4873,7 +4872,7 @@ func (s *IntegrationCreate) Encode(e *jx.Encoder) {
 func (s *IntegrationCreate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -4939,8 +4938,8 @@ func (s *IntegrationCreate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -5106,7 +5105,7 @@ func (s *IntegrationList) Encode(e *jx.Encoder) {
 func (s *IntegrationList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -5172,8 +5171,8 @@ func (s *IntegrationList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -5339,7 +5338,7 @@ func (s *IntegrationOwnerRead) Encode(e *jx.Encoder) {
 func (s *IntegrationOwnerRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -5402,8 +5401,8 @@ func (s *IntegrationOwnerRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -5554,7 +5553,7 @@ func (s *IntegrationRead) Encode(e *jx.Encoder) {
 func (s *IntegrationRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -5620,8 +5619,8 @@ func (s *IntegrationRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -5787,7 +5786,7 @@ func (s *IntegrationUpdate) Encode(e *jx.Encoder) {
 func (s *IntegrationUpdate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -5853,8 +5852,8 @@ func (s *IntegrationUpdate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -6814,41 +6813,6 @@ func (s *OptString) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes uuid.UUID as json.
-func (o OptUUID) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	json.EncodeUUID(e, o.Value)
-}
-
-// Decode decodes uuid.UUID from json.
-func (o *OptUUID) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptUUID to nil")
-	}
-	o.Set = true
-	v, err := json.DecodeUUID(d)
-	if err != nil {
-		return err
-	}
-	o.Value = v
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptUUID) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptUUID) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode encodes UpdateGroupSettingsReqJoinPolicy as json.
 func (o OptUpdateGroupSettingsReqJoinPolicy) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -6926,7 +6890,7 @@ func (s *OrganizationChildrenList) Encode(e *jx.Encoder) {
 func (s *OrganizationChildrenList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -6989,8 +6953,8 @@ func (s *OrganizationChildrenList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -7141,7 +7105,7 @@ func (s *OrganizationCreate) Encode(e *jx.Encoder) {
 func (s *OrganizationCreate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -7204,8 +7168,8 @@ func (s *OrganizationCreate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -7356,7 +7320,7 @@ func (s *OrganizationGroupsList) Encode(e *jx.Encoder) {
 func (s *OrganizationGroupsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -7415,8 +7379,8 @@ func (s *OrganizationGroupsList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -7571,7 +7535,7 @@ func (s *OrganizationIntegrationsList) Encode(e *jx.Encoder) {
 func (s *OrganizationIntegrationsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -7637,8 +7601,8 @@ func (s *OrganizationIntegrationsList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -7804,7 +7768,7 @@ func (s *OrganizationList) Encode(e *jx.Encoder) {
 func (s *OrganizationList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -7867,8 +7831,8 @@ func (s *OrganizationList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -8019,7 +7983,7 @@ func (s *OrganizationParentRead) Encode(e *jx.Encoder) {
 func (s *OrganizationParentRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -8082,8 +8046,8 @@ func (s *OrganizationParentRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -8234,7 +8198,7 @@ func (s *OrganizationRead) Encode(e *jx.Encoder) {
 func (s *OrganizationRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -8297,8 +8261,8 @@ func (s *OrganizationRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -8449,7 +8413,7 @@ func (s *OrganizationUpdate) Encode(e *jx.Encoder) {
 func (s *OrganizationUpdate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -8512,8 +8476,8 @@ func (s *OrganizationUpdate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -8664,7 +8628,7 @@ func (s *OrganizationUsersList) Encode(e *jx.Encoder) {
 func (s *OrganizationUsersList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -8768,8 +8732,8 @@ func (s *OrganizationUsersList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -9523,7 +9487,7 @@ func (s *SessionCreate) Encode(e *jx.Encoder) {
 func (s *SessionCreate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -9594,8 +9558,8 @@ func (s *SessionCreate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -9813,7 +9777,7 @@ func (s *SessionList) Encode(e *jx.Encoder) {
 func (s *SessionList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -9884,8 +9848,8 @@ func (s *SessionList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -10103,7 +10067,7 @@ func (s *SessionRead) Encode(e *jx.Encoder) {
 func (s *SessionRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -10174,8 +10138,8 @@ func (s *SessionRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -10393,7 +10357,7 @@ func (s *SessionUpdate) Encode(e *jx.Encoder) {
 func (s *SessionUpdate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -10464,8 +10428,8 @@ func (s *SessionUpdate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -10683,7 +10647,7 @@ func (s *SessionUsersRead) Encode(e *jx.Encoder) {
 func (s *SessionUsersRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -10787,8 +10751,8 @@ func (s *SessionUsersRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -11063,7 +11027,7 @@ func (s *UpdateGroupReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("users")
 			e.ArrStart()
 			for _, elem := range s.Users {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -11168,11 +11132,11 @@ func (s *UpdateGroupReq) Decode(d *jx.Decoder) error {
 			}
 		case "users":
 			if err := func() error {
-				s.Users = make([]uuid.UUID, 0)
+				s.Users = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -11650,7 +11614,7 @@ func (s *UpdateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("children")
 			e.ArrStart()
 			for _, elem := range s.Children {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -11660,7 +11624,7 @@ func (s *UpdateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("users")
 			e.ArrStart()
 			for _, elem := range s.Users {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -11670,7 +11634,7 @@ func (s *UpdateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("groups")
 			e.ArrStart()
 			for _, elem := range s.Groups {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -11680,7 +11644,7 @@ func (s *UpdateOrganizationReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("integrations")
 			e.ArrStart()
 			for _, elem := range s.Integrations {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -11770,11 +11734,11 @@ func (s *UpdateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "children":
 			if err := func() error {
-				s.Children = make([]uuid.UUID, 0)
+				s.Children = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -11789,11 +11753,11 @@ func (s *UpdateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "users":
 			if err := func() error {
-				s.Users = make([]uuid.UUID, 0)
+				s.Users = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -11808,11 +11772,11 @@ func (s *UpdateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "groups":
 			if err := func() error {
-				s.Groups = make([]uuid.UUID, 0)
+				s.Groups = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -11827,11 +11791,11 @@ func (s *UpdateOrganizationReq) Decode(d *jx.Decoder) error {
 			}
 		case "integrations":
 			if err := func() error {
-				s.Integrations = make([]uuid.UUID, 0)
+				s.Integrations = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -12131,7 +12095,7 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("organizations")
 			e.ArrStart()
 			for _, elem := range s.Organizations {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -12141,7 +12105,7 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("sessions")
 			e.ArrStart()
 			for _, elem := range s.Sessions {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -12151,7 +12115,7 @@ func (s *UpdateUserReq) encodeFields(e *jx.Encoder) {
 			e.FieldStart("groups")
 			e.ArrStart()
 			for _, elem := range s.Groups {
-				json.EncodeUUID(e, elem)
+				e.Str(elem)
 			}
 			e.ArrEnd()
 		}
@@ -12328,11 +12292,11 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 			}
 		case "organizations":
 			if err := func() error {
-				s.Organizations = make([]uuid.UUID, 0)
+				s.Organizations = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -12347,11 +12311,11 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 			}
 		case "sessions":
 			if err := func() error {
-				s.Sessions = make([]uuid.UUID, 0)
+				s.Sessions = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -12366,11 +12330,11 @@ func (s *UpdateUserReq) Decode(d *jx.Decoder) error {
 			}
 		case "groups":
 			if err := func() error {
-				s.Groups = make([]uuid.UUID, 0)
+				s.Groups = make([]string, 0)
 				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem uuid.UUID
-					v, err := json.DecodeUUID(d)
-					elem = v
+					var elem string
+					v, err := d.Str()
+					elem = string(v)
 					if err != nil {
 						return err
 					}
@@ -12418,7 +12382,7 @@ func (s *UserCreate) Encode(e *jx.Encoder) {
 func (s *UserCreate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -12522,8 +12486,8 @@ func (s *UserCreate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -12753,7 +12717,7 @@ func (s *UserGroupsList) Encode(e *jx.Encoder) {
 func (s *UserGroupsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -12812,8 +12776,8 @@ func (s *UserGroupsList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -12968,7 +12932,7 @@ func (s *UserList) Encode(e *jx.Encoder) {
 func (s *UserList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -13072,8 +13036,8 @@ func (s *UserList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -13303,7 +13267,7 @@ func (s *UserOrganizationsList) Encode(e *jx.Encoder) {
 func (s *UserOrganizationsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -13366,8 +13330,8 @@ func (s *UserOrganizationsList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -13518,7 +13482,7 @@ func (s *UserRead) Encode(e *jx.Encoder) {
 func (s *UserRead) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -13622,8 +13586,8 @@ func (s *UserRead) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -13853,7 +13817,7 @@ func (s *UserSessionsList) Encode(e *jx.Encoder) {
 func (s *UserSessionsList) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -13924,8 +13888,8 @@ func (s *UserSessionsList) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}
@@ -14143,7 +14107,7 @@ func (s *UserUpdate) Encode(e *jx.Encoder) {
 func (s *UserUpdate) encodeFields(e *jx.Encoder) {
 	{
 		e.FieldStart("id")
-		json.EncodeUUID(e, s.ID)
+		e.Str(s.ID)
 	}
 	{
 		e.FieldStart("created_at")
@@ -14247,8 +14211,8 @@ func (s *UserUpdate) Decode(d *jx.Decoder) error {
 		case "id":
 			requiredBitSet[0] |= 1 << 0
 			if err := func() error {
-				v, err := json.DecodeUUID(d)
-				s.ID = v
+				v, err := d.Str()
+				s.ID = string(v)
 				if err != nil {
 					return err
 				}

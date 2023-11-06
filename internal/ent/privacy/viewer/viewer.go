@@ -4,8 +4,6 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-
-	"github.com/google/uuid"
 )
 
 // Role for viewer actions.
@@ -20,28 +18,31 @@ const (
 
 // Viewer describes the query/mutation viewer-context.
 type Viewer interface {
-	Admin() bool                     // If viewer is admin.
-	Organization() (uuid.UUID, bool) // Tenant identifier.
+	GetUser() UserViewer
+	GetUserID() string
+	Admin() bool // If viewer is admin.
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
-	T    *generated.Organization
-	Role Role // Attached roles.
+	UserID string
+	T      *generated.Organization
+	Role   Role // Attached roles.
+}
+
+// GetUser returns the user information.
+func (u UserViewer) GetUser() UserViewer {
+	return u
+}
+
+// GetUserID returns the ID of the user.
+func (u UserViewer) GetUserID() string {
+	return u.UserID
 }
 
 // Admin of the UserViewer
-func (v UserViewer) Admin() bool {
-	return v.Role&Admin != 0
-}
-
-// Organization of the UserViewer
-func (v UserViewer) Organization() (uuid.UUID, bool) {
-	if v.T != nil {
-		return v.T.ID, true
-	}
-
-	return uuid.UUID{}, false
+func (u UserViewer) Admin() bool {
+	return u.Role&Admin != 0
 }
 
 type ctxKey struct{}
@@ -49,6 +50,7 @@ type ctxKey struct{}
 // FromContext returns the Viewer stored in a context.
 func FromContext(ctx context.Context) Viewer {
 	v, _ := ctx.Value(ctxKey{}).(Viewer)
+
 	return v
 }
 

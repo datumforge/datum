@@ -16,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -224,8 +223,8 @@ func (oq *OrganizationQuery) FirstX(ctx context.Context) *Organization {
 
 // FirstID returns the first Organization ID from the query.
 // Returns a *NotFoundError when no Organization ID was found.
-func (oq *OrganizationQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (oq *OrganizationQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = oq.Limit(1).IDs(setContextOp(ctx, oq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -237,7 +236,7 @@ func (oq *OrganizationQuery) FirstID(ctx context.Context) (id uuid.UUID, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (oq *OrganizationQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (oq *OrganizationQuery) FirstIDX(ctx context.Context) string {
 	id, err := oq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -275,8 +274,8 @@ func (oq *OrganizationQuery) OnlyX(ctx context.Context) *Organization {
 // OnlyID is like Only, but returns the only Organization ID in the query.
 // Returns a *NotSingularError when more than one Organization ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = oq.Limit(2).IDs(setContextOp(ctx, oq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -292,7 +291,7 @@ func (oq *OrganizationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (oq *OrganizationQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (oq *OrganizationQuery) OnlyIDX(ctx context.Context) string {
 	id, err := oq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -320,7 +319,7 @@ func (oq *OrganizationQuery) AllX(ctx context.Context) []*Organization {
 }
 
 // IDs executes the query and returns a list of Organization IDs.
-func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if oq.ctx.Unique == nil && oq.path != nil {
 		oq.Unique(true)
 	}
@@ -332,7 +331,7 @@ func (oq *OrganizationQuery) IDs(ctx context.Context) (ids []uuid.UUID, err erro
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (oq *OrganizationQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (oq *OrganizationQuery) IDsX(ctx context.Context) []string {
 	ids, err := oq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -638,8 +637,8 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 }
 
 func (oq *OrganizationQuery) loadParent(ctx context.Context, query *OrganizationQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Organization)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*Organization)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Organization)
 	for i := range nodes {
 		fk := nodes[i].ParentOrganizationID
 		if _, ok := nodeids[fk]; !ok {
@@ -668,7 +667,7 @@ func (oq *OrganizationQuery) loadParent(ctx context.Context, query *Organization
 }
 func (oq *OrganizationQuery) loadChildren(ctx context.Context, query *OrganizationQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Organization)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Organization)
+	nodeids := make(map[string]*Organization)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -698,8 +697,8 @@ func (oq *OrganizationQuery) loadChildren(ctx context.Context, query *Organizati
 }
 func (oq *OrganizationQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *User)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
-	byID := make(map[uuid.UUID]*Organization)
-	nids := make(map[uuid.UUID]map[*Organization]struct{})
+	byID := make(map[string]*Organization)
+	nids := make(map[string]map[*Organization]struct{})
 	for i, node := range nodes {
 		edgeIDs[i] = node.ID
 		byID[node.ID] = node
@@ -729,11 +728,11 @@ func (oq *OrganizationQuery) loadUsers(ctx context.Context, query *UserQuery, no
 				if err != nil {
 					return nil, err
 				}
-				return append([]any{new(uuid.UUID)}, values...), nil
+				return append([]any{new(sql.NullString)}, values...), nil
 			}
 			spec.Assign = func(columns []string, values []any) error {
-				outValue := *values[0].(*uuid.UUID)
-				inValue := *values[1].(*uuid.UUID)
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
 				if nids[inValue] == nil {
 					nids[inValue] = map[*Organization]struct{}{byID[outValue]: {}}
 					return assign(columns[1:], values[1:])
@@ -760,7 +759,7 @@ func (oq *OrganizationQuery) loadUsers(ctx context.Context, query *UserQuery, no
 }
 func (oq *OrganizationQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Group)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Organization)
+	nodeids := make(map[string]*Organization)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -791,7 +790,7 @@ func (oq *OrganizationQuery) loadGroups(ctx context.Context, query *GroupQuery, 
 }
 func (oq *OrganizationQuery) loadIntegrations(ctx context.Context, query *IntegrationQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *Integration)) error {
 	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Organization)
+	nodeids := make(map[string]*Organization)
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
@@ -836,7 +835,7 @@ func (oq *OrganizationQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (oq *OrganizationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(organization.Table, organization.Columns, sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString))
 	_spec.From = oq.sql
 	if unique := oq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

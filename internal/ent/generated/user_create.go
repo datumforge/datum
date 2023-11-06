@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -53,29 +52,29 @@ func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (uc *UserCreate) SetCreatedBy(u uuid.UUID) *UserCreate {
-	uc.mutation.SetCreatedBy(u)
+func (uc *UserCreate) SetCreatedBy(s string) *UserCreate {
+	uc.mutation.SetCreatedBy(s)
 	return uc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCreatedBy(u *uuid.UUID) *UserCreate {
-	if u != nil {
-		uc.SetCreatedBy(*u)
+func (uc *UserCreate) SetNillableCreatedBy(s *string) *UserCreate {
+	if s != nil {
+		uc.SetCreatedBy(*s)
 	}
 	return uc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (uc *UserCreate) SetUpdatedBy(u uuid.UUID) *UserCreate {
-	uc.mutation.SetUpdatedBy(u)
+func (uc *UserCreate) SetUpdatedBy(s string) *UserCreate {
+	uc.mutation.SetUpdatedBy(s)
 	return uc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (uc *UserCreate) SetNillableUpdatedBy(u *uuid.UUID) *UserCreate {
-	if u != nil {
-		uc.SetUpdatedBy(*u)
+func (uc *UserCreate) SetNillableUpdatedBy(s *string) *UserCreate {
+	if s != nil {
+		uc.SetUpdatedBy(*s)
 	}
 	return uc
 }
@@ -211,28 +210,28 @@ func (uc *UserCreate) SetNillableRecoveryCode(s *string) *UserCreate {
 }
 
 // SetID sets the "id" field.
-func (uc *UserCreate) SetID(u uuid.UUID) *UserCreate {
-	uc.mutation.SetID(u)
+func (uc *UserCreate) SetID(s string) *UserCreate {
+	uc.mutation.SetID(s)
 	return uc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableID(u *uuid.UUID) *UserCreate {
-	if u != nil {
-		uc.SetID(*u)
+func (uc *UserCreate) SetNillableID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetID(*s)
 	}
 	return uc
 }
 
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
-func (uc *UserCreate) AddOrganizationIDs(ids ...uuid.UUID) *UserCreate {
+func (uc *UserCreate) AddOrganizationIDs(ids ...string) *UserCreate {
 	uc.mutation.AddOrganizationIDs(ids...)
 	return uc
 }
 
 // AddOrganizations adds the "organizations" edges to the Organization entity.
 func (uc *UserCreate) AddOrganizations(o ...*Organization) *UserCreate {
-	ids := make([]uuid.UUID, len(o))
+	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
@@ -240,14 +239,14 @@ func (uc *UserCreate) AddOrganizations(o ...*Organization) *UserCreate {
 }
 
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
-func (uc *UserCreate) AddSessionIDs(ids ...uuid.UUID) *UserCreate {
+func (uc *UserCreate) AddSessionIDs(ids ...string) *UserCreate {
 	uc.mutation.AddSessionIDs(ids...)
 	return uc
 }
 
 // AddSessions adds the "sessions" edges to the Session entity.
 func (uc *UserCreate) AddSessions(s ...*Session) *UserCreate {
-	ids := make([]uuid.UUID, len(s))
+	ids := make([]string, len(s))
 	for i := range s {
 		ids[i] = s[i].ID
 	}
@@ -255,14 +254,14 @@ func (uc *UserCreate) AddSessions(s ...*Session) *UserCreate {
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
-func (uc *UserCreate) AddGroupIDs(ids ...uuid.UUID) *UserCreate {
+func (uc *UserCreate) AddGroupIDs(ids ...string) *UserCreate {
 	uc.mutation.AddGroupIDs(ids...)
 	return uc
 }
 
 // AddGroups adds the "groups" edges to the Group entity.
 func (uc *UserCreate) AddGroups(g ...*Group) *UserCreate {
-	ids := make([]uuid.UUID, len(g))
+	ids := make([]string, len(g))
 	for i := range g {
 		ids[i] = g[i].ID
 	}
@@ -406,10 +405,10 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected User.ID type: %T", _spec.ID.Value)
 		}
 	}
 	uc.mutation.id = &_node.ID
@@ -420,12 +419,12 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	var (
 		_node = &User{config: uc.config}
-		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeString))
 	)
 	_spec.Schema = uc.schemaConfig.User
 	if id, ok := uc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
@@ -436,11 +435,11 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.UpdatedAt = value
 	}
 	if value, ok := uc.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := uc.mutation.UpdatedBy(); ok {
-		_spec.SetField(user.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := uc.mutation.Email(); ok {
@@ -495,7 +494,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: user.OrganizationsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = uc.schemaConfig.UserOrganizations
@@ -512,7 +511,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.SessionsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = uc.schemaConfig.Session
@@ -529,7 +528,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: user.GroupsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = uc.schemaConfig.GroupUsers

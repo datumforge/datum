@@ -9,7 +9,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/google/uuid"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -29,7 +28,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 }
 
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, id uuid.UUID, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
 	// TODO - add permissions checks
 
 	user, err := r.client.User.Get(ctx, id)
@@ -56,7 +55,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id uuid.UUID, input g
 }
 
 // DeleteUser is the resolver for the deleteUser field.
-func (r *mutationResolver) DeleteUser(ctx context.Context, id uuid.UUID) (*UserDeletePayload, error) {
+func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
 	// TODO - add permissions checks
 
 	if err := r.client.User.DeleteOneID(id).Exec(ctx); err != nil {
@@ -72,7 +71,7 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id uuid.UUID) (*UserD
 }
 
 // User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context, id uuid.UUID) (*generated.User, error) {
+func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
 	user, err := r.client.User.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

@@ -16,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -459,8 +458,8 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 							ids[i] = nodes[i].ID
 						}
 						var v []struct {
-							NodeID uuid.UUID `sql:"parent_organization_id"`
-							Count  int       `sql:"count"`
+							NodeID string `sql:"parent_organization_id"`
+							Count  int    `sql:"count"`
 						}
 						query.Where(func(s *sql.Selector) {
 							s.Where(sql.InValues(s.C(organization.ChildrenColumn), ids...))
@@ -468,7 +467,7 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 						if err := query.GroupBy(organization.ChildrenColumn).Aggregate(Count()).Scan(ctx, &v); err != nil {
 							return err
 						}
-						m := make(map[uuid.UUID]int, len(v))
+						m := make(map[string]int, len(v))
 						for i := range v {
 							m[v[i].NodeID] = v[i].Count
 						}

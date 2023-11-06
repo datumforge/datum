@@ -16,7 +16,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -41,15 +40,15 @@ func (gu *GroupUpdate) SetUpdatedAt(t time.Time) *GroupUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gu *GroupUpdate) SetCreatedBy(u uuid.UUID) *GroupUpdate {
-	gu.mutation.SetCreatedBy(u)
+func (gu *GroupUpdate) SetCreatedBy(s string) *GroupUpdate {
+	gu.mutation.SetCreatedBy(s)
 	return gu
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableCreatedBy(u *uuid.UUID) *GroupUpdate {
-	if u != nil {
-		gu.SetCreatedBy(*u)
+func (gu *GroupUpdate) SetNillableCreatedBy(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetCreatedBy(*s)
 	}
 	return gu
 }
@@ -61,15 +60,15 @@ func (gu *GroupUpdate) ClearCreatedBy() *GroupUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gu *GroupUpdate) SetUpdatedBy(u uuid.UUID) *GroupUpdate {
-	gu.mutation.SetUpdatedBy(u)
+func (gu *GroupUpdate) SetUpdatedBy(s string) *GroupUpdate {
+	gu.mutation.SetUpdatedBy(s)
 	return gu
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableUpdatedBy(u *uuid.UUID) *GroupUpdate {
-	if u != nil {
-		gu.SetUpdatedBy(*u)
+func (gu *GroupUpdate) SetNillableUpdatedBy(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetUpdatedBy(*s)
 	}
 	return gu
 }
@@ -107,7 +106,7 @@ func (gu *GroupUpdate) SetLogoURL(s string) *GroupUpdate {
 }
 
 // SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
-func (gu *GroupUpdate) SetSettingID(id uuid.UUID) *GroupUpdate {
+func (gu *GroupUpdate) SetSettingID(id string) *GroupUpdate {
 	gu.mutation.SetSettingID(id)
 	return gu
 }
@@ -118,14 +117,14 @@ func (gu *GroupUpdate) SetSetting(g *GroupSettings) *GroupUpdate {
 }
 
 // AddUserIDs adds the "users" edge to the User entity by IDs.
-func (gu *GroupUpdate) AddUserIDs(ids ...uuid.UUID) *GroupUpdate {
+func (gu *GroupUpdate) AddUserIDs(ids ...string) *GroupUpdate {
 	gu.mutation.AddUserIDs(ids...)
 	return gu
 }
 
 // AddUsers adds the "users" edges to the User entity.
 func (gu *GroupUpdate) AddUsers(u ...*User) *GroupUpdate {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -133,13 +132,13 @@ func (gu *GroupUpdate) AddUsers(u ...*User) *GroupUpdate {
 }
 
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (gu *GroupUpdate) SetOwnerID(id uuid.UUID) *GroupUpdate {
+func (gu *GroupUpdate) SetOwnerID(id string) *GroupUpdate {
 	gu.mutation.SetOwnerID(id)
 	return gu
 }
 
 // SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (gu *GroupUpdate) SetNillableOwnerID(id *uuid.UUID) *GroupUpdate {
+func (gu *GroupUpdate) SetNillableOwnerID(id *string) *GroupUpdate {
 	if id != nil {
 		gu = gu.SetOwnerID(*id)
 	}
@@ -169,14 +168,14 @@ func (gu *GroupUpdate) ClearUsers() *GroupUpdate {
 }
 
 // RemoveUserIDs removes the "users" edge to User entities by IDs.
-func (gu *GroupUpdate) RemoveUserIDs(ids ...uuid.UUID) *GroupUpdate {
+func (gu *GroupUpdate) RemoveUserIDs(ids ...string) *GroupUpdate {
 	gu.mutation.RemoveUserIDs(ids...)
 	return gu
 }
 
 // RemoveUsers removes "users" edges to User entities.
 func (gu *GroupUpdate) RemoveUsers(u ...*User) *GroupUpdate {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -253,7 +252,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if err := gu.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(group.Table, group.Columns, sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(group.Table, group.Columns, sqlgraph.NewFieldSpec(group.FieldID, field.TypeString))
 	if ps := gu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -265,16 +264,16 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := gu.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(group.FieldCreatedBy, field.TypeString, value)
 	}
 	if gu.mutation.CreatedByCleared() {
-		_spec.ClearField(group.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(group.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := gu.mutation.UpdatedBy(); ok {
-		_spec.SetField(group.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(group.FieldUpdatedBy, field.TypeString, value)
 	}
 	if gu.mutation.UpdatedByCleared() {
-		_spec.ClearField(group.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
@@ -293,7 +292,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.GroupSettings
@@ -307,7 +306,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.GroupSettings
@@ -324,7 +323,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.GroupUsers
@@ -338,7 +337,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.GroupUsers
@@ -355,7 +354,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.GroupUsers
@@ -372,7 +371,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{group.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.Group
@@ -386,7 +385,7 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{group.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gu.schemaConfig.Group
@@ -424,15 +423,15 @@ func (guo *GroupUpdateOne) SetUpdatedAt(t time.Time) *GroupUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (guo *GroupUpdateOne) SetCreatedBy(u uuid.UUID) *GroupUpdateOne {
-	guo.mutation.SetCreatedBy(u)
+func (guo *GroupUpdateOne) SetCreatedBy(s string) *GroupUpdateOne {
+	guo.mutation.SetCreatedBy(s)
 	return guo
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableCreatedBy(u *uuid.UUID) *GroupUpdateOne {
-	if u != nil {
-		guo.SetCreatedBy(*u)
+func (guo *GroupUpdateOne) SetNillableCreatedBy(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetCreatedBy(*s)
 	}
 	return guo
 }
@@ -444,15 +443,15 @@ func (guo *GroupUpdateOne) ClearCreatedBy() *GroupUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (guo *GroupUpdateOne) SetUpdatedBy(u uuid.UUID) *GroupUpdateOne {
-	guo.mutation.SetUpdatedBy(u)
+func (guo *GroupUpdateOne) SetUpdatedBy(s string) *GroupUpdateOne {
+	guo.mutation.SetUpdatedBy(s)
 	return guo
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableUpdatedBy(u *uuid.UUID) *GroupUpdateOne {
-	if u != nil {
-		guo.SetUpdatedBy(*u)
+func (guo *GroupUpdateOne) SetNillableUpdatedBy(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetUpdatedBy(*s)
 	}
 	return guo
 }
@@ -490,7 +489,7 @@ func (guo *GroupUpdateOne) SetLogoURL(s string) *GroupUpdateOne {
 }
 
 // SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
-func (guo *GroupUpdateOne) SetSettingID(id uuid.UUID) *GroupUpdateOne {
+func (guo *GroupUpdateOne) SetSettingID(id string) *GroupUpdateOne {
 	guo.mutation.SetSettingID(id)
 	return guo
 }
@@ -501,14 +500,14 @@ func (guo *GroupUpdateOne) SetSetting(g *GroupSettings) *GroupUpdateOne {
 }
 
 // AddUserIDs adds the "users" edge to the User entity by IDs.
-func (guo *GroupUpdateOne) AddUserIDs(ids ...uuid.UUID) *GroupUpdateOne {
+func (guo *GroupUpdateOne) AddUserIDs(ids ...string) *GroupUpdateOne {
 	guo.mutation.AddUserIDs(ids...)
 	return guo
 }
 
 // AddUsers adds the "users" edges to the User entity.
 func (guo *GroupUpdateOne) AddUsers(u ...*User) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -516,13 +515,13 @@ func (guo *GroupUpdateOne) AddUsers(u ...*User) *GroupUpdateOne {
 }
 
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (guo *GroupUpdateOne) SetOwnerID(id uuid.UUID) *GroupUpdateOne {
+func (guo *GroupUpdateOne) SetOwnerID(id string) *GroupUpdateOne {
 	guo.mutation.SetOwnerID(id)
 	return guo
 }
 
 // SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableOwnerID(id *uuid.UUID) *GroupUpdateOne {
+func (guo *GroupUpdateOne) SetNillableOwnerID(id *string) *GroupUpdateOne {
 	if id != nil {
 		guo = guo.SetOwnerID(*id)
 	}
@@ -552,14 +551,14 @@ func (guo *GroupUpdateOne) ClearUsers() *GroupUpdateOne {
 }
 
 // RemoveUserIDs removes the "users" edge to User entities by IDs.
-func (guo *GroupUpdateOne) RemoveUserIDs(ids ...uuid.UUID) *GroupUpdateOne {
+func (guo *GroupUpdateOne) RemoveUserIDs(ids ...string) *GroupUpdateOne {
 	guo.mutation.RemoveUserIDs(ids...)
 	return guo
 }
 
 // RemoveUsers removes "users" edges to User entities.
 func (guo *GroupUpdateOne) RemoveUsers(u ...*User) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(u))
+	ids := make([]string, len(u))
 	for i := range u {
 		ids[i] = u[i].ID
 	}
@@ -649,7 +648,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	if err := guo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(group.Table, group.Columns, sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(group.Table, group.Columns, sqlgraph.NewFieldSpec(group.FieldID, field.TypeString))
 	id, ok := guo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`generated: missing "Group.id" for update`)}
@@ -678,16 +677,16 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := guo.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(group.FieldCreatedBy, field.TypeString, value)
 	}
 	if guo.mutation.CreatedByCleared() {
-		_spec.ClearField(group.FieldCreatedBy, field.TypeUUID)
+		_spec.ClearField(group.FieldCreatedBy, field.TypeString)
 	}
 	if value, ok := guo.mutation.UpdatedBy(); ok {
-		_spec.SetField(group.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(group.FieldUpdatedBy, field.TypeString, value)
 	}
 	if guo.mutation.UpdatedByCleared() {
-		_spec.ClearField(group.FieldUpdatedBy, field.TypeUUID)
+		_spec.ClearField(group.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
@@ -706,7 +705,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.GroupSettings
@@ -720,7 +719,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.GroupSettings
@@ -737,7 +736,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.GroupUsers
@@ -751,7 +750,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.GroupUsers
@@ -768,7 +767,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.GroupUsers
@@ -785,7 +784,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: []string{group.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.Group
@@ -799,7 +798,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: []string{group.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = guo.schemaConfig.Group

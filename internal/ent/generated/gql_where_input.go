@@ -14,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 // GroupWhereInput represents a where input for filtering Group queries.
@@ -25,14 +24,16 @@ type GroupWhereInput struct {
 	And        []*GroupWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
-	ID      *uuid.UUID  `json:"id,omitempty"`
-	IDNEQ   *uuid.UUID  `json:"idNEQ,omitempty"`
-	IDIn    []uuid.UUID `json:"idIn,omitempty"`
-	IDNotIn []uuid.UUID `json:"idNotIn,omitempty"`
-	IDGT    *uuid.UUID  `json:"idGT,omitempty"`
-	IDGTE   *uuid.UUID  `json:"idGTE,omitempty"`
-	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
-	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
 	// "created_at" field predicates.
 	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
@@ -55,28 +56,38 @@ type GroupWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
@@ -201,6 +212,12 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	if i.IDLTE != nil {
 		predicates = append(predicates, group.IDLTE(*i.IDLTE))
 	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, group.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, group.IDContainsFold(*i.IDContainsFold))
+	}
 	if i.CreatedAt != nil {
 		predicates = append(predicates, group.CreatedAtEQ(*i.CreatedAt))
 	}
@@ -273,11 +290,26 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	if i.CreatedByLTE != nil {
 		predicates = append(predicates, group.CreatedByLTE(*i.CreatedByLTE))
 	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, group.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, group.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, group.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
 	if i.CreatedByIsNil {
 		predicates = append(predicates, group.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
 		predicates = append(predicates, group.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, group.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, group.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
 		predicates = append(predicates, group.UpdatedByEQ(*i.UpdatedBy))
@@ -303,11 +335,26 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	if i.UpdatedByLTE != nil {
 		predicates = append(predicates, group.UpdatedByLTE(*i.UpdatedByLTE))
 	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, group.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, group.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, group.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
 	if i.UpdatedByIsNil {
 		predicates = append(predicates, group.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, group.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, group.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, group.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Name != nil {
 		predicates = append(predicates, group.NameEQ(*i.Name))
@@ -421,14 +468,16 @@ type GroupSettingsWhereInput struct {
 	And        []*GroupSettingsWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
-	ID      *uuid.UUID  `json:"id,omitempty"`
-	IDNEQ   *uuid.UUID  `json:"idNEQ,omitempty"`
-	IDIn    []uuid.UUID `json:"idIn,omitempty"`
-	IDNotIn []uuid.UUID `json:"idNotIn,omitempty"`
-	IDGT    *uuid.UUID  `json:"idGT,omitempty"`
-	IDGTE   *uuid.UUID  `json:"idGTE,omitempty"`
-	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
-	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
 	// "created_at" field predicates.
 	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
@@ -451,28 +500,38 @@ type GroupSettingsWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "visibility" field predicates.
 	Visibility      *groupsettings.Visibility  `json:"visibility,omitempty"`
@@ -582,6 +641,12 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 	if i.IDLTE != nil {
 		predicates = append(predicates, groupsettings.IDLTE(*i.IDLTE))
 	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, groupsettings.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, groupsettings.IDContainsFold(*i.IDContainsFold))
+	}
 	if i.CreatedAt != nil {
 		predicates = append(predicates, groupsettings.CreatedAtEQ(*i.CreatedAt))
 	}
@@ -654,11 +719,26 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 	if i.CreatedByLTE != nil {
 		predicates = append(predicates, groupsettings.CreatedByLTE(*i.CreatedByLTE))
 	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, groupsettings.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, groupsettings.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, groupsettings.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
 	if i.CreatedByIsNil {
 		predicates = append(predicates, groupsettings.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
 		predicates = append(predicates, groupsettings.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, groupsettings.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, groupsettings.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
 		predicates = append(predicates, groupsettings.UpdatedByEQ(*i.UpdatedBy))
@@ -684,11 +764,26 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 	if i.UpdatedByLTE != nil {
 		predicates = append(predicates, groupsettings.UpdatedByLTE(*i.UpdatedByLTE))
 	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, groupsettings.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, groupsettings.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, groupsettings.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
 	if i.UpdatedByIsNil {
 		predicates = append(predicates, groupsettings.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, groupsettings.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, groupsettings.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, groupsettings.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Visibility != nil {
 		predicates = append(predicates, groupsettings.VisibilityEQ(*i.Visibility))
@@ -733,14 +828,16 @@ type IntegrationWhereInput struct {
 	And        []*IntegrationWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
-	ID      *uuid.UUID  `json:"id,omitempty"`
-	IDNEQ   *uuid.UUID  `json:"idNEQ,omitempty"`
-	IDIn    []uuid.UUID `json:"idIn,omitempty"`
-	IDNotIn []uuid.UUID `json:"idNotIn,omitempty"`
-	IDGT    *uuid.UUID  `json:"idGT,omitempty"`
-	IDGTE   *uuid.UUID  `json:"idGTE,omitempty"`
-	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
-	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
 	// "created_at" field predicates.
 	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
@@ -763,28 +860,38 @@ type IntegrationWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
@@ -948,6 +1055,12 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 	if i.IDLTE != nil {
 		predicates = append(predicates, integration.IDLTE(*i.IDLTE))
 	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, integration.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, integration.IDContainsFold(*i.IDContainsFold))
+	}
 	if i.CreatedAt != nil {
 		predicates = append(predicates, integration.CreatedAtEQ(*i.CreatedAt))
 	}
@@ -1020,11 +1133,26 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 	if i.CreatedByLTE != nil {
 		predicates = append(predicates, integration.CreatedByLTE(*i.CreatedByLTE))
 	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, integration.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, integration.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, integration.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
 	if i.CreatedByIsNil {
 		predicates = append(predicates, integration.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
 		predicates = append(predicates, integration.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, integration.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, integration.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
 		predicates = append(predicates, integration.UpdatedByEQ(*i.UpdatedBy))
@@ -1050,11 +1178,26 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 	if i.UpdatedByLTE != nil {
 		predicates = append(predicates, integration.UpdatedByLTE(*i.UpdatedByLTE))
 	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, integration.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, integration.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, integration.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
 	if i.UpdatedByIsNil {
 		predicates = append(predicates, integration.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, integration.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, integration.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, integration.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Name != nil {
 		predicates = append(predicates, integration.NameEQ(*i.Name))
@@ -1255,14 +1398,16 @@ type OrganizationWhereInput struct {
 	And        []*OrganizationWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
-	ID      *uuid.UUID  `json:"id,omitempty"`
-	IDNEQ   *uuid.UUID  `json:"idNEQ,omitempty"`
-	IDIn    []uuid.UUID `json:"idIn,omitempty"`
-	IDNotIn []uuid.UUID `json:"idNotIn,omitempty"`
-	IDGT    *uuid.UUID  `json:"idGT,omitempty"`
-	IDGTE   *uuid.UUID  `json:"idGTE,omitempty"`
-	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
-	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
 	// "created_at" field predicates.
 	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
@@ -1285,36 +1430,55 @@ type OrganizationWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "parent_organization_id" field predicates.
-	ParentOrganizationID       *uuid.UUID  `json:"parentOrganizationID,omitempty"`
-	ParentOrganizationIDNEQ    *uuid.UUID  `json:"parentOrganizationIDNEQ,omitempty"`
-	ParentOrganizationIDIn     []uuid.UUID `json:"parentOrganizationIDIn,omitempty"`
-	ParentOrganizationIDNotIn  []uuid.UUID `json:"parentOrganizationIDNotIn,omitempty"`
-	ParentOrganizationIDIsNil  bool        `json:"parentOrganizationIDIsNil,omitempty"`
-	ParentOrganizationIDNotNil bool        `json:"parentOrganizationIDNotNil,omitempty"`
+	ParentOrganizationID             *string  `json:"parentOrganizationID,omitempty"`
+	ParentOrganizationIDNEQ          *string  `json:"parentOrganizationIDNEQ,omitempty"`
+	ParentOrganizationIDIn           []string `json:"parentOrganizationIDIn,omitempty"`
+	ParentOrganizationIDNotIn        []string `json:"parentOrganizationIDNotIn,omitempty"`
+	ParentOrganizationIDGT           *string  `json:"parentOrganizationIDGT,omitempty"`
+	ParentOrganizationIDGTE          *string  `json:"parentOrganizationIDGTE,omitempty"`
+	ParentOrganizationIDLT           *string  `json:"parentOrganizationIDLT,omitempty"`
+	ParentOrganizationIDLTE          *string  `json:"parentOrganizationIDLTE,omitempty"`
+	ParentOrganizationIDContains     *string  `json:"parentOrganizationIDContains,omitempty"`
+	ParentOrganizationIDHasPrefix    *string  `json:"parentOrganizationIDHasPrefix,omitempty"`
+	ParentOrganizationIDHasSuffix    *string  `json:"parentOrganizationIDHasSuffix,omitempty"`
+	ParentOrganizationIDIsNil        bool     `json:"parentOrganizationIDIsNil,omitempty"`
+	ParentOrganizationIDNotNil       bool     `json:"parentOrganizationIDNotNil,omitempty"`
+	ParentOrganizationIDEqualFold    *string  `json:"parentOrganizationIDEqualFold,omitempty"`
+	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
 
 	// "parent" edge predicates.
 	HasParent     *bool                     `json:"hasParent,omitempty"`
@@ -1432,6 +1596,12 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	if i.IDLTE != nil {
 		predicates = append(predicates, organization.IDLTE(*i.IDLTE))
 	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, organization.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, organization.IDContainsFold(*i.IDContainsFold))
+	}
 	if i.CreatedAt != nil {
 		predicates = append(predicates, organization.CreatedAtEQ(*i.CreatedAt))
 	}
@@ -1504,11 +1674,26 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	if i.CreatedByLTE != nil {
 		predicates = append(predicates, organization.CreatedByLTE(*i.CreatedByLTE))
 	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, organization.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, organization.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, organization.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
 	if i.CreatedByIsNil {
 		predicates = append(predicates, organization.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
 		predicates = append(predicates, organization.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, organization.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, organization.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
 		predicates = append(predicates, organization.UpdatedByEQ(*i.UpdatedBy))
@@ -1534,11 +1719,26 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	if i.UpdatedByLTE != nil {
 		predicates = append(predicates, organization.UpdatedByLTE(*i.UpdatedByLTE))
 	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, organization.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, organization.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, organization.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
 	if i.UpdatedByIsNil {
 		predicates = append(predicates, organization.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, organization.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, organization.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, organization.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.ParentOrganizationID != nil {
 		predicates = append(predicates, organization.ParentOrganizationIDEQ(*i.ParentOrganizationID))
@@ -1552,11 +1752,38 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	if len(i.ParentOrganizationIDNotIn) > 0 {
 		predicates = append(predicates, organization.ParentOrganizationIDNotIn(i.ParentOrganizationIDNotIn...))
 	}
+	if i.ParentOrganizationIDGT != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDGT(*i.ParentOrganizationIDGT))
+	}
+	if i.ParentOrganizationIDGTE != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDGTE(*i.ParentOrganizationIDGTE))
+	}
+	if i.ParentOrganizationIDLT != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDLT(*i.ParentOrganizationIDLT))
+	}
+	if i.ParentOrganizationIDLTE != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDLTE(*i.ParentOrganizationIDLTE))
+	}
+	if i.ParentOrganizationIDContains != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDContains(*i.ParentOrganizationIDContains))
+	}
+	if i.ParentOrganizationIDHasPrefix != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDHasPrefix(*i.ParentOrganizationIDHasPrefix))
+	}
+	if i.ParentOrganizationIDHasSuffix != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDHasSuffix(*i.ParentOrganizationIDHasSuffix))
+	}
 	if i.ParentOrganizationIDIsNil {
 		predicates = append(predicates, organization.ParentOrganizationIDIsNil())
 	}
 	if i.ParentOrganizationIDNotNil {
 		predicates = append(predicates, organization.ParentOrganizationIDNotNil())
+	}
+	if i.ParentOrganizationIDEqualFold != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDEqualFold(*i.ParentOrganizationIDEqualFold))
+	}
+	if i.ParentOrganizationIDContainsFold != nil {
+		predicates = append(predicates, organization.ParentOrganizationIDContainsFold(*i.ParentOrganizationIDContainsFold))
 	}
 
 	if i.HasParent != nil {
@@ -1667,14 +1894,16 @@ type SessionWhereInput struct {
 	And        []*SessionWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
-	ID      *uuid.UUID  `json:"id,omitempty"`
-	IDNEQ   *uuid.UUID  `json:"idNEQ,omitempty"`
-	IDIn    []uuid.UUID `json:"idIn,omitempty"`
-	IDNotIn []uuid.UUID `json:"idNotIn,omitempty"`
-	IDGT    *uuid.UUID  `json:"idGT,omitempty"`
-	IDGTE   *uuid.UUID  `json:"idGTE,omitempty"`
-	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
-	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
 	// "created_at" field predicates.
 	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
@@ -1697,28 +1926,38 @@ type SessionWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "type" field predicates.
 	Type      *session.Type  `json:"type,omitempty"`
@@ -1877,6 +2116,12 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 	if i.IDLTE != nil {
 		predicates = append(predicates, session.IDLTE(*i.IDLTE))
 	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, session.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, session.IDContainsFold(*i.IDContainsFold))
+	}
 	if i.CreatedAt != nil {
 		predicates = append(predicates, session.CreatedAtEQ(*i.CreatedAt))
 	}
@@ -1949,11 +2194,26 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 	if i.CreatedByLTE != nil {
 		predicates = append(predicates, session.CreatedByLTE(*i.CreatedByLTE))
 	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, session.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, session.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, session.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
 	if i.CreatedByIsNil {
 		predicates = append(predicates, session.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
 		predicates = append(predicates, session.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, session.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, session.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
 		predicates = append(predicates, session.UpdatedByEQ(*i.UpdatedBy))
@@ -1979,11 +2239,26 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 	if i.UpdatedByLTE != nil {
 		predicates = append(predicates, session.UpdatedByLTE(*i.UpdatedByLTE))
 	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, session.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, session.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, session.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
 	if i.UpdatedByIsNil {
 		predicates = append(predicates, session.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, session.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, session.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, session.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Type != nil {
 		predicates = append(predicates, session.TypeEQ(*i.Type))
@@ -2163,14 +2438,16 @@ type UserWhereInput struct {
 	And        []*UserWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
-	ID      *uuid.UUID  `json:"id,omitempty"`
-	IDNEQ   *uuid.UUID  `json:"idNEQ,omitempty"`
-	IDIn    []uuid.UUID `json:"idIn,omitempty"`
-	IDNotIn []uuid.UUID `json:"idNotIn,omitempty"`
-	IDGT    *uuid.UUID  `json:"idGT,omitempty"`
-	IDGTE   *uuid.UUID  `json:"idGTE,omitempty"`
-	IDLT    *uuid.UUID  `json:"idLT,omitempty"`
-	IDLTE   *uuid.UUID  `json:"idLTE,omitempty"`
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
 	// "created_at" field predicates.
 	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
@@ -2193,28 +2470,38 @@ type UserWhereInput struct {
 	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
 
 	// "created_by" field predicates.
-	CreatedBy       *uuid.UUID  `json:"createdBy,omitempty"`
-	CreatedByNEQ    *uuid.UUID  `json:"createdByNEQ,omitempty"`
-	CreatedByIn     []uuid.UUID `json:"createdByIn,omitempty"`
-	CreatedByNotIn  []uuid.UUID `json:"createdByNotIn,omitempty"`
-	CreatedByGT     *uuid.UUID  `json:"createdByGT,omitempty"`
-	CreatedByGTE    *uuid.UUID  `json:"createdByGTE,omitempty"`
-	CreatedByLT     *uuid.UUID  `json:"createdByLT,omitempty"`
-	CreatedByLTE    *uuid.UUID  `json:"createdByLTE,omitempty"`
-	CreatedByIsNil  bool        `json:"createdByIsNil,omitempty"`
-	CreatedByNotNil bool        `json:"createdByNotNil,omitempty"`
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
 
 	// "updated_by" field predicates.
-	UpdatedBy       *uuid.UUID  `json:"updatedBy,omitempty"`
-	UpdatedByNEQ    *uuid.UUID  `json:"updatedByNEQ,omitempty"`
-	UpdatedByIn     []uuid.UUID `json:"updatedByIn,omitempty"`
-	UpdatedByNotIn  []uuid.UUID `json:"updatedByNotIn,omitempty"`
-	UpdatedByGT     *uuid.UUID  `json:"updatedByGT,omitempty"`
-	UpdatedByGTE    *uuid.UUID  `json:"updatedByGTE,omitempty"`
-	UpdatedByLT     *uuid.UUID  `json:"updatedByLT,omitempty"`
-	UpdatedByLTE    *uuid.UUID  `json:"updatedByLTE,omitempty"`
-	UpdatedByIsNil  bool        `json:"updatedByIsNil,omitempty"`
-	UpdatedByNotNil bool        `json:"updatedByNotNil,omitempty"`
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "email" field predicates.
 	Email             *string  `json:"email,omitempty"`
@@ -2475,6 +2762,12 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.IDLTE != nil {
 		predicates = append(predicates, user.IDLTE(*i.IDLTE))
 	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, user.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, user.IDContainsFold(*i.IDContainsFold))
+	}
 	if i.CreatedAt != nil {
 		predicates = append(predicates, user.CreatedAtEQ(*i.CreatedAt))
 	}
@@ -2547,11 +2840,26 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.CreatedByLTE != nil {
 		predicates = append(predicates, user.CreatedByLTE(*i.CreatedByLTE))
 	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, user.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, user.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, user.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
 	if i.CreatedByIsNil {
 		predicates = append(predicates, user.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
 		predicates = append(predicates, user.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, user.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, user.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
 		predicates = append(predicates, user.UpdatedByEQ(*i.UpdatedBy))
@@ -2577,11 +2885,26 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.UpdatedByLTE != nil {
 		predicates = append(predicates, user.UpdatedByLTE(*i.UpdatedByLTE))
 	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, user.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, user.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, user.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
 	if i.UpdatedByIsNil {
 		predicates = append(predicates, user.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
 		predicates = append(predicates, user.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, user.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, user.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Email != nil {
 		predicates = append(predicates, user.EmailEQ(*i.Email))

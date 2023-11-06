@@ -7,7 +7,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-	"github.com/google/uuid"
 )
 
 // AuditMixin provides auditing for all records where enabled. The created_at, created_by, updated_at, and updated_by records are automatically populated when this mixin is enabled.
@@ -24,9 +23,9 @@ func (AuditMixin) Fields() []ent.Field {
 		field.Time("updated_at").
 			Default(time.Now).
 			UpdateDefault(time.Now),
-		field.UUID("created_by", uuid.UUID{}).
+		field.String("created_by").
 			Optional(),
-		field.UUID("updated_by", uuid.UUID{}).
+		field.String("updated_by").
 			Optional(),
 	}
 }
@@ -45,10 +44,10 @@ func AuditHook(next ent.Mutator) ent.Mutator {
 		CreatedAt() (v time.Time, exists bool) // exists if present before this hook
 		SetUpdatedAt(time.Time)
 		UpdatedAt() (v time.Time, exists bool)
-		SetCreatedBy(uuid.UUID)
-		CreatedBy() (id uuid.UUID, exists bool)
-		SetUpdatedBy(uuid.UUID)
-		UpdatedBy() (id uuid.UUID, exists bool)
+		SetCreatedBy(string)
+		CreatedBy() (id string, exists bool)
+		SetUpdatedBy(string)
+		UpdatedBy() (id string, exists bool)
 	}
 
 	return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {

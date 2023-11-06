@@ -9,7 +9,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/google/uuid"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
@@ -41,7 +40,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 }
 
 // UpdateOrganization is the resolver for the updateOrganization field.
-func (r *mutationResolver) UpdateOrganization(ctx context.Context, id uuid.UUID, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
+func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
 	// TODO - add permissions checks
 
 	org, err := r.client.Organization.Get(ctx, id)
@@ -68,7 +67,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id uuid.UUID,
 }
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
-func (r *mutationResolver) DeleteOrganization(ctx context.Context, id uuid.UUID) (*OrganizationDeletePayload, error) {
+func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
 	// TODO - add permissions checks
 
 	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
@@ -84,7 +83,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id uuid.UUID)
 }
 
 // Organization is the resolver for the organization field.
-func (r *queryResolver) Organization(ctx context.Context, id uuid.UUID) (*generated.Organization, error) {
+func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
 	// TODO - add permissions checks
 
 	org, err := r.client.Organization.Get(ctx, id)

@@ -8,8 +8,6 @@ import (
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
-
-	"github.com/google/uuid"
 )
 
 // GroupSettings holds the schema definition for the GroupSettings entity.
@@ -20,7 +18,6 @@ type GroupSettings struct {
 // Fields of the GroupSettings.
 func (GroupSettings) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("id", uuid.UUID{}).Default(uuid.New).Unique().Immutable(),
 		field.Enum("visibility").NamedValues("public", "PUBLIC", "private", "PRIVATE").Default("PUBLIC"),
 		field.Enum("join_policy").NamedValues(
 			"open", "OPEN",
@@ -53,5 +50,6 @@ func (GroupSettings) Annotations() []schema.Annotation {
 func (GroupSettings) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
+		mixin.IDMixin{},
 	}
 }

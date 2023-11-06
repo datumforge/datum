@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
-	"github.com/google/uuid"
 )
 
 // GroupSettingsCreate is the builder for creating a GroupSettings entity.
@@ -51,29 +50,29 @@ func (gsc *GroupSettingsCreate) SetNillableUpdatedAt(t *time.Time) *GroupSetting
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (gsc *GroupSettingsCreate) SetCreatedBy(u uuid.UUID) *GroupSettingsCreate {
-	gsc.mutation.SetCreatedBy(u)
+func (gsc *GroupSettingsCreate) SetCreatedBy(s string) *GroupSettingsCreate {
+	gsc.mutation.SetCreatedBy(s)
 	return gsc
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsc *GroupSettingsCreate) SetNillableCreatedBy(u *uuid.UUID) *GroupSettingsCreate {
-	if u != nil {
-		gsc.SetCreatedBy(*u)
+func (gsc *GroupSettingsCreate) SetNillableCreatedBy(s *string) *GroupSettingsCreate {
+	if s != nil {
+		gsc.SetCreatedBy(*s)
 	}
 	return gsc
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (gsc *GroupSettingsCreate) SetUpdatedBy(u uuid.UUID) *GroupSettingsCreate {
-	gsc.mutation.SetUpdatedBy(u)
+func (gsc *GroupSettingsCreate) SetUpdatedBy(s string) *GroupSettingsCreate {
+	gsc.mutation.SetUpdatedBy(s)
 	return gsc
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (gsc *GroupSettingsCreate) SetNillableUpdatedBy(u *uuid.UUID) *GroupSettingsCreate {
-	if u != nil {
-		gsc.SetUpdatedBy(*u)
+func (gsc *GroupSettingsCreate) SetNillableUpdatedBy(s *string) *GroupSettingsCreate {
+	if s != nil {
+		gsc.SetUpdatedBy(*s)
 	}
 	return gsc
 }
@@ -107,27 +106,27 @@ func (gsc *GroupSettingsCreate) SetNillableJoinPolicy(gp *groupsettings.JoinPoli
 }
 
 // SetID sets the "id" field.
-func (gsc *GroupSettingsCreate) SetID(u uuid.UUID) *GroupSettingsCreate {
-	gsc.mutation.SetID(u)
+func (gsc *GroupSettingsCreate) SetID(s string) *GroupSettingsCreate {
+	gsc.mutation.SetID(s)
 	return gsc
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (gsc *GroupSettingsCreate) SetNillableID(u *uuid.UUID) *GroupSettingsCreate {
-	if u != nil {
-		gsc.SetID(*u)
+func (gsc *GroupSettingsCreate) SetNillableID(s *string) *GroupSettingsCreate {
+	if s != nil {
+		gsc.SetID(*s)
 	}
 	return gsc
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (gsc *GroupSettingsCreate) SetGroupID(id uuid.UUID) *GroupSettingsCreate {
+func (gsc *GroupSettingsCreate) SetGroupID(id string) *GroupSettingsCreate {
 	gsc.mutation.SetGroupID(id)
 	return gsc
 }
 
 // SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gsc *GroupSettingsCreate) SetNillableGroupID(id *uuid.UUID) *GroupSettingsCreate {
+func (gsc *GroupSettingsCreate) SetNillableGroupID(id *string) *GroupSettingsCreate {
 	if id != nil {
 		gsc = gsc.SetGroupID(*id)
 	}
@@ -247,10 +246,10 @@ func (gsc *GroupSettingsCreate) sqlSave(ctx context.Context) (*GroupSettings, er
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		if id, ok := _spec.ID.Value.(*uuid.UUID); ok {
-			_node.ID = *id
-		} else if err := _node.ID.Scan(_spec.ID.Value); err != nil {
-			return nil, err
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected GroupSettings.ID type: %T", _spec.ID.Value)
 		}
 	}
 	gsc.mutation.id = &_node.ID
@@ -261,12 +260,12 @@ func (gsc *GroupSettingsCreate) sqlSave(ctx context.Context) (*GroupSettings, er
 func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSpec) {
 	var (
 		_node = &GroupSettings{config: gsc.config}
-		_spec = sqlgraph.NewCreateSpec(groupsettings.Table, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeUUID))
+		_spec = sqlgraph.NewCreateSpec(groupsettings.Table, sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString))
 	)
 	_spec.Schema = gsc.schemaConfig.GroupSettings
 	if id, ok := gsc.mutation.ID(); ok {
 		_node.ID = id
-		_spec.ID.Value = &id
+		_spec.ID.Value = id
 	}
 	if value, ok := gsc.mutation.CreatedAt(); ok {
 		_spec.SetField(groupsettings.FieldCreatedAt, field.TypeTime, value)
@@ -277,11 +276,11 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 		_node.UpdatedAt = value
 	}
 	if value, ok := gsc.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeUUID, value)
+		_spec.SetField(groupsettings.FieldCreatedBy, field.TypeString, value)
 		_node.CreatedBy = value
 	}
 	if value, ok := gsc.mutation.UpdatedBy(); ok {
-		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeUUID, value)
+		_spec.SetField(groupsettings.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
 	if value, ok := gsc.mutation.Visibility(); ok {
@@ -300,7 +299,7 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 			Columns: []string{groupsettings.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = gsc.schemaConfig.GroupSettings

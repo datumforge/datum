@@ -13,7 +13,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/google/uuid"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -114,8 +113,8 @@ func (iq *IntegrationQuery) FirstX(ctx context.Context) *Integration {
 
 // FirstID returns the first Integration ID from the query.
 // Returns a *NotFoundError when no Integration ID was found.
-func (iq *IntegrationQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (iq *IntegrationQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = iq.Limit(1).IDs(setContextOp(ctx, iq.ctx, "FirstID")); err != nil {
 		return
 	}
@@ -127,7 +126,7 @@ func (iq *IntegrationQuery) FirstID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (iq *IntegrationQuery) FirstIDX(ctx context.Context) uuid.UUID {
+func (iq *IntegrationQuery) FirstIDX(ctx context.Context) string {
 	id, err := iq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -165,8 +164,8 @@ func (iq *IntegrationQuery) OnlyX(ctx context.Context) *Integration {
 // OnlyID is like Only, but returns the only Integration ID in the query.
 // Returns a *NotSingularError when more than one Integration ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (iq *IntegrationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
-	var ids []uuid.UUID
+func (iq *IntegrationQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = iq.Limit(2).IDs(setContextOp(ctx, iq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -182,7 +181,7 @@ func (iq *IntegrationQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (iq *IntegrationQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+func (iq *IntegrationQuery) OnlyIDX(ctx context.Context) string {
 	id, err := iq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -210,7 +209,7 @@ func (iq *IntegrationQuery) AllX(ctx context.Context) []*Integration {
 }
 
 // IDs executes the query and returns a list of Integration IDs.
-func (iq *IntegrationQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+func (iq *IntegrationQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if iq.ctx.Unique == nil && iq.path != nil {
 		iq.Unique(true)
 	}
@@ -222,7 +221,7 @@ func (iq *IntegrationQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (iq *IntegrationQuery) IDsX(ctx context.Context) []uuid.UUID {
+func (iq *IntegrationQuery) IDsX(ctx context.Context) []string {
 	ids, err := iq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -427,8 +426,8 @@ func (iq *IntegrationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 }
 
 func (iq *IntegrationQuery) loadOwner(ctx context.Context, query *OrganizationQuery, nodes []*Integration, init func(*Integration), assign func(*Integration, *Organization)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*Integration)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Integration)
 	for i := range nodes {
 		if nodes[i].organization_integrations == nil {
 			continue
@@ -474,7 +473,7 @@ func (iq *IntegrationQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (iq *IntegrationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(integration.Table, integration.Columns, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewQuerySpec(integration.Table, integration.Columns, sqlgraph.NewFieldSpec(integration.FieldID, field.TypeString))
 	_spec.From = iq.sql
 	if unique := iq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

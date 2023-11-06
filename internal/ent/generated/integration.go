@@ -11,22 +11,21 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/google/uuid"
 )
 
 // Integration is the model entity for the Integration schema.
 type Integration struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy uuid.UUID `json:"created_by,omitempty"`
+	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Kind holds the value of the "kind" field.
@@ -38,7 +37,7 @@ type Integration struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the IntegrationQuery when eager-loading is set.
 	Edges                     IntegrationEdges `json:"edges"`
-	organization_integrations *uuid.UUID
+	organization_integrations *string
 	selectValues              sql.SelectValues
 }
 
@@ -71,14 +70,12 @@ func (*Integration) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case integration.FieldName, integration.FieldKind, integration.FieldDescription, integration.FieldSecretName:
+		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy, integration.FieldName, integration.FieldKind, integration.FieldDescription, integration.FieldSecretName:
 			values[i] = new(sql.NullString)
 		case integration.FieldCreatedAt, integration.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case integration.FieldID, integration.FieldCreatedBy, integration.FieldUpdatedBy:
-			values[i] = new(uuid.UUID)
 		case integration.ForeignKeys[0]: // organization_integrations
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -95,10 +92,10 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 	for j := range columns {
 		switch columns[j] {
 		case integration.FieldID:
-			if value, ok := values[j].(*uuid.UUID); !ok {
+			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[j])
-			} else if value != nil {
-				i.ID = *value
+			} else if value.Valid {
+				i.ID = value.String
 			}
 		case integration.FieldCreatedAt:
 			if value, ok := values[j].(*sql.NullTime); !ok {
@@ -113,16 +110,16 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 				i.UpdatedAt = value.Time
 			}
 		case integration.FieldCreatedBy:
-			if value, ok := values[j].(*uuid.UUID); !ok {
+			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[j])
-			} else if value != nil {
-				i.CreatedBy = *value
+			} else if value.Valid {
+				i.CreatedBy = value.String
 			}
 		case integration.FieldUpdatedBy:
-			if value, ok := values[j].(*uuid.UUID); !ok {
+			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[j])
-			} else if value != nil {
-				i.UpdatedBy = *value
+			} else if value.Valid {
+				i.UpdatedBy = value.String
 			}
 		case integration.FieldName:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -149,11 +146,11 @@ func (i *Integration) assignValues(columns []string, values []any) error {
 				i.SecretName = value.String
 			}
 		case integration.ForeignKeys[0]:
-			if value, ok := values[j].(*sql.NullScanner); !ok {
+			if value, ok := values[j].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_integrations", values[j])
 			} else if value.Valid {
-				i.organization_integrations = new(uuid.UUID)
-				*i.organization_integrations = *value.S.(*uuid.UUID)
+				i.organization_integrations = new(string)
+				*i.organization_integrations = value.String
 			}
 		default:
 			i.selectValues.Set(columns[j], values[j])
@@ -203,10 +200,10 @@ func (i *Integration) String() string {
 	builder.WriteString(i.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", i.CreatedBy))
+	builder.WriteString(i.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", i.UpdatedBy))
+	builder.WriteString(i.UpdatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(i.Name)

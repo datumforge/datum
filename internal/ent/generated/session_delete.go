@@ -42,7 +42,7 @@ func (sd *SessionDelete) ExecX(ctx context.Context) int {
 }
 
 func (sd *SessionDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(session.Table, sqlgraph.NewFieldSpec(session.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewDeleteSpec(session.Table, sqlgraph.NewFieldSpec(session.FieldID, field.TypeString))
 	_spec.Node.Schema = sd.schemaConfig.Session
 	ctx = internal.NewSchemaConfigContext(ctx, sd.schemaConfig)
 	if ps := sd.mutation.predicates; len(ps) > 0 {

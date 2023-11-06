@@ -7,7 +7,6 @@ import (
 	"net/url"
 
 	"github.com/go-faster/errors"
-	"github.com/google/uuid"
 
 	"github.com/ogen-go/ogen/conv"
 	"github.com/ogen-go/ogen/middleware"
@@ -19,7 +18,7 @@ import (
 // DeleteGroupParams is parameters of deleteGroup operation.
 type DeleteGroupParams struct {
 	// ID of the Group.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackDeleteGroupParams(packed middleware.Parameters) (params DeleteGroupParams) {
@@ -28,7 +27,7 @@ func unpackDeleteGroupParams(packed middleware.Parameters) (params DeleteGroupPa
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -58,7 +57,7 @@ func decodeDeleteGroupParams(args [1]string, argsEscaped bool, r *http.Request) 
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -85,7 +84,7 @@ func decodeDeleteGroupParams(args [1]string, argsEscaped bool, r *http.Request) 
 // DeleteGroupSettingsParams is parameters of deleteGroupSettings operation.
 type DeleteGroupSettingsParams struct {
 	// ID of the GroupSettings.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackDeleteGroupSettingsParams(packed middleware.Parameters) (params DeleteGroupSettingsParams) {
@@ -94,7 +93,7 @@ func unpackDeleteGroupSettingsParams(packed middleware.Parameters) (params Delet
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -124,7 +123,7 @@ func decodeDeleteGroupSettingsParams(args [1]string, argsEscaped bool, r *http.R
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -151,7 +150,7 @@ func decodeDeleteGroupSettingsParams(args [1]string, argsEscaped bool, r *http.R
 // DeleteIntegrationParams is parameters of deleteIntegration operation.
 type DeleteIntegrationParams struct {
 	// ID of the Integration.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackDeleteIntegrationParams(packed middleware.Parameters) (params DeleteIntegrationParams) {
@@ -160,7 +159,7 @@ func unpackDeleteIntegrationParams(packed middleware.Parameters) (params DeleteI
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -190,7 +189,7 @@ func decodeDeleteIntegrationParams(args [1]string, argsEscaped bool, r *http.Req
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -217,7 +216,7 @@ func decodeDeleteIntegrationParams(args [1]string, argsEscaped bool, r *http.Req
 // DeleteOrganizationParams is parameters of deleteOrganization operation.
 type DeleteOrganizationParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackDeleteOrganizationParams(packed middleware.Parameters) (params DeleteOrganizationParams) {
@@ -226,7 +225,7 @@ func unpackDeleteOrganizationParams(packed middleware.Parameters) (params Delete
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -256,7 +255,7 @@ func decodeDeleteOrganizationParams(args [1]string, argsEscaped bool, r *http.Re
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -283,7 +282,7 @@ func decodeDeleteOrganizationParams(args [1]string, argsEscaped bool, r *http.Re
 // DeleteSessionParams is parameters of deleteSession operation.
 type DeleteSessionParams struct {
 	// ID of the Session.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackDeleteSessionParams(packed middleware.Parameters) (params DeleteSessionParams) {
@@ -292,7 +291,7 @@ func unpackDeleteSessionParams(packed middleware.Parameters) (params DeleteSessi
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -322,7 +321,7 @@ func decodeDeleteSessionParams(args [1]string, argsEscaped bool, r *http.Request
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -349,7 +348,7 @@ func decodeDeleteSessionParams(args [1]string, argsEscaped bool, r *http.Request
 // DeleteUserParams is parameters of deleteUser operation.
 type DeleteUserParams struct {
 	// ID of the User.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackDeleteUserParams(packed middleware.Parameters) (params DeleteUserParams) {
@@ -358,7 +357,7 @@ func unpackDeleteUserParams(packed middleware.Parameters) (params DeleteUserPara
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -388,7 +387,7 @@ func decodeDeleteUserParams(args [1]string, argsEscaped bool, r *http.Request) (
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -745,7 +744,7 @@ func decodeListGroupSettingsParams(args [0]string, argsEscaped bool, r *http.Req
 // ListGroupUsersParams is parameters of listGroupUsers operation.
 type ListGroupUsersParams struct {
 	// ID of the Group.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -758,7 +757,7 @@ func unpackListGroupUsersParams(packed middleware.Parameters) (params ListGroupU
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -807,7 +806,7 @@ func decodeListGroupUsersParams(args [1]string, argsEscaped bool, r *http.Reques
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -1246,7 +1245,7 @@ func decodeListOrganizationParams(args [0]string, argsEscaped bool, r *http.Requ
 // ListOrganizationChildrenParams is parameters of listOrganizationChildren operation.
 type ListOrganizationChildrenParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -1259,7 +1258,7 @@ func unpackListOrganizationChildrenParams(packed middleware.Parameters) (params 
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -1308,7 +1307,7 @@ func decodeListOrganizationChildrenParams(args [1]string, argsEscaped bool, r *h
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -1417,7 +1416,7 @@ func decodeListOrganizationChildrenParams(args [1]string, argsEscaped bool, r *h
 // ListOrganizationGroupsParams is parameters of listOrganizationGroups operation.
 type ListOrganizationGroupsParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -1430,7 +1429,7 @@ func unpackListOrganizationGroupsParams(packed middleware.Parameters) (params Li
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -1479,7 +1478,7 @@ func decodeListOrganizationGroupsParams(args [1]string, argsEscaped bool, r *htt
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -1588,7 +1587,7 @@ func decodeListOrganizationGroupsParams(args [1]string, argsEscaped bool, r *htt
 // ListOrganizationIntegrationsParams is parameters of listOrganizationIntegrations operation.
 type ListOrganizationIntegrationsParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -1601,7 +1600,7 @@ func unpackListOrganizationIntegrationsParams(packed middleware.Parameters) (par
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -1650,7 +1649,7 @@ func decodeListOrganizationIntegrationsParams(args [1]string, argsEscaped bool, 
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -1759,7 +1758,7 @@ func decodeListOrganizationIntegrationsParams(args [1]string, argsEscaped bool, 
 // ListOrganizationUsersParams is parameters of listOrganizationUsers operation.
 type ListOrganizationUsersParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -1772,7 +1771,7 @@ func unpackListOrganizationUsersParams(packed middleware.Parameters) (params Lis
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -1821,7 +1820,7 @@ func decodeListOrganizationUsersParams(args [1]string, argsEscaped bool, r *http
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2260,7 +2259,7 @@ func decodeListUserParams(args [0]string, argsEscaped bool, r *http.Request) (pa
 // ListUserGroupsParams is parameters of listUserGroups operation.
 type ListUserGroupsParams struct {
 	// ID of the User.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -2273,7 +2272,7 @@ func unpackListUserGroupsParams(packed middleware.Parameters) (params ListUserGr
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -2322,7 +2321,7 @@ func decodeListUserGroupsParams(args [1]string, argsEscaped bool, r *http.Reques
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2431,7 +2430,7 @@ func decodeListUserGroupsParams(args [1]string, argsEscaped bool, r *http.Reques
 // ListUserOrganizationsParams is parameters of listUserOrganizations operation.
 type ListUserOrganizationsParams struct {
 	// ID of the User.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -2444,7 +2443,7 @@ func unpackListUserOrganizationsParams(packed middleware.Parameters) (params Lis
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -2493,7 +2492,7 @@ func decodeListUserOrganizationsParams(args [1]string, argsEscaped bool, r *http
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2602,7 +2601,7 @@ func decodeListUserOrganizationsParams(args [1]string, argsEscaped bool, r *http
 // ListUserSessionsParams is parameters of listUserSessions operation.
 type ListUserSessionsParams struct {
 	// ID of the User.
-	ID uuid.UUID
+	ID string
 	// What page to render.
 	Page OptInt
 	// Item count to render per page.
@@ -2615,7 +2614,7 @@ func unpackListUserSessionsParams(packed middleware.Parameters) (params ListUser
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	{
 		key := middleware.ParameterKey{
@@ -2664,7 +2663,7 @@ func decodeListUserSessionsParams(args [1]string, argsEscaped bool, r *http.Requ
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2773,7 +2772,7 @@ func decodeListUserSessionsParams(args [1]string, argsEscaped bool, r *http.Requ
 // ReadGroupParams is parameters of readGroup operation.
 type ReadGroupParams struct {
 	// ID of the Group.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadGroupParams(packed middleware.Parameters) (params ReadGroupParams) {
@@ -2782,7 +2781,7 @@ func unpackReadGroupParams(packed middleware.Parameters) (params ReadGroupParams
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -2812,7 +2811,7 @@ func decodeReadGroupParams(args [1]string, argsEscaped bool, r *http.Request) (p
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2839,7 +2838,7 @@ func decodeReadGroupParams(args [1]string, argsEscaped bool, r *http.Request) (p
 // ReadGroupOwnerParams is parameters of readGroupOwner operation.
 type ReadGroupOwnerParams struct {
 	// ID of the Group.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadGroupOwnerParams(packed middleware.Parameters) (params ReadGroupOwnerParams) {
@@ -2848,7 +2847,7 @@ func unpackReadGroupOwnerParams(packed middleware.Parameters) (params ReadGroupO
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -2878,7 +2877,7 @@ func decodeReadGroupOwnerParams(args [1]string, argsEscaped bool, r *http.Reques
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2905,7 +2904,7 @@ func decodeReadGroupOwnerParams(args [1]string, argsEscaped bool, r *http.Reques
 // ReadGroupSettingParams is parameters of readGroupSetting operation.
 type ReadGroupSettingParams struct {
 	// ID of the Group.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadGroupSettingParams(packed middleware.Parameters) (params ReadGroupSettingParams) {
@@ -2914,7 +2913,7 @@ func unpackReadGroupSettingParams(packed middleware.Parameters) (params ReadGrou
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -2944,7 +2943,7 @@ func decodeReadGroupSettingParams(args [1]string, argsEscaped bool, r *http.Requ
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -2971,7 +2970,7 @@ func decodeReadGroupSettingParams(args [1]string, argsEscaped bool, r *http.Requ
 // ReadGroupSettingsParams is parameters of readGroupSettings operation.
 type ReadGroupSettingsParams struct {
 	// ID of the GroupSettings.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadGroupSettingsParams(packed middleware.Parameters) (params ReadGroupSettingsParams) {
@@ -2980,7 +2979,7 @@ func unpackReadGroupSettingsParams(packed middleware.Parameters) (params ReadGro
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3010,7 +3009,7 @@ func decodeReadGroupSettingsParams(args [1]string, argsEscaped bool, r *http.Req
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3037,7 +3036,7 @@ func decodeReadGroupSettingsParams(args [1]string, argsEscaped bool, r *http.Req
 // ReadGroupSettingsGroupParams is parameters of readGroupSettingsGroup operation.
 type ReadGroupSettingsGroupParams struct {
 	// ID of the GroupSettings.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadGroupSettingsGroupParams(packed middleware.Parameters) (params ReadGroupSettingsGroupParams) {
@@ -3046,7 +3045,7 @@ func unpackReadGroupSettingsGroupParams(packed middleware.Parameters) (params Re
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3076,7 +3075,7 @@ func decodeReadGroupSettingsGroupParams(args [1]string, argsEscaped bool, r *htt
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3103,7 +3102,7 @@ func decodeReadGroupSettingsGroupParams(args [1]string, argsEscaped bool, r *htt
 // ReadIntegrationParams is parameters of readIntegration operation.
 type ReadIntegrationParams struct {
 	// ID of the Integration.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadIntegrationParams(packed middleware.Parameters) (params ReadIntegrationParams) {
@@ -3112,7 +3111,7 @@ func unpackReadIntegrationParams(packed middleware.Parameters) (params ReadInteg
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3142,7 +3141,7 @@ func decodeReadIntegrationParams(args [1]string, argsEscaped bool, r *http.Reque
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3169,7 +3168,7 @@ func decodeReadIntegrationParams(args [1]string, argsEscaped bool, r *http.Reque
 // ReadIntegrationOwnerParams is parameters of readIntegrationOwner operation.
 type ReadIntegrationOwnerParams struct {
 	// ID of the Integration.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadIntegrationOwnerParams(packed middleware.Parameters) (params ReadIntegrationOwnerParams) {
@@ -3178,7 +3177,7 @@ func unpackReadIntegrationOwnerParams(packed middleware.Parameters) (params Read
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3208,7 +3207,7 @@ func decodeReadIntegrationOwnerParams(args [1]string, argsEscaped bool, r *http.
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3235,7 +3234,7 @@ func decodeReadIntegrationOwnerParams(args [1]string, argsEscaped bool, r *http.
 // ReadOrganizationParams is parameters of readOrganization operation.
 type ReadOrganizationParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadOrganizationParams(packed middleware.Parameters) (params ReadOrganizationParams) {
@@ -3244,7 +3243,7 @@ func unpackReadOrganizationParams(packed middleware.Parameters) (params ReadOrga
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3274,7 +3273,7 @@ func decodeReadOrganizationParams(args [1]string, argsEscaped bool, r *http.Requ
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3301,7 +3300,7 @@ func decodeReadOrganizationParams(args [1]string, argsEscaped bool, r *http.Requ
 // ReadOrganizationParentParams is parameters of readOrganizationParent operation.
 type ReadOrganizationParentParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadOrganizationParentParams(packed middleware.Parameters) (params ReadOrganizationParentParams) {
@@ -3310,7 +3309,7 @@ func unpackReadOrganizationParentParams(packed middleware.Parameters) (params Re
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3340,7 +3339,7 @@ func decodeReadOrganizationParentParams(args [1]string, argsEscaped bool, r *htt
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3367,7 +3366,7 @@ func decodeReadOrganizationParentParams(args [1]string, argsEscaped bool, r *htt
 // ReadSessionParams is parameters of readSession operation.
 type ReadSessionParams struct {
 	// ID of the Session.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadSessionParams(packed middleware.Parameters) (params ReadSessionParams) {
@@ -3376,7 +3375,7 @@ func unpackReadSessionParams(packed middleware.Parameters) (params ReadSessionPa
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3406,7 +3405,7 @@ func decodeReadSessionParams(args [1]string, argsEscaped bool, r *http.Request) 
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3433,7 +3432,7 @@ func decodeReadSessionParams(args [1]string, argsEscaped bool, r *http.Request) 
 // ReadSessionUsersParams is parameters of readSessionUsers operation.
 type ReadSessionUsersParams struct {
 	// ID of the Session.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadSessionUsersParams(packed middleware.Parameters) (params ReadSessionUsersParams) {
@@ -3442,7 +3441,7 @@ func unpackReadSessionUsersParams(packed middleware.Parameters) (params ReadSess
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3472,7 +3471,7 @@ func decodeReadSessionUsersParams(args [1]string, argsEscaped bool, r *http.Requ
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3499,7 +3498,7 @@ func decodeReadSessionUsersParams(args [1]string, argsEscaped bool, r *http.Requ
 // ReadUserParams is parameters of readUser operation.
 type ReadUserParams struct {
 	// ID of the User.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackReadUserParams(packed middleware.Parameters) (params ReadUserParams) {
@@ -3508,7 +3507,7 @@ func unpackReadUserParams(packed middleware.Parameters) (params ReadUserParams) 
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3538,7 +3537,7 @@ func decodeReadUserParams(args [1]string, argsEscaped bool, r *http.Request) (pa
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3565,7 +3564,7 @@ func decodeReadUserParams(args [1]string, argsEscaped bool, r *http.Request) (pa
 // UpdateGroupParams is parameters of updateGroup operation.
 type UpdateGroupParams struct {
 	// ID of the Group.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackUpdateGroupParams(packed middleware.Parameters) (params UpdateGroupParams) {
@@ -3574,7 +3573,7 @@ func unpackUpdateGroupParams(packed middleware.Parameters) (params UpdateGroupPa
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3604,7 +3603,7 @@ func decodeUpdateGroupParams(args [1]string, argsEscaped bool, r *http.Request) 
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3631,7 +3630,7 @@ func decodeUpdateGroupParams(args [1]string, argsEscaped bool, r *http.Request) 
 // UpdateGroupSettingsParams is parameters of updateGroupSettings operation.
 type UpdateGroupSettingsParams struct {
 	// ID of the GroupSettings.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackUpdateGroupSettingsParams(packed middleware.Parameters) (params UpdateGroupSettingsParams) {
@@ -3640,7 +3639,7 @@ func unpackUpdateGroupSettingsParams(packed middleware.Parameters) (params Updat
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3670,7 +3669,7 @@ func decodeUpdateGroupSettingsParams(args [1]string, argsEscaped bool, r *http.R
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3697,7 +3696,7 @@ func decodeUpdateGroupSettingsParams(args [1]string, argsEscaped bool, r *http.R
 // UpdateIntegrationParams is parameters of updateIntegration operation.
 type UpdateIntegrationParams struct {
 	// ID of the Integration.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackUpdateIntegrationParams(packed middleware.Parameters) (params UpdateIntegrationParams) {
@@ -3706,7 +3705,7 @@ func unpackUpdateIntegrationParams(packed middleware.Parameters) (params UpdateI
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3736,7 +3735,7 @@ func decodeUpdateIntegrationParams(args [1]string, argsEscaped bool, r *http.Req
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3763,7 +3762,7 @@ func decodeUpdateIntegrationParams(args [1]string, argsEscaped bool, r *http.Req
 // UpdateOrganizationParams is parameters of updateOrganization operation.
 type UpdateOrganizationParams struct {
 	// ID of the Organization.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackUpdateOrganizationParams(packed middleware.Parameters) (params UpdateOrganizationParams) {
@@ -3772,7 +3771,7 @@ func unpackUpdateOrganizationParams(packed middleware.Parameters) (params Update
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3802,7 +3801,7 @@ func decodeUpdateOrganizationParams(args [1]string, argsEscaped bool, r *http.Re
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3829,7 +3828,7 @@ func decodeUpdateOrganizationParams(args [1]string, argsEscaped bool, r *http.Re
 // UpdateSessionParams is parameters of updateSession operation.
 type UpdateSessionParams struct {
 	// ID of the Session.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackUpdateSessionParams(packed middleware.Parameters) (params UpdateSessionParams) {
@@ -3838,7 +3837,7 @@ func unpackUpdateSessionParams(packed middleware.Parameters) (params UpdateSessi
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3868,7 +3867,7 @@ func decodeUpdateSessionParams(args [1]string, argsEscaped bool, r *http.Request
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}
@@ -3895,7 +3894,7 @@ func decodeUpdateSessionParams(args [1]string, argsEscaped bool, r *http.Request
 // UpdateUserParams is parameters of updateUser operation.
 type UpdateUserParams struct {
 	// ID of the User.
-	ID uuid.UUID
+	ID string
 }
 
 func unpackUpdateUserParams(packed middleware.Parameters) (params UpdateUserParams) {
@@ -3904,7 +3903,7 @@ func unpackUpdateUserParams(packed middleware.Parameters) (params UpdateUserPara
 			Name: "id",
 			In:   "path",
 		}
-		params.ID = packed[key].(uuid.UUID)
+		params.ID = packed[key].(string)
 	}
 	return params
 }
@@ -3934,7 +3933,7 @@ func decodeUpdateUserParams(args [1]string, argsEscaped bool, r *http.Request) (
 					return err
 				}
 
-				c, err := conv.ToUUID(val)
+				c, err := conv.ToString(val)
 				if err != nil {
 					return err
 				}

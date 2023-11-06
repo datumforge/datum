@@ -11,22 +11,21 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
-	"github.com/google/uuid"
 )
 
 // GroupSettings is the model entity for the GroupSettings schema.
 type GroupSettings struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID uuid.UUID `json:"id,omitempty"`
+	ID string `json:"id,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy uuid.UUID `json:"created_by,omitempty"`
+	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy uuid.UUID `json:"updated_by,omitempty"`
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// Visibility holds the value of the "visibility" field.
 	Visibility groupsettings.Visibility `json:"visibility,omitempty"`
 	// JoinPolicy holds the value of the "join_policy" field.
@@ -34,7 +33,7 @@ type GroupSettings struct {
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupSettingsQuery when eager-loading is set.
 	Edges         GroupSettingsEdges `json:"edges"`
-	group_setting *uuid.UUID
+	group_setting *string
 	selectValues  sql.SelectValues
 }
 
@@ -65,14 +64,12 @@ func (*GroupSettings) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case groupsettings.FieldVisibility, groupsettings.FieldJoinPolicy:
+		case groupsettings.FieldID, groupsettings.FieldCreatedBy, groupsettings.FieldUpdatedBy, groupsettings.FieldVisibility, groupsettings.FieldJoinPolicy:
 			values[i] = new(sql.NullString)
 		case groupsettings.FieldCreatedAt, groupsettings.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case groupsettings.FieldID, groupsettings.FieldCreatedBy, groupsettings.FieldUpdatedBy:
-			values[i] = new(uuid.UUID)
 		case groupsettings.ForeignKeys[0]: // group_setting
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -89,10 +86,10 @@ func (gs *GroupSettings) assignValues(columns []string, values []any) error {
 	for i := range columns {
 		switch columns[i] {
 		case groupsettings.FieldID:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
-			} else if value != nil {
-				gs.ID = *value
+			} else if value.Valid {
+				gs.ID = value.String
 			}
 		case groupsettings.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -107,16 +104,16 @@ func (gs *GroupSettings) assignValues(columns []string, values []any) error {
 				gs.UpdatedAt = value.Time
 			}
 		case groupsettings.FieldCreatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value != nil {
-				gs.CreatedBy = *value
+			} else if value.Valid {
+				gs.CreatedBy = value.String
 			}
 		case groupsettings.FieldUpdatedBy:
-			if value, ok := values[i].(*uuid.UUID); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value != nil {
-				gs.UpdatedBy = *value
+			} else if value.Valid {
+				gs.UpdatedBy = value.String
 			}
 		case groupsettings.FieldVisibility:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -131,11 +128,11 @@ func (gs *GroupSettings) assignValues(columns []string, values []any) error {
 				gs.JoinPolicy = groupsettings.JoinPolicy(value.String)
 			}
 		case groupsettings.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullScanner); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field group_setting", values[i])
 			} else if value.Valid {
-				gs.group_setting = new(uuid.UUID)
-				*gs.group_setting = *value.S.(*uuid.UUID)
+				gs.group_setting = new(string)
+				*gs.group_setting = value.String
 			}
 		default:
 			gs.selectValues.Set(columns[i], values[i])
@@ -185,10 +182,10 @@ func (gs *GroupSettings) String() string {
 	builder.WriteString(gs.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("created_by=")
-	builder.WriteString(fmt.Sprintf("%v", gs.CreatedBy))
+	builder.WriteString(gs.CreatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
-	builder.WriteString(fmt.Sprintf("%v", gs.UpdatedBy))
+	builder.WriteString(gs.UpdatedBy)
 	builder.WriteString(", ")
 	builder.WriteString("visibility=")
 	builder.WriteString(fmt.Sprintf("%v", gs.Visibility))

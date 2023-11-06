@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/google/uuid"
 )
 
 const (
@@ -43,21 +42,21 @@ type GroupMutation struct {
 	config
 	op             Op
 	typ            string
-	id             *uuid.UUID
+	id             *string
 	created_at     *time.Time
 	updated_at     *time.Time
-	created_by     *uuid.UUID
-	updated_by     *uuid.UUID
+	created_by     *string
+	updated_by     *string
 	name           *string
 	description    *string
 	logo_url       *string
 	clearedFields  map[string]struct{}
-	setting        *uuid.UUID
+	setting        *string
 	clearedsetting bool
-	users          map[uuid.UUID]struct{}
-	removedusers   map[uuid.UUID]struct{}
+	users          map[string]struct{}
+	removedusers   map[string]struct{}
 	clearedusers   bool
-	owner          *uuid.UUID
+	owner          *string
 	clearedowner   bool
 	done           bool
 	oldValue       func(context.Context) (*Group, error)
@@ -84,7 +83,7 @@ func newGroupMutation(c config, op Op, opts ...groupOption) *GroupMutation {
 }
 
 // withGroupID sets the ID field of the mutation.
-func withGroupID(id uuid.UUID) groupOption {
+func withGroupID(id string) groupOption {
 	return func(m *GroupMutation) {
 		var (
 			err   error
@@ -136,13 +135,13 @@ func (m GroupMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Group entities.
-func (m *GroupMutation) SetID(id uuid.UUID) {
+func (m *GroupMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *GroupMutation) ID() (id uuid.UUID, exists bool) {
+func (m *GroupMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -153,12 +152,12 @@ func (m *GroupMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *GroupMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *GroupMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -241,12 +240,12 @@ func (m *GroupMutation) ResetUpdatedAt() {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *GroupMutation) SetCreatedBy(u uuid.UUID) {
-	m.created_by = &u
+func (m *GroupMutation) SetCreatedBy(s string) {
+	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *GroupMutation) CreatedBy() (r uuid.UUID, exists bool) {
+func (m *GroupMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -257,7 +256,7 @@ func (m *GroupMutation) CreatedBy() (r uuid.UUID, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Group entity.
 // If the Group object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupMutation) OldCreatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *GroupMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -290,12 +289,12 @@ func (m *GroupMutation) ResetCreatedBy() {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *GroupMutation) SetUpdatedBy(u uuid.UUID) {
-	m.updated_by = &u
+func (m *GroupMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *GroupMutation) UpdatedBy() (r uuid.UUID, exists bool) {
+func (m *GroupMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -306,7 +305,7 @@ func (m *GroupMutation) UpdatedBy() (r uuid.UUID, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Group entity.
 // If the Group object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupMutation) OldUpdatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *GroupMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -447,7 +446,7 @@ func (m *GroupMutation) ResetLogoURL() {
 }
 
 // SetSettingID sets the "setting" edge to the GroupSettings entity by id.
-func (m *GroupMutation) SetSettingID(id uuid.UUID) {
+func (m *GroupMutation) SetSettingID(id string) {
 	m.setting = &id
 }
 
@@ -462,7 +461,7 @@ func (m *GroupMutation) SettingCleared() bool {
 }
 
 // SettingID returns the "setting" edge ID in the mutation.
-func (m *GroupMutation) SettingID() (id uuid.UUID, exists bool) {
+func (m *GroupMutation) SettingID() (id string, exists bool) {
 	if m.setting != nil {
 		return *m.setting, true
 	}
@@ -472,7 +471,7 @@ func (m *GroupMutation) SettingID() (id uuid.UUID, exists bool) {
 // SettingIDs returns the "setting" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // SettingID instead. It exists only for internal usage by the builders.
-func (m *GroupMutation) SettingIDs() (ids []uuid.UUID) {
+func (m *GroupMutation) SettingIDs() (ids []string) {
 	if id := m.setting; id != nil {
 		ids = append(ids, *id)
 	}
@@ -486,9 +485,9 @@ func (m *GroupMutation) ResetSetting() {
 }
 
 // AddUserIDs adds the "users" edge to the User entity by ids.
-func (m *GroupMutation) AddUserIDs(ids ...uuid.UUID) {
+func (m *GroupMutation) AddUserIDs(ids ...string) {
 	if m.users == nil {
-		m.users = make(map[uuid.UUID]struct{})
+		m.users = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.users[ids[i]] = struct{}{}
@@ -506,9 +505,9 @@ func (m *GroupMutation) UsersCleared() bool {
 }
 
 // RemoveUserIDs removes the "users" edge to the User entity by IDs.
-func (m *GroupMutation) RemoveUserIDs(ids ...uuid.UUID) {
+func (m *GroupMutation) RemoveUserIDs(ids ...string) {
 	if m.removedusers == nil {
-		m.removedusers = make(map[uuid.UUID]struct{})
+		m.removedusers = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.users, ids[i])
@@ -517,7 +516,7 @@ func (m *GroupMutation) RemoveUserIDs(ids ...uuid.UUID) {
 }
 
 // RemovedUsers returns the removed IDs of the "users" edge to the User entity.
-func (m *GroupMutation) RemovedUsersIDs() (ids []uuid.UUID) {
+func (m *GroupMutation) RemovedUsersIDs() (ids []string) {
 	for id := range m.removedusers {
 		ids = append(ids, id)
 	}
@@ -525,7 +524,7 @@ func (m *GroupMutation) RemovedUsersIDs() (ids []uuid.UUID) {
 }
 
 // UsersIDs returns the "users" edge IDs in the mutation.
-func (m *GroupMutation) UsersIDs() (ids []uuid.UUID) {
+func (m *GroupMutation) UsersIDs() (ids []string) {
 	for id := range m.users {
 		ids = append(ids, id)
 	}
@@ -540,7 +539,7 @@ func (m *GroupMutation) ResetUsers() {
 }
 
 // SetOwnerID sets the "owner" edge to the Organization entity by id.
-func (m *GroupMutation) SetOwnerID(id uuid.UUID) {
+func (m *GroupMutation) SetOwnerID(id string) {
 	m.owner = &id
 }
 
@@ -555,7 +554,7 @@ func (m *GroupMutation) OwnerCleared() bool {
 }
 
 // OwnerID returns the "owner" edge ID in the mutation.
-func (m *GroupMutation) OwnerID() (id uuid.UUID, exists bool) {
+func (m *GroupMutation) OwnerID() (id string, exists bool) {
 	if m.owner != nil {
 		return *m.owner, true
 	}
@@ -565,7 +564,7 @@ func (m *GroupMutation) OwnerID() (id uuid.UUID, exists bool) {
 // OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // OwnerID instead. It exists only for internal usage by the builders.
-func (m *GroupMutation) OwnerIDs() (ids []uuid.UUID) {
+func (m *GroupMutation) OwnerIDs() (ids []string) {
 	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
@@ -703,14 +702,14 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case group.FieldCreatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
 	case group.FieldUpdatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -951,15 +950,15 @@ type GroupSettingsMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
-	created_by    *uuid.UUID
-	updated_by    *uuid.UUID
+	created_by    *string
+	updated_by    *string
 	visibility    *groupsettings.Visibility
 	join_policy   *groupsettings.JoinPolicy
 	clearedFields map[string]struct{}
-	group         *uuid.UUID
+	group         *string
 	clearedgroup  bool
 	done          bool
 	oldValue      func(context.Context) (*GroupSettings, error)
@@ -986,7 +985,7 @@ func newGroupSettingsMutation(c config, op Op, opts ...groupsettingsOption) *Gro
 }
 
 // withGroupSettingsID sets the ID field of the mutation.
-func withGroupSettingsID(id uuid.UUID) groupsettingsOption {
+func withGroupSettingsID(id string) groupsettingsOption {
 	return func(m *GroupSettingsMutation) {
 		var (
 			err   error
@@ -1038,13 +1037,13 @@ func (m GroupSettingsMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of GroupSettings entities.
-func (m *GroupSettingsMutation) SetID(id uuid.UUID) {
+func (m *GroupSettingsMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *GroupSettingsMutation) ID() (id uuid.UUID, exists bool) {
+func (m *GroupSettingsMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1055,12 +1054,12 @@ func (m *GroupSettingsMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *GroupSettingsMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *GroupSettingsMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1143,12 +1142,12 @@ func (m *GroupSettingsMutation) ResetUpdatedAt() {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *GroupSettingsMutation) SetCreatedBy(u uuid.UUID) {
-	m.created_by = &u
+func (m *GroupSettingsMutation) SetCreatedBy(s string) {
+	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *GroupSettingsMutation) CreatedBy() (r uuid.UUID, exists bool) {
+func (m *GroupSettingsMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -1159,7 +1158,7 @@ func (m *GroupSettingsMutation) CreatedBy() (r uuid.UUID, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the GroupSettings entity.
 // If the GroupSettings object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupSettingsMutation) OldCreatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *GroupSettingsMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -1192,12 +1191,12 @@ func (m *GroupSettingsMutation) ResetCreatedBy() {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *GroupSettingsMutation) SetUpdatedBy(u uuid.UUID) {
-	m.updated_by = &u
+func (m *GroupSettingsMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *GroupSettingsMutation) UpdatedBy() (r uuid.UUID, exists bool) {
+func (m *GroupSettingsMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -1208,7 +1207,7 @@ func (m *GroupSettingsMutation) UpdatedBy() (r uuid.UUID, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the GroupSettings entity.
 // If the GroupSettings object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupSettingsMutation) OldUpdatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *GroupSettingsMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -1313,7 +1312,7 @@ func (m *GroupSettingsMutation) ResetJoinPolicy() {
 }
 
 // SetGroupID sets the "group" edge to the Group entity by id.
-func (m *GroupSettingsMutation) SetGroupID(id uuid.UUID) {
+func (m *GroupSettingsMutation) SetGroupID(id string) {
 	m.group = &id
 }
 
@@ -1328,7 +1327,7 @@ func (m *GroupSettingsMutation) GroupCleared() bool {
 }
 
 // GroupID returns the "group" edge ID in the mutation.
-func (m *GroupSettingsMutation) GroupID() (id uuid.UUID, exists bool) {
+func (m *GroupSettingsMutation) GroupID() (id string, exists bool) {
 	if m.group != nil {
 		return *m.group, true
 	}
@@ -1338,7 +1337,7 @@ func (m *GroupSettingsMutation) GroupID() (id uuid.UUID, exists bool) {
 // GroupIDs returns the "group" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // GroupID instead. It exists only for internal usage by the builders.
-func (m *GroupSettingsMutation) GroupIDs() (ids []uuid.UUID) {
+func (m *GroupSettingsMutation) GroupIDs() (ids []string) {
 	if id := m.group; id != nil {
 		ids = append(ids, *id)
 	}
@@ -1469,14 +1468,14 @@ func (m *GroupSettingsMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case groupsettings.FieldCreatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
 	case groupsettings.FieldUpdatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1661,17 +1660,17 @@ type IntegrationMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
-	created_by    *uuid.UUID
-	updated_by    *uuid.UUID
+	created_by    *string
+	updated_by    *string
 	name          *string
 	kind          *string
 	description   *string
 	secret_name   *string
 	clearedFields map[string]struct{}
-	owner         *uuid.UUID
+	owner         *string
 	clearedowner  bool
 	done          bool
 	oldValue      func(context.Context) (*Integration, error)
@@ -1698,7 +1697,7 @@ func newIntegrationMutation(c config, op Op, opts ...integrationOption) *Integra
 }
 
 // withIntegrationID sets the ID field of the mutation.
-func withIntegrationID(id uuid.UUID) integrationOption {
+func withIntegrationID(id string) integrationOption {
 	return func(m *IntegrationMutation) {
 		var (
 			err   error
@@ -1750,13 +1749,13 @@ func (m IntegrationMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Integration entities.
-func (m *IntegrationMutation) SetID(id uuid.UUID) {
+func (m *IntegrationMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *IntegrationMutation) ID() (id uuid.UUID, exists bool) {
+func (m *IntegrationMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1767,12 +1766,12 @@ func (m *IntegrationMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *IntegrationMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *IntegrationMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -1855,12 +1854,12 @@ func (m *IntegrationMutation) ResetUpdatedAt() {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *IntegrationMutation) SetCreatedBy(u uuid.UUID) {
-	m.created_by = &u
+func (m *IntegrationMutation) SetCreatedBy(s string) {
+	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *IntegrationMutation) CreatedBy() (r uuid.UUID, exists bool) {
+func (m *IntegrationMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -1871,7 +1870,7 @@ func (m *IntegrationMutation) CreatedBy() (r uuid.UUID, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Integration entity.
 // If the Integration object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *IntegrationMutation) OldCreatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *IntegrationMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -1904,12 +1903,12 @@ func (m *IntegrationMutation) ResetCreatedBy() {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *IntegrationMutation) SetUpdatedBy(u uuid.UUID) {
-	m.updated_by = &u
+func (m *IntegrationMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *IntegrationMutation) UpdatedBy() (r uuid.UUID, exists bool) {
+func (m *IntegrationMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -1920,7 +1919,7 @@ func (m *IntegrationMutation) UpdatedBy() (r uuid.UUID, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Integration entity.
 // If the Integration object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *IntegrationMutation) OldUpdatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *IntegrationMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -2110,7 +2109,7 @@ func (m *IntegrationMutation) ResetSecretName() {
 }
 
 // SetOwnerID sets the "owner" edge to the Organization entity by id.
-func (m *IntegrationMutation) SetOwnerID(id uuid.UUID) {
+func (m *IntegrationMutation) SetOwnerID(id string) {
 	m.owner = &id
 }
 
@@ -2125,7 +2124,7 @@ func (m *IntegrationMutation) OwnerCleared() bool {
 }
 
 // OwnerID returns the "owner" edge ID in the mutation.
-func (m *IntegrationMutation) OwnerID() (id uuid.UUID, exists bool) {
+func (m *IntegrationMutation) OwnerID() (id string, exists bool) {
 	if m.owner != nil {
 		return *m.owner, true
 	}
@@ -2135,7 +2134,7 @@ func (m *IntegrationMutation) OwnerID() (id uuid.UUID, exists bool) {
 // OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // OwnerID instead. It exists only for internal usage by the builders.
-func (m *IntegrationMutation) OwnerIDs() (ids []uuid.UUID) {
+func (m *IntegrationMutation) OwnerIDs() (ids []string) {
 	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2280,14 +2279,14 @@ func (m *IntegrationMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case integration.FieldCreatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
 	case integration.FieldUpdatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2498,27 +2497,27 @@ type OrganizationMutation struct {
 	config
 	op                  Op
 	typ                 string
-	id                  *uuid.UUID
+	id                  *string
 	created_at          *time.Time
 	updated_at          *time.Time
-	created_by          *uuid.UUID
-	updated_by          *uuid.UUID
+	created_by          *string
+	updated_by          *string
 	name                *string
 	description         *string
 	clearedFields       map[string]struct{}
-	parent              *uuid.UUID
+	parent              *string
 	clearedparent       bool
-	children            map[uuid.UUID]struct{}
-	removedchildren     map[uuid.UUID]struct{}
+	children            map[string]struct{}
+	removedchildren     map[string]struct{}
 	clearedchildren     bool
-	users               map[uuid.UUID]struct{}
-	removedusers        map[uuid.UUID]struct{}
+	users               map[string]struct{}
+	removedusers        map[string]struct{}
 	clearedusers        bool
-	groups              map[uuid.UUID]struct{}
-	removedgroups       map[uuid.UUID]struct{}
+	groups              map[string]struct{}
+	removedgroups       map[string]struct{}
 	clearedgroups       bool
-	integrations        map[uuid.UUID]struct{}
-	removedintegrations map[uuid.UUID]struct{}
+	integrations        map[string]struct{}
+	removedintegrations map[string]struct{}
 	clearedintegrations bool
 	done                bool
 	oldValue            func(context.Context) (*Organization, error)
@@ -2545,7 +2544,7 @@ func newOrganizationMutation(c config, op Op, opts ...organizationOption) *Organ
 }
 
 // withOrganizationID sets the ID field of the mutation.
-func withOrganizationID(id uuid.UUID) organizationOption {
+func withOrganizationID(id string) organizationOption {
 	return func(m *OrganizationMutation) {
 		var (
 			err   error
@@ -2597,13 +2596,13 @@ func (m OrganizationMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Organization entities.
-func (m *OrganizationMutation) SetID(id uuid.UUID) {
+func (m *OrganizationMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *OrganizationMutation) ID() (id uuid.UUID, exists bool) {
+func (m *OrganizationMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2614,12 +2613,12 @@ func (m *OrganizationMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *OrganizationMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *OrganizationMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -2702,12 +2701,12 @@ func (m *OrganizationMutation) ResetUpdatedAt() {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *OrganizationMutation) SetCreatedBy(u uuid.UUID) {
-	m.created_by = &u
+func (m *OrganizationMutation) SetCreatedBy(s string) {
+	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *OrganizationMutation) CreatedBy() (r uuid.UUID, exists bool) {
+func (m *OrganizationMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -2718,7 +2717,7 @@ func (m *OrganizationMutation) CreatedBy() (r uuid.UUID, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldCreatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *OrganizationMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -2751,12 +2750,12 @@ func (m *OrganizationMutation) ResetCreatedBy() {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *OrganizationMutation) SetUpdatedBy(u uuid.UUID) {
-	m.updated_by = &u
+func (m *OrganizationMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *OrganizationMutation) UpdatedBy() (r uuid.UUID, exists bool) {
+func (m *OrganizationMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -2767,7 +2766,7 @@ func (m *OrganizationMutation) UpdatedBy() (r uuid.UUID, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldUpdatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *OrganizationMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -2885,12 +2884,12 @@ func (m *OrganizationMutation) ResetDescription() {
 }
 
 // SetParentOrganizationID sets the "parent_organization_id" field.
-func (m *OrganizationMutation) SetParentOrganizationID(u uuid.UUID) {
-	m.parent = &u
+func (m *OrganizationMutation) SetParentOrganizationID(s string) {
+	m.parent = &s
 }
 
 // ParentOrganizationID returns the value of the "parent_organization_id" field in the mutation.
-func (m *OrganizationMutation) ParentOrganizationID() (r uuid.UUID, exists bool) {
+func (m *OrganizationMutation) ParentOrganizationID() (r string, exists bool) {
 	v := m.parent
 	if v == nil {
 		return
@@ -2901,7 +2900,7 @@ func (m *OrganizationMutation) ParentOrganizationID() (r uuid.UUID, exists bool)
 // OldParentOrganizationID returns the old "parent_organization_id" field's value of the Organization entity.
 // If the Organization object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrganizationMutation) OldParentOrganizationID(ctx context.Context) (v uuid.UUID, err error) {
+func (m *OrganizationMutation) OldParentOrganizationID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldParentOrganizationID is only allowed on UpdateOne operations")
 	}
@@ -2934,7 +2933,7 @@ func (m *OrganizationMutation) ResetParentOrganizationID() {
 }
 
 // SetParentID sets the "parent" edge to the Organization entity by id.
-func (m *OrganizationMutation) SetParentID(id uuid.UUID) {
+func (m *OrganizationMutation) SetParentID(id string) {
 	m.parent = &id
 }
 
@@ -2950,7 +2949,7 @@ func (m *OrganizationMutation) ParentCleared() bool {
 }
 
 // ParentID returns the "parent" edge ID in the mutation.
-func (m *OrganizationMutation) ParentID() (id uuid.UUID, exists bool) {
+func (m *OrganizationMutation) ParentID() (id string, exists bool) {
 	if m.parent != nil {
 		return *m.parent, true
 	}
@@ -2960,7 +2959,7 @@ func (m *OrganizationMutation) ParentID() (id uuid.UUID, exists bool) {
 // ParentIDs returns the "parent" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // ParentID instead. It exists only for internal usage by the builders.
-func (m *OrganizationMutation) ParentIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) ParentIDs() (ids []string) {
 	if id := m.parent; id != nil {
 		ids = append(ids, *id)
 	}
@@ -2974,9 +2973,9 @@ func (m *OrganizationMutation) ResetParent() {
 }
 
 // AddChildIDs adds the "children" edge to the Organization entity by ids.
-func (m *OrganizationMutation) AddChildIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) AddChildIDs(ids ...string) {
 	if m.children == nil {
-		m.children = make(map[uuid.UUID]struct{})
+		m.children = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.children[ids[i]] = struct{}{}
@@ -2994,9 +2993,9 @@ func (m *OrganizationMutation) ChildrenCleared() bool {
 }
 
 // RemoveChildIDs removes the "children" edge to the Organization entity by IDs.
-func (m *OrganizationMutation) RemoveChildIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) RemoveChildIDs(ids ...string) {
 	if m.removedchildren == nil {
-		m.removedchildren = make(map[uuid.UUID]struct{})
+		m.removedchildren = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.children, ids[i])
@@ -3005,7 +3004,7 @@ func (m *OrganizationMutation) RemoveChildIDs(ids ...uuid.UUID) {
 }
 
 // RemovedChildren returns the removed IDs of the "children" edge to the Organization entity.
-func (m *OrganizationMutation) RemovedChildrenIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) RemovedChildrenIDs() (ids []string) {
 	for id := range m.removedchildren {
 		ids = append(ids, id)
 	}
@@ -3013,7 +3012,7 @@ func (m *OrganizationMutation) RemovedChildrenIDs() (ids []uuid.UUID) {
 }
 
 // ChildrenIDs returns the "children" edge IDs in the mutation.
-func (m *OrganizationMutation) ChildrenIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) ChildrenIDs() (ids []string) {
 	for id := range m.children {
 		ids = append(ids, id)
 	}
@@ -3028,9 +3027,9 @@ func (m *OrganizationMutation) ResetChildren() {
 }
 
 // AddUserIDs adds the "users" edge to the User entity by ids.
-func (m *OrganizationMutation) AddUserIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) AddUserIDs(ids ...string) {
 	if m.users == nil {
-		m.users = make(map[uuid.UUID]struct{})
+		m.users = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.users[ids[i]] = struct{}{}
@@ -3048,9 +3047,9 @@ func (m *OrganizationMutation) UsersCleared() bool {
 }
 
 // RemoveUserIDs removes the "users" edge to the User entity by IDs.
-func (m *OrganizationMutation) RemoveUserIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) RemoveUserIDs(ids ...string) {
 	if m.removedusers == nil {
-		m.removedusers = make(map[uuid.UUID]struct{})
+		m.removedusers = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.users, ids[i])
@@ -3059,7 +3058,7 @@ func (m *OrganizationMutation) RemoveUserIDs(ids ...uuid.UUID) {
 }
 
 // RemovedUsers returns the removed IDs of the "users" edge to the User entity.
-func (m *OrganizationMutation) RemovedUsersIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) RemovedUsersIDs() (ids []string) {
 	for id := range m.removedusers {
 		ids = append(ids, id)
 	}
@@ -3067,7 +3066,7 @@ func (m *OrganizationMutation) RemovedUsersIDs() (ids []uuid.UUID) {
 }
 
 // UsersIDs returns the "users" edge IDs in the mutation.
-func (m *OrganizationMutation) UsersIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) UsersIDs() (ids []string) {
 	for id := range m.users {
 		ids = append(ids, id)
 	}
@@ -3082,9 +3081,9 @@ func (m *OrganizationMutation) ResetUsers() {
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by ids.
-func (m *OrganizationMutation) AddGroupIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) AddGroupIDs(ids ...string) {
 	if m.groups == nil {
-		m.groups = make(map[uuid.UUID]struct{})
+		m.groups = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.groups[ids[i]] = struct{}{}
@@ -3102,9 +3101,9 @@ func (m *OrganizationMutation) GroupsCleared() bool {
 }
 
 // RemoveGroupIDs removes the "groups" edge to the Group entity by IDs.
-func (m *OrganizationMutation) RemoveGroupIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) RemoveGroupIDs(ids ...string) {
 	if m.removedgroups == nil {
-		m.removedgroups = make(map[uuid.UUID]struct{})
+		m.removedgroups = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.groups, ids[i])
@@ -3113,7 +3112,7 @@ func (m *OrganizationMutation) RemoveGroupIDs(ids ...uuid.UUID) {
 }
 
 // RemovedGroups returns the removed IDs of the "groups" edge to the Group entity.
-func (m *OrganizationMutation) RemovedGroupsIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) RemovedGroupsIDs() (ids []string) {
 	for id := range m.removedgroups {
 		ids = append(ids, id)
 	}
@@ -3121,7 +3120,7 @@ func (m *OrganizationMutation) RemovedGroupsIDs() (ids []uuid.UUID) {
 }
 
 // GroupsIDs returns the "groups" edge IDs in the mutation.
-func (m *OrganizationMutation) GroupsIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) GroupsIDs() (ids []string) {
 	for id := range m.groups {
 		ids = append(ids, id)
 	}
@@ -3136,9 +3135,9 @@ func (m *OrganizationMutation) ResetGroups() {
 }
 
 // AddIntegrationIDs adds the "integrations" edge to the Integration entity by ids.
-func (m *OrganizationMutation) AddIntegrationIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) AddIntegrationIDs(ids ...string) {
 	if m.integrations == nil {
-		m.integrations = make(map[uuid.UUID]struct{})
+		m.integrations = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.integrations[ids[i]] = struct{}{}
@@ -3156,9 +3155,9 @@ func (m *OrganizationMutation) IntegrationsCleared() bool {
 }
 
 // RemoveIntegrationIDs removes the "integrations" edge to the Integration entity by IDs.
-func (m *OrganizationMutation) RemoveIntegrationIDs(ids ...uuid.UUID) {
+func (m *OrganizationMutation) RemoveIntegrationIDs(ids ...string) {
 	if m.removedintegrations == nil {
-		m.removedintegrations = make(map[uuid.UUID]struct{})
+		m.removedintegrations = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.integrations, ids[i])
@@ -3167,7 +3166,7 @@ func (m *OrganizationMutation) RemoveIntegrationIDs(ids ...uuid.UUID) {
 }
 
 // RemovedIntegrations returns the removed IDs of the "integrations" edge to the Integration entity.
-func (m *OrganizationMutation) RemovedIntegrationsIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) RemovedIntegrationsIDs() (ids []string) {
 	for id := range m.removedintegrations {
 		ids = append(ids, id)
 	}
@@ -3175,7 +3174,7 @@ func (m *OrganizationMutation) RemovedIntegrationsIDs() (ids []uuid.UUID) {
 }
 
 // IntegrationsIDs returns the "integrations" edge IDs in the mutation.
-func (m *OrganizationMutation) IntegrationsIDs() (ids []uuid.UUID) {
+func (m *OrganizationMutation) IntegrationsIDs() (ids []string) {
 	for id := range m.integrations {
 		ids = append(ids, id)
 	}
@@ -3314,14 +3313,14 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case organization.FieldCreatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
 	case organization.FieldUpdatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3342,7 +3341,7 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 		m.SetDescription(v)
 		return nil
 	case organization.FieldParentOrganizationID:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -3634,18 +3633,18 @@ type SessionMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *uuid.UUID
+	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
-	created_by    *uuid.UUID
-	updated_by    *uuid.UUID
+	created_by    *string
+	updated_by    *string
 	_type         *session.Type
 	disabled      *bool
 	token         *string
 	user_agent    *string
 	ips           *string
 	clearedFields map[string]struct{}
-	users         *uuid.UUID
+	users         *string
 	clearedusers  bool
 	done          bool
 	oldValue      func(context.Context) (*Session, error)
@@ -3672,7 +3671,7 @@ func newSessionMutation(c config, op Op, opts ...sessionOption) *SessionMutation
 }
 
 // withSessionID sets the ID field of the mutation.
-func withSessionID(id uuid.UUID) sessionOption {
+func withSessionID(id string) sessionOption {
 	return func(m *SessionMutation) {
 		var (
 			err   error
@@ -3724,13 +3723,13 @@ func (m SessionMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of Session entities.
-func (m *SessionMutation) SetID(id uuid.UUID) {
+func (m *SessionMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *SessionMutation) ID() (id uuid.UUID, exists bool) {
+func (m *SessionMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -3741,12 +3740,12 @@ func (m *SessionMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *SessionMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *SessionMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -3829,12 +3828,12 @@ func (m *SessionMutation) ResetUpdatedAt() {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *SessionMutation) SetCreatedBy(u uuid.UUID) {
-	m.created_by = &u
+func (m *SessionMutation) SetCreatedBy(s string) {
+	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *SessionMutation) CreatedBy() (r uuid.UUID, exists bool) {
+func (m *SessionMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -3845,7 +3844,7 @@ func (m *SessionMutation) CreatedBy() (r uuid.UUID, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Session entity.
 // If the Session object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldCreatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *SessionMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -3878,12 +3877,12 @@ func (m *SessionMutation) ResetCreatedBy() {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *SessionMutation) SetUpdatedBy(u uuid.UUID) {
-	m.updated_by = &u
+func (m *SessionMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *SessionMutation) UpdatedBy() (r uuid.UUID, exists bool) {
+func (m *SessionMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -3894,7 +3893,7 @@ func (m *SessionMutation) UpdatedBy() (r uuid.UUID, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Session entity.
 // If the Session object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldUpdatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *SessionMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -4120,7 +4119,7 @@ func (m *SessionMutation) ResetIps() {
 }
 
 // SetUsersID sets the "users" edge to the User entity by id.
-func (m *SessionMutation) SetUsersID(id uuid.UUID) {
+func (m *SessionMutation) SetUsersID(id string) {
 	m.users = &id
 }
 
@@ -4135,7 +4134,7 @@ func (m *SessionMutation) UsersCleared() bool {
 }
 
 // UsersID returns the "users" edge ID in the mutation.
-func (m *SessionMutation) UsersID() (id uuid.UUID, exists bool) {
+func (m *SessionMutation) UsersID() (id string, exists bool) {
 	if m.users != nil {
 		return *m.users, true
 	}
@@ -4145,7 +4144,7 @@ func (m *SessionMutation) UsersID() (id uuid.UUID, exists bool) {
 // UsersIDs returns the "users" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
 // UsersID instead. It exists only for internal usage by the builders.
-func (m *SessionMutation) UsersIDs() (ids []uuid.UUID) {
+func (m *SessionMutation) UsersIDs() (ids []string) {
 	if id := m.users; id != nil {
 		ids = append(ids, *id)
 	}
@@ -4297,14 +4296,14 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case session.FieldCreatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
 	case session.FieldUpdatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4525,11 +4524,11 @@ type UserMutation struct {
 	config
 	op                   Op
 	typ                  string
-	id                   *uuid.UUID
+	id                   *string
 	created_at           *time.Time
 	updated_at           *time.Time
-	created_by           *uuid.UUID
-	updated_by           *uuid.UUID
+	created_by           *string
+	updated_by           *string
 	email                *string
 	first_name           *string
 	last_name            *string
@@ -4542,14 +4541,14 @@ type UserMutation struct {
 	suspended_at         *time.Time
 	recovery_code        *string
 	clearedFields        map[string]struct{}
-	organizations        map[uuid.UUID]struct{}
-	removedorganizations map[uuid.UUID]struct{}
+	organizations        map[string]struct{}
+	removedorganizations map[string]struct{}
 	clearedorganizations bool
-	sessions             map[uuid.UUID]struct{}
-	removedsessions      map[uuid.UUID]struct{}
+	sessions             map[string]struct{}
+	removedsessions      map[string]struct{}
 	clearedsessions      bool
-	groups               map[uuid.UUID]struct{}
-	removedgroups        map[uuid.UUID]struct{}
+	groups               map[string]struct{}
+	removedgroups        map[string]struct{}
 	clearedgroups        bool
 	done                 bool
 	oldValue             func(context.Context) (*User, error)
@@ -4576,7 +4575,7 @@ func newUserMutation(c config, op Op, opts ...userOption) *UserMutation {
 }
 
 // withUserID sets the ID field of the mutation.
-func withUserID(id uuid.UUID) userOption {
+func withUserID(id string) userOption {
 	return func(m *UserMutation) {
 		var (
 			err   error
@@ -4628,13 +4627,13 @@ func (m UserMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of User entities.
-func (m *UserMutation) SetID(id uuid.UUID) {
+func (m *UserMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *UserMutation) ID() (id uuid.UUID, exists bool) {
+func (m *UserMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -4645,12 +4644,12 @@ func (m *UserMutation) ID() (id uuid.UUID, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *UserMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+func (m *UserMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []uuid.UUID{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -4733,12 +4732,12 @@ func (m *UserMutation) ResetUpdatedAt() {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (m *UserMutation) SetCreatedBy(u uuid.UUID) {
-	m.created_by = &u
+func (m *UserMutation) SetCreatedBy(s string) {
+	m.created_by = &s
 }
 
 // CreatedBy returns the value of the "created_by" field in the mutation.
-func (m *UserMutation) CreatedBy() (r uuid.UUID, exists bool) {
+func (m *UserMutation) CreatedBy() (r string, exists bool) {
 	v := m.created_by
 	if v == nil {
 		return
@@ -4749,7 +4748,7 @@ func (m *UserMutation) CreatedBy() (r uuid.UUID, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCreatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *UserMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -4782,12 +4781,12 @@ func (m *UserMutation) ResetCreatedBy() {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (m *UserMutation) SetUpdatedBy(u uuid.UUID) {
-	m.updated_by = &u
+func (m *UserMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
 }
 
 // UpdatedBy returns the value of the "updated_by" field in the mutation.
-func (m *UserMutation) UpdatedBy() (r uuid.UUID, exists bool) {
+func (m *UserMutation) UpdatedBy() (r string, exists bool) {
 	v := m.updated_by
 	if v == nil {
 		return
@@ -4798,7 +4797,7 @@ func (m *UserMutation) UpdatedBy() (r uuid.UUID, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldUpdatedBy(ctx context.Context) (v uuid.UUID, err error) {
+func (m *UserMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -5305,9 +5304,9 @@ func (m *UserMutation) ResetRecoveryCode() {
 }
 
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
-func (m *UserMutation) AddOrganizationIDs(ids ...uuid.UUID) {
+func (m *UserMutation) AddOrganizationIDs(ids ...string) {
 	if m.organizations == nil {
-		m.organizations = make(map[uuid.UUID]struct{})
+		m.organizations = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.organizations[ids[i]] = struct{}{}
@@ -5325,9 +5324,9 @@ func (m *UserMutation) OrganizationsCleared() bool {
 }
 
 // RemoveOrganizationIDs removes the "organizations" edge to the Organization entity by IDs.
-func (m *UserMutation) RemoveOrganizationIDs(ids ...uuid.UUID) {
+func (m *UserMutation) RemoveOrganizationIDs(ids ...string) {
 	if m.removedorganizations == nil {
-		m.removedorganizations = make(map[uuid.UUID]struct{})
+		m.removedorganizations = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.organizations, ids[i])
@@ -5336,7 +5335,7 @@ func (m *UserMutation) RemoveOrganizationIDs(ids ...uuid.UUID) {
 }
 
 // RemovedOrganizations returns the removed IDs of the "organizations" edge to the Organization entity.
-func (m *UserMutation) RemovedOrganizationsIDs() (ids []uuid.UUID) {
+func (m *UserMutation) RemovedOrganizationsIDs() (ids []string) {
 	for id := range m.removedorganizations {
 		ids = append(ids, id)
 	}
@@ -5344,7 +5343,7 @@ func (m *UserMutation) RemovedOrganizationsIDs() (ids []uuid.UUID) {
 }
 
 // OrganizationsIDs returns the "organizations" edge IDs in the mutation.
-func (m *UserMutation) OrganizationsIDs() (ids []uuid.UUID) {
+func (m *UserMutation) OrganizationsIDs() (ids []string) {
 	for id := range m.organizations {
 		ids = append(ids, id)
 	}
@@ -5359,9 +5358,9 @@ func (m *UserMutation) ResetOrganizations() {
 }
 
 // AddSessionIDs adds the "sessions" edge to the Session entity by ids.
-func (m *UserMutation) AddSessionIDs(ids ...uuid.UUID) {
+func (m *UserMutation) AddSessionIDs(ids ...string) {
 	if m.sessions == nil {
-		m.sessions = make(map[uuid.UUID]struct{})
+		m.sessions = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.sessions[ids[i]] = struct{}{}
@@ -5379,9 +5378,9 @@ func (m *UserMutation) SessionsCleared() bool {
 }
 
 // RemoveSessionIDs removes the "sessions" edge to the Session entity by IDs.
-func (m *UserMutation) RemoveSessionIDs(ids ...uuid.UUID) {
+func (m *UserMutation) RemoveSessionIDs(ids ...string) {
 	if m.removedsessions == nil {
-		m.removedsessions = make(map[uuid.UUID]struct{})
+		m.removedsessions = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.sessions, ids[i])
@@ -5390,7 +5389,7 @@ func (m *UserMutation) RemoveSessionIDs(ids ...uuid.UUID) {
 }
 
 // RemovedSessions returns the removed IDs of the "sessions" edge to the Session entity.
-func (m *UserMutation) RemovedSessionsIDs() (ids []uuid.UUID) {
+func (m *UserMutation) RemovedSessionsIDs() (ids []string) {
 	for id := range m.removedsessions {
 		ids = append(ids, id)
 	}
@@ -5398,7 +5397,7 @@ func (m *UserMutation) RemovedSessionsIDs() (ids []uuid.UUID) {
 }
 
 // SessionsIDs returns the "sessions" edge IDs in the mutation.
-func (m *UserMutation) SessionsIDs() (ids []uuid.UUID) {
+func (m *UserMutation) SessionsIDs() (ids []string) {
 	for id := range m.sessions {
 		ids = append(ids, id)
 	}
@@ -5413,9 +5412,9 @@ func (m *UserMutation) ResetSessions() {
 }
 
 // AddGroupIDs adds the "groups" edge to the Group entity by ids.
-func (m *UserMutation) AddGroupIDs(ids ...uuid.UUID) {
+func (m *UserMutation) AddGroupIDs(ids ...string) {
 	if m.groups == nil {
-		m.groups = make(map[uuid.UUID]struct{})
+		m.groups = make(map[string]struct{})
 	}
 	for i := range ids {
 		m.groups[ids[i]] = struct{}{}
@@ -5433,9 +5432,9 @@ func (m *UserMutation) GroupsCleared() bool {
 }
 
 // RemoveGroupIDs removes the "groups" edge to the Group entity by IDs.
-func (m *UserMutation) RemoveGroupIDs(ids ...uuid.UUID) {
+func (m *UserMutation) RemoveGroupIDs(ids ...string) {
 	if m.removedgroups == nil {
-		m.removedgroups = make(map[uuid.UUID]struct{})
+		m.removedgroups = make(map[string]struct{})
 	}
 	for i := range ids {
 		delete(m.groups, ids[i])
@@ -5444,7 +5443,7 @@ func (m *UserMutation) RemoveGroupIDs(ids ...uuid.UUID) {
 }
 
 // RemovedGroups returns the removed IDs of the "groups" edge to the Group entity.
-func (m *UserMutation) RemovedGroupsIDs() (ids []uuid.UUID) {
+func (m *UserMutation) RemovedGroupsIDs() (ids []string) {
 	for id := range m.removedgroups {
 		ids = append(ids, id)
 	}
@@ -5452,7 +5451,7 @@ func (m *UserMutation) RemovedGroupsIDs() (ids []uuid.UUID) {
 }
 
 // GroupsIDs returns the "groups" edge IDs in the mutation.
-func (m *UserMutation) GroupsIDs() (ids []uuid.UUID) {
+func (m *UserMutation) GroupsIDs() (ids []string) {
 	for id := range m.groups {
 		ids = append(ids, id)
 	}
@@ -5647,14 +5646,14 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetUpdatedAt(v)
 		return nil
 	case user.FieldCreatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedBy(v)
 		return nil
 	case user.FieldUpdatedBy:
-		v, ok := value.(uuid.UUID)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

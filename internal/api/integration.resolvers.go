@@ -9,7 +9,6 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/google/uuid"
 )
 
 // CreateIntegration is the resolver for the createIntegration field.
@@ -29,7 +28,7 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 }
 
 // UpdateIntegration is the resolver for the updateIntegration field.
-func (r *mutationResolver) UpdateIntegration(ctx context.Context, id uuid.UUID, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
+func (r *mutationResolver) UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
 	// TODO - add permissions checks
 
 	i, err := r.client.Integration.Get(ctx, id)
@@ -56,7 +55,7 @@ func (r *mutationResolver) UpdateIntegration(ctx context.Context, id uuid.UUID, 
 }
 
 // DeleteIntegration is the resolver for the deleteIntegration field.
-func (r *mutationResolver) DeleteIntegration(ctx context.Context, id uuid.UUID) (*IntegrationDeletePayload, error) {
+func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*IntegrationDeletePayload, error) {
 	// TODO - add permissions checks
 
 	if err := r.client.Integration.DeleteOneID(id).Exec(ctx); err != nil {
@@ -72,7 +71,7 @@ func (r *mutationResolver) DeleteIntegration(ctx context.Context, id uuid.UUID) 
 }
 
 // Integration is the resolver for the integration field.
-func (r *queryResolver) Integration(ctx context.Context, id uuid.UUID) (*generated.Integration, error) {
+func (r *queryResolver) Integration(ctx context.Context, id string) (*generated.Integration, error) {
 	// TODO - add permissions checks
 
 	i, err := r.client.Integration.Get(ctx, id)

@@ -15,6 +15,8 @@ import (
 	"entgo.io/ent/entc/gen"
 	"github.com/hedwigz/entviz"
 	"github.com/ogen-go/ogen"
+
+	_ "github.com/datumforge/datum/internal/nanox"
 )
 
 func main() {
@@ -32,6 +34,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("creating ogent extension: %v", err)
 	}
+
+	ogent.Options()
 
 	gqlExt, err := entgql.NewExtension(
 		// Tell Ent to generate a GraphQL schema for
@@ -60,10 +64,10 @@ func main() {
 	},
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
-			ogent,
-			oas,
 			entviz.Extension{},
 			gqlExt,
+			ogent,
+			oas,
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

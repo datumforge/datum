@@ -12,8 +12,6 @@ const (
 	idLength = 21
 )
 
-var _ ent.Mixin = (*IDMixin)(nil)
-
 // IDMixin holds the schema definition for the ID
 type IDMixin struct {
 	mixin.Schema
@@ -23,7 +21,6 @@ type IDMixin struct {
 func (IDMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").
-			Unique().
 			Immutable().
 			DefaultFunc(mustGetNewID),
 	}

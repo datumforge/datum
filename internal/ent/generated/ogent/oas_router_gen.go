@@ -532,6 +532,60 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 				}
+			case 'r': // Prefix: "refresh-tokens"
+				if l := len("refresh-tokens"); len(elem) >= l && elem[0:l] == "refresh-tokens" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch r.Method {
+					case "GET":
+						s.handleListRefreshTokenRequest([0]string{}, elemIsEscaped, w, r)
+					case "POST":
+						s.handleCreateRefreshTokenRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET,POST")
+					}
+
+					return
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "id"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "DELETE":
+							s.handleDeleteRefreshTokenRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "GET":
+							s.handleReadRefreshTokenRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						case "PATCH":
+							s.handleUpdateRefreshTokenRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "DELETE,GET,PATCH")
+						}
+
+						return
+					}
+				}
 			case 's': // Prefix: "sessions"
 				if l := len("sessions"); len(elem) >= l && elem[0:l] == "sessions" {
 					elem = elem[l:]
@@ -1403,6 +1457,82 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									return
 								}
 							}
+						}
+					}
+				}
+			case 'r': // Prefix: "refresh-tokens"
+				if l := len("refresh-tokens"); len(elem) >= l && elem[0:l] == "refresh-tokens" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						r.name = "ListRefreshToken"
+						r.summary = "List RefreshTokens"
+						r.operationID = "listRefreshToken"
+						r.pathPattern = "/refresh-tokens"
+						r.args = args
+						r.count = 0
+						return r, true
+					case "POST":
+						r.name = "CreateRefreshToken"
+						r.summary = "Create a new RefreshToken"
+						r.operationID = "createRefreshToken"
+						r.pathPattern = "/refresh-tokens"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "id"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						switch method {
+						case "DELETE":
+							// Leaf: DeleteRefreshToken
+							r.name = "DeleteRefreshToken"
+							r.summary = "Deletes a RefreshToken by ID"
+							r.operationID = "deleteRefreshToken"
+							r.pathPattern = "/refresh-tokens/{id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "GET":
+							// Leaf: ReadRefreshToken
+							r.name = "ReadRefreshToken"
+							r.summary = "Find a RefreshToken by ID"
+							r.operationID = "readRefreshToken"
+							r.pathPattern = "/refresh-tokens/{id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						case "PATCH":
+							// Leaf: UpdateRefreshToken
+							r.name = "UpdateRefreshToken"
+							r.summary = "Updates a RefreshToken"
+							r.operationID = "updateRefreshToken"
+							r.pathPattern = "/refresh-tokens/{id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
 						}
 					}
 				}

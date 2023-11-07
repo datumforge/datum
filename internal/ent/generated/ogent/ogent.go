@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/go-faster/jx"
@@ -1141,6 +1142,171 @@ func (h *OgentHandler) ListOrganizationIntegrations(ctx context.Context, params 
 	}
 	r := NewOrganizationIntegrationsLists(es)
 	return (*ListOrganizationIntegrationsOKApplicationJSON)(&r), nil
+}
+
+// CreateRefreshToken handles POST /refresh-tokens requests.
+func (h *OgentHandler) CreateRefreshToken(ctx context.Context, req *CreateRefreshTokenReq) (CreateRefreshTokenRes, error) {
+	b := h.client.RefreshToken.Create()
+	// Add all fields.
+	b.SetClientID(req.ClientID)
+	// Add all edges.
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.RefreshToken.Query().Where(refreshtoken.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewRefreshTokenCreate(e), nil
+}
+
+// ReadRefreshToken handles GET /refresh-tokens/{id} requests.
+func (h *OgentHandler) ReadRefreshToken(ctx context.Context, params ReadRefreshTokenParams) (ReadRefreshTokenRes, error) {
+	q := h.client.RefreshToken.Query().Where(refreshtoken.IDEQ(params.ID))
+	e, err := q.Only(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return NewRefreshTokenRead(e), nil
+}
+
+// UpdateRefreshToken handles PATCH /refresh-tokens/{id} requests.
+func (h *OgentHandler) UpdateRefreshToken(ctx context.Context, req *UpdateRefreshTokenReq, params UpdateRefreshTokenParams) (UpdateRefreshTokenRes, error) {
+	b := h.client.RefreshToken.UpdateOneID(params.ID)
+	// Add all fields.
+	if v, ok := req.ClientID.Get(); ok {
+		b.SetClientID(v)
+	}
+	// Add all edges.
+	// Persist to storage.
+	e, err := b.Save(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	// Reload the entity to attach all eager-loaded edges.
+	q := h.client.RefreshToken.Query().Where(refreshtoken.ID(e.ID))
+	e, err = q.Only(ctx)
+	if err != nil {
+		// This should never happen.
+		return nil, err
+	}
+	return NewRefreshTokenUpdate(e), nil
+}
+
+// DeleteRefreshToken handles DELETE /refresh-tokens/{id} requests.
+func (h *OgentHandler) DeleteRefreshToken(ctx context.Context, params DeleteRefreshTokenParams) (DeleteRefreshTokenRes, error) {
+	err := h.client.RefreshToken.DeleteOneID(params.ID).Exec(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsConstraintError(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	return new(DeleteRefreshTokenNoContent), nil
+
+}
+
+// ListRefreshToken handles GET /refresh-tokens requests.
+func (h *OgentHandler) ListRefreshToken(ctx context.Context, params ListRefreshTokenParams) (ListRefreshTokenRes, error) {
+	q := h.client.RefreshToken.Query()
+	page := 1
+	if v, ok := params.Page.Get(); ok {
+		page = v
+	}
+	itemsPerPage := 30
+	if v, ok := params.ItemsPerPage.Get(); ok {
+		itemsPerPage = v
+	}
+	q.Limit(itemsPerPage).Offset((page - 1) * itemsPerPage)
+
+	es, err := q.All(ctx)
+	if err != nil {
+		switch {
+		case generated.IsNotFound(err):
+			return &R404{
+				Code:   http.StatusNotFound,
+				Status: http.StatusText(http.StatusNotFound),
+				Errors: rawError(err),
+			}, nil
+		case generated.IsNotSingular(err):
+			return &R409{
+				Code:   http.StatusConflict,
+				Status: http.StatusText(http.StatusConflict),
+				Errors: rawError(err),
+			}, nil
+		default:
+			// Let the server handle the error.
+			return nil, err
+		}
+	}
+	r := NewRefreshTokenLists(es)
+	return (*ListRefreshTokenOKApplicationJSON)(&r), nil
 }
 
 // CreateSession handles POST /sessions requests.

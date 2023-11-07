@@ -32,6 +32,12 @@ type Handler interface {
 	//
 	// POST /organizations
 	CreateOrganization(ctx context.Context, req *CreateOrganizationReq) (CreateOrganizationRes, error)
+	// CreateRefreshToken implements createRefreshToken operation.
+	//
+	// Creates a new RefreshToken and persists it to storage.
+	//
+	// POST /refresh-tokens
+	CreateRefreshToken(ctx context.Context, req *CreateRefreshTokenReq) (CreateRefreshTokenRes, error)
 	// CreateSession implements createSession operation.
 	//
 	// Creates a new Session and persists it to storage.
@@ -68,6 +74,12 @@ type Handler interface {
 	//
 	// DELETE /organizations/{id}
 	DeleteOrganization(ctx context.Context, params DeleteOrganizationParams) (DeleteOrganizationRes, error)
+	// DeleteRefreshToken implements deleteRefreshToken operation.
+	//
+	// Deletes the RefreshToken with the requested ID.
+	//
+	// DELETE /refresh-tokens/{id}
+	DeleteRefreshToken(ctx context.Context, params DeleteRefreshTokenParams) (DeleteRefreshTokenRes, error)
 	// DeleteSession implements deleteSession operation.
 	//
 	// Deletes the Session with the requested ID.
@@ -134,6 +146,12 @@ type Handler interface {
 	//
 	// GET /organizations/{id}/users
 	ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (ListOrganizationUsersRes, error)
+	// ListRefreshToken implements listRefreshToken operation.
+	//
+	// List RefreshTokens.
+	//
+	// GET /refresh-tokens
+	ListRefreshToken(ctx context.Context, params ListRefreshTokenParams) (ListRefreshTokenRes, error)
 	// ListSession implements listSession operation.
 	//
 	// List Sessions.
@@ -218,6 +236,12 @@ type Handler interface {
 	//
 	// GET /organizations/{id}/parent
 	ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (ReadOrganizationParentRes, error)
+	// ReadRefreshToken implements readRefreshToken operation.
+	//
+	// Finds the RefreshToken with the requested ID and returns it.
+	//
+	// GET /refresh-tokens/{id}
+	ReadRefreshToken(ctx context.Context, params ReadRefreshTokenParams) (ReadRefreshTokenRes, error)
 	// ReadSession implements readSession operation.
 	//
 	// Finds the Session with the requested ID and returns it.
@@ -260,6 +284,12 @@ type Handler interface {
 	//
 	// PATCH /organizations/{id}
 	UpdateOrganization(ctx context.Context, req *UpdateOrganizationReq, params UpdateOrganizationParams) (UpdateOrganizationRes, error)
+	// UpdateRefreshToken implements updateRefreshToken operation.
+	//
+	// Updates a RefreshToken and persists changes to storage.
+	//
+	// PATCH /refresh-tokens/{id}
+	UpdateRefreshToken(ctx context.Context, req *UpdateRefreshTokenReq, params UpdateRefreshTokenParams) (UpdateRefreshTokenRes, error)
 	// UpdateSession implements updateSession operation.
 	//
 	// Updates a Session and persists changes to storage.

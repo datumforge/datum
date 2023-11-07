@@ -8,6 +8,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -19,7 +20,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 6)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
@@ -102,6 +103,20 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   refreshtoken.Table,
+			Columns: refreshtoken.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: refreshtoken.FieldID,
+			},
+		},
+		Type: "RefreshToken",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			refreshtoken.FieldClientID: {Type: field.TypeString, Column: refreshtoken.FieldClientID},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -122,7 +137,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldIps:       {Type: field.TypeString, Column: session.FieldIps},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -768,6 +783,51 @@ func (f *OrganizationFilter) WhereHasIntegrationsWith(preds ...predicate.Integra
 }
 
 // addPredicate implements the predicateAdder interface.
+func (rtq *RefreshTokenQuery) addPredicate(pred func(s *sql.Selector)) {
+	rtq.predicates = append(rtq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the RefreshTokenQuery builder.
+func (rtq *RefreshTokenQuery) Filter() *RefreshTokenFilter {
+	return &RefreshTokenFilter{config: rtq.config, predicateAdder: rtq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *RefreshTokenMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the RefreshTokenMutation builder.
+func (m *RefreshTokenMutation) Filter() *RefreshTokenFilter {
+	return &RefreshTokenFilter{config: m.config, predicateAdder: m}
+}
+
+// RefreshTokenFilter provides a generic filtering capability at runtime for RefreshTokenQuery.
+type RefreshTokenFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *RefreshTokenFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *RefreshTokenFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldID))
+}
+
+// WhereClientID applies the entql string predicate on the client_id field.
+func (f *RefreshTokenFilter) WhereClientID(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldClientID))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (sq *SessionQuery) addPredicate(pred func(s *sql.Selector)) {
 	sq.predicates = append(sq.predicates, pred)
 }
@@ -796,7 +856,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -895,7 +955,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

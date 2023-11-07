@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/schema"
@@ -158,6 +159,19 @@ func init() {
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() string)
+	refreshtokenMixin := schema.RefreshToken{}.Mixin()
+	refreshtokenMixinFields0 := refreshtokenMixin[0].Fields()
+	_ = refreshtokenMixinFields0
+	refreshtokenFields := schema.RefreshToken{}.Fields()
+	_ = refreshtokenFields
+	// refreshtokenDescClientID is the schema descriptor for client_id field.
+	refreshtokenDescClientID := refreshtokenFields[0].Descriptor()
+	// refreshtoken.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
+	refreshtoken.ClientIDValidator = refreshtokenDescClientID.Validators[0].(func(string) error)
+	// refreshtokenDescID is the schema descriptor for id field.
+	refreshtokenDescID := refreshtokenMixinFields0[0].Descriptor()
+	// refreshtoken.DefaultID holds the default value on creation for the id field.
+	refreshtoken.DefaultID = refreshtokenDescID.Default.(func() string)
 	sessionMixin := schema.Session{}.Mixin()
 	sessionMixinHooks0 := sessionMixin[0].Hooks()
 	session.Hooks[0] = sessionMixinHooks0[0]

@@ -49,6 +49,15 @@ func (UnimplementedHandler) CreateOrganization(ctx context.Context, req *CreateO
 	return r, ht.ErrNotImplemented
 }
 
+// CreateRefreshToken implements createRefreshToken operation.
+//
+// Creates a new RefreshToken and persists it to storage.
+//
+// POST /refresh-tokens
+func (UnimplementedHandler) CreateRefreshToken(ctx context.Context, req *CreateRefreshTokenReq) (r CreateRefreshTokenRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // CreateSession implements createSession operation.
 //
 // Creates a new Session and persists it to storage.
@@ -100,6 +109,15 @@ func (UnimplementedHandler) DeleteIntegration(ctx context.Context, params Delete
 //
 // DELETE /organizations/{id}
 func (UnimplementedHandler) DeleteOrganization(ctx context.Context, params DeleteOrganizationParams) (r DeleteOrganizationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// DeleteRefreshToken implements deleteRefreshToken operation.
+//
+// Deletes the RefreshToken with the requested ID.
+//
+// DELETE /refresh-tokens/{id}
+func (UnimplementedHandler) DeleteRefreshToken(ctx context.Context, params DeleteRefreshTokenParams) (r DeleteRefreshTokenRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -199,6 +217,15 @@ func (UnimplementedHandler) ListOrganizationIntegrations(ctx context.Context, pa
 //
 // GET /organizations/{id}/users
 func (UnimplementedHandler) ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (r ListOrganizationUsersRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ListRefreshToken implements listRefreshToken operation.
+//
+// List RefreshTokens.
+//
+// GET /refresh-tokens
+func (UnimplementedHandler) ListRefreshToken(ctx context.Context, params ListRefreshTokenParams) (r ListRefreshTokenRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -328,6 +355,15 @@ func (UnimplementedHandler) ReadOrganizationParent(ctx context.Context, params R
 	return r, ht.ErrNotImplemented
 }
 
+// ReadRefreshToken implements readRefreshToken operation.
+//
+// Finds the RefreshToken with the requested ID and returns it.
+//
+// GET /refresh-tokens/{id}
+func (UnimplementedHandler) ReadRefreshToken(ctx context.Context, params ReadRefreshTokenParams) (r ReadRefreshTokenRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ReadSession implements readSession operation.
 //
 // Finds the Session with the requested ID and returns it.
@@ -388,6 +424,15 @@ func (UnimplementedHandler) UpdateIntegration(ctx context.Context, req *UpdateIn
 //
 // PATCH /organizations/{id}
 func (UnimplementedHandler) UpdateOrganization(ctx context.Context, req *UpdateOrganizationReq, params UpdateOrganizationParams) (r UpdateOrganizationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// UpdateRefreshToken implements updateRefreshToken operation.
+//
+// Updates a RefreshToken and persists changes to storage.
+//
+// PATCH /refresh-tokens/{id}
+func (UnimplementedHandler) UpdateRefreshToken(ctx context.Context, req *UpdateRefreshTokenReq, params UpdateRefreshTokenParams) (r UpdateRefreshTokenRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

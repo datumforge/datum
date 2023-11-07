@@ -47,6 +47,12 @@ type Invoker interface {
 	//
 	// POST /organizations
 	CreateOrganization(ctx context.Context, request *CreateOrganizationReq) (CreateOrganizationRes, error)
+	// CreateRefreshToken invokes createRefreshToken operation.
+	//
+	// Creates a new RefreshToken and persists it to storage.
+	//
+	// POST /refresh-tokens
+	CreateRefreshToken(ctx context.Context, request *CreateRefreshTokenReq) (CreateRefreshTokenRes, error)
 	// CreateSession invokes createSession operation.
 	//
 	// Creates a new Session and persists it to storage.
@@ -83,6 +89,12 @@ type Invoker interface {
 	//
 	// DELETE /organizations/{id}
 	DeleteOrganization(ctx context.Context, params DeleteOrganizationParams) (DeleteOrganizationRes, error)
+	// DeleteRefreshToken invokes deleteRefreshToken operation.
+	//
+	// Deletes the RefreshToken with the requested ID.
+	//
+	// DELETE /refresh-tokens/{id}
+	DeleteRefreshToken(ctx context.Context, params DeleteRefreshTokenParams) (DeleteRefreshTokenRes, error)
 	// DeleteSession invokes deleteSession operation.
 	//
 	// Deletes the Session with the requested ID.
@@ -149,6 +161,12 @@ type Invoker interface {
 	//
 	// GET /organizations/{id}/users
 	ListOrganizationUsers(ctx context.Context, params ListOrganizationUsersParams) (ListOrganizationUsersRes, error)
+	// ListRefreshToken invokes listRefreshToken operation.
+	//
+	// List RefreshTokens.
+	//
+	// GET /refresh-tokens
+	ListRefreshToken(ctx context.Context, params ListRefreshTokenParams) (ListRefreshTokenRes, error)
 	// ListSession invokes listSession operation.
 	//
 	// List Sessions.
@@ -233,6 +251,12 @@ type Invoker interface {
 	//
 	// GET /organizations/{id}/parent
 	ReadOrganizationParent(ctx context.Context, params ReadOrganizationParentParams) (ReadOrganizationParentRes, error)
+	// ReadRefreshToken invokes readRefreshToken operation.
+	//
+	// Finds the RefreshToken with the requested ID and returns it.
+	//
+	// GET /refresh-tokens/{id}
+	ReadRefreshToken(ctx context.Context, params ReadRefreshTokenParams) (ReadRefreshTokenRes, error)
 	// ReadSession invokes readSession operation.
 	//
 	// Finds the Session with the requested ID and returns it.
@@ -275,6 +299,12 @@ type Invoker interface {
 	//
 	// PATCH /organizations/{id}
 	UpdateOrganization(ctx context.Context, request *UpdateOrganizationReq, params UpdateOrganizationParams) (UpdateOrganizationRes, error)
+	// UpdateRefreshToken invokes updateRefreshToken operation.
+	//
+	// Updates a RefreshToken and persists changes to storage.
+	//
+	// PATCH /refresh-tokens/{id}
+	UpdateRefreshToken(ctx context.Context, request *UpdateRefreshTokenReq, params UpdateRefreshTokenParams) (UpdateRefreshTokenRes, error)
 	// UpdateSession invokes updateSession operation.
 	//
 	// Updates a Session and persists changes to storage.
@@ -639,6 +669,81 @@ func (c *Client) sendCreateOrganization(ctx context.Context, request *CreateOrga
 
 	stage = "DecodeResponse"
 	result, err := decodeCreateOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// CreateRefreshToken invokes createRefreshToken operation.
+//
+// Creates a new RefreshToken and persists it to storage.
+//
+// POST /refresh-tokens
+func (c *Client) CreateRefreshToken(ctx context.Context, request *CreateRefreshTokenReq) (CreateRefreshTokenRes, error) {
+	res, err := c.sendCreateRefreshToken(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendCreateRefreshToken(ctx context.Context, request *CreateRefreshTokenReq) (res CreateRefreshTokenRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("createRefreshToken"),
+		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/refresh-tokens"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "CreateRefreshToken",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/refresh-tokens"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeCreateRefreshTokenRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeCreateRefreshTokenResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1158,6 +1263,96 @@ func (c *Client) sendDeleteOrganization(ctx context.Context, params DeleteOrgani
 
 	stage = "DecodeResponse"
 	result, err := decodeDeleteOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// DeleteRefreshToken invokes deleteRefreshToken operation.
+//
+// Deletes the RefreshToken with the requested ID.
+//
+// DELETE /refresh-tokens/{id}
+func (c *Client) DeleteRefreshToken(ctx context.Context, params DeleteRefreshTokenParams) (DeleteRefreshTokenRes, error) {
+	res, err := c.sendDeleteRefreshToken(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendDeleteRefreshToken(ctx context.Context, params DeleteRefreshTokenParams) (res DeleteRefreshTokenRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("deleteRefreshToken"),
+		semconv.HTTPMethodKey.String("DELETE"),
+		semconv.HTTPRouteKey.String("/refresh-tokens/{id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "DeleteRefreshToken",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/refresh-tokens/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "DELETE", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeDeleteRefreshTokenResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -2423,6 +2618,116 @@ func (c *Client) sendListOrganizationUsers(ctx context.Context, params ListOrgan
 
 	stage = "DecodeResponse"
 	result, err := decodeListOrganizationUsersResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ListRefreshToken invokes listRefreshToken operation.
+//
+// List RefreshTokens.
+//
+// GET /refresh-tokens
+func (c *Client) ListRefreshToken(ctx context.Context, params ListRefreshTokenParams) (ListRefreshTokenRes, error) {
+	res, err := c.sendListRefreshToken(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendListRefreshToken(ctx context.Context, params ListRefreshTokenParams) (res ListRefreshTokenRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("listRefreshToken"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/refresh-tokens"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ListRefreshToken",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/refresh-tokens"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "itemsPerPage" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "itemsPerPage",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.ItemsPerPage.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeListRefreshTokenResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -3852,6 +4157,96 @@ func (c *Client) sendReadOrganizationParent(ctx context.Context, params ReadOrga
 	return result, nil
 }
 
+// ReadRefreshToken invokes readRefreshToken operation.
+//
+// Finds the RefreshToken with the requested ID and returns it.
+//
+// GET /refresh-tokens/{id}
+func (c *Client) ReadRefreshToken(ctx context.Context, params ReadRefreshTokenParams) (ReadRefreshTokenRes, error) {
+	res, err := c.sendReadRefreshToken(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendReadRefreshToken(ctx context.Context, params ReadRefreshTokenParams) (res ReadRefreshTokenRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("readRefreshToken"),
+		semconv.HTTPMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/refresh-tokens/{id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ReadRefreshToken",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/refresh-tokens/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeReadRefreshTokenResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // ReadSession invokes readSession operation.
 //
 // Finds the Session with the requested ID and returns it.
@@ -4497,6 +4892,99 @@ func (c *Client) sendUpdateOrganization(ctx context.Context, request *UpdateOrga
 
 	stage = "DecodeResponse"
 	result, err := decodeUpdateOrganizationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// UpdateRefreshToken invokes updateRefreshToken operation.
+//
+// Updates a RefreshToken and persists changes to storage.
+//
+// PATCH /refresh-tokens/{id}
+func (c *Client) UpdateRefreshToken(ctx context.Context, request *UpdateRefreshTokenReq, params UpdateRefreshTokenParams) (UpdateRefreshTokenRes, error) {
+	res, err := c.sendUpdateRefreshToken(ctx, request, params)
+	return res, err
+}
+
+func (c *Client) sendUpdateRefreshToken(ctx context.Context, request *UpdateRefreshTokenReq, params UpdateRefreshTokenParams) (res UpdateRefreshTokenRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("updateRefreshToken"),
+		semconv.HTTPMethodKey.String("PATCH"),
+		semconv.HTTPRouteKey.String("/refresh-tokens/{id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "UpdateRefreshToken",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/refresh-tokens/"
+	{
+		// Encode "id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.ID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "PATCH", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeUpdateRefreshTokenRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeUpdateRefreshTokenResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

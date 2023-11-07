@@ -467,6 +467,14 @@ func (s ListOrganizationUsersOKApplicationJSON) Validate() error {
 	return nil
 }
 
+func (s ListRefreshTokenOKApplicationJSON) Validate() error {
+	alias := ([]RefreshTokenList)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	return nil
+}
+
 func (s ListSessionOKApplicationJSON) Validate() error {
 	alias := ([]SessionList)(s)
 	if alias == nil {

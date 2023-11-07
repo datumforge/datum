@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/hashicorp/go-multierror"
@@ -33,6 +34,9 @@ func (n *Integration) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Organization) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *RefreshToken) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Session) IsNode() {}
@@ -138,6 +142,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.Organization.Query().
 			Where(organization.ID(id))
 		query, err := query.CollectFields(ctx, "Organization")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case refreshtoken.Table:
+		query := c.RefreshToken.Query().
+			Where(refreshtoken.ID(id))
+		query, err := query.CollectFields(ctx, "RefreshToken")
 		if err != nil {
 			return nil, err
 		}
@@ -295,6 +311,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Organization.Query().
 			Where(organization.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "Organization")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case refreshtoken.Table:
+		query := c.RefreshToken.Query().
+			Where(refreshtoken.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "RefreshToken")
 		if err != nil {
 			return nil, err
 		}

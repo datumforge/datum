@@ -535,6 +535,20 @@ func (s *CreateOrganizationReq) SetIntegrations(val []string) {
 	s.Integrations = val
 }
 
+type CreateRefreshTokenReq struct {
+	ClientID string `json:"client_id"`
+}
+
+// GetClientID returns the value of ClientID.
+func (s *CreateRefreshTokenReq) GetClientID() string {
+	return s.ClientID
+}
+
+// SetClientID sets the value of ClientID.
+func (s *CreateRefreshTokenReq) SetClientID(val string) {
+	s.ClientID = val
+}
+
 type CreateSessionReq struct {
 	CreatedAt time.Time            `json:"created_at"`
 	UpdatedAt time.Time            `json:"updated_at"`
@@ -916,6 +930,11 @@ func (*DeleteIntegrationNoContent) deleteIntegrationRes() {}
 type DeleteOrganizationNoContent struct{}
 
 func (*DeleteOrganizationNoContent) deleteOrganizationRes() {}
+
+// DeleteRefreshTokenNoContent is response for DeleteRefreshToken operation.
+type DeleteRefreshTokenNoContent struct{}
+
+func (*DeleteRefreshTokenNoContent) deleteRefreshTokenRes() {}
 
 // DeleteSessionNoContent is response for DeleteSession operation.
 type DeleteSessionNoContent struct{}
@@ -3099,6 +3118,10 @@ type ListOrganizationUsersOKApplicationJSON []OrganizationUsersList
 
 func (*ListOrganizationUsersOKApplicationJSON) listOrganizationUsersRes() {}
 
+type ListRefreshTokenOKApplicationJSON []RefreshTokenList
+
+func (*ListRefreshTokenOKApplicationJSON) listRefreshTokenRes() {}
+
 type ListSessionOKApplicationJSON []SessionList
 
 func (*ListSessionOKApplicationJSON) listSessionRes() {}
@@ -4359,12 +4382,14 @@ func (*R400) createGroupRes()                  {}
 func (*R400) createGroupSettingsRes()          {}
 func (*R400) createIntegrationRes()            {}
 func (*R400) createOrganizationRes()           {}
+func (*R400) createRefreshTokenRes()           {}
 func (*R400) createSessionRes()                {}
 func (*R400) createUserRes()                   {}
 func (*R400) deleteGroupRes()                  {}
 func (*R400) deleteGroupSettingsRes()          {}
 func (*R400) deleteIntegrationRes()            {}
 func (*R400) deleteOrganizationRes()           {}
+func (*R400) deleteRefreshTokenRes()           {}
 func (*R400) deleteSessionRes()                {}
 func (*R400) deleteUserRes()                   {}
 func (*R400) listGroupRes()                    {}
@@ -4376,6 +4401,7 @@ func (*R400) listOrganizationGroupsRes()       {}
 func (*R400) listOrganizationIntegrationsRes() {}
 func (*R400) listOrganizationRes()             {}
 func (*R400) listOrganizationUsersRes()        {}
+func (*R400) listRefreshTokenRes()             {}
 func (*R400) listSessionRes()                  {}
 func (*R400) listUserGroupsRes()               {}
 func (*R400) listUserOrganizationsRes()        {}
@@ -4390,6 +4416,7 @@ func (*R400) readIntegrationOwnerRes()         {}
 func (*R400) readIntegrationRes()              {}
 func (*R400) readOrganizationParentRes()       {}
 func (*R400) readOrganizationRes()             {}
+func (*R400) readRefreshTokenRes()             {}
 func (*R400) readSessionRes()                  {}
 func (*R400) readSessionUsersRes()             {}
 func (*R400) readUserRes()                     {}
@@ -4397,6 +4424,7 @@ func (*R400) updateGroupRes()                  {}
 func (*R400) updateGroupSettingsRes()          {}
 func (*R400) updateIntegrationRes()            {}
 func (*R400) updateOrganizationRes()           {}
+func (*R400) updateRefreshTokenRes()           {}
 func (*R400) updateSessionRes()                {}
 func (*R400) updateUserRes()                   {}
 
@@ -4440,6 +4468,7 @@ func (*R404) deleteGroupRes()                  {}
 func (*R404) deleteGroupSettingsRes()          {}
 func (*R404) deleteIntegrationRes()            {}
 func (*R404) deleteOrganizationRes()           {}
+func (*R404) deleteRefreshTokenRes()           {}
 func (*R404) deleteSessionRes()                {}
 func (*R404) deleteUserRes()                   {}
 func (*R404) listGroupRes()                    {}
@@ -4451,6 +4480,7 @@ func (*R404) listOrganizationGroupsRes()       {}
 func (*R404) listOrganizationIntegrationsRes() {}
 func (*R404) listOrganizationRes()             {}
 func (*R404) listOrganizationUsersRes()        {}
+func (*R404) listRefreshTokenRes()             {}
 func (*R404) listSessionRes()                  {}
 func (*R404) listUserGroupsRes()               {}
 func (*R404) listUserOrganizationsRes()        {}
@@ -4465,6 +4495,7 @@ func (*R404) readIntegrationOwnerRes()         {}
 func (*R404) readIntegrationRes()              {}
 func (*R404) readOrganizationParentRes()       {}
 func (*R404) readOrganizationRes()             {}
+func (*R404) readRefreshTokenRes()             {}
 func (*R404) readSessionRes()                  {}
 func (*R404) readSessionUsersRes()             {}
 func (*R404) readUserRes()                     {}
@@ -4472,6 +4503,7 @@ func (*R404) updateGroupRes()                  {}
 func (*R404) updateGroupSettingsRes()          {}
 func (*R404) updateIntegrationRes()            {}
 func (*R404) updateOrganizationRes()           {}
+func (*R404) updateRefreshTokenRes()           {}
 func (*R404) updateSessionRes()                {}
 func (*R404) updateUserRes()                   {}
 
@@ -4515,12 +4547,14 @@ func (*R409) createGroupRes()                  {}
 func (*R409) createGroupSettingsRes()          {}
 func (*R409) createIntegrationRes()            {}
 func (*R409) createOrganizationRes()           {}
+func (*R409) createRefreshTokenRes()           {}
 func (*R409) createSessionRes()                {}
 func (*R409) createUserRes()                   {}
 func (*R409) deleteGroupRes()                  {}
 func (*R409) deleteGroupSettingsRes()          {}
 func (*R409) deleteIntegrationRes()            {}
 func (*R409) deleteOrganizationRes()           {}
+func (*R409) deleteRefreshTokenRes()           {}
 func (*R409) deleteSessionRes()                {}
 func (*R409) deleteUserRes()                   {}
 func (*R409) listGroupRes()                    {}
@@ -4532,6 +4566,7 @@ func (*R409) listOrganizationGroupsRes()       {}
 func (*R409) listOrganizationIntegrationsRes() {}
 func (*R409) listOrganizationRes()             {}
 func (*R409) listOrganizationUsersRes()        {}
+func (*R409) listRefreshTokenRes()             {}
 func (*R409) listSessionRes()                  {}
 func (*R409) listUserGroupsRes()               {}
 func (*R409) listUserOrganizationsRes()        {}
@@ -4546,6 +4581,7 @@ func (*R409) readIntegrationOwnerRes()         {}
 func (*R409) readIntegrationRes()              {}
 func (*R409) readOrganizationParentRes()       {}
 func (*R409) readOrganizationRes()             {}
+func (*R409) readRefreshTokenRes()             {}
 func (*R409) readSessionRes()                  {}
 func (*R409) readSessionUsersRes()             {}
 func (*R409) readUserRes()                     {}
@@ -4553,6 +4589,7 @@ func (*R409) updateGroupRes()                  {}
 func (*R409) updateGroupSettingsRes()          {}
 func (*R409) updateIntegrationRes()            {}
 func (*R409) updateOrganizationRes()           {}
+func (*R409) updateRefreshTokenRes()           {}
 func (*R409) updateSessionRes()                {}
 func (*R409) updateUserRes()                   {}
 
@@ -4596,12 +4633,14 @@ func (*R500) createGroupRes()                  {}
 func (*R500) createGroupSettingsRes()          {}
 func (*R500) createIntegrationRes()            {}
 func (*R500) createOrganizationRes()           {}
+func (*R500) createRefreshTokenRes()           {}
 func (*R500) createSessionRes()                {}
 func (*R500) createUserRes()                   {}
 func (*R500) deleteGroupRes()                  {}
 func (*R500) deleteGroupSettingsRes()          {}
 func (*R500) deleteIntegrationRes()            {}
 func (*R500) deleteOrganizationRes()           {}
+func (*R500) deleteRefreshTokenRes()           {}
 func (*R500) deleteSessionRes()                {}
 func (*R500) deleteUserRes()                   {}
 func (*R500) listGroupRes()                    {}
@@ -4613,6 +4652,7 @@ func (*R500) listOrganizationGroupsRes()       {}
 func (*R500) listOrganizationIntegrationsRes() {}
 func (*R500) listOrganizationRes()             {}
 func (*R500) listOrganizationUsersRes()        {}
+func (*R500) listRefreshTokenRes()             {}
 func (*R500) listSessionRes()                  {}
 func (*R500) listUserGroupsRes()               {}
 func (*R500) listUserOrganizationsRes()        {}
@@ -4627,6 +4667,7 @@ func (*R500) readIntegrationOwnerRes()         {}
 func (*R500) readIntegrationRes()              {}
 func (*R500) readOrganizationParentRes()       {}
 func (*R500) readOrganizationRes()             {}
+func (*R500) readRefreshTokenRes()             {}
 func (*R500) readSessionRes()                  {}
 func (*R500) readSessionUsersRes()             {}
 func (*R500) readUserRes()                     {}
@@ -4634,8 +4675,119 @@ func (*R500) updateGroupRes()                  {}
 func (*R500) updateGroupSettingsRes()          {}
 func (*R500) updateIntegrationRes()            {}
 func (*R500) updateOrganizationRes()           {}
+func (*R500) updateRefreshTokenRes()           {}
 func (*R500) updateSessionRes()                {}
 func (*R500) updateUserRes()                   {}
+
+// Ref: #/components/schemas/RefreshTokenCreate
+type RefreshTokenCreate struct {
+	ID       string `json:"id"`
+	ClientID string `json:"client_id"`
+}
+
+// GetID returns the value of ID.
+func (s *RefreshTokenCreate) GetID() string {
+	return s.ID
+}
+
+// GetClientID returns the value of ClientID.
+func (s *RefreshTokenCreate) GetClientID() string {
+	return s.ClientID
+}
+
+// SetID sets the value of ID.
+func (s *RefreshTokenCreate) SetID(val string) {
+	s.ID = val
+}
+
+// SetClientID sets the value of ClientID.
+func (s *RefreshTokenCreate) SetClientID(val string) {
+	s.ClientID = val
+}
+
+func (*RefreshTokenCreate) createRefreshTokenRes() {}
+
+// Ref: #/components/schemas/RefreshTokenList
+type RefreshTokenList struct {
+	ID       string `json:"id"`
+	ClientID string `json:"client_id"`
+}
+
+// GetID returns the value of ID.
+func (s *RefreshTokenList) GetID() string {
+	return s.ID
+}
+
+// GetClientID returns the value of ClientID.
+func (s *RefreshTokenList) GetClientID() string {
+	return s.ClientID
+}
+
+// SetID sets the value of ID.
+func (s *RefreshTokenList) SetID(val string) {
+	s.ID = val
+}
+
+// SetClientID sets the value of ClientID.
+func (s *RefreshTokenList) SetClientID(val string) {
+	s.ClientID = val
+}
+
+// Ref: #/components/schemas/RefreshTokenRead
+type RefreshTokenRead struct {
+	ID       string `json:"id"`
+	ClientID string `json:"client_id"`
+}
+
+// GetID returns the value of ID.
+func (s *RefreshTokenRead) GetID() string {
+	return s.ID
+}
+
+// GetClientID returns the value of ClientID.
+func (s *RefreshTokenRead) GetClientID() string {
+	return s.ClientID
+}
+
+// SetID sets the value of ID.
+func (s *RefreshTokenRead) SetID(val string) {
+	s.ID = val
+}
+
+// SetClientID sets the value of ClientID.
+func (s *RefreshTokenRead) SetClientID(val string) {
+	s.ClientID = val
+}
+
+func (*RefreshTokenRead) readRefreshTokenRes() {}
+
+// Ref: #/components/schemas/RefreshTokenUpdate
+type RefreshTokenUpdate struct {
+	ID       string `json:"id"`
+	ClientID string `json:"client_id"`
+}
+
+// GetID returns the value of ID.
+func (s *RefreshTokenUpdate) GetID() string {
+	return s.ID
+}
+
+// GetClientID returns the value of ClientID.
+func (s *RefreshTokenUpdate) GetClientID() string {
+	return s.ClientID
+}
+
+// SetID sets the value of ID.
+func (s *RefreshTokenUpdate) SetID(val string) {
+	s.ID = val
+}
+
+// SetClientID sets the value of ClientID.
+func (s *RefreshTokenUpdate) SetClientID(val string) {
+	s.ClientID = val
+}
+
+func (*RefreshTokenUpdate) updateRefreshTokenRes() {}
 
 // Ref: #/components/schemas/SessionCreate
 type SessionCreate struct {
@@ -5909,6 +6061,20 @@ func (s *UpdateOrganizationReq) SetGroups(val []string) {
 // SetIntegrations sets the value of Integrations.
 func (s *UpdateOrganizationReq) SetIntegrations(val []string) {
 	s.Integrations = val
+}
+
+type UpdateRefreshTokenReq struct {
+	ClientID OptString `json:"client_id"`
+}
+
+// GetClientID returns the value of ClientID.
+func (s *UpdateRefreshTokenReq) GetClientID() OptString {
+	return s.ClientID
+}
+
+// SetClientID sets the value of ClientID.
+func (s *UpdateRefreshTokenReq) SetClientID(val OptString) {
+	s.ClientID = val
 }
 
 type UpdateSessionReq struct {

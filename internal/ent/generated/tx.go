@@ -20,6 +20,8 @@ type Tx struct {
 	Integration *IntegrationClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// RefreshToken is the client for interacting with the RefreshToken builders.
+	RefreshToken *RefreshTokenClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
 	// User is the client for interacting with the User builders.
@@ -159,6 +161,7 @@ func (tx *Tx) init() {
 	tx.GroupSettings = NewGroupSettingsClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
+	tx.RefreshToken = NewRefreshTokenClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }

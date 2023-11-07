@@ -1,6 +1,6 @@
 module github.com/datumforge/datum
 
-go 1.21.3
+go 1.21.4
 
 require (
 	entgo.io/contrib v0.4.5

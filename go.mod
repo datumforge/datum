@@ -38,10 +38,10 @@ require (
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
-	google.golang.org/api v0.143.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
-	google.golang.org/grpc v1.58.3 // indirect
+	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
+	google.golang.org/api v0.150.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231106174013-bbf56f31fb17 // indirect
+	google.golang.org/grpc v1.59.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 )
 
@@ -52,7 +52,7 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
 	github.com/dlclark/regexp2 v1.10.0 // indirect
-	github.com/fatih/color v1.15.0 // indirect
+	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect

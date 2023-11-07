@@ -20,7 +20,7 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
             golangci_lint_flags: "--config=.golangci.yaml --timeout=10m"
-            go_version: "1.21.1"
+            go_version: "1.21.4"
             github_token: ${{ secrets.GITHUB_TOKEN }}
             level: warning
             reporter: github-pr-review

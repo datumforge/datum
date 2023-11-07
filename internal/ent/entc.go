@@ -15,6 +15,7 @@ import (
 	"entgo.io/ent/entc/gen"
 	"github.com/hedwigz/entviz"
 	"github.com/ogen-go/ogen"
+	"gocloud.dev/secrets"
 )
 
 func main() {
@@ -58,6 +59,9 @@ func main() {
 			gen.FeatureIntercept,
 		},
 	},
+		entc.Dependency(
+			entc.DependencyType(&secrets.Keeper{}),
+		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
 			entviz.Extension{},

@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"gocloud.dev/secrets"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -75,7 +76,8 @@ type (
 		// hooks to execute on mutations.
 		hooks *hooks
 		// interceptors to execute on queries.
-		inters *inters
+		inters        *inters
+		SecretsKeeper *secrets.Keeper
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -111,6 +113,13 @@ func Log(fn func(...any)) Option {
 func Driver(driver dialect.Driver) Option {
 	return func(c *config) {
 		c.driver = driver
+	}
+}
+
+// SecretsKeeper configures the SecretsKeeper.
+func SecretsKeeper(v *secrets.Keeper) Option {
+	return func(c *config) {
+		c.SecretsKeeper = v
 	}
 }
 

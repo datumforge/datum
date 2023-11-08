@@ -5,6 +5,7 @@ package generated
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -17,7 +18,27 @@ type RefreshToken struct {
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
 	// ClientID holds the value of the "client_id" field.
-	ClientID     string `json:"client_id,omitempty"`
+	ClientID string `json:"client_id,omitempty"`
+	// Nonce holds the value of the "nonce" field.
+	Nonce string `json:"nonce,omitempty"`
+	// ClaimsUserID holds the value of the "claims_user_id" field.
+	ClaimsUserID string `json:"claims_user_id,omitempty"`
+	// ClaimsUsername holds the value of the "claims_username" field.
+	ClaimsUsername string `json:"claims_username,omitempty"`
+	// ClaimsEmail holds the value of the "claims_email" field.
+	ClaimsEmail string `json:"claims_email,omitempty"`
+	// ClaimsEmailVerified holds the value of the "claims_email_verified" field.
+	ClaimsEmailVerified bool `json:"claims_email_verified,omitempty"`
+	// ClaimsPreferredUsername holds the value of the "claims_preferred_username" field.
+	ClaimsPreferredUsername string `json:"claims_preferred_username,omitempty"`
+	// ConnectorID holds the value of the "connector_id" field.
+	ConnectorID string `json:"connector_id,omitempty"`
+	// Token holds the value of the "token" field.
+	Token string `json:"token,omitempty"`
+	// ObsoleteToken holds the value of the "obsolete_token" field.
+	ObsoleteToken string `json:"obsolete_token,omitempty"`
+	// LastUsed holds the value of the "last_used" field.
+	LastUsed     time.Time `json:"last_used,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -26,8 +47,12 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case refreshtoken.FieldID, refreshtoken.FieldClientID:
+		case refreshtoken.FieldClaimsEmailVerified:
+			values[i] = new(sql.NullBool)
+		case refreshtoken.FieldID, refreshtoken.FieldClientID, refreshtoken.FieldNonce, refreshtoken.FieldClaimsUserID, refreshtoken.FieldClaimsUsername, refreshtoken.FieldClaimsEmail, refreshtoken.FieldClaimsPreferredUsername, refreshtoken.FieldConnectorID, refreshtoken.FieldToken, refreshtoken.FieldObsoleteToken:
 			values[i] = new(sql.NullString)
+		case refreshtoken.FieldLastUsed:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -54,6 +79,66 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field client_id", values[i])
 			} else if value.Valid {
 				rt.ClientID = value.String
+			}
+		case refreshtoken.FieldNonce:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field nonce", values[i])
+			} else if value.Valid {
+				rt.Nonce = value.String
+			}
+		case refreshtoken.FieldClaimsUserID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field claims_user_id", values[i])
+			} else if value.Valid {
+				rt.ClaimsUserID = value.String
+			}
+		case refreshtoken.FieldClaimsUsername:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field claims_username", values[i])
+			} else if value.Valid {
+				rt.ClaimsUsername = value.String
+			}
+		case refreshtoken.FieldClaimsEmail:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field claims_email", values[i])
+			} else if value.Valid {
+				rt.ClaimsEmail = value.String
+			}
+		case refreshtoken.FieldClaimsEmailVerified:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field claims_email_verified", values[i])
+			} else if value.Valid {
+				rt.ClaimsEmailVerified = value.Bool
+			}
+		case refreshtoken.FieldClaimsPreferredUsername:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field claims_preferred_username", values[i])
+			} else if value.Valid {
+				rt.ClaimsPreferredUsername = value.String
+			}
+		case refreshtoken.FieldConnectorID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field connector_id", values[i])
+			} else if value.Valid {
+				rt.ConnectorID = value.String
+			}
+		case refreshtoken.FieldToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field token", values[i])
+			} else if value.Valid {
+				rt.Token = value.String
+			}
+		case refreshtoken.FieldObsoleteToken:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field obsolete_token", values[i])
+			} else if value.Valid {
+				rt.ObsoleteToken = value.String
+			}
+		case refreshtoken.FieldLastUsed:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field last_used", values[i])
+			} else if value.Valid {
+				rt.LastUsed = value.Time
 			}
 		default:
 			rt.selectValues.Set(columns[i], values[i])
@@ -93,6 +178,36 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", rt.ID))
 	builder.WriteString("client_id=")
 	builder.WriteString(rt.ClientID)
+	builder.WriteString(", ")
+	builder.WriteString("nonce=")
+	builder.WriteString(rt.Nonce)
+	builder.WriteString(", ")
+	builder.WriteString("claims_user_id=")
+	builder.WriteString(rt.ClaimsUserID)
+	builder.WriteString(", ")
+	builder.WriteString("claims_username=")
+	builder.WriteString(rt.ClaimsUsername)
+	builder.WriteString(", ")
+	builder.WriteString("claims_email=")
+	builder.WriteString(rt.ClaimsEmail)
+	builder.WriteString(", ")
+	builder.WriteString("claims_email_verified=")
+	builder.WriteString(fmt.Sprintf("%v", rt.ClaimsEmailVerified))
+	builder.WriteString(", ")
+	builder.WriteString("claims_preferred_username=")
+	builder.WriteString(rt.ClaimsPreferredUsername)
+	builder.WriteString(", ")
+	builder.WriteString("connector_id=")
+	builder.WriteString(rt.ConnectorID)
+	builder.WriteString(", ")
+	builder.WriteString("token=")
+	builder.WriteString(rt.Token)
+	builder.WriteString(", ")
+	builder.WriteString("obsolete_token=")
+	builder.WriteString(rt.ObsoleteToken)
+	builder.WriteString(", ")
+	builder.WriteString("last_used=")
+	builder.WriteString(rt.LastUsed.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

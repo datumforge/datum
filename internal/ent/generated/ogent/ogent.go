@@ -1149,6 +1149,16 @@ func (h *OgentHandler) CreateRefreshToken(ctx context.Context, req *CreateRefres
 	b := h.client.RefreshToken.Create()
 	// Add all fields.
 	b.SetClientID(req.ClientID)
+	b.SetNonce(req.Nonce)
+	b.SetClaimsUserID(req.ClaimsUserID)
+	b.SetClaimsUsername(req.ClaimsUsername)
+	b.SetClaimsEmail(req.ClaimsEmail)
+	b.SetClaimsEmailVerified(req.ClaimsEmailVerified)
+	b.SetClaimsPreferredUsername(req.ClaimsPreferredUsername)
+	b.SetConnectorID(req.ConnectorID)
+	b.SetToken(req.Token)
+	b.SetObsoleteToken(req.ObsoleteToken)
+	b.SetLastUsed(req.LastUsed)
 	// Add all edges.
 	// Persist to storage.
 	e, err := b.Save(ctx)
@@ -1213,6 +1223,36 @@ func (h *OgentHandler) UpdateRefreshToken(ctx context.Context, req *UpdateRefres
 	// Add all fields.
 	if v, ok := req.ClientID.Get(); ok {
 		b.SetClientID(v)
+	}
+	if v, ok := req.Nonce.Get(); ok {
+		b.SetNonce(v)
+	}
+	if v, ok := req.ClaimsUserID.Get(); ok {
+		b.SetClaimsUserID(v)
+	}
+	if v, ok := req.ClaimsUsername.Get(); ok {
+		b.SetClaimsUsername(v)
+	}
+	if v, ok := req.ClaimsEmail.Get(); ok {
+		b.SetClaimsEmail(v)
+	}
+	if v, ok := req.ClaimsEmailVerified.Get(); ok {
+		b.SetClaimsEmailVerified(v)
+	}
+	if v, ok := req.ClaimsPreferredUsername.Get(); ok {
+		b.SetClaimsPreferredUsername(v)
+	}
+	if v, ok := req.ConnectorID.Get(); ok {
+		b.SetConnectorID(v)
+	}
+	if v, ok := req.Token.Get(); ok {
+		b.SetToken(v)
+	}
+	if v, ok := req.ObsoleteToken.Get(); ok {
+		b.SetObsoleteToken(v)
+	}
+	if v, ok := req.LastUsed.Get(); ok {
+		b.SetLastUsed(v)
 	}
 	// Add all edges.
 	// Persist to storage.

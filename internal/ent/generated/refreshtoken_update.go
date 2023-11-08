@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -32,6 +33,74 @@ func (rtu *RefreshTokenUpdate) Where(ps ...predicate.RefreshToken) *RefreshToken
 // SetClientID sets the "client_id" field.
 func (rtu *RefreshTokenUpdate) SetClientID(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetClientID(s)
+	return rtu
+}
+
+// SetNonce sets the "nonce" field.
+func (rtu *RefreshTokenUpdate) SetNonce(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetNonce(s)
+	return rtu
+}
+
+// SetClaimsUserID sets the "claims_user_id" field.
+func (rtu *RefreshTokenUpdate) SetClaimsUserID(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetClaimsUserID(s)
+	return rtu
+}
+
+// SetClaimsUsername sets the "claims_username" field.
+func (rtu *RefreshTokenUpdate) SetClaimsUsername(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetClaimsUsername(s)
+	return rtu
+}
+
+// SetClaimsEmail sets the "claims_email" field.
+func (rtu *RefreshTokenUpdate) SetClaimsEmail(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetClaimsEmail(s)
+	return rtu
+}
+
+// SetClaimsEmailVerified sets the "claims_email_verified" field.
+func (rtu *RefreshTokenUpdate) SetClaimsEmailVerified(b bool) *RefreshTokenUpdate {
+	rtu.mutation.SetClaimsEmailVerified(b)
+	return rtu
+}
+
+// SetClaimsPreferredUsername sets the "claims_preferred_username" field.
+func (rtu *RefreshTokenUpdate) SetClaimsPreferredUsername(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetClaimsPreferredUsername(s)
+	return rtu
+}
+
+// SetConnectorID sets the "connector_id" field.
+func (rtu *RefreshTokenUpdate) SetConnectorID(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetConnectorID(s)
+	return rtu
+}
+
+// SetToken sets the "token" field.
+func (rtu *RefreshTokenUpdate) SetToken(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetToken(s)
+	return rtu
+}
+
+// SetObsoleteToken sets the "obsolete_token" field.
+func (rtu *RefreshTokenUpdate) SetObsoleteToken(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetObsoleteToken(s)
+	return rtu
+}
+
+// SetLastUsed sets the "last_used" field.
+func (rtu *RefreshTokenUpdate) SetLastUsed(t time.Time) *RefreshTokenUpdate {
+	rtu.mutation.SetLastUsed(t)
+	return rtu
+}
+
+// SetNillableLastUsed sets the "last_used" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableLastUsed(t *time.Time) *RefreshTokenUpdate {
+	if t != nil {
+		rtu.SetLastUsed(*t)
+	}
 	return rtu
 }
 
@@ -74,6 +143,31 @@ func (rtu *RefreshTokenUpdate) check() error {
 			return &ValidationError{Name: "client_id", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.client_id": %w`, err)}
 		}
 	}
+	if v, ok := rtu.mutation.Nonce(); ok {
+		if err := refreshtoken.NonceValidator(v); err != nil {
+			return &ValidationError{Name: "nonce", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.nonce": %w`, err)}
+		}
+	}
+	if v, ok := rtu.mutation.ClaimsUserID(); ok {
+		if err := refreshtoken.ClaimsUserIDValidator(v); err != nil {
+			return &ValidationError{Name: "claims_user_id", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.claims_user_id": %w`, err)}
+		}
+	}
+	if v, ok := rtu.mutation.ClaimsUsername(); ok {
+		if err := refreshtoken.ClaimsUsernameValidator(v); err != nil {
+			return &ValidationError{Name: "claims_username", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.claims_username": %w`, err)}
+		}
+	}
+	if v, ok := rtu.mutation.ClaimsEmail(); ok {
+		if err := refreshtoken.ClaimsEmailValidator(v); err != nil {
+			return &ValidationError{Name: "claims_email", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.claims_email": %w`, err)}
+		}
+	}
+	if v, ok := rtu.mutation.ConnectorID(); ok {
+		if err := refreshtoken.ConnectorIDValidator(v); err != nil {
+			return &ValidationError{Name: "connector_id", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.connector_id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -91,6 +185,36 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := rtu.mutation.ClientID(); ok {
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.Nonce(); ok {
+		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ClaimsUserID(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsUserID, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ClaimsUsername(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsUsername, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ClaimsEmail(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsEmail, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ClaimsEmailVerified(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
+	}
+	if value, ok := rtu.mutation.ClaimsPreferredUsername(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ConnectorID(); ok {
+		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.Token(); ok {
+		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ObsoleteToken(); ok {
+		_spec.SetField(refreshtoken.FieldObsoleteToken, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.LastUsed(); ok {
+		_spec.SetField(refreshtoken.FieldLastUsed, field.TypeTime, value)
 	}
 	_spec.Node.Schema = rtu.schemaConfig.RefreshToken
 	ctx = internal.NewSchemaConfigContext(ctx, rtu.schemaConfig)
@@ -117,6 +241,74 @@ type RefreshTokenUpdateOne struct {
 // SetClientID sets the "client_id" field.
 func (rtuo *RefreshTokenUpdateOne) SetClientID(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetClientID(s)
+	return rtuo
+}
+
+// SetNonce sets the "nonce" field.
+func (rtuo *RefreshTokenUpdateOne) SetNonce(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetNonce(s)
+	return rtuo
+}
+
+// SetClaimsUserID sets the "claims_user_id" field.
+func (rtuo *RefreshTokenUpdateOne) SetClaimsUserID(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetClaimsUserID(s)
+	return rtuo
+}
+
+// SetClaimsUsername sets the "claims_username" field.
+func (rtuo *RefreshTokenUpdateOne) SetClaimsUsername(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetClaimsUsername(s)
+	return rtuo
+}
+
+// SetClaimsEmail sets the "claims_email" field.
+func (rtuo *RefreshTokenUpdateOne) SetClaimsEmail(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetClaimsEmail(s)
+	return rtuo
+}
+
+// SetClaimsEmailVerified sets the "claims_email_verified" field.
+func (rtuo *RefreshTokenUpdateOne) SetClaimsEmailVerified(b bool) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetClaimsEmailVerified(b)
+	return rtuo
+}
+
+// SetClaimsPreferredUsername sets the "claims_preferred_username" field.
+func (rtuo *RefreshTokenUpdateOne) SetClaimsPreferredUsername(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetClaimsPreferredUsername(s)
+	return rtuo
+}
+
+// SetConnectorID sets the "connector_id" field.
+func (rtuo *RefreshTokenUpdateOne) SetConnectorID(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetConnectorID(s)
+	return rtuo
+}
+
+// SetToken sets the "token" field.
+func (rtuo *RefreshTokenUpdateOne) SetToken(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetToken(s)
+	return rtuo
+}
+
+// SetObsoleteToken sets the "obsolete_token" field.
+func (rtuo *RefreshTokenUpdateOne) SetObsoleteToken(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetObsoleteToken(s)
+	return rtuo
+}
+
+// SetLastUsed sets the "last_used" field.
+func (rtuo *RefreshTokenUpdateOne) SetLastUsed(t time.Time) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetLastUsed(t)
+	return rtuo
+}
+
+// SetNillableLastUsed sets the "last_used" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableLastUsed(t *time.Time) *RefreshTokenUpdateOne {
+	if t != nil {
+		rtuo.SetLastUsed(*t)
+	}
 	return rtuo
 }
 
@@ -172,6 +364,31 @@ func (rtuo *RefreshTokenUpdateOne) check() error {
 			return &ValidationError{Name: "client_id", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.client_id": %w`, err)}
 		}
 	}
+	if v, ok := rtuo.mutation.Nonce(); ok {
+		if err := refreshtoken.NonceValidator(v); err != nil {
+			return &ValidationError{Name: "nonce", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.nonce": %w`, err)}
+		}
+	}
+	if v, ok := rtuo.mutation.ClaimsUserID(); ok {
+		if err := refreshtoken.ClaimsUserIDValidator(v); err != nil {
+			return &ValidationError{Name: "claims_user_id", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.claims_user_id": %w`, err)}
+		}
+	}
+	if v, ok := rtuo.mutation.ClaimsUsername(); ok {
+		if err := refreshtoken.ClaimsUsernameValidator(v); err != nil {
+			return &ValidationError{Name: "claims_username", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.claims_username": %w`, err)}
+		}
+	}
+	if v, ok := rtuo.mutation.ClaimsEmail(); ok {
+		if err := refreshtoken.ClaimsEmailValidator(v); err != nil {
+			return &ValidationError{Name: "claims_email", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.claims_email": %w`, err)}
+		}
+	}
+	if v, ok := rtuo.mutation.ConnectorID(); ok {
+		if err := refreshtoken.ConnectorIDValidator(v); err != nil {
+			return &ValidationError{Name: "connector_id", err: fmt.Errorf(`generated: validator failed for field "RefreshToken.connector_id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -206,6 +423,36 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 	}
 	if value, ok := rtuo.mutation.ClientID(); ok {
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.Nonce(); ok {
+		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ClaimsUserID(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsUserID, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ClaimsUsername(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsUsername, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ClaimsEmail(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsEmail, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ClaimsEmailVerified(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
+	}
+	if value, ok := rtuo.mutation.ClaimsPreferredUsername(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ConnectorID(); ok {
+		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.Token(); ok {
+		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ObsoleteToken(); ok {
+		_spec.SetField(refreshtoken.FieldObsoleteToken, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.LastUsed(); ok {
+		_spec.SetField(refreshtoken.FieldLastUsed, field.TypeTime, value)
 	}
 	_spec.Node.Schema = rtuo.schemaConfig.RefreshToken
 	ctx = internal.NewSchemaConfigContext(ctx, rtuo.schemaConfig)

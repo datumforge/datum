@@ -1,0 +1,2 @@
+-- Create "refresh_tokens" table
+CREATE TABLE `refresh_tokens` (`id` text NOT NULL, `client_id` text NOT NULL, `nonce` text NOT NULL, `claims_user_id` text NOT NULL, `claims_username` text NOT NULL, `claims_email` text NOT NULL, `claims_email_verified` bool NOT NULL, `claims_preferred_username` text NOT NULL, `connector_id` text NOT NULL, `token` text NOT NULL, `obsolete_token` text NOT NULL, `last_used` datetime NOT NULL, PRIMARY KEY (`id`));

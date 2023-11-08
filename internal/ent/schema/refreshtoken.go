@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 
@@ -17,29 +19,28 @@ func (RefreshToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("client_id").
 			NotEmpty(),
-		//		field.JSON("scopes", []string{}).
-		//			Optional(),
-		//		field.Text("nonce").
-		//			NotEmpty(),
-		//		field.Text("claims_user_id").
-		//			NotEmpty(),
-		//		field.Text("claims_username").
-		//			NotEmpty(),
-		//		field.Text("claims_email").
-		//			NotEmpty(),
-		//		field.Bool("claims_email_verified"),
-		//		field.JSON("claims_groups", []string{}).
-		//			Optional(),
-		//		field.Text("claims_preferred_username"),
-		//		field.Text("connector_id").
-		//			NotEmpty(),
+		//		field.JSON("scopes", []string{}).Optional(),
+		//Annotations(entgql.Type("JSON")),
+		field.Text("nonce").
+			NotEmpty(),
+		field.Text("claims_user_id").
+			NotEmpty(),
+		field.Text("claims_username").
+			NotEmpty(),
+		field.Text("claims_email").
+			NotEmpty(),
+		field.Bool("claims_email_verified"),
+		//		field.JSON("claims_groups", []string{}).Optional().Annotations(entgql.Type("JSON")),
+		field.Text("claims_preferred_username"),
+		field.Text("connector_id").
+			NotEmpty(),
 		//		field.Bytes("connector_data").
 		//			Nillable().
 		//			Optional(),
-		//		field.Text("token"),
-		//		field.Text("obsolete_token"),
-		//		field.Time("last_used").
-		//			Default(time.Now),
+		field.Text("token"),
+		field.Text("obsolete_token"),
+		field.Time("last_used").
+			Default(time.Now),
 	}
 }
 

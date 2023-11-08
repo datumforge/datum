@@ -16,9 +16,18 @@ import (
 	"github.com/hedwigz/entviz"
 	"github.com/ogen-go/ogen"
 	"gocloud.dev/secrets"
+
+	"github.com/datumforge/datum/internal/entx"
 )
 
 func main() {
+	xExt, err := entx.NewExtension(
+		entx.WithJSONScalar(),
+	)
+	if err != nil {
+		log.Fatalf("creating entx extension: %v", err)
+	}
+
 	// Ensure the schema directory exists before running entc.
 	_ = os.Mkdir("schema", 0755)
 
@@ -41,6 +50,7 @@ func main() {
 		entgql.WithSchemaPath("schema/ent.graphql"),
 		entgql.WithConfigPath("gqlgen.yml"),
 		entgql.WithWhereInputs(true),
+		entgql.WithSchemaHook(xExt.GQLSchemaHooks()...),
 	)
 	if err != nil {
 		log.Fatalf("creating entgql extension: %v", err)

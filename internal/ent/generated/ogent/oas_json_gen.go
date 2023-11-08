@@ -1138,10 +1138,60 @@ func (s *CreateRefreshTokenReq) encodeFields(e *jx.Encoder) {
 		e.FieldStart("client_id")
 		e.Str(s.ClientID)
 	}
+	{
+		e.FieldStart("nonce")
+		e.Str(s.Nonce)
+	}
+	{
+		e.FieldStart("claims_user_id")
+		e.Str(s.ClaimsUserID)
+	}
+	{
+		e.FieldStart("claims_username")
+		e.Str(s.ClaimsUsername)
+	}
+	{
+		e.FieldStart("claims_email")
+		e.Str(s.ClaimsEmail)
+	}
+	{
+		e.FieldStart("claims_email_verified")
+		e.Bool(s.ClaimsEmailVerified)
+	}
+	{
+		e.FieldStart("claims_preferred_username")
+		e.Str(s.ClaimsPreferredUsername)
+	}
+	{
+		e.FieldStart("connector_id")
+		e.Str(s.ConnectorID)
+	}
+	{
+		e.FieldStart("token")
+		e.Str(s.Token)
+	}
+	{
+		e.FieldStart("obsolete_token")
+		e.Str(s.ObsoleteToken)
+	}
+	{
+		e.FieldStart("last_used")
+		json.EncodeDateTime(e, s.LastUsed)
+	}
 }
 
-var jsonFieldsNameOfCreateRefreshTokenReq = [1]string{
-	0: "client_id",
+var jsonFieldsNameOfCreateRefreshTokenReq = [11]string{
+	0:  "client_id",
+	1:  "nonce",
+	2:  "claims_user_id",
+	3:  "claims_username",
+	4:  "claims_email",
+	5:  "claims_email_verified",
+	6:  "claims_preferred_username",
+	7:  "connector_id",
+	8:  "token",
+	9:  "obsolete_token",
+	10: "last_used",
 }
 
 // Decode decodes CreateRefreshTokenReq from json.
@@ -1149,7 +1199,7 @@ func (s *CreateRefreshTokenReq) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode CreateRefreshTokenReq to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -1165,6 +1215,126 @@ func (s *CreateRefreshTokenReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"client_id\"")
 			}
+		case "nonce":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Nonce = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"nonce\"")
+			}
+		case "claims_user_id":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUserID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_user_id\"")
+			}
+		case "claims_username":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_username\"")
+			}
+		case "claims_email":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsEmail = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email\"")
+			}
+		case "claims_email_verified":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Bool()
+				s.ClaimsEmailVerified = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email_verified\"")
+			}
+		case "claims_preferred_username":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsPreferredUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_preferred_username\"")
+			}
+		case "connector_id":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.ConnectorID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"connector_id\"")
+			}
+		case "token":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Token = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "obsolete_token":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.ObsoleteToken = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"obsolete_token\"")
+			}
+		case "last_used":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastUsed = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1174,8 +1344,9 @@ func (s *CreateRefreshTokenReq) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -9639,11 +9810,61 @@ func (s *RefreshTokenCreate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("client_id")
 		e.Str(s.ClientID)
 	}
+	{
+		e.FieldStart("nonce")
+		e.Str(s.Nonce)
+	}
+	{
+		e.FieldStart("claims_user_id")
+		e.Str(s.ClaimsUserID)
+	}
+	{
+		e.FieldStart("claims_username")
+		e.Str(s.ClaimsUsername)
+	}
+	{
+		e.FieldStart("claims_email")
+		e.Str(s.ClaimsEmail)
+	}
+	{
+		e.FieldStart("claims_email_verified")
+		e.Bool(s.ClaimsEmailVerified)
+	}
+	{
+		e.FieldStart("claims_preferred_username")
+		e.Str(s.ClaimsPreferredUsername)
+	}
+	{
+		e.FieldStart("connector_id")
+		e.Str(s.ConnectorID)
+	}
+	{
+		e.FieldStart("token")
+		e.Str(s.Token)
+	}
+	{
+		e.FieldStart("obsolete_token")
+		e.Str(s.ObsoleteToken)
+	}
+	{
+		e.FieldStart("last_used")
+		json.EncodeDateTime(e, s.LastUsed)
+	}
 }
 
-var jsonFieldsNameOfRefreshTokenCreate = [2]string{
-	0: "id",
-	1: "client_id",
+var jsonFieldsNameOfRefreshTokenCreate = [12]string{
+	0:  "id",
+	1:  "client_id",
+	2:  "nonce",
+	3:  "claims_user_id",
+	4:  "claims_username",
+	5:  "claims_email",
+	6:  "claims_email_verified",
+	7:  "claims_preferred_username",
+	8:  "connector_id",
+	9:  "token",
+	10: "obsolete_token",
+	11: "last_used",
 }
 
 // Decode decodes RefreshTokenCreate from json.
@@ -9651,7 +9872,7 @@ func (s *RefreshTokenCreate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode RefreshTokenCreate to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -9679,6 +9900,126 @@ func (s *RefreshTokenCreate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"client_id\"")
 			}
+		case "nonce":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Nonce = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"nonce\"")
+			}
+		case "claims_user_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUserID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_user_id\"")
+			}
+		case "claims_username":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_username\"")
+			}
+		case "claims_email":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsEmail = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email\"")
+			}
+		case "claims_email_verified":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Bool()
+				s.ClaimsEmailVerified = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email_verified\"")
+			}
+		case "claims_preferred_username":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsPreferredUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_preferred_username\"")
+			}
+		case "connector_id":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ConnectorID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"connector_id\"")
+			}
+		case "token":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Token = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "obsolete_token":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.ObsoleteToken = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"obsolete_token\"")
+			}
+		case "last_used":
+			requiredBitSet[1] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastUsed = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -9688,8 +10029,9 @@ func (s *RefreshTokenCreate) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -9752,11 +10094,61 @@ func (s *RefreshTokenList) encodeFields(e *jx.Encoder) {
 		e.FieldStart("client_id")
 		e.Str(s.ClientID)
 	}
+	{
+		e.FieldStart("nonce")
+		e.Str(s.Nonce)
+	}
+	{
+		e.FieldStart("claims_user_id")
+		e.Str(s.ClaimsUserID)
+	}
+	{
+		e.FieldStart("claims_username")
+		e.Str(s.ClaimsUsername)
+	}
+	{
+		e.FieldStart("claims_email")
+		e.Str(s.ClaimsEmail)
+	}
+	{
+		e.FieldStart("claims_email_verified")
+		e.Bool(s.ClaimsEmailVerified)
+	}
+	{
+		e.FieldStart("claims_preferred_username")
+		e.Str(s.ClaimsPreferredUsername)
+	}
+	{
+		e.FieldStart("connector_id")
+		e.Str(s.ConnectorID)
+	}
+	{
+		e.FieldStart("token")
+		e.Str(s.Token)
+	}
+	{
+		e.FieldStart("obsolete_token")
+		e.Str(s.ObsoleteToken)
+	}
+	{
+		e.FieldStart("last_used")
+		json.EncodeDateTime(e, s.LastUsed)
+	}
 }
 
-var jsonFieldsNameOfRefreshTokenList = [2]string{
-	0: "id",
-	1: "client_id",
+var jsonFieldsNameOfRefreshTokenList = [12]string{
+	0:  "id",
+	1:  "client_id",
+	2:  "nonce",
+	3:  "claims_user_id",
+	4:  "claims_username",
+	5:  "claims_email",
+	6:  "claims_email_verified",
+	7:  "claims_preferred_username",
+	8:  "connector_id",
+	9:  "token",
+	10: "obsolete_token",
+	11: "last_used",
 }
 
 // Decode decodes RefreshTokenList from json.
@@ -9764,7 +10156,7 @@ func (s *RefreshTokenList) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode RefreshTokenList to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -9792,6 +10184,126 @@ func (s *RefreshTokenList) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"client_id\"")
 			}
+		case "nonce":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Nonce = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"nonce\"")
+			}
+		case "claims_user_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUserID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_user_id\"")
+			}
+		case "claims_username":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_username\"")
+			}
+		case "claims_email":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsEmail = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email\"")
+			}
+		case "claims_email_verified":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Bool()
+				s.ClaimsEmailVerified = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email_verified\"")
+			}
+		case "claims_preferred_username":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsPreferredUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_preferred_username\"")
+			}
+		case "connector_id":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ConnectorID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"connector_id\"")
+			}
+		case "token":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Token = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "obsolete_token":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.ObsoleteToken = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"obsolete_token\"")
+			}
+		case "last_used":
+			requiredBitSet[1] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastUsed = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -9801,8 +10313,9 @@ func (s *RefreshTokenList) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -9865,11 +10378,61 @@ func (s *RefreshTokenRead) encodeFields(e *jx.Encoder) {
 		e.FieldStart("client_id")
 		e.Str(s.ClientID)
 	}
+	{
+		e.FieldStart("nonce")
+		e.Str(s.Nonce)
+	}
+	{
+		e.FieldStart("claims_user_id")
+		e.Str(s.ClaimsUserID)
+	}
+	{
+		e.FieldStart("claims_username")
+		e.Str(s.ClaimsUsername)
+	}
+	{
+		e.FieldStart("claims_email")
+		e.Str(s.ClaimsEmail)
+	}
+	{
+		e.FieldStart("claims_email_verified")
+		e.Bool(s.ClaimsEmailVerified)
+	}
+	{
+		e.FieldStart("claims_preferred_username")
+		e.Str(s.ClaimsPreferredUsername)
+	}
+	{
+		e.FieldStart("connector_id")
+		e.Str(s.ConnectorID)
+	}
+	{
+		e.FieldStart("token")
+		e.Str(s.Token)
+	}
+	{
+		e.FieldStart("obsolete_token")
+		e.Str(s.ObsoleteToken)
+	}
+	{
+		e.FieldStart("last_used")
+		json.EncodeDateTime(e, s.LastUsed)
+	}
 }
 
-var jsonFieldsNameOfRefreshTokenRead = [2]string{
-	0: "id",
-	1: "client_id",
+var jsonFieldsNameOfRefreshTokenRead = [12]string{
+	0:  "id",
+	1:  "client_id",
+	2:  "nonce",
+	3:  "claims_user_id",
+	4:  "claims_username",
+	5:  "claims_email",
+	6:  "claims_email_verified",
+	7:  "claims_preferred_username",
+	8:  "connector_id",
+	9:  "token",
+	10: "obsolete_token",
+	11: "last_used",
 }
 
 // Decode decodes RefreshTokenRead from json.
@@ -9877,7 +10440,7 @@ func (s *RefreshTokenRead) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode RefreshTokenRead to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -9905,6 +10468,126 @@ func (s *RefreshTokenRead) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"client_id\"")
 			}
+		case "nonce":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Nonce = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"nonce\"")
+			}
+		case "claims_user_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUserID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_user_id\"")
+			}
+		case "claims_username":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_username\"")
+			}
+		case "claims_email":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsEmail = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email\"")
+			}
+		case "claims_email_verified":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Bool()
+				s.ClaimsEmailVerified = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email_verified\"")
+			}
+		case "claims_preferred_username":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsPreferredUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_preferred_username\"")
+			}
+		case "connector_id":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ConnectorID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"connector_id\"")
+			}
+		case "token":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Token = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "obsolete_token":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.ObsoleteToken = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"obsolete_token\"")
+			}
+		case "last_used":
+			requiredBitSet[1] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastUsed = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -9914,8 +10597,9 @@ func (s *RefreshTokenRead) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -9978,11 +10662,61 @@ func (s *RefreshTokenUpdate) encodeFields(e *jx.Encoder) {
 		e.FieldStart("client_id")
 		e.Str(s.ClientID)
 	}
+	{
+		e.FieldStart("nonce")
+		e.Str(s.Nonce)
+	}
+	{
+		e.FieldStart("claims_user_id")
+		e.Str(s.ClaimsUserID)
+	}
+	{
+		e.FieldStart("claims_username")
+		e.Str(s.ClaimsUsername)
+	}
+	{
+		e.FieldStart("claims_email")
+		e.Str(s.ClaimsEmail)
+	}
+	{
+		e.FieldStart("claims_email_verified")
+		e.Bool(s.ClaimsEmailVerified)
+	}
+	{
+		e.FieldStart("claims_preferred_username")
+		e.Str(s.ClaimsPreferredUsername)
+	}
+	{
+		e.FieldStart("connector_id")
+		e.Str(s.ConnectorID)
+	}
+	{
+		e.FieldStart("token")
+		e.Str(s.Token)
+	}
+	{
+		e.FieldStart("obsolete_token")
+		e.Str(s.ObsoleteToken)
+	}
+	{
+		e.FieldStart("last_used")
+		json.EncodeDateTime(e, s.LastUsed)
+	}
 }
 
-var jsonFieldsNameOfRefreshTokenUpdate = [2]string{
-	0: "id",
-	1: "client_id",
+var jsonFieldsNameOfRefreshTokenUpdate = [12]string{
+	0:  "id",
+	1:  "client_id",
+	2:  "nonce",
+	3:  "claims_user_id",
+	4:  "claims_username",
+	5:  "claims_email",
+	6:  "claims_email_verified",
+	7:  "claims_preferred_username",
+	8:  "connector_id",
+	9:  "token",
+	10: "obsolete_token",
+	11: "last_used",
 }
 
 // Decode decodes RefreshTokenUpdate from json.
@@ -9990,7 +10724,7 @@ func (s *RefreshTokenUpdate) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode RefreshTokenUpdate to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -10018,6 +10752,126 @@ func (s *RefreshTokenUpdate) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"client_id\"")
 			}
+		case "nonce":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Nonce = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"nonce\"")
+			}
+		case "claims_user_id":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUserID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_user_id\"")
+			}
+		case "claims_username":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_username\"")
+			}
+		case "claims_email":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsEmail = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email\"")
+			}
+		case "claims_email_verified":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Bool()
+				s.ClaimsEmailVerified = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email_verified\"")
+			}
+		case "claims_preferred_username":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.ClaimsPreferredUsername = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_preferred_username\"")
+			}
+		case "connector_id":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.ConnectorID = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"connector_id\"")
+			}
+		case "token":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Token = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "obsolete_token":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.ObsoleteToken = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"obsolete_token\"")
+			}
+		case "last_used":
+			requiredBitSet[1] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.LastUsed = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -10027,8 +10881,9 @@ func (s *RefreshTokenUpdate) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
+	for i, mask := range [2]uint8{
+		0b11111111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -12445,10 +13300,80 @@ func (s *UpdateRefreshTokenReq) encodeFields(e *jx.Encoder) {
 			s.ClientID.Encode(e)
 		}
 	}
+	{
+		if s.Nonce.Set {
+			e.FieldStart("nonce")
+			s.Nonce.Encode(e)
+		}
+	}
+	{
+		if s.ClaimsUserID.Set {
+			e.FieldStart("claims_user_id")
+			s.ClaimsUserID.Encode(e)
+		}
+	}
+	{
+		if s.ClaimsUsername.Set {
+			e.FieldStart("claims_username")
+			s.ClaimsUsername.Encode(e)
+		}
+	}
+	{
+		if s.ClaimsEmail.Set {
+			e.FieldStart("claims_email")
+			s.ClaimsEmail.Encode(e)
+		}
+	}
+	{
+		if s.ClaimsEmailVerified.Set {
+			e.FieldStart("claims_email_verified")
+			s.ClaimsEmailVerified.Encode(e)
+		}
+	}
+	{
+		if s.ClaimsPreferredUsername.Set {
+			e.FieldStart("claims_preferred_username")
+			s.ClaimsPreferredUsername.Encode(e)
+		}
+	}
+	{
+		if s.ConnectorID.Set {
+			e.FieldStart("connector_id")
+			s.ConnectorID.Encode(e)
+		}
+	}
+	{
+		if s.Token.Set {
+			e.FieldStart("token")
+			s.Token.Encode(e)
+		}
+	}
+	{
+		if s.ObsoleteToken.Set {
+			e.FieldStart("obsolete_token")
+			s.ObsoleteToken.Encode(e)
+		}
+	}
+	{
+		if s.LastUsed.Set {
+			e.FieldStart("last_used")
+			s.LastUsed.Encode(e, json.EncodeDateTime)
+		}
+	}
 }
 
-var jsonFieldsNameOfUpdateRefreshTokenReq = [1]string{
-	0: "client_id",
+var jsonFieldsNameOfUpdateRefreshTokenReq = [11]string{
+	0:  "client_id",
+	1:  "nonce",
+	2:  "claims_user_id",
+	3:  "claims_username",
+	4:  "claims_email",
+	5:  "claims_email_verified",
+	6:  "claims_preferred_username",
+	7:  "connector_id",
+	8:  "token",
+	9:  "obsolete_token",
+	10: "last_used",
 }
 
 // Decode decodes UpdateRefreshTokenReq from json.
@@ -12468,6 +13393,106 @@ func (s *UpdateRefreshTokenReq) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"client_id\"")
+			}
+		case "nonce":
+			if err := func() error {
+				s.Nonce.Reset()
+				if err := s.Nonce.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"nonce\"")
+			}
+		case "claims_user_id":
+			if err := func() error {
+				s.ClaimsUserID.Reset()
+				if err := s.ClaimsUserID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_user_id\"")
+			}
+		case "claims_username":
+			if err := func() error {
+				s.ClaimsUsername.Reset()
+				if err := s.ClaimsUsername.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_username\"")
+			}
+		case "claims_email":
+			if err := func() error {
+				s.ClaimsEmail.Reset()
+				if err := s.ClaimsEmail.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email\"")
+			}
+		case "claims_email_verified":
+			if err := func() error {
+				s.ClaimsEmailVerified.Reset()
+				if err := s.ClaimsEmailVerified.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_email_verified\"")
+			}
+		case "claims_preferred_username":
+			if err := func() error {
+				s.ClaimsPreferredUsername.Reset()
+				if err := s.ClaimsPreferredUsername.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"claims_preferred_username\"")
+			}
+		case "connector_id":
+			if err := func() error {
+				s.ConnectorID.Reset()
+				if err := s.ConnectorID.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"connector_id\"")
+			}
+		case "token":
+			if err := func() error {
+				s.Token.Reset()
+				if err := s.Token.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"token\"")
+			}
+		case "obsolete_token":
+			if err := func() error {
+				s.ObsoleteToken.Reset()
+				if err := s.ObsoleteToken.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"obsolete_token\"")
+			}
+		case "last_used":
+			if err := func() error {
+				s.LastUsed.Reset()
+				if err := s.LastUsed.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"last_used\"")
 			}
 		default:
 			return d.Skip()

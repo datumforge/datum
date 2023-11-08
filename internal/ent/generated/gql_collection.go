@@ -670,6 +670,56 @@ func (rt *RefreshTokenQuery) collectField(ctx context.Context, opCtx *graphql.Op
 				selectedFields = append(selectedFields, refreshtoken.FieldClientID)
 				fieldSeen[refreshtoken.FieldClientID] = struct{}{}
 			}
+		case "nonce":
+			if _, ok := fieldSeen[refreshtoken.FieldNonce]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldNonce)
+				fieldSeen[refreshtoken.FieldNonce] = struct{}{}
+			}
+		case "claimsUserID":
+			if _, ok := fieldSeen[refreshtoken.FieldClaimsUserID]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldClaimsUserID)
+				fieldSeen[refreshtoken.FieldClaimsUserID] = struct{}{}
+			}
+		case "claimsUsername":
+			if _, ok := fieldSeen[refreshtoken.FieldClaimsUsername]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldClaimsUsername)
+				fieldSeen[refreshtoken.FieldClaimsUsername] = struct{}{}
+			}
+		case "claimsEmail":
+			if _, ok := fieldSeen[refreshtoken.FieldClaimsEmail]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldClaimsEmail)
+				fieldSeen[refreshtoken.FieldClaimsEmail] = struct{}{}
+			}
+		case "claimsEmailVerified":
+			if _, ok := fieldSeen[refreshtoken.FieldClaimsEmailVerified]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldClaimsEmailVerified)
+				fieldSeen[refreshtoken.FieldClaimsEmailVerified] = struct{}{}
+			}
+		case "claimsPreferredUsername":
+			if _, ok := fieldSeen[refreshtoken.FieldClaimsPreferredUsername]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldClaimsPreferredUsername)
+				fieldSeen[refreshtoken.FieldClaimsPreferredUsername] = struct{}{}
+			}
+		case "connectorID":
+			if _, ok := fieldSeen[refreshtoken.FieldConnectorID]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldConnectorID)
+				fieldSeen[refreshtoken.FieldConnectorID] = struct{}{}
+			}
+		case "token":
+			if _, ok := fieldSeen[refreshtoken.FieldToken]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldToken)
+				fieldSeen[refreshtoken.FieldToken] = struct{}{}
+			}
+		case "obsoleteToken":
+			if _, ok := fieldSeen[refreshtoken.FieldObsoleteToken]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldObsoleteToken)
+				fieldSeen[refreshtoken.FieldObsoleteToken] = struct{}{}
+			}
+		case "lastUsed":
+			if _, ok := fieldSeen[refreshtoken.FieldLastUsed]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldLastUsed)
+				fieldSeen[refreshtoken.FieldLastUsed] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

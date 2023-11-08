@@ -536,7 +536,17 @@ func (s *CreateOrganizationReq) SetIntegrations(val []string) {
 }
 
 type CreateRefreshTokenReq struct {
-	ClientID string `json:"client_id"`
+	ClientID                string    `json:"client_id"`
+	Nonce                   string    `json:"nonce"`
+	ClaimsUserID            string    `json:"claims_user_id"`
+	ClaimsUsername          string    `json:"claims_username"`
+	ClaimsEmail             string    `json:"claims_email"`
+	ClaimsEmailVerified     bool      `json:"claims_email_verified"`
+	ClaimsPreferredUsername string    `json:"claims_preferred_username"`
+	ConnectorID             string    `json:"connector_id"`
+	Token                   string    `json:"token"`
+	ObsoleteToken           string    `json:"obsolete_token"`
+	LastUsed                time.Time `json:"last_used"`
 }
 
 // GetClientID returns the value of ClientID.
@@ -544,9 +554,109 @@ func (s *CreateRefreshTokenReq) GetClientID() string {
 	return s.ClientID
 }
 
+// GetNonce returns the value of Nonce.
+func (s *CreateRefreshTokenReq) GetNonce() string {
+	return s.Nonce
+}
+
+// GetClaimsUserID returns the value of ClaimsUserID.
+func (s *CreateRefreshTokenReq) GetClaimsUserID() string {
+	return s.ClaimsUserID
+}
+
+// GetClaimsUsername returns the value of ClaimsUsername.
+func (s *CreateRefreshTokenReq) GetClaimsUsername() string {
+	return s.ClaimsUsername
+}
+
+// GetClaimsEmail returns the value of ClaimsEmail.
+func (s *CreateRefreshTokenReq) GetClaimsEmail() string {
+	return s.ClaimsEmail
+}
+
+// GetClaimsEmailVerified returns the value of ClaimsEmailVerified.
+func (s *CreateRefreshTokenReq) GetClaimsEmailVerified() bool {
+	return s.ClaimsEmailVerified
+}
+
+// GetClaimsPreferredUsername returns the value of ClaimsPreferredUsername.
+func (s *CreateRefreshTokenReq) GetClaimsPreferredUsername() string {
+	return s.ClaimsPreferredUsername
+}
+
+// GetConnectorID returns the value of ConnectorID.
+func (s *CreateRefreshTokenReq) GetConnectorID() string {
+	return s.ConnectorID
+}
+
+// GetToken returns the value of Token.
+func (s *CreateRefreshTokenReq) GetToken() string {
+	return s.Token
+}
+
+// GetObsoleteToken returns the value of ObsoleteToken.
+func (s *CreateRefreshTokenReq) GetObsoleteToken() string {
+	return s.ObsoleteToken
+}
+
+// GetLastUsed returns the value of LastUsed.
+func (s *CreateRefreshTokenReq) GetLastUsed() time.Time {
+	return s.LastUsed
+}
+
 // SetClientID sets the value of ClientID.
 func (s *CreateRefreshTokenReq) SetClientID(val string) {
 	s.ClientID = val
+}
+
+// SetNonce sets the value of Nonce.
+func (s *CreateRefreshTokenReq) SetNonce(val string) {
+	s.Nonce = val
+}
+
+// SetClaimsUserID sets the value of ClaimsUserID.
+func (s *CreateRefreshTokenReq) SetClaimsUserID(val string) {
+	s.ClaimsUserID = val
+}
+
+// SetClaimsUsername sets the value of ClaimsUsername.
+func (s *CreateRefreshTokenReq) SetClaimsUsername(val string) {
+	s.ClaimsUsername = val
+}
+
+// SetClaimsEmail sets the value of ClaimsEmail.
+func (s *CreateRefreshTokenReq) SetClaimsEmail(val string) {
+	s.ClaimsEmail = val
+}
+
+// SetClaimsEmailVerified sets the value of ClaimsEmailVerified.
+func (s *CreateRefreshTokenReq) SetClaimsEmailVerified(val bool) {
+	s.ClaimsEmailVerified = val
+}
+
+// SetClaimsPreferredUsername sets the value of ClaimsPreferredUsername.
+func (s *CreateRefreshTokenReq) SetClaimsPreferredUsername(val string) {
+	s.ClaimsPreferredUsername = val
+}
+
+// SetConnectorID sets the value of ConnectorID.
+func (s *CreateRefreshTokenReq) SetConnectorID(val string) {
+	s.ConnectorID = val
+}
+
+// SetToken sets the value of Token.
+func (s *CreateRefreshTokenReq) SetToken(val string) {
+	s.Token = val
+}
+
+// SetObsoleteToken sets the value of ObsoleteToken.
+func (s *CreateRefreshTokenReq) SetObsoleteToken(val string) {
+	s.ObsoleteToken = val
+}
+
+// SetLastUsed sets the value of LastUsed.
+func (s *CreateRefreshTokenReq) SetLastUsed(val time.Time) {
+	s.LastUsed = val
 }
 
 type CreateSessionReq struct {
@@ -4681,8 +4791,18 @@ func (*R500) updateUserRes()                   {}
 
 // Ref: #/components/schemas/RefreshTokenCreate
 type RefreshTokenCreate struct {
-	ID       string `json:"id"`
-	ClientID string `json:"client_id"`
+	ID                      string    `json:"id"`
+	ClientID                string    `json:"client_id"`
+	Nonce                   string    `json:"nonce"`
+	ClaimsUserID            string    `json:"claims_user_id"`
+	ClaimsUsername          string    `json:"claims_username"`
+	ClaimsEmail             string    `json:"claims_email"`
+	ClaimsEmailVerified     bool      `json:"claims_email_verified"`
+	ClaimsPreferredUsername string    `json:"claims_preferred_username"`
+	ConnectorID             string    `json:"connector_id"`
+	Token                   string    `json:"token"`
+	ObsoleteToken           string    `json:"obsolete_token"`
+	LastUsed                time.Time `json:"last_used"`
 }
 
 // GetID returns the value of ID.
@@ -4695,6 +4815,56 @@ func (s *RefreshTokenCreate) GetClientID() string {
 	return s.ClientID
 }
 
+// GetNonce returns the value of Nonce.
+func (s *RefreshTokenCreate) GetNonce() string {
+	return s.Nonce
+}
+
+// GetClaimsUserID returns the value of ClaimsUserID.
+func (s *RefreshTokenCreate) GetClaimsUserID() string {
+	return s.ClaimsUserID
+}
+
+// GetClaimsUsername returns the value of ClaimsUsername.
+func (s *RefreshTokenCreate) GetClaimsUsername() string {
+	return s.ClaimsUsername
+}
+
+// GetClaimsEmail returns the value of ClaimsEmail.
+func (s *RefreshTokenCreate) GetClaimsEmail() string {
+	return s.ClaimsEmail
+}
+
+// GetClaimsEmailVerified returns the value of ClaimsEmailVerified.
+func (s *RefreshTokenCreate) GetClaimsEmailVerified() bool {
+	return s.ClaimsEmailVerified
+}
+
+// GetClaimsPreferredUsername returns the value of ClaimsPreferredUsername.
+func (s *RefreshTokenCreate) GetClaimsPreferredUsername() string {
+	return s.ClaimsPreferredUsername
+}
+
+// GetConnectorID returns the value of ConnectorID.
+func (s *RefreshTokenCreate) GetConnectorID() string {
+	return s.ConnectorID
+}
+
+// GetToken returns the value of Token.
+func (s *RefreshTokenCreate) GetToken() string {
+	return s.Token
+}
+
+// GetObsoleteToken returns the value of ObsoleteToken.
+func (s *RefreshTokenCreate) GetObsoleteToken() string {
+	return s.ObsoleteToken
+}
+
+// GetLastUsed returns the value of LastUsed.
+func (s *RefreshTokenCreate) GetLastUsed() time.Time {
+	return s.LastUsed
+}
+
 // SetID sets the value of ID.
 func (s *RefreshTokenCreate) SetID(val string) {
 	s.ID = val
@@ -4705,12 +4875,72 @@ func (s *RefreshTokenCreate) SetClientID(val string) {
 	s.ClientID = val
 }
 
+// SetNonce sets the value of Nonce.
+func (s *RefreshTokenCreate) SetNonce(val string) {
+	s.Nonce = val
+}
+
+// SetClaimsUserID sets the value of ClaimsUserID.
+func (s *RefreshTokenCreate) SetClaimsUserID(val string) {
+	s.ClaimsUserID = val
+}
+
+// SetClaimsUsername sets the value of ClaimsUsername.
+func (s *RefreshTokenCreate) SetClaimsUsername(val string) {
+	s.ClaimsUsername = val
+}
+
+// SetClaimsEmail sets the value of ClaimsEmail.
+func (s *RefreshTokenCreate) SetClaimsEmail(val string) {
+	s.ClaimsEmail = val
+}
+
+// SetClaimsEmailVerified sets the value of ClaimsEmailVerified.
+func (s *RefreshTokenCreate) SetClaimsEmailVerified(val bool) {
+	s.ClaimsEmailVerified = val
+}
+
+// SetClaimsPreferredUsername sets the value of ClaimsPreferredUsername.
+func (s *RefreshTokenCreate) SetClaimsPreferredUsername(val string) {
+	s.ClaimsPreferredUsername = val
+}
+
+// SetConnectorID sets the value of ConnectorID.
+func (s *RefreshTokenCreate) SetConnectorID(val string) {
+	s.ConnectorID = val
+}
+
+// SetToken sets the value of Token.
+func (s *RefreshTokenCreate) SetToken(val string) {
+	s.Token = val
+}
+
+// SetObsoleteToken sets the value of ObsoleteToken.
+func (s *RefreshTokenCreate) SetObsoleteToken(val string) {
+	s.ObsoleteToken = val
+}
+
+// SetLastUsed sets the value of LastUsed.
+func (s *RefreshTokenCreate) SetLastUsed(val time.Time) {
+	s.LastUsed = val
+}
+
 func (*RefreshTokenCreate) createRefreshTokenRes() {}
 
 // Ref: #/components/schemas/RefreshTokenList
 type RefreshTokenList struct {
-	ID       string `json:"id"`
-	ClientID string `json:"client_id"`
+	ID                      string    `json:"id"`
+	ClientID                string    `json:"client_id"`
+	Nonce                   string    `json:"nonce"`
+	ClaimsUserID            string    `json:"claims_user_id"`
+	ClaimsUsername          string    `json:"claims_username"`
+	ClaimsEmail             string    `json:"claims_email"`
+	ClaimsEmailVerified     bool      `json:"claims_email_verified"`
+	ClaimsPreferredUsername string    `json:"claims_preferred_username"`
+	ConnectorID             string    `json:"connector_id"`
+	Token                   string    `json:"token"`
+	ObsoleteToken           string    `json:"obsolete_token"`
+	LastUsed                time.Time `json:"last_used"`
 }
 
 // GetID returns the value of ID.
@@ -4723,6 +4953,56 @@ func (s *RefreshTokenList) GetClientID() string {
 	return s.ClientID
 }
 
+// GetNonce returns the value of Nonce.
+func (s *RefreshTokenList) GetNonce() string {
+	return s.Nonce
+}
+
+// GetClaimsUserID returns the value of ClaimsUserID.
+func (s *RefreshTokenList) GetClaimsUserID() string {
+	return s.ClaimsUserID
+}
+
+// GetClaimsUsername returns the value of ClaimsUsername.
+func (s *RefreshTokenList) GetClaimsUsername() string {
+	return s.ClaimsUsername
+}
+
+// GetClaimsEmail returns the value of ClaimsEmail.
+func (s *RefreshTokenList) GetClaimsEmail() string {
+	return s.ClaimsEmail
+}
+
+// GetClaimsEmailVerified returns the value of ClaimsEmailVerified.
+func (s *RefreshTokenList) GetClaimsEmailVerified() bool {
+	return s.ClaimsEmailVerified
+}
+
+// GetClaimsPreferredUsername returns the value of ClaimsPreferredUsername.
+func (s *RefreshTokenList) GetClaimsPreferredUsername() string {
+	return s.ClaimsPreferredUsername
+}
+
+// GetConnectorID returns the value of ConnectorID.
+func (s *RefreshTokenList) GetConnectorID() string {
+	return s.ConnectorID
+}
+
+// GetToken returns the value of Token.
+func (s *RefreshTokenList) GetToken() string {
+	return s.Token
+}
+
+// GetObsoleteToken returns the value of ObsoleteToken.
+func (s *RefreshTokenList) GetObsoleteToken() string {
+	return s.ObsoleteToken
+}
+
+// GetLastUsed returns the value of LastUsed.
+func (s *RefreshTokenList) GetLastUsed() time.Time {
+	return s.LastUsed
+}
+
 // SetID sets the value of ID.
 func (s *RefreshTokenList) SetID(val string) {
 	s.ID = val
@@ -4733,10 +5013,70 @@ func (s *RefreshTokenList) SetClientID(val string) {
 	s.ClientID = val
 }
 
+// SetNonce sets the value of Nonce.
+func (s *RefreshTokenList) SetNonce(val string) {
+	s.Nonce = val
+}
+
+// SetClaimsUserID sets the value of ClaimsUserID.
+func (s *RefreshTokenList) SetClaimsUserID(val string) {
+	s.ClaimsUserID = val
+}
+
+// SetClaimsUsername sets the value of ClaimsUsername.
+func (s *RefreshTokenList) SetClaimsUsername(val string) {
+	s.ClaimsUsername = val
+}
+
+// SetClaimsEmail sets the value of ClaimsEmail.
+func (s *RefreshTokenList) SetClaimsEmail(val string) {
+	s.ClaimsEmail = val
+}
+
+// SetClaimsEmailVerified sets the value of ClaimsEmailVerified.
+func (s *RefreshTokenList) SetClaimsEmailVerified(val bool) {
+	s.ClaimsEmailVerified = val
+}
+
+// SetClaimsPreferredUsername sets the value of ClaimsPreferredUsername.
+func (s *RefreshTokenList) SetClaimsPreferredUsername(val string) {
+	s.ClaimsPreferredUsername = val
+}
+
+// SetConnectorID sets the value of ConnectorID.
+func (s *RefreshTokenList) SetConnectorID(val string) {
+	s.ConnectorID = val
+}
+
+// SetToken sets the value of Token.
+func (s *RefreshTokenList) SetToken(val string) {
+	s.Token = val
+}
+
+// SetObsoleteToken sets the value of ObsoleteToken.
+func (s *RefreshTokenList) SetObsoleteToken(val string) {
+	s.ObsoleteToken = val
+}
+
+// SetLastUsed sets the value of LastUsed.
+func (s *RefreshTokenList) SetLastUsed(val time.Time) {
+	s.LastUsed = val
+}
+
 // Ref: #/components/schemas/RefreshTokenRead
 type RefreshTokenRead struct {
-	ID       string `json:"id"`
-	ClientID string `json:"client_id"`
+	ID                      string    `json:"id"`
+	ClientID                string    `json:"client_id"`
+	Nonce                   string    `json:"nonce"`
+	ClaimsUserID            string    `json:"claims_user_id"`
+	ClaimsUsername          string    `json:"claims_username"`
+	ClaimsEmail             string    `json:"claims_email"`
+	ClaimsEmailVerified     bool      `json:"claims_email_verified"`
+	ClaimsPreferredUsername string    `json:"claims_preferred_username"`
+	ConnectorID             string    `json:"connector_id"`
+	Token                   string    `json:"token"`
+	ObsoleteToken           string    `json:"obsolete_token"`
+	LastUsed                time.Time `json:"last_used"`
 }
 
 // GetID returns the value of ID.
@@ -4749,6 +5089,56 @@ func (s *RefreshTokenRead) GetClientID() string {
 	return s.ClientID
 }
 
+// GetNonce returns the value of Nonce.
+func (s *RefreshTokenRead) GetNonce() string {
+	return s.Nonce
+}
+
+// GetClaimsUserID returns the value of ClaimsUserID.
+func (s *RefreshTokenRead) GetClaimsUserID() string {
+	return s.ClaimsUserID
+}
+
+// GetClaimsUsername returns the value of ClaimsUsername.
+func (s *RefreshTokenRead) GetClaimsUsername() string {
+	return s.ClaimsUsername
+}
+
+// GetClaimsEmail returns the value of ClaimsEmail.
+func (s *RefreshTokenRead) GetClaimsEmail() string {
+	return s.ClaimsEmail
+}
+
+// GetClaimsEmailVerified returns the value of ClaimsEmailVerified.
+func (s *RefreshTokenRead) GetClaimsEmailVerified() bool {
+	return s.ClaimsEmailVerified
+}
+
+// GetClaimsPreferredUsername returns the value of ClaimsPreferredUsername.
+func (s *RefreshTokenRead) GetClaimsPreferredUsername() string {
+	return s.ClaimsPreferredUsername
+}
+
+// GetConnectorID returns the value of ConnectorID.
+func (s *RefreshTokenRead) GetConnectorID() string {
+	return s.ConnectorID
+}
+
+// GetToken returns the value of Token.
+func (s *RefreshTokenRead) GetToken() string {
+	return s.Token
+}
+
+// GetObsoleteToken returns the value of ObsoleteToken.
+func (s *RefreshTokenRead) GetObsoleteToken() string {
+	return s.ObsoleteToken
+}
+
+// GetLastUsed returns the value of LastUsed.
+func (s *RefreshTokenRead) GetLastUsed() time.Time {
+	return s.LastUsed
+}
+
 // SetID sets the value of ID.
 func (s *RefreshTokenRead) SetID(val string) {
 	s.ID = val
@@ -4759,12 +5149,72 @@ func (s *RefreshTokenRead) SetClientID(val string) {
 	s.ClientID = val
 }
 
+// SetNonce sets the value of Nonce.
+func (s *RefreshTokenRead) SetNonce(val string) {
+	s.Nonce = val
+}
+
+// SetClaimsUserID sets the value of ClaimsUserID.
+func (s *RefreshTokenRead) SetClaimsUserID(val string) {
+	s.ClaimsUserID = val
+}
+
+// SetClaimsUsername sets the value of ClaimsUsername.
+func (s *RefreshTokenRead) SetClaimsUsername(val string) {
+	s.ClaimsUsername = val
+}
+
+// SetClaimsEmail sets the value of ClaimsEmail.
+func (s *RefreshTokenRead) SetClaimsEmail(val string) {
+	s.ClaimsEmail = val
+}
+
+// SetClaimsEmailVerified sets the value of ClaimsEmailVerified.
+func (s *RefreshTokenRead) SetClaimsEmailVerified(val bool) {
+	s.ClaimsEmailVerified = val
+}
+
+// SetClaimsPreferredUsername sets the value of ClaimsPreferredUsername.
+func (s *RefreshTokenRead) SetClaimsPreferredUsername(val string) {
+	s.ClaimsPreferredUsername = val
+}
+
+// SetConnectorID sets the value of ConnectorID.
+func (s *RefreshTokenRead) SetConnectorID(val string) {
+	s.ConnectorID = val
+}
+
+// SetToken sets the value of Token.
+func (s *RefreshTokenRead) SetToken(val string) {
+	s.Token = val
+}
+
+// SetObsoleteToken sets the value of ObsoleteToken.
+func (s *RefreshTokenRead) SetObsoleteToken(val string) {
+	s.ObsoleteToken = val
+}
+
+// SetLastUsed sets the value of LastUsed.
+func (s *RefreshTokenRead) SetLastUsed(val time.Time) {
+	s.LastUsed = val
+}
+
 func (*RefreshTokenRead) readRefreshTokenRes() {}
 
 // Ref: #/components/schemas/RefreshTokenUpdate
 type RefreshTokenUpdate struct {
-	ID       string `json:"id"`
-	ClientID string `json:"client_id"`
+	ID                      string    `json:"id"`
+	ClientID                string    `json:"client_id"`
+	Nonce                   string    `json:"nonce"`
+	ClaimsUserID            string    `json:"claims_user_id"`
+	ClaimsUsername          string    `json:"claims_username"`
+	ClaimsEmail             string    `json:"claims_email"`
+	ClaimsEmailVerified     bool      `json:"claims_email_verified"`
+	ClaimsPreferredUsername string    `json:"claims_preferred_username"`
+	ConnectorID             string    `json:"connector_id"`
+	Token                   string    `json:"token"`
+	ObsoleteToken           string    `json:"obsolete_token"`
+	LastUsed                time.Time `json:"last_used"`
 }
 
 // GetID returns the value of ID.
@@ -4777,6 +5227,56 @@ func (s *RefreshTokenUpdate) GetClientID() string {
 	return s.ClientID
 }
 
+// GetNonce returns the value of Nonce.
+func (s *RefreshTokenUpdate) GetNonce() string {
+	return s.Nonce
+}
+
+// GetClaimsUserID returns the value of ClaimsUserID.
+func (s *RefreshTokenUpdate) GetClaimsUserID() string {
+	return s.ClaimsUserID
+}
+
+// GetClaimsUsername returns the value of ClaimsUsername.
+func (s *RefreshTokenUpdate) GetClaimsUsername() string {
+	return s.ClaimsUsername
+}
+
+// GetClaimsEmail returns the value of ClaimsEmail.
+func (s *RefreshTokenUpdate) GetClaimsEmail() string {
+	return s.ClaimsEmail
+}
+
+// GetClaimsEmailVerified returns the value of ClaimsEmailVerified.
+func (s *RefreshTokenUpdate) GetClaimsEmailVerified() bool {
+	return s.ClaimsEmailVerified
+}
+
+// GetClaimsPreferredUsername returns the value of ClaimsPreferredUsername.
+func (s *RefreshTokenUpdate) GetClaimsPreferredUsername() string {
+	return s.ClaimsPreferredUsername
+}
+
+// GetConnectorID returns the value of ConnectorID.
+func (s *RefreshTokenUpdate) GetConnectorID() string {
+	return s.ConnectorID
+}
+
+// GetToken returns the value of Token.
+func (s *RefreshTokenUpdate) GetToken() string {
+	return s.Token
+}
+
+// GetObsoleteToken returns the value of ObsoleteToken.
+func (s *RefreshTokenUpdate) GetObsoleteToken() string {
+	return s.ObsoleteToken
+}
+
+// GetLastUsed returns the value of LastUsed.
+func (s *RefreshTokenUpdate) GetLastUsed() time.Time {
+	return s.LastUsed
+}
+
 // SetID sets the value of ID.
 func (s *RefreshTokenUpdate) SetID(val string) {
 	s.ID = val
@@ -4785,6 +5285,56 @@ func (s *RefreshTokenUpdate) SetID(val string) {
 // SetClientID sets the value of ClientID.
 func (s *RefreshTokenUpdate) SetClientID(val string) {
 	s.ClientID = val
+}
+
+// SetNonce sets the value of Nonce.
+func (s *RefreshTokenUpdate) SetNonce(val string) {
+	s.Nonce = val
+}
+
+// SetClaimsUserID sets the value of ClaimsUserID.
+func (s *RefreshTokenUpdate) SetClaimsUserID(val string) {
+	s.ClaimsUserID = val
+}
+
+// SetClaimsUsername sets the value of ClaimsUsername.
+func (s *RefreshTokenUpdate) SetClaimsUsername(val string) {
+	s.ClaimsUsername = val
+}
+
+// SetClaimsEmail sets the value of ClaimsEmail.
+func (s *RefreshTokenUpdate) SetClaimsEmail(val string) {
+	s.ClaimsEmail = val
+}
+
+// SetClaimsEmailVerified sets the value of ClaimsEmailVerified.
+func (s *RefreshTokenUpdate) SetClaimsEmailVerified(val bool) {
+	s.ClaimsEmailVerified = val
+}
+
+// SetClaimsPreferredUsername sets the value of ClaimsPreferredUsername.
+func (s *RefreshTokenUpdate) SetClaimsPreferredUsername(val string) {
+	s.ClaimsPreferredUsername = val
+}
+
+// SetConnectorID sets the value of ConnectorID.
+func (s *RefreshTokenUpdate) SetConnectorID(val string) {
+	s.ConnectorID = val
+}
+
+// SetToken sets the value of Token.
+func (s *RefreshTokenUpdate) SetToken(val string) {
+	s.Token = val
+}
+
+// SetObsoleteToken sets the value of ObsoleteToken.
+func (s *RefreshTokenUpdate) SetObsoleteToken(val string) {
+	s.ObsoleteToken = val
+}
+
+// SetLastUsed sets the value of LastUsed.
+func (s *RefreshTokenUpdate) SetLastUsed(val time.Time) {
+	s.LastUsed = val
 }
 
 func (*RefreshTokenUpdate) updateRefreshTokenRes() {}
@@ -6064,7 +6614,17 @@ func (s *UpdateOrganizationReq) SetIntegrations(val []string) {
 }
 
 type UpdateRefreshTokenReq struct {
-	ClientID OptString `json:"client_id"`
+	ClientID                OptString   `json:"client_id"`
+	Nonce                   OptString   `json:"nonce"`
+	ClaimsUserID            OptString   `json:"claims_user_id"`
+	ClaimsUsername          OptString   `json:"claims_username"`
+	ClaimsEmail             OptString   `json:"claims_email"`
+	ClaimsEmailVerified     OptBool     `json:"claims_email_verified"`
+	ClaimsPreferredUsername OptString   `json:"claims_preferred_username"`
+	ConnectorID             OptString   `json:"connector_id"`
+	Token                   OptString   `json:"token"`
+	ObsoleteToken           OptString   `json:"obsolete_token"`
+	LastUsed                OptDateTime `json:"last_used"`
 }
 
 // GetClientID returns the value of ClientID.
@@ -6072,9 +6632,109 @@ func (s *UpdateRefreshTokenReq) GetClientID() OptString {
 	return s.ClientID
 }
 
+// GetNonce returns the value of Nonce.
+func (s *UpdateRefreshTokenReq) GetNonce() OptString {
+	return s.Nonce
+}
+
+// GetClaimsUserID returns the value of ClaimsUserID.
+func (s *UpdateRefreshTokenReq) GetClaimsUserID() OptString {
+	return s.ClaimsUserID
+}
+
+// GetClaimsUsername returns the value of ClaimsUsername.
+func (s *UpdateRefreshTokenReq) GetClaimsUsername() OptString {
+	return s.ClaimsUsername
+}
+
+// GetClaimsEmail returns the value of ClaimsEmail.
+func (s *UpdateRefreshTokenReq) GetClaimsEmail() OptString {
+	return s.ClaimsEmail
+}
+
+// GetClaimsEmailVerified returns the value of ClaimsEmailVerified.
+func (s *UpdateRefreshTokenReq) GetClaimsEmailVerified() OptBool {
+	return s.ClaimsEmailVerified
+}
+
+// GetClaimsPreferredUsername returns the value of ClaimsPreferredUsername.
+func (s *UpdateRefreshTokenReq) GetClaimsPreferredUsername() OptString {
+	return s.ClaimsPreferredUsername
+}
+
+// GetConnectorID returns the value of ConnectorID.
+func (s *UpdateRefreshTokenReq) GetConnectorID() OptString {
+	return s.ConnectorID
+}
+
+// GetToken returns the value of Token.
+func (s *UpdateRefreshTokenReq) GetToken() OptString {
+	return s.Token
+}
+
+// GetObsoleteToken returns the value of ObsoleteToken.
+func (s *UpdateRefreshTokenReq) GetObsoleteToken() OptString {
+	return s.ObsoleteToken
+}
+
+// GetLastUsed returns the value of LastUsed.
+func (s *UpdateRefreshTokenReq) GetLastUsed() OptDateTime {
+	return s.LastUsed
+}
+
 // SetClientID sets the value of ClientID.
 func (s *UpdateRefreshTokenReq) SetClientID(val OptString) {
 	s.ClientID = val
+}
+
+// SetNonce sets the value of Nonce.
+func (s *UpdateRefreshTokenReq) SetNonce(val OptString) {
+	s.Nonce = val
+}
+
+// SetClaimsUserID sets the value of ClaimsUserID.
+func (s *UpdateRefreshTokenReq) SetClaimsUserID(val OptString) {
+	s.ClaimsUserID = val
+}
+
+// SetClaimsUsername sets the value of ClaimsUsername.
+func (s *UpdateRefreshTokenReq) SetClaimsUsername(val OptString) {
+	s.ClaimsUsername = val
+}
+
+// SetClaimsEmail sets the value of ClaimsEmail.
+func (s *UpdateRefreshTokenReq) SetClaimsEmail(val OptString) {
+	s.ClaimsEmail = val
+}
+
+// SetClaimsEmailVerified sets the value of ClaimsEmailVerified.
+func (s *UpdateRefreshTokenReq) SetClaimsEmailVerified(val OptBool) {
+	s.ClaimsEmailVerified = val
+}
+
+// SetClaimsPreferredUsername sets the value of ClaimsPreferredUsername.
+func (s *UpdateRefreshTokenReq) SetClaimsPreferredUsername(val OptString) {
+	s.ClaimsPreferredUsername = val
+}
+
+// SetConnectorID sets the value of ConnectorID.
+func (s *UpdateRefreshTokenReq) SetConnectorID(val OptString) {
+	s.ConnectorID = val
+}
+
+// SetToken sets the value of Token.
+func (s *UpdateRefreshTokenReq) SetToken(val OptString) {
+	s.Token = val
+}
+
+// SetObsoleteToken sets the value of ObsoleteToken.
+func (s *UpdateRefreshTokenReq) SetObsoleteToken(val OptString) {
+	s.ObsoleteToken = val
+}
+
+// SetLastUsed sets the value of LastUsed.
+func (s *UpdateRefreshTokenReq) SetLastUsed(val OptDateTime) {
+	s.LastUsed = val
 }
 
 type UpdateSessionReq struct {

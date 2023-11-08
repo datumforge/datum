@@ -539,6 +539,8 @@ input IntegrationWhereInput {
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
 }
+"""A valid JSON string."""
+scalar JSON
 """
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
@@ -852,6 +854,16 @@ type Query {
 type RefreshToken implements Node {
   id: ID!
   clientID: String!
+  nonce: String!
+  claimsUserID: String!
+  claimsUsername: String!
+  claimsEmail: String!
+  claimsEmailVerified: Boolean!
+  claimsPreferredUsername: String!
+  connectorID: String!
+  token: String!
+  obsoleteToken: String!
+  lastUsed: Time!
 }
 """
 RefreshTokenWhereInput is used for filtering RefreshToken objects.
@@ -886,6 +898,130 @@ input RefreshTokenWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
+  """nonce field predicates"""
+  nonce: String
+  nonceNEQ: String
+  nonceIn: [String!]
+  nonceNotIn: [String!]
+  nonceGT: String
+  nonceGTE: String
+  nonceLT: String
+  nonceLTE: String
+  nonceContains: String
+  nonceHasPrefix: String
+  nonceHasSuffix: String
+  nonceEqualFold: String
+  nonceContainsFold: String
+  """claims_user_id field predicates"""
+  claimsUserID: String
+  claimsUserIDNEQ: String
+  claimsUserIDIn: [String!]
+  claimsUserIDNotIn: [String!]
+  claimsUserIDGT: String
+  claimsUserIDGTE: String
+  claimsUserIDLT: String
+  claimsUserIDLTE: String
+  claimsUserIDContains: String
+  claimsUserIDHasPrefix: String
+  claimsUserIDHasSuffix: String
+  claimsUserIDEqualFold: String
+  claimsUserIDContainsFold: String
+  """claims_username field predicates"""
+  claimsUsername: String
+  claimsUsernameNEQ: String
+  claimsUsernameIn: [String!]
+  claimsUsernameNotIn: [String!]
+  claimsUsernameGT: String
+  claimsUsernameGTE: String
+  claimsUsernameLT: String
+  claimsUsernameLTE: String
+  claimsUsernameContains: String
+  claimsUsernameHasPrefix: String
+  claimsUsernameHasSuffix: String
+  claimsUsernameEqualFold: String
+  claimsUsernameContainsFold: String
+  """claims_email field predicates"""
+  claimsEmail: String
+  claimsEmailNEQ: String
+  claimsEmailIn: [String!]
+  claimsEmailNotIn: [String!]
+  claimsEmailGT: String
+  claimsEmailGTE: String
+  claimsEmailLT: String
+  claimsEmailLTE: String
+  claimsEmailContains: String
+  claimsEmailHasPrefix: String
+  claimsEmailHasSuffix: String
+  claimsEmailEqualFold: String
+  claimsEmailContainsFold: String
+  """claims_email_verified field predicates"""
+  claimsEmailVerified: Boolean
+  claimsEmailVerifiedNEQ: Boolean
+  """claims_preferred_username field predicates"""
+  claimsPreferredUsername: String
+  claimsPreferredUsernameNEQ: String
+  claimsPreferredUsernameIn: [String!]
+  claimsPreferredUsernameNotIn: [String!]
+  claimsPreferredUsernameGT: String
+  claimsPreferredUsernameGTE: String
+  claimsPreferredUsernameLT: String
+  claimsPreferredUsernameLTE: String
+  claimsPreferredUsernameContains: String
+  claimsPreferredUsernameHasPrefix: String
+  claimsPreferredUsernameHasSuffix: String
+  claimsPreferredUsernameEqualFold: String
+  claimsPreferredUsernameContainsFold: String
+  """connector_id field predicates"""
+  connectorID: String
+  connectorIDNEQ: String
+  connectorIDIn: [String!]
+  connectorIDNotIn: [String!]
+  connectorIDGT: String
+  connectorIDGTE: String
+  connectorIDLT: String
+  connectorIDLTE: String
+  connectorIDContains: String
+  connectorIDHasPrefix: String
+  connectorIDHasSuffix: String
+  connectorIDEqualFold: String
+  connectorIDContainsFold: String
+  """token field predicates"""
+  token: String
+  tokenNEQ: String
+  tokenIn: [String!]
+  tokenNotIn: [String!]
+  tokenGT: String
+  tokenGTE: String
+  tokenLT: String
+  tokenLTE: String
+  tokenContains: String
+  tokenHasPrefix: String
+  tokenHasSuffix: String
+  tokenEqualFold: String
+  tokenContainsFold: String
+  """obsolete_token field predicates"""
+  obsoleteToken: String
+  obsoleteTokenNEQ: String
+  obsoleteTokenIn: [String!]
+  obsoleteTokenNotIn: [String!]
+  obsoleteTokenGT: String
+  obsoleteTokenGTE: String
+  obsoleteTokenLT: String
+  obsoleteTokenLTE: String
+  obsoleteTokenContains: String
+  obsoleteTokenHasPrefix: String
+  obsoleteTokenHasSuffix: String
+  obsoleteTokenEqualFold: String
+  obsoleteTokenContainsFold: String
+  """last_used field predicates"""
+  lastUsed: Time
+  lastUsedNEQ: Time
+  lastUsedIn: [Time!]
+  lastUsedNotIn: [Time!]
+  lastUsedGT: Time
+  lastUsedGTE: Time
+  lastUsedLT: Time
+  lastUsedLTE: Time
 }
 type Session implements Node {
   id: ID!

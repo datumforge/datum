@@ -112,7 +112,17 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "RefreshToken",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			refreshtoken.FieldClientID: {Type: field.TypeString, Column: refreshtoken.FieldClientID},
+			refreshtoken.FieldClientID:                {Type: field.TypeString, Column: refreshtoken.FieldClientID},
+			refreshtoken.FieldNonce:                   {Type: field.TypeString, Column: refreshtoken.FieldNonce},
+			refreshtoken.FieldClaimsUserID:            {Type: field.TypeString, Column: refreshtoken.FieldClaimsUserID},
+			refreshtoken.FieldClaimsUsername:          {Type: field.TypeString, Column: refreshtoken.FieldClaimsUsername},
+			refreshtoken.FieldClaimsEmail:             {Type: field.TypeString, Column: refreshtoken.FieldClaimsEmail},
+			refreshtoken.FieldClaimsEmailVerified:     {Type: field.TypeBool, Column: refreshtoken.FieldClaimsEmailVerified},
+			refreshtoken.FieldClaimsPreferredUsername: {Type: field.TypeString, Column: refreshtoken.FieldClaimsPreferredUsername},
+			refreshtoken.FieldConnectorID:             {Type: field.TypeString, Column: refreshtoken.FieldConnectorID},
+			refreshtoken.FieldToken:                   {Type: field.TypeString, Column: refreshtoken.FieldToken},
+			refreshtoken.FieldObsoleteToken:           {Type: field.TypeString, Column: refreshtoken.FieldObsoleteToken},
+			refreshtoken.FieldLastUsed:                {Type: field.TypeTime, Column: refreshtoken.FieldLastUsed},
 		},
 	}
 	graph.Nodes[5] = &sqlgraph.Node{
@@ -825,6 +835,56 @@ func (f *RefreshTokenFilter) WhereID(p entql.StringP) {
 // WhereClientID applies the entql string predicate on the client_id field.
 func (f *RefreshTokenFilter) WhereClientID(p entql.StringP) {
 	f.Where(p.Field(refreshtoken.FieldClientID))
+}
+
+// WhereNonce applies the entql string predicate on the nonce field.
+func (f *RefreshTokenFilter) WhereNonce(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldNonce))
+}
+
+// WhereClaimsUserID applies the entql string predicate on the claims_user_id field.
+func (f *RefreshTokenFilter) WhereClaimsUserID(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldClaimsUserID))
+}
+
+// WhereClaimsUsername applies the entql string predicate on the claims_username field.
+func (f *RefreshTokenFilter) WhereClaimsUsername(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldClaimsUsername))
+}
+
+// WhereClaimsEmail applies the entql string predicate on the claims_email field.
+func (f *RefreshTokenFilter) WhereClaimsEmail(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldClaimsEmail))
+}
+
+// WhereClaimsEmailVerified applies the entql bool predicate on the claims_email_verified field.
+func (f *RefreshTokenFilter) WhereClaimsEmailVerified(p entql.BoolP) {
+	f.Where(p.Field(refreshtoken.FieldClaimsEmailVerified))
+}
+
+// WhereClaimsPreferredUsername applies the entql string predicate on the claims_preferred_username field.
+func (f *RefreshTokenFilter) WhereClaimsPreferredUsername(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldClaimsPreferredUsername))
+}
+
+// WhereConnectorID applies the entql string predicate on the connector_id field.
+func (f *RefreshTokenFilter) WhereConnectorID(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldConnectorID))
+}
+
+// WhereToken applies the entql string predicate on the token field.
+func (f *RefreshTokenFilter) WhereToken(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldToken))
+}
+
+// WhereObsoleteToken applies the entql string predicate on the obsolete_token field.
+func (f *RefreshTokenFilter) WhereObsoleteToken(p entql.StringP) {
+	f.Where(p.Field(refreshtoken.FieldObsoleteToken))
+}
+
+// WhereLastUsed applies the entql time.Time predicate on the last_used field.
+func (f *RefreshTokenFilter) WhereLastUsed(p entql.TimeP) {
+	f.Where(p.Field(refreshtoken.FieldLastUsed))
 }
 
 // addPredicate implements the predicateAdder interface.

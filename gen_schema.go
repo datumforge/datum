@@ -31,6 +31,14 @@ func main() {
 		Description: "A Universally Unique Identifier (UUID)",
 		Name:        "UUID",
 	}
+
+	// Add JSON Type to schema.graphql
+	//	schema.Types["JSON"] = &ast.Definition{
+	//		Kind:        ast.Scalar,
+	//		Description: "JSON",
+	//		Name:        "JSON",
+	//	}
+
 	f, err := os.Create("schema.graphql")
 	if err != nil {
 		log.Fatal(err)

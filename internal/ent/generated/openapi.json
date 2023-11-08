@@ -1871,10 +1871,51 @@
                 "properties": {
                   "client_id": {
                     "type": "string"
+                  },
+                  "nonce": {
+                    "type": "string"
+                  },
+                  "claims_user_id": {
+                    "type": "string"
+                  },
+                  "claims_username": {
+                    "type": "string"
+                  },
+                  "claims_email": {
+                    "type": "string"
+                  },
+                  "claims_email_verified": {
+                    "type": "boolean"
+                  },
+                  "claims_preferred_username": {
+                    "type": "string"
+                  },
+                  "connector_id": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "obsolete_token": {
+                    "type": "string"
+                  },
+                  "last_used": {
+                    "type": "string",
+                    "format": "date-time"
                   }
                 },
                 "required": [
-                  "client_id"
+                  "client_id",
+                  "nonce",
+                  "claims_user_id",
+                  "claims_username",
+                  "claims_email",
+                  "claims_email_verified",
+                  "claims_preferred_username",
+                  "connector_id",
+                  "token",
+                  "obsolete_token",
+                  "last_used"
                 ]
               }
             }
@@ -2011,6 +2052,37 @@
                 "properties": {
                   "client_id": {
                     "type": "string"
+                  },
+                  "nonce": {
+                    "type": "string"
+                  },
+                  "claims_user_id": {
+                    "type": "string"
+                  },
+                  "claims_username": {
+                    "type": "string"
+                  },
+                  "claims_email": {
+                    "type": "string"
+                  },
+                  "claims_email_verified": {
+                    "type": "boolean"
+                  },
+                  "claims_preferred_username": {
+                    "type": "string"
+                  },
+                  "connector_id": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "obsolete_token": {
+                    "type": "string"
+                  },
+                  "last_used": {
+                    "type": "string",
+                    "format": "date-time"
                   }
                 }
               }
@@ -4290,11 +4362,52 @@
           },
           "client_id": {
             "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "obsolete_token": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "client_id"
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "token",
+          "obsolete_token",
+          "last_used"
         ]
       },
       "RefreshTokenCreate": {
@@ -4305,11 +4418,52 @@
           },
           "client_id": {
             "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "obsolete_token": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "client_id"
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "token",
+          "obsolete_token",
+          "last_used"
         ]
       },
       "RefreshTokenList": {
@@ -4320,11 +4474,52 @@
           },
           "client_id": {
             "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "obsolete_token": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "client_id"
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "token",
+          "obsolete_token",
+          "last_used"
         ]
       },
       "RefreshTokenRead": {
@@ -4335,11 +4530,52 @@
           },
           "client_id": {
             "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "obsolete_token": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "client_id"
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "token",
+          "obsolete_token",
+          "last_used"
         ]
       },
       "RefreshTokenUpdate": {
@@ -4350,11 +4586,52 @@
           },
           "client_id": {
             "type": "string"
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "obsolete_token": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
           "id",
-          "client_id"
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "token",
+          "obsolete_token",
+          "last_used"
         ]
       },
       "Session": {

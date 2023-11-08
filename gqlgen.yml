@@ -91,3 +91,6 @@ models:
     model: github.com/99designs/gqlgen/graphql.Byte
   Date:
     model: github.com/99designs/gqlgen/graphql.Time
+  JSON:
+    model:
+      - github.com/datumforge/datum/internal/entx/json.RawMessage

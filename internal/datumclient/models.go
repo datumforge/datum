@@ -747,13 +747,16 @@ type PageInfo struct {
 type RefreshToken struct {
 	ID                      string    `json:"id"`
 	ClientID                string    `json:"clientID"`
+	Scopes                  *string   `json:"scopes,omitempty"`
 	Nonce                   string    `json:"nonce"`
 	ClaimsUserID            string    `json:"claimsUserID"`
 	ClaimsUsername          string    `json:"claimsUsername"`
 	ClaimsEmail             string    `json:"claimsEmail"`
 	ClaimsEmailVerified     bool      `json:"claimsEmailVerified"`
+	ClaimsGroups            *string   `json:"claimsGroups,omitempty"`
 	ClaimsPreferredUsername string    `json:"claimsPreferredUsername"`
 	ConnectorID             string    `json:"connectorID"`
+	ConnectorData           *string   `json:"connectorData,omitempty"`
 	Token                   string    `json:"token"`
 	ObsoleteToken           string    `json:"obsoleteToken"`
 	LastUsed                time.Time `json:"lastUsed"`
@@ -792,6 +795,22 @@ type RefreshTokenWhereInput struct {
 	ClientIDHasSuffix    *string  `json:"clientIDHasSuffix,omitempty"`
 	ClientIDEqualFold    *string  `json:"clientIDEqualFold,omitempty"`
 	ClientIDContainsFold *string  `json:"clientIDContainsFold,omitempty"`
+	// scopes field predicates
+	Scopes             *string  `json:"scopes,omitempty"`
+	ScopesNeq          *string  `json:"scopesNEQ,omitempty"`
+	ScopesIn           []string `json:"scopesIn,omitempty"`
+	ScopesNotIn        []string `json:"scopesNotIn,omitempty"`
+	ScopesGt           *string  `json:"scopesGT,omitempty"`
+	ScopesGte          *string  `json:"scopesGTE,omitempty"`
+	ScopesLt           *string  `json:"scopesLT,omitempty"`
+	ScopesLte          *string  `json:"scopesLTE,omitempty"`
+	ScopesContains     *string  `json:"scopesContains,omitempty"`
+	ScopesHasPrefix    *string  `json:"scopesHasPrefix,omitempty"`
+	ScopesHasSuffix    *string  `json:"scopesHasSuffix,omitempty"`
+	ScopesIsNil        *bool    `json:"scopesIsNil,omitempty"`
+	ScopesNotNil       *bool    `json:"scopesNotNil,omitempty"`
+	ScopesEqualFold    *string  `json:"scopesEqualFold,omitempty"`
+	ScopesContainsFold *string  `json:"scopesContainsFold,omitempty"`
 	// nonce field predicates
 	Nonce             *string  `json:"nonce,omitempty"`
 	NonceNeq          *string  `json:"nonceNEQ,omitempty"`
@@ -851,6 +870,22 @@ type RefreshTokenWhereInput struct {
 	// claims_email_verified field predicates
 	ClaimsEmailVerified    *bool `json:"claimsEmailVerified,omitempty"`
 	ClaimsEmailVerifiedNeq *bool `json:"claimsEmailVerifiedNEQ,omitempty"`
+	// claims_groups field predicates
+	ClaimsGroups             *string  `json:"claimsGroups,omitempty"`
+	ClaimsGroupsNeq          *string  `json:"claimsGroupsNEQ,omitempty"`
+	ClaimsGroupsIn           []string `json:"claimsGroupsIn,omitempty"`
+	ClaimsGroupsNotIn        []string `json:"claimsGroupsNotIn,omitempty"`
+	ClaimsGroupsGt           *string  `json:"claimsGroupsGT,omitempty"`
+	ClaimsGroupsGte          *string  `json:"claimsGroupsGTE,omitempty"`
+	ClaimsGroupsLt           *string  `json:"claimsGroupsLT,omitempty"`
+	ClaimsGroupsLte          *string  `json:"claimsGroupsLTE,omitempty"`
+	ClaimsGroupsContains     *string  `json:"claimsGroupsContains,omitempty"`
+	ClaimsGroupsHasPrefix    *string  `json:"claimsGroupsHasPrefix,omitempty"`
+	ClaimsGroupsHasSuffix    *string  `json:"claimsGroupsHasSuffix,omitempty"`
+	ClaimsGroupsIsNil        *bool    `json:"claimsGroupsIsNil,omitempty"`
+	ClaimsGroupsNotNil       *bool    `json:"claimsGroupsNotNil,omitempty"`
+	ClaimsGroupsEqualFold    *string  `json:"claimsGroupsEqualFold,omitempty"`
+	ClaimsGroupsContainsFold *string  `json:"claimsGroupsContainsFold,omitempty"`
 	// claims_preferred_username field predicates
 	ClaimsPreferredUsername             *string  `json:"claimsPreferredUsername,omitempty"`
 	ClaimsPreferredUsernameNeq          *string  `json:"claimsPreferredUsernameNEQ,omitempty"`
@@ -879,6 +914,22 @@ type RefreshTokenWhereInput struct {
 	ConnectorIDHasSuffix    *string  `json:"connectorIDHasSuffix,omitempty"`
 	ConnectorIDEqualFold    *string  `json:"connectorIDEqualFold,omitempty"`
 	ConnectorIDContainsFold *string  `json:"connectorIDContainsFold,omitempty"`
+	// connector_data field predicates
+	ConnectorData             *string  `json:"connectorData,omitempty"`
+	ConnectorDataNeq          *string  `json:"connectorDataNEQ,omitempty"`
+	ConnectorDataIn           []string `json:"connectorDataIn,omitempty"`
+	ConnectorDataNotIn        []string `json:"connectorDataNotIn,omitempty"`
+	ConnectorDataGt           *string  `json:"connectorDataGT,omitempty"`
+	ConnectorDataGte          *string  `json:"connectorDataGTE,omitempty"`
+	ConnectorDataLt           *string  `json:"connectorDataLT,omitempty"`
+	ConnectorDataLte          *string  `json:"connectorDataLTE,omitempty"`
+	ConnectorDataContains     *string  `json:"connectorDataContains,omitempty"`
+	ConnectorDataHasPrefix    *string  `json:"connectorDataHasPrefix,omitempty"`
+	ConnectorDataHasSuffix    *string  `json:"connectorDataHasSuffix,omitempty"`
+	ConnectorDataIsNil        *bool    `json:"connectorDataIsNil,omitempty"`
+	ConnectorDataNotNil       *bool    `json:"connectorDataNotNil,omitempty"`
+	ConnectorDataEqualFold    *string  `json:"connectorDataEqualFold,omitempty"`
+	ConnectorDataContainsFold *string  `json:"connectorDataContainsFold,omitempty"`
 	// token field predicates
 	Token             *string  `json:"token,omitempty"`
 	TokenNeq          *string  `json:"tokenNEQ,omitempty"`

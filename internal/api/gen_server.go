@@ -228,15 +228,18 @@ type ComplexityRoot struct {
 	RefreshToken struct {
 		ClaimsEmail             func(childComplexity int) int
 		ClaimsEmailVerified     func(childComplexity int) int
+		ClaimsGroups            func(childComplexity int) int
 		ClaimsPreferredUsername func(childComplexity int) int
 		ClaimsUserID            func(childComplexity int) int
 		ClaimsUsername          func(childComplexity int) int
 		ClientID                func(childComplexity int) int
+		ConnectorData           func(childComplexity int) int
 		ConnectorID             func(childComplexity int) int
 		ID                      func(childComplexity int) int
 		LastUsed                func(childComplexity int) int
 		Nonce                   func(childComplexity int) int
 		ObsoleteToken           func(childComplexity int) int
+		Scopes                  func(childComplexity int) int
 		Token                   func(childComplexity int) int
 	}
 
@@ -1251,6 +1254,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RefreshToken.ClaimsEmailVerified(childComplexity), true
 
+	case "RefreshToken.claimsGroups":
+		if e.complexity.RefreshToken.ClaimsGroups == nil {
+			break
+		}
+
+		return e.complexity.RefreshToken.ClaimsGroups(childComplexity), true
+
 	case "RefreshToken.claimsPreferredUsername":
 		if e.complexity.RefreshToken.ClaimsPreferredUsername == nil {
 			break
@@ -1278,6 +1288,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RefreshToken.ClientID(childComplexity), true
+
+	case "RefreshToken.connectorData":
+		if e.complexity.RefreshToken.ConnectorData == nil {
+			break
+		}
+
+		return e.complexity.RefreshToken.ConnectorData(childComplexity), true
 
 	case "RefreshToken.connectorID":
 		if e.complexity.RefreshToken.ConnectorID == nil {
@@ -1313,6 +1330,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RefreshToken.ObsoleteToken(childComplexity), true
+
+	case "RefreshToken.scopes":
+		if e.complexity.RefreshToken.Scopes == nil {
+			break
+		}
+
+		return e.complexity.RefreshToken.Scopes(childComplexity), true
 
 	case "RefreshToken.token":
 		if e.complexity.RefreshToken.Token == nil {
@@ -2627,13 +2651,16 @@ type Query {
 type RefreshToken implements Node {
   id: ID!
   clientID: String!
+  scopes: String
   nonce: String!
   claimsUserID: String!
   claimsUsername: String!
   claimsEmail: String!
   claimsEmailVerified: Boolean!
+  claimsGroups: String
   claimsPreferredUsername: String!
   connectorID: String!
+  connectorData: String
   token: String!
   obsoleteToken: String!
   lastUsed: Time!
@@ -2671,6 +2698,22 @@ input RefreshTokenWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
+  """scopes field predicates"""
+  scopes: String
+  scopesNEQ: String
+  scopesIn: [String!]
+  scopesNotIn: [String!]
+  scopesGT: String
+  scopesGTE: String
+  scopesLT: String
+  scopesLTE: String
+  scopesContains: String
+  scopesHasPrefix: String
+  scopesHasSuffix: String
+  scopesIsNil: Boolean
+  scopesNotNil: Boolean
+  scopesEqualFold: String
+  scopesContainsFold: String
   """nonce field predicates"""
   nonce: String
   nonceNEQ: String
@@ -2730,6 +2773,22 @@ input RefreshTokenWhereInput {
   """claims_email_verified field predicates"""
   claimsEmailVerified: Boolean
   claimsEmailVerifiedNEQ: Boolean
+  """claims_groups field predicates"""
+  claimsGroups: String
+  claimsGroupsNEQ: String
+  claimsGroupsIn: [String!]
+  claimsGroupsNotIn: [String!]
+  claimsGroupsGT: String
+  claimsGroupsGTE: String
+  claimsGroupsLT: String
+  claimsGroupsLTE: String
+  claimsGroupsContains: String
+  claimsGroupsHasPrefix: String
+  claimsGroupsHasSuffix: String
+  claimsGroupsIsNil: Boolean
+  claimsGroupsNotNil: Boolean
+  claimsGroupsEqualFold: String
+  claimsGroupsContainsFold: String
   """claims_preferred_username field predicates"""
   claimsPreferredUsername: String
   claimsPreferredUsernameNEQ: String
@@ -2758,6 +2817,22 @@ input RefreshTokenWhereInput {
   connectorIDHasSuffix: String
   connectorIDEqualFold: String
   connectorIDContainsFold: String
+  """connector_data field predicates"""
+  connectorData: String
+  connectorDataNEQ: String
+  connectorDataIn: [String!]
+  connectorDataNotIn: [String!]
+  connectorDataGT: String
+  connectorDataGTE: String
+  connectorDataLT: String
+  connectorDataLTE: String
+  connectorDataContains: String
+  connectorDataHasPrefix: String
+  connectorDataHasSuffix: String
+  connectorDataIsNil: Boolean
+  connectorDataNotNil: Boolean
+  connectorDataEqualFold: String
+  connectorDataContainsFold: String
   """token field predicates"""
   token: String
   tokenNEQ: String
@@ -3589,7 +3664,6 @@ type OrganizationDeletePayload {
     deletedID: ID!
 }`, BuiltIn: false},
 	{Name: "../../schema/refreshtoken.graphql", Input: ``, BuiltIn: false},
-	{Name: "../../schema/scalars.graphql", Input: ``, BuiltIn: false},
 	{Name: "../../schema/session.graphql", Input: `extend type Query {
     """
     Look up session by ID
@@ -10301,6 +10375,47 @@ func (ec *executionContext) fieldContext_RefreshToken_clientID(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _RefreshToken_scopes(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshToken) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshToken_scopes(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scopes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshToken_scopes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshToken",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _RefreshToken_nonce(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshToken) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_RefreshToken_nonce(ctx, field)
 	if err != nil {
@@ -10521,6 +10636,47 @@ func (ec *executionContext) fieldContext_RefreshToken_claimsEmailVerified(ctx co
 	return fc, nil
 }
 
+func (ec *executionContext) _RefreshToken_claimsGroups(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshToken) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshToken_claimsGroups(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClaimsGroups, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshToken_claimsGroups(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshToken",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _RefreshToken_claimsPreferredUsername(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshToken) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_RefreshToken_claimsPreferredUsername(ctx, field)
 	if err != nil {
@@ -10597,6 +10753,47 @@ func (ec *executionContext) _RefreshToken_connectorID(ctx context.Context, field
 }
 
 func (ec *executionContext) fieldContext_RefreshToken_connectorID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshToken",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshToken_connectorData(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshToken) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshToken_connectorData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ConnectorData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshToken_connectorData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RefreshToken",
 		Field:      field,
@@ -18807,7 +19004,7 @@ func (ec *executionContext) unmarshalInputRefreshTokenWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "nonce", "nonceNEQ", "nonceIn", "nonceNotIn", "nonceGT", "nonceGTE", "nonceLT", "nonceLTE", "nonceContains", "nonceHasPrefix", "nonceHasSuffix", "nonceEqualFold", "nonceContainsFold", "claimsUserID", "claimsUserIDNEQ", "claimsUserIDIn", "claimsUserIDNotIn", "claimsUserIDGT", "claimsUserIDGTE", "claimsUserIDLT", "claimsUserIDLTE", "claimsUserIDContains", "claimsUserIDHasPrefix", "claimsUserIDHasSuffix", "claimsUserIDEqualFold", "claimsUserIDContainsFold", "claimsUsername", "claimsUsernameNEQ", "claimsUsernameIn", "claimsUsernameNotIn", "claimsUsernameGT", "claimsUsernameGTE", "claimsUsernameLT", "claimsUsernameLTE", "claimsUsernameContains", "claimsUsernameHasPrefix", "claimsUsernameHasSuffix", "claimsUsernameEqualFold", "claimsUsernameContainsFold", "claimsEmail", "claimsEmailNEQ", "claimsEmailIn", "claimsEmailNotIn", "claimsEmailGT", "claimsEmailGTE", "claimsEmailLT", "claimsEmailLTE", "claimsEmailContains", "claimsEmailHasPrefix", "claimsEmailHasSuffix", "claimsEmailEqualFold", "claimsEmailContainsFold", "claimsEmailVerified", "claimsEmailVerifiedNEQ", "claimsPreferredUsername", "claimsPreferredUsernameNEQ", "claimsPreferredUsernameIn", "claimsPreferredUsernameNotIn", "claimsPreferredUsernameGT", "claimsPreferredUsernameGTE", "claimsPreferredUsernameLT", "claimsPreferredUsernameLTE", "claimsPreferredUsernameContains", "claimsPreferredUsernameHasPrefix", "claimsPreferredUsernameHasSuffix", "claimsPreferredUsernameEqualFold", "claimsPreferredUsernameContainsFold", "connectorID", "connectorIDNEQ", "connectorIDIn", "connectorIDNotIn", "connectorIDGT", "connectorIDGTE", "connectorIDLT", "connectorIDLTE", "connectorIDContains", "connectorIDHasPrefix", "connectorIDHasSuffix", "connectorIDEqualFold", "connectorIDContainsFold", "token", "tokenNEQ", "tokenIn", "tokenNotIn", "tokenGT", "tokenGTE", "tokenLT", "tokenLTE", "tokenContains", "tokenHasPrefix", "tokenHasSuffix", "tokenEqualFold", "tokenContainsFold", "obsoleteToken", "obsoleteTokenNEQ", "obsoleteTokenIn", "obsoleteTokenNotIn", "obsoleteTokenGT", "obsoleteTokenGTE", "obsoleteTokenLT", "obsoleteTokenLTE", "obsoleteTokenContains", "obsoleteTokenHasPrefix", "obsoleteTokenHasSuffix", "obsoleteTokenEqualFold", "obsoleteTokenContainsFold", "lastUsed", "lastUsedNEQ", "lastUsedIn", "lastUsedNotIn", "lastUsedGT", "lastUsedGTE", "lastUsedLT", "lastUsedLTE"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesIsNil", "scopesNotNil", "scopesEqualFold", "scopesContainsFold", "nonce", "nonceNEQ", "nonceIn", "nonceNotIn", "nonceGT", "nonceGTE", "nonceLT", "nonceLTE", "nonceContains", "nonceHasPrefix", "nonceHasSuffix", "nonceEqualFold", "nonceContainsFold", "claimsUserID", "claimsUserIDNEQ", "claimsUserIDIn", "claimsUserIDNotIn", "claimsUserIDGT", "claimsUserIDGTE", "claimsUserIDLT", "claimsUserIDLTE", "claimsUserIDContains", "claimsUserIDHasPrefix", "claimsUserIDHasSuffix", "claimsUserIDEqualFold", "claimsUserIDContainsFold", "claimsUsername", "claimsUsernameNEQ", "claimsUsernameIn", "claimsUsernameNotIn", "claimsUsernameGT", "claimsUsernameGTE", "claimsUsernameLT", "claimsUsernameLTE", "claimsUsernameContains", "claimsUsernameHasPrefix", "claimsUsernameHasSuffix", "claimsUsernameEqualFold", "claimsUsernameContainsFold", "claimsEmail", "claimsEmailNEQ", "claimsEmailIn", "claimsEmailNotIn", "claimsEmailGT", "claimsEmailGTE", "claimsEmailLT", "claimsEmailLTE", "claimsEmailContains", "claimsEmailHasPrefix", "claimsEmailHasSuffix", "claimsEmailEqualFold", "claimsEmailContainsFold", "claimsEmailVerified", "claimsEmailVerifiedNEQ", "claimsGroups", "claimsGroupsNEQ", "claimsGroupsIn", "claimsGroupsNotIn", "claimsGroupsGT", "claimsGroupsGTE", "claimsGroupsLT", "claimsGroupsLTE", "claimsGroupsContains", "claimsGroupsHasPrefix", "claimsGroupsHasSuffix", "claimsGroupsIsNil", "claimsGroupsNotNil", "claimsGroupsEqualFold", "claimsGroupsContainsFold", "claimsPreferredUsername", "claimsPreferredUsernameNEQ", "claimsPreferredUsernameIn", "claimsPreferredUsernameNotIn", "claimsPreferredUsernameGT", "claimsPreferredUsernameGTE", "claimsPreferredUsernameLT", "claimsPreferredUsernameLTE", "claimsPreferredUsernameContains", "claimsPreferredUsernameHasPrefix", "claimsPreferredUsernameHasSuffix", "claimsPreferredUsernameEqualFold", "claimsPreferredUsernameContainsFold", "connectorID", "connectorIDNEQ", "connectorIDIn", "connectorIDNotIn", "connectorIDGT", "connectorIDGTE", "connectorIDLT", "connectorIDLTE", "connectorIDContains", "connectorIDHasPrefix", "connectorIDHasSuffix", "connectorIDEqualFold", "connectorIDContainsFold", "connectorData", "connectorDataNEQ", "connectorDataIn", "connectorDataNotIn", "connectorDataGT", "connectorDataGTE", "connectorDataLT", "connectorDataLTE", "connectorDataContains", "connectorDataHasPrefix", "connectorDataHasSuffix", "connectorDataIsNil", "connectorDataNotNil", "connectorDataEqualFold", "connectorDataContainsFold", "token", "tokenNEQ", "tokenIn", "tokenNotIn", "tokenGT", "tokenGTE", "tokenLT", "tokenLTE", "tokenContains", "tokenHasPrefix", "tokenHasSuffix", "tokenEqualFold", "tokenContainsFold", "obsoleteToken", "obsoleteTokenNEQ", "obsoleteTokenIn", "obsoleteTokenNotIn", "obsoleteTokenGT", "obsoleteTokenGTE", "obsoleteTokenLT", "obsoleteTokenLTE", "obsoleteTokenContains", "obsoleteTokenHasPrefix", "obsoleteTokenHasSuffix", "obsoleteTokenEqualFold", "obsoleteTokenContainsFold", "lastUsed", "lastUsedNEQ", "lastUsedIn", "lastUsedNotIn", "lastUsedGT", "lastUsedGTE", "lastUsedLT", "lastUsedLTE"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19048,6 +19245,141 @@ func (ec *executionContext) unmarshalInputRefreshTokenWhereInput(ctx context.Con
 				return it, err
 			}
 			it.ClientIDContainsFold = data
+		case "scopes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopes"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Scopes = data
+		case "scopesNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesNEQ = data
+		case "scopesIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesIn = data
+		case "scopesNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesNotIn = data
+		case "scopesGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesGT = data
+		case "scopesGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesGTE = data
+		case "scopesLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesLT = data
+		case "scopesLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesLTE = data
+		case "scopesContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesContains = data
+		case "scopesHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesHasPrefix = data
+		case "scopesHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesHasSuffix = data
+		case "scopesIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesIsNil = data
+		case "scopesNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesNotNil = data
+		case "scopesEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesEqualFold = data
+		case "scopesContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopesContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ScopesContainsFold = data
 		case "nonce":
 			var err error
 
@@ -19534,6 +19866,141 @@ func (ec *executionContext) unmarshalInputRefreshTokenWhereInput(ctx context.Con
 				return it, err
 			}
 			it.ClaimsEmailVerifiedNEQ = data
+		case "claimsGroups":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroups"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroups = data
+		case "claimsGroupsNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsNEQ = data
+		case "claimsGroupsIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsIn = data
+		case "claimsGroupsNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsNotIn = data
+		case "claimsGroupsGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsGT = data
+		case "claimsGroupsGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsGTE = data
+		case "claimsGroupsLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsLT = data
+		case "claimsGroupsLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsLTE = data
+		case "claimsGroupsContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsContains = data
+		case "claimsGroupsHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsHasPrefix = data
+		case "claimsGroupsHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsHasSuffix = data
+		case "claimsGroupsIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsIsNil = data
+		case "claimsGroupsNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsNotNil = data
+		case "claimsGroupsEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsEqualFold = data
+		case "claimsGroupsContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroupsContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroupsContainsFold = data
 		case "claimsPreferredUsername":
 			var err error
 
@@ -19768,6 +20235,141 @@ func (ec *executionContext) unmarshalInputRefreshTokenWhereInput(ctx context.Con
 				return it, err
 			}
 			it.ConnectorIDContainsFold = data
+		case "connectorData":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorData"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorData = data
+		case "connectorDataNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataNEQ = data
+		case "connectorDataIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataIn = data
+		case "connectorDataNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataNotIn = data
+		case "connectorDataGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataGT = data
+		case "connectorDataGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataGTE = data
+		case "connectorDataLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataLT = data
+		case "connectorDataLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataLTE = data
+		case "connectorDataContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataContains = data
+		case "connectorDataHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataHasPrefix = data
+		case "connectorDataHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataHasSuffix = data
+		case "connectorDataIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataIsNil = data
+		case "connectorDataNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataNotNil = data
+		case "connectorDataEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataEqualFold = data
+		case "connectorDataContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorDataContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorDataContainsFold = data
 		case "token":
 			var err error
 
@@ -25561,6 +26163,8 @@ func (ec *executionContext) _RefreshToken(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "scopes":
+			out.Values[i] = ec._RefreshToken_scopes(ctx, field, obj)
 		case "nonce":
 			out.Values[i] = ec._RefreshToken_nonce(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -25586,6 +26190,8 @@ func (ec *executionContext) _RefreshToken(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "claimsGroups":
+			out.Values[i] = ec._RefreshToken_claimsGroups(ctx, field, obj)
 		case "claimsPreferredUsername":
 			out.Values[i] = ec._RefreshToken_claimsPreferredUsername(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -25596,6 +26202,8 @@ func (ec *executionContext) _RefreshToken(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "connectorData":
+			out.Values[i] = ec._RefreshToken_connectorData(ctx, field, obj)
 		case "token":
 			out.Values[i] = ec._RefreshToken_token(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

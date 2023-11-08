@@ -1872,6 +1872,9 @@
                   "client_id": {
                     "type": "string"
                   },
+                  "scopes": {
+                    "type": "string"
+                  },
                   "nonce": {
                     "type": "string"
                   },
@@ -1887,10 +1890,16 @@
                   "claims_email_verified": {
                     "type": "boolean"
                   },
+                  "claims_groups": {
+                    "type": "string"
+                  },
                   "claims_preferred_username": {
                     "type": "string"
                   },
                   "connector_id": {
+                    "type": "string"
+                  },
+                  "connector_data": {
                     "type": "string"
                   },
                   "token": {
@@ -2053,6 +2062,9 @@
                   "client_id": {
                     "type": "string"
                   },
+                  "scopes": {
+                    "type": "string"
+                  },
                   "nonce": {
                     "type": "string"
                   },
@@ -2068,10 +2080,16 @@
                   "claims_email_verified": {
                     "type": "boolean"
                   },
+                  "claims_groups": {
+                    "type": "string"
+                  },
                   "claims_preferred_username": {
                     "type": "string"
                   },
                   "connector_id": {
+                    "type": "string"
+                  },
+                  "connector_data": {
                     "type": "string"
                   },
                   "token": {
@@ -4363,6 +4381,9 @@
           "client_id": {
             "type": "string"
           },
+          "scopes": {
+            "type": "string"
+          },
           "nonce": {
             "type": "string"
           },
@@ -4378,10 +4399,16 @@
           "claims_email_verified": {
             "type": "boolean"
           },
+          "claims_groups": {
+            "type": "string"
+          },
           "claims_preferred_username": {
             "type": "string"
           },
           "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
             "type": "string"
           },
           "token": {
@@ -4419,6 +4446,9 @@
           "client_id": {
             "type": "string"
           },
+          "scopes": {
+            "type": "string"
+          },
           "nonce": {
             "type": "string"
           },
@@ -4434,10 +4464,16 @@
           "claims_email_verified": {
             "type": "boolean"
           },
+          "claims_groups": {
+            "type": "string"
+          },
           "claims_preferred_username": {
             "type": "string"
           },
           "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
             "type": "string"
           },
           "token": {
@@ -4475,6 +4511,9 @@
           "client_id": {
             "type": "string"
           },
+          "scopes": {
+            "type": "string"
+          },
           "nonce": {
             "type": "string"
           },
@@ -4490,10 +4529,16 @@
           "claims_email_verified": {
             "type": "boolean"
           },
+          "claims_groups": {
+            "type": "string"
+          },
           "claims_preferred_username": {
             "type": "string"
           },
           "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
             "type": "string"
           },
           "token": {
@@ -4531,6 +4576,9 @@
           "client_id": {
             "type": "string"
           },
+          "scopes": {
+            "type": "string"
+          },
           "nonce": {
             "type": "string"
           },
@@ -4546,10 +4594,16 @@
           "claims_email_verified": {
             "type": "boolean"
           },
+          "claims_groups": {
+            "type": "string"
+          },
           "claims_preferred_username": {
             "type": "string"
           },
           "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
             "type": "string"
           },
           "token": {
@@ -4587,6 +4641,9 @@
           "client_id": {
             "type": "string"
           },
+          "scopes": {
+            "type": "string"
+          },
           "nonce": {
             "type": "string"
           },
@@ -4602,10 +4659,16 @@
           "claims_email_verified": {
             "type": "boolean"
           },
+          "claims_groups": {
+            "type": "string"
+          },
           "claims_preferred_username": {
             "type": "string"
           },
           "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
             "type": "string"
           },
           "token": {

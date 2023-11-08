@@ -1149,13 +1149,22 @@ func (h *OgentHandler) CreateRefreshToken(ctx context.Context, req *CreateRefres
 	b := h.client.RefreshToken.Create()
 	// Add all fields.
 	b.SetClientID(req.ClientID)
+	if v, ok := req.Scopes.Get(); ok {
+		b.SetScopes(v)
+	}
 	b.SetNonce(req.Nonce)
 	b.SetClaimsUserID(req.ClaimsUserID)
 	b.SetClaimsUsername(req.ClaimsUsername)
 	b.SetClaimsEmail(req.ClaimsEmail)
 	b.SetClaimsEmailVerified(req.ClaimsEmailVerified)
+	if v, ok := req.ClaimsGroups.Get(); ok {
+		b.SetClaimsGroups(v)
+	}
 	b.SetClaimsPreferredUsername(req.ClaimsPreferredUsername)
 	b.SetConnectorID(req.ConnectorID)
+	if v, ok := req.ConnectorData.Get(); ok {
+		b.SetConnectorData(v)
+	}
 	b.SetToken(req.Token)
 	b.SetObsoleteToken(req.ObsoleteToken)
 	b.SetLastUsed(req.LastUsed)
@@ -1224,6 +1233,9 @@ func (h *OgentHandler) UpdateRefreshToken(ctx context.Context, req *UpdateRefres
 	if v, ok := req.ClientID.Get(); ok {
 		b.SetClientID(v)
 	}
+	if v, ok := req.Scopes.Get(); ok {
+		b.SetScopes(v)
+	}
 	if v, ok := req.Nonce.Get(); ok {
 		b.SetNonce(v)
 	}
@@ -1239,11 +1251,17 @@ func (h *OgentHandler) UpdateRefreshToken(ctx context.Context, req *UpdateRefres
 	if v, ok := req.ClaimsEmailVerified.Get(); ok {
 		b.SetClaimsEmailVerified(v)
 	}
+	if v, ok := req.ClaimsGroups.Get(); ok {
+		b.SetClaimsGroups(v)
+	}
 	if v, ok := req.ClaimsPreferredUsername.Get(); ok {
 		b.SetClaimsPreferredUsername(v)
 	}
 	if v, ok := req.ConnectorID.Get(); ok {
 		b.SetConnectorID(v)
+	}
+	if v, ok := req.ConnectorData.Get(); ok {
+		b.SetConnectorData(v)
 	}
 	if v, ok := req.Token.Get(); ok {
 		b.SetToken(v)

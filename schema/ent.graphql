@@ -854,13 +854,16 @@ type Query {
 type RefreshToken implements Node {
   id: ID!
   clientID: String!
+  scopes: String
   nonce: String!
   claimsUserID: String!
   claimsUsername: String!
   claimsEmail: String!
   claimsEmailVerified: Boolean!
+  claimsGroups: String
   claimsPreferredUsername: String!
   connectorID: String!
+  connectorData: String
   token: String!
   obsoleteToken: String!
   lastUsed: Time!
@@ -898,6 +901,22 @@ input RefreshTokenWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
+  """scopes field predicates"""
+  scopes: String
+  scopesNEQ: String
+  scopesIn: [String!]
+  scopesNotIn: [String!]
+  scopesGT: String
+  scopesGTE: String
+  scopesLT: String
+  scopesLTE: String
+  scopesContains: String
+  scopesHasPrefix: String
+  scopesHasSuffix: String
+  scopesIsNil: Boolean
+  scopesNotNil: Boolean
+  scopesEqualFold: String
+  scopesContainsFold: String
   """nonce field predicates"""
   nonce: String
   nonceNEQ: String
@@ -957,6 +976,22 @@ input RefreshTokenWhereInput {
   """claims_email_verified field predicates"""
   claimsEmailVerified: Boolean
   claimsEmailVerifiedNEQ: Boolean
+  """claims_groups field predicates"""
+  claimsGroups: String
+  claimsGroupsNEQ: String
+  claimsGroupsIn: [String!]
+  claimsGroupsNotIn: [String!]
+  claimsGroupsGT: String
+  claimsGroupsGTE: String
+  claimsGroupsLT: String
+  claimsGroupsLTE: String
+  claimsGroupsContains: String
+  claimsGroupsHasPrefix: String
+  claimsGroupsHasSuffix: String
+  claimsGroupsIsNil: Boolean
+  claimsGroupsNotNil: Boolean
+  claimsGroupsEqualFold: String
+  claimsGroupsContainsFold: String
   """claims_preferred_username field predicates"""
   claimsPreferredUsername: String
   claimsPreferredUsernameNEQ: String
@@ -985,6 +1020,22 @@ input RefreshTokenWhereInput {
   connectorIDHasSuffix: String
   connectorIDEqualFold: String
   connectorIDContainsFold: String
+  """connector_data field predicates"""
+  connectorData: String
+  connectorDataNEQ: String
+  connectorDataIn: [String!]
+  connectorDataNotIn: [String!]
+  connectorDataGT: String
+  connectorDataGTE: String
+  connectorDataLT: String
+  connectorDataLTE: String
+  connectorDataContains: String
+  connectorDataHasPrefix: String
+  connectorDataHasSuffix: String
+  connectorDataIsNil: Boolean
+  connectorDataNotNil: Boolean
+  connectorDataEqualFold: String
+  connectorDataContainsFold: String
   """token field predicates"""
   token: String
   tokenNEQ: String

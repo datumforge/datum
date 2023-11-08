@@ -36,6 +36,26 @@ func (rtu *RefreshTokenUpdate) SetClientID(s string) *RefreshTokenUpdate {
 	return rtu
 }
 
+// SetScopes sets the "scopes" field.
+func (rtu *RefreshTokenUpdate) SetScopes(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetScopes(s)
+	return rtu
+}
+
+// SetNillableScopes sets the "scopes" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableScopes(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetScopes(*s)
+	}
+	return rtu
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (rtu *RefreshTokenUpdate) ClearScopes() *RefreshTokenUpdate {
+	rtu.mutation.ClearScopes()
+	return rtu
+}
+
 // SetNonce sets the "nonce" field.
 func (rtu *RefreshTokenUpdate) SetNonce(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetNonce(s)
@@ -66,6 +86,26 @@ func (rtu *RefreshTokenUpdate) SetClaimsEmailVerified(b bool) *RefreshTokenUpdat
 	return rtu
 }
 
+// SetClaimsGroups sets the "claims_groups" field.
+func (rtu *RefreshTokenUpdate) SetClaimsGroups(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetClaimsGroups(s)
+	return rtu
+}
+
+// SetNillableClaimsGroups sets the "claims_groups" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClaimsGroups(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetClaimsGroups(*s)
+	}
+	return rtu
+}
+
+// ClearClaimsGroups clears the value of the "claims_groups" field.
+func (rtu *RefreshTokenUpdate) ClearClaimsGroups() *RefreshTokenUpdate {
+	rtu.mutation.ClearClaimsGroups()
+	return rtu
+}
+
 // SetClaimsPreferredUsername sets the "claims_preferred_username" field.
 func (rtu *RefreshTokenUpdate) SetClaimsPreferredUsername(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetClaimsPreferredUsername(s)
@@ -75,6 +115,26 @@ func (rtu *RefreshTokenUpdate) SetClaimsPreferredUsername(s string) *RefreshToke
 // SetConnectorID sets the "connector_id" field.
 func (rtu *RefreshTokenUpdate) SetConnectorID(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetConnectorID(s)
+	return rtu
+}
+
+// SetConnectorData sets the "connector_data" field.
+func (rtu *RefreshTokenUpdate) SetConnectorData(s string) *RefreshTokenUpdate {
+	rtu.mutation.SetConnectorData(s)
+	return rtu
+}
+
+// SetNillableConnectorData sets the "connector_data" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableConnectorData(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetConnectorData(*s)
+	}
+	return rtu
+}
+
+// ClearConnectorData clears the value of the "connector_data" field.
+func (rtu *RefreshTokenUpdate) ClearConnectorData() *RefreshTokenUpdate {
+	rtu.mutation.ClearConnectorData()
 	return rtu
 }
 
@@ -186,6 +246,12 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := rtu.mutation.ClientID(); ok {
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
 	}
+	if value, ok := rtu.mutation.Scopes(); ok {
+		_spec.SetField(refreshtoken.FieldScopes, field.TypeString, value)
+	}
+	if rtu.mutation.ScopesCleared() {
+		_spec.ClearField(refreshtoken.FieldScopes, field.TypeString)
+	}
 	if value, ok := rtu.mutation.Nonce(); ok {
 		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)
 	}
@@ -201,11 +267,23 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := rtu.mutation.ClaimsEmailVerified(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
 	}
+	if value, ok := rtu.mutation.ClaimsGroups(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeString, value)
+	}
+	if rtu.mutation.ClaimsGroupsCleared() {
+		_spec.ClearField(refreshtoken.FieldClaimsGroups, field.TypeString)
+	}
 	if value, ok := rtu.mutation.ClaimsPreferredUsername(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
 	}
 	if value, ok := rtu.mutation.ConnectorID(); ok {
 		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
+	}
+	if value, ok := rtu.mutation.ConnectorData(); ok {
+		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeString, value)
+	}
+	if rtu.mutation.ConnectorDataCleared() {
+		_spec.ClearField(refreshtoken.FieldConnectorData, field.TypeString)
 	}
 	if value, ok := rtu.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)
@@ -244,6 +322,26 @@ func (rtuo *RefreshTokenUpdateOne) SetClientID(s string) *RefreshTokenUpdateOne 
 	return rtuo
 }
 
+// SetScopes sets the "scopes" field.
+func (rtuo *RefreshTokenUpdateOne) SetScopes(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetScopes(s)
+	return rtuo
+}
+
+// SetNillableScopes sets the "scopes" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableScopes(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetScopes(*s)
+	}
+	return rtuo
+}
+
+// ClearScopes clears the value of the "scopes" field.
+func (rtuo *RefreshTokenUpdateOne) ClearScopes() *RefreshTokenUpdateOne {
+	rtuo.mutation.ClearScopes()
+	return rtuo
+}
+
 // SetNonce sets the "nonce" field.
 func (rtuo *RefreshTokenUpdateOne) SetNonce(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetNonce(s)
@@ -274,6 +372,26 @@ func (rtuo *RefreshTokenUpdateOne) SetClaimsEmailVerified(b bool) *RefreshTokenU
 	return rtuo
 }
 
+// SetClaimsGroups sets the "claims_groups" field.
+func (rtuo *RefreshTokenUpdateOne) SetClaimsGroups(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetClaimsGroups(s)
+	return rtuo
+}
+
+// SetNillableClaimsGroups sets the "claims_groups" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsGroups(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetClaimsGroups(*s)
+	}
+	return rtuo
+}
+
+// ClearClaimsGroups clears the value of the "claims_groups" field.
+func (rtuo *RefreshTokenUpdateOne) ClearClaimsGroups() *RefreshTokenUpdateOne {
+	rtuo.mutation.ClearClaimsGroups()
+	return rtuo
+}
+
 // SetClaimsPreferredUsername sets the "claims_preferred_username" field.
 func (rtuo *RefreshTokenUpdateOne) SetClaimsPreferredUsername(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetClaimsPreferredUsername(s)
@@ -283,6 +401,26 @@ func (rtuo *RefreshTokenUpdateOne) SetClaimsPreferredUsername(s string) *Refresh
 // SetConnectorID sets the "connector_id" field.
 func (rtuo *RefreshTokenUpdateOne) SetConnectorID(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetConnectorID(s)
+	return rtuo
+}
+
+// SetConnectorData sets the "connector_data" field.
+func (rtuo *RefreshTokenUpdateOne) SetConnectorData(s string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetConnectorData(s)
+	return rtuo
+}
+
+// SetNillableConnectorData sets the "connector_data" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableConnectorData(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetConnectorData(*s)
+	}
+	return rtuo
+}
+
+// ClearConnectorData clears the value of the "connector_data" field.
+func (rtuo *RefreshTokenUpdateOne) ClearConnectorData() *RefreshTokenUpdateOne {
+	rtuo.mutation.ClearConnectorData()
 	return rtuo
 }
 
@@ -424,6 +562,12 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 	if value, ok := rtuo.mutation.ClientID(); ok {
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
 	}
+	if value, ok := rtuo.mutation.Scopes(); ok {
+		_spec.SetField(refreshtoken.FieldScopes, field.TypeString, value)
+	}
+	if rtuo.mutation.ScopesCleared() {
+		_spec.ClearField(refreshtoken.FieldScopes, field.TypeString)
+	}
 	if value, ok := rtuo.mutation.Nonce(); ok {
 		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)
 	}
@@ -439,11 +583,23 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 	if value, ok := rtuo.mutation.ClaimsEmailVerified(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
 	}
+	if value, ok := rtuo.mutation.ClaimsGroups(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeString, value)
+	}
+	if rtuo.mutation.ClaimsGroupsCleared() {
+		_spec.ClearField(refreshtoken.FieldClaimsGroups, field.TypeString)
+	}
 	if value, ok := rtuo.mutation.ClaimsPreferredUsername(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
 	}
 	if value, ok := rtuo.mutation.ConnectorID(); ok {
 		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
+	}
+	if value, ok := rtuo.mutation.ConnectorData(); ok {
+		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeString, value)
+	}
+	if rtuo.mutation.ConnectorDataCleared() {
+		_spec.ClearField(refreshtoken.FieldConnectorData, field.TypeString)
 	}
 	if value, ok := rtuo.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)

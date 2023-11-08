@@ -939,13 +939,19 @@ func NewRefreshTokenCreate(e *generated.RefreshToken) *RefreshTokenCreate {
 	var ret RefreshTokenCreate
 	ret.ID = e.ID
 	ret.ClientID = e.ClientID
+	ret.Scopes = NewOptString(e.Scopes)
 	ret.Nonce = e.Nonce
 	ret.ClaimsUserID = e.ClaimsUserID
 	ret.ClaimsUsername = e.ClaimsUsername
 	ret.ClaimsEmail = e.ClaimsEmail
 	ret.ClaimsEmailVerified = e.ClaimsEmailVerified
+	ret.ClaimsGroups = NewOptString(e.ClaimsGroups)
 	ret.ClaimsPreferredUsername = e.ClaimsPreferredUsername
 	ret.ConnectorID = e.ConnectorID
+	ret.ConnectorData = OptString{}
+	if e.ConnectorData != nil {
+		ret.ConnectorData.SetTo(*e.ConnectorData)
+	}
 	ret.Token = e.Token
 	ret.ObsoleteToken = e.ObsoleteToken
 	ret.LastUsed = e.LastUsed
@@ -977,13 +983,19 @@ func NewRefreshTokenList(e *generated.RefreshToken) *RefreshTokenList {
 	var ret RefreshTokenList
 	ret.ID = e.ID
 	ret.ClientID = e.ClientID
+	ret.Scopes = NewOptString(e.Scopes)
 	ret.Nonce = e.Nonce
 	ret.ClaimsUserID = e.ClaimsUserID
 	ret.ClaimsUsername = e.ClaimsUsername
 	ret.ClaimsEmail = e.ClaimsEmail
 	ret.ClaimsEmailVerified = e.ClaimsEmailVerified
+	ret.ClaimsGroups = NewOptString(e.ClaimsGroups)
 	ret.ClaimsPreferredUsername = e.ClaimsPreferredUsername
 	ret.ConnectorID = e.ConnectorID
+	ret.ConnectorData = OptString{}
+	if e.ConnectorData != nil {
+		ret.ConnectorData.SetTo(*e.ConnectorData)
+	}
 	ret.Token = e.Token
 	ret.ObsoleteToken = e.ObsoleteToken
 	ret.LastUsed = e.LastUsed
@@ -1015,13 +1027,19 @@ func NewRefreshTokenRead(e *generated.RefreshToken) *RefreshTokenRead {
 	var ret RefreshTokenRead
 	ret.ID = e.ID
 	ret.ClientID = e.ClientID
+	ret.Scopes = NewOptString(e.Scopes)
 	ret.Nonce = e.Nonce
 	ret.ClaimsUserID = e.ClaimsUserID
 	ret.ClaimsUsername = e.ClaimsUsername
 	ret.ClaimsEmail = e.ClaimsEmail
 	ret.ClaimsEmailVerified = e.ClaimsEmailVerified
+	ret.ClaimsGroups = NewOptString(e.ClaimsGroups)
 	ret.ClaimsPreferredUsername = e.ClaimsPreferredUsername
 	ret.ConnectorID = e.ConnectorID
+	ret.ConnectorData = OptString{}
+	if e.ConnectorData != nil {
+		ret.ConnectorData.SetTo(*e.ConnectorData)
+	}
 	ret.Token = e.Token
 	ret.ObsoleteToken = e.ObsoleteToken
 	ret.LastUsed = e.LastUsed
@@ -1053,13 +1071,19 @@ func NewRefreshTokenUpdate(e *generated.RefreshToken) *RefreshTokenUpdate {
 	var ret RefreshTokenUpdate
 	ret.ID = e.ID
 	ret.ClientID = e.ClientID
+	ret.Scopes = NewOptString(e.Scopes)
 	ret.Nonce = e.Nonce
 	ret.ClaimsUserID = e.ClaimsUserID
 	ret.ClaimsUsername = e.ClaimsUsername
 	ret.ClaimsEmail = e.ClaimsEmail
 	ret.ClaimsEmailVerified = e.ClaimsEmailVerified
+	ret.ClaimsGroups = NewOptString(e.ClaimsGroups)
 	ret.ClaimsPreferredUsername = e.ClaimsPreferredUsername
 	ret.ConnectorID = e.ConnectorID
+	ret.ConnectorData = OptString{}
+	if e.ConnectorData != nil {
+		ret.ConnectorData.SetTo(*e.ConnectorData)
+	}
 	ret.Token = e.Token
 	ret.ObsoleteToken = e.ObsoleteToken
 	ret.LastUsed = e.LastUsed

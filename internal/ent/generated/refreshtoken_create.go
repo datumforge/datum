@@ -26,6 +26,20 @@ func (rtc *RefreshTokenCreate) SetClientID(s string) *RefreshTokenCreate {
 	return rtc
 }
 
+// SetScopes sets the "scopes" field.
+func (rtc *RefreshTokenCreate) SetScopes(s string) *RefreshTokenCreate {
+	rtc.mutation.SetScopes(s)
+	return rtc
+}
+
+// SetNillableScopes sets the "scopes" field if the given value is not nil.
+func (rtc *RefreshTokenCreate) SetNillableScopes(s *string) *RefreshTokenCreate {
+	if s != nil {
+		rtc.SetScopes(*s)
+	}
+	return rtc
+}
+
 // SetNonce sets the "nonce" field.
 func (rtc *RefreshTokenCreate) SetNonce(s string) *RefreshTokenCreate {
 	rtc.mutation.SetNonce(s)
@@ -56,6 +70,20 @@ func (rtc *RefreshTokenCreate) SetClaimsEmailVerified(b bool) *RefreshTokenCreat
 	return rtc
 }
 
+// SetClaimsGroups sets the "claims_groups" field.
+func (rtc *RefreshTokenCreate) SetClaimsGroups(s string) *RefreshTokenCreate {
+	rtc.mutation.SetClaimsGroups(s)
+	return rtc
+}
+
+// SetNillableClaimsGroups sets the "claims_groups" field if the given value is not nil.
+func (rtc *RefreshTokenCreate) SetNillableClaimsGroups(s *string) *RefreshTokenCreate {
+	if s != nil {
+		rtc.SetClaimsGroups(*s)
+	}
+	return rtc
+}
+
 // SetClaimsPreferredUsername sets the "claims_preferred_username" field.
 func (rtc *RefreshTokenCreate) SetClaimsPreferredUsername(s string) *RefreshTokenCreate {
 	rtc.mutation.SetClaimsPreferredUsername(s)
@@ -65,6 +93,20 @@ func (rtc *RefreshTokenCreate) SetClaimsPreferredUsername(s string) *RefreshToke
 // SetConnectorID sets the "connector_id" field.
 func (rtc *RefreshTokenCreate) SetConnectorID(s string) *RefreshTokenCreate {
 	rtc.mutation.SetConnectorID(s)
+	return rtc
+}
+
+// SetConnectorData sets the "connector_data" field.
+func (rtc *RefreshTokenCreate) SetConnectorData(s string) *RefreshTokenCreate {
+	rtc.mutation.SetConnectorData(s)
+	return rtc
+}
+
+// SetNillableConnectorData sets the "connector_data" field if the given value is not nil.
+func (rtc *RefreshTokenCreate) SetNillableConnectorData(s *string) *RefreshTokenCreate {
+	if s != nil {
+		rtc.SetConnectorData(*s)
+	}
 	return rtc
 }
 
@@ -258,6 +300,10 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
 		_node.ClientID = value
 	}
+	if value, ok := rtc.mutation.Scopes(); ok {
+		_spec.SetField(refreshtoken.FieldScopes, field.TypeString, value)
+		_node.Scopes = value
+	}
 	if value, ok := rtc.mutation.Nonce(); ok {
 		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)
 		_node.Nonce = value
@@ -278,6 +324,10 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
 		_node.ClaimsEmailVerified = value
 	}
+	if value, ok := rtc.mutation.ClaimsGroups(); ok {
+		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeString, value)
+		_node.ClaimsGroups = value
+	}
 	if value, ok := rtc.mutation.ClaimsPreferredUsername(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
 		_node.ClaimsPreferredUsername = value
@@ -285,6 +335,10 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 	if value, ok := rtc.mutation.ConnectorID(); ok {
 		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
 		_node.ConnectorID = value
+	}
+	if value, ok := rtc.mutation.ConnectorData(); ok {
+		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeString, value)
+		_node.ConnectorData = &value
 	}
 	if value, ok := rtc.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)

@@ -670,6 +670,11 @@ func (rt *RefreshTokenQuery) collectField(ctx context.Context, opCtx *graphql.Op
 				selectedFields = append(selectedFields, refreshtoken.FieldClientID)
 				fieldSeen[refreshtoken.FieldClientID] = struct{}{}
 			}
+		case "scopes":
+			if _, ok := fieldSeen[refreshtoken.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldScopes)
+				fieldSeen[refreshtoken.FieldScopes] = struct{}{}
+			}
 		case "nonce":
 			if _, ok := fieldSeen[refreshtoken.FieldNonce]; !ok {
 				selectedFields = append(selectedFields, refreshtoken.FieldNonce)
@@ -695,6 +700,11 @@ func (rt *RefreshTokenQuery) collectField(ctx context.Context, opCtx *graphql.Op
 				selectedFields = append(selectedFields, refreshtoken.FieldClaimsEmailVerified)
 				fieldSeen[refreshtoken.FieldClaimsEmailVerified] = struct{}{}
 			}
+		case "claimsGroups":
+			if _, ok := fieldSeen[refreshtoken.FieldClaimsGroups]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldClaimsGroups)
+				fieldSeen[refreshtoken.FieldClaimsGroups] = struct{}{}
+			}
 		case "claimsPreferredUsername":
 			if _, ok := fieldSeen[refreshtoken.FieldClaimsPreferredUsername]; !ok {
 				selectedFields = append(selectedFields, refreshtoken.FieldClaimsPreferredUsername)
@@ -704,6 +714,11 @@ func (rt *RefreshTokenQuery) collectField(ctx context.Context, opCtx *graphql.Op
 			if _, ok := fieldSeen[refreshtoken.FieldConnectorID]; !ok {
 				selectedFields = append(selectedFields, refreshtoken.FieldConnectorID)
 				fieldSeen[refreshtoken.FieldConnectorID] = struct{}{}
+			}
+		case "connectorData":
+			if _, ok := fieldSeen[refreshtoken.FieldConnectorData]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldConnectorData)
+				fieldSeen[refreshtoken.FieldConnectorData] = struct{}{}
 			}
 		case "token":
 			if _, ok := fieldSeen[refreshtoken.FieldToken]; !ok {

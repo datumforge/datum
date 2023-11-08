@@ -69,6 +69,11 @@ func ClientID(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldClientID, v))
 }
 
+// Scopes applies equality check predicate on the "scopes" field. It's identical to ScopesEQ.
+func Scopes(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEQ(FieldScopes, v))
+}
+
 // Nonce applies equality check predicate on the "nonce" field. It's identical to NonceEQ.
 func Nonce(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldNonce, v))
@@ -94,6 +99,11 @@ func ClaimsEmailVerified(v bool) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldClaimsEmailVerified, v))
 }
 
+// ClaimsGroups applies equality check predicate on the "claims_groups" field. It's identical to ClaimsGroupsEQ.
+func ClaimsGroups(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEQ(FieldClaimsGroups, v))
+}
+
 // ClaimsPreferredUsername applies equality check predicate on the "claims_preferred_username" field. It's identical to ClaimsPreferredUsernameEQ.
 func ClaimsPreferredUsername(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldClaimsPreferredUsername, v))
@@ -102,6 +112,11 @@ func ClaimsPreferredUsername(v string) predicate.RefreshToken {
 // ConnectorID applies equality check predicate on the "connector_id" field. It's identical to ConnectorIDEQ.
 func ConnectorID(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldConnectorID, v))
+}
+
+// ConnectorData applies equality check predicate on the "connector_data" field. It's identical to ConnectorDataEQ.
+func ConnectorData(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEQ(FieldConnectorData, v))
 }
 
 // Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
@@ -182,6 +197,81 @@ func ClientIDEqualFold(v string) predicate.RefreshToken {
 // ClientIDContainsFold applies the ContainsFold predicate on the "client_id" field.
 func ClientIDContainsFold(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldContainsFold(FieldClientID, v))
+}
+
+// ScopesEQ applies the EQ predicate on the "scopes" field.
+func ScopesEQ(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEQ(FieldScopes, v))
+}
+
+// ScopesNEQ applies the NEQ predicate on the "scopes" field.
+func ScopesNEQ(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNEQ(FieldScopes, v))
+}
+
+// ScopesIn applies the In predicate on the "scopes" field.
+func ScopesIn(vs ...string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldIn(FieldScopes, vs...))
+}
+
+// ScopesNotIn applies the NotIn predicate on the "scopes" field.
+func ScopesNotIn(vs ...string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNotIn(FieldScopes, vs...))
+}
+
+// ScopesGT applies the GT predicate on the "scopes" field.
+func ScopesGT(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldGT(FieldScopes, v))
+}
+
+// ScopesGTE applies the GTE predicate on the "scopes" field.
+func ScopesGTE(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldGTE(FieldScopes, v))
+}
+
+// ScopesLT applies the LT predicate on the "scopes" field.
+func ScopesLT(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldLT(FieldScopes, v))
+}
+
+// ScopesLTE applies the LTE predicate on the "scopes" field.
+func ScopesLTE(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldLTE(FieldScopes, v))
+}
+
+// ScopesContains applies the Contains predicate on the "scopes" field.
+func ScopesContains(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldContains(FieldScopes, v))
+}
+
+// ScopesHasPrefix applies the HasPrefix predicate on the "scopes" field.
+func ScopesHasPrefix(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldHasPrefix(FieldScopes, v))
+}
+
+// ScopesHasSuffix applies the HasSuffix predicate on the "scopes" field.
+func ScopesHasSuffix(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldHasSuffix(FieldScopes, v))
+}
+
+// ScopesIsNil applies the IsNil predicate on the "scopes" field.
+func ScopesIsNil() predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldIsNull(FieldScopes))
+}
+
+// ScopesNotNil applies the NotNil predicate on the "scopes" field.
+func ScopesNotNil() predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNotNull(FieldScopes))
+}
+
+// ScopesEqualFold applies the EqualFold predicate on the "scopes" field.
+func ScopesEqualFold(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEqualFold(FieldScopes, v))
+}
+
+// ScopesContainsFold applies the ContainsFold predicate on the "scopes" field.
+func ScopesContainsFold(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldContainsFold(FieldScopes, v))
 }
 
 // NonceEQ applies the EQ predicate on the "nonce" field.
@@ -454,6 +544,81 @@ func ClaimsEmailVerifiedNEQ(v bool) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldNEQ(FieldClaimsEmailVerified, v))
 }
 
+// ClaimsGroupsEQ applies the EQ predicate on the "claims_groups" field.
+func ClaimsGroupsEQ(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEQ(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsNEQ applies the NEQ predicate on the "claims_groups" field.
+func ClaimsGroupsNEQ(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNEQ(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsIn applies the In predicate on the "claims_groups" field.
+func ClaimsGroupsIn(vs ...string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldIn(FieldClaimsGroups, vs...))
+}
+
+// ClaimsGroupsNotIn applies the NotIn predicate on the "claims_groups" field.
+func ClaimsGroupsNotIn(vs ...string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNotIn(FieldClaimsGroups, vs...))
+}
+
+// ClaimsGroupsGT applies the GT predicate on the "claims_groups" field.
+func ClaimsGroupsGT(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldGT(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsGTE applies the GTE predicate on the "claims_groups" field.
+func ClaimsGroupsGTE(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldGTE(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsLT applies the LT predicate on the "claims_groups" field.
+func ClaimsGroupsLT(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldLT(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsLTE applies the LTE predicate on the "claims_groups" field.
+func ClaimsGroupsLTE(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldLTE(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsContains applies the Contains predicate on the "claims_groups" field.
+func ClaimsGroupsContains(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldContains(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsHasPrefix applies the HasPrefix predicate on the "claims_groups" field.
+func ClaimsGroupsHasPrefix(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldHasPrefix(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsHasSuffix applies the HasSuffix predicate on the "claims_groups" field.
+func ClaimsGroupsHasSuffix(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldHasSuffix(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsIsNil applies the IsNil predicate on the "claims_groups" field.
+func ClaimsGroupsIsNil() predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldIsNull(FieldClaimsGroups))
+}
+
+// ClaimsGroupsNotNil applies the NotNil predicate on the "claims_groups" field.
+func ClaimsGroupsNotNil() predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNotNull(FieldClaimsGroups))
+}
+
+// ClaimsGroupsEqualFold applies the EqualFold predicate on the "claims_groups" field.
+func ClaimsGroupsEqualFold(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEqualFold(FieldClaimsGroups, v))
+}
+
+// ClaimsGroupsContainsFold applies the ContainsFold predicate on the "claims_groups" field.
+func ClaimsGroupsContainsFold(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldContainsFold(FieldClaimsGroups, v))
+}
+
 // ClaimsPreferredUsernameEQ applies the EQ predicate on the "claims_preferred_username" field.
 func ClaimsPreferredUsernameEQ(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldClaimsPreferredUsername, v))
@@ -582,6 +747,81 @@ func ConnectorIDEqualFold(v string) predicate.RefreshToken {
 // ConnectorIDContainsFold applies the ContainsFold predicate on the "connector_id" field.
 func ConnectorIDContainsFold(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldContainsFold(FieldConnectorID, v))
+}
+
+// ConnectorDataEQ applies the EQ predicate on the "connector_data" field.
+func ConnectorDataEQ(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEQ(FieldConnectorData, v))
+}
+
+// ConnectorDataNEQ applies the NEQ predicate on the "connector_data" field.
+func ConnectorDataNEQ(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNEQ(FieldConnectorData, v))
+}
+
+// ConnectorDataIn applies the In predicate on the "connector_data" field.
+func ConnectorDataIn(vs ...string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldIn(FieldConnectorData, vs...))
+}
+
+// ConnectorDataNotIn applies the NotIn predicate on the "connector_data" field.
+func ConnectorDataNotIn(vs ...string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNotIn(FieldConnectorData, vs...))
+}
+
+// ConnectorDataGT applies the GT predicate on the "connector_data" field.
+func ConnectorDataGT(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldGT(FieldConnectorData, v))
+}
+
+// ConnectorDataGTE applies the GTE predicate on the "connector_data" field.
+func ConnectorDataGTE(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldGTE(FieldConnectorData, v))
+}
+
+// ConnectorDataLT applies the LT predicate on the "connector_data" field.
+func ConnectorDataLT(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldLT(FieldConnectorData, v))
+}
+
+// ConnectorDataLTE applies the LTE predicate on the "connector_data" field.
+func ConnectorDataLTE(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldLTE(FieldConnectorData, v))
+}
+
+// ConnectorDataContains applies the Contains predicate on the "connector_data" field.
+func ConnectorDataContains(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldContains(FieldConnectorData, v))
+}
+
+// ConnectorDataHasPrefix applies the HasPrefix predicate on the "connector_data" field.
+func ConnectorDataHasPrefix(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldHasPrefix(FieldConnectorData, v))
+}
+
+// ConnectorDataHasSuffix applies the HasSuffix predicate on the "connector_data" field.
+func ConnectorDataHasSuffix(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldHasSuffix(FieldConnectorData, v))
+}
+
+// ConnectorDataIsNil applies the IsNil predicate on the "connector_data" field.
+func ConnectorDataIsNil() predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldIsNull(FieldConnectorData))
+}
+
+// ConnectorDataNotNil applies the NotNil predicate on the "connector_data" field.
+func ConnectorDataNotNil() predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldNotNull(FieldConnectorData))
+}
+
+// ConnectorDataEqualFold applies the EqualFold predicate on the "connector_data" field.
+func ConnectorDataEqualFold(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldEqualFold(FieldConnectorData, v))
+}
+
+// ConnectorDataContainsFold applies the ContainsFold predicate on the "connector_data" field.
+func ConnectorDataContainsFold(v string) predicate.RefreshToken {
+	return predicate.RefreshToken(sql.FieldContainsFold(FieldConnectorData, v))
 }
 
 // TokenEQ applies the EQ predicate on the "token" field.

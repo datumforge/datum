@@ -15,6 +15,8 @@ const (
 	FieldID = "id"
 	// FieldClientID holds the string denoting the client_id field in the database.
 	FieldClientID = "client_id"
+	// FieldScopes holds the string denoting the scopes field in the database.
+	FieldScopes = "scopes"
 	// FieldNonce holds the string denoting the nonce field in the database.
 	FieldNonce = "nonce"
 	// FieldClaimsUserID holds the string denoting the claims_user_id field in the database.
@@ -25,10 +27,14 @@ const (
 	FieldClaimsEmail = "claims_email"
 	// FieldClaimsEmailVerified holds the string denoting the claims_email_verified field in the database.
 	FieldClaimsEmailVerified = "claims_email_verified"
+	// FieldClaimsGroups holds the string denoting the claims_groups field in the database.
+	FieldClaimsGroups = "claims_groups"
 	// FieldClaimsPreferredUsername holds the string denoting the claims_preferred_username field in the database.
 	FieldClaimsPreferredUsername = "claims_preferred_username"
 	// FieldConnectorID holds the string denoting the connector_id field in the database.
 	FieldConnectorID = "connector_id"
+	// FieldConnectorData holds the string denoting the connector_data field in the database.
+	FieldConnectorData = "connector_data"
 	// FieldToken holds the string denoting the token field in the database.
 	FieldToken = "token"
 	// FieldObsoleteToken holds the string denoting the obsolete_token field in the database.
@@ -43,13 +49,16 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldClientID,
+	FieldScopes,
 	FieldNonce,
 	FieldClaimsUserID,
 	FieldClaimsUsername,
 	FieldClaimsEmail,
 	FieldClaimsEmailVerified,
+	FieldClaimsGroups,
 	FieldClaimsPreferredUsername,
 	FieldConnectorID,
+	FieldConnectorData,
 	FieldToken,
 	FieldObsoleteToken,
 	FieldLastUsed,
@@ -97,6 +106,11 @@ func ByClientID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClientID, opts...).ToFunc()
 }
 
+// ByScopes orders the results by the scopes field.
+func ByScopes(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldScopes, opts...).ToFunc()
+}
+
 // ByNonce orders the results by the nonce field.
 func ByNonce(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNonce, opts...).ToFunc()
@@ -122,6 +136,11 @@ func ByClaimsEmailVerified(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClaimsEmailVerified, opts...).ToFunc()
 }
 
+// ByClaimsGroups orders the results by the claims_groups field.
+func ByClaimsGroups(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldClaimsGroups, opts...).ToFunc()
+}
+
 // ByClaimsPreferredUsername orders the results by the claims_preferred_username field.
 func ByClaimsPreferredUsername(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClaimsPreferredUsername, opts...).ToFunc()
@@ -130,6 +149,11 @@ func ByClaimsPreferredUsername(opts ...sql.OrderTermOption) OrderOption {
 // ByConnectorID orders the results by the connector_id field.
 func ByConnectorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldConnectorID, opts...).ToFunc()
+}
+
+// ByConnectorData orders the results by the connector_data field.
+func ByConnectorData(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConnectorData, opts...).ToFunc()
 }
 
 // ByToken orders the results by the token field.

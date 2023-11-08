@@ -17,7 +17,7 @@ type RefreshToken struct {
 // Fields of the RefreshToken
 func (RefreshToken) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("client_id").
+		field.Text("client_id").
 			NotEmpty(),
 		// TO DO figure out why JSON doesn't work with oas / ogent
 		field.Text("scopes").Optional(),

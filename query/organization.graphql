@@ -21,3 +21,37 @@ query GetAllOrganizations {
     }
   }
 }
+
+mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
+      name
+      description
+      parent {
+        id
+        name
+      }
+    }
+  }
+}
+
+mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
+  updateOrganization(id: $updateOrganizationId, input: $input) {
+    organization {
+      id
+      name
+      parent {
+        id
+        name
+      }
+      description
+    }
+  }
+}
+
+mutation DeleteOrganization($deleteOrganizationId: ID!) {
+  deleteOrganization(id: $deleteOrganizationId) {
+    deletedID
+  }
+}

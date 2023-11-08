@@ -1,0 +1,23 @@
+query GetOrganizationByID($organizationId: ID!) {
+  organization(id: $organizationId) {
+    id
+    name
+    parent {
+      id
+      name
+    }
+    description
+  }
+}
+
+query GetAllOrganizations {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        description
+      }
+    }
+  }
+}

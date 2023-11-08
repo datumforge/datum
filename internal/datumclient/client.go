@@ -3,6 +3,7 @@
 package datumclient
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
@@ -10,6 +11,8 @@ import (
 )
 
 type DatumClient interface {
+	GetOrganizationByID(ctx context.Context, organizationID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationByID, error)
+	GetAllOrganizations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllOrganizations, error)
 }
 
 type Client struct {
@@ -52,4 +55,180 @@ type Mutation struct {
 	CreateUser         UserCreatePayload         "json:\"createUser\" graphql:\"createUser\""
 	UpdateUser         UserUpdatePayload         "json:\"updateUser\" graphql:\"updateUser\""
 	DeleteUser         UserDeletePayload         "json:\"deleteUser\" graphql:\"deleteUser\""
+}
+type GetOrganizationByID_Organization_Parent struct {
+	ID   string "json:\"id\" graphql:\"id\""
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetOrganizationByID_Organization_Parent) GetID() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Parent{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationByID_Organization_Parent) GetName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Parent{}
+	}
+	return t.Name
+}
+
+type GetOrganizationByID_Organization struct {
+	ID          string                                   "json:\"id\" graphql:\"id\""
+	Name        string                                   "json:\"name\" graphql:\"name\""
+	Parent      *GetOrganizationByID_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+}
+
+func (t *GetOrganizationByID_Organization) GetID() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationByID_Organization) GetName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.Name
+}
+func (t *GetOrganizationByID_Organization) GetParent() *GetOrganizationByID_Organization_Parent {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.Parent
+}
+func (t *GetOrganizationByID_Organization) GetDescription() *string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.Description
+}
+
+type GetAllOrganizations_Organizations_Edges_Node struct {
+	ID          string  "json:\"id\" graphql:\"id\""
+	Name        string  "json:\"name\" graphql:\"name\""
+	Description *string "json:\"description,omitempty\" graphql:\"description\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.Description
+}
+
+type GetAllOrganizations_Organizations_Edges struct {
+	Node *GetAllOrganizations_Organizations_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges) GetNode() *GetAllOrganizations_Organizations_Edges_Node {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllOrganizations_Organizations struct {
+	Edges []*GetAllOrganizations_Organizations_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllOrganizations_Organizations) GetEdges() []*GetAllOrganizations_Organizations_Edges {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations{}
+	}
+	return t.Edges
+}
+
+type GetOrganizationByID struct {
+	Organization GetOrganizationByID_Organization "json:\"organization\" graphql:\"organization\""
+}
+
+func (t *GetOrganizationByID) GetOrganization() *GetOrganizationByID_Organization {
+	if t == nil {
+		t = &GetOrganizationByID{}
+	}
+	return &t.Organization
+}
+
+type GetAllOrganizations struct {
+	Organizations GetAllOrganizations_Organizations "json:\"organizations\" graphql:\"organizations\""
+}
+
+func (t *GetAllOrganizations) GetOrganizations() *GetAllOrganizations_Organizations {
+	if t == nil {
+		t = &GetAllOrganizations{}
+	}
+	return &t.Organizations
+}
+
+const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId: ID!) {
+	organization(id: $organizationId) {
+		id
+		name
+		parent {
+			id
+			name
+		}
+		description
+	}
+}
+`
+
+func (c *Client) GetOrganizationByID(ctx context.Context, organizationID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationByID, error) {
+	vars := map[string]interface{}{
+		"organizationId": organizationID,
+	}
+
+	var res GetOrganizationByID
+	if err := c.Client.Post(ctx, "GetOrganizationByID", GetOrganizationByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllOrganizationsDocument = `query GetAllOrganizations {
+	organizations {
+		edges {
+			node {
+				id
+				name
+				description
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllOrganizations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllOrganizations, error) {
+	vars := map[string]interface{}{}
+
+	var res GetAllOrganizations
+	if err := c.Client.Post(ctx, "GetAllOrganizations", GetAllOrganizationsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
 }

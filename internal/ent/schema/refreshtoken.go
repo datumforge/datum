@@ -20,7 +20,7 @@ func (RefreshToken) Fields() []ent.Field {
 		field.String("client_id").
 			NotEmpty(),
 		//		field.JSON("scopes", []string{}).Optional(),
-		//Annotations(entgql.Type("JSON")),
+		// Annotations(entgql.Type("JSON")),
 		field.Text("nonce").
 			NotEmpty(),
 		field.Text("claims_user_id").

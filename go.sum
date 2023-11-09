@@ -59,6 +59,8 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/Yamashou/gqlgenc v0.15.1 h1:pva+W/myYSo0f7greV0joKe1wFsRo8tZtI52CWojrhI=
 github.com/Yamashou/gqlgenc v0.15.1/go.mod h1:yKaNzczoGrIElG3mG8j2Bg3imv4WyIjLSTRBtvhfMtU=
+github.com/Yamashou/gqlgenc v0.16.0 h1:k1X/dvwnkiDImaeYw+C1j+GDX3MnzB4aONOTE6Mrku4=
+github.com/Yamashou/gqlgenc v0.16.0/go.mod h1:yKaNzczoGrIElG3mG8j2Bg3imv4WyIjLSTRBtvhfMtU=
 github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da h1:KjTM2ks9d14ZYCvmHS9iAKVt9AyzRSqNU1qabPih5BY=
 github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da/go.mod h1:eHEWzANqSiWQsof+nXEI9bUVUyV6F53Fp89EuCh2EAA=
 github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=

@@ -6,7 +6,7 @@ require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.12.4
 	github.com/99designs/gqlgen v0.17.40
-	github.com/Yamashou/gqlgenc v0.15.1
+	github.com/Yamashou/gqlgenc v0.16.0
 	github.com/brpaz/echozap v1.1.3
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/hashicorp/go-multierror v1.1.1

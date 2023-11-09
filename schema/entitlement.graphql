@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up entitlement by ID
+    """
+     entitlement(
+        """
+        ID of the entitlement
+        """
+        id: ID!
+    ):  Entitlement!
+}
+
+extend type Mutation{
+    """
+    Create a new entitlement
+    """
+    createEntitlement(
+        """
+        values of the entitlement
+        """
+        input: CreateEntitlementInput!
+    ): EntitlementCreatePayload!
+    """
+    Update an existing entitlement
+    """
+    updateEntitlement(
+        """
+        ID of the entitlement
+        """
+        id: ID!
+        """
+        New values for the entitlement
+        """
+        input: UpdateEntitlementInput!
+    ): EntitlementUpdatePayload!
+    """
+    Delete an existing entitlement
+    """
+    deleteEntitlement(
+        """
+        ID of the entitlement
+        """
+        id: ID!
+    ): EntitlementDeletePayload!
+}
+
+"""
+Return response for createEntitlement mutation
+"""
+type EntitlementCreatePayload {
+    """
+    Created entitlement
+    """
+    entitlement: Entitlement!
+}
+
+"""
+Return response for updateEntitlement mutation
+"""
+type EntitlementUpdatePayload {
+    """
+    Updated entitlement
+    """
+    entitlement: Entitlement!
+}
+
+"""
+Return response for deleteEntitlement mutation
+"""
+type EntitlementDeletePayload {
+    """
+    Deleted entitlement ID
+    """
+    deletedID: ID!
+}

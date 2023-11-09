@@ -33,13 +33,16 @@ func (Entitlement) Edges() []ent.Edge {
 // Annotations of the Entitlement
 func (Entitlement) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll, entgql.SkipMutationUpdateInput),
+		entgql.RelayConnection(),
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }
 
 // Mixin of the Entitlement
 func (Entitlement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
+		mixin.AuditMixin{},
 		mixin.IDMixin{},
 	}
 }

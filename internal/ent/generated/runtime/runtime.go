@@ -26,16 +26,30 @@ import (
 // to their package variables.
 func init() {
 	entitlementMixin := schema.Entitlement{}.Mixin()
+	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
+	entitlement.Hooks[0] = entitlementMixinHooks0[0]
 	entitlementMixinFields0 := entitlementMixin[0].Fields()
 	_ = entitlementMixinFields0
+	entitlementMixinFields1 := entitlementMixin[1].Fields()
+	_ = entitlementMixinFields1
 	entitlementFields := schema.Entitlement{}.Fields()
 	_ = entitlementFields
+	// entitlementDescCreatedAt is the schema descriptor for created_at field.
+	entitlementDescCreatedAt := entitlementMixinFields0[0].Descriptor()
+	// entitlement.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitlement.DefaultCreatedAt = entitlementDescCreatedAt.Default.(func() time.Time)
+	// entitlementDescUpdatedAt is the schema descriptor for updated_at field.
+	entitlementDescUpdatedAt := entitlementMixinFields0[1].Descriptor()
+	// entitlement.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitlement.DefaultUpdatedAt = entitlementDescUpdatedAt.Default.(func() time.Time)
+	// entitlement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entitlement.UpdateDefaultUpdatedAt = entitlementDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// entitlementDescCancelled is the schema descriptor for cancelled field.
 	entitlementDescCancelled := entitlementFields[4].Descriptor()
 	// entitlement.DefaultCancelled holds the default value on creation for the cancelled field.
 	entitlement.DefaultCancelled = entitlementDescCancelled.Default.(bool)
 	// entitlementDescID is the schema descriptor for id field.
-	entitlementDescID := entitlementMixinFields0[0].Descriptor()
+	entitlementDescID := entitlementMixinFields1[0].Descriptor()
 	// entitlement.DefaultID holds the default value on creation for the id field.
 	entitlement.DefaultID = entitlementDescID.Default.(func() string)
 	groupMixin := schema.Group{}.Mixin()

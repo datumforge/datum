@@ -265,12 +265,12 @@ func (eq *EntitlementQuery) Clone() *EntitlementQuery {
 // Example:
 //
 //	var v []struct {
-//		Tier entitlement.Tier `json:"tier,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Entitlement.Query().
-//		GroupBy(entitlement.FieldTier).
+//		GroupBy(entitlement.FieldCreatedAt).
 //		Aggregate(generated.Count()).
 //		Scan(ctx, &v)
 func (eq *EntitlementQuery) GroupBy(field string, fields ...string) *EntitlementGroupBy {
@@ -288,11 +288,11 @@ func (eq *EntitlementQuery) GroupBy(field string, fields ...string) *Entitlement
 // Example:
 //
 //	var v []struct {
-//		Tier entitlement.Tier `json:"tier,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Entitlement.Query().
-//		Select(entitlement.FieldTier).
+//		Select(entitlement.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (eq *EntitlementQuery) Select(fields ...string) *EntitlementSelect {
 	eq.ctx.Fields = append(eq.ctx.Fields, fields...)

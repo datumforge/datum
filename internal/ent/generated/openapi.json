@@ -77,6 +77,20 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -101,6 +115,8 @@
                   }
                 },
                 "required": [
+                  "created_at",
+                  "updated_at",
                   "tier",
                   "cancelled"
                 ]
@@ -237,6 +253,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -3699,6 +3725,20 @@
           "id": {
             "type": "string"
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -3724,6 +3764,8 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
           "tier",
           "cancelled"
         ]
@@ -3734,6 +3776,20 @@
           "id": {
             "type": "string"
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -3759,6 +3815,8 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
           "tier",
           "cancelled"
         ]
@@ -3769,6 +3827,20 @@
           "id": {
             "type": "string"
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -3794,6 +3866,8 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
           "tier",
           "cancelled"
         ]
@@ -3804,6 +3878,20 @@
           "id": {
             "type": "string"
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -3829,6 +3917,8 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
           "tier",
           "cancelled"
         ]
@@ -3839,6 +3929,20 @@
           "id": {
             "type": "string"
           },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -3864,6 +3968,8 @@
         },
         "required": [
           "id",
+          "created_at",
+          "updated_at",
           "tier",
           "cancelled"
         ]

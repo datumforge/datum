@@ -5,9 +5,132 @@ package generated
 import (
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 )
+
+// CreateEntitlementInput represents a mutation input for creating entitlements.
+type CreateEntitlementInput struct {
+	CreatedAt            *time.Time
+	UpdatedAt            *time.Time
+	CreatedBy            *string
+	UpdatedBy            *string
+	Tier                 *entitlement.Tier
+	StripeCustomerID     *string
+	StripeSubscriptionID *string
+	ExpiresAt            *time.Time
+	Cancelled            *bool
+}
+
+// Mutate applies the CreateEntitlementInput on the EntitlementMutation builder.
+func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tier; v != nil {
+		m.SetTier(*v)
+	}
+	if v := i.StripeCustomerID; v != nil {
+		m.SetStripeCustomerID(*v)
+	}
+	if v := i.StripeSubscriptionID; v != nil {
+		m.SetStripeSubscriptionID(*v)
+	}
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
+	if v := i.Cancelled; v != nil {
+		m.SetCancelled(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateEntitlementInput on the EntitlementCreate builder.
+func (c *EntitlementCreate) SetInput(i CreateEntitlementInput) *EntitlementCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateEntitlementInput represents a mutation input for updating entitlements.
+type UpdateEntitlementInput struct {
+	UpdatedAt                 *time.Time
+	ClearCreatedBy            bool
+	CreatedBy                 *string
+	ClearUpdatedBy            bool
+	UpdatedBy                 *string
+	Tier                      *entitlement.Tier
+	ClearStripeCustomerID     bool
+	StripeCustomerID          *string
+	ClearStripeSubscriptionID bool
+	StripeSubscriptionID      *string
+	ClearExpiresAt            bool
+	ExpiresAt                 *time.Time
+	Cancelled                 *bool
+}
+
+// Mutate applies the UpdateEntitlementInput on the EntitlementMutation builder.
+func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tier; v != nil {
+		m.SetTier(*v)
+	}
+	if i.ClearStripeCustomerID {
+		m.ClearStripeCustomerID()
+	}
+	if v := i.StripeCustomerID; v != nil {
+		m.SetStripeCustomerID(*v)
+	}
+	if i.ClearStripeSubscriptionID {
+		m.ClearStripeSubscriptionID()
+	}
+	if v := i.StripeSubscriptionID; v != nil {
+		m.SetStripeSubscriptionID(*v)
+	}
+	if i.ClearExpiresAt {
+		m.ClearExpiresAt()
+	}
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
+	if v := i.Cancelled; v != nil {
+		m.SetCancelled(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateEntitlementInput on the EntitlementUpdate builder.
+func (c *EntitlementUpdate) SetInput(i UpdateEntitlementInput) *EntitlementUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateEntitlementInput on the EntitlementUpdateOne builder.
+func (c *EntitlementUpdateOne) SetInput(i UpdateEntitlementInput) *EntitlementUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
 
 // CreateGroupInput represents a mutation input for creating groups.
 type CreateGroupInput struct {

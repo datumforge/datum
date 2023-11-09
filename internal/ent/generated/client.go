@@ -389,7 +389,8 @@ func (c *EntitlementClient) GetX(ctx context.Context, id string) *Entitlement {
 
 // Hooks returns the client hooks.
 func (c *EntitlementClient) Hooks() []Hook {
-	return c.hooks.Entitlement
+	hooks := c.hooks.Entitlement
+	return append(hooks[:len(hooks):len(hooks)], entitlement.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

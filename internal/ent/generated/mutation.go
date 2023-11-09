@@ -49,6 +49,10 @@ type EntitlementMutation struct {
 	op                     Op
 	typ                    string
 	id                     *string
+	created_at             *time.Time
+	updated_at             *time.Time
+	created_by             *string
+	updated_by             *string
 	tier                   *entitlement.Tier
 	stripe_customer_id     *string
 	stripe_subscription_id *string
@@ -162,6 +166,176 @@ func (m *EntitlementMutation) IDs(ctx context.Context) ([]string, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *EntitlementMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *EntitlementMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *EntitlementMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *EntitlementMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *EntitlementMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *EntitlementMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *EntitlementMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *EntitlementMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *EntitlementMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[entitlement.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *EntitlementMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *EntitlementMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, entitlement.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *EntitlementMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *EntitlementMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *EntitlementMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[entitlement.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *EntitlementMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *EntitlementMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, entitlement.FieldUpdatedBy)
 }
 
 // SetTier sets the "tier" field.
@@ -417,7 +591,19 @@ func (m *EntitlementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, entitlement.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, entitlement.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, entitlement.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, entitlement.FieldUpdatedBy)
+	}
 	if m.tier != nil {
 		fields = append(fields, entitlement.FieldTier)
 	}
@@ -441,6 +627,14 @@ func (m *EntitlementMutation) Fields() []string {
 // schema.
 func (m *EntitlementMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case entitlement.FieldCreatedAt:
+		return m.CreatedAt()
+	case entitlement.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case entitlement.FieldCreatedBy:
+		return m.CreatedBy()
+	case entitlement.FieldUpdatedBy:
+		return m.UpdatedBy()
 	case entitlement.FieldTier:
 		return m.Tier()
 	case entitlement.FieldStripeCustomerID:
@@ -460,6 +654,14 @@ func (m *EntitlementMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *EntitlementMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case entitlement.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case entitlement.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case entitlement.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case entitlement.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
 	case entitlement.FieldTier:
 		return m.OldTier(ctx)
 	case entitlement.FieldStripeCustomerID:
@@ -479,6 +681,34 @@ func (m *EntitlementMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case entitlement.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case entitlement.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case entitlement.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case entitlement.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
 	case entitlement.FieldTier:
 		v, ok := value.(entitlement.Tier)
 		if !ok {
@@ -544,6 +774,12 @@ func (m *EntitlementMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *EntitlementMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(entitlement.FieldCreatedBy) {
+		fields = append(fields, entitlement.FieldCreatedBy)
+	}
+	if m.FieldCleared(entitlement.FieldUpdatedBy) {
+		fields = append(fields, entitlement.FieldUpdatedBy)
+	}
 	if m.FieldCleared(entitlement.FieldStripeCustomerID) {
 		fields = append(fields, entitlement.FieldStripeCustomerID)
 	}
@@ -567,6 +803,12 @@ func (m *EntitlementMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *EntitlementMutation) ClearField(name string) error {
 	switch name {
+	case entitlement.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case entitlement.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
 	case entitlement.FieldStripeCustomerID:
 		m.ClearStripeCustomerID()
 		return nil
@@ -584,6 +826,18 @@ func (m *EntitlementMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *EntitlementMutation) ResetField(name string) error {
 	switch name {
+	case entitlement.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case entitlement.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case entitlement.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case entitlement.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
 	case entitlement.FieldTier:
 		m.ResetTier()
 		return nil

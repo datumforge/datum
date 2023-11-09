@@ -29,6 +29,7 @@ func NewClient(cli *http.Client, baseURL string, options *clientv2.Options, inte
 type Query struct {
 	Node                      generated.Noder                "json:\"node,omitempty\" graphql:\"node\""
 	Nodes                     []generated.Noder              "json:\"nodes\" graphql:\"nodes\""
+	Entitlements              EntitlementConnection          "json:\"entitlements\" graphql:\"entitlements\""
 	Groups                    GroupConnection                "json:\"groups\" graphql:\"groups\""
 	GroupSettingsSlice        GroupSettingsConnection        "json:\"groupSettingsSlice\" graphql:\"groupSettingsSlice\""
 	Integrations              IntegrationConnection          "json:\"integrations\" graphql:\"integrations\""
@@ -36,6 +37,7 @@ type Query struct {
 	OrganizationSettingsSlice OrganizationSettingsConnection "json:\"organizationSettingsSlice\" graphql:\"organizationSettingsSlice\""
 	Sessions                  SessionConnection              "json:\"sessions\" graphql:\"sessions\""
 	Users                     UserConnection                 "json:\"users\" graphql:\"users\""
+	Entitlement               Entitlement                    "json:\"entitlement\" graphql:\"entitlement\""
 	Group                     Group                          "json:\"group\" graphql:\"group\""
 	Integration               Integration                    "json:\"integration\" graphql:\"integration\""
 	Organization              Organization                   "json:\"organization\" graphql:\"organization\""
@@ -44,6 +46,9 @@ type Query struct {
 	Service                   Service                        "json:\"_service\" graphql:\"_service\""
 }
 type Mutation struct {
+	CreateEntitlement  EntitlementCreatePayload  "json:\"createEntitlement\" graphql:\"createEntitlement\""
+	UpdateEntitlement  EntitlementUpdatePayload  "json:\"updateEntitlement\" graphql:\"updateEntitlement\""
+	DeleteEntitlement  EntitlementDeletePayload  "json:\"deleteEntitlement\" graphql:\"deleteEntitlement\""
 	CreateGroup        GroupCreatePayload        "json:\"createGroup\" graphql:\"createGroup\""
 	UpdateGroup        GroupUpdatePayload        "json:\"updateGroup\" graphql:\"updateGroup\""
 	DeleteGroup        GroupDeletePayload        "json:\"deleteGroup\" graphql:\"deleteGroup\""

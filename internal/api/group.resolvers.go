@@ -30,8 +30,3 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
 	panic(fmt.Errorf("not implemented: Group - group"))
 }
-
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
-
-type mutationResolver struct{ *Resolver }

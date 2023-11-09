@@ -22,6 +22,11 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 	panic(fmt.Errorf("not implemented: Nodes - nodes"))
 }
 
+// Entitlements is the resolver for the entitlements field.
+func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error) {
+	panic(fmt.Errorf("not implemented: Entitlements - entitlements"))
+}
+
 // Groups is the resolver for the groups field.
 func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
 	panic(fmt.Errorf("not implemented: Groups - groups"))

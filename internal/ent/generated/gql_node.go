@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -23,6 +24,9 @@ import (
 type Noder interface {
 	IsNode()
 }
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Entitlement) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Group) IsNode() {}
@@ -106,6 +110,18 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
 	switch table {
+	case entitlement.Table:
+		query := c.Entitlement.Query().
+			Where(entitlement.ID(id))
+		query, err := query.CollectFields(ctx, "Entitlement")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case group.Table:
 		query := c.Group.Query().
 			Where(group.ID(id))
@@ -275,6 +291,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
+	case entitlement.Table:
+		query := c.Entitlement.Query().
+			Where(entitlement.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Entitlement")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case group.Table:
 		query := c.Group.Query().
 			Where(group.IDIn(ids...))

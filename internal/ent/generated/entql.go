@@ -34,6 +34,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Entitlement",
 		Fields: map[string]*sqlgraph.FieldSpec{
+			entitlement.FieldCreatedAt:            {Type: field.TypeTime, Column: entitlement.FieldCreatedAt},
+			entitlement.FieldUpdatedAt:            {Type: field.TypeTime, Column: entitlement.FieldUpdatedAt},
+			entitlement.FieldCreatedBy:            {Type: field.TypeString, Column: entitlement.FieldCreatedBy},
+			entitlement.FieldUpdatedBy:            {Type: field.TypeString, Column: entitlement.FieldUpdatedBy},
 			entitlement.FieldTier:                 {Type: field.TypeEnum, Column: entitlement.FieldTier},
 			entitlement.FieldStripeCustomerID:     {Type: field.TypeString, Column: entitlement.FieldStripeCustomerID},
 			entitlement.FieldStripeSubscriptionID: {Type: field.TypeString, Column: entitlement.FieldStripeSubscriptionID},
@@ -439,6 +443,26 @@ func (f *EntitlementFilter) Where(p entql.P) {
 // WhereID applies the entql string predicate on the id field.
 func (f *EntitlementFilter) WhereID(p entql.StringP) {
 	f.Where(p.Field(entitlement.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *EntitlementFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlement.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *EntitlementFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlement.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *EntitlementFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *EntitlementFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldUpdatedBy))
 }
 
 // WhereTier applies the entql string predicate on the tier field.

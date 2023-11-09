@@ -20,6 +20,62 @@ type EntitlementCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (ec *EntitlementCreate) SetCreatedAt(t time.Time) *EntitlementCreate {
+	ec.mutation.SetCreatedAt(t)
+	return ec
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableCreatedAt(t *time.Time) *EntitlementCreate {
+	if t != nil {
+		ec.SetCreatedAt(*t)
+	}
+	return ec
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (ec *EntitlementCreate) SetUpdatedAt(t time.Time) *EntitlementCreate {
+	ec.mutation.SetUpdatedAt(t)
+	return ec
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableUpdatedAt(t *time.Time) *EntitlementCreate {
+	if t != nil {
+		ec.SetUpdatedAt(*t)
+	}
+	return ec
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (ec *EntitlementCreate) SetCreatedBy(s string) *EntitlementCreate {
+	ec.mutation.SetCreatedBy(s)
+	return ec
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableCreatedBy(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetCreatedBy(*s)
+	}
+	return ec
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (ec *EntitlementCreate) SetUpdatedBy(s string) *EntitlementCreate {
+	ec.mutation.SetUpdatedBy(s)
+	return ec
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableUpdatedBy(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetUpdatedBy(*s)
+	}
+	return ec
+}
+
 // SetTier sets the "tier" field.
 func (ec *EntitlementCreate) SetTier(e entitlement.Tier) *EntitlementCreate {
 	ec.mutation.SetTier(e)
@@ -111,7 +167,9 @@ func (ec *EntitlementCreate) Mutation() *EntitlementMutation {
 
 // Save creates the Entitlement in the database.
 func (ec *EntitlementCreate) Save(ctx context.Context) (*Entitlement, error) {
-	ec.defaults()
+	if err := ec.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ec.sqlSave, ec.mutation, ec.hooks)
 }
 
@@ -138,7 +196,21 @@ func (ec *EntitlementCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ec *EntitlementCreate) defaults() {
+func (ec *EntitlementCreate) defaults() error {
+	if _, ok := ec.mutation.CreatedAt(); !ok {
+		if entitlement.DefaultCreatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlement.DefaultCreatedAt (forgotten import generated/runtime?)")
+		}
+		v := entitlement.DefaultCreatedAt()
+		ec.mutation.SetCreatedAt(v)
+	}
+	if _, ok := ec.mutation.UpdatedAt(); !ok {
+		if entitlement.DefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlement.DefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entitlement.DefaultUpdatedAt()
+		ec.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := ec.mutation.Tier(); !ok {
 		v := entitlement.DefaultTier
 		ec.mutation.SetTier(v)
@@ -148,13 +220,23 @@ func (ec *EntitlementCreate) defaults() {
 		ec.mutation.SetCancelled(v)
 	}
 	if _, ok := ec.mutation.ID(); !ok {
+		if entitlement.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized entitlement.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := entitlement.DefaultID()
 		ec.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (ec *EntitlementCreate) check() error {
+	if _, ok := ec.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`generated: missing required field "Entitlement.created_at"`)}
+	}
+	if _, ok := ec.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Entitlement.updated_at"`)}
+	}
 	if _, ok := ec.mutation.Tier(); !ok {
 		return &ValidationError{Name: "tier", err: errors.New(`generated: missing required field "Entitlement.tier"`)}
 	}
@@ -201,6 +283,22 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 	if id, ok := ec.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := ec.mutation.CreatedAt(); ok {
+		_spec.SetField(entitlement.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := ec.mutation.UpdatedAt(); ok {
+		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := ec.mutation.CreatedBy(); ok {
+		_spec.SetField(entitlement.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := ec.mutation.UpdatedBy(); ok {
+		_spec.SetField(entitlement.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := ec.mutation.Tier(); ok {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)

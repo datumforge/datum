@@ -30,6 +30,52 @@ func (eu *EntitlementUpdate) Where(ps ...predicate.Entitlement) *EntitlementUpda
 	return eu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (eu *EntitlementUpdate) SetUpdatedAt(t time.Time) *EntitlementUpdate {
+	eu.mutation.SetUpdatedAt(t)
+	return eu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (eu *EntitlementUpdate) SetCreatedBy(s string) *EntitlementUpdate {
+	eu.mutation.SetCreatedBy(s)
+	return eu
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableCreatedBy(s *string) *EntitlementUpdate {
+	if s != nil {
+		eu.SetCreatedBy(*s)
+	}
+	return eu
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (eu *EntitlementUpdate) ClearCreatedBy() *EntitlementUpdate {
+	eu.mutation.ClearCreatedBy()
+	return eu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (eu *EntitlementUpdate) SetUpdatedBy(s string) *EntitlementUpdate {
+	eu.mutation.SetUpdatedBy(s)
+	return eu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableUpdatedBy(s *string) *EntitlementUpdate {
+	if s != nil {
+		eu.SetUpdatedBy(*s)
+	}
+	return eu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (eu *EntitlementUpdate) ClearUpdatedBy() *EntitlementUpdate {
+	eu.mutation.ClearUpdatedBy()
+	return eu
+}
+
 // SetTier sets the "tier" field.
 func (eu *EntitlementUpdate) SetTier(e entitlement.Tier) *EntitlementUpdate {
 	eu.mutation.SetTier(e)
@@ -125,6 +171,9 @@ func (eu *EntitlementUpdate) Mutation() *EntitlementMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (eu *EntitlementUpdate) Save(ctx context.Context) (int, error) {
+	if err := eu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, eu.sqlSave, eu.mutation, eu.hooks)
 }
 
@@ -150,6 +199,18 @@ func (eu *EntitlementUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (eu *EntitlementUpdate) defaults() error {
+	if _, ok := eu.mutation.UpdatedAt(); !ok {
+		if entitlement.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlement.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entitlement.UpdateDefaultUpdatedAt()
+		eu.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (eu *EntitlementUpdate) check() error {
 	if v, ok := eu.mutation.Tier(); ok {
@@ -171,6 +232,21 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := eu.mutation.UpdatedAt(); ok {
+		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := eu.mutation.CreatedBy(); ok {
+		_spec.SetField(entitlement.FieldCreatedBy, field.TypeString, value)
+	}
+	if eu.mutation.CreatedByCleared() {
+		_spec.ClearField(entitlement.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := eu.mutation.UpdatedBy(); ok {
+		_spec.SetField(entitlement.FieldUpdatedBy, field.TypeString, value)
+	}
+	if eu.mutation.UpdatedByCleared() {
+		_spec.ClearField(entitlement.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := eu.mutation.Tier(); ok {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
@@ -216,6 +292,52 @@ type EntitlementUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *EntitlementMutation
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (euo *EntitlementUpdateOne) SetUpdatedAt(t time.Time) *EntitlementUpdateOne {
+	euo.mutation.SetUpdatedAt(t)
+	return euo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (euo *EntitlementUpdateOne) SetCreatedBy(s string) *EntitlementUpdateOne {
+	euo.mutation.SetCreatedBy(s)
+	return euo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableCreatedBy(s *string) *EntitlementUpdateOne {
+	if s != nil {
+		euo.SetCreatedBy(*s)
+	}
+	return euo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (euo *EntitlementUpdateOne) ClearCreatedBy() *EntitlementUpdateOne {
+	euo.mutation.ClearCreatedBy()
+	return euo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (euo *EntitlementUpdateOne) SetUpdatedBy(s string) *EntitlementUpdateOne {
+	euo.mutation.SetUpdatedBy(s)
+	return euo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableUpdatedBy(s *string) *EntitlementUpdateOne {
+	if s != nil {
+		euo.SetUpdatedBy(*s)
+	}
+	return euo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (euo *EntitlementUpdateOne) ClearUpdatedBy() *EntitlementUpdateOne {
+	euo.mutation.ClearUpdatedBy()
+	return euo
 }
 
 // SetTier sets the "tier" field.
@@ -326,6 +448,9 @@ func (euo *EntitlementUpdateOne) Select(field string, fields ...string) *Entitle
 
 // Save executes the query and returns the updated Entitlement entity.
 func (euo *EntitlementUpdateOne) Save(ctx context.Context) (*Entitlement, error) {
+	if err := euo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, euo.sqlSave, euo.mutation, euo.hooks)
 }
 
@@ -349,6 +474,18 @@ func (euo *EntitlementUpdateOne) ExecX(ctx context.Context) {
 	if err := euo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (euo *EntitlementUpdateOne) defaults() error {
+	if _, ok := euo.mutation.UpdatedAt(); !ok {
+		if entitlement.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized entitlement.UpdateDefaultUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := entitlement.UpdateDefaultUpdatedAt()
+		euo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -389,6 +526,21 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := euo.mutation.UpdatedAt(); ok {
+		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := euo.mutation.CreatedBy(); ok {
+		_spec.SetField(entitlement.FieldCreatedBy, field.TypeString, value)
+	}
+	if euo.mutation.CreatedByCleared() {
+		_spec.ClearField(entitlement.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := euo.mutation.UpdatedBy(); ok {
+		_spec.SetField(entitlement.FieldUpdatedBy, field.TypeString, value)
+	}
+	if euo.mutation.UpdatedByCleared() {
+		_spec.ClearField(entitlement.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := euo.mutation.Tier(); ok {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)

@@ -6,6 +6,24 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// Return response for createEntitlement mutation
+type EntitlementCreatePayload struct {
+	// Created entitlement
+	Entitlement *generated.Entitlement `json:"entitlement"`
+}
+
+// Return response for deleteEntitlement mutation
+type EntitlementDeletePayload struct {
+	// Deleted entitlement ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateEntitlement mutation
+type EntitlementUpdatePayload struct {
+	// Updated entitlement
+	Entitlement *generated.Entitlement `json:"entitlement"`
+}
+
 // Return response for createGroup mutation
 type GroupCreatePayload struct {
 	// Created group

@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/errcode"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -103,6 +104,252 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// EntitlementEdge is the edge representation of Entitlement.
+type EntitlementEdge struct {
+	Node   *Entitlement `json:"node"`
+	Cursor Cursor       `json:"cursor"`
+}
+
+// EntitlementConnection is the connection containing edges to Entitlement.
+type EntitlementConnection struct {
+	Edges      []*EntitlementEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+func (c *EntitlementConnection) build(nodes []*Entitlement, pager *entitlementPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Entitlement
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Entitlement {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Entitlement {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*EntitlementEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &EntitlementEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// EntitlementPaginateOption enables pagination customization.
+type EntitlementPaginateOption func(*entitlementPager) error
+
+// WithEntitlementOrder configures pagination ordering.
+func WithEntitlementOrder(order *EntitlementOrder) EntitlementPaginateOption {
+	if order == nil {
+		order = DefaultEntitlementOrder
+	}
+	o := *order
+	return func(pager *entitlementPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultEntitlementOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithEntitlementFilter configures pagination filter.
+func WithEntitlementFilter(filter func(*EntitlementQuery) (*EntitlementQuery, error)) EntitlementPaginateOption {
+	return func(pager *entitlementPager) error {
+		if filter == nil {
+			return errors.New("EntitlementQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type entitlementPager struct {
+	reverse bool
+	order   *EntitlementOrder
+	filter  func(*EntitlementQuery) (*EntitlementQuery, error)
+}
+
+func newEntitlementPager(opts []EntitlementPaginateOption, reverse bool) (*entitlementPager, error) {
+	pager := &entitlementPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultEntitlementOrder
+	}
+	return pager, nil
+}
+
+func (p *entitlementPager) applyFilter(query *EntitlementQuery) (*EntitlementQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *entitlementPager) toCursor(e *Entitlement) Cursor {
+	return p.order.Field.toCursor(e)
+}
+
+func (p *entitlementPager) applyCursors(query *EntitlementQuery, after, before *Cursor) (*EntitlementQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultEntitlementOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *entitlementPager) applyOrder(query *EntitlementQuery) *EntitlementQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultEntitlementOrder.Field {
+		query = query.Order(DefaultEntitlementOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *entitlementPager) orderExpr(query *EntitlementQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultEntitlementOrder.Field {
+			b.Comma().Ident(DefaultEntitlementOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Entitlement.
+func (e *EntitlementQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...EntitlementPaginateOption,
+) (*EntitlementConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newEntitlementPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if e, err = pager.applyFilter(e); err != nil {
+		return nil, err
+	}
+	conn := &EntitlementConnection{Edges: []*EntitlementEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = e.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if e, err = pager.applyCursors(e, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		e.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := e.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	e = pager.applyOrder(e)
+	nodes, err := e.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// EntitlementOrderField defines the ordering field of Entitlement.
+type EntitlementOrderField struct {
+	// Value extracts the ordering value from the given Entitlement.
+	Value    func(*Entitlement) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) entitlement.OrderOption
+	toCursor func(*Entitlement) Cursor
+}
+
+// EntitlementOrder defines the ordering of Entitlement.
+type EntitlementOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *EntitlementOrderField `json:"field"`
+}
+
+// DefaultEntitlementOrder is the default ordering of Entitlement.
+var DefaultEntitlementOrder = &EntitlementOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &EntitlementOrderField{
+		Value: func(e *Entitlement) (ent.Value, error) {
+			return e.ID, nil
+		},
+		column: entitlement.FieldID,
+		toTerm: entitlement.ByID,
+		toCursor: func(e *Entitlement) Cursor {
+			return Cursor{ID: e.ID}
+		},
+	},
+}
+
+// ToEdge converts Entitlement into EntitlementEdge.
+func (e *Entitlement) ToEdge(order *EntitlementOrder) *EntitlementEdge {
+	if order == nil {
+		order = DefaultEntitlementOrder
+	}
+	return &EntitlementEdge{
+		Node:   e,
+		Cursor: order.Field.toCursor(e),
+	}
 }
 
 // GroupEdge is the edge representation of Group.

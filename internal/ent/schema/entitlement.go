@@ -25,7 +25,7 @@ func (Entitlement) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Subscription
+// Edges of the Entitlement
 func (Entitlement) Edges() []ent.Edge {
 	return []ent.Edge{}
 }

@@ -59,41 +59,38 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 
-// ID is the resolver for the id field.
-func (r *subscriptionResolver) ID(ctx context.Context) (<-chan string, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
-}
-
-// Tier is the resolver for the tier field.
-func (r *subscriptionResolver) Tier(ctx context.Context) (<-chan subscription.Tier, error) {
-	panic(fmt.Errorf("not implemented: Tier - tier"))
-}
-
-// StripeCustomerID is the resolver for the stripeCustomerID field.
-func (r *subscriptionResolver) StripeCustomerID(ctx context.Context) (<-chan *string, error) {
-	panic(fmt.Errorf("not implemented: StripeCustomerID - stripeCustomerID"))
-}
-
-// StripeSubscriptionID is the resolver for the stripeSubscriptionID field.
-func (r *subscriptionResolver) StripeSubscriptionID(ctx context.Context) (<-chan *string, error) {
-	panic(fmt.Errorf("not implemented: StripeSubscriptionID - stripeSubscriptionID"))
-}
-
-// ExpiresAt is the resolver for the expiresAt field.
-func (r *subscriptionResolver) ExpiresAt(ctx context.Context) (<-chan *time.Time, error) {
-	panic(fmt.Errorf("not implemented: ExpiresAt - expiresAt"))
-}
-
-// Cancelled is the resolver for the cancelled field.
-func (r *subscriptionResolver) Cancelled(ctx context.Context) (<-chan bool, error) {
-	panic(fmt.Errorf("not implemented: Cancelled - cancelled"))
-}
-
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-// Subscription returns SubscriptionResolver implementation.
+type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) Subscriptions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SubscriptionWhereInput) (*generated.SubscriptionConnection, error) {
+	panic(fmt.Errorf("not implemented: Subscriptions - subscriptions"))
+}
+func (r *subscriptionResolver) ID(ctx context.Context) (<-chan string, error) {
+	panic(fmt.Errorf("not implemented: ID - id"))
+}
+func (r *subscriptionResolver) Tier(ctx context.Context) (<-chan subscription.Tier, error) {
+	panic(fmt.Errorf("not implemented: Tier - tier"))
+}
+func (r *subscriptionResolver) StripeCustomerID(ctx context.Context) (<-chan *string, error) {
+	panic(fmt.Errorf("not implemented: StripeCustomerID - stripeCustomerID"))
+}
+func (r *subscriptionResolver) StripeSubscriptionID(ctx context.Context) (<-chan *string, error) {
+	panic(fmt.Errorf("not implemented: StripeSubscriptionID - stripeSubscriptionID"))
+}
+func (r *subscriptionResolver) ExpiresAt(ctx context.Context) (<-chan *time.Time, error) {
+	panic(fmt.Errorf("not implemented: ExpiresAt - expiresAt"))
+}
+func (r *subscriptionResolver) Cancelled(ctx context.Context) (<-chan bool, error) {
+	panic(fmt.Errorf("not implemented: Cancelled - cancelled"))
+}
 func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
 
-type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }

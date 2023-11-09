@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -26,6 +28,13 @@ func (Subscription) Fields() []ent.Field {
 // Edges of the Subscription
 func (Subscription) Edges() []ent.Edge {
 	return []ent.Edge{}
+}
+
+// Annotations of the Subscription
+func (Subscription) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll, entgql.SkipMutationUpdateInput),
+	}
 }
 
 // Mixin of the RefreshToken

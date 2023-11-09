@@ -37,7 +37,7 @@ func (Entitlement) Annotations() []schema.Annotation {
 	}
 }
 
-// Mixin of the RefreshToken
+// Mixin of the Entitlement
 func (Entitlement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.IDMixin{},

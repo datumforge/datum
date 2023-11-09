@@ -8,6 +8,21 @@ import (
 )
 
 var (
+	// EntitlementsColumns holds the columns for the "entitlements" table.
+	EntitlementsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "tier", Type: field.TypeEnum, Enums: []string{"free", "pro", "enterprise"}, Default: "free"},
+		{Name: "stripe_customer_id", Type: field.TypeString, Nullable: true},
+		{Name: "stripe_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "cancelled", Type: field.TypeBool, Default: false},
+	}
+	// EntitlementsTable holds the schema information for the "entitlements" table.
+	EntitlementsTable = &schema.Table{
+		Name:       "entitlements",
+		Columns:    EntitlementsColumns,
+		PrimaryKey: []*schema.Column{EntitlementsColumns[0]},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -207,21 +222,6 @@ var (
 			},
 		},
 	}
-	// SubscriptionsColumns holds the columns for the "subscriptions" table.
-	SubscriptionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "tier", Type: field.TypeEnum, Enums: []string{"free", "pro", "enterprise"}, Default: "free"},
-		{Name: "stripe_customer_id", Type: field.TypeString, Nullable: true},
-		{Name: "stripe_subscription_id", Type: field.TypeString, Nullable: true},
-		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
-		{Name: "cancelled", Type: field.TypeBool, Default: false},
-	}
-	// SubscriptionsTable holds the schema information for the "subscriptions" table.
-	SubscriptionsTable = &schema.Table{
-		Name:       "subscriptions",
-		Columns:    SubscriptionsColumns,
-		PrimaryKey: []*schema.Column{SubscriptionsColumns[0]},
-	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -306,6 +306,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		EntitlementsTable,
 		GroupsTable,
 		GroupSettingsTable,
 		IntegrationsTable,
@@ -313,7 +314,6 @@ var (
 		OrganizationSettingsTable,
 		RefreshTokensTable,
 		SessionsTable,
-		SubscriptionsTable,
 		UsersTable,
 		GroupUsersTable,
 		UserOrganizationsTable,

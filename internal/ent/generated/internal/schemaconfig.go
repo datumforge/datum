@@ -7,6 +7,7 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
+	Entitlement          string // Entitlement table.
 	Group                string // Group table.
 	GroupUsers           string // Group-users->User table.
 	GroupSettings        string // GroupSettings table.
@@ -15,7 +16,6 @@ type SchemaConfig struct {
 	OrganizationSettings string // OrganizationSettings table.
 	RefreshToken         string // RefreshToken table.
 	Session              string // Session table.
-	Subscription         string // Subscription table.
 	User                 string // User table.
 	UserOrganizations    string // User-organizations->Organization table.
 }

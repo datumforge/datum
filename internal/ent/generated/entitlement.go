@@ -9,16 +9,16 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/datumforge/datum/internal/ent/generated/subscription"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 )
 
-// Subscription is the model entity for the Subscription schema.
-type Subscription struct {
+// Entitlement is the model entity for the Entitlement schema.
+type Entitlement struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
 	// Tier holds the value of the "tier" field.
-	Tier subscription.Tier `json:"tier,omitempty"`
+	Tier entitlement.Tier `json:"tier,omitempty"`
 	// StripeCustomerID holds the value of the "stripe_customer_id" field.
 	StripeCustomerID string `json:"stripe_customer_id,omitempty"`
 	// StripeSubscriptionID holds the value of the "stripe_subscription_id" field.
@@ -31,15 +31,15 @@ type Subscription struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Subscription) scanValues(columns []string) ([]any, error) {
+func (*Entitlement) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case subscription.FieldCancelled:
+		case entitlement.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case subscription.FieldID, subscription.FieldTier, subscription.FieldStripeCustomerID, subscription.FieldStripeSubscriptionID:
+		case entitlement.FieldID, entitlement.FieldTier, entitlement.FieldStripeCustomerID, entitlement.FieldStripeSubscriptionID:
 			values[i] = new(sql.NullString)
-		case subscription.FieldExpiresAt:
+		case entitlement.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -49,102 +49,102 @@ func (*Subscription) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Subscription fields.
-func (s *Subscription) assignValues(columns []string, values []any) error {
+// to the Entitlement fields.
+func (e *Entitlement) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case subscription.FieldID:
+		case entitlement.FieldID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
-				s.ID = value.String
+				e.ID = value.String
 			}
-		case subscription.FieldTier:
+		case entitlement.FieldTier:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tier", values[i])
 			} else if value.Valid {
-				s.Tier = subscription.Tier(value.String)
+				e.Tier = entitlement.Tier(value.String)
 			}
-		case subscription.FieldStripeCustomerID:
+		case entitlement.FieldStripeCustomerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field stripe_customer_id", values[i])
 			} else if value.Valid {
-				s.StripeCustomerID = value.String
+				e.StripeCustomerID = value.String
 			}
-		case subscription.FieldStripeSubscriptionID:
+		case entitlement.FieldStripeSubscriptionID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field stripe_subscription_id", values[i])
 			} else if value.Valid {
-				s.StripeSubscriptionID = value.String
+				e.StripeSubscriptionID = value.String
 			}
-		case subscription.FieldExpiresAt:
+		case entitlement.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
 			} else if value.Valid {
-				s.ExpiresAt = value.Time
+				e.ExpiresAt = value.Time
 			}
-		case subscription.FieldCancelled:
+		case entitlement.FieldCancelled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field cancelled", values[i])
 			} else if value.Valid {
-				s.Cancelled = value.Bool
+				e.Cancelled = value.Bool
 			}
 		default:
-			s.selectValues.Set(columns[i], values[i])
+			e.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Subscription.
+// Value returns the ent.Value that was dynamically selected and assigned to the Entitlement.
 // This includes values selected through modifiers, order, etc.
-func (s *Subscription) Value(name string) (ent.Value, error) {
-	return s.selectValues.Get(name)
+func (e *Entitlement) Value(name string) (ent.Value, error) {
+	return e.selectValues.Get(name)
 }
 
-// Update returns a builder for updating this Subscription.
-// Note that you need to call Subscription.Unwrap() before calling this method if this Subscription
+// Update returns a builder for updating this Entitlement.
+// Note that you need to call Entitlement.Unwrap() before calling this method if this Entitlement
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (s *Subscription) Update() *SubscriptionUpdateOne {
-	return NewSubscriptionClient(s.config).UpdateOne(s)
+func (e *Entitlement) Update() *EntitlementUpdateOne {
+	return NewEntitlementClient(e.config).UpdateOne(e)
 }
 
-// Unwrap unwraps the Subscription entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Entitlement entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (s *Subscription) Unwrap() *Subscription {
-	_tx, ok := s.config.driver.(*txDriver)
+func (e *Entitlement) Unwrap() *Entitlement {
+	_tx, ok := e.config.driver.(*txDriver)
 	if !ok {
-		panic("generated: Subscription is not a transactional entity")
+		panic("generated: Entitlement is not a transactional entity")
 	}
-	s.config.driver = _tx.drv
-	return s
+	e.config.driver = _tx.drv
+	return e
 }
 
 // String implements the fmt.Stringer.
-func (s *Subscription) String() string {
+func (e *Entitlement) String() string {
 	var builder strings.Builder
-	builder.WriteString("Subscription(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", s.ID))
+	builder.WriteString("Entitlement(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", e.ID))
 	builder.WriteString("tier=")
-	builder.WriteString(fmt.Sprintf("%v", s.Tier))
+	builder.WriteString(fmt.Sprintf("%v", e.Tier))
 	builder.WriteString(", ")
 	builder.WriteString("stripe_customer_id=")
-	builder.WriteString(s.StripeCustomerID)
+	builder.WriteString(e.StripeCustomerID)
 	builder.WriteString(", ")
 	builder.WriteString("stripe_subscription_id=")
-	builder.WriteString(s.StripeSubscriptionID)
+	builder.WriteString(e.StripeSubscriptionID)
 	builder.WriteString(", ")
 	builder.WriteString("expires_at=")
-	builder.WriteString(s.ExpiresAt.Format(time.ANSIC))
+	builder.WriteString(e.ExpiresAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("cancelled=")
-	builder.WriteString(fmt.Sprintf("%v", s.Cancelled))
+	builder.WriteString(fmt.Sprintf("%v", e.Cancelled))
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// Subscriptions is a parsable slice of Subscription.
-type Subscriptions []*Subscription
+// Entitlements is a parsable slice of Entitlement.
+type Entitlements []*Entitlement

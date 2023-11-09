@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -19,7 +20,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -81,6 +81,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			entitlement.Table:          entitlement.ValidColumn,
 			group.Table:                group.ValidColumn,
 			groupsettings.Table:        groupsettings.ValidColumn,
 			integration.Table:          integration.ValidColumn,
@@ -88,7 +89,6 @@ func checkColumn(table, column string) error {
 			organizationsettings.Table: organizationsettings.ValidColumn,
 			refreshtoken.Table:         refreshtoken.ValidColumn,
 			session.Table:              session.ValidColumn,
-			subscription.Table:         subscription.ValidColumn,
 			user.Table:                 user.ValidColumn,
 		})
 	})

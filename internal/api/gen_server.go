@@ -3843,6 +3843,7 @@ input UserWhereInput {
   hasGroupsWith: [GroupWhereInput!]
 }
 `, BuiltIn: false},
+	{Name: "../../schema/entitlement.graphql", Input: ``, BuiltIn: false},
 	{Name: "../../schema/group.graphql", Input: `extend type Query {
     """
     Look up group by ID
@@ -4146,7 +4147,6 @@ type SessionDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/subscription.graphql", Input: ``, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `extend type Query {
     """
     Look up user by ID

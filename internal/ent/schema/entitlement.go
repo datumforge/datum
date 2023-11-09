@@ -9,13 +9,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
-// Subscription holds the schema definition for the Subscription entity.
-type Subscription struct {
+// Entitlement holds the schema definition for the Entitlement entity.
+type Entitlement struct {
 	ent.Schema
 }
 
 // Fields of the Subscription.
-func (Subscription) Fields() []ent.Field {
+func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("tier").Values("free", "pro", "enterprise").Default("free"),
 		field.String("stripe_customer_id").Optional(),
@@ -26,19 +26,19 @@ func (Subscription) Fields() []ent.Field {
 }
 
 // Edges of the Subscription
-func (Subscription) Edges() []ent.Edge {
+func (Entitlement) Edges() []ent.Edge {
 	return []ent.Edge{}
 }
 
-// Annotations of the Subscription
-func (Subscription) Annotations() []schema.Annotation {
+// Annotations of the Entitlement
+func (Entitlement) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll, entgql.SkipMutationUpdateInput),
 	}
 }
 
 // Mixin of the RefreshToken
-func (Subscription) Mixin() []ent.Mixin {
+func (Entitlement) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.IDMixin{},
 	}

@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op generated.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The EntitlementQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EntitlementQueryRuleFunc func(context.Context, *generated.EntitlementQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EntitlementQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EntitlementQuery", q)
+}
+
+// The EntitlementMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EntitlementMutationRuleFunc func(context.Context, *generated.EntitlementMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EntitlementMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EntitlementMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EntitlementMutation", m)
+}
+
 // The GroupQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type GroupQueryRuleFunc func(context.Context, *generated.GroupQuery) error
@@ -279,30 +303,6 @@ func (f SessionMutationRuleFunc) EvalMutation(ctx context.Context, m generated.M
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.SessionMutation", m)
 }
 
-// The SubscriptionQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type SubscriptionQueryRuleFunc func(context.Context, *generated.SubscriptionQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f SubscriptionQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.SubscriptionQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.SubscriptionQuery", q)
-}
-
-// The SubscriptionMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type SubscriptionMutationRuleFunc func(context.Context, *generated.SubscriptionMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f SubscriptionMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.SubscriptionMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.SubscriptionMutation", m)
-}
-
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *generated.UserQuery) error
@@ -362,6 +362,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q generated.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *generated.EntitlementQuery:
+		return q.Filter(), nil
 	case *generated.GroupQuery:
 		return q.Filter(), nil
 	case *generated.GroupSettingsQuery:
@@ -376,8 +378,6 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.SessionQuery:
 		return q.Filter(), nil
-	case *generated.SubscriptionQuery:
-		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
 	default:
@@ -387,6 +387,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 
 func mutationFilter(m generated.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *generated.EntitlementMutation:
+		return m.Filter(), nil
 	case *generated.GroupMutation:
 		return m.Filter(), nil
 	case *generated.GroupSettingsMutation:
@@ -400,8 +402,6 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.RefreshTokenMutation:
 		return m.Filter(), nil
 	case *generated.SessionMutation:
-		return m.Filter(), nil
-	case *generated.SubscriptionMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil

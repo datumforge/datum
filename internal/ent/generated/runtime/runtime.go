@@ -6,6 +6,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -13,7 +14,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/schema"
 
@@ -25,6 +25,19 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	entitlementMixin := schema.Entitlement{}.Mixin()
+	entitlementMixinFields0 := entitlementMixin[0].Fields()
+	_ = entitlementMixinFields0
+	entitlementFields := schema.Entitlement{}.Fields()
+	_ = entitlementFields
+	// entitlementDescCancelled is the schema descriptor for cancelled field.
+	entitlementDescCancelled := entitlementFields[4].Descriptor()
+	// entitlement.DefaultCancelled holds the default value on creation for the cancelled field.
+	entitlement.DefaultCancelled = entitlementDescCancelled.Default.(bool)
+	// entitlementDescID is the schema descriptor for id field.
+	entitlementDescID := entitlementMixinFields0[0].Descriptor()
+	// entitlement.DefaultID holds the default value on creation for the id field.
+	entitlement.DefaultID = entitlementDescID.Default.(func() string)
 	groupMixin := schema.Group{}.Mixin()
 	group.Policy = privacy.NewPolicies(groupMixin[1], schema.Group{})
 	group.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -278,19 +291,6 @@ func init() {
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() string)
-	subscriptionMixin := schema.Subscription{}.Mixin()
-	subscriptionMixinFields0 := subscriptionMixin[0].Fields()
-	_ = subscriptionMixinFields0
-	subscriptionFields := schema.Subscription{}.Fields()
-	_ = subscriptionFields
-	// subscriptionDescCancelled is the schema descriptor for cancelled field.
-	subscriptionDescCancelled := subscriptionFields[4].Descriptor()
-	// subscription.DefaultCancelled holds the default value on creation for the cancelled field.
-	subscription.DefaultCancelled = subscriptionDescCancelled.Default.(bool)
-	// subscriptionDescID is the schema descriptor for id field.
-	subscriptionDescID := subscriptionMixinFields0[0].Descriptor()
-	// subscription.DefaultID holds the default value on creation for the id field.
-	subscription.DefaultID = subscriptionDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(userMixin[1], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

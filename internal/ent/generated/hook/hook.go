@@ -9,6 +9,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// The EntitlementFunc type is an adapter to allow the use of ordinary
+// function as Entitlement mutator.
+type EntitlementFunc func(context.Context, *generated.EntitlementMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntitlementFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.EntitlementMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.EntitlementMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *generated.GroupMutation) (generated.Value, error)
@@ -91,18 +103,6 @@ func (f SessionFunc) Mutate(ctx context.Context, m generated.Mutation) (generate
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SessionMutation", m)
-}
-
-// The SubscriptionFunc type is an adapter to allow the use of ordinary
-// function as Subscription mutator.
-type SubscriptionFunc func(context.Context, *generated.SubscriptionMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f SubscriptionFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.SubscriptionMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SubscriptionMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

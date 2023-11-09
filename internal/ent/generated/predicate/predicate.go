@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Entitlement is the predicate function for entitlement builders.
+type Entitlement func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
@@ -26,9 +29,6 @@ type RefreshToken func(*sql.Selector)
 
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)
-
-// Subscription is the predicate function for subscription builders.
-type Subscription func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

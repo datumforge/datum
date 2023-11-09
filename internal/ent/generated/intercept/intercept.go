@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
@@ -16,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -74,6 +74,33 @@ func (f TraverseFunc) Traverse(ctx context.Context, q generated.Query) error {
 		return err
 	}
 	return f(ctx, query)
+}
+
+// The EntitlementFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EntitlementFunc func(context.Context, *generated.EntitlementQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EntitlementFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EntitlementQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EntitlementQuery", q)
+}
+
+// The TraverseEntitlement type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEntitlement func(context.Context, *generated.EntitlementQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEntitlement) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEntitlement) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EntitlementQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EntitlementQuery", q)
 }
 
 // The GroupFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -265,33 +292,6 @@ func (f TraverseSession) Traverse(ctx context.Context, q generated.Query) error 
 	return fmt.Errorf("unexpected query type %T. expect *generated.SessionQuery", q)
 }
 
-// The SubscriptionFunc type is an adapter to allow the use of ordinary function as a Querier.
-type SubscriptionFunc func(context.Context, *generated.SubscriptionQuery) (generated.Value, error)
-
-// Query calls f(ctx, q).
-func (f SubscriptionFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.SubscriptionQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.SubscriptionQuery", q)
-}
-
-// The TraverseSubscription type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseSubscription func(context.Context, *generated.SubscriptionQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseSubscription) Intercept(next generated.Querier) generated.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseSubscription) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.SubscriptionQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.SubscriptionQuery", q)
-}
-
 // The UserFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserFunc func(context.Context, *generated.UserQuery) (generated.Value, error)
 
@@ -322,6 +322,8 @@ func (f TraverseUser) Traverse(ctx context.Context, q generated.Query) error {
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
+	case *generated.EntitlementQuery:
+		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.GroupQuery:
 		return &query[*generated.GroupQuery, predicate.Group, group.OrderOption]{typ: generated.TypeGroup, tq: q}, nil
 	case *generated.GroupSettingsQuery:
@@ -336,8 +338,6 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.RefreshTokenQuery, predicate.RefreshToken, refreshtoken.OrderOption]{typ: generated.TypeRefreshToken, tq: q}, nil
 	case *generated.SessionQuery:
 		return &query[*generated.SessionQuery, predicate.Session, session.OrderOption]{typ: generated.TypeSession, tq: q}, nil
-	case *generated.SubscriptionQuery:
-		return &query[*generated.SubscriptionQuery, predicate.Subscription, subscription.OrderOption]{typ: generated.TypeSubscription, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
 	default:

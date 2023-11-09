@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Entitlement is the client for interacting with the Entitlement builders.
+	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupSettings is the client for interacting with the GroupSettings builders.
@@ -26,8 +28,6 @@ type Tx struct {
 	RefreshToken *RefreshTokenClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
-	// Subscription is the client for interacting with the Subscription builders.
-	Subscription *SubscriptionClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -161,6 +161,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupSettings = NewGroupSettingsClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
@@ -168,7 +169,6 @@ func (tx *Tx) init() {
 	tx.OrganizationSettings = NewOrganizationSettingsClient(tx.config)
 	tx.RefreshToken = NewRefreshTokenClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
-	tx.Subscription = NewSubscriptionClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
@@ -179,7 +179,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Group.QueryXXX(), the query will be executed
+// applies a query, for example: Entitlement.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

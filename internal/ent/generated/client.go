@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -43,6 +44,8 @@ type Client struct {
 	GroupSettings *GroupSettingsClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
+	// OauthProvider is the client for interacting with the OauthProvider builders.
+	OauthProvider *OauthProviderClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// OrganizationSettings is the client for interacting with the OrganizationSettings builders.
@@ -72,6 +75,7 @@ func (c *Client) init() {
 	c.Group = NewGroupClient(c.config)
 	c.GroupSettings = NewGroupSettingsClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
+	c.OauthProvider = NewOauthProviderClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.OrganizationSettings = NewOrganizationSettingsClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
@@ -177,6 +181,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Group:                NewGroupClient(cfg),
 		GroupSettings:        NewGroupSettingsClient(cfg),
 		Integration:          NewIntegrationClient(cfg),
+		OauthProvider:        NewOauthProviderClient(cfg),
 		Organization:         NewOrganizationClient(cfg),
 		OrganizationSettings: NewOrganizationSettingsClient(cfg),
 		PersonalAccessToken:  NewPersonalAccessTokenClient(cfg),
@@ -206,6 +211,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Group:                NewGroupClient(cfg),
 		GroupSettings:        NewGroupSettingsClient(cfg),
 		Integration:          NewIntegrationClient(cfg),
+		OauthProvider:        NewOauthProviderClient(cfg),
 		Organization:         NewOrganizationClient(cfg),
 		OrganizationSettings: NewOrganizationSettingsClient(cfg),
 		PersonalAccessToken:  NewPersonalAccessTokenClient(cfg),
@@ -241,9 +247,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.Organization,
-		c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken, c.Session,
-		c.User,
+		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.OauthProvider,
+		c.Organization, c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken,
+		c.Session, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -253,9 +259,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.Organization,
-		c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken, c.Session,
-		c.User,
+		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.OauthProvider,
+		c.Organization, c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken,
+		c.Session, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -272,6 +278,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.GroupSettings.mutate(ctx, m)
 	case *IntegrationMutation:
 		return c.Integration.mutate(ctx, m)
+	case *OauthProviderMutation:
+		return c.OauthProvider.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
 	case *OrganizationSettingsMutation:
@@ -917,6 +925,140 @@ func (c *IntegrationClient) mutate(ctx context.Context, m *IntegrationMutation) 
 		return (&IntegrationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("generated: unknown Integration mutation op: %q", m.Op())
+	}
+}
+
+// OauthProviderClient is a client for the OauthProvider schema.
+type OauthProviderClient struct {
+	config
+}
+
+// NewOauthProviderClient returns a client for the OauthProvider from the given config.
+func NewOauthProviderClient(c config) *OauthProviderClient {
+	return &OauthProviderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oauthprovider.Hooks(f(g(h())))`.
+func (c *OauthProviderClient) Use(hooks ...Hook) {
+	c.hooks.OauthProvider = append(c.hooks.OauthProvider, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `oauthprovider.Intercept(f(g(h())))`.
+func (c *OauthProviderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OauthProvider = append(c.inters.OauthProvider, interceptors...)
+}
+
+// Create returns a builder for creating a OauthProvider entity.
+func (c *OauthProviderClient) Create() *OauthProviderCreate {
+	mutation := newOauthProviderMutation(c.config, OpCreate)
+	return &OauthProviderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OauthProvider entities.
+func (c *OauthProviderClient) CreateBulk(builders ...*OauthProviderCreate) *OauthProviderCreateBulk {
+	return &OauthProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OauthProviderClient) MapCreateBulk(slice any, setFunc func(*OauthProviderCreate, int)) *OauthProviderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OauthProviderCreateBulk{err: fmt.Errorf("calling to OauthProviderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OauthProviderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OauthProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OauthProvider.
+func (c *OauthProviderClient) Update() *OauthProviderUpdate {
+	mutation := newOauthProviderMutation(c.config, OpUpdate)
+	return &OauthProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OauthProviderClient) UpdateOne(op *OauthProvider) *OauthProviderUpdateOne {
+	mutation := newOauthProviderMutation(c.config, OpUpdateOne, withOauthProvider(op))
+	return &OauthProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OauthProviderClient) UpdateOneID(id string) *OauthProviderUpdateOne {
+	mutation := newOauthProviderMutation(c.config, OpUpdateOne, withOauthProviderID(id))
+	return &OauthProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OauthProvider.
+func (c *OauthProviderClient) Delete() *OauthProviderDelete {
+	mutation := newOauthProviderMutation(c.config, OpDelete)
+	return &OauthProviderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OauthProviderClient) DeleteOne(op *OauthProvider) *OauthProviderDeleteOne {
+	return c.DeleteOneID(op.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OauthProviderClient) DeleteOneID(id string) *OauthProviderDeleteOne {
+	builder := c.Delete().Where(oauthprovider.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OauthProviderDeleteOne{builder}
+}
+
+// Query returns a query builder for OauthProvider.
+func (c *OauthProviderClient) Query() *OauthProviderQuery {
+	return &OauthProviderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOauthProvider},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OauthProvider entity by its id.
+func (c *OauthProviderClient) Get(ctx context.Context, id string) (*OauthProvider, error) {
+	return c.Query().Where(oauthprovider.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OauthProviderClient) GetX(ctx context.Context, id string) *OauthProvider {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OauthProviderClient) Hooks() []Hook {
+	hooks := c.hooks.OauthProvider
+	return append(hooks[:len(hooks):len(hooks)], oauthprovider.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *OauthProviderClient) Interceptors() []Interceptor {
+	return c.inters.OauthProvider
+}
+
+func (c *OauthProviderClient) mutate(ctx context.Context, m *OauthProviderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OauthProviderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OauthProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OauthProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OauthProviderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OauthProvider mutation op: %q", m.Op())
 	}
 }
 
@@ -1935,12 +2077,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Entitlement, Group, GroupSettings, Integration, Organization,
+		Entitlement, Group, GroupSettings, Integration, OauthProvider, Organization,
 		OrganizationSettings, PersonalAccessToken, RefreshToken, Session,
 		User []ent.Hook
 	}
 	inters struct {
-		Entitlement, Group, GroupSettings, Integration, Organization,
+		Entitlement, Group, GroupSettings, Integration, OauthProvider, Organization,
 		OrganizationSettings, PersonalAccessToken, RefreshToken, Session,
 		User []ent.Interceptor
 	}

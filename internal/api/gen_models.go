@@ -60,6 +60,24 @@ type IntegrationUpdatePayload struct {
 	Integration *generated.Integration `json:"integration"`
 }
 
+// Return response for createOauthprovider mutation
+type OauthProviderCreatePayload struct {
+	// Created oauthprovider
+	OauthProvider *generated.OauthProvider `json:"OauthProvider"`
+}
+
+// Return response for deleteOauthprovider mutation
+type OauthProviderDeletePayload struct {
+	// Deleted oauthprovider ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateOauthprovider mutation
+type OauthProviderUpdatePayload struct {
+	// Updated oauthprovider
+	OauthProvider *generated.OauthProvider `json:"OauthProvider"`
+}
+
 // Return response for createOrganization mutation
 type OrganizationCreatePayload struct {
 	// Created organization

@@ -7,6 +7,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -23,7 +24,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 10)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 11)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   entitlement.Table,
@@ -108,6 +109,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   oauthprovider.Table,
+			Columns: oauthprovider.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: oauthprovider.FieldID,
+			},
+		},
+		Type: "OauthProvider",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			oauthprovider.FieldCreatedAt:    {Type: field.TypeTime, Column: oauthprovider.FieldCreatedAt},
+			oauthprovider.FieldUpdatedAt:    {Type: field.TypeTime, Column: oauthprovider.FieldUpdatedAt},
+			oauthprovider.FieldCreatedBy:    {Type: field.TypeString, Column: oauthprovider.FieldCreatedBy},
+			oauthprovider.FieldUpdatedBy:    {Type: field.TypeString, Column: oauthprovider.FieldUpdatedBy},
+			oauthprovider.FieldName:         {Type: field.TypeString, Column: oauthprovider.FieldName},
+			oauthprovider.FieldClientID:     {Type: field.TypeString, Column: oauthprovider.FieldClientID},
+			oauthprovider.FieldClientSecret: {Type: field.TypeString, Column: oauthprovider.FieldClientSecret},
+			oauthprovider.FieldRedirectURL:  {Type: field.TypeString, Column: oauthprovider.FieldRedirectURL},
+			oauthprovider.FieldScopes:       {Type: field.TypeString, Column: oauthprovider.FieldScopes},
+			oauthprovider.FieldAuthURL:      {Type: field.TypeString, Column: oauthprovider.FieldAuthURL},
+			oauthprovider.FieldTokenURL:     {Type: field.TypeString, Column: oauthprovider.FieldTokenURL},
+			oauthprovider.FieldAuthStyle:    {Type: field.TypeUint8, Column: oauthprovider.FieldAuthStyle},
+			oauthprovider.FieldInfoURL:      {Type: field.TypeString, Column: oauthprovider.FieldInfoURL},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organization.Table,
 			Columns: organization.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -126,7 +153,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldParentOrganizationID: {Type: field.TypeString, Column: organization.FieldParentOrganizationID},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organizationsettings.Table,
 			Columns: organizationsettings.Columns,
@@ -152,7 +179,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsettings.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsettings.FieldTaxIdentifier},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   personalaccesstoken.Table,
 			Columns: personalaccesstoken.Columns,
@@ -175,7 +202,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldLastUsedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   refreshtoken.Table,
 			Columns: refreshtoken.Columns,
@@ -202,7 +229,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			refreshtoken.FieldLastUsed:                {Type: field.TypeTime, Column: refreshtoken.FieldLastUsed},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -224,7 +251,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldIps:       {Type: field.TypeString, Column: session.FieldIps},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -834,6 +861,111 @@ func (f *IntegrationFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (opq *OauthProviderQuery) addPredicate(pred func(s *sql.Selector)) {
+	opq.predicates = append(opq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OauthProviderQuery builder.
+func (opq *OauthProviderQuery) Filter() *OauthProviderFilter {
+	return &OauthProviderFilter{config: opq.config, predicateAdder: opq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OauthProviderMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OauthProviderMutation builder.
+func (m *OauthProviderMutation) Filter() *OauthProviderFilter {
+	return &OauthProviderFilter{config: m.config, predicateAdder: m}
+}
+
+// OauthProviderFilter provides a generic filtering capability at runtime for OauthProviderQuery.
+type OauthProviderFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OauthProviderFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OauthProviderFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *OauthProviderFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(oauthprovider.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *OauthProviderFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(oauthprovider.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *OauthProviderFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *OauthProviderFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldUpdatedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *OauthProviderFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldName))
+}
+
+// WhereClientID applies the entql string predicate on the client_id field.
+func (f *OauthProviderFilter) WhereClientID(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldClientID))
+}
+
+// WhereClientSecret applies the entql string predicate on the client_secret field.
+func (f *OauthProviderFilter) WhereClientSecret(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldClientSecret))
+}
+
+// WhereRedirectURL applies the entql string predicate on the redirect_url field.
+func (f *OauthProviderFilter) WhereRedirectURL(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldRedirectURL))
+}
+
+// WhereScopes applies the entql string predicate on the scopes field.
+func (f *OauthProviderFilter) WhereScopes(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldScopes))
+}
+
+// WhereAuthURL applies the entql string predicate on the auth_url field.
+func (f *OauthProviderFilter) WhereAuthURL(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldAuthURL))
+}
+
+// WhereTokenURL applies the entql string predicate on the token_url field.
+func (f *OauthProviderFilter) WhereTokenURL(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldTokenURL))
+}
+
+// WhereAuthStyle applies the entql uint8 predicate on the auth_style field.
+func (f *OauthProviderFilter) WhereAuthStyle(p entql.Uint8P) {
+	f.Where(p.Field(oauthprovider.FieldAuthStyle))
+}
+
+// WhereInfoURL applies the entql string predicate on the info_url field.
+func (f *OauthProviderFilter) WhereInfoURL(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldInfoURL))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (oq *OrganizationQuery) addPredicate(pred func(s *sql.Selector)) {
 	oq.predicates = append(oq.predicates, pred)
 }
@@ -862,7 +994,7 @@ type OrganizationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1007,7 +1139,7 @@ type OrganizationSettingsFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationSettingsFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1112,7 +1244,7 @@ type PersonalAccessTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PersonalAccessTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1216,7 +1348,7 @@ type RefreshTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RefreshTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1326,7 +1458,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1425,7 +1557,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -1909,6 +1910,796 @@ func (i *IntegrationWhereInput) P() (predicate.Integration, error) {
 		return predicates[0], nil
 	default:
 		return integration.And(predicates...), nil
+	}
+}
+
+// OauthProviderWhereInput represents a where input for filtering OauthProvider queries.
+type OauthProviderWhereInput struct {
+	Predicates []predicate.OauthProvider  `json:"-"`
+	Not        *OauthProviderWhereInput   `json:"not,omitempty"`
+	Or         []*OauthProviderWhereInput `json:"or,omitempty"`
+	And        []*OauthProviderWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
+
+	// "created_at" field predicates.
+	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ   *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn    []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT    *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE   *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT    *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE   *time.Time  `json:"createdAtLTE,omitempty"`
+
+	// "updated_at" field predicates.
+	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	UpdatedAtNEQ   *time.Time  `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn    []time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn []time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGT    *time.Time  `json:"updatedAtGT,omitempty"`
+	UpdatedAtGTE   *time.Time  `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLT    *time.Time  `json:"updatedAtLT,omitempty"`
+	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
+
+	// "created_by" field predicates.
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
+
+	// "updated_by" field predicates.
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
+
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "client_id" field predicates.
+	ClientID             *string  `json:"clientID,omitempty"`
+	ClientIDNEQ          *string  `json:"clientIDNEQ,omitempty"`
+	ClientIDIn           []string `json:"clientIDIn,omitempty"`
+	ClientIDNotIn        []string `json:"clientIDNotIn,omitempty"`
+	ClientIDGT           *string  `json:"clientIDGT,omitempty"`
+	ClientIDGTE          *string  `json:"clientIDGTE,omitempty"`
+	ClientIDLT           *string  `json:"clientIDLT,omitempty"`
+	ClientIDLTE          *string  `json:"clientIDLTE,omitempty"`
+	ClientIDContains     *string  `json:"clientIDContains,omitempty"`
+	ClientIDHasPrefix    *string  `json:"clientIDHasPrefix,omitempty"`
+	ClientIDHasSuffix    *string  `json:"clientIDHasSuffix,omitempty"`
+	ClientIDEqualFold    *string  `json:"clientIDEqualFold,omitempty"`
+	ClientIDContainsFold *string  `json:"clientIDContainsFold,omitempty"`
+
+	// "client_secret" field predicates.
+	ClientSecret             *string  `json:"clientSecret,omitempty"`
+	ClientSecretNEQ          *string  `json:"clientSecretNEQ,omitempty"`
+	ClientSecretIn           []string `json:"clientSecretIn,omitempty"`
+	ClientSecretNotIn        []string `json:"clientSecretNotIn,omitempty"`
+	ClientSecretGT           *string  `json:"clientSecretGT,omitempty"`
+	ClientSecretGTE          *string  `json:"clientSecretGTE,omitempty"`
+	ClientSecretLT           *string  `json:"clientSecretLT,omitempty"`
+	ClientSecretLTE          *string  `json:"clientSecretLTE,omitempty"`
+	ClientSecretContains     *string  `json:"clientSecretContains,omitempty"`
+	ClientSecretHasPrefix    *string  `json:"clientSecretHasPrefix,omitempty"`
+	ClientSecretHasSuffix    *string  `json:"clientSecretHasSuffix,omitempty"`
+	ClientSecretEqualFold    *string  `json:"clientSecretEqualFold,omitempty"`
+	ClientSecretContainsFold *string  `json:"clientSecretContainsFold,omitempty"`
+
+	// "redirect_url" field predicates.
+	RedirectURL             *string  `json:"redirectURL,omitempty"`
+	RedirectURLNEQ          *string  `json:"redirectURLNEQ,omitempty"`
+	RedirectURLIn           []string `json:"redirectURLIn,omitempty"`
+	RedirectURLNotIn        []string `json:"redirectURLNotIn,omitempty"`
+	RedirectURLGT           *string  `json:"redirectURLGT,omitempty"`
+	RedirectURLGTE          *string  `json:"redirectURLGTE,omitempty"`
+	RedirectURLLT           *string  `json:"redirectURLLT,omitempty"`
+	RedirectURLLTE          *string  `json:"redirectURLLTE,omitempty"`
+	RedirectURLContains     *string  `json:"redirectURLContains,omitempty"`
+	RedirectURLHasPrefix    *string  `json:"redirectURLHasPrefix,omitempty"`
+	RedirectURLHasSuffix    *string  `json:"redirectURLHasSuffix,omitempty"`
+	RedirectURLEqualFold    *string  `json:"redirectURLEqualFold,omitempty"`
+	RedirectURLContainsFold *string  `json:"redirectURLContainsFold,omitempty"`
+
+	// "scopes" field predicates.
+	Scopes             *string  `json:"scopes,omitempty"`
+	ScopesNEQ          *string  `json:"scopesNEQ,omitempty"`
+	ScopesIn           []string `json:"scopesIn,omitempty"`
+	ScopesNotIn        []string `json:"scopesNotIn,omitempty"`
+	ScopesGT           *string  `json:"scopesGT,omitempty"`
+	ScopesGTE          *string  `json:"scopesGTE,omitempty"`
+	ScopesLT           *string  `json:"scopesLT,omitempty"`
+	ScopesLTE          *string  `json:"scopesLTE,omitempty"`
+	ScopesContains     *string  `json:"scopesContains,omitempty"`
+	ScopesHasPrefix    *string  `json:"scopesHasPrefix,omitempty"`
+	ScopesHasSuffix    *string  `json:"scopesHasSuffix,omitempty"`
+	ScopesEqualFold    *string  `json:"scopesEqualFold,omitempty"`
+	ScopesContainsFold *string  `json:"scopesContainsFold,omitempty"`
+
+	// "auth_url" field predicates.
+	AuthURL             *string  `json:"authURL,omitempty"`
+	AuthURLNEQ          *string  `json:"authURLNEQ,omitempty"`
+	AuthURLIn           []string `json:"authURLIn,omitempty"`
+	AuthURLNotIn        []string `json:"authURLNotIn,omitempty"`
+	AuthURLGT           *string  `json:"authURLGT,omitempty"`
+	AuthURLGTE          *string  `json:"authURLGTE,omitempty"`
+	AuthURLLT           *string  `json:"authURLLT,omitempty"`
+	AuthURLLTE          *string  `json:"authURLLTE,omitempty"`
+	AuthURLContains     *string  `json:"authURLContains,omitempty"`
+	AuthURLHasPrefix    *string  `json:"authURLHasPrefix,omitempty"`
+	AuthURLHasSuffix    *string  `json:"authURLHasSuffix,omitempty"`
+	AuthURLEqualFold    *string  `json:"authURLEqualFold,omitempty"`
+	AuthURLContainsFold *string  `json:"authURLContainsFold,omitempty"`
+
+	// "token_url" field predicates.
+	TokenURL             *string  `json:"tokenURL,omitempty"`
+	TokenURLNEQ          *string  `json:"tokenURLNEQ,omitempty"`
+	TokenURLIn           []string `json:"tokenURLIn,omitempty"`
+	TokenURLNotIn        []string `json:"tokenURLNotIn,omitempty"`
+	TokenURLGT           *string  `json:"tokenURLGT,omitempty"`
+	TokenURLGTE          *string  `json:"tokenURLGTE,omitempty"`
+	TokenURLLT           *string  `json:"tokenURLLT,omitempty"`
+	TokenURLLTE          *string  `json:"tokenURLLTE,omitempty"`
+	TokenURLContains     *string  `json:"tokenURLContains,omitempty"`
+	TokenURLHasPrefix    *string  `json:"tokenURLHasPrefix,omitempty"`
+	TokenURLHasSuffix    *string  `json:"tokenURLHasSuffix,omitempty"`
+	TokenURLEqualFold    *string  `json:"tokenURLEqualFold,omitempty"`
+	TokenURLContainsFold *string  `json:"tokenURLContainsFold,omitempty"`
+
+	// "auth_style" field predicates.
+	AuthStyle      *uint8  `json:"authStyle,omitempty"`
+	AuthStyleNEQ   *uint8  `json:"authStyleNEQ,omitempty"`
+	AuthStyleIn    []uint8 `json:"authStyleIn,omitempty"`
+	AuthStyleNotIn []uint8 `json:"authStyleNotIn,omitempty"`
+	AuthStyleGT    *uint8  `json:"authStyleGT,omitempty"`
+	AuthStyleGTE   *uint8  `json:"authStyleGTE,omitempty"`
+	AuthStyleLT    *uint8  `json:"authStyleLT,omitempty"`
+	AuthStyleLTE   *uint8  `json:"authStyleLTE,omitempty"`
+
+	// "info_url" field predicates.
+	InfoURL             *string  `json:"infoURL,omitempty"`
+	InfoURLNEQ          *string  `json:"infoURLNEQ,omitempty"`
+	InfoURLIn           []string `json:"infoURLIn,omitempty"`
+	InfoURLNotIn        []string `json:"infoURLNotIn,omitempty"`
+	InfoURLGT           *string  `json:"infoURLGT,omitempty"`
+	InfoURLGTE          *string  `json:"infoURLGTE,omitempty"`
+	InfoURLLT           *string  `json:"infoURLLT,omitempty"`
+	InfoURLLTE          *string  `json:"infoURLLTE,omitempty"`
+	InfoURLContains     *string  `json:"infoURLContains,omitempty"`
+	InfoURLHasPrefix    *string  `json:"infoURLHasPrefix,omitempty"`
+	InfoURLHasSuffix    *string  `json:"infoURLHasSuffix,omitempty"`
+	InfoURLEqualFold    *string  `json:"infoURLEqualFold,omitempty"`
+	InfoURLContainsFold *string  `json:"infoURLContainsFold,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *OauthProviderWhereInput) AddPredicates(predicates ...predicate.OauthProvider) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the OauthProviderWhereInput filter on the OauthProviderQuery builder.
+func (i *OauthProviderWhereInput) Filter(q *OauthProviderQuery) (*OauthProviderQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyOauthProviderWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyOauthProviderWhereInput is returned in case the OauthProviderWhereInput is empty.
+var ErrEmptyOauthProviderWhereInput = errors.New("generated: empty predicate OauthProviderWhereInput")
+
+// P returns a predicate for filtering oauthproviders.
+// An error is returned if the input is empty or invalid.
+func (i *OauthProviderWhereInput) P() (predicate.OauthProvider, error) {
+	var predicates []predicate.OauthProvider
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, oauthprovider.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.OauthProvider, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, oauthprovider.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.OauthProvider, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, oauthprovider.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, oauthprovider.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, oauthprovider.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, oauthprovider.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, oauthprovider.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, oauthprovider.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, oauthprovider.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, oauthprovider.IDLTE(*i.IDLTE))
+	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, oauthprovider.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, oauthprovider.IDContainsFold(*i.IDContainsFold))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, oauthprovider.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, oauthprovider.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, oauthprovider.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, oauthprovider.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, oauthprovider.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, oauthprovider.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, oauthprovider.CreatedAtLTE(*i.CreatedAtLTE))
+	}
+	if i.UpdatedAt != nil {
+		predicates = append(predicates, oauthprovider.UpdatedAtEQ(*i.UpdatedAt))
+	}
+	if i.UpdatedAtNEQ != nil {
+		predicates = append(predicates, oauthprovider.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+	}
+	if len(i.UpdatedAtIn) > 0 {
+		predicates = append(predicates, oauthprovider.UpdatedAtIn(i.UpdatedAtIn...))
+	}
+	if len(i.UpdatedAtNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+	}
+	if i.UpdatedAtGT != nil {
+		predicates = append(predicates, oauthprovider.UpdatedAtGT(*i.UpdatedAtGT))
+	}
+	if i.UpdatedAtGTE != nil {
+		predicates = append(predicates, oauthprovider.UpdatedAtGTE(*i.UpdatedAtGTE))
+	}
+	if i.UpdatedAtLT != nil {
+		predicates = append(predicates, oauthprovider.UpdatedAtLT(*i.UpdatedAtLT))
+	}
+	if i.UpdatedAtLTE != nil {
+		predicates = append(predicates, oauthprovider.UpdatedAtLTE(*i.UpdatedAtLTE))
+	}
+	if i.CreatedBy != nil {
+		predicates = append(predicates, oauthprovider.CreatedByEQ(*i.CreatedBy))
+	}
+	if i.CreatedByNEQ != nil {
+		predicates = append(predicates, oauthprovider.CreatedByNEQ(*i.CreatedByNEQ))
+	}
+	if len(i.CreatedByIn) > 0 {
+		predicates = append(predicates, oauthprovider.CreatedByIn(i.CreatedByIn...))
+	}
+	if len(i.CreatedByNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.CreatedByNotIn(i.CreatedByNotIn...))
+	}
+	if i.CreatedByGT != nil {
+		predicates = append(predicates, oauthprovider.CreatedByGT(*i.CreatedByGT))
+	}
+	if i.CreatedByGTE != nil {
+		predicates = append(predicates, oauthprovider.CreatedByGTE(*i.CreatedByGTE))
+	}
+	if i.CreatedByLT != nil {
+		predicates = append(predicates, oauthprovider.CreatedByLT(*i.CreatedByLT))
+	}
+	if i.CreatedByLTE != nil {
+		predicates = append(predicates, oauthprovider.CreatedByLTE(*i.CreatedByLTE))
+	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, oauthprovider.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
+	if i.CreatedByIsNil {
+		predicates = append(predicates, oauthprovider.CreatedByIsNil())
+	}
+	if i.CreatedByNotNil {
+		predicates = append(predicates, oauthprovider.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, oauthprovider.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, oauthprovider.CreatedByContainsFold(*i.CreatedByContainsFold))
+	}
+	if i.UpdatedBy != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByEQ(*i.UpdatedBy))
+	}
+	if i.UpdatedByNEQ != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByNEQ(*i.UpdatedByNEQ))
+	}
+	if len(i.UpdatedByIn) > 0 {
+		predicates = append(predicates, oauthprovider.UpdatedByIn(i.UpdatedByIn...))
+	}
+	if len(i.UpdatedByNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.UpdatedByNotIn(i.UpdatedByNotIn...))
+	}
+	if i.UpdatedByGT != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByGT(*i.UpdatedByGT))
+	}
+	if i.UpdatedByGTE != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByGTE(*i.UpdatedByGTE))
+	}
+	if i.UpdatedByLT != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByLT(*i.UpdatedByLT))
+	}
+	if i.UpdatedByLTE != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByLTE(*i.UpdatedByLTE))
+	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
+	if i.UpdatedByIsNil {
+		predicates = append(predicates, oauthprovider.UpdatedByIsNil())
+	}
+	if i.UpdatedByNotNil {
+		predicates = append(predicates, oauthprovider.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, oauthprovider.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, oauthprovider.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, oauthprovider.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, oauthprovider.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, oauthprovider.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, oauthprovider.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, oauthprovider.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, oauthprovider.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, oauthprovider.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, oauthprovider.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, oauthprovider.NameContainsFold(*i.NameContainsFold))
+	}
+	if i.ClientID != nil {
+		predicates = append(predicates, oauthprovider.ClientIDEQ(*i.ClientID))
+	}
+	if i.ClientIDNEQ != nil {
+		predicates = append(predicates, oauthprovider.ClientIDNEQ(*i.ClientIDNEQ))
+	}
+	if len(i.ClientIDIn) > 0 {
+		predicates = append(predicates, oauthprovider.ClientIDIn(i.ClientIDIn...))
+	}
+	if len(i.ClientIDNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.ClientIDNotIn(i.ClientIDNotIn...))
+	}
+	if i.ClientIDGT != nil {
+		predicates = append(predicates, oauthprovider.ClientIDGT(*i.ClientIDGT))
+	}
+	if i.ClientIDGTE != nil {
+		predicates = append(predicates, oauthprovider.ClientIDGTE(*i.ClientIDGTE))
+	}
+	if i.ClientIDLT != nil {
+		predicates = append(predicates, oauthprovider.ClientIDLT(*i.ClientIDLT))
+	}
+	if i.ClientIDLTE != nil {
+		predicates = append(predicates, oauthprovider.ClientIDLTE(*i.ClientIDLTE))
+	}
+	if i.ClientIDContains != nil {
+		predicates = append(predicates, oauthprovider.ClientIDContains(*i.ClientIDContains))
+	}
+	if i.ClientIDHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.ClientIDHasPrefix(*i.ClientIDHasPrefix))
+	}
+	if i.ClientIDHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.ClientIDHasSuffix(*i.ClientIDHasSuffix))
+	}
+	if i.ClientIDEqualFold != nil {
+		predicates = append(predicates, oauthprovider.ClientIDEqualFold(*i.ClientIDEqualFold))
+	}
+	if i.ClientIDContainsFold != nil {
+		predicates = append(predicates, oauthprovider.ClientIDContainsFold(*i.ClientIDContainsFold))
+	}
+	if i.ClientSecret != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretEQ(*i.ClientSecret))
+	}
+	if i.ClientSecretNEQ != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretNEQ(*i.ClientSecretNEQ))
+	}
+	if len(i.ClientSecretIn) > 0 {
+		predicates = append(predicates, oauthprovider.ClientSecretIn(i.ClientSecretIn...))
+	}
+	if len(i.ClientSecretNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.ClientSecretNotIn(i.ClientSecretNotIn...))
+	}
+	if i.ClientSecretGT != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretGT(*i.ClientSecretGT))
+	}
+	if i.ClientSecretGTE != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretGTE(*i.ClientSecretGTE))
+	}
+	if i.ClientSecretLT != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretLT(*i.ClientSecretLT))
+	}
+	if i.ClientSecretLTE != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretLTE(*i.ClientSecretLTE))
+	}
+	if i.ClientSecretContains != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretContains(*i.ClientSecretContains))
+	}
+	if i.ClientSecretHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretHasPrefix(*i.ClientSecretHasPrefix))
+	}
+	if i.ClientSecretHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretHasSuffix(*i.ClientSecretHasSuffix))
+	}
+	if i.ClientSecretEqualFold != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretEqualFold(*i.ClientSecretEqualFold))
+	}
+	if i.ClientSecretContainsFold != nil {
+		predicates = append(predicates, oauthprovider.ClientSecretContainsFold(*i.ClientSecretContainsFold))
+	}
+	if i.RedirectURL != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLEQ(*i.RedirectURL))
+	}
+	if i.RedirectURLNEQ != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLNEQ(*i.RedirectURLNEQ))
+	}
+	if len(i.RedirectURLIn) > 0 {
+		predicates = append(predicates, oauthprovider.RedirectURLIn(i.RedirectURLIn...))
+	}
+	if len(i.RedirectURLNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.RedirectURLNotIn(i.RedirectURLNotIn...))
+	}
+	if i.RedirectURLGT != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLGT(*i.RedirectURLGT))
+	}
+	if i.RedirectURLGTE != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLGTE(*i.RedirectURLGTE))
+	}
+	if i.RedirectURLLT != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLLT(*i.RedirectURLLT))
+	}
+	if i.RedirectURLLTE != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLLTE(*i.RedirectURLLTE))
+	}
+	if i.RedirectURLContains != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLContains(*i.RedirectURLContains))
+	}
+	if i.RedirectURLHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLHasPrefix(*i.RedirectURLHasPrefix))
+	}
+	if i.RedirectURLHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLHasSuffix(*i.RedirectURLHasSuffix))
+	}
+	if i.RedirectURLEqualFold != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLEqualFold(*i.RedirectURLEqualFold))
+	}
+	if i.RedirectURLContainsFold != nil {
+		predicates = append(predicates, oauthprovider.RedirectURLContainsFold(*i.RedirectURLContainsFold))
+	}
+	if i.Scopes != nil {
+		predicates = append(predicates, oauthprovider.ScopesEQ(*i.Scopes))
+	}
+	if i.ScopesNEQ != nil {
+		predicates = append(predicates, oauthprovider.ScopesNEQ(*i.ScopesNEQ))
+	}
+	if len(i.ScopesIn) > 0 {
+		predicates = append(predicates, oauthprovider.ScopesIn(i.ScopesIn...))
+	}
+	if len(i.ScopesNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.ScopesNotIn(i.ScopesNotIn...))
+	}
+	if i.ScopesGT != nil {
+		predicates = append(predicates, oauthprovider.ScopesGT(*i.ScopesGT))
+	}
+	if i.ScopesGTE != nil {
+		predicates = append(predicates, oauthprovider.ScopesGTE(*i.ScopesGTE))
+	}
+	if i.ScopesLT != nil {
+		predicates = append(predicates, oauthprovider.ScopesLT(*i.ScopesLT))
+	}
+	if i.ScopesLTE != nil {
+		predicates = append(predicates, oauthprovider.ScopesLTE(*i.ScopesLTE))
+	}
+	if i.ScopesContains != nil {
+		predicates = append(predicates, oauthprovider.ScopesContains(*i.ScopesContains))
+	}
+	if i.ScopesHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.ScopesHasPrefix(*i.ScopesHasPrefix))
+	}
+	if i.ScopesHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.ScopesHasSuffix(*i.ScopesHasSuffix))
+	}
+	if i.ScopesEqualFold != nil {
+		predicates = append(predicates, oauthprovider.ScopesEqualFold(*i.ScopesEqualFold))
+	}
+	if i.ScopesContainsFold != nil {
+		predicates = append(predicates, oauthprovider.ScopesContainsFold(*i.ScopesContainsFold))
+	}
+	if i.AuthURL != nil {
+		predicates = append(predicates, oauthprovider.AuthURLEQ(*i.AuthURL))
+	}
+	if i.AuthURLNEQ != nil {
+		predicates = append(predicates, oauthprovider.AuthURLNEQ(*i.AuthURLNEQ))
+	}
+	if len(i.AuthURLIn) > 0 {
+		predicates = append(predicates, oauthprovider.AuthURLIn(i.AuthURLIn...))
+	}
+	if len(i.AuthURLNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.AuthURLNotIn(i.AuthURLNotIn...))
+	}
+	if i.AuthURLGT != nil {
+		predicates = append(predicates, oauthprovider.AuthURLGT(*i.AuthURLGT))
+	}
+	if i.AuthURLGTE != nil {
+		predicates = append(predicates, oauthprovider.AuthURLGTE(*i.AuthURLGTE))
+	}
+	if i.AuthURLLT != nil {
+		predicates = append(predicates, oauthprovider.AuthURLLT(*i.AuthURLLT))
+	}
+	if i.AuthURLLTE != nil {
+		predicates = append(predicates, oauthprovider.AuthURLLTE(*i.AuthURLLTE))
+	}
+	if i.AuthURLContains != nil {
+		predicates = append(predicates, oauthprovider.AuthURLContains(*i.AuthURLContains))
+	}
+	if i.AuthURLHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.AuthURLHasPrefix(*i.AuthURLHasPrefix))
+	}
+	if i.AuthURLHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.AuthURLHasSuffix(*i.AuthURLHasSuffix))
+	}
+	if i.AuthURLEqualFold != nil {
+		predicates = append(predicates, oauthprovider.AuthURLEqualFold(*i.AuthURLEqualFold))
+	}
+	if i.AuthURLContainsFold != nil {
+		predicates = append(predicates, oauthprovider.AuthURLContainsFold(*i.AuthURLContainsFold))
+	}
+	if i.TokenURL != nil {
+		predicates = append(predicates, oauthprovider.TokenURLEQ(*i.TokenURL))
+	}
+	if i.TokenURLNEQ != nil {
+		predicates = append(predicates, oauthprovider.TokenURLNEQ(*i.TokenURLNEQ))
+	}
+	if len(i.TokenURLIn) > 0 {
+		predicates = append(predicates, oauthprovider.TokenURLIn(i.TokenURLIn...))
+	}
+	if len(i.TokenURLNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.TokenURLNotIn(i.TokenURLNotIn...))
+	}
+	if i.TokenURLGT != nil {
+		predicates = append(predicates, oauthprovider.TokenURLGT(*i.TokenURLGT))
+	}
+	if i.TokenURLGTE != nil {
+		predicates = append(predicates, oauthprovider.TokenURLGTE(*i.TokenURLGTE))
+	}
+	if i.TokenURLLT != nil {
+		predicates = append(predicates, oauthprovider.TokenURLLT(*i.TokenURLLT))
+	}
+	if i.TokenURLLTE != nil {
+		predicates = append(predicates, oauthprovider.TokenURLLTE(*i.TokenURLLTE))
+	}
+	if i.TokenURLContains != nil {
+		predicates = append(predicates, oauthprovider.TokenURLContains(*i.TokenURLContains))
+	}
+	if i.TokenURLHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.TokenURLHasPrefix(*i.TokenURLHasPrefix))
+	}
+	if i.TokenURLHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.TokenURLHasSuffix(*i.TokenURLHasSuffix))
+	}
+	if i.TokenURLEqualFold != nil {
+		predicates = append(predicates, oauthprovider.TokenURLEqualFold(*i.TokenURLEqualFold))
+	}
+	if i.TokenURLContainsFold != nil {
+		predicates = append(predicates, oauthprovider.TokenURLContainsFold(*i.TokenURLContainsFold))
+	}
+	if i.AuthStyle != nil {
+		predicates = append(predicates, oauthprovider.AuthStyleEQ(*i.AuthStyle))
+	}
+	if i.AuthStyleNEQ != nil {
+		predicates = append(predicates, oauthprovider.AuthStyleNEQ(*i.AuthStyleNEQ))
+	}
+	if len(i.AuthStyleIn) > 0 {
+		predicates = append(predicates, oauthprovider.AuthStyleIn(i.AuthStyleIn...))
+	}
+	if len(i.AuthStyleNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.AuthStyleNotIn(i.AuthStyleNotIn...))
+	}
+	if i.AuthStyleGT != nil {
+		predicates = append(predicates, oauthprovider.AuthStyleGT(*i.AuthStyleGT))
+	}
+	if i.AuthStyleGTE != nil {
+		predicates = append(predicates, oauthprovider.AuthStyleGTE(*i.AuthStyleGTE))
+	}
+	if i.AuthStyleLT != nil {
+		predicates = append(predicates, oauthprovider.AuthStyleLT(*i.AuthStyleLT))
+	}
+	if i.AuthStyleLTE != nil {
+		predicates = append(predicates, oauthprovider.AuthStyleLTE(*i.AuthStyleLTE))
+	}
+	if i.InfoURL != nil {
+		predicates = append(predicates, oauthprovider.InfoURLEQ(*i.InfoURL))
+	}
+	if i.InfoURLNEQ != nil {
+		predicates = append(predicates, oauthprovider.InfoURLNEQ(*i.InfoURLNEQ))
+	}
+	if len(i.InfoURLIn) > 0 {
+		predicates = append(predicates, oauthprovider.InfoURLIn(i.InfoURLIn...))
+	}
+	if len(i.InfoURLNotIn) > 0 {
+		predicates = append(predicates, oauthprovider.InfoURLNotIn(i.InfoURLNotIn...))
+	}
+	if i.InfoURLGT != nil {
+		predicates = append(predicates, oauthprovider.InfoURLGT(*i.InfoURLGT))
+	}
+	if i.InfoURLGTE != nil {
+		predicates = append(predicates, oauthprovider.InfoURLGTE(*i.InfoURLGTE))
+	}
+	if i.InfoURLLT != nil {
+		predicates = append(predicates, oauthprovider.InfoURLLT(*i.InfoURLLT))
+	}
+	if i.InfoURLLTE != nil {
+		predicates = append(predicates, oauthprovider.InfoURLLTE(*i.InfoURLLTE))
+	}
+	if i.InfoURLContains != nil {
+		predicates = append(predicates, oauthprovider.InfoURLContains(*i.InfoURLContains))
+	}
+	if i.InfoURLHasPrefix != nil {
+		predicates = append(predicates, oauthprovider.InfoURLHasPrefix(*i.InfoURLHasPrefix))
+	}
+	if i.InfoURLHasSuffix != nil {
+		predicates = append(predicates, oauthprovider.InfoURLHasSuffix(*i.InfoURLHasSuffix))
+	}
+	if i.InfoURLEqualFold != nil {
+		predicates = append(predicates, oauthprovider.InfoURLEqualFold(*i.InfoURLEqualFold))
+	}
+	if i.InfoURLContainsFold != nil {
+		predicates = append(predicates, oauthprovider.InfoURLContainsFold(*i.InfoURLContainsFold))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyOauthProviderWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return oauthprovider.And(predicates...), nil
 	}
 }
 

@@ -207,6 +207,30 @@ func (f IntegrationMutationRuleFunc) EvalMutation(ctx context.Context, m generat
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.IntegrationMutation", m)
 }
 
+// The OauthProviderQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OauthProviderQueryRuleFunc func(context.Context, *generated.OauthProviderQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OauthProviderQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OauthProviderQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OauthProviderQuery", q)
+}
+
+// The OauthProviderMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OauthProviderMutationRuleFunc func(context.Context, *generated.OauthProviderMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OauthProviderMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OauthProviderMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OauthProviderMutation", m)
+}
+
 // The OrganizationQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OrganizationQueryRuleFunc func(context.Context, *generated.OrganizationQuery) error
@@ -394,6 +418,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.IntegrationQuery:
 		return q.Filter(), nil
+	case *generated.OauthProviderQuery:
+		return q.Filter(), nil
 	case *generated.OrganizationQuery:
 		return q.Filter(), nil
 	case *generated.OrganizationSettingsQuery:
@@ -420,6 +446,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.GroupSettingsMutation:
 		return m.Filter(), nil
 	case *generated.IntegrationMutation:
+		return m.Filter(), nil
+	case *generated.OauthProviderMutation:
 		return m.Filter(), nil
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil

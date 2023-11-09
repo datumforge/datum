@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -1200,6 +1201,252 @@ func (i *Integration) ToEdge(order *IntegrationOrder) *IntegrationEdge {
 	return &IntegrationEdge{
 		Node:   i,
 		Cursor: order.Field.toCursor(i),
+	}
+}
+
+// OauthProviderEdge is the edge representation of OauthProvider.
+type OauthProviderEdge struct {
+	Node   *OauthProvider `json:"node"`
+	Cursor Cursor         `json:"cursor"`
+}
+
+// OauthProviderConnection is the connection containing edges to OauthProvider.
+type OauthProviderConnection struct {
+	Edges      []*OauthProviderEdge `json:"edges"`
+	PageInfo   PageInfo             `json:"pageInfo"`
+	TotalCount int                  `json:"totalCount"`
+}
+
+func (c *OauthProviderConnection) build(nodes []*OauthProvider, pager *oauthproviderPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *OauthProvider
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *OauthProvider {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *OauthProvider {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*OauthProviderEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &OauthProviderEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// OauthProviderPaginateOption enables pagination customization.
+type OauthProviderPaginateOption func(*oauthproviderPager) error
+
+// WithOauthProviderOrder configures pagination ordering.
+func WithOauthProviderOrder(order *OauthProviderOrder) OauthProviderPaginateOption {
+	if order == nil {
+		order = DefaultOauthProviderOrder
+	}
+	o := *order
+	return func(pager *oauthproviderPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultOauthProviderOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithOauthProviderFilter configures pagination filter.
+func WithOauthProviderFilter(filter func(*OauthProviderQuery) (*OauthProviderQuery, error)) OauthProviderPaginateOption {
+	return func(pager *oauthproviderPager) error {
+		if filter == nil {
+			return errors.New("OauthProviderQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type oauthproviderPager struct {
+	reverse bool
+	order   *OauthProviderOrder
+	filter  func(*OauthProviderQuery) (*OauthProviderQuery, error)
+}
+
+func newOauthProviderPager(opts []OauthProviderPaginateOption, reverse bool) (*oauthproviderPager, error) {
+	pager := &oauthproviderPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultOauthProviderOrder
+	}
+	return pager, nil
+}
+
+func (p *oauthproviderPager) applyFilter(query *OauthProviderQuery) (*OauthProviderQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *oauthproviderPager) toCursor(op *OauthProvider) Cursor {
+	return p.order.Field.toCursor(op)
+}
+
+func (p *oauthproviderPager) applyCursors(query *OauthProviderQuery, after, before *Cursor) (*OauthProviderQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultOauthProviderOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *oauthproviderPager) applyOrder(query *OauthProviderQuery) *OauthProviderQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultOauthProviderOrder.Field {
+		query = query.Order(DefaultOauthProviderOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *oauthproviderPager) orderExpr(query *OauthProviderQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultOauthProviderOrder.Field {
+			b.Comma().Ident(DefaultOauthProviderOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to OauthProvider.
+func (op *OauthProviderQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...OauthProviderPaginateOption,
+) (*OauthProviderConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newOauthProviderPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if op, err = pager.applyFilter(op); err != nil {
+		return nil, err
+	}
+	conn := &OauthProviderConnection{Edges: []*OauthProviderEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = op.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if op, err = pager.applyCursors(op, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		op.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := op.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	op = pager.applyOrder(op)
+	nodes, err := op.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// OauthProviderOrderField defines the ordering field of OauthProvider.
+type OauthProviderOrderField struct {
+	// Value extracts the ordering value from the given OauthProvider.
+	Value    func(*OauthProvider) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) oauthprovider.OrderOption
+	toCursor func(*OauthProvider) Cursor
+}
+
+// OauthProviderOrder defines the ordering of OauthProvider.
+type OauthProviderOrder struct {
+	Direction OrderDirection           `json:"direction"`
+	Field     *OauthProviderOrderField `json:"field"`
+}
+
+// DefaultOauthProviderOrder is the default ordering of OauthProvider.
+var DefaultOauthProviderOrder = &OauthProviderOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &OauthProviderOrderField{
+		Value: func(op *OauthProvider) (ent.Value, error) {
+			return op.ID, nil
+		},
+		column: oauthprovider.FieldID,
+		toTerm: oauthprovider.ByID,
+		toCursor: func(op *OauthProvider) Cursor {
+			return Cursor{ID: op.ID}
+		},
+	},
+}
+
+// ToEdge converts OauthProvider into OauthProviderEdge.
+func (op *OauthProvider) ToEdge(order *OauthProviderOrder) *OauthProviderEdge {
+	if order == nil {
+		order = DefaultOauthProviderOrder
+	}
+	return &OauthProviderEdge{
+		Node:   op,
+		Cursor: order.Field.toCursor(op),
 	}
 }
 

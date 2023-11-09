@@ -12,6 +12,7 @@ type SchemaConfig struct {
 	GroupUsers           string // Group-users->User table.
 	GroupSettings        string // GroupSettings table.
 	Integration          string // Integration table.
+	OauthProvider        string // OauthProvider table.
 	Organization         string // Organization table.
 	OrganizationSettings string // OrganizationSettings table.
 	PersonalAccessToken  string // PersonalAccessToken table.

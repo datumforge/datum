@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -148,6 +149,29 @@ func init() {
 	integrationDescID := integrationMixinFields1[0].Descriptor()
 	// integration.DefaultID holds the default value on creation for the id field.
 	integration.DefaultID = integrationDescID.Default.(func() string)
+	oauthproviderMixin := schema.OauthProvider{}.Mixin()
+	oauthproviderMixinHooks0 := oauthproviderMixin[0].Hooks()
+	oauthprovider.Hooks[0] = oauthproviderMixinHooks0[0]
+	oauthproviderMixinFields0 := oauthproviderMixin[0].Fields()
+	_ = oauthproviderMixinFields0
+	oauthproviderMixinFields1 := oauthproviderMixin[1].Fields()
+	_ = oauthproviderMixinFields1
+	oauthproviderFields := schema.OauthProvider{}.Fields()
+	_ = oauthproviderFields
+	// oauthproviderDescCreatedAt is the schema descriptor for created_at field.
+	oauthproviderDescCreatedAt := oauthproviderMixinFields0[0].Descriptor()
+	// oauthprovider.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauthprovider.DefaultCreatedAt = oauthproviderDescCreatedAt.Default.(func() time.Time)
+	// oauthproviderDescUpdatedAt is the schema descriptor for updated_at field.
+	oauthproviderDescUpdatedAt := oauthproviderMixinFields0[1].Descriptor()
+	// oauthprovider.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauthprovider.DefaultUpdatedAt = oauthproviderDescUpdatedAt.Default.(func() time.Time)
+	// oauthprovider.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauthprovider.UpdateDefaultUpdatedAt = oauthproviderDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// oauthproviderDescID is the schema descriptor for id field.
+	oauthproviderDescID := oauthproviderMixinFields1[0].Descriptor()
+	// oauthprovider.DefaultID holds the default value on creation for the id field.
+	oauthprovider.DefaultID = oauthproviderDescID.Default.(func() string)
 	organizationMixin := schema.Organization{}.Mixin()
 	organizationMixinHooks0 := organizationMixin[0].Hooks()
 	organization.Hooks[0] = organizationMixinHooks0[0]

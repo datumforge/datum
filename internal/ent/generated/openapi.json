@@ -1473,6 +1473,340 @@
         }
       }
     },
+    "/oauth-providers": {
+      "get": {
+        "tags": [
+          "OauthProvider"
+        ],
+        "summary": "List OauthProviders",
+        "description": "List OauthProviders.",
+        "operationId": "listOauthProvider",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OauthProvider list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OauthProviderList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OauthProvider"
+        ],
+        "summary": "Create a new OauthProvider",
+        "description": "Creates a new OauthProvider and persists it to storage.",
+        "operationId": "createOauthProvider",
+        "requestBody": {
+          "description": "OauthProvider to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "client_secret": {
+                    "type": "string"
+                  },
+                  "redirect_url": {
+                    "type": "string"
+                  },
+                  "scopes": {
+                    "type": "string"
+                  },
+                  "auth_url": {
+                    "type": "string"
+                  },
+                  "token_url": {
+                    "type": "string"
+                  },
+                  "auth_style": {
+                    "type": "integer",
+                    "format": "int32",
+                    "maximum": 255,
+                    "minimum": 0
+                  },
+                  "info_url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "name",
+                  "client_id",
+                  "client_secret",
+                  "redirect_url",
+                  "scopes",
+                  "auth_url",
+                  "token_url",
+                  "auth_style",
+                  "info_url"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OauthProvider created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OauthProviderCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/oauth-providers/{id}": {
+      "get": {
+        "tags": [
+          "OauthProvider"
+        ],
+        "summary": "Find a OauthProvider by ID",
+        "description": "Finds the OauthProvider with the requested ID and returns it.",
+        "operationId": "readOauthProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OauthProvider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OauthProvider with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OauthProviderRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OauthProvider"
+        ],
+        "summary": "Deletes a OauthProvider by ID",
+        "description": "Deletes the OauthProvider with the requested ID.",
+        "operationId": "deleteOauthProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OauthProvider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OauthProvider with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OauthProvider"
+        ],
+        "summary": "Updates a OauthProvider",
+        "description": "Updates a OauthProvider and persists changes to storage.",
+        "operationId": "updateOauthProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OauthProvider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OauthProvider properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "client_secret": {
+                    "type": "string"
+                  },
+                  "redirect_url": {
+                    "type": "string"
+                  },
+                  "scopes": {
+                    "type": "string"
+                  },
+                  "auth_url": {
+                    "type": "string"
+                  },
+                  "token_url": {
+                    "type": "string"
+                  },
+                  "auth_style": {
+                    "type": "integer",
+                    "format": "int32",
+                    "maximum": 255,
+                    "minimum": 0
+                  },
+                  "info_url": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OauthProvider updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OauthProviderUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organization-settings": {
       "get": {
         "tags": [
@@ -5299,6 +5633,336 @@
           "created_at",
           "updated_at",
           "name"
+        ]
+      },
+      "OauthProvider": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "string"
+          },
+          "auth_url": {
+            "type": "string"
+          },
+          "token_url": {
+            "type": "string"
+          },
+          "auth_style": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "info_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "client_id",
+          "client_secret",
+          "redirect_url",
+          "scopes",
+          "auth_url",
+          "token_url",
+          "auth_style",
+          "info_url"
+        ]
+      },
+      "OauthProviderCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "string"
+          },
+          "auth_url": {
+            "type": "string"
+          },
+          "token_url": {
+            "type": "string"
+          },
+          "auth_style": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "info_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "client_id",
+          "client_secret",
+          "redirect_url",
+          "scopes",
+          "auth_url",
+          "token_url",
+          "auth_style",
+          "info_url"
+        ]
+      },
+      "OauthProviderList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "string"
+          },
+          "auth_url": {
+            "type": "string"
+          },
+          "token_url": {
+            "type": "string"
+          },
+          "auth_style": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "info_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "client_id",
+          "client_secret",
+          "redirect_url",
+          "scopes",
+          "auth_url",
+          "token_url",
+          "auth_style",
+          "info_url"
+        ]
+      },
+      "OauthProviderRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "string"
+          },
+          "auth_url": {
+            "type": "string"
+          },
+          "token_url": {
+            "type": "string"
+          },
+          "auth_style": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "info_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "client_id",
+          "client_secret",
+          "redirect_url",
+          "scopes",
+          "auth_url",
+          "token_url",
+          "auth_style",
+          "info_url"
+        ]
+      },
+      "OauthProviderUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "string"
+          },
+          "auth_url": {
+            "type": "string"
+          },
+          "token_url": {
+            "type": "string"
+          },
+          "auth_style": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "info_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "client_id",
+          "client_secret",
+          "redirect_url",
+          "scopes",
+          "auth_url",
+          "token_url",
+          "auth_style",
+          "info_url"
         ]
       },
       "Organization": {

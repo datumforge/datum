@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up OauthProvider by ID
+    """
+     OauthProvider(
+        """
+        ID of the OauthProvider
+        """
+        id: ID!
+    ):  OauthProvider!
+}
+
+extend type Mutation{
+    """
+    Create a new oauthprovider
+    """
+    createOauthProvider(
+        """
+        values of the oauthprovider
+        """
+        input: CreateOauthProviderInput!
+    ): OauthProviderCreatePayload!
+    """
+    Update an existing oauthprovider
+    """
+    updateOauthProvider(
+        """
+        ID of the oauthprovider
+        """
+        id: ID!
+        """
+        New values for the oauthprovider
+        """
+        input: UpdateOauthProviderInput!
+    ): OauthProviderUpdatePayload!
+    """
+    Delete an existing oauthprovider
+    """
+    deleteOauthProvider(
+        """
+        ID of the oauthprovider
+        """
+        id: ID!
+    ): OauthProviderDeletePayload!
+}
+
+"""
+Return response for createOauthprovider mutation
+"""
+type OauthProviderCreatePayload {
+    """
+    Created oauthprovider
+    """
+    OauthProvider: OauthProvider!
+}
+
+"""
+Return response for updateOauthprovider mutation
+"""
+type OauthProviderUpdatePayload {
+    """
+    Updated oauthprovider
+    """
+    OauthProvider: OauthProvider!
+}
+
+"""
+Return response for deleteOauthprovider mutation
+"""
+type OauthProviderDeletePayload {
+    """
+    Deleted oauthprovider ID
+    """
+    deletedID: ID!
+}

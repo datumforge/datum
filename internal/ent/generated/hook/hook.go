@@ -57,6 +57,18 @@ func (f IntegrationFunc) Mutate(ctx context.Context, m generated.Mutation) (gene
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.IntegrationMutation", m)
 }
 
+// The OauthProviderFunc type is an adapter to allow the use of ordinary
+// function as OauthProvider mutator.
+type OauthProviderFunc func(context.Context, *generated.OauthProviderMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OauthProviderFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OauthProviderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OauthProviderMutation", m)
+}
+
 // The OrganizationFunc type is an adapter to allow the use of ordinary
 // function as Organization mutator.
 type OrganizationFunc func(context.Context, *generated.OrganizationMutation) (generated.Value, error)

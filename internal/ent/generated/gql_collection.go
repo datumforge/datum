@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -502,6 +503,133 @@ func newIntegrationPaginateArgs(rv map[string]any) *integrationPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*IntegrationWhereInput); ok {
 		args.opts = append(args.opts, WithIntegrationFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (op *OauthProviderQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthProviderQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return op, nil
+	}
+	if err := op.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return op, nil
+}
+
+func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(oauthprovider.Columns))
+		selectedFields = []string{oauthprovider.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[oauthprovider.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldCreatedAt)
+				fieldSeen[oauthprovider.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[oauthprovider.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldUpdatedAt)
+				fieldSeen[oauthprovider.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[oauthprovider.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldCreatedBy)
+				fieldSeen[oauthprovider.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[oauthprovider.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldUpdatedBy)
+				fieldSeen[oauthprovider.FieldUpdatedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[oauthprovider.FieldName]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldName)
+				fieldSeen[oauthprovider.FieldName] = struct{}{}
+			}
+		case "clientID":
+			if _, ok := fieldSeen[oauthprovider.FieldClientID]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldClientID)
+				fieldSeen[oauthprovider.FieldClientID] = struct{}{}
+			}
+		case "clientSecret":
+			if _, ok := fieldSeen[oauthprovider.FieldClientSecret]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldClientSecret)
+				fieldSeen[oauthprovider.FieldClientSecret] = struct{}{}
+			}
+		case "redirectURL":
+			if _, ok := fieldSeen[oauthprovider.FieldRedirectURL]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldRedirectURL)
+				fieldSeen[oauthprovider.FieldRedirectURL] = struct{}{}
+			}
+		case "scopes":
+			if _, ok := fieldSeen[oauthprovider.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldScopes)
+				fieldSeen[oauthprovider.FieldScopes] = struct{}{}
+			}
+		case "authURL":
+			if _, ok := fieldSeen[oauthprovider.FieldAuthURL]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldAuthURL)
+				fieldSeen[oauthprovider.FieldAuthURL] = struct{}{}
+			}
+		case "tokenURL":
+			if _, ok := fieldSeen[oauthprovider.FieldTokenURL]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldTokenURL)
+				fieldSeen[oauthprovider.FieldTokenURL] = struct{}{}
+			}
+		case "authStyle":
+			if _, ok := fieldSeen[oauthprovider.FieldAuthStyle]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldAuthStyle)
+				fieldSeen[oauthprovider.FieldAuthStyle] = struct{}{}
+			}
+		case "infoURL":
+			if _, ok := fieldSeen[oauthprovider.FieldInfoURL]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldInfoURL)
+				fieldSeen[oauthprovider.FieldInfoURL] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		op.Select(selectedFields...)
+	}
+	return nil
+}
+
+type oauthproviderPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OauthProviderPaginateOption
+}
+
+func newOauthProviderPaginateArgs(rv map[string]any) *oauthproviderPaginateArgs {
+	args := &oauthproviderPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OauthProviderWhereInput); ok {
+		args.opts = append(args.opts, WithOauthProviderFilter(v.Filter))
 	}
 	return args
 }

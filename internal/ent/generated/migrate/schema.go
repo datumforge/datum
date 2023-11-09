@@ -112,6 +112,29 @@ var (
 			},
 		},
 	}
+	// OauthProvidersColumns holds the columns for the "oauth_providers" table.
+	OauthProvidersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "client_id", Type: field.TypeString},
+		{Name: "client_secret", Type: field.TypeString},
+		{Name: "redirect_url", Type: field.TypeString},
+		{Name: "scopes", Type: field.TypeString},
+		{Name: "auth_url", Type: field.TypeString},
+		{Name: "token_url", Type: field.TypeString},
+		{Name: "auth_style", Type: field.TypeUint8},
+		{Name: "info_url", Type: field.TypeString},
+	}
+	// OauthProvidersTable holds the schema information for the "oauth_providers" table.
+	OauthProvidersTable = &schema.Table{
+		Name:       "oauth_providers",
+		Columns:    OauthProvidersColumns,
+		PrimaryKey: []*schema.Column{OauthProvidersColumns[0]},
+	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -349,6 +372,7 @@ var (
 		GroupsTable,
 		GroupSettingsTable,
 		IntegrationsTable,
+		OauthProvidersTable,
 		OrganizationsTable,
 		OrganizationSettingsTable,
 		PersonalAccessTokensTable,

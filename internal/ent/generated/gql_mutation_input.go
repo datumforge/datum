@@ -446,6 +446,130 @@ func (c *IntegrationUpdateOne) SetInput(i UpdateIntegrationInput) *IntegrationUp
 	return c
 }
 
+// CreateOauthProviderInput represents a mutation input for creating oauthproviders.
+type CreateOauthProviderInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Name         string
+	ClientID     string
+	ClientSecret string
+	RedirectURL  string
+	Scopes       string
+	AuthURL      string
+	TokenURL     string
+	AuthStyle    uint8
+	InfoURL      string
+}
+
+// Mutate applies the CreateOauthProviderInput on the OauthProviderMutation builder.
+func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	m.SetClientID(i.ClientID)
+	m.SetClientSecret(i.ClientSecret)
+	m.SetRedirectURL(i.RedirectURL)
+	m.SetScopes(i.Scopes)
+	m.SetAuthURL(i.AuthURL)
+	m.SetTokenURL(i.TokenURL)
+	m.SetAuthStyle(i.AuthStyle)
+	m.SetInfoURL(i.InfoURL)
+}
+
+// SetInput applies the change-set in the CreateOauthProviderInput on the OauthProviderCreate builder.
+func (c *OauthProviderCreate) SetInput(i CreateOauthProviderInput) *OauthProviderCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOauthProviderInput represents a mutation input for updating oauthproviders.
+type UpdateOauthProviderInput struct {
+	UpdatedAt      *time.Time
+	ClearCreatedBy bool
+	CreatedBy      *string
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Name           *string
+	ClientID       *string
+	ClientSecret   *string
+	RedirectURL    *string
+	Scopes         *string
+	AuthURL        *string
+	TokenURL       *string
+	AuthStyle      *uint8
+	InfoURL        *string
+}
+
+// Mutate applies the UpdateOauthProviderInput on the OauthProviderMutation builder.
+func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.ClientID; v != nil {
+		m.SetClientID(*v)
+	}
+	if v := i.ClientSecret; v != nil {
+		m.SetClientSecret(*v)
+	}
+	if v := i.RedirectURL; v != nil {
+		m.SetRedirectURL(*v)
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(*v)
+	}
+	if v := i.AuthURL; v != nil {
+		m.SetAuthURL(*v)
+	}
+	if v := i.TokenURL; v != nil {
+		m.SetTokenURL(*v)
+	}
+	if v := i.AuthStyle; v != nil {
+		m.SetAuthStyle(*v)
+	}
+	if v := i.InfoURL; v != nil {
+		m.SetInfoURL(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdate builder.
+func (c *OauthProviderUpdate) SetInput(i UpdateOauthProviderInput) *OauthProviderUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdateOne builder.
+func (c *OauthProviderUpdateOne) SetInput(i UpdateOauthProviderInput) *OauthProviderUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
 	CreatedAt      *time.Time

@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -183,6 +184,33 @@ func (f TraverseIntegration) Traverse(ctx context.Context, q generated.Query) er
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.IntegrationQuery", q)
+}
+
+// The OauthProviderFunc type is an adapter to allow the use of ordinary function as a Querier.
+type OauthProviderFunc func(context.Context, *generated.OauthProviderQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f OauthProviderFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.OauthProviderQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.OauthProviderQuery", q)
+}
+
+// The TraverseOauthProvider type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseOauthProvider func(context.Context, *generated.OauthProviderQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseOauthProvider) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseOauthProvider) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OauthProviderQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.OauthProviderQuery", q)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -358,6 +386,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.GroupSettingsQuery, predicate.GroupSettings, groupsettings.OrderOption]{typ: generated.TypeGroupSettings, tq: q}, nil
 	case *generated.IntegrationQuery:
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
+	case *generated.OauthProviderQuery:
+		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
 	case *generated.OrganizationQuery:
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.OrganizationSettingsQuery:

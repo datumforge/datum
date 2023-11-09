@@ -152,6 +152,10 @@ func (User) Edges() []ent.Edge {
 				// When a user is deleted, delete the sessions
 				OnDelete: entsql.Cascade}),
 		edge.From("groups", Group.Type).Ref("users"),
+		edge.To("personal_access_tokens", PersonalAccessToken.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
 	}
 }
 

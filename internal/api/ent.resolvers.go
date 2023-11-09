@@ -52,6 +52,11 @@ func (r *queryResolver) OrganizationSettingsSlice(ctx context.Context, after *en
 	panic(fmt.Errorf("not implemented: OrganizationSettingsSlice - organizationSettingsSlice"))
 }
 
+// PersonalAccessTokens is the resolver for the personalAccessTokens field.
+func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error) {
+	panic(fmt.Errorf("not implemented: PersonalAccessTokens - personalAccessTokens"))
+}
+
 // Sessions is the resolver for the sessions field.
 func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) (*generated.SessionConnection, error) {
 	return r.client.Session.Query().Paginate(ctx, after, first, before, last, generated.WithSessionFilter(where.Filter))

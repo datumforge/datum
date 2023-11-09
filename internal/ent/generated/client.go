@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -46,6 +47,8 @@ type Client struct {
 	Organization *OrganizationClient
 	// OrganizationSettings is the client for interacting with the OrganizationSettings builders.
 	OrganizationSettings *OrganizationSettingsClient
+	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
+	PersonalAccessToken *PersonalAccessTokenClient
 	// RefreshToken is the client for interacting with the RefreshToken builders.
 	RefreshToken *RefreshTokenClient
 	// Session is the client for interacting with the Session builders.
@@ -71,6 +74,7 @@ func (c *Client) init() {
 	c.Integration = NewIntegrationClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.OrganizationSettings = NewOrganizationSettingsClient(c.config)
+	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.RefreshToken = NewRefreshTokenClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -175,6 +179,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Integration:          NewIntegrationClient(cfg),
 		Organization:         NewOrganizationClient(cfg),
 		OrganizationSettings: NewOrganizationSettingsClient(cfg),
+		PersonalAccessToken:  NewPersonalAccessTokenClient(cfg),
 		RefreshToken:         NewRefreshTokenClient(cfg),
 		Session:              NewSessionClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -203,6 +208,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Integration:          NewIntegrationClient(cfg),
 		Organization:         NewOrganizationClient(cfg),
 		OrganizationSettings: NewOrganizationSettingsClient(cfg),
+		PersonalAccessToken:  NewPersonalAccessTokenClient(cfg),
 		RefreshToken:         NewRefreshTokenClient(cfg),
 		Session:              NewSessionClient(cfg),
 		User:                 NewUserClient(cfg),
@@ -236,7 +242,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.Organization,
-		c.OrganizationSettings, c.RefreshToken, c.Session, c.User,
+		c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken, c.Session,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -247,7 +254,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.Organization,
-		c.OrganizationSettings, c.RefreshToken, c.Session, c.User,
+		c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken, c.Session,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -268,6 +276,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Organization.mutate(ctx, m)
 	case *OrganizationSettingsMutation:
 		return c.OrganizationSettings.mutate(ctx, m)
+	case *PersonalAccessTokenMutation:
+		return c.PersonalAccessToken.mutate(ctx, m)
 	case *RefreshTokenMutation:
 		return c.RefreshToken.mutate(ctx, m)
 	case *SessionMutation:
@@ -1273,6 +1283,159 @@ func (c *OrganizationSettingsClient) mutate(ctx context.Context, m *Organization
 	}
 }
 
+// PersonalAccessTokenClient is a client for the PersonalAccessToken schema.
+type PersonalAccessTokenClient struct {
+	config
+}
+
+// NewPersonalAccessTokenClient returns a client for the PersonalAccessToken from the given config.
+func NewPersonalAccessTokenClient(c config) *PersonalAccessTokenClient {
+	return &PersonalAccessTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `personalaccesstoken.Hooks(f(g(h())))`.
+func (c *PersonalAccessTokenClient) Use(hooks ...Hook) {
+	c.hooks.PersonalAccessToken = append(c.hooks.PersonalAccessToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `personalaccesstoken.Intercept(f(g(h())))`.
+func (c *PersonalAccessTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PersonalAccessToken = append(c.inters.PersonalAccessToken, interceptors...)
+}
+
+// Create returns a builder for creating a PersonalAccessToken entity.
+func (c *PersonalAccessTokenClient) Create() *PersonalAccessTokenCreate {
+	mutation := newPersonalAccessTokenMutation(c.config, OpCreate)
+	return &PersonalAccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PersonalAccessToken entities.
+func (c *PersonalAccessTokenClient) CreateBulk(builders ...*PersonalAccessTokenCreate) *PersonalAccessTokenCreateBulk {
+	return &PersonalAccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PersonalAccessTokenClient) MapCreateBulk(slice any, setFunc func(*PersonalAccessTokenCreate, int)) *PersonalAccessTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PersonalAccessTokenCreateBulk{err: fmt.Errorf("calling to PersonalAccessTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PersonalAccessTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PersonalAccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PersonalAccessToken.
+func (c *PersonalAccessTokenClient) Update() *PersonalAccessTokenUpdate {
+	mutation := newPersonalAccessTokenMutation(c.config, OpUpdate)
+	return &PersonalAccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PersonalAccessTokenClient) UpdateOne(pat *PersonalAccessToken) *PersonalAccessTokenUpdateOne {
+	mutation := newPersonalAccessTokenMutation(c.config, OpUpdateOne, withPersonalAccessToken(pat))
+	return &PersonalAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PersonalAccessTokenClient) UpdateOneID(id string) *PersonalAccessTokenUpdateOne {
+	mutation := newPersonalAccessTokenMutation(c.config, OpUpdateOne, withPersonalAccessTokenID(id))
+	return &PersonalAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PersonalAccessToken.
+func (c *PersonalAccessTokenClient) Delete() *PersonalAccessTokenDelete {
+	mutation := newPersonalAccessTokenMutation(c.config, OpDelete)
+	return &PersonalAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PersonalAccessTokenClient) DeleteOne(pat *PersonalAccessToken) *PersonalAccessTokenDeleteOne {
+	return c.DeleteOneID(pat.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PersonalAccessTokenClient) DeleteOneID(id string) *PersonalAccessTokenDeleteOne {
+	builder := c.Delete().Where(personalaccesstoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PersonalAccessTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for PersonalAccessToken.
+func (c *PersonalAccessTokenClient) Query() *PersonalAccessTokenQuery {
+	return &PersonalAccessTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePersonalAccessToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PersonalAccessToken entity by its id.
+func (c *PersonalAccessTokenClient) Get(ctx context.Context, id string) (*PersonalAccessToken, error) {
+	return c.Query().Where(personalaccesstoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PersonalAccessTokenClient) GetX(ctx context.Context, id string) *PersonalAccessToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a PersonalAccessToken.
+func (c *PersonalAccessTokenClient) QueryUser(pat *PersonalAccessToken) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pat.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(personalaccesstoken.Table, personalaccesstoken.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, personalaccesstoken.UserTable, personalaccesstoken.UserColumn),
+		)
+		schemaConfig := pat.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		fromV = sqlgraph.Neighbors(pat.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PersonalAccessTokenClient) Hooks() []Hook {
+	hooks := c.hooks.PersonalAccessToken
+	return append(hooks[:len(hooks):len(hooks)], personalaccesstoken.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PersonalAccessTokenClient) Interceptors() []Interceptor {
+	return c.inters.PersonalAccessToken
+}
+
+func (c *PersonalAccessTokenClient) mutate(ctx context.Context, m *PersonalAccessTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PersonalAccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PersonalAccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PersonalAccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PersonalAccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown PersonalAccessToken mutation op: %q", m.Op())
+	}
+}
+
 // RefreshTokenClient is a client for the RefreshToken schema.
 type RefreshTokenClient struct {
 	config
@@ -1724,6 +1887,25 @@ func (c *UserClient) QueryGroups(u *User) *GroupQuery {
 	return query
 }
 
+// QueryPersonalAccessTokens queries the personal_access_tokens edge of a User.
+func (c *UserClient) QueryPersonalAccessTokens(u *User) *PersonalAccessTokenQuery {
+	query := (&PersonalAccessTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(personalaccesstoken.Table, personalaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PersonalAccessTokensTable, user.PersonalAccessTokensColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -1754,11 +1936,13 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Entitlement, Group, GroupSettings, Integration, Organization,
-		OrganizationSettings, RefreshToken, Session, User []ent.Hook
+		OrganizationSettings, PersonalAccessToken, RefreshToken, Session,
+		User []ent.Hook
 	}
 	inters struct {
 		Entitlement, Group, GroupSettings, Integration, Organization,
-		OrganizationSettings, RefreshToken, Session, User []ent.Interceptor
+		OrganizationSettings, PersonalAccessToken, RefreshToken, Session,
+		User []ent.Interceptor
 	}
 )
 

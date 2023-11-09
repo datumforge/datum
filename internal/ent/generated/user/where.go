@@ -1104,6 +1104,35 @@ func HasGroupsWith(preds ...predicate.Group) predicate.User {
 	})
 }
 
+// HasPersonalAccessTokens applies the HasEdge predicate on the "personal_access_tokens" edge.
+func HasPersonalAccessTokens() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PersonalAccessTokensTable, PersonalAccessTokensColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPersonalAccessTokensWith applies the HasEdge predicate on the "personal_access_tokens" edge with a given conditions (other predicates).
+func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newPersonalAccessTokensStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -87,6 +88,7 @@ func checkColumn(table, column string) error {
 			integration.Table:          integration.ValidColumn,
 			organization.Table:         organization.ValidColumn,
 			organizationsettings.Table: organizationsettings.ValidColumn,
+			personalaccesstoken.Table:  personalaccesstoken.ValidColumn,
 			refreshtoken.Table:         refreshtoken.ValidColumn,
 			session.Table:              session.ValidColumn,
 			user.Table:                 user.ValidColumn,

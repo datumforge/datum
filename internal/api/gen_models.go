@@ -78,6 +78,24 @@ type OrganizationUpdatePayload struct {
 	Organization *generated.Organization `json:"organization"`
 }
 
+// Return response for createPersonalAccessToken mutation
+type PersonalAccessTokenCreatePayload struct {
+	// Created PersonalAccessToken
+	PersonalAccessToken *generated.PersonalAccessToken `json:"PersonalAccessToken"`
+}
+
+// Return response for deletePersonalAccessToken mutation
+type PersonalAccessTokenDeletePayload struct {
+	// Deleted PersonalAccessToken ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updatePersonalAccessToken mutation
+type PersonalAccessTokenUpdatePayload struct {
+	// Updated PersonalAccessToken
+	PersonalAccessToken *generated.PersonalAccessToken `json:"PersonalAccessToken"`
+}
+
 // Return response for createSession mutation
 type SessionCreatePayload struct {
 	// Created session

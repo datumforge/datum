@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -881,6 +882,127 @@ func newOrganizationSettingsPaginateArgs(rv map[string]any) *organizationsetting
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pat *PersonalAccessTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*PersonalAccessTokenQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return pat, nil
+	}
+	if err := pat.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return pat, nil
+}
+
+func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(personalaccesstoken.Columns))
+		selectedFields = []string{personalaccesstoken.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: pat.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			pat.withUser = query
+			if _, ok := fieldSeen[personalaccesstoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldUserID)
+				fieldSeen[personalaccesstoken.FieldUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[personalaccesstoken.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldCreatedAt)
+				fieldSeen[personalaccesstoken.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[personalaccesstoken.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldUpdatedAt)
+				fieldSeen[personalaccesstoken.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[personalaccesstoken.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldCreatedBy)
+				fieldSeen[personalaccesstoken.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[personalaccesstoken.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldUpdatedBy)
+				fieldSeen[personalaccesstoken.FieldUpdatedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[personalaccesstoken.FieldName]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldName)
+				fieldSeen[personalaccesstoken.FieldName] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[personalaccesstoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldUserID)
+				fieldSeen[personalaccesstoken.FieldUserID] = struct{}{}
+			}
+		case "abilities":
+			if _, ok := fieldSeen[personalaccesstoken.FieldAbilities]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldAbilities)
+				fieldSeen[personalaccesstoken.FieldAbilities] = struct{}{}
+			}
+		case "expirationAt":
+			if _, ok := fieldSeen[personalaccesstoken.FieldExpirationAt]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldExpirationAt)
+				fieldSeen[personalaccesstoken.FieldExpirationAt] = struct{}{}
+			}
+		case "lastUsedAt":
+			if _, ok := fieldSeen[personalaccesstoken.FieldLastUsedAt]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldLastUsedAt)
+				fieldSeen[personalaccesstoken.FieldLastUsedAt] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		pat.Select(selectedFields...)
+	}
+	return nil
+}
+
+type personalaccesstokenPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []PersonalAccessTokenPaginateOption
+}
+
+func newPersonalAccessTokenPaginateArgs(rv map[string]any) *personalaccesstokenPaginateArgs {
+	args := &personalaccesstokenPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*PersonalAccessTokenWhereInput); ok {
+		args.opts = append(args.opts, WithPersonalAccessTokenFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (rt *RefreshTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*RefreshTokenQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1184,6 +1306,18 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.WithNamedGroups(alias, func(wq *GroupQuery) {
+				*wq = *query
+			})
+		case "personalAccessTokens":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PersonalAccessTokenClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
 				*wq = *query
 			})
 		case "createdAt":

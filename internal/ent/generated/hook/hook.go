@@ -81,6 +81,18 @@ func (f OrganizationSettingsFunc) Mutate(ctx context.Context, m generated.Mutati
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingsMutation", m)
 }
 
+// The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary
+// function as PersonalAccessToken mutator.
+type PersonalAccessTokenFunc func(context.Context, *generated.PersonalAccessTokenMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PersonalAccessTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.PersonalAccessTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.PersonalAccessTokenMutation", m)
+}
+
 // The RefreshTokenFunc type is an adapter to allow the use of ordinary
 // function as RefreshToken mutator.
 type RefreshTokenFunc func(context.Context, *generated.RefreshTokenMutation) (generated.Value, error)

@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -1738,6 +1739,252 @@ func (os *OrganizationSettings) ToEdge(order *OrganizationSettingsOrder) *Organi
 	return &OrganizationSettingsEdge{
 		Node:   os,
 		Cursor: order.Field.toCursor(os),
+	}
+}
+
+// PersonalAccessTokenEdge is the edge representation of PersonalAccessToken.
+type PersonalAccessTokenEdge struct {
+	Node   *PersonalAccessToken `json:"node"`
+	Cursor Cursor               `json:"cursor"`
+}
+
+// PersonalAccessTokenConnection is the connection containing edges to PersonalAccessToken.
+type PersonalAccessTokenConnection struct {
+	Edges      []*PersonalAccessTokenEdge `json:"edges"`
+	PageInfo   PageInfo                   `json:"pageInfo"`
+	TotalCount int                        `json:"totalCount"`
+}
+
+func (c *PersonalAccessTokenConnection) build(nodes []*PersonalAccessToken, pager *personalaccesstokenPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *PersonalAccessToken
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *PersonalAccessToken {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *PersonalAccessToken {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*PersonalAccessTokenEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &PersonalAccessTokenEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// PersonalAccessTokenPaginateOption enables pagination customization.
+type PersonalAccessTokenPaginateOption func(*personalaccesstokenPager) error
+
+// WithPersonalAccessTokenOrder configures pagination ordering.
+func WithPersonalAccessTokenOrder(order *PersonalAccessTokenOrder) PersonalAccessTokenPaginateOption {
+	if order == nil {
+		order = DefaultPersonalAccessTokenOrder
+	}
+	o := *order
+	return func(pager *personalaccesstokenPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultPersonalAccessTokenOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithPersonalAccessTokenFilter configures pagination filter.
+func WithPersonalAccessTokenFilter(filter func(*PersonalAccessTokenQuery) (*PersonalAccessTokenQuery, error)) PersonalAccessTokenPaginateOption {
+	return func(pager *personalaccesstokenPager) error {
+		if filter == nil {
+			return errors.New("PersonalAccessTokenQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type personalaccesstokenPager struct {
+	reverse bool
+	order   *PersonalAccessTokenOrder
+	filter  func(*PersonalAccessTokenQuery) (*PersonalAccessTokenQuery, error)
+}
+
+func newPersonalAccessTokenPager(opts []PersonalAccessTokenPaginateOption, reverse bool) (*personalaccesstokenPager, error) {
+	pager := &personalaccesstokenPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultPersonalAccessTokenOrder
+	}
+	return pager, nil
+}
+
+func (p *personalaccesstokenPager) applyFilter(query *PersonalAccessTokenQuery) (*PersonalAccessTokenQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *personalaccesstokenPager) toCursor(pat *PersonalAccessToken) Cursor {
+	return p.order.Field.toCursor(pat)
+}
+
+func (p *personalaccesstokenPager) applyCursors(query *PersonalAccessTokenQuery, after, before *Cursor) (*PersonalAccessTokenQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultPersonalAccessTokenOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *personalaccesstokenPager) applyOrder(query *PersonalAccessTokenQuery) *PersonalAccessTokenQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultPersonalAccessTokenOrder.Field {
+		query = query.Order(DefaultPersonalAccessTokenOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *personalaccesstokenPager) orderExpr(query *PersonalAccessTokenQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultPersonalAccessTokenOrder.Field {
+			b.Comma().Ident(DefaultPersonalAccessTokenOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to PersonalAccessToken.
+func (pat *PersonalAccessTokenQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...PersonalAccessTokenPaginateOption,
+) (*PersonalAccessTokenConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newPersonalAccessTokenPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if pat, err = pager.applyFilter(pat); err != nil {
+		return nil, err
+	}
+	conn := &PersonalAccessTokenConnection{Edges: []*PersonalAccessTokenEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = pat.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if pat, err = pager.applyCursors(pat, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		pat.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := pat.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	pat = pager.applyOrder(pat)
+	nodes, err := pat.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// PersonalAccessTokenOrderField defines the ordering field of PersonalAccessToken.
+type PersonalAccessTokenOrderField struct {
+	// Value extracts the ordering value from the given PersonalAccessToken.
+	Value    func(*PersonalAccessToken) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) personalaccesstoken.OrderOption
+	toCursor func(*PersonalAccessToken) Cursor
+}
+
+// PersonalAccessTokenOrder defines the ordering of PersonalAccessToken.
+type PersonalAccessTokenOrder struct {
+	Direction OrderDirection                 `json:"direction"`
+	Field     *PersonalAccessTokenOrderField `json:"field"`
+}
+
+// DefaultPersonalAccessTokenOrder is the default ordering of PersonalAccessToken.
+var DefaultPersonalAccessTokenOrder = &PersonalAccessTokenOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &PersonalAccessTokenOrderField{
+		Value: func(pat *PersonalAccessToken) (ent.Value, error) {
+			return pat.ID, nil
+		},
+		column: personalaccesstoken.FieldID,
+		toTerm: personalaccesstoken.ByID,
+		toCursor: func(pat *PersonalAccessToken) Cursor {
+			return Cursor{ID: pat.ID}
+		},
+	},
+}
+
+// ToEdge converts PersonalAccessToken into PersonalAccessTokenEdge.
+func (pat *PersonalAccessToken) ToEdge(order *PersonalAccessTokenOrder) *PersonalAccessTokenEdge {
+	if order == nil {
+		order = DefaultPersonalAccessTokenOrder
+	}
+	return &PersonalAccessTokenEdge{
+		Node:   pat,
+		Cursor: order.Field.toCursor(pat),
 	}
 }
 

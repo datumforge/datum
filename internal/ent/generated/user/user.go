@@ -51,6 +51,8 @@ const (
 	EdgeSessions = "sessions"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
+	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
+	EdgePersonalAccessTokens = "personal_access_tokens"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -70,6 +72,13 @@ const (
 	// GroupsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
+	// PersonalAccessTokensTable is the table that holds the personal_access_tokens relation/edge.
+	PersonalAccessTokensTable = "personal_access_tokens"
+	// PersonalAccessTokensInverseTable is the table name for the PersonalAccessToken entity.
+	// It exists in this package in order to avoid circular dependency with the "personalaccesstoken" package.
+	PersonalAccessTokensInverseTable = "personal_access_tokens"
+	// PersonalAccessTokensColumn is the table column denoting the personal_access_tokens relation/edge.
+	PersonalAccessTokensColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -269,6 +278,20 @@ func ByGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
+func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPersonalAccessTokensStep(), opts...)
+	}
+}
+
+// ByPersonalAccessTokens orders the results by personal_access_tokens terms.
+func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPersonalAccessTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -288,5 +311,12 @@ func newGroupsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GroupsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, GroupsTable, GroupsPrimaryKey...),
+	)
+}
+func newPersonalAccessTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PersonalAccessTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PersonalAccessTokensTable, PersonalAccessTokensColumn),
 	)
 }

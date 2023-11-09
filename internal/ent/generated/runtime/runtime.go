@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -239,6 +240,29 @@ func init() {
 	organizationsettingsDescID := organizationsettingsMixinFields1[0].Descriptor()
 	// organizationsettings.DefaultID holds the default value on creation for the id field.
 	organizationsettings.DefaultID = organizationsettingsDescID.Default.(func() string)
+	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
+	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
+	personalaccesstoken.Hooks[0] = personalaccesstokenMixinHooks0[0]
+	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
+	_ = personalaccesstokenMixinFields0
+	personalaccesstokenMixinFields1 := personalaccesstokenMixin[1].Fields()
+	_ = personalaccesstokenMixinFields1
+	personalaccesstokenFields := schema.PersonalAccessToken{}.Fields()
+	_ = personalaccesstokenFields
+	// personalaccesstokenDescCreatedAt is the schema descriptor for created_at field.
+	personalaccesstokenDescCreatedAt := personalaccesstokenMixinFields0[0].Descriptor()
+	// personalaccesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	personalaccesstoken.DefaultCreatedAt = personalaccesstokenDescCreatedAt.Default.(func() time.Time)
+	// personalaccesstokenDescUpdatedAt is the schema descriptor for updated_at field.
+	personalaccesstokenDescUpdatedAt := personalaccesstokenMixinFields0[1].Descriptor()
+	// personalaccesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	personalaccesstoken.DefaultUpdatedAt = personalaccesstokenDescUpdatedAt.Default.(func() time.Time)
+	// personalaccesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	personalaccesstoken.UpdateDefaultUpdatedAt = personalaccesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// personalaccesstokenDescID is the schema descriptor for id field.
+	personalaccesstokenDescID := personalaccesstokenMixinFields1[0].Descriptor()
+	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
+	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
 	refreshtokenMixin := schema.RefreshToken{}.Mixin()
 	refreshtokenMixinFields0 := refreshtokenMixin[0].Fields()
 	_ = refreshtokenMixinFields0

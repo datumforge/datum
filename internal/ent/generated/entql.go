@@ -9,6 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -22,7 +23,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 9)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 10)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   entitlement.Table,
@@ -153,6 +154,29 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   personalaccesstoken.Table,
+			Columns: personalaccesstoken.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: personalaccesstoken.FieldID,
+			},
+		},
+		Type: "PersonalAccessToken",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			personalaccesstoken.FieldCreatedAt:    {Type: field.TypeTime, Column: personalaccesstoken.FieldCreatedAt},
+			personalaccesstoken.FieldUpdatedAt:    {Type: field.TypeTime, Column: personalaccesstoken.FieldUpdatedAt},
+			personalaccesstoken.FieldCreatedBy:    {Type: field.TypeString, Column: personalaccesstoken.FieldCreatedBy},
+			personalaccesstoken.FieldUpdatedBy:    {Type: field.TypeString, Column: personalaccesstoken.FieldUpdatedBy},
+			personalaccesstoken.FieldName:         {Type: field.TypeString, Column: personalaccesstoken.FieldName},
+			personalaccesstoken.FieldUserID:       {Type: field.TypeString, Column: personalaccesstoken.FieldUserID},
+			personalaccesstoken.FieldToken:        {Type: field.TypeString, Column: personalaccesstoken.FieldToken},
+			personalaccesstoken.FieldAbilities:    {Type: field.TypeJSON, Column: personalaccesstoken.FieldAbilities},
+			personalaccesstoken.FieldExpirationAt: {Type: field.TypeTime, Column: personalaccesstoken.FieldExpirationAt},
+			personalaccesstoken.FieldLastUsedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
+		},
+	}
+	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   refreshtoken.Table,
 			Columns: refreshtoken.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -178,7 +202,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			refreshtoken.FieldLastUsed:                {Type: field.TypeTime, Column: refreshtoken.FieldLastUsed},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -200,7 +224,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldIps:       {Type: field.TypeString, Column: session.FieldIps},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -349,6 +373,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Integration",
 	)
 	graph.MustAddE(
+		"user",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   personalaccesstoken.UserTable,
+			Columns: []string{personalaccesstoken.UserColumn},
+			Bidi:    false,
+		},
+		"PersonalAccessToken",
+		"User",
+	)
+	graph.MustAddE(
 		"users",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -395,6 +431,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"Group",
+	)
+	graph.MustAddE(
+		"personal_access_tokens",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.PersonalAccessTokensTable,
+			Columns: []string{user.PersonalAccessTokensColumn},
+			Bidi:    false,
+		},
+		"User",
+		"PersonalAccessToken",
 	)
 	return graph
 }()
@@ -1036,6 +1084,110 @@ func (f *OrganizationSettingsFilter) WhereTaxIdentifier(p entql.StringP) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (patq *PersonalAccessTokenQuery) addPredicate(pred func(s *sql.Selector)) {
+	patq.predicates = append(patq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PersonalAccessTokenQuery builder.
+func (patq *PersonalAccessTokenQuery) Filter() *PersonalAccessTokenFilter {
+	return &PersonalAccessTokenFilter{config: patq.config, predicateAdder: patq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PersonalAccessTokenMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PersonalAccessTokenMutation builder.
+func (m *PersonalAccessTokenMutation) Filter() *PersonalAccessTokenFilter {
+	return &PersonalAccessTokenFilter{config: m.config, predicateAdder: m}
+}
+
+// PersonalAccessTokenFilter provides a generic filtering capability at runtime for PersonalAccessTokenQuery.
+type PersonalAccessTokenFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PersonalAccessTokenFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *PersonalAccessTokenFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *PersonalAccessTokenFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(personalaccesstoken.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *PersonalAccessTokenFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(personalaccesstoken.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *PersonalAccessTokenFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *PersonalAccessTokenFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldUpdatedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *PersonalAccessTokenFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldName))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *PersonalAccessTokenFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldUserID))
+}
+
+// WhereToken applies the entql string predicate on the token field.
+func (f *PersonalAccessTokenFilter) WhereToken(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldToken))
+}
+
+// WhereAbilities applies the entql json.RawMessage predicate on the abilities field.
+func (f *PersonalAccessTokenFilter) WhereAbilities(p entql.BytesP) {
+	f.Where(p.Field(personalaccesstoken.FieldAbilities))
+}
+
+// WhereExpirationAt applies the entql time.Time predicate on the expiration_at field.
+func (f *PersonalAccessTokenFilter) WhereExpirationAt(p entql.TimeP) {
+	f.Where(p.Field(personalaccesstoken.FieldExpirationAt))
+}
+
+// WhereLastUsedAt applies the entql time.Time predicate on the last_used_at field.
+func (f *PersonalAccessTokenFilter) WhereLastUsedAt(p entql.TimeP) {
+	f.Where(p.Field(personalaccesstoken.FieldLastUsedAt))
+}
+
+// WhereHasUser applies a predicate to check if query has an edge user.
+func (f *PersonalAccessTokenFilter) WhereHasUser() {
+	f.Where(entql.HasEdge("user"))
+}
+
+// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
+func (f *PersonalAccessTokenFilter) WhereHasUserWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (rtq *RefreshTokenQuery) addPredicate(pred func(s *sql.Selector)) {
 	rtq.predicates = append(rtq.predicates, pred)
 }
@@ -1064,7 +1216,7 @@ type RefreshTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RefreshTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1174,7 +1326,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1273,7 +1425,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1395,6 +1547,20 @@ func (f *UserFilter) WhereHasGroups() {
 // WhereHasGroupsWith applies a predicate to check if query has an edge groups with a given conditions (other predicates).
 func (f *UserFilter) WhereHasGroupsWith(preds ...predicate.Group) {
 	f.Where(entql.HasEdgeWith("groups", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.
+func (f *UserFilter) WhereHasPersonalAccessTokens() {
+	f.Where(entql.HasEdge("personal_access_tokens"))
+}
+
+// WhereHasPersonalAccessTokensWith applies a predicate to check if query has an edge personal_access_tokens with a given conditions (other predicates).
+func (f *UserFilter) WhereHasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) {
+	f.Where(entql.HasEdgeWith("personal_access_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

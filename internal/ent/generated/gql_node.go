@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -42,6 +43,9 @@ func (n *Organization) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *OrganizationSettings) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *PersonalAccessToken) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *RefreshToken) IsNode() {}
@@ -174,6 +178,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.OrganizationSettings.Query().
 			Where(organizationsettings.ID(id))
 		query, err := query.CollectFields(ctx, "OrganizationSettings")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case personalaccesstoken.Table:
+		query := c.PersonalAccessToken.Query().
+			Where(personalaccesstoken.ID(id))
+		query, err := query.CollectFields(ctx, "PersonalAccessToken")
 		if err != nil {
 			return nil, err
 		}
@@ -375,6 +391,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.OrganizationSettings.Query().
 			Where(organizationsettings.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "OrganizationSettings")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case personalaccesstoken.Table:
+		query := c.PersonalAccessToken.Query().
+			Where(personalaccesstoken.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "PersonalAccessToken")
 		if err != nil {
 			return nil, err
 		}

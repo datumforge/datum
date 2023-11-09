@@ -722,6 +722,128 @@ func (c *OrganizationSettingsUpdateOne) SetInput(i UpdateOrganizationSettingsInp
 	return c
 }
 
+// CreatePersonalAccessTokenInput represents a mutation input for creating personalaccesstokens.
+type CreatePersonalAccessTokenInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Name         string
+	Token        string
+	Abilities    []string
+	ExpirationAt time.Time
+	LastUsedAt   *time.Time
+	UserID       string
+}
+
+// Mutate applies the CreatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
+func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	m.SetToken(i.Token)
+	if v := i.Abilities; v != nil {
+		m.SetAbilities(v)
+	}
+	m.SetExpirationAt(i.ExpirationAt)
+	if v := i.LastUsedAt; v != nil {
+		m.SetLastUsedAt(*v)
+	}
+	m.SetUserID(i.UserID)
+}
+
+// SetInput applies the change-set in the CreatePersonalAccessTokenInput on the PersonalAccessTokenCreate builder.
+func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *PersonalAccessTokenCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
+type UpdatePersonalAccessTokenInput struct {
+	UpdatedAt       *time.Time
+	ClearCreatedBy  bool
+	CreatedBy       *string
+	ClearUpdatedBy  bool
+	UpdatedBy       *string
+	Name            *string
+	Token           *string
+	ClearAbilities  bool
+	Abilities       []string
+	AppendAbilities []string
+	ExpirationAt    *time.Time
+	ClearLastUsedAt bool
+	LastUsedAt      *time.Time
+	UserID          *string
+}
+
+// Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
+func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Token; v != nil {
+		m.SetToken(*v)
+	}
+	if i.ClearAbilities {
+		m.ClearAbilities()
+	}
+	if v := i.Abilities; v != nil {
+		m.SetAbilities(v)
+	}
+	if i.AppendAbilities != nil {
+		m.AppendAbilities(i.Abilities)
+	}
+	if v := i.ExpirationAt; v != nil {
+		m.SetExpirationAt(*v)
+	}
+	if i.ClearLastUsedAt {
+		m.ClearLastUsedAt()
+	}
+	if v := i.LastUsedAt; v != nil {
+		m.SetLastUsedAt(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdate builder.
+func (c *PersonalAccessTokenUpdate) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdateOne builder.
+func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateSessionInput represents a mutation input for creating sessions.
 type CreateSessionInput struct {
 	CreatedAt *time.Time
@@ -836,24 +958,25 @@ func (c *SessionUpdateOne) SetInput(i UpdateSessionInput) *SessionUpdateOne {
 
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
-	CreatedAt       *time.Time
-	UpdatedAt       *time.Time
-	CreatedBy       *string
-	UpdatedBy       *string
-	Email           string
-	FirstName       string
-	LastName        string
-	DisplayName     *string
-	Locked          *bool
-	AvatarRemoteURL *string
-	AvatarLocalFile *string
-	AvatarUpdatedAt *time.Time
-	SilencedAt      *time.Time
-	SuspendedAt     *time.Time
-	RecoveryCode    *string
-	OrganizationIDs []string
-	SessionIDs      []string
-	GroupIDs        []string
+	CreatedAt              *time.Time
+	UpdatedAt              *time.Time
+	CreatedBy              *string
+	UpdatedBy              *string
+	Email                  string
+	FirstName              string
+	LastName               string
+	DisplayName            *string
+	Locked                 *bool
+	AvatarRemoteURL        *string
+	AvatarLocalFile        *string
+	AvatarUpdatedAt        *time.Time
+	SilencedAt             *time.Time
+	SuspendedAt            *time.Time
+	RecoveryCode           *string
+	OrganizationIDs        []string
+	SessionIDs             []string
+	GroupIDs               []string
+	PersonalAccessTokenIDs []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -906,6 +1029,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.GroupIDs; len(v) > 0 {
 		m.AddGroupIDs(v...)
 	}
+	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
+		m.AddPersonalAccessTokenIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -916,37 +1042,40 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 
 // UpdateUserInput represents a mutation input for updating users.
 type UpdateUserInput struct {
-	UpdatedAt             *time.Time
-	ClearCreatedBy        bool
-	CreatedBy             *string
-	ClearUpdatedBy        bool
-	UpdatedBy             *string
-	Email                 *string
-	FirstName             *string
-	LastName              *string
-	DisplayName           *string
-	Locked                *bool
-	ClearAvatarRemoteURL  bool
-	AvatarRemoteURL       *string
-	ClearAvatarLocalFile  bool
-	AvatarLocalFile       *string
-	ClearAvatarUpdatedAt  bool
-	AvatarUpdatedAt       *time.Time
-	ClearSilencedAt       bool
-	SilencedAt            *time.Time
-	ClearSuspendedAt      bool
-	SuspendedAt           *time.Time
-	ClearRecoveryCode     bool
-	RecoveryCode          *string
-	ClearOrganizations    bool
-	AddOrganizationIDs    []string
-	RemoveOrganizationIDs []string
-	ClearSessions         bool
-	AddSessionIDs         []string
-	RemoveSessionIDs      []string
-	ClearGroups           bool
-	AddGroupIDs           []string
-	RemoveGroupIDs        []string
+	UpdatedAt                    *time.Time
+	ClearCreatedBy               bool
+	CreatedBy                    *string
+	ClearUpdatedBy               bool
+	UpdatedBy                    *string
+	Email                        *string
+	FirstName                    *string
+	LastName                     *string
+	DisplayName                  *string
+	Locked                       *bool
+	ClearAvatarRemoteURL         bool
+	AvatarRemoteURL              *string
+	ClearAvatarLocalFile         bool
+	AvatarLocalFile              *string
+	ClearAvatarUpdatedAt         bool
+	AvatarUpdatedAt              *time.Time
+	ClearSilencedAt              bool
+	SilencedAt                   *time.Time
+	ClearSuspendedAt             bool
+	SuspendedAt                  *time.Time
+	ClearRecoveryCode            bool
+	RecoveryCode                 *string
+	ClearOrganizations           bool
+	AddOrganizationIDs           []string
+	RemoveOrganizationIDs        []string
+	ClearSessions                bool
+	AddSessionIDs                []string
+	RemoveSessionIDs             []string
+	ClearGroups                  bool
+	AddGroupIDs                  []string
+	RemoveGroupIDs               []string
+	ClearPersonalAccessTokens    bool
+	AddPersonalAccessTokenIDs    []string
+	RemovePersonalAccessTokenIDs []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1043,6 +1172,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveGroupIDs; len(v) > 0 {
 		m.RemoveGroupIDs(v...)
+	}
+	if i.ClearPersonalAccessTokens {
+		m.ClearPersonalAccessTokens()
+	}
+	if v := i.AddPersonalAccessTokenIDs; len(v) > 0 {
+		m.AddPersonalAccessTokenIDs(v...)
+	}
+	if v := i.RemovePersonalAccessTokenIDs; len(v) > 0 {
+		m.RemovePersonalAccessTokenIDs(v...)
 	}
 }
 

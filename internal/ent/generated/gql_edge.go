@@ -109,6 +109,14 @@ func (o *Organization) Integrations(ctx context.Context) (result []*Integration,
 	return result, err
 }
 
+func (pat *PersonalAccessToken) User(ctx context.Context) (*User, error) {
+	result, err := pat.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = pat.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
 func (s *Session) Users(ctx context.Context) (*User, error) {
 	result, err := s.Edges.UsersOrErr()
 	if IsNotLoaded(err) {
@@ -149,6 +157,18 @@ func (u *User) Groups(ctx context.Context) (result []*Group, err error) {
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryGroups().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAccessToken, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedPersonalAccessTokens(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.PersonalAccessTokensOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryPersonalAccessTokens().All(ctx)
 	}
 	return result, err
 }

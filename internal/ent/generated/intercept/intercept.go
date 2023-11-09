@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -238,6 +239,33 @@ func (f TraverseOrganizationSettings) Traverse(ctx context.Context, q generated.
 	return fmt.Errorf("unexpected query type %T. expect *generated.OrganizationSettingsQuery", q)
 }
 
+// The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PersonalAccessTokenFunc func(context.Context, *generated.PersonalAccessTokenQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f PersonalAccessTokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.PersonalAccessTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.PersonalAccessTokenQuery", q)
+}
+
+// The TraversePersonalAccessToken type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePersonalAccessToken func(context.Context, *generated.PersonalAccessTokenQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePersonalAccessToken) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePersonalAccessToken) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.PersonalAccessTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.PersonalAccessTokenQuery", q)
+}
+
 // The RefreshTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
 type RefreshTokenFunc func(context.Context, *generated.RefreshTokenQuery) (generated.Value, error)
 
@@ -334,6 +362,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.OrganizationSettingsQuery:
 		return &query[*generated.OrganizationSettingsQuery, predicate.OrganizationSettings, organizationsettings.OrderOption]{typ: generated.TypeOrganizationSettings, tq: q}, nil
+	case *generated.PersonalAccessTokenQuery:
+		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
 	case *generated.RefreshTokenQuery:
 		return &query[*generated.RefreshTokenQuery, predicate.RefreshToken, refreshtoken.OrderOption]{typ: generated.TypeRefreshToken, tq: q}, nil
 	case *generated.SessionQuery:

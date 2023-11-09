@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -24,18 +25,20 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                    *QueryContext
-	order                  []user.OrderOption
-	inters                 []Interceptor
-	predicates             []predicate.User
-	withOrganizations      *OrganizationQuery
-	withSessions           *SessionQuery
-	withGroups             *GroupQuery
-	modifiers              []func(*sql.Selector)
-	loadTotal              []func(context.Context, []*User) error
-	withNamedOrganizations map[string]*OrganizationQuery
-	withNamedSessions      map[string]*SessionQuery
-	withNamedGroups        map[string]*GroupQuery
+	ctx                           *QueryContext
+	order                         []user.OrderOption
+	inters                        []Interceptor
+	predicates                    []predicate.User
+	withOrganizations             *OrganizationQuery
+	withSessions                  *SessionQuery
+	withGroups                    *GroupQuery
+	withPersonalAccessTokens      *PersonalAccessTokenQuery
+	modifiers                     []func(*sql.Selector)
+	loadTotal                     []func(context.Context, []*User) error
+	withNamedOrganizations        map[string]*OrganizationQuery
+	withNamedSessions             map[string]*SessionQuery
+	withNamedGroups               map[string]*GroupQuery
+	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -141,6 +144,31 @@ func (uq *UserQuery) QueryGroups() *GroupQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.Group
 		step.Edge.Schema = schemaConfig.GroupUsers
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPersonalAccessTokens chains the current query on the "personal_access_tokens" edge.
+func (uq *UserQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
+	query := (&PersonalAccessTokenClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(personalaccesstoken.Table, personalaccesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PersonalAccessTokensTable, user.PersonalAccessTokensColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.PersonalAccessToken
+		step.Edge.Schema = schemaConfig.PersonalAccessToken
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -334,14 +362,15 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:            uq.config,
-		ctx:               uq.ctx.Clone(),
-		order:             append([]user.OrderOption{}, uq.order...),
-		inters:            append([]Interceptor{}, uq.inters...),
-		predicates:        append([]predicate.User{}, uq.predicates...),
-		withOrganizations: uq.withOrganizations.Clone(),
-		withSessions:      uq.withSessions.Clone(),
-		withGroups:        uq.withGroups.Clone(),
+		config:                   uq.config,
+		ctx:                      uq.ctx.Clone(),
+		order:                    append([]user.OrderOption{}, uq.order...),
+		inters:                   append([]Interceptor{}, uq.inters...),
+		predicates:               append([]predicate.User{}, uq.predicates...),
+		withOrganizations:        uq.withOrganizations.Clone(),
+		withSessions:             uq.withSessions.Clone(),
+		withGroups:               uq.withGroups.Clone(),
+		withPersonalAccessTokens: uq.withPersonalAccessTokens.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -378,6 +407,17 @@ func (uq *UserQuery) WithGroups(opts ...func(*GroupQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withGroups = query
+	return uq
+}
+
+// WithPersonalAccessTokens tells the query-builder to eager-load the nodes that are connected to
+// the "personal_access_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithPersonalAccessTokens(opts ...func(*PersonalAccessTokenQuery)) *UserQuery {
+	query := (&PersonalAccessTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withPersonalAccessTokens = query
 	return uq
 }
 
@@ -465,10 +505,11 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			uq.withOrganizations != nil,
 			uq.withSessions != nil,
 			uq.withGroups != nil,
+			uq.withPersonalAccessTokens != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -515,6 +556,15 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := uq.withPersonalAccessTokens; query != nil {
+		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
+			func(n *User) { n.Edges.PersonalAccessTokens = []*PersonalAccessToken{} },
+			func(n *User, e *PersonalAccessToken) {
+				n.Edges.PersonalAccessTokens = append(n.Edges.PersonalAccessTokens, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range uq.withNamedOrganizations {
 		if err := uq.loadOrganizations(ctx, query, nodes,
 			func(n *User) { n.appendNamedOrganizations(name) },
@@ -533,6 +583,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadGroups(ctx, query, nodes,
 			func(n *User) { n.appendNamedGroups(name) },
 			func(n *User, e *Group) { n.appendNamedGroups(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedPersonalAccessTokens {
+		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
+			func(n *User) { n.appendNamedPersonalAccessTokens(name) },
+			func(n *User, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -699,6 +756,36 @@ func (uq *UserQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes []
 	}
 	return nil
 }
+func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *PersonalAccessTokenQuery, nodes []*User, init func(*User), assign func(*User, *PersonalAccessToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(personalaccesstoken.FieldUserID)
+	}
+	query.Where(predicate.PersonalAccessToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.PersonalAccessTokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.UserID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := uq.querySpec()
@@ -828,6 +915,20 @@ func (uq *UserQuery) WithNamedGroups(name string, opts ...func(*GroupQuery)) *Us
 		uq.withNamedGroups = make(map[string]*GroupQuery)
 	}
 	uq.withNamedGroups[name] = query
+	return uq
+}
+
+// WithNamedPersonalAccessTokens tells the query-builder to eager-load the nodes that are connected to the "personal_access_tokens"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*PersonalAccessTokenQuery)) *UserQuery {
+	query := (&PersonalAccessTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedPersonalAccessTokens == nil {
+		uq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
+	}
+	uq.withNamedPersonalAccessTokens[name] = query
 	return uq
 }
 

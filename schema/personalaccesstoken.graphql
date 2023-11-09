@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up PersonalAccessToken by ID
+    """
+     PersonalAccessToken(
+        """
+        ID of the PersonalAccessToken
+        """
+        id: ID!
+    ):  PersonalAccessToken!
+}
+
+extend type Mutation{
+    """
+    Create a new PersonalAccessToken
+    """
+    createPersonalAccessToken(
+        """
+        values of the PersonalAccessToken
+        """
+        input: CreatePersonalAccessTokenInput!
+    ): PersonalAccessTokenCreatePayload!
+    """
+    Update an existing PersonalAccessToken
+    """
+    updatePersonalAccessToken(
+        """
+        ID of the PersonalAccessToken
+        """
+        id: ID!
+        """
+        New values for the PersonalAccessToken
+        """
+        input: UpdatePersonalAccessTokenInput!
+    ): PersonalAccessTokenUpdatePayload!
+    """
+    Delete an existing PersonalAccessToken
+    """
+    deletePersonalAccessToken(
+        """
+        ID of the PersonalAccessToken
+        """
+        id: ID!
+    ): PersonalAccessTokenDeletePayload!
+}
+
+"""
+Return response for createPersonalAccessToken mutation
+"""
+type PersonalAccessTokenCreatePayload {
+    """
+    Created PersonalAccessToken
+    """
+    PersonalAccessToken: PersonalAccessToken!
+}
+
+"""
+Return response for updatePersonalAccessToken mutation
+"""
+type PersonalAccessTokenUpdatePayload {
+    """
+    Updated PersonalAccessToken
+    """
+    PersonalAccessToken: PersonalAccessToken!
+}
+
+"""
+Return response for deletePersonalAccessToken mutation
+"""
+type PersonalAccessTokenDeletePayload {
+    """
+    Deleted PersonalAccessToken ID
+    """
+    deletedID: ID!
+}

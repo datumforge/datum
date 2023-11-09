@@ -24,6 +24,9 @@ type Organization func(*sql.Selector)
 // OrganizationSettings is the predicate function for organizationsettings builders.
 type OrganizationSettings func(*sql.Selector)
 
+// PersonalAccessToken is the predicate function for personalaccesstoken builders.
+type PersonalAccessToken func(*sql.Selector)
+
 // RefreshToken is the predicate function for refreshtoken builders.
 type RefreshToken func(*sql.Selector)
 

@@ -61,15 +61,18 @@ type UserEdges struct {
 	Sessions []*Session `json:"sessions,omitempty"`
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
+	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
+	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
-	namedOrganizations map[string][]*Organization
-	namedSessions      map[string][]*Session
-	namedGroups        map[string][]*Group
+	namedOrganizations        map[string][]*Organization
+	namedSessions             map[string][]*Session
+	namedGroups               map[string][]*Group
+	namedPersonalAccessTokens map[string][]*PersonalAccessToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -97,6 +100,15 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
+}
+
+// PersonalAccessTokensOrErr returns the PersonalAccessTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
+	if e.loadedTypes[3] {
+		return e.PersonalAccessTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "personal_access_tokens"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -255,6 +267,11 @@ func (u *User) QueryGroups() *GroupQuery {
 	return NewUserClient(u.config).QueryGroups(u)
 }
 
+// QueryPersonalAccessTokens queries the "personal_access_tokens" edge of the User entity.
+func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
+	return NewUserClient(u.config).QueryPersonalAccessTokens(u)
+}
+
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -404,6 +421,30 @@ func (u *User) appendNamedGroups(name string, edges ...*Group) {
 		u.Edges.namedGroups[name] = []*Group{}
 	} else {
 		u.Edges.namedGroups[name] = append(u.Edges.namedGroups[name], edges...)
+	}
+}
+
+// NamedPersonalAccessTokens returns the PersonalAccessTokens named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedPersonalAccessTokens(name string) ([]*PersonalAccessToken, error) {
+	if u.Edges.namedPersonalAccessTokens == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedPersonalAccessTokens[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAccessToken) {
+	if u.Edges.namedPersonalAccessTokens == nil {
+		u.Edges.namedPersonalAccessTokens = make(map[string][]*PersonalAccessToken)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
+	} else {
+		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
 	}
 }
 

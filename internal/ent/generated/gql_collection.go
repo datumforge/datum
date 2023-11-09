@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -1017,6 +1018,93 @@ func newSessionPaginateArgs(rv map[string]any) *sessionPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*SessionWhereInput); ok {
 		args.opts = append(args.opts, WithSessionFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (s *SubscriptionQuery) CollectFields(ctx context.Context, satisfies ...string) (*SubscriptionQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return s, nil
+	}
+	if err := s.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+
+func (s *SubscriptionQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(subscription.Columns))
+		selectedFields = []string{subscription.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "tier":
+			if _, ok := fieldSeen[subscription.FieldTier]; !ok {
+				selectedFields = append(selectedFields, subscription.FieldTier)
+				fieldSeen[subscription.FieldTier] = struct{}{}
+			}
+		case "stripeCustomerID":
+			if _, ok := fieldSeen[subscription.FieldStripeCustomerID]; !ok {
+				selectedFields = append(selectedFields, subscription.FieldStripeCustomerID)
+				fieldSeen[subscription.FieldStripeCustomerID] = struct{}{}
+			}
+		case "stripeSubscriptionID":
+			if _, ok := fieldSeen[subscription.FieldStripeSubscriptionID]; !ok {
+				selectedFields = append(selectedFields, subscription.FieldStripeSubscriptionID)
+				fieldSeen[subscription.FieldStripeSubscriptionID] = struct{}{}
+			}
+		case "expiresAt":
+			if _, ok := fieldSeen[subscription.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, subscription.FieldExpiresAt)
+				fieldSeen[subscription.FieldExpiresAt] = struct{}{}
+			}
+		case "cancelled":
+			if _, ok := fieldSeen[subscription.FieldCancelled]; !ok {
+				selectedFields = append(selectedFields, subscription.FieldCancelled)
+				fieldSeen[subscription.FieldCancelled] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		s.Select(selectedFields...)
+	}
+	return nil
+}
+
+type subscriptionPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []SubscriptionPaginateOption
+}
+
+func newSubscriptionPaginateArgs(rv map[string]any) *subscriptionPaginateArgs {
+	args := &subscriptionPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*SubscriptionWhereInput); ok {
+		args.opts = append(args.opts, WithSubscriptionFilter(v.Filter))
 	}
 	return args
 }

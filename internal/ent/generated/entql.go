@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"entgo.io/ent/dialect/sql"
@@ -21,7 +22,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 9)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
@@ -178,6 +179,24 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   subscription.Table,
+			Columns: subscription.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: subscription.FieldID,
+			},
+		},
+		Type: "Subscription",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			subscription.FieldTier:                 {Type: field.TypeEnum, Column: subscription.FieldTier},
+			subscription.FieldStripeCustomerID:     {Type: field.TypeString, Column: subscription.FieldStripeCustomerID},
+			subscription.FieldStripeSubscriptionID: {Type: field.TypeString, Column: subscription.FieldStripeSubscriptionID},
+			subscription.FieldExpiresAt:            {Type: field.TypeTime, Column: subscription.FieldExpiresAt},
+			subscription.FieldCancelled:            {Type: field.TypeBool, Column: subscription.FieldCancelled},
+		},
+	}
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -1137,6 +1156,71 @@ func (f *SessionFilter) WhereHasUsersWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (sq *SubscriptionQuery) addPredicate(pred func(s *sql.Selector)) {
+	sq.predicates = append(sq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the SubscriptionQuery builder.
+func (sq *SubscriptionQuery) Filter() *SubscriptionFilter {
+	return &SubscriptionFilter{config: sq.config, predicateAdder: sq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *SubscriptionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the SubscriptionMutation builder.
+func (m *SubscriptionMutation) Filter() *SubscriptionFilter {
+	return &SubscriptionFilter{config: m.config, predicateAdder: m}
+}
+
+// SubscriptionFilter provides a generic filtering capability at runtime for SubscriptionQuery.
+type SubscriptionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *SubscriptionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *SubscriptionFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldID))
+}
+
+// WhereTier applies the entql string predicate on the tier field.
+func (f *SubscriptionFilter) WhereTier(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldTier))
+}
+
+// WhereStripeCustomerID applies the entql string predicate on the stripe_customer_id field.
+func (f *SubscriptionFilter) WhereStripeCustomerID(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldStripeCustomerID))
+}
+
+// WhereStripeSubscriptionID applies the entql string predicate on the stripe_subscription_id field.
+func (f *SubscriptionFilter) WhereStripeSubscriptionID(p entql.StringP) {
+	f.Where(p.Field(subscription.FieldStripeSubscriptionID))
+}
+
+// WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
+func (f *SubscriptionFilter) WhereExpiresAt(p entql.TimeP) {
+	f.Where(p.Field(subscription.FieldExpiresAt))
+}
+
+// WhereCancelled applies the entql bool predicate on the cancelled field.
+func (f *SubscriptionFilter) WhereCancelled(p entql.BoolP) {
+	f.Where(p.Field(subscription.FieldCancelled))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -1165,7 +1249,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

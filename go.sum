@@ -57,8 +57,6 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20OEh60=
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
-github.com/Yamashou/gqlgenc v0.15.1 h1:pva+W/myYSo0f7greV0joKe1wFsRo8tZtI52CWojrhI=
-github.com/Yamashou/gqlgenc v0.15.1/go.mod h1:yKaNzczoGrIElG3mG8j2Bg3imv4WyIjLSTRBtvhfMtU=
 github.com/Yamashou/gqlgenc v0.16.0 h1:k1X/dvwnkiDImaeYw+C1j+GDX3MnzB4aONOTE6Mrku4=
 github.com/Yamashou/gqlgenc v0.16.0/go.mod h1:yKaNzczoGrIElG3mG8j2Bg3imv4WyIjLSTRBtvhfMtU=
 github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da h1:KjTM2ks9d14ZYCvmHS9iAKVt9AyzRSqNU1qabPih5BY=

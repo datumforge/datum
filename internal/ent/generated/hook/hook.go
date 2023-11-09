@@ -93,6 +93,18 @@ func (f SessionFunc) Mutate(ctx context.Context, m generated.Mutation) (generate
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SessionMutation", m)
 }
 
+// The SubscriptionFunc type is an adapter to allow the use of ordinary
+// function as Subscription mutator.
+type SubscriptionFunc func(context.Context, *generated.SubscriptionMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SubscriptionFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.SubscriptionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SubscriptionMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *generated.UserMutation) (generated.Value, error)

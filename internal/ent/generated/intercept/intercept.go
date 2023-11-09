@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -264,6 +265,33 @@ func (f TraverseSession) Traverse(ctx context.Context, q generated.Query) error 
 	return fmt.Errorf("unexpected query type %T. expect *generated.SessionQuery", q)
 }
 
+// The SubscriptionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type SubscriptionFunc func(context.Context, *generated.SubscriptionQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f SubscriptionFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.SubscriptionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.SubscriptionQuery", q)
+}
+
+// The TraverseSubscription type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseSubscription func(context.Context, *generated.SubscriptionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseSubscription) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseSubscription) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.SubscriptionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.SubscriptionQuery", q)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserFunc func(context.Context, *generated.UserQuery) (generated.Value, error)
 
@@ -308,6 +336,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.RefreshTokenQuery, predicate.RefreshToken, refreshtoken.OrderOption]{typ: generated.TypeRefreshToken, tq: q}, nil
 	case *generated.SessionQuery:
 		return &query[*generated.SessionQuery, predicate.Session, session.OrderOption]{typ: generated.TypeSession, tq: q}, nil
+	case *generated.SubscriptionQuery:
+		return &query[*generated.SubscriptionQuery, predicate.Subscription, subscription.OrderOption]{typ: generated.TypeSubscription, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
 	default:

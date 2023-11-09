@@ -27,5 +27,8 @@ type RefreshToken func(*sql.Selector)
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)
 
+// Subscription is the predicate function for subscription builders.
+type Subscription func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

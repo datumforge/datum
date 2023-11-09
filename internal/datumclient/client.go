@@ -491,3 +491,11 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 
 	return &res, nil
 }
+
+var DocumentOperationNames = map[string]string{
+	GetOrganizationByIDDocument: "GetOrganizationByID",
+	GetAllOrganizationsDocument: "GetAllOrganizations",
+	CreateOrganizationDocument:  "CreateOrganization",
+	UpdateOrganizationDocument:  "UpdateOrganization",
+	DeleteOrganizationDocument:  "DeleteOrganization",
+}

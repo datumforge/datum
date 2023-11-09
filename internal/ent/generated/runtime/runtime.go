@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/subscription"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/schema"
 
@@ -277,6 +278,19 @@ func init() {
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() string)
+	subscriptionMixin := schema.Subscription{}.Mixin()
+	subscriptionMixinFields0 := subscriptionMixin[0].Fields()
+	_ = subscriptionMixinFields0
+	subscriptionFields := schema.Subscription{}.Fields()
+	_ = subscriptionFields
+	// subscriptionDescCancelled is the schema descriptor for cancelled field.
+	subscriptionDescCancelled := subscriptionFields[4].Descriptor()
+	// subscription.DefaultCancelled holds the default value on creation for the cancelled field.
+	subscription.DefaultCancelled = subscriptionDescCancelled.Default.(bool)
+	// subscriptionDescID is the schema descriptor for id field.
+	subscriptionDescID := subscriptionMixinFields0[0].Descriptor()
+	// subscription.DefaultID holds the default value on creation for the id field.
+	subscription.DefaultID = subscriptionDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(userMixin[1], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

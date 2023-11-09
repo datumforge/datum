@@ -7,9 +7,11 @@ package api
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/contrib/entgql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/subscription"
 )
 
 // Node is the resolver for the node field.
@@ -57,7 +59,41 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 
+// ID is the resolver for the id field.
+func (r *subscriptionResolver) ID(ctx context.Context) (<-chan string, error) {
+	panic(fmt.Errorf("not implemented: ID - id"))
+}
+
+// Tier is the resolver for the tier field.
+func (r *subscriptionResolver) Tier(ctx context.Context) (<-chan subscription.Tier, error) {
+	panic(fmt.Errorf("not implemented: Tier - tier"))
+}
+
+// StripeCustomerID is the resolver for the stripeCustomerID field.
+func (r *subscriptionResolver) StripeCustomerID(ctx context.Context) (<-chan *string, error) {
+	panic(fmt.Errorf("not implemented: StripeCustomerID - stripeCustomerID"))
+}
+
+// StripeSubscriptionID is the resolver for the stripeSubscriptionID field.
+func (r *subscriptionResolver) StripeSubscriptionID(ctx context.Context) (<-chan *string, error) {
+	panic(fmt.Errorf("not implemented: StripeSubscriptionID - stripeSubscriptionID"))
+}
+
+// ExpiresAt is the resolver for the expiresAt field.
+func (r *subscriptionResolver) ExpiresAt(ctx context.Context) (<-chan *time.Time, error) {
+	panic(fmt.Errorf("not implemented: ExpiresAt - expiresAt"))
+}
+
+// Cancelled is the resolver for the cancelled field.
+func (r *subscriptionResolver) Cancelled(ctx context.Context) (<-chan bool, error) {
+	panic(fmt.Errorf("not implemented: Cancelled - cancelled"))
+}
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Subscription returns SubscriptionResolver implementation.
+func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
+
 type queryResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }

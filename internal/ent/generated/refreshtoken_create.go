@@ -27,16 +27,8 @@ func (rtc *RefreshTokenCreate) SetClientID(s string) *RefreshTokenCreate {
 }
 
 // SetScopes sets the "scopes" field.
-func (rtc *RefreshTokenCreate) SetScopes(s string) *RefreshTokenCreate {
+func (rtc *RefreshTokenCreate) SetScopes(s []string) *RefreshTokenCreate {
 	rtc.mutation.SetScopes(s)
-	return rtc
-}
-
-// SetNillableScopes sets the "scopes" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableScopes(s *string) *RefreshTokenCreate {
-	if s != nil {
-		rtc.SetScopes(*s)
-	}
 	return rtc
 }
 
@@ -301,7 +293,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		_node.ClientID = value
 	}
 	if value, ok := rtc.mutation.Scopes(); ok {
-		_spec.SetField(refreshtoken.FieldScopes, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldScopes, field.TypeJSON, value)
 		_node.Scopes = value
 	}
 	if value, ok := rtc.mutation.Nonce(); ok {

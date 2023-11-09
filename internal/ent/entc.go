@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 
-	"ariga.io/ogent"
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
@@ -36,11 +35,6 @@ func main() {
 	oas, err := entoas.NewExtension(entoas.Spec(spec))
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)
-	}
-
-	ogent, err := ogent.NewExtension(spec)
-	if err != nil {
-		log.Fatalf("creating ogent extension: %v", err)
 	}
 
 	gqlExt, err := entgql.NewExtension(
@@ -76,7 +70,6 @@ func main() {
 		entc.Extensions(
 			entviz.Extension{},
 			gqlExt,
-			ogent,
 			oas,
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)

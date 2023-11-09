@@ -1873,7 +1873,10 @@
                     "type": "string"
                   },
                   "scopes": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "nonce": {
                     "type": "string"
@@ -2063,7 +2066,10 @@
                     "type": "string"
                   },
                   "scopes": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "nonce": {
                     "type": "string"
@@ -4382,7 +4388,10 @@
             "type": "string"
           },
           "scopes": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "nonce": {
             "type": "string"
@@ -4447,7 +4456,10 @@
             "type": "string"
           },
           "scopes": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "nonce": {
             "type": "string"
@@ -4512,7 +4524,10 @@
             "type": "string"
           },
           "scopes": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "nonce": {
             "type": "string"
@@ -4577,7 +4592,10 @@
             "type": "string"
           },
           "scopes": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "nonce": {
             "type": "string"
@@ -4642,7 +4660,10 @@
             "type": "string"
           },
           "scopes": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "nonce": {
             "type": "string"

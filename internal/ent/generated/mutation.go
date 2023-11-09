@@ -3637,7 +3637,8 @@ type RefreshTokenMutation struct {
 	typ                       string
 	id                        *string
 	client_id                 *string
-	scopes                    *string
+	scopes                    *[]string
+	appendscopes              []string
 	nonce                     *string
 	claims_user_id            *string
 	claims_username           *string
@@ -3797,12 +3798,13 @@ func (m *RefreshTokenMutation) ResetClientID() {
 }
 
 // SetScopes sets the "scopes" field.
-func (m *RefreshTokenMutation) SetScopes(s string) {
+func (m *RefreshTokenMutation) SetScopes(s []string) {
 	m.scopes = &s
+	m.appendscopes = nil
 }
 
 // Scopes returns the value of the "scopes" field in the mutation.
-func (m *RefreshTokenMutation) Scopes() (r string, exists bool) {
+func (m *RefreshTokenMutation) Scopes() (r []string, exists bool) {
 	v := m.scopes
 	if v == nil {
 		return
@@ -3813,7 +3815,7 @@ func (m *RefreshTokenMutation) Scopes() (r string, exists bool) {
 // OldScopes returns the old "scopes" field's value of the RefreshToken entity.
 // If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *RefreshTokenMutation) OldScopes(ctx context.Context) (v string, err error) {
+func (m *RefreshTokenMutation) OldScopes(ctx context.Context) (v []string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldScopes is only allowed on UpdateOne operations")
 	}
@@ -3827,9 +3829,23 @@ func (m *RefreshTokenMutation) OldScopes(ctx context.Context) (v string, err err
 	return oldValue.Scopes, nil
 }
 
+// AppendScopes adds s to the "scopes" field.
+func (m *RefreshTokenMutation) AppendScopes(s []string) {
+	m.appendscopes = append(m.appendscopes, s...)
+}
+
+// AppendedScopes returns the list of values that were appended to the "scopes" field in this mutation.
+func (m *RefreshTokenMutation) AppendedScopes() ([]string, bool) {
+	if len(m.appendscopes) == 0 {
+		return nil, false
+	}
+	return m.appendscopes, true
+}
+
 // ClearScopes clears the value of the "scopes" field.
 func (m *RefreshTokenMutation) ClearScopes() {
 	m.scopes = nil
+	m.appendscopes = nil
 	m.clearedFields[refreshtoken.FieldScopes] = struct{}{}
 }
 
@@ -3842,6 +3858,7 @@ func (m *RefreshTokenMutation) ScopesCleared() bool {
 // ResetScopes resets all changes to the "scopes" field.
 func (m *RefreshTokenMutation) ResetScopes() {
 	m.scopes = nil
+	m.appendscopes = nil
 	delete(m.clearedFields, refreshtoken.FieldScopes)
 }
 
@@ -4470,7 +4487,7 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 		m.SetClientID(v)
 		return nil
 	case refreshtoken.FieldScopes:
-		v, ok := value.(string)
+		v, ok := value.([]string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

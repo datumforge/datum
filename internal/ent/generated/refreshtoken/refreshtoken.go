@@ -106,11 +106,6 @@ func ByClientID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClientID, opts...).ToFunc()
 }
 
-// ByScopes orders the results by the scopes field.
-func ByScopes(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldScopes, opts...).ToFunc()
-}
-
 // ByNonce orders the results by the nonce field.
 func ByNonce(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldNonce, opts...).ToFunc()

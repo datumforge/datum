@@ -121,8 +121,8 @@ var (
 	// RefreshTokensColumns holds the columns for the "refresh_tokens" table.
 	RefreshTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
-		{Name: "client_id", Type: field.TypeString},
-		{Name: "scopes", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "client_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
 		{Name: "nonce", Type: field.TypeString, Size: 2147483647},
 		{Name: "claims_user_id", Type: field.TypeString, Size: 2147483647},
 		{Name: "claims_username", Type: field.TypeString, Size: 2147483647},

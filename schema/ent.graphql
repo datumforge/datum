@@ -854,7 +854,7 @@ type Query {
 type RefreshToken implements Node {
   id: ID!
   clientID: String!
-  scopes: String
+  scopes: [String!]
   nonce: String!
   claimsUserID: String!
   claimsUsername: String!
@@ -901,22 +901,6 @@ input RefreshTokenWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
-  """scopes field predicates"""
-  scopes: String
-  scopesNEQ: String
-  scopesIn: [String!]
-  scopesNotIn: [String!]
-  scopesGT: String
-  scopesGTE: String
-  scopesLT: String
-  scopesLTE: String
-  scopesContains: String
-  scopesHasPrefix: String
-  scopesHasSuffix: String
-  scopesIsNil: Boolean
-  scopesNotNil: Boolean
-  scopesEqualFold: String
-  scopesContainsFold: String
   """nonce field predicates"""
   nonce: String
   nonceNEQ: String

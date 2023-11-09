@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
@@ -37,16 +38,14 @@ func (rtu *RefreshTokenUpdate) SetClientID(s string) *RefreshTokenUpdate {
 }
 
 // SetScopes sets the "scopes" field.
-func (rtu *RefreshTokenUpdate) SetScopes(s string) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) SetScopes(s []string) *RefreshTokenUpdate {
 	rtu.mutation.SetScopes(s)
 	return rtu
 }
 
-// SetNillableScopes sets the "scopes" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableScopes(s *string) *RefreshTokenUpdate {
-	if s != nil {
-		rtu.SetScopes(*s)
-	}
+// AppendScopes appends s to the "scopes" field.
+func (rtu *RefreshTokenUpdate) AppendScopes(s []string) *RefreshTokenUpdate {
+	rtu.mutation.AppendScopes(s)
 	return rtu
 }
 
@@ -247,10 +246,15 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
 	}
 	if value, ok := rtu.mutation.Scopes(); ok {
-		_spec.SetField(refreshtoken.FieldScopes, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldScopes, field.TypeJSON, value)
+	}
+	if value, ok := rtu.mutation.AppendedScopes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, refreshtoken.FieldScopes, value)
+		})
 	}
 	if rtu.mutation.ScopesCleared() {
-		_spec.ClearField(refreshtoken.FieldScopes, field.TypeString)
+		_spec.ClearField(refreshtoken.FieldScopes, field.TypeJSON)
 	}
 	if value, ok := rtu.mutation.Nonce(); ok {
 		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)
@@ -323,16 +327,14 @@ func (rtuo *RefreshTokenUpdateOne) SetClientID(s string) *RefreshTokenUpdateOne 
 }
 
 // SetScopes sets the "scopes" field.
-func (rtuo *RefreshTokenUpdateOne) SetScopes(s string) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) SetScopes(s []string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetScopes(s)
 	return rtuo
 }
 
-// SetNillableScopes sets the "scopes" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableScopes(s *string) *RefreshTokenUpdateOne {
-	if s != nil {
-		rtuo.SetScopes(*s)
-	}
+// AppendScopes appends s to the "scopes" field.
+func (rtuo *RefreshTokenUpdateOne) AppendScopes(s []string) *RefreshTokenUpdateOne {
+	rtuo.mutation.AppendScopes(s)
 	return rtuo
 }
 
@@ -563,10 +565,15 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 		_spec.SetField(refreshtoken.FieldClientID, field.TypeString, value)
 	}
 	if value, ok := rtuo.mutation.Scopes(); ok {
-		_spec.SetField(refreshtoken.FieldScopes, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldScopes, field.TypeJSON, value)
+	}
+	if value, ok := rtuo.mutation.AppendedScopes(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, refreshtoken.FieldScopes, value)
+		})
 	}
 	if rtuo.mutation.ScopesCleared() {
-		_spec.ClearField(refreshtoken.FieldScopes, field.TypeString)
+		_spec.ClearField(refreshtoken.FieldScopes, field.TypeJSON)
 	}
 	if value, ok := rtuo.mutation.Nonce(); ok {
 		_spec.SetField(refreshtoken.FieldNonce, field.TypeString, value)

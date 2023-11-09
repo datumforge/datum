@@ -113,7 +113,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 		Type: "RefreshToken",
 		Fields: map[string]*sqlgraph.FieldSpec{
 			refreshtoken.FieldClientID:                {Type: field.TypeString, Column: refreshtoken.FieldClientID},
-			refreshtoken.FieldScopes:                  {Type: field.TypeString, Column: refreshtoken.FieldScopes},
+			refreshtoken.FieldScopes:                  {Type: field.TypeJSON, Column: refreshtoken.FieldScopes},
 			refreshtoken.FieldNonce:                   {Type: field.TypeString, Column: refreshtoken.FieldNonce},
 			refreshtoken.FieldClaimsUserID:            {Type: field.TypeString, Column: refreshtoken.FieldClaimsUserID},
 			refreshtoken.FieldClaimsUsername:          {Type: field.TypeString, Column: refreshtoken.FieldClaimsUsername},
@@ -840,8 +840,8 @@ func (f *RefreshTokenFilter) WhereClientID(p entql.StringP) {
 	f.Where(p.Field(refreshtoken.FieldClientID))
 }
 
-// WhereScopes applies the entql string predicate on the scopes field.
-func (f *RefreshTokenFilter) WhereScopes(p entql.StringP) {
+// WhereScopes applies the entql json.RawMessage predicate on the scopes field.
+func (f *RefreshTokenFilter) WhereScopes(p entql.BytesP) {
 	f.Where(p.Field(refreshtoken.FieldScopes))
 }
 

@@ -747,7 +747,7 @@ type PageInfo struct {
 type RefreshToken struct {
 	ID                      string    `json:"id"`
 	ClientID                string    `json:"clientID"`
-	Scopes                  *string   `json:"scopes,omitempty"`
+	Scopes                  []string  `json:"scopes,omitempty"`
 	Nonce                   string    `json:"nonce"`
 	ClaimsUserID            string    `json:"claimsUserID"`
 	ClaimsUsername          string    `json:"claimsUsername"`
@@ -795,22 +795,6 @@ type RefreshTokenWhereInput struct {
 	ClientIDHasSuffix    *string  `json:"clientIDHasSuffix,omitempty"`
 	ClientIDEqualFold    *string  `json:"clientIDEqualFold,omitempty"`
 	ClientIDContainsFold *string  `json:"clientIDContainsFold,omitempty"`
-	// scopes field predicates
-	Scopes             *string  `json:"scopes,omitempty"`
-	ScopesNeq          *string  `json:"scopesNEQ,omitempty"`
-	ScopesIn           []string `json:"scopesIn,omitempty"`
-	ScopesNotIn        []string `json:"scopesNotIn,omitempty"`
-	ScopesGt           *string  `json:"scopesGT,omitempty"`
-	ScopesGte          *string  `json:"scopesGTE,omitempty"`
-	ScopesLt           *string  `json:"scopesLT,omitempty"`
-	ScopesLte          *string  `json:"scopesLTE,omitempty"`
-	ScopesContains     *string  `json:"scopesContains,omitempty"`
-	ScopesHasPrefix    *string  `json:"scopesHasPrefix,omitempty"`
-	ScopesHasSuffix    *string  `json:"scopesHasSuffix,omitempty"`
-	ScopesIsNil        *bool    `json:"scopesIsNil,omitempty"`
-	ScopesNotNil       *bool    `json:"scopesNotNil,omitempty"`
-	ScopesEqualFold    *string  `json:"scopesEqualFold,omitempty"`
-	ScopesContainsFold *string  `json:"scopesContainsFold,omitempty"`
 	// nonce field predicates
 	Nonce             *string  `json:"nonce,omitempty"`
 	NonceNeq          *string  `json:"nonceNEQ,omitempty"`

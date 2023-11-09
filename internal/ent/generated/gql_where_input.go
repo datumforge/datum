@@ -1921,23 +1921,6 @@ type RefreshTokenWhereInput struct {
 	ClientIDEqualFold    *string  `json:"clientIDEqualFold,omitempty"`
 	ClientIDContainsFold *string  `json:"clientIDContainsFold,omitempty"`
 
-	// "scopes" field predicates.
-	Scopes             *string  `json:"scopes,omitempty"`
-	ScopesNEQ          *string  `json:"scopesNEQ,omitempty"`
-	ScopesIn           []string `json:"scopesIn,omitempty"`
-	ScopesNotIn        []string `json:"scopesNotIn,omitempty"`
-	ScopesGT           *string  `json:"scopesGT,omitempty"`
-	ScopesGTE          *string  `json:"scopesGTE,omitempty"`
-	ScopesLT           *string  `json:"scopesLT,omitempty"`
-	ScopesLTE          *string  `json:"scopesLTE,omitempty"`
-	ScopesContains     *string  `json:"scopesContains,omitempty"`
-	ScopesHasPrefix    *string  `json:"scopesHasPrefix,omitempty"`
-	ScopesHasSuffix    *string  `json:"scopesHasSuffix,omitempty"`
-	ScopesIsNil        bool     `json:"scopesIsNil,omitempty"`
-	ScopesNotNil       bool     `json:"scopesNotNil,omitempty"`
-	ScopesEqualFold    *string  `json:"scopesEqualFold,omitempty"`
-	ScopesContainsFold *string  `json:"scopesContainsFold,omitempty"`
-
 	// "nonce" field predicates.
 	Nonce             *string  `json:"nonce,omitempty"`
 	NonceNEQ          *string  `json:"nonceNEQ,omitempty"`
@@ -2246,51 +2229,6 @@ func (i *RefreshTokenWhereInput) P() (predicate.RefreshToken, error) {
 	}
 	if i.ClientIDContainsFold != nil {
 		predicates = append(predicates, refreshtoken.ClientIDContainsFold(*i.ClientIDContainsFold))
-	}
-	if i.Scopes != nil {
-		predicates = append(predicates, refreshtoken.ScopesEQ(*i.Scopes))
-	}
-	if i.ScopesNEQ != nil {
-		predicates = append(predicates, refreshtoken.ScopesNEQ(*i.ScopesNEQ))
-	}
-	if len(i.ScopesIn) > 0 {
-		predicates = append(predicates, refreshtoken.ScopesIn(i.ScopesIn...))
-	}
-	if len(i.ScopesNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ScopesNotIn(i.ScopesNotIn...))
-	}
-	if i.ScopesGT != nil {
-		predicates = append(predicates, refreshtoken.ScopesGT(*i.ScopesGT))
-	}
-	if i.ScopesGTE != nil {
-		predicates = append(predicates, refreshtoken.ScopesGTE(*i.ScopesGTE))
-	}
-	if i.ScopesLT != nil {
-		predicates = append(predicates, refreshtoken.ScopesLT(*i.ScopesLT))
-	}
-	if i.ScopesLTE != nil {
-		predicates = append(predicates, refreshtoken.ScopesLTE(*i.ScopesLTE))
-	}
-	if i.ScopesContains != nil {
-		predicates = append(predicates, refreshtoken.ScopesContains(*i.ScopesContains))
-	}
-	if i.ScopesHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ScopesHasPrefix(*i.ScopesHasPrefix))
-	}
-	if i.ScopesHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ScopesHasSuffix(*i.ScopesHasSuffix))
-	}
-	if i.ScopesIsNil {
-		predicates = append(predicates, refreshtoken.ScopesIsNil())
-	}
-	if i.ScopesNotNil {
-		predicates = append(predicates, refreshtoken.ScopesNotNil())
-	}
-	if i.ScopesEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ScopesEqualFold(*i.ScopesEqualFold))
-	}
-	if i.ScopesContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ScopesContainsFold(*i.ScopesContainsFold))
 	}
 	if i.Nonce != nil {
 		predicates = append(predicates, refreshtoken.NonceEQ(*i.Nonce))

@@ -20,7 +20,7 @@ func (RefreshToken) Fields() []ent.Field {
 		field.Text("client_id").
 			NotEmpty(),
 		// TO DO figure out why JSON doesn't work with oas / ogent
-		field.Text("scopes").Optional(),
+		field.Strings("scopes").Optional(),
 		field.Text("nonce").
 			NotEmpty(),
 		field.Text("claims_user_id").

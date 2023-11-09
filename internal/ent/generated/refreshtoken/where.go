@@ -69,11 +69,6 @@ func ClientID(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldClientID, v))
 }
 
-// Scopes applies equality check predicate on the "scopes" field. It's identical to ScopesEQ.
-func Scopes(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEQ(FieldScopes, v))
-}
-
 // Nonce applies equality check predicate on the "nonce" field. It's identical to NonceEQ.
 func Nonce(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldEQ(FieldNonce, v))
@@ -199,61 +194,6 @@ func ClientIDContainsFold(v string) predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldContainsFold(FieldClientID, v))
 }
 
-// ScopesEQ applies the EQ predicate on the "scopes" field.
-func ScopesEQ(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEQ(FieldScopes, v))
-}
-
-// ScopesNEQ applies the NEQ predicate on the "scopes" field.
-func ScopesNEQ(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNEQ(FieldScopes, v))
-}
-
-// ScopesIn applies the In predicate on the "scopes" field.
-func ScopesIn(vs ...string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldIn(FieldScopes, vs...))
-}
-
-// ScopesNotIn applies the NotIn predicate on the "scopes" field.
-func ScopesNotIn(vs ...string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldNotIn(FieldScopes, vs...))
-}
-
-// ScopesGT applies the GT predicate on the "scopes" field.
-func ScopesGT(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldGT(FieldScopes, v))
-}
-
-// ScopesGTE applies the GTE predicate on the "scopes" field.
-func ScopesGTE(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldGTE(FieldScopes, v))
-}
-
-// ScopesLT applies the LT predicate on the "scopes" field.
-func ScopesLT(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldLT(FieldScopes, v))
-}
-
-// ScopesLTE applies the LTE predicate on the "scopes" field.
-func ScopesLTE(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldLTE(FieldScopes, v))
-}
-
-// ScopesContains applies the Contains predicate on the "scopes" field.
-func ScopesContains(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldContains(FieldScopes, v))
-}
-
-// ScopesHasPrefix applies the HasPrefix predicate on the "scopes" field.
-func ScopesHasPrefix(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldHasPrefix(FieldScopes, v))
-}
-
-// ScopesHasSuffix applies the HasSuffix predicate on the "scopes" field.
-func ScopesHasSuffix(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldHasSuffix(FieldScopes, v))
-}
-
 // ScopesIsNil applies the IsNil predicate on the "scopes" field.
 func ScopesIsNil() predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldIsNull(FieldScopes))
@@ -262,16 +202,6 @@ func ScopesIsNil() predicate.RefreshToken {
 // ScopesNotNil applies the NotNil predicate on the "scopes" field.
 func ScopesNotNil() predicate.RefreshToken {
 	return predicate.RefreshToken(sql.FieldNotNull(FieldScopes))
-}
-
-// ScopesEqualFold applies the EqualFold predicate on the "scopes" field.
-func ScopesEqualFold(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldEqualFold(FieldScopes, v))
-}
-
-// ScopesContainsFold applies the ContainsFold predicate on the "scopes" field.
-func ScopesContainsFold(v string) predicate.RefreshToken {
-	return predicate.RefreshToken(sql.FieldContainsFold(FieldScopes, v))
 }
 
 // NonceEQ applies the EQ predicate on the "nonce" field.

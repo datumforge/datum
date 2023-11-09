@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -20,7 +21,7 @@ type RefreshToken struct {
 	// ClientID holds the value of the "client_id" field.
 	ClientID string `json:"client_id,omitempty"`
 	// Scopes holds the value of the "scopes" field.
-	Scopes string `json:"scopes,omitempty"`
+	Scopes []string `json:"scopes,omitempty"`
 	// Nonce holds the value of the "nonce" field.
 	Nonce string `json:"nonce,omitempty"`
 	// ClaimsUserID holds the value of the "claims_user_id" field.
@@ -53,9 +54,11 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case refreshtoken.FieldScopes:
+			values[i] = new([]byte)
 		case refreshtoken.FieldClaimsEmailVerified:
 			values[i] = new(sql.NullBool)
-		case refreshtoken.FieldID, refreshtoken.FieldClientID, refreshtoken.FieldScopes, refreshtoken.FieldNonce, refreshtoken.FieldClaimsUserID, refreshtoken.FieldClaimsUsername, refreshtoken.FieldClaimsEmail, refreshtoken.FieldClaimsGroups, refreshtoken.FieldClaimsPreferredUsername, refreshtoken.FieldConnectorID, refreshtoken.FieldConnectorData, refreshtoken.FieldToken, refreshtoken.FieldObsoleteToken:
+		case refreshtoken.FieldID, refreshtoken.FieldClientID, refreshtoken.FieldNonce, refreshtoken.FieldClaimsUserID, refreshtoken.FieldClaimsUsername, refreshtoken.FieldClaimsEmail, refreshtoken.FieldClaimsGroups, refreshtoken.FieldClaimsPreferredUsername, refreshtoken.FieldConnectorID, refreshtoken.FieldConnectorData, refreshtoken.FieldToken, refreshtoken.FieldObsoleteToken:
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldLastUsed:
 			values[i] = new(sql.NullTime)
@@ -87,10 +90,12 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 				rt.ClientID = value.String
 			}
 		case refreshtoken.FieldScopes:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field scopes", values[i])
-			} else if value.Valid {
-				rt.Scopes = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &rt.Scopes); err != nil {
+					return fmt.Errorf("unmarshal field scopes: %w", err)
+				}
 			}
 		case refreshtoken.FieldNonce:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -205,7 +210,7 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString(rt.ClientID)
 	builder.WriteString(", ")
 	builder.WriteString("scopes=")
-	builder.WriteString(rt.Scopes)
+	builder.WriteString(fmt.Sprintf("%v", rt.Scopes))
 	builder.WriteString(", ")
 	builder.WriteString("nonce=")
 	builder.WriteString(rt.Nonce)

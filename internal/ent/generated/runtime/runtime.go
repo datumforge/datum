@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -159,6 +160,57 @@ func init() {
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() string)
+	organizationsettingsMixin := schema.OrganizationSettings{}.Mixin()
+	organizationsettingsMixinHooks0 := organizationsettingsMixin[0].Hooks()
+	organizationsettings.Hooks[0] = organizationsettingsMixinHooks0[0]
+	organizationsettingsMixinFields0 := organizationsettingsMixin[0].Fields()
+	_ = organizationsettingsMixinFields0
+	organizationsettingsMixinFields1 := organizationsettingsMixin[1].Fields()
+	_ = organizationsettingsMixinFields1
+	organizationsettingsFields := schema.OrganizationSettings{}.Fields()
+	_ = organizationsettingsFields
+	// organizationsettingsDescCreatedAt is the schema descriptor for created_at field.
+	organizationsettingsDescCreatedAt := organizationsettingsMixinFields0[0].Descriptor()
+	// organizationsettings.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organizationsettings.DefaultCreatedAt = organizationsettingsDescCreatedAt.Default.(func() time.Time)
+	// organizationsettingsDescUpdatedAt is the schema descriptor for updated_at field.
+	organizationsettingsDescUpdatedAt := organizationsettingsMixinFields0[1].Descriptor()
+	// organizationsettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	organizationsettings.DefaultUpdatedAt = organizationsettingsDescUpdatedAt.Default.(func() time.Time)
+	// organizationsettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	organizationsettings.UpdateDefaultUpdatedAt = organizationsettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organizationsettingsDescSSOCert is the schema descriptor for sso_cert field.
+	organizationsettingsDescSSOCert := organizationsettingsFields[1].Descriptor()
+	// organizationsettings.DefaultSSOCert holds the default value on creation for the sso_cert field.
+	organizationsettings.DefaultSSOCert = organizationsettingsDescSSOCert.Default.(string)
+	// organizationsettingsDescSSOEntrypoint is the schema descriptor for sso_entrypoint field.
+	organizationsettingsDescSSOEntrypoint := organizationsettingsFields[2].Descriptor()
+	// organizationsettings.DefaultSSOEntrypoint holds the default value on creation for the sso_entrypoint field.
+	organizationsettings.DefaultSSOEntrypoint = organizationsettingsDescSSOEntrypoint.Default.(string)
+	// organizationsettingsDescSSOIssuer is the schema descriptor for sso_issuer field.
+	organizationsettingsDescSSOIssuer := organizationsettingsFields[3].Descriptor()
+	// organizationsettings.DefaultSSOIssuer holds the default value on creation for the sso_issuer field.
+	organizationsettings.DefaultSSOIssuer = organizationsettingsDescSSOIssuer.Default.(string)
+	// organizationsettingsDescBillingContact is the schema descriptor for billing_contact field.
+	organizationsettingsDescBillingContact := organizationsettingsFields[4].Descriptor()
+	// organizationsettings.BillingContactValidator is a validator for the "billing_contact" field. It is called by the builders before save.
+	organizationsettings.BillingContactValidator = organizationsettingsDescBillingContact.Validators[0].(func(string) error)
+	// organizationsettingsDescBillingEmail is the schema descriptor for billing_email field.
+	organizationsettingsDescBillingEmail := organizationsettingsFields[5].Descriptor()
+	// organizationsettings.BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
+	organizationsettings.BillingEmailValidator = organizationsettingsDescBillingEmail.Validators[0].(func(string) error)
+	// organizationsettingsDescBillingPhone is the schema descriptor for billing_phone field.
+	organizationsettingsDescBillingPhone := organizationsettingsFields[6].Descriptor()
+	// organizationsettings.BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
+	organizationsettings.BillingPhoneValidator = organizationsettingsDescBillingPhone.Validators[0].(func(string) error)
+	// organizationsettingsDescBillingAddress is the schema descriptor for billing_address field.
+	organizationsettingsDescBillingAddress := organizationsettingsFields[7].Descriptor()
+	// organizationsettings.BillingAddressValidator is a validator for the "billing_address" field. It is called by the builders before save.
+	organizationsettings.BillingAddressValidator = organizationsettingsDescBillingAddress.Validators[0].(func(string) error)
+	// organizationsettingsDescID is the schema descriptor for id field.
+	organizationsettingsDescID := organizationsettingsMixinFields1[0].Descriptor()
+	// organizationsettings.DefaultID holds the default value on creation for the id field.
+	organizationsettings.DefaultID = organizationsettingsDescID.Default.(func() string)
 	refreshtokenMixin := schema.RefreshToken{}.Mixin()
 	refreshtokenMixinFields0 := refreshtokenMixin[0].Fields()
 	_ = refreshtokenMixinFields0

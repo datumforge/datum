@@ -118,6 +118,29 @@ var (
 			},
 		},
 	}
+	// OrganizationSettingsColumns holds the columns for the "organization_settings" table.
+	OrganizationSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "domains", Type: field.TypeJSON},
+		{Name: "sso_cert", Type: field.TypeString, Size: 2147483647, Default: ""},
+		{Name: "sso_entrypoint", Type: field.TypeString, Default: ""},
+		{Name: "sso_issuer", Type: field.TypeString, Default: ""},
+		{Name: "billing_contact", Type: field.TypeString},
+		{Name: "billing_email", Type: field.TypeString},
+		{Name: "billing_phone", Type: field.TypeString},
+		{Name: "billing_address", Type: field.TypeString},
+		{Name: "tax_identifier", Type: field.TypeString},
+	}
+	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
+	OrganizationSettingsTable = &schema.Table{
+		Name:       "organization_settings",
+		Columns:    OrganizationSettingsColumns,
+		PrimaryKey: []*schema.Column{OrganizationSettingsColumns[0]},
+	}
 	// RefreshTokensColumns holds the columns for the "refresh_tokens" table.
 	RefreshTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -128,10 +151,10 @@ var (
 		{Name: "claims_username", Type: field.TypeString, Size: 2147483647},
 		{Name: "claims_email", Type: field.TypeString, Size: 2147483647},
 		{Name: "claims_email_verified", Type: field.TypeBool},
-		{Name: "claims_groups", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "claims_groups", Type: field.TypeJSON, Nullable: true},
 		{Name: "claims_preferred_username", Type: field.TypeString, Size: 2147483647},
 		{Name: "connector_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "connector_data", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "connector_data", Type: field.TypeJSON, Nullable: true},
 		{Name: "token", Type: field.TypeString, Size: 2147483647},
 		{Name: "obsolete_token", Type: field.TypeString, Size: 2147483647},
 		{Name: "last_used", Type: field.TypeTime},
@@ -272,6 +295,7 @@ var (
 		GroupSettingsTable,
 		IntegrationsTable,
 		OrganizationsTable,
+		OrganizationSettingsTable,
 		RefreshTokensTable,
 		SessionsTable,
 		UsersTable,

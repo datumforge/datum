@@ -7,15 +7,16 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
-	Group             string // Group table.
-	GroupUsers        string // Group-users->User table.
-	GroupSettings     string // GroupSettings table.
-	Integration       string // Integration table.
-	Organization      string // Organization table.
-	RefreshToken      string // RefreshToken table.
-	Session           string // Session table.
-	User              string // User table.
-	UserOrganizations string // User-organizations->Organization table.
+	Group                string // Group table.
+	GroupUsers           string // Group-users->User table.
+	GroupSettings        string // GroupSettings table.
+	Integration          string // Integration table.
+	Organization         string // Organization table.
+	OrganizationSettings string // OrganizationSettings table.
+	RefreshToken         string // RefreshToken table.
+	Session              string // Session table.
+	User                 string // User table.
+	UserOrganizations    string // User-organizations->Organization table.
 }
 
 type schemaCtxKey struct{}

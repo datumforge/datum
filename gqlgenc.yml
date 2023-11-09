@@ -9,8 +9,6 @@ models:
     model: github.com/99designs/gqlgen/graphql.Int64
   Date:
     model: github.com/99designs/gqlgen/graphql.Time
-  Byte:
-    model: github.com/99designs/gqlgen/graphql.Byte
   ID:
     model:
       -  github.com/99designs/gqlgen/graphql.String

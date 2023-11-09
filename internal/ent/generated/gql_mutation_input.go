@@ -463,6 +463,142 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 	return c
 }
 
+// CreateOrganizationSettingsInput represents a mutation input for creating organizationsettingsslice.
+type CreateOrganizationSettingsInput struct {
+	CreatedAt      *time.Time
+	UpdatedAt      *time.Time
+	CreatedBy      *string
+	UpdatedBy      *string
+	Domains        []string
+	SSOCert        *string
+	SSOEntrypoint  *string
+	SSOIssuer      *string
+	BillingContact string
+	BillingEmail   string
+	BillingPhone   string
+	BillingAddress string
+	TaxIdentifier  string
+}
+
+// Mutate applies the CreateOrganizationSettingsInput on the OrganizationSettingsMutation builder.
+func (i *CreateOrganizationSettingsInput) Mutate(m *OrganizationSettingsMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Domains; v != nil {
+		m.SetDomains(v)
+	}
+	if v := i.SSOCert; v != nil {
+		m.SetSSOCert(*v)
+	}
+	if v := i.SSOEntrypoint; v != nil {
+		m.SetSSOEntrypoint(*v)
+	}
+	if v := i.SSOIssuer; v != nil {
+		m.SetSSOIssuer(*v)
+	}
+	m.SetBillingContact(i.BillingContact)
+	m.SetBillingEmail(i.BillingEmail)
+	m.SetBillingPhone(i.BillingPhone)
+	m.SetBillingAddress(i.BillingAddress)
+	m.SetTaxIdentifier(i.TaxIdentifier)
+}
+
+// SetInput applies the change-set in the CreateOrganizationSettingsInput on the OrganizationSettingsCreate builder.
+func (c *OrganizationSettingsCreate) SetInput(i CreateOrganizationSettingsInput) *OrganizationSettingsCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOrganizationSettingsInput represents a mutation input for updating organizationsettingsslice.
+type UpdateOrganizationSettingsInput struct {
+	UpdatedAt      *time.Time
+	ClearCreatedBy bool
+	CreatedBy      *string
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Domains        []string
+	AppendDomains  []string
+	SSOCert        *string
+	SSOEntrypoint  *string
+	SSOIssuer      *string
+	BillingContact *string
+	BillingEmail   *string
+	BillingPhone   *string
+	BillingAddress *string
+	TaxIdentifier  *string
+}
+
+// Mutate applies the UpdateOrganizationSettingsInput on the OrganizationSettingsMutation builder.
+func (i *UpdateOrganizationSettingsInput) Mutate(m *OrganizationSettingsMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Domains; v != nil {
+		m.SetDomains(v)
+	}
+	if i.AppendDomains != nil {
+		m.AppendDomains(i.Domains)
+	}
+	if v := i.SSOCert; v != nil {
+		m.SetSSOCert(*v)
+	}
+	if v := i.SSOEntrypoint; v != nil {
+		m.SetSSOEntrypoint(*v)
+	}
+	if v := i.SSOIssuer; v != nil {
+		m.SetSSOIssuer(*v)
+	}
+	if v := i.BillingContact; v != nil {
+		m.SetBillingContact(*v)
+	}
+	if v := i.BillingEmail; v != nil {
+		m.SetBillingEmail(*v)
+	}
+	if v := i.BillingPhone; v != nil {
+		m.SetBillingPhone(*v)
+	}
+	if v := i.BillingAddress; v != nil {
+		m.SetBillingAddress(*v)
+	}
+	if v := i.TaxIdentifier; v != nil {
+		m.SetTaxIdentifier(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOrganizationSettingsInput on the OrganizationSettingsUpdate builder.
+func (c *OrganizationSettingsUpdate) SetInput(i UpdateOrganizationSettingsInput) *OrganizationSettingsUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOrganizationSettingsInput on the OrganizationSettingsUpdateOne builder.
+func (c *OrganizationSettingsUpdateOne) SetInput(i UpdateOrganizationSettingsInput) *OrganizationSettingsUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateSessionInput represents a mutation input for creating sessions.
 type CreateSessionInput struct {
 	CreatedAt *time.Time

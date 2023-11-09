@@ -33,13 +33,13 @@ type RefreshToken struct {
 	// ClaimsEmailVerified holds the value of the "claims_email_verified" field.
 	ClaimsEmailVerified bool `json:"claims_email_verified,omitempty"`
 	// ClaimsGroups holds the value of the "claims_groups" field.
-	ClaimsGroups string `json:"claims_groups,omitempty"`
+	ClaimsGroups []string `json:"claims_groups,omitempty"`
 	// ClaimsPreferredUsername holds the value of the "claims_preferred_username" field.
 	ClaimsPreferredUsername string `json:"claims_preferred_username,omitempty"`
 	// ConnectorID holds the value of the "connector_id" field.
 	ConnectorID string `json:"connector_id,omitempty"`
 	// ConnectorData holds the value of the "connector_data" field.
-	ConnectorData *string `json:"connector_data,omitempty"`
+	ConnectorData []string `json:"connector_data,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"token,omitempty"`
 	// ObsoleteToken holds the value of the "obsolete_token" field.
@@ -54,11 +54,11 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case refreshtoken.FieldScopes:
+		case refreshtoken.FieldScopes, refreshtoken.FieldClaimsGroups, refreshtoken.FieldConnectorData:
 			values[i] = new([]byte)
 		case refreshtoken.FieldClaimsEmailVerified:
 			values[i] = new(sql.NullBool)
-		case refreshtoken.FieldID, refreshtoken.FieldClientID, refreshtoken.FieldNonce, refreshtoken.FieldClaimsUserID, refreshtoken.FieldClaimsUsername, refreshtoken.FieldClaimsEmail, refreshtoken.FieldClaimsGroups, refreshtoken.FieldClaimsPreferredUsername, refreshtoken.FieldConnectorID, refreshtoken.FieldConnectorData, refreshtoken.FieldToken, refreshtoken.FieldObsoleteToken:
+		case refreshtoken.FieldID, refreshtoken.FieldClientID, refreshtoken.FieldNonce, refreshtoken.FieldClaimsUserID, refreshtoken.FieldClaimsUsername, refreshtoken.FieldClaimsEmail, refreshtoken.FieldClaimsPreferredUsername, refreshtoken.FieldConnectorID, refreshtoken.FieldToken, refreshtoken.FieldObsoleteToken:
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldLastUsed:
 			values[i] = new(sql.NullTime)
@@ -128,10 +128,12 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 				rt.ClaimsEmailVerified = value.Bool
 			}
 		case refreshtoken.FieldClaimsGroups:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field claims_groups", values[i])
-			} else if value.Valid {
-				rt.ClaimsGroups = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &rt.ClaimsGroups); err != nil {
+					return fmt.Errorf("unmarshal field claims_groups: %w", err)
+				}
 			}
 		case refreshtoken.FieldClaimsPreferredUsername:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -146,11 +148,12 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 				rt.ConnectorID = value.String
 			}
 		case refreshtoken.FieldConnectorData:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field connector_data", values[i])
-			} else if value.Valid {
-				rt.ConnectorData = new(string)
-				*rt.ConnectorData = value.String
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &rt.ConnectorData); err != nil {
+					return fmt.Errorf("unmarshal field connector_data: %w", err)
+				}
 			}
 		case refreshtoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -228,7 +231,7 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString(fmt.Sprintf("%v", rt.ClaimsEmailVerified))
 	builder.WriteString(", ")
 	builder.WriteString("claims_groups=")
-	builder.WriteString(rt.ClaimsGroups)
+	builder.WriteString(fmt.Sprintf("%v", rt.ClaimsGroups))
 	builder.WriteString(", ")
 	builder.WriteString("claims_preferred_username=")
 	builder.WriteString(rt.ClaimsPreferredUsername)
@@ -236,10 +239,8 @@ func (rt *RefreshToken) String() string {
 	builder.WriteString("connector_id=")
 	builder.WriteString(rt.ConnectorID)
 	builder.WriteString(", ")
-	if v := rt.ConnectorData; v != nil {
-		builder.WriteString("connector_data=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("connector_data=")
+	builder.WriteString(fmt.Sprintf("%v", rt.ConnectorData))
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(rt.Token)

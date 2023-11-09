@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -640,6 +641,133 @@ func newOrganizationPaginateArgs(rv map[string]any) *organizationPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*OrganizationWhereInput); ok {
 		args.opts = append(args.opts, WithOrganizationFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (os *OrganizationSettingsQuery) CollectFields(ctx context.Context, satisfies ...string) (*OrganizationSettingsQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return os, nil
+	}
+	if err := os.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return os, nil
+}
+
+func (os *OrganizationSettingsQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(organizationsettings.Columns))
+		selectedFields = []string{organizationsettings.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[organizationsettings.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldCreatedAt)
+				fieldSeen[organizationsettings.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[organizationsettings.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldUpdatedAt)
+				fieldSeen[organizationsettings.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[organizationsettings.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldCreatedBy)
+				fieldSeen[organizationsettings.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[organizationsettings.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldUpdatedBy)
+				fieldSeen[organizationsettings.FieldUpdatedBy] = struct{}{}
+			}
+		case "domains":
+			if _, ok := fieldSeen[organizationsettings.FieldDomains]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldDomains)
+				fieldSeen[organizationsettings.FieldDomains] = struct{}{}
+			}
+		case "ssoCert":
+			if _, ok := fieldSeen[organizationsettings.FieldSSOCert]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldSSOCert)
+				fieldSeen[organizationsettings.FieldSSOCert] = struct{}{}
+			}
+		case "ssoEntrypoint":
+			if _, ok := fieldSeen[organizationsettings.FieldSSOEntrypoint]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldSSOEntrypoint)
+				fieldSeen[organizationsettings.FieldSSOEntrypoint] = struct{}{}
+			}
+		case "ssoIssuer":
+			if _, ok := fieldSeen[organizationsettings.FieldSSOIssuer]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldSSOIssuer)
+				fieldSeen[organizationsettings.FieldSSOIssuer] = struct{}{}
+			}
+		case "billingContact":
+			if _, ok := fieldSeen[organizationsettings.FieldBillingContact]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldBillingContact)
+				fieldSeen[organizationsettings.FieldBillingContact] = struct{}{}
+			}
+		case "billingEmail":
+			if _, ok := fieldSeen[organizationsettings.FieldBillingEmail]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldBillingEmail)
+				fieldSeen[organizationsettings.FieldBillingEmail] = struct{}{}
+			}
+		case "billingPhone":
+			if _, ok := fieldSeen[organizationsettings.FieldBillingPhone]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldBillingPhone)
+				fieldSeen[organizationsettings.FieldBillingPhone] = struct{}{}
+			}
+		case "billingAddress":
+			if _, ok := fieldSeen[organizationsettings.FieldBillingAddress]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldBillingAddress)
+				fieldSeen[organizationsettings.FieldBillingAddress] = struct{}{}
+			}
+		case "taxIdentifier":
+			if _, ok := fieldSeen[organizationsettings.FieldTaxIdentifier]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldTaxIdentifier)
+				fieldSeen[organizationsettings.FieldTaxIdentifier] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		os.Select(selectedFields...)
+	}
+	return nil
+}
+
+type organizationsettingsPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OrganizationSettingsPaginateOption
+}
+
+func newOrganizationSettingsPaginateArgs(rv map[string]any) *organizationsettingsPaginateArgs {
+	args := &organizationsettingsPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OrganizationSettingsWhereInput); ok {
+		args.opts = append(args.opts, WithOrganizationSettingsFilter(v.Filter))
 	}
 	return args
 }

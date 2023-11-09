@@ -131,11 +131,6 @@ func ByClaimsEmailVerified(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClaimsEmailVerified, opts...).ToFunc()
 }
 
-// ByClaimsGroups orders the results by the claims_groups field.
-func ByClaimsGroups(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldClaimsGroups, opts...).ToFunc()
-}
-
 // ByClaimsPreferredUsername orders the results by the claims_preferred_username field.
 func ByClaimsPreferredUsername(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldClaimsPreferredUsername, opts...).ToFunc()
@@ -144,11 +139,6 @@ func ByClaimsPreferredUsername(opts ...sql.OrderTermOption) OrderOption {
 // ByConnectorID orders the results by the connector_id field.
 func ByConnectorID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldConnectorID, opts...).ToFunc()
-}
-
-// ByConnectorData orders the results by the connector_data field.
-func ByConnectorData(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldConnectorData, opts...).ToFunc()
 }
 
 // ByToken orders the results by the token field.

@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -79,13 +80,14 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			group.Table:         group.ValidColumn,
-			groupsettings.Table: groupsettings.ValidColumn,
-			integration.Table:   integration.ValidColumn,
-			organization.Table:  organization.ValidColumn,
-			refreshtoken.Table:  refreshtoken.ValidColumn,
-			session.Table:       session.ValidColumn,
-			user.Table:          user.ValidColumn,
+			group.Table:                group.ValidColumn,
+			groupsettings.Table:        groupsettings.ValidColumn,
+			integration.Table:          integration.ValidColumn,
+			organization.Table:         organization.ValidColumn,
+			organizationsettings.Table: organizationsettings.ValidColumn,
+			refreshtoken.Table:         refreshtoken.ValidColumn,
+			session.Table:              session.ValidColumn,
+			user.Table:                 user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

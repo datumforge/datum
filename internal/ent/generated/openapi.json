@@ -1162,6 +1162,340 @@
         }
       }
     },
+    "/organization-settings": {
+      "get": {
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "summary": "List OrganizationSettings",
+        "description": "List OrganizationSettings.",
+        "operationId": "listOrganizationSettings",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OrganizationSettings list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationSettingsList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "summary": "Create a new OrganizationSettings",
+        "description": "Creates a new OrganizationSettings and persists it to storage.",
+        "operationId": "createOrganizationSettings",
+        "requestBody": {
+          "description": "OrganizationSettings to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "sso_cert": {
+                    "type": "string"
+                  },
+                  "sso_entrypoint": {
+                    "type": "string"
+                  },
+                  "sso_issuer": {
+                    "type": "string"
+                  },
+                  "billing_contact": {
+                    "type": "string"
+                  },
+                  "billing_email": {
+                    "type": "string"
+                  },
+                  "billing_phone": {
+                    "type": "string"
+                  },
+                  "billing_address": {
+                    "type": "string"
+                  },
+                  "tax_identifier": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "domains",
+                  "sso_cert",
+                  "sso_entrypoint",
+                  "sso_issuer",
+                  "billing_contact",
+                  "billing_email",
+                  "billing_phone",
+                  "billing_address",
+                  "tax_identifier"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrganizationSettings created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettingsCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organization-settings/{id}": {
+      "get": {
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "summary": "Find a OrganizationSettings by ID",
+        "description": "Finds the OrganizationSettings with the requested ID and returns it.",
+        "operationId": "readOrganizationSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OrganizationSettings with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettingsRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "summary": "Deletes a OrganizationSettings by ID",
+        "description": "Deletes the OrganizationSettings with the requested ID.",
+        "operationId": "deleteOrganizationSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OrganizationSettings with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "summary": "Updates a OrganizationSettings",
+        "description": "Updates a OrganizationSettings and persists changes to storage.",
+        "operationId": "updateOrganizationSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OrganizationSettings properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "domains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "sso_cert": {
+                    "type": "string"
+                  },
+                  "sso_entrypoint": {
+                    "type": "string"
+                  },
+                  "sso_issuer": {
+                    "type": "string"
+                  },
+                  "billing_contact": {
+                    "type": "string"
+                  },
+                  "billing_email": {
+                    "type": "string"
+                  },
+                  "billing_phone": {
+                    "type": "string"
+                  },
+                  "billing_address": {
+                    "type": "string"
+                  },
+                  "tax_identifier": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrganizationSettings updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettingsUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organizations": {
       "get": {
         "tags": [
@@ -1894,7 +2228,10 @@
                     "type": "boolean"
                   },
                   "claims_groups": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "claims_preferred_username": {
                     "type": "string"
@@ -1903,7 +2240,10 @@
                     "type": "string"
                   },
                   "connector_data": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "token": {
                     "type": "string"
@@ -2087,7 +2427,10 @@
                     "type": "boolean"
                   },
                   "claims_groups": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "claims_preferred_username": {
                     "type": "string"
@@ -2096,7 +2439,10 @@
                     "type": "string"
                   },
                   "connector_data": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "token": {
                     "type": "string"
@@ -4121,6 +4467,336 @@
           "name"
         ]
       },
+      "OrganizationSettings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sso_cert": {
+            "type": "string"
+          },
+          "sso_entrypoint": {
+            "type": "string"
+          },
+          "sso_issuer": {
+            "type": "string"
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "domains",
+          "sso_cert",
+          "sso_entrypoint",
+          "sso_issuer",
+          "billing_contact",
+          "billing_email",
+          "billing_phone",
+          "billing_address",
+          "tax_identifier"
+        ]
+      },
+      "OrganizationSettingsCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sso_cert": {
+            "type": "string"
+          },
+          "sso_entrypoint": {
+            "type": "string"
+          },
+          "sso_issuer": {
+            "type": "string"
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "domains",
+          "sso_cert",
+          "sso_entrypoint",
+          "sso_issuer",
+          "billing_contact",
+          "billing_email",
+          "billing_phone",
+          "billing_address",
+          "tax_identifier"
+        ]
+      },
+      "OrganizationSettingsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sso_cert": {
+            "type": "string"
+          },
+          "sso_entrypoint": {
+            "type": "string"
+          },
+          "sso_issuer": {
+            "type": "string"
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "domains",
+          "sso_cert",
+          "sso_entrypoint",
+          "sso_issuer",
+          "billing_contact",
+          "billing_email",
+          "billing_phone",
+          "billing_address",
+          "tax_identifier"
+        ]
+      },
+      "OrganizationSettingsRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sso_cert": {
+            "type": "string"
+          },
+          "sso_entrypoint": {
+            "type": "string"
+          },
+          "sso_issuer": {
+            "type": "string"
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "domains",
+          "sso_cert",
+          "sso_entrypoint",
+          "sso_issuer",
+          "billing_contact",
+          "billing_email",
+          "billing_phone",
+          "billing_address",
+          "tax_identifier"
+        ]
+      },
+      "OrganizationSettingsUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sso_cert": {
+            "type": "string"
+          },
+          "sso_entrypoint": {
+            "type": "string"
+          },
+          "sso_issuer": {
+            "type": "string"
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "domains",
+          "sso_cert",
+          "sso_entrypoint",
+          "sso_issuer",
+          "billing_contact",
+          "billing_email",
+          "billing_phone",
+          "billing_address",
+          "tax_identifier"
+        ]
+      },
       "OrganizationUpdate": {
         "type": "object",
         "properties": {
@@ -4409,7 +5085,10 @@
             "type": "boolean"
           },
           "claims_groups": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "claims_preferred_username": {
             "type": "string"
@@ -4418,7 +5097,10 @@
             "type": "string"
           },
           "connector_data": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "token": {
             "type": "string"
@@ -4477,7 +5159,10 @@
             "type": "boolean"
           },
           "claims_groups": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "claims_preferred_username": {
             "type": "string"
@@ -4486,7 +5171,10 @@
             "type": "string"
           },
           "connector_data": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "token": {
             "type": "string"
@@ -4545,7 +5233,10 @@
             "type": "boolean"
           },
           "claims_groups": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "claims_preferred_username": {
             "type": "string"
@@ -4554,7 +5245,10 @@
             "type": "string"
           },
           "connector_data": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "token": {
             "type": "string"
@@ -4613,7 +5307,10 @@
             "type": "boolean"
           },
           "claims_groups": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "claims_preferred_username": {
             "type": "string"
@@ -4622,7 +5319,10 @@
             "type": "string"
           },
           "connector_data": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "token": {
             "type": "string"
@@ -4681,7 +5381,10 @@
             "type": "boolean"
           },
           "claims_groups": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "claims_preferred_username": {
             "type": "string"
@@ -4690,7 +5393,10 @@
             "type": "string"
           },
           "connector_data": {
-            "type": "string"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "token": {
             "type": "string"

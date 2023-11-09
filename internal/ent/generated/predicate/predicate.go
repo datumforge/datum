@@ -18,6 +18,9 @@ type Integration func(*sql.Selector)
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)
 
+// OrganizationSettings is the predicate function for organizationsettings builders.
+type OrganizationSettings func(*sql.Selector)
+
 // RefreshToken is the predicate function for refreshtoken builders.
 type RefreshToken func(*sql.Selector)
 

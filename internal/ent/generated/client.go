@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -40,6 +41,8 @@ type Client struct {
 	Integration *IntegrationClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// OrganizationSettings is the client for interacting with the OrganizationSettings builders.
+	OrganizationSettings *OrganizationSettingsClient
 	// RefreshToken is the client for interacting with the RefreshToken builders.
 	RefreshToken *RefreshTokenClient
 	// Session is the client for interacting with the Session builders.
@@ -63,6 +66,7 @@ func (c *Client) init() {
 	c.GroupSettings = NewGroupSettingsClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
+	c.OrganizationSettings = NewOrganizationSettingsClient(c.config)
 	c.RefreshToken = NewRefreshTokenClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -159,15 +163,16 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:           ctx,
-		config:        cfg,
-		Group:         NewGroupClient(cfg),
-		GroupSettings: NewGroupSettingsClient(cfg),
-		Integration:   NewIntegrationClient(cfg),
-		Organization:  NewOrganizationClient(cfg),
-		RefreshToken:  NewRefreshTokenClient(cfg),
-		Session:       NewSessionClient(cfg),
-		User:          NewUserClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		Group:                NewGroupClient(cfg),
+		GroupSettings:        NewGroupSettingsClient(cfg),
+		Integration:          NewIntegrationClient(cfg),
+		Organization:         NewOrganizationClient(cfg),
+		OrganizationSettings: NewOrganizationSettingsClient(cfg),
+		RefreshToken:         NewRefreshTokenClient(cfg),
+		Session:              NewSessionClient(cfg),
+		User:                 NewUserClient(cfg),
 	}, nil
 }
 
@@ -185,15 +190,16 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:           ctx,
-		config:        cfg,
-		Group:         NewGroupClient(cfg),
-		GroupSettings: NewGroupSettingsClient(cfg),
-		Integration:   NewIntegrationClient(cfg),
-		Organization:  NewOrganizationClient(cfg),
-		RefreshToken:  NewRefreshTokenClient(cfg),
-		Session:       NewSessionClient(cfg),
-		User:          NewUserClient(cfg),
+		ctx:                  ctx,
+		config:               cfg,
+		Group:                NewGroupClient(cfg),
+		GroupSettings:        NewGroupSettingsClient(cfg),
+		Integration:          NewIntegrationClient(cfg),
+		Organization:         NewOrganizationClient(cfg),
+		OrganizationSettings: NewOrganizationSettingsClient(cfg),
+		RefreshToken:         NewRefreshTokenClient(cfg),
+		Session:              NewSessionClient(cfg),
+		User:                 NewUserClient(cfg),
 	}, nil
 }
 
@@ -223,8 +229,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Group, c.GroupSettings, c.Integration, c.Organization, c.RefreshToken,
-		c.Session, c.User,
+		c.Group, c.GroupSettings, c.Integration, c.Organization, c.OrganizationSettings,
+		c.RefreshToken, c.Session, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -234,8 +240,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Group, c.GroupSettings, c.Integration, c.Organization, c.RefreshToken,
-		c.Session, c.User,
+		c.Group, c.GroupSettings, c.Integration, c.Organization, c.OrganizationSettings,
+		c.RefreshToken, c.Session, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -252,6 +258,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Integration.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
+	case *OrganizationSettingsMutation:
+		return c.OrganizationSettings.mutate(ctx, m)
 	case *RefreshTokenMutation:
 		return c.RefreshToken.mutate(ctx, m)
 	case *SessionMutation:
@@ -989,6 +997,140 @@ func (c *OrganizationClient) mutate(ctx context.Context, m *OrganizationMutation
 	}
 }
 
+// OrganizationSettingsClient is a client for the OrganizationSettings schema.
+type OrganizationSettingsClient struct {
+	config
+}
+
+// NewOrganizationSettingsClient returns a client for the OrganizationSettings from the given config.
+func NewOrganizationSettingsClient(c config) *OrganizationSettingsClient {
+	return &OrganizationSettingsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `organizationsettings.Hooks(f(g(h())))`.
+func (c *OrganizationSettingsClient) Use(hooks ...Hook) {
+	c.hooks.OrganizationSettings = append(c.hooks.OrganizationSettings, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `organizationsettings.Intercept(f(g(h())))`.
+func (c *OrganizationSettingsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OrganizationSettings = append(c.inters.OrganizationSettings, interceptors...)
+}
+
+// Create returns a builder for creating a OrganizationSettings entity.
+func (c *OrganizationSettingsClient) Create() *OrganizationSettingsCreate {
+	mutation := newOrganizationSettingsMutation(c.config, OpCreate)
+	return &OrganizationSettingsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OrganizationSettings entities.
+func (c *OrganizationSettingsClient) CreateBulk(builders ...*OrganizationSettingsCreate) *OrganizationSettingsCreateBulk {
+	return &OrganizationSettingsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OrganizationSettingsClient) MapCreateBulk(slice any, setFunc func(*OrganizationSettingsCreate, int)) *OrganizationSettingsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OrganizationSettingsCreateBulk{err: fmt.Errorf("calling to OrganizationSettingsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OrganizationSettingsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OrganizationSettingsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OrganizationSettings.
+func (c *OrganizationSettingsClient) Update() *OrganizationSettingsUpdate {
+	mutation := newOrganizationSettingsMutation(c.config, OpUpdate)
+	return &OrganizationSettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OrganizationSettingsClient) UpdateOne(os *OrganizationSettings) *OrganizationSettingsUpdateOne {
+	mutation := newOrganizationSettingsMutation(c.config, OpUpdateOne, withOrganizationSettings(os))
+	return &OrganizationSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OrganizationSettingsClient) UpdateOneID(id string) *OrganizationSettingsUpdateOne {
+	mutation := newOrganizationSettingsMutation(c.config, OpUpdateOne, withOrganizationSettingsID(id))
+	return &OrganizationSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OrganizationSettings.
+func (c *OrganizationSettingsClient) Delete() *OrganizationSettingsDelete {
+	mutation := newOrganizationSettingsMutation(c.config, OpDelete)
+	return &OrganizationSettingsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OrganizationSettingsClient) DeleteOne(os *OrganizationSettings) *OrganizationSettingsDeleteOne {
+	return c.DeleteOneID(os.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OrganizationSettingsClient) DeleteOneID(id string) *OrganizationSettingsDeleteOne {
+	builder := c.Delete().Where(organizationsettings.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OrganizationSettingsDeleteOne{builder}
+}
+
+// Query returns a query builder for OrganizationSettings.
+func (c *OrganizationSettingsClient) Query() *OrganizationSettingsQuery {
+	return &OrganizationSettingsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOrganizationSettings},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OrganizationSettings entity by its id.
+func (c *OrganizationSettingsClient) Get(ctx context.Context, id string) (*OrganizationSettings, error) {
+	return c.Query().Where(organizationsettings.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OrganizationSettingsClient) GetX(ctx context.Context, id string) *OrganizationSettings {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OrganizationSettingsClient) Hooks() []Hook {
+	hooks := c.hooks.OrganizationSettings
+	return append(hooks[:len(hooks):len(hooks)], organizationsettings.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *OrganizationSettingsClient) Interceptors() []Interceptor {
+	return c.inters.OrganizationSettings
+}
+
+func (c *OrganizationSettingsClient) mutate(ctx context.Context, m *OrganizationSettingsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OrganizationSettingsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OrganizationSettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OrganizationSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OrganizationSettingsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OrganizationSettings mutation op: %q", m.Op())
+	}
+}
+
 // RefreshTokenClient is a client for the RefreshToken schema.
 type RefreshTokenClient struct {
 	config
@@ -1469,12 +1611,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Group, GroupSettings, Integration, Organization, RefreshToken, Session,
-		User []ent.Hook
+		Group, GroupSettings, Integration, Organization, OrganizationSettings,
+		RefreshToken, Session, User []ent.Hook
 	}
 	inters struct {
-		Group, GroupSettings, Integration, Organization, RefreshToken, Session,
-		User []ent.Interceptor
+		Group, GroupSettings, Integration, Organization, OrganizationSettings,
+		RefreshToken, Session, User []ent.Interceptor
 	}
 )
 

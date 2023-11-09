@@ -86,16 +86,14 @@ func (rtu *RefreshTokenUpdate) SetClaimsEmailVerified(b bool) *RefreshTokenUpdat
 }
 
 // SetClaimsGroups sets the "claims_groups" field.
-func (rtu *RefreshTokenUpdate) SetClaimsGroups(s string) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) SetClaimsGroups(s []string) *RefreshTokenUpdate {
 	rtu.mutation.SetClaimsGroups(s)
 	return rtu
 }
 
-// SetNillableClaimsGroups sets the "claims_groups" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableClaimsGroups(s *string) *RefreshTokenUpdate {
-	if s != nil {
-		rtu.SetClaimsGroups(*s)
-	}
+// AppendClaimsGroups appends s to the "claims_groups" field.
+func (rtu *RefreshTokenUpdate) AppendClaimsGroups(s []string) *RefreshTokenUpdate {
+	rtu.mutation.AppendClaimsGroups(s)
 	return rtu
 }
 
@@ -118,16 +116,14 @@ func (rtu *RefreshTokenUpdate) SetConnectorID(s string) *RefreshTokenUpdate {
 }
 
 // SetConnectorData sets the "connector_data" field.
-func (rtu *RefreshTokenUpdate) SetConnectorData(s string) *RefreshTokenUpdate {
+func (rtu *RefreshTokenUpdate) SetConnectorData(s []string) *RefreshTokenUpdate {
 	rtu.mutation.SetConnectorData(s)
 	return rtu
 }
 
-// SetNillableConnectorData sets the "connector_data" field if the given value is not nil.
-func (rtu *RefreshTokenUpdate) SetNillableConnectorData(s *string) *RefreshTokenUpdate {
-	if s != nil {
-		rtu.SetConnectorData(*s)
-	}
+// AppendConnectorData appends s to the "connector_data" field.
+func (rtu *RefreshTokenUpdate) AppendConnectorData(s []string) *RefreshTokenUpdate {
+	rtu.mutation.AppendConnectorData(s)
 	return rtu
 }
 
@@ -272,10 +268,15 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
 	}
 	if value, ok := rtu.mutation.ClaimsGroups(); ok {
-		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeJSON, value)
+	}
+	if value, ok := rtu.mutation.AppendedClaimsGroups(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, refreshtoken.FieldClaimsGroups, value)
+		})
 	}
 	if rtu.mutation.ClaimsGroupsCleared() {
-		_spec.ClearField(refreshtoken.FieldClaimsGroups, field.TypeString)
+		_spec.ClearField(refreshtoken.FieldClaimsGroups, field.TypeJSON)
 	}
 	if value, ok := rtu.mutation.ClaimsPreferredUsername(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
@@ -284,10 +285,15 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
 	}
 	if value, ok := rtu.mutation.ConnectorData(); ok {
-		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeJSON, value)
+	}
+	if value, ok := rtu.mutation.AppendedConnectorData(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, refreshtoken.FieldConnectorData, value)
+		})
 	}
 	if rtu.mutation.ConnectorDataCleared() {
-		_spec.ClearField(refreshtoken.FieldConnectorData, field.TypeString)
+		_spec.ClearField(refreshtoken.FieldConnectorData, field.TypeJSON)
 	}
 	if value, ok := rtu.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)
@@ -375,16 +381,14 @@ func (rtuo *RefreshTokenUpdateOne) SetClaimsEmailVerified(b bool) *RefreshTokenU
 }
 
 // SetClaimsGroups sets the "claims_groups" field.
-func (rtuo *RefreshTokenUpdateOne) SetClaimsGroups(s string) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) SetClaimsGroups(s []string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetClaimsGroups(s)
 	return rtuo
 }
 
-// SetNillableClaimsGroups sets the "claims_groups" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsGroups(s *string) *RefreshTokenUpdateOne {
-	if s != nil {
-		rtuo.SetClaimsGroups(*s)
-	}
+// AppendClaimsGroups appends s to the "claims_groups" field.
+func (rtuo *RefreshTokenUpdateOne) AppendClaimsGroups(s []string) *RefreshTokenUpdateOne {
+	rtuo.mutation.AppendClaimsGroups(s)
 	return rtuo
 }
 
@@ -407,16 +411,14 @@ func (rtuo *RefreshTokenUpdateOne) SetConnectorID(s string) *RefreshTokenUpdateO
 }
 
 // SetConnectorData sets the "connector_data" field.
-func (rtuo *RefreshTokenUpdateOne) SetConnectorData(s string) *RefreshTokenUpdateOne {
+func (rtuo *RefreshTokenUpdateOne) SetConnectorData(s []string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetConnectorData(s)
 	return rtuo
 }
 
-// SetNillableConnectorData sets the "connector_data" field if the given value is not nil.
-func (rtuo *RefreshTokenUpdateOne) SetNillableConnectorData(s *string) *RefreshTokenUpdateOne {
-	if s != nil {
-		rtuo.SetConnectorData(*s)
-	}
+// AppendConnectorData appends s to the "connector_data" field.
+func (rtuo *RefreshTokenUpdateOne) AppendConnectorData(s []string) *RefreshTokenUpdateOne {
+	rtuo.mutation.AppendConnectorData(s)
 	return rtuo
 }
 
@@ -591,10 +593,15 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 		_spec.SetField(refreshtoken.FieldClaimsEmailVerified, field.TypeBool, value)
 	}
 	if value, ok := rtuo.mutation.ClaimsGroups(); ok {
-		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeJSON, value)
+	}
+	if value, ok := rtuo.mutation.AppendedClaimsGroups(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, refreshtoken.FieldClaimsGroups, value)
+		})
 	}
 	if rtuo.mutation.ClaimsGroupsCleared() {
-		_spec.ClearField(refreshtoken.FieldClaimsGroups, field.TypeString)
+		_spec.ClearField(refreshtoken.FieldClaimsGroups, field.TypeJSON)
 	}
 	if value, ok := rtuo.mutation.ClaimsPreferredUsername(); ok {
 		_spec.SetField(refreshtoken.FieldClaimsPreferredUsername, field.TypeString, value)
@@ -603,10 +610,15 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 		_spec.SetField(refreshtoken.FieldConnectorID, field.TypeString, value)
 	}
 	if value, ok := rtuo.mutation.ConnectorData(); ok {
-		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeJSON, value)
+	}
+	if value, ok := rtuo.mutation.AppendedConnectorData(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, refreshtoken.FieldConnectorData, value)
+		})
 	}
 	if rtuo.mutation.ConnectorDataCleared() {
-		_spec.ClearField(refreshtoken.FieldConnectorData, field.TypeString)
+		_spec.ClearField(refreshtoken.FieldConnectorData, field.TypeJSON)
 	}
 	if value, ok := rtuo.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)

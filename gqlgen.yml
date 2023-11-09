@@ -87,8 +87,6 @@ models:
   Node:
     model:
       - github.com/datumforge/datum/internal/ent/generated.Noder
-  Byte:
-    model: github.com/99designs/gqlgen/graphql.Byte
   Date:
     model: github.com/99designs/gqlgen/graphql.Time
   JSON:

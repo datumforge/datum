@@ -207,6 +207,30 @@ func (f OrganizationMutationRuleFunc) EvalMutation(ctx context.Context, m genera
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationMutation", m)
 }
 
+// The OrganizationSettingsQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OrganizationSettingsQueryRuleFunc func(context.Context, *generated.OrganizationSettingsQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OrganizationSettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrganizationSettingsQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OrganizationSettingsQuery", q)
+}
+
+// The OrganizationSettingsMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OrganizationSettingsMutationRuleFunc func(context.Context, *generated.OrganizationSettingsMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OrganizationSettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OrganizationSettingsMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingsMutation", m)
+}
+
 // The RefreshTokenQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RefreshTokenQueryRuleFunc func(context.Context, *generated.RefreshTokenQuery) error
@@ -322,6 +346,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.OrganizationQuery:
 		return q.Filter(), nil
+	case *generated.OrganizationSettingsQuery:
+		return q.Filter(), nil
 	case *generated.RefreshTokenQuery:
 		return q.Filter(), nil
 	case *generated.SessionQuery:
@@ -342,6 +368,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.IntegrationMutation:
 		return m.Filter(), nil
 	case *generated.OrganizationMutation:
+		return m.Filter(), nil
+	case *generated.OrganizationSettingsMutation:
 		return m.Filter(), nil
 	case *generated.RefreshTokenMutation:
 		return m.Filter(), nil

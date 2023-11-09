@@ -19,8 +19,8 @@ func (RefreshToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("client_id").
 			NotEmpty(),
-		// TO DO figure out why JSON doesn't work with oas / ogent
-		field.Strings("scopes").Optional(),
+		field.JSON("scopes", []string{}).
+			Optional(),
 		field.Text("nonce").
 			NotEmpty(),
 		field.Text("claims_user_id").
@@ -30,14 +30,13 @@ func (RefreshToken) Fields() []ent.Field {
 		field.Text("claims_email").
 			NotEmpty(),
 		field.Bool("claims_email_verified"),
-		// TO DO figure out why JSON doesn't work with oas / ogent
-		field.Text("claims_groups").Optional(),
-		//			Annotations(entoas.Schema(&ogen.Schema(AsArray))),
+		field.JSON("claims_groups", []string{}).
+			Optional(),
 		field.Text("claims_preferred_username"),
 		field.Text("connector_id").
 			NotEmpty(),
-		// TO DO figure out why Bytes doesn't work with oas / ogent
-		field.Text("connector_data").Nillable().Optional(),
+		field.JSON("connector_data", []string{}).
+			Optional(),
 		field.Text("token"),
 		field.Text("obsolete_token"),
 		field.Time("last_used").

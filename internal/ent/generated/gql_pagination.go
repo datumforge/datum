@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -1244,6 +1245,252 @@ func (o *Organization) ToEdge(order *OrganizationOrder) *OrganizationEdge {
 	return &OrganizationEdge{
 		Node:   o,
 		Cursor: order.Field.toCursor(o),
+	}
+}
+
+// OrganizationSettingsEdge is the edge representation of OrganizationSettings.
+type OrganizationSettingsEdge struct {
+	Node   *OrganizationSettings `json:"node"`
+	Cursor Cursor                `json:"cursor"`
+}
+
+// OrganizationSettingsConnection is the connection containing edges to OrganizationSettings.
+type OrganizationSettingsConnection struct {
+	Edges      []*OrganizationSettingsEdge `json:"edges"`
+	PageInfo   PageInfo                    `json:"pageInfo"`
+	TotalCount int                         `json:"totalCount"`
+}
+
+func (c *OrganizationSettingsConnection) build(nodes []*OrganizationSettings, pager *organizationsettingsPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *OrganizationSettings
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *OrganizationSettings {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *OrganizationSettings {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*OrganizationSettingsEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &OrganizationSettingsEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// OrganizationSettingsPaginateOption enables pagination customization.
+type OrganizationSettingsPaginateOption func(*organizationsettingsPager) error
+
+// WithOrganizationSettingsOrder configures pagination ordering.
+func WithOrganizationSettingsOrder(order *OrganizationSettingsOrder) OrganizationSettingsPaginateOption {
+	if order == nil {
+		order = DefaultOrganizationSettingsOrder
+	}
+	o := *order
+	return func(pager *organizationsettingsPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultOrganizationSettingsOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithOrganizationSettingsFilter configures pagination filter.
+func WithOrganizationSettingsFilter(filter func(*OrganizationSettingsQuery) (*OrganizationSettingsQuery, error)) OrganizationSettingsPaginateOption {
+	return func(pager *organizationsettingsPager) error {
+		if filter == nil {
+			return errors.New("OrganizationSettingsQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type organizationsettingsPager struct {
+	reverse bool
+	order   *OrganizationSettingsOrder
+	filter  func(*OrganizationSettingsQuery) (*OrganizationSettingsQuery, error)
+}
+
+func newOrganizationSettingsPager(opts []OrganizationSettingsPaginateOption, reverse bool) (*organizationsettingsPager, error) {
+	pager := &organizationsettingsPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultOrganizationSettingsOrder
+	}
+	return pager, nil
+}
+
+func (p *organizationsettingsPager) applyFilter(query *OrganizationSettingsQuery) (*OrganizationSettingsQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *organizationsettingsPager) toCursor(os *OrganizationSettings) Cursor {
+	return p.order.Field.toCursor(os)
+}
+
+func (p *organizationsettingsPager) applyCursors(query *OrganizationSettingsQuery, after, before *Cursor) (*OrganizationSettingsQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultOrganizationSettingsOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *organizationsettingsPager) applyOrder(query *OrganizationSettingsQuery) *OrganizationSettingsQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultOrganizationSettingsOrder.Field {
+		query = query.Order(DefaultOrganizationSettingsOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *organizationsettingsPager) orderExpr(query *OrganizationSettingsQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultOrganizationSettingsOrder.Field {
+			b.Comma().Ident(DefaultOrganizationSettingsOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to OrganizationSettings.
+func (os *OrganizationSettingsQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...OrganizationSettingsPaginateOption,
+) (*OrganizationSettingsConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newOrganizationSettingsPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if os, err = pager.applyFilter(os); err != nil {
+		return nil, err
+	}
+	conn := &OrganizationSettingsConnection{Edges: []*OrganizationSettingsEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = os.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if os, err = pager.applyCursors(os, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		os.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := os.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	os = pager.applyOrder(os)
+	nodes, err := os.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// OrganizationSettingsOrderField defines the ordering field of OrganizationSettings.
+type OrganizationSettingsOrderField struct {
+	// Value extracts the ordering value from the given OrganizationSettings.
+	Value    func(*OrganizationSettings) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) organizationsettings.OrderOption
+	toCursor func(*OrganizationSettings) Cursor
+}
+
+// OrganizationSettingsOrder defines the ordering of OrganizationSettings.
+type OrganizationSettingsOrder struct {
+	Direction OrderDirection                  `json:"direction"`
+	Field     *OrganizationSettingsOrderField `json:"field"`
+}
+
+// DefaultOrganizationSettingsOrder is the default ordering of OrganizationSettings.
+var DefaultOrganizationSettingsOrder = &OrganizationSettingsOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &OrganizationSettingsOrderField{
+		Value: func(os *OrganizationSettings) (ent.Value, error) {
+			return os.ID, nil
+		},
+		column: organizationsettings.FieldID,
+		toTerm: organizationsettings.ByID,
+		toCursor: func(os *OrganizationSettings) Cursor {
+			return Cursor{ID: os.ID}
+		},
+	},
+}
+
+// ToEdge converts OrganizationSettings into OrganizationSettingsEdge.
+func (os *OrganizationSettings) ToEdge(order *OrganizationSettingsOrder) *OrganizationSettingsEdge {
+	if order == nil {
+		order = DefaultOrganizationSettingsOrder
+	}
+	return &OrganizationSettingsEdge{
+		Node:   os,
+		Cursor: order.Field.toCursor(os),
 	}
 }
 

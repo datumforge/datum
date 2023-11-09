@@ -63,16 +63,8 @@ func (rtc *RefreshTokenCreate) SetClaimsEmailVerified(b bool) *RefreshTokenCreat
 }
 
 // SetClaimsGroups sets the "claims_groups" field.
-func (rtc *RefreshTokenCreate) SetClaimsGroups(s string) *RefreshTokenCreate {
+func (rtc *RefreshTokenCreate) SetClaimsGroups(s []string) *RefreshTokenCreate {
 	rtc.mutation.SetClaimsGroups(s)
-	return rtc
-}
-
-// SetNillableClaimsGroups sets the "claims_groups" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableClaimsGroups(s *string) *RefreshTokenCreate {
-	if s != nil {
-		rtc.SetClaimsGroups(*s)
-	}
 	return rtc
 }
 
@@ -89,16 +81,8 @@ func (rtc *RefreshTokenCreate) SetConnectorID(s string) *RefreshTokenCreate {
 }
 
 // SetConnectorData sets the "connector_data" field.
-func (rtc *RefreshTokenCreate) SetConnectorData(s string) *RefreshTokenCreate {
+func (rtc *RefreshTokenCreate) SetConnectorData(s []string) *RefreshTokenCreate {
 	rtc.mutation.SetConnectorData(s)
-	return rtc
-}
-
-// SetNillableConnectorData sets the "connector_data" field if the given value is not nil.
-func (rtc *RefreshTokenCreate) SetNillableConnectorData(s *string) *RefreshTokenCreate {
-	if s != nil {
-		rtc.SetConnectorData(*s)
-	}
 	return rtc
 }
 
@@ -317,7 +301,7 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		_node.ClaimsEmailVerified = value
 	}
 	if value, ok := rtc.mutation.ClaimsGroups(); ok {
-		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeString, value)
+		_spec.SetField(refreshtoken.FieldClaimsGroups, field.TypeJSON, value)
 		_node.ClaimsGroups = value
 	}
 	if value, ok := rtc.mutation.ClaimsPreferredUsername(); ok {
@@ -329,8 +313,8 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 		_node.ConnectorID = value
 	}
 	if value, ok := rtc.mutation.ConnectorData(); ok {
-		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeString, value)
-		_node.ConnectorData = &value
+		_spec.SetField(refreshtoken.FieldConnectorData, field.TypeJSON, value)
+		_node.ConnectorData = value
 	}
 	if value, ok := rtc.mutation.Token(); ok {
 		_spec.SetField(refreshtoken.FieldToken, field.TypeString, value)

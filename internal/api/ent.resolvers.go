@@ -42,6 +42,11 @@ func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[
 	return r.client.Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))
 }
 
+// OrganizationSettingsSlice is the resolver for the organizationSettingsSlice field.
+func (r *queryResolver) OrganizationSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingsWhereInput) (*generated.OrganizationSettingsConnection, error) {
+	panic(fmt.Errorf("not implemented: OrganizationSettingsSlice - organizationSettingsSlice"))
+}
+
 // Sessions is the resolver for the sessions field.
 func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) (*generated.SessionConnection, error) {
 	return r.client.Session.Query().Paginate(ctx, after, first, before, last, generated.WithSessionFilter(where.Filter))

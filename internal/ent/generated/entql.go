@@ -7,6 +7,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -20,7 +21,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 7)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
@@ -103,6 +104,32 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   organizationsettings.Table,
+			Columns: organizationsettings.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: organizationsettings.FieldID,
+			},
+		},
+		Type: "OrganizationSettings",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			organizationsettings.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsettings.FieldCreatedAt},
+			organizationsettings.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsettings.FieldUpdatedAt},
+			organizationsettings.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsettings.FieldCreatedBy},
+			organizationsettings.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsettings.FieldUpdatedBy},
+			organizationsettings.FieldDomains:        {Type: field.TypeJSON, Column: organizationsettings.FieldDomains},
+			organizationsettings.FieldSSOCert:        {Type: field.TypeString, Column: organizationsettings.FieldSSOCert},
+			organizationsettings.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsettings.FieldSSOEntrypoint},
+			organizationsettings.FieldSSOIssuer:      {Type: field.TypeString, Column: organizationsettings.FieldSSOIssuer},
+			organizationsettings.FieldBillingContact: {Type: field.TypeString, Column: organizationsettings.FieldBillingContact},
+			organizationsettings.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsettings.FieldBillingEmail},
+			organizationsettings.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsettings.FieldBillingPhone},
+			organizationsettings.FieldBillingAddress: {Type: field.TypeString, Column: organizationsettings.FieldBillingAddress},
+			organizationsettings.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsettings.FieldTaxIdentifier},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   refreshtoken.Table,
 			Columns: refreshtoken.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -119,16 +146,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 			refreshtoken.FieldClaimsUsername:          {Type: field.TypeString, Column: refreshtoken.FieldClaimsUsername},
 			refreshtoken.FieldClaimsEmail:             {Type: field.TypeString, Column: refreshtoken.FieldClaimsEmail},
 			refreshtoken.FieldClaimsEmailVerified:     {Type: field.TypeBool, Column: refreshtoken.FieldClaimsEmailVerified},
-			refreshtoken.FieldClaimsGroups:            {Type: field.TypeString, Column: refreshtoken.FieldClaimsGroups},
+			refreshtoken.FieldClaimsGroups:            {Type: field.TypeJSON, Column: refreshtoken.FieldClaimsGroups},
 			refreshtoken.FieldClaimsPreferredUsername: {Type: field.TypeString, Column: refreshtoken.FieldClaimsPreferredUsername},
 			refreshtoken.FieldConnectorID:             {Type: field.TypeString, Column: refreshtoken.FieldConnectorID},
-			refreshtoken.FieldConnectorData:           {Type: field.TypeString, Column: refreshtoken.FieldConnectorData},
+			refreshtoken.FieldConnectorData:           {Type: field.TypeJSON, Column: refreshtoken.FieldConnectorData},
 			refreshtoken.FieldToken:                   {Type: field.TypeString, Column: refreshtoken.FieldToken},
 			refreshtoken.FieldObsoleteToken:           {Type: field.TypeString, Column: refreshtoken.FieldObsoleteToken},
 			refreshtoken.FieldLastUsed:                {Type: field.TypeTime, Column: refreshtoken.FieldLastUsed},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -150,7 +177,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldIps:       {Type: field.TypeString, Column: session.FieldIps},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -796,6 +823,111 @@ func (f *OrganizationFilter) WhereHasIntegrationsWith(preds ...predicate.Integra
 }
 
 // addPredicate implements the predicateAdder interface.
+func (osq *OrganizationSettingsQuery) addPredicate(pred func(s *sql.Selector)) {
+	osq.predicates = append(osq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the OrganizationSettingsQuery builder.
+func (osq *OrganizationSettingsQuery) Filter() *OrganizationSettingsFilter {
+	return &OrganizationSettingsFilter{config: osq.config, predicateAdder: osq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *OrganizationSettingsMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the OrganizationSettingsMutation builder.
+func (m *OrganizationSettingsMutation) Filter() *OrganizationSettingsFilter {
+	return &OrganizationSettingsFilter{config: m.config, predicateAdder: m}
+}
+
+// OrganizationSettingsFilter provides a generic filtering capability at runtime for OrganizationSettingsQuery.
+type OrganizationSettingsFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *OrganizationSettingsFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *OrganizationSettingsFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *OrganizationSettingsFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsettings.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *OrganizationSettingsFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsettings.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *OrganizationSettingsFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *OrganizationSettingsFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldUpdatedBy))
+}
+
+// WhereDomains applies the entql json.RawMessage predicate on the domains field.
+func (f *OrganizationSettingsFilter) WhereDomains(p entql.BytesP) {
+	f.Where(p.Field(organizationsettings.FieldDomains))
+}
+
+// WhereSSOCert applies the entql string predicate on the sso_cert field.
+func (f *OrganizationSettingsFilter) WhereSSOCert(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldSSOCert))
+}
+
+// WhereSSOEntrypoint applies the entql string predicate on the sso_entrypoint field.
+func (f *OrganizationSettingsFilter) WhereSSOEntrypoint(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldSSOEntrypoint))
+}
+
+// WhereSSOIssuer applies the entql string predicate on the sso_issuer field.
+func (f *OrganizationSettingsFilter) WhereSSOIssuer(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldSSOIssuer))
+}
+
+// WhereBillingContact applies the entql string predicate on the billing_contact field.
+func (f *OrganizationSettingsFilter) WhereBillingContact(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldBillingContact))
+}
+
+// WhereBillingEmail applies the entql string predicate on the billing_email field.
+func (f *OrganizationSettingsFilter) WhereBillingEmail(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldBillingEmail))
+}
+
+// WhereBillingPhone applies the entql string predicate on the billing_phone field.
+func (f *OrganizationSettingsFilter) WhereBillingPhone(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldBillingPhone))
+}
+
+// WhereBillingAddress applies the entql string predicate on the billing_address field.
+func (f *OrganizationSettingsFilter) WhereBillingAddress(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldBillingAddress))
+}
+
+// WhereTaxIdentifier applies the entql string predicate on the tax_identifier field.
+func (f *OrganizationSettingsFilter) WhereTaxIdentifier(p entql.StringP) {
+	f.Where(p.Field(organizationsettings.FieldTaxIdentifier))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (rtq *RefreshTokenQuery) addPredicate(pred func(s *sql.Selector)) {
 	rtq.predicates = append(rtq.predicates, pred)
 }
@@ -824,7 +956,7 @@ type RefreshTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *RefreshTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -870,8 +1002,8 @@ func (f *RefreshTokenFilter) WhereClaimsEmailVerified(p entql.BoolP) {
 	f.Where(p.Field(refreshtoken.FieldClaimsEmailVerified))
 }
 
-// WhereClaimsGroups applies the entql string predicate on the claims_groups field.
-func (f *RefreshTokenFilter) WhereClaimsGroups(p entql.StringP) {
+// WhereClaimsGroups applies the entql json.RawMessage predicate on the claims_groups field.
+func (f *RefreshTokenFilter) WhereClaimsGroups(p entql.BytesP) {
 	f.Where(p.Field(refreshtoken.FieldClaimsGroups))
 }
 
@@ -885,8 +1017,8 @@ func (f *RefreshTokenFilter) WhereConnectorID(p entql.StringP) {
 	f.Where(p.Field(refreshtoken.FieldConnectorID))
 }
 
-// WhereConnectorData applies the entql string predicate on the connector_data field.
-func (f *RefreshTokenFilter) WhereConnectorData(p entql.StringP) {
+// WhereConnectorData applies the entql json.RawMessage predicate on the connector_data field.
+func (f *RefreshTokenFilter) WhereConnectorData(p entql.BytesP) {
 	f.Where(p.Field(refreshtoken.FieldConnectorData))
 }
 
@@ -934,7 +1066,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1033,7 +1165,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

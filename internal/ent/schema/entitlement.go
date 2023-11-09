@@ -14,7 +14,7 @@ type Entitlement struct {
 	ent.Schema
 }
 
-// Fields of the Subscription.
+// Fields of the Entitlement.
 func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("tier").Values("free", "pro", "enterprise").Default("free"),

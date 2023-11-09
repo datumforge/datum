@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/schema"
 
@@ -277,6 +278,33 @@ func init() {
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() string)
+	tacoMixin := schema.Taco{}.Mixin()
+	tacoMixinHooks1 := tacoMixin[1].Hooks()
+	taco.Hooks[0] = tacoMixinHooks1[0]
+	tacoMixinFields0 := tacoMixin[0].Fields()
+	_ = tacoMixinFields0
+	tacoMixinFields1 := tacoMixin[1].Fields()
+	_ = tacoMixinFields1
+	tacoFields := schema.Taco{}.Fields()
+	_ = tacoFields
+	// tacoDescCreatedAt is the schema descriptor for created_at field.
+	tacoDescCreatedAt := tacoMixinFields1[0].Descriptor()
+	// taco.DefaultCreatedAt holds the default value on creation for the created_at field.
+	taco.DefaultCreatedAt = tacoDescCreatedAt.Default.(func() time.Time)
+	// tacoDescUpdatedAt is the schema descriptor for updated_at field.
+	tacoDescUpdatedAt := tacoMixinFields1[1].Descriptor()
+	// taco.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	taco.DefaultUpdatedAt = tacoDescUpdatedAt.Default.(func() time.Time)
+	// taco.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	taco.UpdateDefaultUpdatedAt = tacoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tacoDescCancelled is the schema descriptor for cancelled field.
+	tacoDescCancelled := tacoFields[4].Descriptor()
+	// taco.DefaultCancelled holds the default value on creation for the cancelled field.
+	taco.DefaultCancelled = tacoDescCancelled.Default.(bool)
+	// tacoDescID is the schema descriptor for id field.
+	tacoDescID := tacoMixinFields0[0].Descriptor()
+	// taco.DefaultID holds the default value on creation for the id field.
+	taco.DefaultID = tacoDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(userMixin[1], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

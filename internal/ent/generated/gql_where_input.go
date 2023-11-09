@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -3847,6 +3848,524 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 		return predicates[0], nil
 	default:
 		return session.And(predicates...), nil
+	}
+}
+
+// TacoWhereInput represents a where input for filtering Taco queries.
+type TacoWhereInput struct {
+	Predicates []predicate.Taco  `json:"-"`
+	Not        *TacoWhereInput   `json:"not,omitempty"`
+	Or         []*TacoWhereInput `json:"or,omitempty"`
+	And        []*TacoWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
+
+	// "created_at" field predicates.
+	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ   *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn    []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT    *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE   *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT    *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE   *time.Time  `json:"createdAtLTE,omitempty"`
+
+	// "updated_at" field predicates.
+	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	UpdatedAtNEQ   *time.Time  `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn    []time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn []time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGT    *time.Time  `json:"updatedAtGT,omitempty"`
+	UpdatedAtGTE   *time.Time  `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLT    *time.Time  `json:"updatedAtLT,omitempty"`
+	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
+
+	// "created_by" field predicates.
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
+
+	// "updated_by" field predicates.
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
+
+	// "tier" field predicates.
+	Tier      *taco.Tier  `json:"tier,omitempty"`
+	TierNEQ   *taco.Tier  `json:"tierNEQ,omitempty"`
+	TierIn    []taco.Tier `json:"tierIn,omitempty"`
+	TierNotIn []taco.Tier `json:"tierNotIn,omitempty"`
+
+	// "stripe_customer_id" field predicates.
+	StripeCustomerID             *string  `json:"stripeCustomerID,omitempty"`
+	StripeCustomerIDNEQ          *string  `json:"stripeCustomerIDNEQ,omitempty"`
+	StripeCustomerIDIn           []string `json:"stripeCustomerIDIn,omitempty"`
+	StripeCustomerIDNotIn        []string `json:"stripeCustomerIDNotIn,omitempty"`
+	StripeCustomerIDGT           *string  `json:"stripeCustomerIDGT,omitempty"`
+	StripeCustomerIDGTE          *string  `json:"stripeCustomerIDGTE,omitempty"`
+	StripeCustomerIDLT           *string  `json:"stripeCustomerIDLT,omitempty"`
+	StripeCustomerIDLTE          *string  `json:"stripeCustomerIDLTE,omitempty"`
+	StripeCustomerIDContains     *string  `json:"stripeCustomerIDContains,omitempty"`
+	StripeCustomerIDHasPrefix    *string  `json:"stripeCustomerIDHasPrefix,omitempty"`
+	StripeCustomerIDHasSuffix    *string  `json:"stripeCustomerIDHasSuffix,omitempty"`
+	StripeCustomerIDIsNil        bool     `json:"stripeCustomerIDIsNil,omitempty"`
+	StripeCustomerIDNotNil       bool     `json:"stripeCustomerIDNotNil,omitempty"`
+	StripeCustomerIDEqualFold    *string  `json:"stripeCustomerIDEqualFold,omitempty"`
+	StripeCustomerIDContainsFold *string  `json:"stripeCustomerIDContainsFold,omitempty"`
+
+	// "stripe_subscription_id" field predicates.
+	StripeSubscriptionID             *string  `json:"stripeSubscriptionID,omitempty"`
+	StripeSubscriptionIDNEQ          *string  `json:"stripeSubscriptionIDNEQ,omitempty"`
+	StripeSubscriptionIDIn           []string `json:"stripeSubscriptionIDIn,omitempty"`
+	StripeSubscriptionIDNotIn        []string `json:"stripeSubscriptionIDNotIn,omitempty"`
+	StripeSubscriptionIDGT           *string  `json:"stripeSubscriptionIDGT,omitempty"`
+	StripeSubscriptionIDGTE          *string  `json:"stripeSubscriptionIDGTE,omitempty"`
+	StripeSubscriptionIDLT           *string  `json:"stripeSubscriptionIDLT,omitempty"`
+	StripeSubscriptionIDLTE          *string  `json:"stripeSubscriptionIDLTE,omitempty"`
+	StripeSubscriptionIDContains     *string  `json:"stripeSubscriptionIDContains,omitempty"`
+	StripeSubscriptionIDHasPrefix    *string  `json:"stripeSubscriptionIDHasPrefix,omitempty"`
+	StripeSubscriptionIDHasSuffix    *string  `json:"stripeSubscriptionIDHasSuffix,omitempty"`
+	StripeSubscriptionIDIsNil        bool     `json:"stripeSubscriptionIDIsNil,omitempty"`
+	StripeSubscriptionIDNotNil       bool     `json:"stripeSubscriptionIDNotNil,omitempty"`
+	StripeSubscriptionIDEqualFold    *string  `json:"stripeSubscriptionIDEqualFold,omitempty"`
+	StripeSubscriptionIDContainsFold *string  `json:"stripeSubscriptionIDContainsFold,omitempty"`
+
+	// "expires_at" field predicates.
+	ExpiresAt       *time.Time  `json:"expiresAt,omitempty"`
+	ExpiresAtNEQ    *time.Time  `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn     []time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn  []time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGT     *time.Time  `json:"expiresAtGT,omitempty"`
+	ExpiresAtGTE    *time.Time  `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLT     *time.Time  `json:"expiresAtLT,omitempty"`
+	ExpiresAtLTE    *time.Time  `json:"expiresAtLTE,omitempty"`
+	ExpiresAtIsNil  bool        `json:"expiresAtIsNil,omitempty"`
+	ExpiresAtNotNil bool        `json:"expiresAtNotNil,omitempty"`
+
+	// "cancelled" field predicates.
+	Cancelled    *bool `json:"cancelled,omitempty"`
+	CancelledNEQ *bool `json:"cancelledNEQ,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *TacoWhereInput) AddPredicates(predicates ...predicate.Taco) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the TacoWhereInput filter on the TacoQuery builder.
+func (i *TacoWhereInput) Filter(q *TacoQuery) (*TacoQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyTacoWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyTacoWhereInput is returned in case the TacoWhereInput is empty.
+var ErrEmptyTacoWhereInput = errors.New("generated: empty predicate TacoWhereInput")
+
+// P returns a predicate for filtering tacos.
+// An error is returned if the input is empty or invalid.
+func (i *TacoWhereInput) P() (predicate.Taco, error) {
+	var predicates []predicate.Taco
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, taco.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.Taco, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, taco.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.Taco, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, taco.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, taco.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, taco.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, taco.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, taco.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, taco.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, taco.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, taco.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, taco.IDLTE(*i.IDLTE))
+	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, taco.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, taco.IDContainsFold(*i.IDContainsFold))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, taco.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, taco.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, taco.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, taco.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, taco.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, taco.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, taco.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, taco.CreatedAtLTE(*i.CreatedAtLTE))
+	}
+	if i.UpdatedAt != nil {
+		predicates = append(predicates, taco.UpdatedAtEQ(*i.UpdatedAt))
+	}
+	if i.UpdatedAtNEQ != nil {
+		predicates = append(predicates, taco.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+	}
+	if len(i.UpdatedAtIn) > 0 {
+		predicates = append(predicates, taco.UpdatedAtIn(i.UpdatedAtIn...))
+	}
+	if len(i.UpdatedAtNotIn) > 0 {
+		predicates = append(predicates, taco.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+	}
+	if i.UpdatedAtGT != nil {
+		predicates = append(predicates, taco.UpdatedAtGT(*i.UpdatedAtGT))
+	}
+	if i.UpdatedAtGTE != nil {
+		predicates = append(predicates, taco.UpdatedAtGTE(*i.UpdatedAtGTE))
+	}
+	if i.UpdatedAtLT != nil {
+		predicates = append(predicates, taco.UpdatedAtLT(*i.UpdatedAtLT))
+	}
+	if i.UpdatedAtLTE != nil {
+		predicates = append(predicates, taco.UpdatedAtLTE(*i.UpdatedAtLTE))
+	}
+	if i.CreatedBy != nil {
+		predicates = append(predicates, taco.CreatedByEQ(*i.CreatedBy))
+	}
+	if i.CreatedByNEQ != nil {
+		predicates = append(predicates, taco.CreatedByNEQ(*i.CreatedByNEQ))
+	}
+	if len(i.CreatedByIn) > 0 {
+		predicates = append(predicates, taco.CreatedByIn(i.CreatedByIn...))
+	}
+	if len(i.CreatedByNotIn) > 0 {
+		predicates = append(predicates, taco.CreatedByNotIn(i.CreatedByNotIn...))
+	}
+	if i.CreatedByGT != nil {
+		predicates = append(predicates, taco.CreatedByGT(*i.CreatedByGT))
+	}
+	if i.CreatedByGTE != nil {
+		predicates = append(predicates, taco.CreatedByGTE(*i.CreatedByGTE))
+	}
+	if i.CreatedByLT != nil {
+		predicates = append(predicates, taco.CreatedByLT(*i.CreatedByLT))
+	}
+	if i.CreatedByLTE != nil {
+		predicates = append(predicates, taco.CreatedByLTE(*i.CreatedByLTE))
+	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, taco.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, taco.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, taco.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
+	if i.CreatedByIsNil {
+		predicates = append(predicates, taco.CreatedByIsNil())
+	}
+	if i.CreatedByNotNil {
+		predicates = append(predicates, taco.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, taco.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, taco.CreatedByContainsFold(*i.CreatedByContainsFold))
+	}
+	if i.UpdatedBy != nil {
+		predicates = append(predicates, taco.UpdatedByEQ(*i.UpdatedBy))
+	}
+	if i.UpdatedByNEQ != nil {
+		predicates = append(predicates, taco.UpdatedByNEQ(*i.UpdatedByNEQ))
+	}
+	if len(i.UpdatedByIn) > 0 {
+		predicates = append(predicates, taco.UpdatedByIn(i.UpdatedByIn...))
+	}
+	if len(i.UpdatedByNotIn) > 0 {
+		predicates = append(predicates, taco.UpdatedByNotIn(i.UpdatedByNotIn...))
+	}
+	if i.UpdatedByGT != nil {
+		predicates = append(predicates, taco.UpdatedByGT(*i.UpdatedByGT))
+	}
+	if i.UpdatedByGTE != nil {
+		predicates = append(predicates, taco.UpdatedByGTE(*i.UpdatedByGTE))
+	}
+	if i.UpdatedByLT != nil {
+		predicates = append(predicates, taco.UpdatedByLT(*i.UpdatedByLT))
+	}
+	if i.UpdatedByLTE != nil {
+		predicates = append(predicates, taco.UpdatedByLTE(*i.UpdatedByLTE))
+	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, taco.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, taco.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, taco.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
+	if i.UpdatedByIsNil {
+		predicates = append(predicates, taco.UpdatedByIsNil())
+	}
+	if i.UpdatedByNotNil {
+		predicates = append(predicates, taco.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, taco.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, taco.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+	}
+	if i.Tier != nil {
+		predicates = append(predicates, taco.TierEQ(*i.Tier))
+	}
+	if i.TierNEQ != nil {
+		predicates = append(predicates, taco.TierNEQ(*i.TierNEQ))
+	}
+	if len(i.TierIn) > 0 {
+		predicates = append(predicates, taco.TierIn(i.TierIn...))
+	}
+	if len(i.TierNotIn) > 0 {
+		predicates = append(predicates, taco.TierNotIn(i.TierNotIn...))
+	}
+	if i.StripeCustomerID != nil {
+		predicates = append(predicates, taco.StripeCustomerIDEQ(*i.StripeCustomerID))
+	}
+	if i.StripeCustomerIDNEQ != nil {
+		predicates = append(predicates, taco.StripeCustomerIDNEQ(*i.StripeCustomerIDNEQ))
+	}
+	if len(i.StripeCustomerIDIn) > 0 {
+		predicates = append(predicates, taco.StripeCustomerIDIn(i.StripeCustomerIDIn...))
+	}
+	if len(i.StripeCustomerIDNotIn) > 0 {
+		predicates = append(predicates, taco.StripeCustomerIDNotIn(i.StripeCustomerIDNotIn...))
+	}
+	if i.StripeCustomerIDGT != nil {
+		predicates = append(predicates, taco.StripeCustomerIDGT(*i.StripeCustomerIDGT))
+	}
+	if i.StripeCustomerIDGTE != nil {
+		predicates = append(predicates, taco.StripeCustomerIDGTE(*i.StripeCustomerIDGTE))
+	}
+	if i.StripeCustomerIDLT != nil {
+		predicates = append(predicates, taco.StripeCustomerIDLT(*i.StripeCustomerIDLT))
+	}
+	if i.StripeCustomerIDLTE != nil {
+		predicates = append(predicates, taco.StripeCustomerIDLTE(*i.StripeCustomerIDLTE))
+	}
+	if i.StripeCustomerIDContains != nil {
+		predicates = append(predicates, taco.StripeCustomerIDContains(*i.StripeCustomerIDContains))
+	}
+	if i.StripeCustomerIDHasPrefix != nil {
+		predicates = append(predicates, taco.StripeCustomerIDHasPrefix(*i.StripeCustomerIDHasPrefix))
+	}
+	if i.StripeCustomerIDHasSuffix != nil {
+		predicates = append(predicates, taco.StripeCustomerIDHasSuffix(*i.StripeCustomerIDHasSuffix))
+	}
+	if i.StripeCustomerIDIsNil {
+		predicates = append(predicates, taco.StripeCustomerIDIsNil())
+	}
+	if i.StripeCustomerIDNotNil {
+		predicates = append(predicates, taco.StripeCustomerIDNotNil())
+	}
+	if i.StripeCustomerIDEqualFold != nil {
+		predicates = append(predicates, taco.StripeCustomerIDEqualFold(*i.StripeCustomerIDEqualFold))
+	}
+	if i.StripeCustomerIDContainsFold != nil {
+		predicates = append(predicates, taco.StripeCustomerIDContainsFold(*i.StripeCustomerIDContainsFold))
+	}
+	if i.StripeSubscriptionID != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDEQ(*i.StripeSubscriptionID))
+	}
+	if i.StripeSubscriptionIDNEQ != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDNEQ(*i.StripeSubscriptionIDNEQ))
+	}
+	if len(i.StripeSubscriptionIDIn) > 0 {
+		predicates = append(predicates, taco.StripeSubscriptionIDIn(i.StripeSubscriptionIDIn...))
+	}
+	if len(i.StripeSubscriptionIDNotIn) > 0 {
+		predicates = append(predicates, taco.StripeSubscriptionIDNotIn(i.StripeSubscriptionIDNotIn...))
+	}
+	if i.StripeSubscriptionIDGT != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDGT(*i.StripeSubscriptionIDGT))
+	}
+	if i.StripeSubscriptionIDGTE != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDGTE(*i.StripeSubscriptionIDGTE))
+	}
+	if i.StripeSubscriptionIDLT != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDLT(*i.StripeSubscriptionIDLT))
+	}
+	if i.StripeSubscriptionIDLTE != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDLTE(*i.StripeSubscriptionIDLTE))
+	}
+	if i.StripeSubscriptionIDContains != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDContains(*i.StripeSubscriptionIDContains))
+	}
+	if i.StripeSubscriptionIDHasPrefix != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDHasPrefix(*i.StripeSubscriptionIDHasPrefix))
+	}
+	if i.StripeSubscriptionIDHasSuffix != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDHasSuffix(*i.StripeSubscriptionIDHasSuffix))
+	}
+	if i.StripeSubscriptionIDIsNil {
+		predicates = append(predicates, taco.StripeSubscriptionIDIsNil())
+	}
+	if i.StripeSubscriptionIDNotNil {
+		predicates = append(predicates, taco.StripeSubscriptionIDNotNil())
+	}
+	if i.StripeSubscriptionIDEqualFold != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDEqualFold(*i.StripeSubscriptionIDEqualFold))
+	}
+	if i.StripeSubscriptionIDContainsFold != nil {
+		predicates = append(predicates, taco.StripeSubscriptionIDContainsFold(*i.StripeSubscriptionIDContainsFold))
+	}
+	if i.ExpiresAt != nil {
+		predicates = append(predicates, taco.ExpiresAtEQ(*i.ExpiresAt))
+	}
+	if i.ExpiresAtNEQ != nil {
+		predicates = append(predicates, taco.ExpiresAtNEQ(*i.ExpiresAtNEQ))
+	}
+	if len(i.ExpiresAtIn) > 0 {
+		predicates = append(predicates, taco.ExpiresAtIn(i.ExpiresAtIn...))
+	}
+	if len(i.ExpiresAtNotIn) > 0 {
+		predicates = append(predicates, taco.ExpiresAtNotIn(i.ExpiresAtNotIn...))
+	}
+	if i.ExpiresAtGT != nil {
+		predicates = append(predicates, taco.ExpiresAtGT(*i.ExpiresAtGT))
+	}
+	if i.ExpiresAtGTE != nil {
+		predicates = append(predicates, taco.ExpiresAtGTE(*i.ExpiresAtGTE))
+	}
+	if i.ExpiresAtLT != nil {
+		predicates = append(predicates, taco.ExpiresAtLT(*i.ExpiresAtLT))
+	}
+	if i.ExpiresAtLTE != nil {
+		predicates = append(predicates, taco.ExpiresAtLTE(*i.ExpiresAtLTE))
+	}
+	if i.ExpiresAtIsNil {
+		predicates = append(predicates, taco.ExpiresAtIsNil())
+	}
+	if i.ExpiresAtNotNil {
+		predicates = append(predicates, taco.ExpiresAtNotNil())
+	}
+	if i.Cancelled != nil {
+		predicates = append(predicates, taco.CancelledEQ(*i.Cancelled))
+	}
+	if i.CancelledNEQ != nil {
+		predicates = append(predicates, taco.CancelledNEQ(*i.CancelledNEQ))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyTacoWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return taco.And(predicates...), nil
 	}
 }
 

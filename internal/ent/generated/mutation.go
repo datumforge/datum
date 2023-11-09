@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -38,6 +39,7 @@ const (
 	TypeOrganizationSettings = "OrganizationSettings"
 	TypeRefreshToken         = "RefreshToken"
 	TypeSession              = "Session"
+	TypeTaco                 = "Taco"
 	TypeUser                 = "User"
 )
 
@@ -6703,6 +6705,868 @@ func (m *SessionMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Session edge %s", name)
+}
+
+// TacoMutation represents an operation that mutates the Taco nodes in the graph.
+type TacoMutation struct {
+	config
+	op                     Op
+	typ                    string
+	id                     *string
+	created_at             *time.Time
+	updated_at             *time.Time
+	created_by             *string
+	updated_by             *string
+	tier                   *taco.Tier
+	stripe_customer_id     *string
+	stripe_subscription_id *string
+	expires_at             *time.Time
+	cancelled              *bool
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*Taco, error)
+	predicates             []predicate.Taco
+}
+
+var _ ent.Mutation = (*TacoMutation)(nil)
+
+// tacoOption allows management of the mutation configuration using functional options.
+type tacoOption func(*TacoMutation)
+
+// newTacoMutation creates new mutation for the Taco entity.
+func newTacoMutation(c config, op Op, opts ...tacoOption) *TacoMutation {
+	m := &TacoMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTaco,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTacoID sets the ID field of the mutation.
+func withTacoID(id string) tacoOption {
+	return func(m *TacoMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Taco
+		)
+		m.oldValue = func(ctx context.Context) (*Taco, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Taco.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTaco sets the old Taco of the mutation.
+func withTaco(node *Taco) tacoOption {
+	return func(m *TacoMutation) {
+		m.oldValue = func(context.Context) (*Taco, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TacoMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TacoMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("generated: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Taco entities.
+func (m *TacoMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TacoMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TacoMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Taco.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TacoMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TacoMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TacoMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TacoMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TacoMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TacoMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *TacoMutation) SetCreatedBy(s string) {
+	m.created_by = &s
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *TacoMutation) CreatedBy() (r string, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *TacoMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[taco.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *TacoMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[taco.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *TacoMutation) ResetCreatedBy() {
+	m.created_by = nil
+	delete(m.clearedFields, taco.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TacoMutation) SetUpdatedBy(s string) {
+	m.updated_by = &s
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TacoMutation) UpdatedBy() (r string, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *TacoMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[taco.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *TacoMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[taco.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TacoMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	delete(m.clearedFields, taco.FieldUpdatedBy)
+}
+
+// SetTier sets the "tier" field.
+func (m *TacoMutation) SetTier(t taco.Tier) {
+	m.tier = &t
+}
+
+// Tier returns the value of the "tier" field in the mutation.
+func (m *TacoMutation) Tier() (r taco.Tier, exists bool) {
+	v := m.tier
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTier returns the old "tier" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldTier(ctx context.Context) (v taco.Tier, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTier is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTier requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTier: %w", err)
+	}
+	return oldValue.Tier, nil
+}
+
+// ResetTier resets all changes to the "tier" field.
+func (m *TacoMutation) ResetTier() {
+	m.tier = nil
+}
+
+// SetStripeCustomerID sets the "stripe_customer_id" field.
+func (m *TacoMutation) SetStripeCustomerID(s string) {
+	m.stripe_customer_id = &s
+}
+
+// StripeCustomerID returns the value of the "stripe_customer_id" field in the mutation.
+func (m *TacoMutation) StripeCustomerID() (r string, exists bool) {
+	v := m.stripe_customer_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStripeCustomerID returns the old "stripe_customer_id" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldStripeCustomerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStripeCustomerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStripeCustomerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStripeCustomerID: %w", err)
+	}
+	return oldValue.StripeCustomerID, nil
+}
+
+// ClearStripeCustomerID clears the value of the "stripe_customer_id" field.
+func (m *TacoMutation) ClearStripeCustomerID() {
+	m.stripe_customer_id = nil
+	m.clearedFields[taco.FieldStripeCustomerID] = struct{}{}
+}
+
+// StripeCustomerIDCleared returns if the "stripe_customer_id" field was cleared in this mutation.
+func (m *TacoMutation) StripeCustomerIDCleared() bool {
+	_, ok := m.clearedFields[taco.FieldStripeCustomerID]
+	return ok
+}
+
+// ResetStripeCustomerID resets all changes to the "stripe_customer_id" field.
+func (m *TacoMutation) ResetStripeCustomerID() {
+	m.stripe_customer_id = nil
+	delete(m.clearedFields, taco.FieldStripeCustomerID)
+}
+
+// SetStripeSubscriptionID sets the "stripe_subscription_id" field.
+func (m *TacoMutation) SetStripeSubscriptionID(s string) {
+	m.stripe_subscription_id = &s
+}
+
+// StripeSubscriptionID returns the value of the "stripe_subscription_id" field in the mutation.
+func (m *TacoMutation) StripeSubscriptionID() (r string, exists bool) {
+	v := m.stripe_subscription_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStripeSubscriptionID returns the old "stripe_subscription_id" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldStripeSubscriptionID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStripeSubscriptionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStripeSubscriptionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStripeSubscriptionID: %w", err)
+	}
+	return oldValue.StripeSubscriptionID, nil
+}
+
+// ClearStripeSubscriptionID clears the value of the "stripe_subscription_id" field.
+func (m *TacoMutation) ClearStripeSubscriptionID() {
+	m.stripe_subscription_id = nil
+	m.clearedFields[taco.FieldStripeSubscriptionID] = struct{}{}
+}
+
+// StripeSubscriptionIDCleared returns if the "stripe_subscription_id" field was cleared in this mutation.
+func (m *TacoMutation) StripeSubscriptionIDCleared() bool {
+	_, ok := m.clearedFields[taco.FieldStripeSubscriptionID]
+	return ok
+}
+
+// ResetStripeSubscriptionID resets all changes to the "stripe_subscription_id" field.
+func (m *TacoMutation) ResetStripeSubscriptionID() {
+	m.stripe_subscription_id = nil
+	delete(m.clearedFields, taco.FieldStripeSubscriptionID)
+}
+
+// SetExpiresAt sets the "expires_at" field.
+func (m *TacoMutation) SetExpiresAt(t time.Time) {
+	m.expires_at = &t
+}
+
+// ExpiresAt returns the value of the "expires_at" field in the mutation.
+func (m *TacoMutation) ExpiresAt() (r time.Time, exists bool) {
+	v := m.expires_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresAt returns the old "expires_at" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldExpiresAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresAt: %w", err)
+	}
+	return oldValue.ExpiresAt, nil
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (m *TacoMutation) ClearExpiresAt() {
+	m.expires_at = nil
+	m.clearedFields[taco.FieldExpiresAt] = struct{}{}
+}
+
+// ExpiresAtCleared returns if the "expires_at" field was cleared in this mutation.
+func (m *TacoMutation) ExpiresAtCleared() bool {
+	_, ok := m.clearedFields[taco.FieldExpiresAt]
+	return ok
+}
+
+// ResetExpiresAt resets all changes to the "expires_at" field.
+func (m *TacoMutation) ResetExpiresAt() {
+	m.expires_at = nil
+	delete(m.clearedFields, taco.FieldExpiresAt)
+}
+
+// SetCancelled sets the "cancelled" field.
+func (m *TacoMutation) SetCancelled(b bool) {
+	m.cancelled = &b
+}
+
+// Cancelled returns the value of the "cancelled" field in the mutation.
+func (m *TacoMutation) Cancelled() (r bool, exists bool) {
+	v := m.cancelled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCancelled returns the old "cancelled" field's value of the Taco entity.
+// If the Taco object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TacoMutation) OldCancelled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCancelled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCancelled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCancelled: %w", err)
+	}
+	return oldValue.Cancelled, nil
+}
+
+// ResetCancelled resets all changes to the "cancelled" field.
+func (m *TacoMutation) ResetCancelled() {
+	m.cancelled = nil
+}
+
+// Where appends a list predicates to the TacoMutation builder.
+func (m *TacoMutation) Where(ps ...predicate.Taco) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TacoMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TacoMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Taco, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TacoMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TacoMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Taco).
+func (m *TacoMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TacoMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.created_at != nil {
+		fields = append(fields, taco.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, taco.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, taco.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, taco.FieldUpdatedBy)
+	}
+	if m.tier != nil {
+		fields = append(fields, taco.FieldTier)
+	}
+	if m.stripe_customer_id != nil {
+		fields = append(fields, taco.FieldStripeCustomerID)
+	}
+	if m.stripe_subscription_id != nil {
+		fields = append(fields, taco.FieldStripeSubscriptionID)
+	}
+	if m.expires_at != nil {
+		fields = append(fields, taco.FieldExpiresAt)
+	}
+	if m.cancelled != nil {
+		fields = append(fields, taco.FieldCancelled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TacoMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case taco.FieldCreatedAt:
+		return m.CreatedAt()
+	case taco.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case taco.FieldCreatedBy:
+		return m.CreatedBy()
+	case taco.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case taco.FieldTier:
+		return m.Tier()
+	case taco.FieldStripeCustomerID:
+		return m.StripeCustomerID()
+	case taco.FieldStripeSubscriptionID:
+		return m.StripeSubscriptionID()
+	case taco.FieldExpiresAt:
+		return m.ExpiresAt()
+	case taco.FieldCancelled:
+		return m.Cancelled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TacoMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case taco.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case taco.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case taco.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case taco.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case taco.FieldTier:
+		return m.OldTier(ctx)
+	case taco.FieldStripeCustomerID:
+		return m.OldStripeCustomerID(ctx)
+	case taco.FieldStripeSubscriptionID:
+		return m.OldStripeSubscriptionID(ctx)
+	case taco.FieldExpiresAt:
+		return m.OldExpiresAt(ctx)
+	case taco.FieldCancelled:
+		return m.OldCancelled(ctx)
+	}
+	return nil, fmt.Errorf("unknown Taco field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TacoMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case taco.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case taco.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case taco.FieldCreatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case taco.FieldUpdatedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case taco.FieldTier:
+		v, ok := value.(taco.Tier)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTier(v)
+		return nil
+	case taco.FieldStripeCustomerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStripeCustomerID(v)
+		return nil
+	case taco.FieldStripeSubscriptionID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStripeSubscriptionID(v)
+		return nil
+	case taco.FieldExpiresAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresAt(v)
+		return nil
+	case taco.FieldCancelled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCancelled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Taco field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TacoMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TacoMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TacoMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Taco numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TacoMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(taco.FieldCreatedBy) {
+		fields = append(fields, taco.FieldCreatedBy)
+	}
+	if m.FieldCleared(taco.FieldUpdatedBy) {
+		fields = append(fields, taco.FieldUpdatedBy)
+	}
+	if m.FieldCleared(taco.FieldStripeCustomerID) {
+		fields = append(fields, taco.FieldStripeCustomerID)
+	}
+	if m.FieldCleared(taco.FieldStripeSubscriptionID) {
+		fields = append(fields, taco.FieldStripeSubscriptionID)
+	}
+	if m.FieldCleared(taco.FieldExpiresAt) {
+		fields = append(fields, taco.FieldExpiresAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TacoMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TacoMutation) ClearField(name string) error {
+	switch name {
+	case taco.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case taco.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case taco.FieldStripeCustomerID:
+		m.ClearStripeCustomerID()
+		return nil
+	case taco.FieldStripeSubscriptionID:
+		m.ClearStripeSubscriptionID()
+		return nil
+	case taco.FieldExpiresAt:
+		m.ClearExpiresAt()
+		return nil
+	}
+	return fmt.Errorf("unknown Taco nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TacoMutation) ResetField(name string) error {
+	switch name {
+	case taco.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case taco.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case taco.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case taco.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case taco.FieldTier:
+		m.ResetTier()
+		return nil
+	case taco.FieldStripeCustomerID:
+		m.ResetStripeCustomerID()
+		return nil
+	case taco.FieldStripeSubscriptionID:
+		m.ResetStripeSubscriptionID()
+		return nil
+	case taco.FieldExpiresAt:
+		m.ResetExpiresAt()
+		return nil
+	case taco.FieldCancelled:
+		m.ResetCancelled()
+		return nil
+	}
+	return fmt.Errorf("unknown Taco field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TacoMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TacoMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TacoMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TacoMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TacoMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TacoMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TacoMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Taco unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TacoMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Taco edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

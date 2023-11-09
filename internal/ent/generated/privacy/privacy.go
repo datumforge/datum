@@ -279,6 +279,30 @@ func (f SessionMutationRuleFunc) EvalMutation(ctx context.Context, m generated.M
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.SessionMutation", m)
 }
 
+// The TacoQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TacoQueryRuleFunc func(context.Context, *generated.TacoQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TacoQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.TacoQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.TacoQuery", q)
+}
+
+// The TacoMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TacoMutationRuleFunc func(context.Context, *generated.TacoMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TacoMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.TacoMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.TacoMutation", m)
+}
+
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *generated.UserQuery) error
@@ -352,6 +376,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.SessionQuery:
 		return q.Filter(), nil
+	case *generated.TacoQuery:
+		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
 	default:
@@ -374,6 +400,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.RefreshTokenMutation:
 		return m.Filter(), nil
 	case *generated.SessionMutation:
+		return m.Filter(), nil
+	case *generated.TacoMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil

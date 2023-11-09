@@ -93,6 +93,18 @@ func (f SessionFunc) Mutate(ctx context.Context, m generated.Mutation) (generate
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.SessionMutation", m)
 }
 
+// The TacoFunc type is an adapter to allow the use of ordinary
+// function as Taco mutator.
+type TacoFunc func(context.Context, *generated.TacoMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TacoFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.TacoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.TacoMutation", m)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *generated.UserMutation) (generated.Value, error)

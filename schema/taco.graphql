@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up taco by ID
+    """
+     taco(
+        """
+        ID of the taco
+        """
+        id: ID!
+    ):  Taco!
+}
+
+extend type Mutation{
+    """
+    Create a new taco
+    """
+    createTaco(
+        """
+        values of the taco
+        """
+        input: CreateTacoInput!
+    ): TacoCreatePayload!
+    """
+    Update an existing taco
+    """
+    updateTaco(
+        """
+        ID of the taco
+        """
+        id: ID!
+        """
+        New values for the taco
+        """
+        input: UpdateTacoInput!
+    ): TacoUpdatePayload!
+    """
+    Delete an existing taco
+    """
+    deleteTaco(
+        """
+        ID of the taco
+        """
+        id: ID!
+    ): TacoDeletePayload!
+}
+
+"""
+Return response for createTaco mutation
+"""
+type TacoCreatePayload {
+    """
+    Created taco
+    """
+    taco: Taco!
+}
+
+"""
+Return response for updateTaco mutation
+"""
+type TacoUpdatePayload {
+    """
+    Updated taco
+    """
+    taco: Taco!
+}
+
+"""
+Return response for deleteTaco mutation
+"""
+type TacoDeletePayload {
+    """
+    Deleted taco ID
+    """
+    deletedID: ID!
+}

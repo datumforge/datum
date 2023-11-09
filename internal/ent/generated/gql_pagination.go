@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
@@ -1983,6 +1984,252 @@ func (s *Session) ToEdge(order *SessionOrder) *SessionEdge {
 	return &SessionEdge{
 		Node:   s,
 		Cursor: order.Field.toCursor(s),
+	}
+}
+
+// TacoEdge is the edge representation of Taco.
+type TacoEdge struct {
+	Node   *Taco  `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// TacoConnection is the connection containing edges to Taco.
+type TacoConnection struct {
+	Edges      []*TacoEdge `json:"edges"`
+	PageInfo   PageInfo    `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+func (c *TacoConnection) build(nodes []*Taco, pager *tacoPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Taco
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Taco {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Taco {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TacoEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TacoEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TacoPaginateOption enables pagination customization.
+type TacoPaginateOption func(*tacoPager) error
+
+// WithTacoOrder configures pagination ordering.
+func WithTacoOrder(order *TacoOrder) TacoPaginateOption {
+	if order == nil {
+		order = DefaultTacoOrder
+	}
+	o := *order
+	return func(pager *tacoPager) error {
+		if err := o.Direction.Validate(); err != nil {
+			return err
+		}
+		if o.Field == nil {
+			o.Field = DefaultTacoOrder.Field
+		}
+		pager.order = &o
+		return nil
+	}
+}
+
+// WithTacoFilter configures pagination filter.
+func WithTacoFilter(filter func(*TacoQuery) (*TacoQuery, error)) TacoPaginateOption {
+	return func(pager *tacoPager) error {
+		if filter == nil {
+			return errors.New("TacoQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type tacoPager struct {
+	reverse bool
+	order   *TacoOrder
+	filter  func(*TacoQuery) (*TacoQuery, error)
+}
+
+func newTacoPager(opts []TacoPaginateOption, reverse bool) (*tacoPager, error) {
+	pager := &tacoPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	if pager.order == nil {
+		pager.order = DefaultTacoOrder
+	}
+	return pager, nil
+}
+
+func (p *tacoPager) applyFilter(query *TacoQuery) (*TacoQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *tacoPager) toCursor(t *Taco) Cursor {
+	return p.order.Field.toCursor(t)
+}
+
+func (p *tacoPager) applyCursors(query *TacoQuery, after, before *Cursor) (*TacoQuery, error) {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultTacoOrder.Field.column, p.order.Field.column, direction) {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *tacoPager) applyOrder(query *TacoQuery) *TacoQuery {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultTacoOrder.Field {
+		query = query.Order(DefaultTacoOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return query
+}
+
+func (p *tacoPager) orderExpr(query *TacoQuery) sql.Querier {
+	direction := p.order.Direction
+	if p.reverse {
+		direction = direction.Reverse()
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(p.order.Field.column)
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultTacoOrder.Field {
+			b.Comma().Ident(DefaultTacoOrder.Field.column).Pad().WriteString(string(direction))
+		}
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Taco.
+func (t *TacoQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TacoPaginateOption,
+) (*TacoConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTacoPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if t, err = pager.applyFilter(t); err != nil {
+		return nil, err
+	}
+	conn := &TacoConnection{Edges: []*TacoEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			if conn.TotalCount, err = t.Clone().Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if t, err = pager.applyCursors(t, after, before); err != nil {
+		return nil, err
+	}
+	if limit := paginateLimit(first, last); limit != 0 {
+		t.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := t.collectField(ctx, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	t = pager.applyOrder(t)
+	nodes, err := t.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+// TacoOrderField defines the ordering field of Taco.
+type TacoOrderField struct {
+	// Value extracts the ordering value from the given Taco.
+	Value    func(*Taco) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) taco.OrderOption
+	toCursor func(*Taco) Cursor
+}
+
+// TacoOrder defines the ordering of Taco.
+type TacoOrder struct {
+	Direction OrderDirection  `json:"direction"`
+	Field     *TacoOrderField `json:"field"`
+}
+
+// DefaultTacoOrder is the default ordering of Taco.
+var DefaultTacoOrder = &TacoOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TacoOrderField{
+		Value: func(t *Taco) (ent.Value, error) {
+			return t.ID, nil
+		},
+		column: taco.FieldID,
+		toTerm: taco.ByID,
+		toCursor: func(t *Taco) Cursor {
+			return Cursor{ID: t.ID}
+		},
+	},
+}
+
+// ToEdge converts Taco into TacoEdge.
+func (t *Taco) ToEdge(order *TacoOrder) *TacoEdge {
+	if order == nil {
+		order = DefaultTacoOrder
+	}
+	return &TacoEdge{
+		Node:   t,
+		Cursor: order.Field.toCursor(t),
 	}
 }
 

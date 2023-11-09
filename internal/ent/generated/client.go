@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"gocloud.dev/secrets"
 
@@ -47,6 +48,8 @@ type Client struct {
 	RefreshToken *RefreshTokenClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
+	// Taco is the client for interacting with the Taco builders.
+	Taco *TacoClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -69,6 +72,7 @@ func (c *Client) init() {
 	c.OrganizationSettings = NewOrganizationSettingsClient(c.config)
 	c.RefreshToken = NewRefreshTokenClient(c.config)
 	c.Session = NewSessionClient(c.config)
+	c.Taco = NewTacoClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -172,6 +176,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OrganizationSettings: NewOrganizationSettingsClient(cfg),
 		RefreshToken:         NewRefreshTokenClient(cfg),
 		Session:              NewSessionClient(cfg),
+		Taco:                 NewTacoClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
 }
@@ -199,6 +204,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OrganizationSettings: NewOrganizationSettingsClient(cfg),
 		RefreshToken:         NewRefreshTokenClient(cfg),
 		Session:              NewSessionClient(cfg),
+		Taco:                 NewTacoClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
 }
@@ -230,7 +236,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Group, c.GroupSettings, c.Integration, c.Organization, c.OrganizationSettings,
-		c.RefreshToken, c.Session, c.User,
+		c.RefreshToken, c.Session, c.Taco, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -241,7 +247,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Group, c.GroupSettings, c.Integration, c.Organization, c.OrganizationSettings,
-		c.RefreshToken, c.Session, c.User,
+		c.RefreshToken, c.Session, c.Taco, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -264,6 +270,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RefreshToken.mutate(ctx, m)
 	case *SessionMutation:
 		return c.Session.mutate(ctx, m)
+	case *TacoMutation:
+		return c.Taco.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
@@ -1417,6 +1425,140 @@ func (c *SessionClient) mutate(ctx context.Context, m *SessionMutation) (Value, 
 	}
 }
 
+// TacoClient is a client for the Taco schema.
+type TacoClient struct {
+	config
+}
+
+// NewTacoClient returns a client for the Taco from the given config.
+func NewTacoClient(c config) *TacoClient {
+	return &TacoClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `taco.Hooks(f(g(h())))`.
+func (c *TacoClient) Use(hooks ...Hook) {
+	c.hooks.Taco = append(c.hooks.Taco, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `taco.Intercept(f(g(h())))`.
+func (c *TacoClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Taco = append(c.inters.Taco, interceptors...)
+}
+
+// Create returns a builder for creating a Taco entity.
+func (c *TacoClient) Create() *TacoCreate {
+	mutation := newTacoMutation(c.config, OpCreate)
+	return &TacoCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Taco entities.
+func (c *TacoClient) CreateBulk(builders ...*TacoCreate) *TacoCreateBulk {
+	return &TacoCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TacoClient) MapCreateBulk(slice any, setFunc func(*TacoCreate, int)) *TacoCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TacoCreateBulk{err: fmt.Errorf("calling to TacoClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TacoCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TacoCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Taco.
+func (c *TacoClient) Update() *TacoUpdate {
+	mutation := newTacoMutation(c.config, OpUpdate)
+	return &TacoUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TacoClient) UpdateOne(t *Taco) *TacoUpdateOne {
+	mutation := newTacoMutation(c.config, OpUpdateOne, withTaco(t))
+	return &TacoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TacoClient) UpdateOneID(id string) *TacoUpdateOne {
+	mutation := newTacoMutation(c.config, OpUpdateOne, withTacoID(id))
+	return &TacoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Taco.
+func (c *TacoClient) Delete() *TacoDelete {
+	mutation := newTacoMutation(c.config, OpDelete)
+	return &TacoDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TacoClient) DeleteOne(t *Taco) *TacoDeleteOne {
+	return c.DeleteOneID(t.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TacoClient) DeleteOneID(id string) *TacoDeleteOne {
+	builder := c.Delete().Where(taco.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TacoDeleteOne{builder}
+}
+
+// Query returns a query builder for Taco.
+func (c *TacoClient) Query() *TacoQuery {
+	return &TacoQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTaco},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Taco entity by its id.
+func (c *TacoClient) Get(ctx context.Context, id string) (*Taco, error) {
+	return c.Query().Where(taco.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TacoClient) GetX(ctx context.Context, id string) *Taco {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TacoClient) Hooks() []Hook {
+	hooks := c.hooks.Taco
+	return append(hooks[:len(hooks):len(hooks)], taco.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *TacoClient) Interceptors() []Interceptor {
+	return c.inters.Taco
+}
+
+func (c *TacoClient) mutate(ctx context.Context, m *TacoMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TacoCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TacoUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TacoUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TacoDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown Taco mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -1612,11 +1754,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Group, GroupSettings, Integration, Organization, OrganizationSettings,
-		RefreshToken, Session, User []ent.Hook
+		RefreshToken, Session, Taco, User []ent.Hook
 	}
 	inters struct {
 		Group, GroupSettings, Integration, Organization, OrganizationSettings,
-		RefreshToken, Session, User []ent.Interceptor
+		RefreshToken, Session, Taco, User []ent.Interceptor
 	}
 )
 

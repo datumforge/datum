@@ -27,5 +27,8 @@ type RefreshToken func(*sql.Selector)
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)
 
+// Taco is the predicate function for taco builders.
+type Taco func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

@@ -35,11 +35,13 @@ type Query struct {
 	Organizations             OrganizationConnection         "json:\"organizations\" graphql:\"organizations\""
 	OrganizationSettingsSlice OrganizationSettingsConnection "json:\"organizationSettingsSlice\" graphql:\"organizationSettingsSlice\""
 	Sessions                  SessionConnection              "json:\"sessions\" graphql:\"sessions\""
+	Tacos                     []*Taco                        "json:\"tacos\" graphql:\"tacos\""
 	Users                     UserConnection                 "json:\"users\" graphql:\"users\""
 	Group                     Group                          "json:\"group\" graphql:\"group\""
 	Integration               Integration                    "json:\"integration\" graphql:\"integration\""
 	Organization              Organization                   "json:\"organization\" graphql:\"organization\""
 	Session                   Session                        "json:\"session\" graphql:\"session\""
+	Taco                      Taco                           "json:\"taco\" graphql:\"taco\""
 	User                      User                           "json:\"user\" graphql:\"user\""
 	Service                   Service                        "json:\"_service\" graphql:\"_service\""
 }
@@ -56,6 +58,9 @@ type Mutation struct {
 	CreateSession      SessionCreatePayload      "json:\"createSession\" graphql:\"createSession\""
 	UpdateSession      SessionUpdatePayload      "json:\"updateSession\" graphql:\"updateSession\""
 	DeleteSession      SessionDeletePayload      "json:\"deleteSession\" graphql:\"deleteSession\""
+	CreateTaco         TacoCreatePayload         "json:\"createTaco\" graphql:\"createTaco\""
+	UpdateTaco         TacoUpdatePayload         "json:\"updateTaco\" graphql:\"updateTaco\""
+	DeleteTaco         TacoDeletePayload         "json:\"deleteTaco\" graphql:\"deleteTaco\""
 	CreateUser         UserCreatePayload         "json:\"createUser\" graphql:\"createUser\""
 	UpdateUser         UserUpdatePayload         "json:\"updateUser\" graphql:\"updateUser\""
 	DeleteUser         UserDeletePayload         "json:\"deleteUser\" graphql:\"deleteUser\""
@@ -490,4 +495,12 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 	}
 
 	return &res, nil
+}
+
+var DocumentOperationNames = map[string]string{
+	GetOrganizationByIDDocument: "GetOrganizationByID",
+	GetAllOrganizationsDocument: "GetAllOrganizations",
+	CreateOrganizationDocument:  "CreateOrganization",
+	UpdateOrganizationDocument:  "UpdateOrganization",
+	DeleteOrganizationDocument:  "DeleteOrganization",
 }

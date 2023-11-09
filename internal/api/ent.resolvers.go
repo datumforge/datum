@@ -52,6 +52,11 @@ func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[strin
 	return r.client.Session.Query().Paginate(ctx, after, first, before, last, generated.WithSessionFilter(where.Filter))
 }
 
+// Tacos is the resolver for the tacos field.
+func (r *queryResolver) Tacos(ctx context.Context) ([]*generated.Taco, error) {
+	panic(fmt.Errorf("not implemented: Tacos - tacos"))
+}
+
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))

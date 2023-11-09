@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -1017,6 +1018,113 @@ func newSessionPaginateArgs(rv map[string]any) *sessionPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*SessionWhereInput); ok {
 		args.opts = append(args.opts, WithSessionFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (t *TacoQuery) CollectFields(ctx context.Context, satisfies ...string) (*TacoQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return t, nil
+	}
+	if err := t.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func (t *TacoQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(taco.Columns))
+		selectedFields = []string{taco.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[taco.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, taco.FieldCreatedAt)
+				fieldSeen[taco.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[taco.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, taco.FieldUpdatedAt)
+				fieldSeen[taco.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[taco.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, taco.FieldCreatedBy)
+				fieldSeen[taco.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[taco.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, taco.FieldUpdatedBy)
+				fieldSeen[taco.FieldUpdatedBy] = struct{}{}
+			}
+		case "tier":
+			if _, ok := fieldSeen[taco.FieldTier]; !ok {
+				selectedFields = append(selectedFields, taco.FieldTier)
+				fieldSeen[taco.FieldTier] = struct{}{}
+			}
+		case "stripeCustomerID":
+			if _, ok := fieldSeen[taco.FieldStripeCustomerID]; !ok {
+				selectedFields = append(selectedFields, taco.FieldStripeCustomerID)
+				fieldSeen[taco.FieldStripeCustomerID] = struct{}{}
+			}
+		case "stripeSubscriptionID":
+			if _, ok := fieldSeen[taco.FieldStripeSubscriptionID]; !ok {
+				selectedFields = append(selectedFields, taco.FieldStripeSubscriptionID)
+				fieldSeen[taco.FieldStripeSubscriptionID] = struct{}{}
+			}
+		case "expiresAt":
+			if _, ok := fieldSeen[taco.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, taco.FieldExpiresAt)
+				fieldSeen[taco.FieldExpiresAt] = struct{}{}
+			}
+		case "cancelled":
+			if _, ok := fieldSeen[taco.FieldCancelled]; !ok {
+				selectedFields = append(selectedFields, taco.FieldCancelled)
+				fieldSeen[taco.FieldCancelled] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		t.Select(selectedFields...)
+	}
+	return nil
+}
+
+type tacoPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TacoPaginateOption
+}
+
+func newTacoPaginateArgs(rv map[string]any) *tacoPaginateArgs {
+	args := &tacoPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*TacoWhereInput); ok {
+		args.opts = append(args.opts, WithTacoFilter(v.Filter))
 	}
 	return args
 }

@@ -26,6 +26,8 @@ type Tx struct {
 	RefreshToken *RefreshTokenClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
+	// Taco is the client for interacting with the Taco builders.
+	Taco *TacoClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -166,6 +168,7 @@ func (tx *Tx) init() {
 	tx.OrganizationSettings = NewOrganizationSettingsClient(tx.config)
 	tx.RefreshToken = NewRefreshTokenClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
+	tx.Taco = NewTacoClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

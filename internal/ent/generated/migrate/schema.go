@@ -207,6 +207,25 @@ var (
 			},
 		},
 	}
+	// TacosColumns holds the columns for the "tacos" table.
+	TacosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "tier", Type: field.TypeEnum, Enums: []string{"free", "pro", "enterprise"}, Default: "free"},
+		{Name: "stripe_customer_id", Type: field.TypeString, Nullable: true},
+		{Name: "stripe_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "cancelled", Type: field.TypeBool, Default: false},
+	}
+	// TacosTable holds the schema information for the "tacos" table.
+	TacosTable = &schema.Table{
+		Name:       "tacos",
+		Columns:    TacosColumns,
+		PrimaryKey: []*schema.Column{TacosColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -298,6 +317,7 @@ var (
 		OrganizationSettingsTable,
 		RefreshTokensTable,
 		SessionsTable,
+		TacosTable,
 		UsersTable,
 		GroupUsersTable,
 		UserOrganizationsTable,

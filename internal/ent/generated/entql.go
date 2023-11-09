@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"entgo.io/ent/dialect/sql"
@@ -21,7 +22,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 8)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 9)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
@@ -178,6 +179,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   taco.Table,
+			Columns: taco.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: taco.FieldID,
+			},
+		},
+		Type: "Taco",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			taco.FieldCreatedAt:            {Type: field.TypeTime, Column: taco.FieldCreatedAt},
+			taco.FieldUpdatedAt:            {Type: field.TypeTime, Column: taco.FieldUpdatedAt},
+			taco.FieldCreatedBy:            {Type: field.TypeString, Column: taco.FieldCreatedBy},
+			taco.FieldUpdatedBy:            {Type: field.TypeString, Column: taco.FieldUpdatedBy},
+			taco.FieldTier:                 {Type: field.TypeEnum, Column: taco.FieldTier},
+			taco.FieldStripeCustomerID:     {Type: field.TypeString, Column: taco.FieldStripeCustomerID},
+			taco.FieldStripeSubscriptionID: {Type: field.TypeString, Column: taco.FieldStripeSubscriptionID},
+			taco.FieldExpiresAt:            {Type: field.TypeTime, Column: taco.FieldExpiresAt},
+			taco.FieldCancelled:            {Type: field.TypeBool, Column: taco.FieldCancelled},
+		},
+	}
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -1137,6 +1160,91 @@ func (f *SessionFilter) WhereHasUsersWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (tq *TacoQuery) addPredicate(pred func(s *sql.Selector)) {
+	tq.predicates = append(tq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the TacoQuery builder.
+func (tq *TacoQuery) Filter() *TacoFilter {
+	return &TacoFilter{config: tq.config, predicateAdder: tq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *TacoMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the TacoMutation builder.
+func (m *TacoMutation) Filter() *TacoFilter {
+	return &TacoFilter{config: m.config, predicateAdder: m}
+}
+
+// TacoFilter provides a generic filtering capability at runtime for TacoQuery.
+type TacoFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *TacoFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *TacoFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(taco.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *TacoFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(taco.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *TacoFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(taco.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *TacoFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(taco.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *TacoFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(taco.FieldUpdatedBy))
+}
+
+// WhereTier applies the entql string predicate on the tier field.
+func (f *TacoFilter) WhereTier(p entql.StringP) {
+	f.Where(p.Field(taco.FieldTier))
+}
+
+// WhereStripeCustomerID applies the entql string predicate on the stripe_customer_id field.
+func (f *TacoFilter) WhereStripeCustomerID(p entql.StringP) {
+	f.Where(p.Field(taco.FieldStripeCustomerID))
+}
+
+// WhereStripeSubscriptionID applies the entql string predicate on the stripe_subscription_id field.
+func (f *TacoFilter) WhereStripeSubscriptionID(p entql.StringP) {
+	f.Where(p.Field(taco.FieldStripeSubscriptionID))
+}
+
+// WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
+func (f *TacoFilter) WhereExpiresAt(p entql.TimeP) {
+	f.Where(p.Field(taco.FieldExpiresAt))
+}
+
+// WhereCancelled applies the entql bool predicate on the cancelled field.
+func (f *TacoFilter) WhereCancelled(p entql.BoolP) {
+	f.Where(p.Field(taco.FieldCancelled))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (uq *UserQuery) addPredicate(pred func(s *sql.Selector)) {
 	uq.predicates = append(uq.predicates, pred)
 }
@@ -1165,7 +1273,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

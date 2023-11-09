@@ -7,6 +7,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 )
 
 // CreateGroupInput represents a mutation input for creating groups.
@@ -707,6 +708,128 @@ func (c *SessionUpdate) SetInput(i UpdateSessionInput) *SessionUpdate {
 
 // SetInput applies the change-set in the UpdateSessionInput on the SessionUpdateOne builder.
 func (c *SessionUpdateOne) SetInput(i UpdateSessionInput) *SessionUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateTacoInput represents a mutation input for creating tacos.
+type CreateTacoInput struct {
+	CreatedAt            *time.Time
+	UpdatedAt            *time.Time
+	CreatedBy            *string
+	UpdatedBy            *string
+	Tier                 *taco.Tier
+	StripeCustomerID     *string
+	StripeSubscriptionID *string
+	ExpiresAt            *time.Time
+	Cancelled            *bool
+}
+
+// Mutate applies the CreateTacoInput on the TacoMutation builder.
+func (i *CreateTacoInput) Mutate(m *TacoMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tier; v != nil {
+		m.SetTier(*v)
+	}
+	if v := i.StripeCustomerID; v != nil {
+		m.SetStripeCustomerID(*v)
+	}
+	if v := i.StripeSubscriptionID; v != nil {
+		m.SetStripeSubscriptionID(*v)
+	}
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
+	if v := i.Cancelled; v != nil {
+		m.SetCancelled(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateTacoInput on the TacoCreate builder.
+func (c *TacoCreate) SetInput(i CreateTacoInput) *TacoCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTacoInput represents a mutation input for updating tacos.
+type UpdateTacoInput struct {
+	UpdatedAt                 *time.Time
+	ClearCreatedBy            bool
+	CreatedBy                 *string
+	ClearUpdatedBy            bool
+	UpdatedBy                 *string
+	Tier                      *taco.Tier
+	ClearStripeCustomerID     bool
+	StripeCustomerID          *string
+	ClearStripeSubscriptionID bool
+	StripeSubscriptionID      *string
+	ClearExpiresAt            bool
+	ExpiresAt                 *time.Time
+	Cancelled                 *bool
+}
+
+// Mutate applies the UpdateTacoInput on the TacoMutation builder.
+func (i *UpdateTacoInput) Mutate(m *TacoMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearCreatedBy {
+		m.ClearCreatedBy()
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Tier; v != nil {
+		m.SetTier(*v)
+	}
+	if i.ClearStripeCustomerID {
+		m.ClearStripeCustomerID()
+	}
+	if v := i.StripeCustomerID; v != nil {
+		m.SetStripeCustomerID(*v)
+	}
+	if i.ClearStripeSubscriptionID {
+		m.ClearStripeSubscriptionID()
+	}
+	if v := i.StripeSubscriptionID; v != nil {
+		m.SetStripeSubscriptionID(*v)
+	}
+	if i.ClearExpiresAt {
+		m.ClearExpiresAt()
+	}
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
+	if v := i.Cancelled; v != nil {
+		m.SetCancelled(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTacoInput on the TacoUpdate builder.
+func (c *TacoUpdate) SetInput(i UpdateTacoInput) *TacoUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTacoInput on the TacoUpdateOne builder.
+func (c *TacoUpdateOne) SetInput(i UpdateTacoInput) *TacoUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

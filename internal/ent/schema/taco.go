@@ -1,19 +1,21 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
-// Subscription holds the schema definition for the Subscription entity.
-type Subscription struct {
+// Taco holds the schema definition for the Subscription entity.
+type Taco struct {
 	ent.Schema
 }
 
 // Fields of the Subscription.
-func (Subscription) Fields() []ent.Field {
+func (Taco) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("tier").Values("free", "pro", "enterprise").Default("free"),
 		field.String("stripe_customer_id").Optional(),
@@ -23,14 +25,23 @@ func (Subscription) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Subscription
-func (Subscription) Edges() []ent.Edge {
+// Edges of the Taco
+func (Taco) Edges() []ent.Edge {
 	return []ent.Edge{}
 }
 
-// Mixin of the RefreshToken
-func (Subscription) Mixin() []ent.Mixin {
+// Mixin of the Taco
+func (Taco) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.IDMixin{},
+		mixin.AuditMixin{},
+	}
+}
+
+// Annotations of the Taco
+func (Taco) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }

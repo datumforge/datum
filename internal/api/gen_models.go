@@ -78,6 +78,24 @@ type SessionUpdatePayload struct {
 	Session *generated.Session `json:"session"`
 }
 
+// Return response for createTaco mutation
+type TacoCreatePayload struct {
+	// Created taco
+	Taco *generated.Taco `json:"taco"`
+}
+
+// Return response for deleteTaco mutation
+type TacoDeletePayload struct {
+	// Deleted taco ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateTaco mutation
+type TacoUpdatePayload struct {
+	// Updated taco
+	Taco *generated.Taco `json:"taco"`
+}
+
 // Return response for createUser mutation
 type UserCreatePayload struct {
 	// Created user

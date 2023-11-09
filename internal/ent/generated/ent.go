@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/taco"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -87,6 +88,7 @@ func checkColumn(table, column string) error {
 			organizationsettings.Table: organizationsettings.ValidColumn,
 			refreshtoken.Table:         refreshtoken.ValidColumn,
 			session.Table:              session.ValidColumn,
+			taco.Table:                 taco.ValidColumn,
 			user.Table:                 user.ValidColumn,
 		})
 	})

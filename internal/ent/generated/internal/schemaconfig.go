@@ -15,6 +15,7 @@ type SchemaConfig struct {
 	OrganizationSettings string // OrganizationSettings table.
 	RefreshToken         string // RefreshToken table.
 	Session              string // Session table.
+	Taco                 string // Taco table.
 	User                 string // User table.
 	UserOrganizations    string // User-organizations->Organization table.
 }

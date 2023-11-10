@@ -69,7 +69,7 @@ func TestQuery_Organizations(t *testing.T) {
 		require.NotNil(t, resp)
 		require.NotNil(t, resp.Organizations.Edges)
 
-		// make sure at two organizations are returned
+		// make sure at least two organizations are returned
 		assert.GreaterOrEqual(t, len(resp.Organizations.Edges), 2)
 
 		org1Found := false

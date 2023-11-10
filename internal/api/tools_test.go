@@ -45,6 +45,7 @@ func setupDB() {
 
 	logger := zap.NewNop()
 
+	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
 	if testDBURI == "" {
 		testDBURI = defaultDBURI
@@ -101,7 +102,7 @@ func graphTestClient() datumclient.DatumClient {
 
 	// setup interceptors
 	i := func(ctx context.Context, req *http.Request, gqlInfo *clientv2.GQLRequestInfo, res interface{}, next clientv2.RequestInterceptorFunc) error {
-		// TODO: Add Auth headers
+		// TODO: Add Auth Headers
 		return next(ctx, req, gqlInfo, res)
 	}
 
@@ -120,30 +121,3 @@ func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 
 	return w.Result(), nil
 }
-
-// type testServerConfig struct {
-// 	echoConfig        echox.Config
-// 	handlerMiddleware []echo.MiddlewareFunc
-// }
-
-// type testServerOption func(*testServerConfig) error
-
-// func newTestServer(options ...testServerOption) (*httptest.Server, error) {
-// 	tsc := new(testServerConfig)
-
-// 	for _, opt := range options {
-// 		if err := opt(tsc); err != nil {
-// 			return nil, err
-// 		}
-// 	}
-
-// 	srv, err := echox.NewServer(zap.NewNop(), tsc.echoConfig.WithMiddleware(tsc.handlerMiddleware...))
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	r := api.NewResolver(EntClient, zap.NewNop().Sugar())
-// 	srv.AddHandler(r.Handler(false))
-
-// 	return httptest.NewServer(srv.Handler()), nil
-// }

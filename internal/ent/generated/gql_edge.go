@@ -109,6 +109,14 @@ func (o *Organization) Integrations(ctx context.Context) (result []*Integration,
 	return result, err
 }
 
+func (o *Organization) Setting(ctx context.Context) (*OrganizationSettings, error) {
+	result, err := o.Edges.SettingOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QuerySetting().Only(ctx)
+	}
+	return result, err
+}
+
 func (pat *PersonalAccessToken) User(ctx context.Context) (*User, error) {
 	result, err := pat.Edges.UserOrErr()
 	if IsNotLoaded(err) {
@@ -169,6 +177,14 @@ func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAcce
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryPersonalAccessTokens().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) Setting(ctx context.Context) (*UserSettings, error) {
+	result, err := u.Edges.SettingOrErr()
+	if IsNotLoaded(err) {
+		result, err = u.QuerySetting().Only(ctx)
 	}
 	return result, err
 }

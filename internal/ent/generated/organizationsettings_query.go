@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
@@ -19,12 +20,14 @@ import (
 // OrganizationSettingsQuery is the builder for querying OrganizationSettings entities.
 type OrganizationSettingsQuery struct {
 	config
-	ctx        *QueryContext
-	order      []organizationsettings.OrderOption
-	inters     []Interceptor
-	predicates []predicate.OrganizationSettings
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*OrganizationSettings) error
+	ctx              *QueryContext
+	order            []organizationsettings.OrderOption
+	inters           []Interceptor
+	predicates       []predicate.OrganizationSettings
+	withOrgnaization *OrganizationQuery
+	withFKs          bool
+	modifiers        []func(*sql.Selector)
+	loadTotal        []func(context.Context, []*OrganizationSettings) error
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -59,6 +62,31 @@ func (osq *OrganizationSettingsQuery) Unique(unique bool) *OrganizationSettingsQ
 func (osq *OrganizationSettingsQuery) Order(o ...organizationsettings.OrderOption) *OrganizationSettingsQuery {
 	osq.order = append(osq.order, o...)
 	return osq
+}
+
+// QueryOrgnaization chains the current query on the "orgnaization" edge.
+func (osq *OrganizationSettingsQuery) QueryOrgnaization() *OrganizationQuery {
+	query := (&OrganizationClient{config: osq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := osq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := osq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organizationsettings.Table, organizationsettings.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, organizationsettings.OrgnaizationTable, organizationsettings.OrgnaizationColumn),
+		)
+		schemaConfig := osq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationSettings
+		fromU = sqlgraph.SetNeighbors(osq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first OrganizationSettings entity from the query.
@@ -248,15 +276,27 @@ func (osq *OrganizationSettingsQuery) Clone() *OrganizationSettingsQuery {
 		return nil
 	}
 	return &OrganizationSettingsQuery{
-		config:     osq.config,
-		ctx:        osq.ctx.Clone(),
-		order:      append([]organizationsettings.OrderOption{}, osq.order...),
-		inters:     append([]Interceptor{}, osq.inters...),
-		predicates: append([]predicate.OrganizationSettings{}, osq.predicates...),
+		config:           osq.config,
+		ctx:              osq.ctx.Clone(),
+		order:            append([]organizationsettings.OrderOption{}, osq.order...),
+		inters:           append([]Interceptor{}, osq.inters...),
+		predicates:       append([]predicate.OrganizationSettings{}, osq.predicates...),
+		withOrgnaization: osq.withOrgnaization.Clone(),
 		// clone intermediate query.
 		sql:  osq.sql.Clone(),
 		path: osq.path,
 	}
+}
+
+// WithOrgnaization tells the query-builder to eager-load the nodes that are connected to
+// the "orgnaization" edge. The optional arguments are used to configure the query builder of the edge.
+func (osq *OrganizationSettingsQuery) WithOrgnaization(opts ...func(*OrganizationQuery)) *OrganizationSettingsQuery {
+	query := (&OrganizationClient{config: osq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	osq.withOrgnaization = query
+	return osq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -335,15 +375,26 @@ func (osq *OrganizationSettingsQuery) prepareQuery(ctx context.Context) error {
 
 func (osq *OrganizationSettingsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OrganizationSettings, error) {
 	var (
-		nodes = []*OrganizationSettings{}
-		_spec = osq.querySpec()
+		nodes       = []*OrganizationSettings{}
+		withFKs     = osq.withFKs
+		_spec       = osq.querySpec()
+		loadedTypes = [1]bool{
+			osq.withOrgnaization != nil,
+		}
 	)
+	if osq.withOrgnaization != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, organizationsettings.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*OrganizationSettings).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &OrganizationSettings{config: osq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	_spec.Node.Schema = osq.schemaConfig.OrganizationSettings
@@ -360,12 +411,51 @@ func (osq *OrganizationSettingsQuery) sqlAll(ctx context.Context, hooks ...query
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := osq.withOrgnaization; query != nil {
+		if err := osq.loadOrgnaization(ctx, query, nodes, nil,
+			func(n *OrganizationSettings, e *Organization) { n.Edges.Orgnaization = e }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range osq.loadTotal {
 		if err := osq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (osq *OrganizationSettingsQuery) loadOrgnaization(ctx context.Context, query *OrganizationQuery, nodes []*OrganizationSettings, init func(*OrganizationSettings), assign func(*OrganizationSettings, *Organization)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*OrganizationSettings)
+	for i := range nodes {
+		if nodes[i].organization_setting == nil {
+			continue
+		}
+		fk := *nodes[i].organization_setting
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(organization.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "organization_setting" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (osq *OrganizationSettingsQuery) sqlCount(ctx context.Context) (int, error) {

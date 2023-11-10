@@ -4,6 +4,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -17,7 +18,8 @@ type OrganizationSettings struct {
 // Fields of the OrganizationSettings
 func (OrganizationSettings) Fields() []ent.Field {
 	return []ent.Field{
-		field.JSON("domains", []string{}),
+		field.JSON("domains", []string{}).
+			Comment("domains associated with the organization"),
 		field.Text("sso_cert").
 			Default(""),
 		field.String("sso_entrypoint").
@@ -35,12 +37,19 @@ func (OrganizationSettings) Fields() []ent.Field {
 			NotEmpty(),
 		field.String("tax_identifier").
 			Comment("Usually government-issued tax ID or business ID such as ABN in Australia"),
+		field.JSON("tags", []string{}).
+			Comment("tags associated with the object").
+			Default([]string{}).
+			Optional(),
 	}
 }
 
 // Edges of the OrganizationSettings
 func (OrganizationSettings) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.From("orgnaization", Organization.Type).Ref("setting").Unique().Annotations(
+			entgql.Skip(entgql.SkipAll)),
+	}
 }
 
 // Annotations of the OrganizationSettings

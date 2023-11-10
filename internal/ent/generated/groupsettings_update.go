@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
@@ -102,6 +103,18 @@ func (gsu *GroupSettingsUpdate) SetNillableJoinPolicy(gp *groupsettings.JoinPoli
 	if gp != nil {
 		gsu.SetJoinPolicy(*gp)
 	}
+	return gsu
+}
+
+// SetTags sets the "tags" field.
+func (gsu *GroupSettingsUpdate) SetTags(s []string) *GroupSettingsUpdate {
+	gsu.mutation.SetTags(s)
+	return gsu
+}
+
+// AppendTags appends s to the "tags" field.
+func (gsu *GroupSettingsUpdate) AppendTags(s []string) *GroupSettingsUpdate {
+	gsu.mutation.AppendTags(s)
 	return gsu
 }
 
@@ -224,6 +237,14 @@ func (gsu *GroupSettingsUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := gsu.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsettings.FieldJoinPolicy, field.TypeEnum, value)
+	}
+	if value, ok := gsu.mutation.Tags(); ok {
+		_spec.SetField(groupsettings.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gsu.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupsettings.FieldTags, value)
+		})
 	}
 	if gsu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -349,6 +370,18 @@ func (gsuo *GroupSettingsUpdateOne) SetNillableJoinPolicy(gp *groupsettings.Join
 	if gp != nil {
 		gsuo.SetJoinPolicy(*gp)
 	}
+	return gsuo
+}
+
+// SetTags sets the "tags" field.
+func (gsuo *GroupSettingsUpdateOne) SetTags(s []string) *GroupSettingsUpdateOne {
+	gsuo.mutation.SetTags(s)
+	return gsuo
+}
+
+// AppendTags appends s to the "tags" field.
+func (gsuo *GroupSettingsUpdateOne) AppendTags(s []string) *GroupSettingsUpdateOne {
+	gsuo.mutation.AppendTags(s)
 	return gsuo
 }
 
@@ -501,6 +534,14 @@ func (gsuo *GroupSettingsUpdateOne) sqlSave(ctx context.Context) (_node *GroupSe
 	}
 	if value, ok := gsuo.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsettings.FieldJoinPolicy, field.TypeEnum, value)
+	}
+	if value, ok := gsuo.mutation.Tags(); ok {
+		_spec.SetField(groupsettings.FieldTags, field.TypeJSON, value)
+	}
+	if value, ok := gsuo.mutation.AppendedTags(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, groupsettings.FieldTags, value)
+		})
 	}
 	if gsuo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

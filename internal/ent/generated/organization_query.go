@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -32,6 +33,7 @@ type OrganizationQuery struct {
 	withUsers             *UserQuery
 	withGroups            *GroupQuery
 	withIntegrations      *IntegrationQuery
+	withSetting           *OrganizationSettingsQuery
 	modifiers             []func(*sql.Selector)
 	loadTotal             []func(context.Context, []*Organization) error
 	withNamedChildren     map[string]*OrganizationQuery
@@ -193,6 +195,31 @@ func (oq *OrganizationQuery) QueryIntegrations() *IntegrationQuery {
 		schemaConfig := oq.schemaConfig
 		step.To.Schema = schemaConfig.Integration
 		step.Edge.Schema = schemaConfig.Integration
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySetting chains the current query on the "setting" edge.
+func (oq *OrganizationQuery) QuerySetting() *OrganizationSettingsQuery {
+	query := (&OrganizationSettingsClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(organizationsettings.Table, organizationsettings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, organization.SettingTable, organization.SettingColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.OrganizationSettings
+		step.Edge.Schema = schemaConfig.OrganizationSettings
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -396,6 +423,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withUsers:        oq.withUsers.Clone(),
 		withGroups:       oq.withGroups.Clone(),
 		withIntegrations: oq.withIntegrations.Clone(),
+		withSetting:      oq.withSetting.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -454,6 +482,17 @@ func (oq *OrganizationQuery) WithIntegrations(opts ...func(*IntegrationQuery)) *
 		opt(query)
 	}
 	oq.withIntegrations = query
+	return oq
+}
+
+// WithSetting tells the query-builder to eager-load the nodes that are connected to
+// the "setting" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithSetting(opts ...func(*OrganizationSettingsQuery)) *OrganizationQuery {
+	query := (&OrganizationSettingsClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withSetting = query
 	return oq
 }
 
@@ -535,12 +574,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withUsers != nil,
 			oq.withGroups != nil,
 			oq.withIntegrations != nil,
+			oq.withSetting != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -597,6 +637,12 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadIntegrations(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Integrations = []*Integration{} },
 			func(n *Organization, e *Integration) { n.Edges.Integrations = append(n.Edges.Integrations, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withSetting; query != nil {
+		if err := oq.loadSetting(ctx, query, nodes, nil,
+			func(n *Organization, e *OrganizationSettings) { n.Edges.Setting = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -814,6 +860,34 @@ func (oq *OrganizationQuery) loadIntegrations(ctx context.Context, query *Integr
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "organization_integrations" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (oq *OrganizationQuery) loadSetting(ctx context.Context, query *OrganizationSettingsQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrganizationSettings)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.OrganizationSettings(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.SettingColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.organization_setting
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "organization_setting" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "organization_setting" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

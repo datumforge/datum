@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -112,20 +113,6 @@ func (uc *UserCreate) SetNillableDisplayName(s *string) *UserCreate {
 	return uc
 }
 
-// SetLocked sets the "locked" field.
-func (uc *UserCreate) SetLocked(b bool) *UserCreate {
-	uc.mutation.SetLocked(b)
-	return uc
-}
-
-// SetNillableLocked sets the "locked" field if the given value is not nil.
-func (uc *UserCreate) SetNillableLocked(b *bool) *UserCreate {
-	if b != nil {
-		uc.SetLocked(*b)
-	}
-	return uc
-}
-
 // SetAvatarRemoteURL sets the "avatar_remote_url" field.
 func (uc *UserCreate) SetAvatarRemoteURL(s string) *UserCreate {
 	uc.mutation.SetAvatarRemoteURL(s)
@@ -168,44 +155,30 @@ func (uc *UserCreate) SetNillableAvatarUpdatedAt(t *time.Time) *UserCreate {
 	return uc
 }
 
-// SetSilencedAt sets the "silenced_at" field.
-func (uc *UserCreate) SetSilencedAt(t time.Time) *UserCreate {
-	uc.mutation.SetSilencedAt(t)
+// SetLastSeen sets the "last_seen" field.
+func (uc *UserCreate) SetLastSeen(t time.Time) *UserCreate {
+	uc.mutation.SetLastSeen(t)
 	return uc
 }
 
-// SetNillableSilencedAt sets the "silenced_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableSilencedAt(t *time.Time) *UserCreate {
+// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLastSeen(t *time.Time) *UserCreate {
 	if t != nil {
-		uc.SetSilencedAt(*t)
+		uc.SetLastSeen(*t)
 	}
 	return uc
 }
 
-// SetSuspendedAt sets the "suspended_at" field.
-func (uc *UserCreate) SetSuspendedAt(t time.Time) *UserCreate {
-	uc.mutation.SetSuspendedAt(t)
+// SetPasswordHash sets the "passwordHash" field.
+func (uc *UserCreate) SetPasswordHash(s string) *UserCreate {
+	uc.mutation.SetPasswordHash(s)
 	return uc
 }
 
-// SetNillableSuspendedAt sets the "suspended_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableSuspendedAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetSuspendedAt(*t)
-	}
-	return uc
-}
-
-// SetRecoveryCode sets the "recovery_code" field.
-func (uc *UserCreate) SetRecoveryCode(s string) *UserCreate {
-	uc.mutation.SetRecoveryCode(s)
-	return uc
-}
-
-// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
-func (uc *UserCreate) SetNillableRecoveryCode(s *string) *UserCreate {
+// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePasswordHash(s *string) *UserCreate {
 	if s != nil {
-		uc.SetRecoveryCode(*s)
+		uc.SetPasswordHash(*s)
 	}
 	return uc
 }
@@ -284,6 +257,17 @@ func (uc *UserCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserCr
 	return uc.AddPersonalAccessTokenIDs(ids...)
 }
 
+// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+func (uc *UserCreate) SetSettingID(id string) *UserCreate {
+	uc.mutation.SetSettingID(id)
+	return uc
+}
+
+// SetSetting sets the "setting" edge to the UserSettings entity.
+func (uc *UserCreate) SetSetting(u *UserSettings) *UserCreate {
+	return uc.SetSettingID(u.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -339,10 +323,6 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultDisplayName
 		uc.mutation.SetDisplayName(v)
 	}
-	if _, ok := uc.mutation.Locked(); !ok {
-		v := user.DefaultLocked
-		uc.mutation.SetLocked(v)
-	}
 	if _, ok := uc.mutation.ID(); !ok {
 		if user.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
@@ -393,9 +373,6 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "User.display_name": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.Locked(); !ok {
-		return &ValidationError{Name: "locked", err: errors.New(`generated: missing required field "User.locked"`)}
-	}
 	if v, ok := uc.mutation.AvatarRemoteURL(); ok {
 		if err := user.AvatarRemoteURLValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_remote_url", err: fmt.Errorf(`generated: validator failed for field "User.avatar_remote_url": %w`, err)}
@@ -405,6 +382,9 @@ func (uc *UserCreate) check() error {
 		if err := user.AvatarLocalFileValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
+	}
+	if _, ok := uc.mutation.SettingID(); !ok {
+		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "User.setting"`)}
 	}
 	return nil
 }
@@ -474,10 +454,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
 		_node.DisplayName = value
 	}
-	if value, ok := uc.mutation.Locked(); ok {
-		_spec.SetField(user.FieldLocked, field.TypeBool, value)
-		_node.Locked = value
-	}
 	if value, ok := uc.mutation.AvatarRemoteURL(); ok {
 		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
 		_node.AvatarRemoteURL = &value
@@ -490,17 +466,13 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldAvatarUpdatedAt, field.TypeTime, value)
 		_node.AvatarUpdatedAt = &value
 	}
-	if value, ok := uc.mutation.SilencedAt(); ok {
-		_spec.SetField(user.FieldSilencedAt, field.TypeTime, value)
-		_node.SilencedAt = &value
+	if value, ok := uc.mutation.LastSeen(); ok {
+		_spec.SetField(user.FieldLastSeen, field.TypeTime, value)
+		_node.LastSeen = value
 	}
-	if value, ok := uc.mutation.SuspendedAt(); ok {
-		_spec.SetField(user.FieldSuspendedAt, field.TypeTime, value)
-		_node.SuspendedAt = &value
-	}
-	if value, ok := uc.mutation.RecoveryCode(); ok {
-		_spec.SetField(user.FieldRecoveryCode, field.TypeString, value)
-		_node.RecoveryCode = &value
+	if value, ok := uc.mutation.PasswordHash(); ok {
+		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
+		_node.PasswordHash = &value
 	}
 	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -565,6 +537,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.PersonalAccessToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.SettingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.SettingTable,
+			Columns: []string{user.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.UserSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

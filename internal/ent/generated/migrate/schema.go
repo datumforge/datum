@@ -37,6 +37,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "logo_url", Type: field.TypeString},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
 		{Name: "organization_groups", Type: field.TypeString, Nullable: true},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
@@ -47,7 +48,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "groups_organizations_groups",
-				Columns:    []*schema.Column{GroupsColumns[8]},
+				Columns:    []*schema.Column{GroupsColumns[9]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -56,7 +57,7 @@ var (
 			{
 				Name:    "group_name_organization_groups",
 				Unique:  true,
-				Columns: []*schema.Column{GroupsColumns[5], GroupsColumns[8]},
+				Columns: []*schema.Column{GroupsColumns[5], GroupsColumns[9]},
 			},
 		},
 	}
@@ -69,6 +70,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
 		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "OPEN"},
+		{Name: "tags", Type: field.TypeJSON},
 		{Name: "group_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// GroupSettingsTable holds the schema information for the "group_settings" table.
@@ -79,7 +81,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "group_settings_groups_setting",
-				Columns:    []*schema.Column{GroupSettingsColumns[7]},
+				Columns:    []*schema.Column{GroupSettingsColumns[8]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -143,6 +145,7 @@ var (
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Unique: true, Size: 160},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
@@ -154,7 +157,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organizations_organizations_children",
-				Columns:    []*schema.Column{OrganizationsColumns[7]},
+				Columns:    []*schema.Column{OrganizationsColumns[8]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -176,12 +179,22 @@ var (
 		{Name: "billing_phone", Type: field.TypeString},
 		{Name: "billing_address", Type: field.TypeString},
 		{Name: "tax_identifier", Type: field.TypeString},
+		{Name: "tags", Type: field.TypeJSON, Nullable: true},
+		{Name: "organization_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// OrganizationSettingsTable holds the schema information for the "organization_settings" table.
 	OrganizationSettingsTable = &schema.Table{
 		Name:       "organization_settings",
 		Columns:    OrganizationSettingsColumns,
 		PrimaryKey: []*schema.Column{OrganizationSettingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "organization_settings_organizations_setting",
+				Columns:    []*schema.Column{OrganizationSettingsColumns[15]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// PersonalAccessTokensColumns holds the columns for the "personal_access_tokens" table.
 	PersonalAccessTokensColumns = []*schema.Column{
@@ -295,13 +308,11 @@ var (
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
-		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_local_file", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
-		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
-		{Name: "recovery_code", Type: field.TypeString, Nullable: true},
+		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
+		{Name: "password_hash", Type: field.TypeString, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -313,6 +324,38 @@ var (
 				Name:    "user_id",
 				Unique:  true,
 				Columns: []*schema.Column{UsersColumns[0]},
+			},
+		},
+	}
+	// UserSettingsColumns holds the columns for the "user_settings" table.
+	UserSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "locked", Type: field.TypeBool, Default: false},
+		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
+		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
+		{Name: "recovery_code", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
+		{Name: "permissions", Type: field.TypeJSON},
+		{Name: "email_confirmed", Type: field.TypeBool, Default: true},
+		{Name: "tags", Type: field.TypeJSON},
+		{Name: "user_setting", Type: field.TypeString, Unique: true, Nullable: true},
+	}
+	// UserSettingsTable holds the schema information for the "user_settings" table.
+	UserSettingsTable = &schema.Table{
+		Name:       "user_settings",
+		Columns:    UserSettingsColumns,
+		PrimaryKey: []*schema.Column{UserSettingsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_settings_users_setting",
+				Columns:    []*schema.Column{UserSettingsColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -379,6 +422,7 @@ var (
 		RefreshTokensTable,
 		SessionsTable,
 		UsersTable,
+		UserSettingsTable,
 		GroupUsersTable,
 		UserOrganizationsTable,
 	}
@@ -389,9 +433,11 @@ func init() {
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[1].RefTable = UsersTable
+	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
 	UserOrganizationsTable.ForeignKeys[0].RefTable = UsersTable

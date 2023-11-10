@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"strings"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -39,6 +41,22 @@ func (Group) Fields() []ent.Field {
 		field.String("logo_url").NotEmpty().Annotations(
 			entgql.Skip(entgql.SkipWhereInput),
 		),
+		field.String("display_name").
+			Comment("The group's displayed 'friendly' name").
+			MaxLen(nameMaxLen).
+			NotEmpty().
+			Default("unknown").
+			Annotations(
+				entgql.OrderField("display_name"),
+			).
+			Validate(
+				func(s string) error {
+					if strings.Contains(s, " ") {
+						return ErrContainsSpaces
+					}
+					return nil
+				},
+			),
 	}
 }
 

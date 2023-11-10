@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 	"github.com/datumforge/datum/internal/ent/schema"
 
 	"entgo.io/ent"
@@ -95,6 +96,27 @@ func init() {
 	groupDescLogoURL := groupFields[2].Descriptor()
 	// group.LogoURLValidator is a validator for the "logo_url" field. It is called by the builders before save.
 	group.LogoURLValidator = groupDescLogoURL.Validators[0].(func(string) error)
+	// groupDescDisplayName is the schema descriptor for display_name field.
+	groupDescDisplayName := groupFields[3].Descriptor()
+	// group.DefaultDisplayName holds the default value on creation for the display_name field.
+	group.DefaultDisplayName = groupDescDisplayName.Default.(string)
+	// group.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	group.DisplayNameValidator = func() func(string) error {
+		validators := groupDescDisplayName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(display_name string) error {
+			for _, fn := range fns {
+				if err := fn(display_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// groupDescID is the schema descriptor for id field.
 	groupDescID := groupMixinFields2[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
@@ -118,6 +140,10 @@ func init() {
 	groupsettings.DefaultUpdatedAt = groupsettingsDescUpdatedAt.Default.(func() time.Time)
 	// groupsettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	groupsettings.UpdateDefaultUpdatedAt = groupsettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupsettingsDescTags is the schema descriptor for tags field.
+	groupsettingsDescTags := groupsettingsFields[2].Descriptor()
+	// groupsettings.DefaultTags holds the default value on creation for the tags field.
+	groupsettings.DefaultTags = groupsettingsDescTags.Default.([]string)
 	// groupsettingsDescID is the schema descriptor for id field.
 	groupsettingsDescID := groupsettingsMixinFields1[0].Descriptor()
 	// groupsettings.DefaultID holds the default value on creation for the id field.
@@ -209,6 +235,27 @@ func init() {
 			return nil
 		}
 	}()
+	// organizationDescDisplayName is the schema descriptor for display_name field.
+	organizationDescDisplayName := organizationFields[1].Descriptor()
+	// organization.DefaultDisplayName holds the default value on creation for the display_name field.
+	organization.DefaultDisplayName = organizationDescDisplayName.Default.(string)
+	// organization.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	organization.DisplayNameValidator = func() func(string) error {
+		validators := organizationDescDisplayName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(display_name string) error {
+			for _, fn := range fns {
+				if err := fn(display_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
@@ -260,6 +307,10 @@ func init() {
 	organizationsettingsDescBillingAddress := organizationsettingsFields[7].Descriptor()
 	// organizationsettings.BillingAddressValidator is a validator for the "billing_address" field. It is called by the builders before save.
 	organizationsettings.BillingAddressValidator = organizationsettingsDescBillingAddress.Validators[0].(func(string) error)
+	// organizationsettingsDescTags is the schema descriptor for tags field.
+	organizationsettingsDescTags := organizationsettingsFields[9].Descriptor()
+	// organizationsettings.DefaultTags holds the default value on creation for the tags field.
+	organizationsettings.DefaultTags = organizationsettingsDescTags.Default.([]string)
 	// organizationsettingsDescID is the schema descriptor for id field.
 	organizationsettingsDescID := organizationsettingsMixinFields1[0].Descriptor()
 	// organizationsettings.DefaultID holds the default value on creation for the id field.
@@ -394,6 +445,7 @@ func init() {
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
+			validators[2].(func(string) error),
 		}
 		return func(first_name string) error {
 			for _, fn := range fns {
@@ -412,6 +464,7 @@ func init() {
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
+			validators[2].(func(string) error),
 		}
 		return func(last_name string) error {
 			for _, fn := range fns {
@@ -432,6 +485,7 @@ func init() {
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
+			validators[2].(func(string) error),
 		}
 		return func(display_name string) error {
 			for _, fn := range fns {
@@ -442,12 +496,8 @@ func init() {
 			return nil
 		}
 	}()
-	// userDescLocked is the schema descriptor for locked field.
-	userDescLocked := userFields[4].Descriptor()
-	// user.DefaultLocked holds the default value on creation for the locked field.
-	user.DefaultLocked = userDescLocked.Default.(bool)
 	// userDescAvatarRemoteURL is the schema descriptor for avatar_remote_url field.
-	userDescAvatarRemoteURL := userFields[5].Descriptor()
+	userDescAvatarRemoteURL := userFields[4].Descriptor()
 	// user.AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
 	user.AvatarRemoteURLValidator = func() func(string) error {
 		validators := userDescAvatarRemoteURL.Validators
@@ -465,13 +515,52 @@ func init() {
 		}
 	}()
 	// userDescAvatarLocalFile is the schema descriptor for avatar_local_file field.
-	userDescAvatarLocalFile := userFields[6].Descriptor()
+	userDescAvatarLocalFile := userFields[5].Descriptor()
 	// user.AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
 	user.AvatarLocalFileValidator = userDescAvatarLocalFile.Validators[0].(func(string) error)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
+	usersettingsMixin := schema.UserSettings{}.Mixin()
+	usersettingsMixinHooks0 := usersettingsMixin[0].Hooks()
+	usersettings.Hooks[0] = usersettingsMixinHooks0[0]
+	usersettingsMixinFields0 := usersettingsMixin[0].Fields()
+	_ = usersettingsMixinFields0
+	usersettingsMixinFields1 := usersettingsMixin[1].Fields()
+	_ = usersettingsMixinFields1
+	usersettingsFields := schema.UserSettings{}.Fields()
+	_ = usersettingsFields
+	// usersettingsDescCreatedAt is the schema descriptor for created_at field.
+	usersettingsDescCreatedAt := usersettingsMixinFields0[0].Descriptor()
+	// usersettings.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usersettings.DefaultCreatedAt = usersettingsDescCreatedAt.Default.(func() time.Time)
+	// usersettingsDescUpdatedAt is the schema descriptor for updated_at field.
+	usersettingsDescUpdatedAt := usersettingsMixinFields0[1].Descriptor()
+	// usersettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usersettings.DefaultUpdatedAt = usersettingsDescUpdatedAt.Default.(func() time.Time)
+	// usersettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usersettings.UpdateDefaultUpdatedAt = usersettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// usersettingsDescLocked is the schema descriptor for locked field.
+	usersettingsDescLocked := usersettingsFields[0].Descriptor()
+	// usersettings.DefaultLocked holds the default value on creation for the locked field.
+	usersettings.DefaultLocked = usersettingsDescLocked.Default.(bool)
+	// usersettingsDescPermissions is the schema descriptor for permissions field.
+	usersettingsDescPermissions := usersettingsFields[6].Descriptor()
+	// usersettings.DefaultPermissions holds the default value on creation for the permissions field.
+	usersettings.DefaultPermissions = usersettingsDescPermissions.Default.([]string)
+	// usersettingsDescEmailConfirmed is the schema descriptor for email_confirmed field.
+	usersettingsDescEmailConfirmed := usersettingsFields[7].Descriptor()
+	// usersettings.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
+	usersettings.DefaultEmailConfirmed = usersettingsDescEmailConfirmed.Default.(bool)
+	// usersettingsDescTags is the schema descriptor for tags field.
+	usersettingsDescTags := usersettingsFields[8].Descriptor()
+	// usersettings.DefaultTags holds the default value on creation for the tags field.
+	usersettings.DefaultTags = usersettingsDescTags.Default.([]string)
+	// usersettingsDescID is the schema descriptor for id field.
+	usersettingsDescID := usersettingsMixinFields1[0].Descriptor()
+	// usersettings.DefaultID holds the default value on creation for the id field.
+	usersettings.DefaultID = usersettingsDescID.Default.(func() string)
 }
 
 const (

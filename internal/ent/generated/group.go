@@ -33,6 +33,8 @@ type Group struct {
 	Description string `json:"description,omitempty"`
 	// LogoURL holds the value of the "logo_url" field.
 	LogoURL string `json:"logo_url,omitempty"`
+	// The group's displayed 'friendly' name
+	DisplayName string `json:"display_name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
 	Edges               GroupEdges `json:"edges"`
@@ -97,7 +99,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldName, group.FieldDescription, group.FieldLogoURL:
+		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldName, group.FieldDescription, group.FieldLogoURL, group.FieldDisplayName:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -165,6 +167,12 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field logo_url", values[i])
 			} else if value.Valid {
 				gr.LogoURL = value.String
+			}
+		case group.FieldDisplayName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field display_name", values[i])
+			} else if value.Valid {
+				gr.DisplayName = value.String
 			}
 		case group.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -244,6 +252,9 @@ func (gr *Group) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("logo_url=")
 	builder.WriteString(gr.LogoURL)
+	builder.WriteString(", ")
+	builder.WriteString("display_name=")
+	builder.WriteString(gr.DisplayName)
 	builder.WriteByte(')')
 	return builder.String()
 }

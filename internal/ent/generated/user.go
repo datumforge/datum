@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 )
 
 // User is the model entity for the User schema.
@@ -33,20 +34,16 @@ type User struct {
 	LastName string `json:"last_name,omitempty"`
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"display_name,omitempty"`
-	// user account is locked if unconfirmed or explicitly locked
-	Locked bool `json:"locked,omitempty"`
 	// URL of the user's remote avatar
 	AvatarRemoteURL *string `json:"avatar_remote_url,omitempty"`
 	// The user's local avatar file
 	AvatarLocalFile *string `json:"avatar_local_file,omitempty"`
 	// The time the user's (local) avatar was last updated
 	AvatarUpdatedAt *time.Time `json:"avatar_updated_at,omitempty"`
-	// The time the user was silenced
-	SilencedAt *time.Time `json:"silenced_at,omitempty"`
-	// The time the user was suspended
-	SuspendedAt *time.Time `json:"suspended_at,omitempty"`
-	// local Actor password recovery code generated during account creation
-	RecoveryCode *string `json:"-"`
+	// the time the user was last seen
+	LastSeen time.Time `json:"last_seen,omitempty"`
+	// user bcrypt password hash
+	PasswordHash *string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -63,11 +60,13 @@ type UserEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
+	// Setting holds the value of the setting edge.
+	Setting *UserSettings `json:"setting,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
+	totalCount [5]map[string]int
 
 	namedOrganizations        map[string][]*Organization
 	namedSessions             map[string][]*Session
@@ -111,16 +110,27 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 	return nil, &NotLoadedError{edge: "personal_access_tokens"}
 }
 
+// SettingOrErr returns the Setting value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) SettingOrErr() (*UserSettings, error) {
+	if e.loadedTypes[4] {
+		if e.Setting == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: usersettings.Label}
+		}
+		return e.Setting, nil
+	}
+	return nil, &NotLoadedError{edge: "setting"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldLocked:
-			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldRecoveryCode:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash:
 			values[i] = new(sql.NullString)
-		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldAvatarUpdatedAt, user.FieldSilencedAt, user.FieldSuspendedAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -191,12 +201,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.DisplayName = value.String
 			}
-		case user.FieldLocked:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field locked", values[i])
-			} else if value.Valid {
-				u.Locked = value.Bool
-			}
 		case user.FieldAvatarRemoteURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field avatar_remote_url", values[i])
@@ -218,26 +222,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 				u.AvatarUpdatedAt = new(time.Time)
 				*u.AvatarUpdatedAt = value.Time
 			}
-		case user.FieldSilencedAt:
+		case user.FieldLastSeen:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field silenced_at", values[i])
+				return fmt.Errorf("unexpected type %T for field last_seen", values[i])
 			} else if value.Valid {
-				u.SilencedAt = new(time.Time)
-				*u.SilencedAt = value.Time
+				u.LastSeen = value.Time
 			}
-		case user.FieldSuspendedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field suspended_at", values[i])
-			} else if value.Valid {
-				u.SuspendedAt = new(time.Time)
-				*u.SuspendedAt = value.Time
-			}
-		case user.FieldRecoveryCode:
+		case user.FieldPasswordHash:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field recovery_code", values[i])
+				return fmt.Errorf("unexpected type %T for field passwordHash", values[i])
 			} else if value.Valid {
-				u.RecoveryCode = new(string)
-				*u.RecoveryCode = value.String
+				u.PasswordHash = new(string)
+				*u.PasswordHash = value.String
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -270,6 +266,11 @@ func (u *User) QueryGroups() *GroupQuery {
 // QueryPersonalAccessTokens queries the "personal_access_tokens" edge of the User entity.
 func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 	return NewUserClient(u.config).QueryPersonalAccessTokens(u)
+}
+
+// QuerySetting queries the "setting" edge of the User entity.
+func (u *User) QuerySetting() *UserSettingsQuery {
+	return NewUserClient(u.config).QuerySetting(u)
 }
 
 // Update returns a builder for updating this User.
@@ -319,9 +320,6 @@ func (u *User) String() string {
 	builder.WriteString("display_name=")
 	builder.WriteString(u.DisplayName)
 	builder.WriteString(", ")
-	builder.WriteString("locked=")
-	builder.WriteString(fmt.Sprintf("%v", u.Locked))
-	builder.WriteString(", ")
 	if v := u.AvatarRemoteURL; v != nil {
 		builder.WriteString("avatar_remote_url=")
 		builder.WriteString(*v)
@@ -337,17 +335,10 @@ func (u *User) String() string {
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	if v := u.SilencedAt; v != nil {
-		builder.WriteString("silenced_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
+	builder.WriteString("last_seen=")
+	builder.WriteString(u.LastSeen.Format(time.ANSIC))
 	builder.WriteString(", ")
-	if v := u.SuspendedAt; v != nil {
-		builder.WriteString("suspended_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
-	builder.WriteString("recovery_code=<sensitive>")
+	builder.WriteString("passwordHash=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }

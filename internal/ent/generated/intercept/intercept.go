@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 )
 
 // The Query interface represents an operation that queries a graph.
@@ -375,6 +376,33 @@ func (f TraverseUser) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.UserQuery", q)
 }
 
+// The UserSettingsFunc type is an adapter to allow the use of ordinary function as a Querier.
+type UserSettingsFunc func(context.Context, *generated.UserSettingsQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f UserSettingsFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.UserSettingsQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.UserSettingsQuery", q)
+}
+
+// The TraverseUserSettings type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseUserSettings func(context.Context, *generated.UserSettingsQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseUserSettings) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseUserSettings) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserSettingsQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.UserSettingsQuery", q)
+}
+
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
@@ -400,6 +428,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.SessionQuery, predicate.Session, session.OrderOption]{typ: generated.TypeSession, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
+	case *generated.UserSettingsQuery:
+		return &query[*generated.UserSettingsQuery, predicate.UserSettings, usersettings.OrderOption]{typ: generated.TypeUserSettings, tq: q}, nil
 	default:
 		return nil, fmt.Errorf("unknown query type %T", q)
 	}

@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -82,6 +83,20 @@ func (ou *OrganizationUpdate) ClearUpdatedBy() *OrganizationUpdate {
 // SetName sets the "name" field.
 func (ou *OrganizationUpdate) SetName(s string) *OrganizationUpdate {
 	ou.mutation.SetName(s)
+	return ou
+}
+
+// SetDisplayName sets the "display_name" field.
+func (ou *OrganizationUpdate) SetDisplayName(s string) *OrganizationUpdate {
+	ou.mutation.SetDisplayName(s)
+	return ou
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableDisplayName(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetDisplayName(*s)
+	}
 	return ou
 }
 
@@ -163,6 +178,17 @@ func (ou *OrganizationUpdate) AddIntegrations(i ...*Integration) *OrganizationUp
 		ids[j] = i[j].ID
 	}
 	return ou.AddIntegrationIDs(ids...)
+}
+
+// SetSettingID sets the "setting" edge to the OrganizationSettings entity by ID.
+func (ou *OrganizationUpdate) SetSettingID(id string) *OrganizationUpdate {
+	ou.mutation.SetSettingID(id)
+	return ou
+}
+
+// SetSetting sets the "setting" edge to the OrganizationSettings entity.
+func (ou *OrganizationUpdate) SetSetting(o *OrganizationSettings) *OrganizationUpdate {
+	return ou.SetSettingID(o.ID)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -254,6 +280,12 @@ func (ou *OrganizationUpdate) RemoveIntegrations(i ...*Integration) *Organizatio
 	return ou.RemoveIntegrationIDs(ids...)
 }
 
+// ClearSetting clears the "setting" edge to the OrganizationSettings entity.
+func (ou *OrganizationUpdate) ClearSetting() *OrganizationUpdate {
+	ou.mutation.ClearSetting()
+	return ou
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ou *OrganizationUpdate) Save(ctx context.Context) (int, error) {
 	if err := ou.defaults(); err != nil {
@@ -303,6 +335,14 @@ func (ou *OrganizationUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Organization.name": %w`, err)}
 		}
 	}
+	if v, ok := ou.mutation.DisplayName(); ok {
+		if err := organization.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
+		}
+	}
+	if _, ok := ou.mutation.SettingID(); ou.mutation.SettingCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Organization.setting"`)
+	}
 	return nil
 }
 
@@ -335,6 +375,9 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := ou.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
+	}
+	if value, ok := ou.mutation.DisplayName(); ok {
+		_spec.SetField(organization.FieldDisplayName, field.TypeString, value)
 	}
 	if value, ok := ou.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
@@ -534,6 +577,37 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.SettingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   organization.SettingTable,
+			Columns: []string{organization.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationSettings
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.SettingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   organization.SettingTable,
+			Columns: []string{organization.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OrganizationSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = ou.schemaConfig.Organization
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
@@ -605,6 +679,20 @@ func (ouo *OrganizationUpdateOne) ClearUpdatedBy() *OrganizationUpdateOne {
 // SetName sets the "name" field.
 func (ouo *OrganizationUpdateOne) SetName(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetName(s)
+	return ouo
+}
+
+// SetDisplayName sets the "display_name" field.
+func (ouo *OrganizationUpdateOne) SetDisplayName(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetDisplayName(s)
+	return ouo
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableDisplayName(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetDisplayName(*s)
+	}
 	return ouo
 }
 
@@ -686,6 +774,17 @@ func (ouo *OrganizationUpdateOne) AddIntegrations(i ...*Integration) *Organizati
 		ids[j] = i[j].ID
 	}
 	return ouo.AddIntegrationIDs(ids...)
+}
+
+// SetSettingID sets the "setting" edge to the OrganizationSettings entity by ID.
+func (ouo *OrganizationUpdateOne) SetSettingID(id string) *OrganizationUpdateOne {
+	ouo.mutation.SetSettingID(id)
+	return ouo
+}
+
+// SetSetting sets the "setting" edge to the OrganizationSettings entity.
+func (ouo *OrganizationUpdateOne) SetSetting(o *OrganizationSettings) *OrganizationUpdateOne {
+	return ouo.SetSettingID(o.ID)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -777,6 +876,12 @@ func (ouo *OrganizationUpdateOne) RemoveIntegrations(i ...*Integration) *Organiz
 	return ouo.RemoveIntegrationIDs(ids...)
 }
 
+// ClearSetting clears the "setting" edge to the OrganizationSettings entity.
+func (ouo *OrganizationUpdateOne) ClearSetting() *OrganizationUpdateOne {
+	ouo.mutation.ClearSetting()
+	return ouo
+}
+
 // Where appends a list predicates to the OrganizationUpdate builder.
 func (ouo *OrganizationUpdateOne) Where(ps ...predicate.Organization) *OrganizationUpdateOne {
 	ouo.mutation.Where(ps...)
@@ -839,6 +944,14 @@ func (ouo *OrganizationUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Organization.name": %w`, err)}
 		}
 	}
+	if v, ok := ouo.mutation.DisplayName(); ok {
+		if err := organization.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
+		}
+	}
+	if _, ok := ouo.mutation.SettingID(); ouo.mutation.SettingCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Organization.setting"`)
+	}
 	return nil
 }
 
@@ -888,6 +1001,9 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if value, ok := ouo.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
+	}
+	if value, ok := ouo.mutation.DisplayName(); ok {
+		_spec.SetField(organization.FieldDisplayName, field.TypeString, value)
 	}
 	if value, ok := ouo.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
@@ -1082,6 +1198,37 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.SettingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   organization.SettingTable,
+			Columns: []string{organization.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationSettings
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.SettingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   organization.SettingTable,
+			Columns: []string{organization.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OrganizationSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -29,6 +29,8 @@ const (
 	FieldDescription = "description"
 	// FieldLogoURL holds the string denoting the logo_url field in the database.
 	FieldLogoURL = "logo_url"
+	// FieldDisplayName holds the string denoting the display_name field in the database.
+	FieldDisplayName = "display_name"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -68,6 +70,7 @@ var Columns = []string{
 	FieldName,
 	FieldDescription,
 	FieldLogoURL,
+	FieldDisplayName,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "groups"
@@ -117,6 +120,10 @@ var (
 	DefaultDescription string
 	// LogoURLValidator is a validator for the "logo_url" field. It is called by the builders before save.
 	LogoURLValidator func(string) error
+	// DefaultDisplayName holds the default value on creation for the "display_name" field.
+	DefaultDisplayName string
+	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	DisplayNameValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -162,6 +169,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByLogoURL orders the results by the logo_url field.
 func ByLogoURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLogoURL, opts...).ToFunc()
+}
+
+// ByDisplayName orders the results by the display_name field.
+func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
 }
 
 // BySettingField orders the results by setting field.

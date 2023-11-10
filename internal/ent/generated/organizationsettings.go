@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 )
 
@@ -26,7 +27,7 @@ type OrganizationSettings struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
-	// Domains holds the value of the "domains" field.
+	// domains associated with the organization
 	Domains []string `json:"domains,omitempty"`
 	// SSOCert holds the value of the "sso_cert" field.
 	SSOCert string `json:"sso_cert,omitempty"`
@@ -44,7 +45,35 @@ type OrganizationSettings struct {
 	BillingAddress string `json:"billing_address,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
 	TaxIdentifier string `json:"tax_identifier,omitempty"`
-	selectValues  sql.SelectValues
+	// tags associated with the object
+	Tags []string `json:"tags,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the OrganizationSettingsQuery when eager-loading is set.
+	Edges                OrganizationSettingsEdges `json:"edges"`
+	organization_setting *string
+	selectValues         sql.SelectValues
+}
+
+// OrganizationSettingsEdges holds the relations/edges for other nodes in the graph.
+type OrganizationSettingsEdges struct {
+	// Orgnaization holds the value of the orgnaization edge.
+	Orgnaization *Organization `json:"orgnaization,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+}
+
+// OrgnaizationOrErr returns the Orgnaization value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrganizationSettingsEdges) OrgnaizationOrErr() (*Organization, error) {
+	if e.loadedTypes[0] {
+		if e.Orgnaization == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Orgnaization, nil
+	}
+	return nil, &NotLoadedError{edge: "orgnaization"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -52,12 +81,14 @@ func (*OrganizationSettings) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organizationsettings.FieldDomains:
+		case organizationsettings.FieldDomains, organizationsettings.FieldTags:
 			values[i] = new([]byte)
 		case organizationsettings.FieldID, organizationsettings.FieldCreatedBy, organizationsettings.FieldUpdatedBy, organizationsettings.FieldSSOCert, organizationsettings.FieldSSOEntrypoint, organizationsettings.FieldSSOIssuer, organizationsettings.FieldBillingContact, organizationsettings.FieldBillingEmail, organizationsettings.FieldBillingPhone, organizationsettings.FieldBillingAddress, organizationsettings.FieldTaxIdentifier:
 			values[i] = new(sql.NullString)
 		case organizationsettings.FieldCreatedAt, organizationsettings.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
+		case organizationsettings.ForeignKeys[0]: // organization_setting
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -159,6 +190,21 @@ func (os *OrganizationSettings) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				os.TaxIdentifier = value.String
 			}
+		case organizationsettings.FieldTags:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field tags", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &os.Tags); err != nil {
+					return fmt.Errorf("unmarshal field tags: %w", err)
+				}
+			}
+		case organizationsettings.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_setting", values[i])
+			} else if value.Valid {
+				os.organization_setting = new(string)
+				*os.organization_setting = value.String
+			}
 		default:
 			os.selectValues.Set(columns[i], values[i])
 		}
@@ -170,6 +216,11 @@ func (os *OrganizationSettings) assignValues(columns []string, values []any) err
 // This includes values selected through modifiers, order, etc.
 func (os *OrganizationSettings) Value(name string) (ent.Value, error) {
 	return os.selectValues.Get(name)
+}
+
+// QueryOrgnaization queries the "orgnaization" edge of the OrganizationSettings entity.
+func (os *OrganizationSettings) QueryOrgnaization() *OrganizationQuery {
+	return NewOrganizationSettingsClient(os.config).QueryOrgnaization(os)
 }
 
 // Update returns a builder for updating this OrganizationSettings.
@@ -233,6 +284,9 @@ func (os *OrganizationSettings) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("tax_identifier=")
 	builder.WriteString(os.TaxIdentifier)
+	builder.WriteString(", ")
+	builder.WriteString("tags=")
+	builder.WriteString(fmt.Sprintf("%v", os.Tags))
 	builder.WriteByte(')')
 	return builder.String()
 }

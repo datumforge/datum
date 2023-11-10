@@ -30,6 +30,8 @@ const (
 	FieldVisibility = "visibility"
 	// FieldJoinPolicy holds the string denoting the join_policy field in the database.
 	FieldJoinPolicy = "join_policy"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// Table holds the table name of the groupsettings in the database.
@@ -52,6 +54,7 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldVisibility,
 	FieldJoinPolicy,
+	FieldTags,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "group_settings"
@@ -88,6 +91,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )

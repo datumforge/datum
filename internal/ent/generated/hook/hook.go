@@ -141,6 +141,18 @@ func (f UserFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserMutation", m)
 }
 
+// The UserSettingsFunc type is an adapter to allow the use of ordinary
+// function as UserSettings mutator.
+type UserSettingsFunc func(context.Context, *generated.UserSettingsMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserSettingsFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.UserSettingsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserSettingsMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, generated.Mutation) bool
 

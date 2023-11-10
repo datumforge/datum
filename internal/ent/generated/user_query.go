@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -33,6 +34,7 @@ type UserQuery struct {
 	withSessions                  *SessionQuery
 	withGroups                    *GroupQuery
 	withPersonalAccessTokens      *PersonalAccessTokenQuery
+	withSetting                   *UserSettingsQuery
 	modifiers                     []func(*sql.Selector)
 	loadTotal                     []func(context.Context, []*User) error
 	withNamedOrganizations        map[string]*OrganizationQuery
@@ -169,6 +171,31 @@ func (uq *UserQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySetting chains the current query on the "setting" edge.
+func (uq *UserQuery) QuerySetting() *UserSettingsQuery {
+	query := (&UserSettingsClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(usersettings.Table, usersettings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.SettingTable, user.SettingColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.UserSettings
+		step.Edge.Schema = schemaConfig.UserSettings
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -371,6 +398,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withSessions:             uq.withSessions.Clone(),
 		withGroups:               uq.withGroups.Clone(),
 		withPersonalAccessTokens: uq.withPersonalAccessTokens.Clone(),
+		withSetting:              uq.withSetting.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -418,6 +446,17 @@ func (uq *UserQuery) WithPersonalAccessTokens(opts ...func(*PersonalAccessTokenQ
 		opt(query)
 	}
 	uq.withPersonalAccessTokens = query
+	return uq
+}
+
+// WithSetting tells the query-builder to eager-load the nodes that are connected to
+// the "setting" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithSetting(opts ...func(*UserSettingsQuery)) *UserQuery {
+	query := (&UserSettingsClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withSetting = query
 	return uq
 }
 
@@ -505,11 +544,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [4]bool{
+		loadedTypes = [5]bool{
 			uq.withOrganizations != nil,
 			uq.withSessions != nil,
 			uq.withGroups != nil,
 			uq.withPersonalAccessTokens != nil,
+			uq.withSetting != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -562,6 +602,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			func(n *User, e *PersonalAccessToken) {
 				n.Edges.PersonalAccessTokens = append(n.Edges.PersonalAccessTokens, e)
 			}); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withSetting; query != nil {
+		if err := uq.loadSetting(ctx, query, nodes, nil,
+			func(n *User, e *UserSettings) { n.Edges.Setting = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -781,6 +827,34 @@ func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *Person
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingsQuery, nodes []*User, init func(*User), assign func(*User, *UserSettings)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.UserSettings(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.SettingColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_setting
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_setting" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_setting" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

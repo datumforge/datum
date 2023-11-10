@@ -77,6 +77,11 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 
+// UserSettingsSlice is the resolver for the userSettingsSlice field.
+func (r *queryResolver) UserSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingsWhereInput) (*generated.UserSettingsConnection, error) {
+	panic(fmt.Errorf("not implemented: UserSettingsSlice - userSettingsSlice"))
+}
+
 // AuthStyle is the resolver for the authStyle field.
 func (r *createOauthProviderInputResolver) AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error {
 	panic(fmt.Errorf("not implemented: AuthStyle - authStyle"))

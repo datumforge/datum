@@ -25,6 +25,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldDisplayName holds the string denoting the display_name field in the database.
+	FieldDisplayName = "display_name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldParentOrganizationID holds the string denoting the parent_organization_id field in the database.
@@ -39,6 +41,8 @@ const (
 	EdgeGroups = "groups"
 	// EdgeIntegrations holds the string denoting the integrations edge name in mutations.
 	EdgeIntegrations = "integrations"
+	// EdgeSetting holds the string denoting the setting edge name in mutations.
+	EdgeSetting = "setting"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -68,6 +72,13 @@ const (
 	IntegrationsInverseTable = "integrations"
 	// IntegrationsColumn is the table column denoting the integrations relation/edge.
 	IntegrationsColumn = "organization_integrations"
+	// SettingTable is the table that holds the setting relation/edge.
+	SettingTable = "organization_settings"
+	// SettingInverseTable is the table name for the OrganizationSettings entity.
+	// It exists in this package in order to avoid circular dependency with the "organizationsettings" package.
+	SettingInverseTable = "organization_settings"
+	// SettingColumn is the table column denoting the setting relation/edge.
+	SettingColumn = "organization_setting"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -78,6 +89,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldName,
+	FieldDisplayName,
 	FieldDescription,
 	FieldParentOrganizationID,
 }
@@ -113,6 +125,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// DefaultDisplayName holds the default value on creation for the "display_name" field.
+	DefaultDisplayName string
+	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	DisplayNameValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -148,6 +164,11 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByDisplayName orders the results by the display_name field.
+func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.
@@ -222,6 +243,13 @@ func ByIntegrations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newIntegrationsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// BySettingField orders the results by setting field.
+func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSettingStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -255,5 +283,12 @@ func newIntegrationsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(IntegrationsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, IntegrationsTable, IntegrationsColumn),
+	)
+}
+func newSettingStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SettingInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
 	)
 }

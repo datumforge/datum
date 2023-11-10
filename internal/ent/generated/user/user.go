@@ -31,20 +31,16 @@ const (
 	FieldLastName = "last_name"
 	// FieldDisplayName holds the string denoting the display_name field in the database.
 	FieldDisplayName = "display_name"
-	// FieldLocked holds the string denoting the locked field in the database.
-	FieldLocked = "locked"
 	// FieldAvatarRemoteURL holds the string denoting the avatar_remote_url field in the database.
 	FieldAvatarRemoteURL = "avatar_remote_url"
 	// FieldAvatarLocalFile holds the string denoting the avatar_local_file field in the database.
 	FieldAvatarLocalFile = "avatar_local_file"
 	// FieldAvatarUpdatedAt holds the string denoting the avatar_updated_at field in the database.
 	FieldAvatarUpdatedAt = "avatar_updated_at"
-	// FieldSilencedAt holds the string denoting the silenced_at field in the database.
-	FieldSilencedAt = "silenced_at"
-	// FieldSuspendedAt holds the string denoting the suspended_at field in the database.
-	FieldSuspendedAt = "suspended_at"
-	// FieldRecoveryCode holds the string denoting the recovery_code field in the database.
-	FieldRecoveryCode = "recovery_code"
+	// FieldLastSeen holds the string denoting the last_seen field in the database.
+	FieldLastSeen = "last_seen"
+	// FieldPasswordHash holds the string denoting the passwordhash field in the database.
+	FieldPasswordHash = "password_hash"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
@@ -53,6 +49,8 @@ const (
 	EdgeGroups = "groups"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
+	// EdgeSetting holds the string denoting the setting edge name in mutations.
+	EdgeSetting = "setting"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -79,6 +77,13 @@ const (
 	PersonalAccessTokensInverseTable = "personal_access_tokens"
 	// PersonalAccessTokensColumn is the table column denoting the personal_access_tokens relation/edge.
 	PersonalAccessTokensColumn = "user_id"
+	// SettingTable is the table that holds the setting relation/edge.
+	SettingTable = "user_settings"
+	// SettingInverseTable is the table name for the UserSettings entity.
+	// It exists in this package in order to avoid circular dependency with the "usersettings" package.
+	SettingInverseTable = "user_settings"
+	// SettingColumn is the table column denoting the setting relation/edge.
+	SettingColumn = "user_setting"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -92,13 +97,11 @@ var Columns = []string{
 	FieldFirstName,
 	FieldLastName,
 	FieldDisplayName,
-	FieldLocked,
 	FieldAvatarRemoteURL,
 	FieldAvatarLocalFile,
 	FieldAvatarUpdatedAt,
-	FieldSilencedAt,
-	FieldSuspendedAt,
-	FieldRecoveryCode,
+	FieldLastSeen,
+	FieldPasswordHash,
 }
 
 var (
@@ -144,8 +147,6 @@ var (
 	DefaultDisplayName string
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	DisplayNameValidator func(string) error
-	// DefaultLocked holds the default value on creation for the "locked" field.
-	DefaultLocked bool
 	// AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
 	AvatarRemoteURLValidator func(string) error
 	// AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
@@ -202,11 +203,6 @@ func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
 }
 
-// ByLocked orders the results by the locked field.
-func ByLocked(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLocked, opts...).ToFunc()
-}
-
 // ByAvatarRemoteURL orders the results by the avatar_remote_url field.
 func ByAvatarRemoteURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatarRemoteURL, opts...).ToFunc()
@@ -222,19 +218,14 @@ func ByAvatarUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAvatarUpdatedAt, opts...).ToFunc()
 }
 
-// BySilencedAt orders the results by the silenced_at field.
-func BySilencedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSilencedAt, opts...).ToFunc()
+// ByLastSeen orders the results by the last_seen field.
+func ByLastSeen(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastSeen, opts...).ToFunc()
 }
 
-// BySuspendedAt orders the results by the suspended_at field.
-func BySuspendedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSuspendedAt, opts...).ToFunc()
-}
-
-// ByRecoveryCode orders the results by the recovery_code field.
-func ByRecoveryCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRecoveryCode, opts...).ToFunc()
+// ByPasswordHash orders the results by the passwordHash field.
+func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPasswordHash, opts...).ToFunc()
 }
 
 // ByOrganizationsCount orders the results by organizations count.
@@ -292,6 +283,13 @@ func ByPersonalAccessTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOpt
 		sqlgraph.OrderByNeighborTerms(s, newPersonalAccessTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// BySettingField orders the results by setting field.
+func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newSettingStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -318,5 +316,12 @@ func newPersonalAccessTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PersonalAccessTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PersonalAccessTokensTable, PersonalAccessTokensColumn),
+	)
+}
+func newSettingStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(SettingInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
 	)
 }

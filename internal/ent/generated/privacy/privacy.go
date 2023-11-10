@@ -375,6 +375,30 @@ func (f UserMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Muta
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserMutation", m)
 }
 
+// The UserSettingsQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserSettingsQueryRuleFunc func(context.Context, *generated.UserSettingsQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserSettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserSettingsQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.UserSettingsQuery", q)
+}
+
+// The UserSettingsMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserSettingsMutationRuleFunc func(context.Context, *generated.UserSettingsMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserSettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.UserSettingsMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserSettingsMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -432,6 +456,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
+	case *generated.UserSettingsQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected query type %T for query filter", q)
 	}
@@ -460,6 +486,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.SessionMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
+		return m.Filter(), nil
+	case *generated.UserSettingsMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected mutation type %T for mutation filter", m)

@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 )
 
@@ -154,6 +155,12 @@ func (osc *OrganizationSettingsCreate) SetTaxIdentifier(s string) *OrganizationS
 	return osc
 }
 
+// SetTags sets the "tags" field.
+func (osc *OrganizationSettingsCreate) SetTags(s []string) *OrganizationSettingsCreate {
+	osc.mutation.SetTags(s)
+	return osc
+}
+
 // SetID sets the "id" field.
 func (osc *OrganizationSettingsCreate) SetID(s string) *OrganizationSettingsCreate {
 	osc.mutation.SetID(s)
@@ -166,6 +173,25 @@ func (osc *OrganizationSettingsCreate) SetNillableID(s *string) *OrganizationSet
 		osc.SetID(*s)
 	}
 	return osc
+}
+
+// SetOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID.
+func (osc *OrganizationSettingsCreate) SetOrgnaizationID(id string) *OrganizationSettingsCreate {
+	osc.mutation.SetOrgnaizationID(id)
+	return osc
+}
+
+// SetNillableOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID if the given value is not nil.
+func (osc *OrganizationSettingsCreate) SetNillableOrgnaizationID(id *string) *OrganizationSettingsCreate {
+	if id != nil {
+		osc = osc.SetOrgnaizationID(*id)
+	}
+	return osc
+}
+
+// SetOrgnaization sets the "orgnaization" edge to the Organization entity.
+func (osc *OrganizationSettingsCreate) SetOrgnaization(o *Organization) *OrganizationSettingsCreate {
+	return osc.SetOrgnaizationID(o.ID)
 }
 
 // Mutation returns the OrganizationSettingsMutation object of the builder.
@@ -230,6 +256,10 @@ func (osc *OrganizationSettingsCreate) defaults() error {
 	if _, ok := osc.mutation.SSOIssuer(); !ok {
 		v := organizationsettings.DefaultSSOIssuer
 		osc.mutation.SetSSOIssuer(v)
+	}
+	if _, ok := osc.mutation.Tags(); !ok {
+		v := organizationsettings.DefaultTags
+		osc.mutation.SetTags(v)
 	}
 	if _, ok := osc.mutation.ID(); !ok {
 		if organizationsettings.DefaultID == nil {
@@ -383,6 +413,28 @@ func (osc *OrganizationSettingsCreate) createSpec() (*OrganizationSettings, *sql
 	if value, ok := osc.mutation.TaxIdentifier(); ok {
 		_spec.SetField(organizationsettings.FieldTaxIdentifier, field.TypeString, value)
 		_node.TaxIdentifier = value
+	}
+	if value, ok := osc.mutation.Tags(); ok {
+		_spec.SetField(organizationsettings.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
+	}
+	if nodes := osc.mutation.OrgnaizationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   organizationsettings.OrgnaizationTable,
+			Columns: []string{organizationsettings.OrgnaizationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = osc.schemaConfig.OrganizationSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.organization_setting = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

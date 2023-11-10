@@ -105,6 +105,12 @@ func (gsc *GroupSettingsCreate) SetNillableJoinPolicy(gp *groupsettings.JoinPoli
 	return gsc
 }
 
+// SetTags sets the "tags" field.
+func (gsc *GroupSettingsCreate) SetTags(s []string) *GroupSettingsCreate {
+	gsc.mutation.SetTags(s)
+	return gsc
+}
+
 // SetID sets the "id" field.
 func (gsc *GroupSettingsCreate) SetID(s string) *GroupSettingsCreate {
 	gsc.mutation.SetID(s)
@@ -197,6 +203,10 @@ func (gsc *GroupSettingsCreate) defaults() error {
 		v := groupsettings.DefaultJoinPolicy
 		gsc.mutation.SetJoinPolicy(v)
 	}
+	if _, ok := gsc.mutation.Tags(); !ok {
+		v := groupsettings.DefaultTags
+		gsc.mutation.SetTags(v)
+	}
 	if _, ok := gsc.mutation.ID(); !ok {
 		if groupsettings.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized groupsettings.DefaultID (forgotten import generated/runtime?)")
@@ -230,6 +240,9 @@ func (gsc *GroupSettingsCreate) check() error {
 		if err := groupsettings.JoinPolicyValidator(v); err != nil {
 			return &ValidationError{Name: "join_policy", err: fmt.Errorf(`generated: validator failed for field "GroupSettings.join_policy": %w`, err)}
 		}
+	}
+	if _, ok := gsc.mutation.Tags(); !ok {
+		return &ValidationError{Name: "tags", err: errors.New(`generated: missing required field "GroupSettings.tags"`)}
 	}
 	return nil
 }
@@ -290,6 +303,10 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 	if value, ok := gsc.mutation.JoinPolicy(); ok {
 		_spec.SetField(groupsettings.FieldJoinPolicy, field.TypeEnum, value)
 		_node.JoinPolicy = value
+	}
+	if value, ok := gsc.mutation.Tags(); ok {
+		_spec.SetField(groupsettings.FieldTags, field.TypeJSON, value)
+		_node.Tags = value
 	}
 	if nodes := gsc.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

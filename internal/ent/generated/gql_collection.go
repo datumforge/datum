@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 )
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
@@ -218,6 +219,11 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, group.FieldLogoURL)
 				fieldSeen[group.FieldLogoURL] = struct{}{}
 			}
+		case "displayName":
+			if _, ok := fieldSeen[group.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, group.FieldDisplayName)
+				fieldSeen[group.FieldDisplayName] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -331,6 +337,11 @@ func (gs *GroupSettingsQuery) collectField(ctx context.Context, opCtx *graphql.O
 			if _, ok := fieldSeen[groupsettings.FieldJoinPolicy]; !ok {
 				selectedFields = append(selectedFields, groupsettings.FieldJoinPolicy)
 				fieldSeen[groupsettings.FieldJoinPolicy] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[groupsettings.FieldTags]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldTags)
+				fieldSeen[groupsettings.FieldTags] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -789,6 +800,16 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedIntegrations(alias, func(wq *IntegrationQuery) {
 				*wq = *query
 			})
+		case "setting":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationSettingsClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.withSetting = query
 		case "createdAt":
 			if _, ok := fieldSeen[organization.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, organization.FieldCreatedAt)
@@ -813,6 +834,11 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if _, ok := fieldSeen[organization.FieldName]; !ok {
 				selectedFields = append(selectedFields, organization.FieldName)
 				fieldSeen[organization.FieldName] = struct{}{}
+			}
+		case "displayName":
+			if _, ok := fieldSeen[organization.FieldDisplayName]; !ok {
+				selectedFields = append(selectedFields, organization.FieldDisplayName)
+				fieldSeen[organization.FieldDisplayName] = struct{}{}
 			}
 		case "description":
 			if _, ok := fieldSeen[organization.FieldDescription]; !ok {
@@ -967,6 +993,11 @@ func (os *OrganizationSettingsQuery) collectField(ctx context.Context, opCtx *gr
 			if _, ok := fieldSeen[organizationsettings.FieldTaxIdentifier]; !ok {
 				selectedFields = append(selectedFields, organizationsettings.FieldTaxIdentifier)
 				fieldSeen[organizationsettings.FieldTaxIdentifier] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[organizationsettings.FieldTags]; !ok {
+				selectedFields = append(selectedFields, organizationsettings.FieldTags)
+				fieldSeen[organizationsettings.FieldTags] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1448,6 +1479,16 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			u.WithNamedPersonalAccessTokens(alias, func(wq *PersonalAccessTokenQuery) {
 				*wq = *query
 			})
+		case "setting":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserSettingsClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.withSetting = query
 		case "createdAt":
 			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, user.FieldCreatedAt)
@@ -1488,11 +1529,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldDisplayName)
 				fieldSeen[user.FieldDisplayName] = struct{}{}
 			}
-		case "locked":
-			if _, ok := fieldSeen[user.FieldLocked]; !ok {
-				selectedFields = append(selectedFields, user.FieldLocked)
-				fieldSeen[user.FieldLocked] = struct{}{}
-			}
 		case "avatarRemoteURL":
 			if _, ok := fieldSeen[user.FieldAvatarRemoteURL]; !ok {
 				selectedFields = append(selectedFields, user.FieldAvatarRemoteURL)
@@ -1508,15 +1544,10 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldAvatarUpdatedAt)
 				fieldSeen[user.FieldAvatarUpdatedAt] = struct{}{}
 			}
-		case "silencedAt":
-			if _, ok := fieldSeen[user.FieldSilencedAt]; !ok {
-				selectedFields = append(selectedFields, user.FieldSilencedAt)
-				fieldSeen[user.FieldSilencedAt] = struct{}{}
-			}
-		case "suspendedAt":
-			if _, ok := fieldSeen[user.FieldSuspendedAt]; !ok {
-				selectedFields = append(selectedFields, user.FieldSuspendedAt)
-				fieldSeen[user.FieldSuspendedAt] = struct{}{}
+		case "lastSeen":
+			if _, ok := fieldSeen[user.FieldLastSeen]; !ok {
+				selectedFields = append(selectedFields, user.FieldLastSeen)
+				fieldSeen[user.FieldLastSeen] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1577,6 +1608,128 @@ func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*UserWhereInput); ok {
 		args.opts = append(args.opts, WithUserFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (us *UserSettingsQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserSettingsQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return us, nil
+	}
+	if err := us.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return us, nil
+}
+
+func (us *UserSettingsQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(usersettings.Columns))
+		selectedFields = []string{usersettings.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[usersettings.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldCreatedAt)
+				fieldSeen[usersettings.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[usersettings.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldUpdatedAt)
+				fieldSeen[usersettings.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[usersettings.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldCreatedBy)
+				fieldSeen[usersettings.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[usersettings.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldUpdatedBy)
+				fieldSeen[usersettings.FieldUpdatedBy] = struct{}{}
+			}
+		case "locked":
+			if _, ok := fieldSeen[usersettings.FieldLocked]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldLocked)
+				fieldSeen[usersettings.FieldLocked] = struct{}{}
+			}
+		case "silencedAt":
+			if _, ok := fieldSeen[usersettings.FieldSilencedAt]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldSilencedAt)
+				fieldSeen[usersettings.FieldSilencedAt] = struct{}{}
+			}
+		case "suspendedAt":
+			if _, ok := fieldSeen[usersettings.FieldSuspendedAt]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldSuspendedAt)
+				fieldSeen[usersettings.FieldSuspendedAt] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[usersettings.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldStatus)
+				fieldSeen[usersettings.FieldStatus] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[usersettings.FieldRole]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldRole)
+				fieldSeen[usersettings.FieldRole] = struct{}{}
+			}
+		case "permissions":
+			if _, ok := fieldSeen[usersettings.FieldPermissions]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldPermissions)
+				fieldSeen[usersettings.FieldPermissions] = struct{}{}
+			}
+		case "emailConfirmed":
+			if _, ok := fieldSeen[usersettings.FieldEmailConfirmed]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldEmailConfirmed)
+				fieldSeen[usersettings.FieldEmailConfirmed] = struct{}{}
+			}
+		case "tags":
+			if _, ok := fieldSeen[usersettings.FieldTags]; !ok {
+				selectedFields = append(selectedFields, usersettings.FieldTags)
+				fieldSeen[usersettings.FieldTags] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		us.Select(selectedFields...)
+	}
+	return nil
+}
+
+type usersettingsPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserSettingsPaginateOption
+}
+
+func newUserSettingsPaginateArgs(rv map[string]any) *usersettingsPaginateArgs {
+	args := &usersettingsPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserSettingsWhereInput); ok {
+		args.opts = append(args.opts, WithUserSettingsFilter(v.Filter))
 	}
 	return args
 }

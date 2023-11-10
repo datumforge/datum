@@ -23,6 +23,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -94,6 +95,7 @@ func checkColumn(table, column string) error {
 			refreshtoken.Table:         refreshtoken.ValidColumn,
 			session.Table:              session.ValidColumn,
 			user.Table:                 user.ValidColumn,
+			usersettings.Table:         usersettings.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

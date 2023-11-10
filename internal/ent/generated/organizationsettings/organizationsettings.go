@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -40,8 +41,19 @@ const (
 	FieldBillingAddress = "billing_address"
 	// FieldTaxIdentifier holds the string denoting the tax_identifier field in the database.
 	FieldTaxIdentifier = "tax_identifier"
+	// FieldTags holds the string denoting the tags field in the database.
+	FieldTags = "tags"
+	// EdgeOrgnaization holds the string denoting the orgnaization edge name in mutations.
+	EdgeOrgnaization = "orgnaization"
 	// Table holds the table name of the organizationsettings in the database.
 	Table = "organization_settings"
+	// OrgnaizationTable is the table that holds the orgnaization relation/edge.
+	OrgnaizationTable = "organization_settings"
+	// OrgnaizationInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OrgnaizationInverseTable = "organizations"
+	// OrgnaizationColumn is the table column denoting the orgnaization relation/edge.
+	OrgnaizationColumn = "organization_setting"
 )
 
 // Columns holds all SQL columns for organizationsettings fields.
@@ -60,12 +72,24 @@ var Columns = []string{
 	FieldBillingPhone,
 	FieldBillingAddress,
 	FieldTaxIdentifier,
+	FieldTags,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "organization_settings"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"organization_setting",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -99,6 +123,8 @@ var (
 	BillingPhoneValidator func(string) error
 	// BillingAddressValidator is a validator for the "billing_address" field. It is called by the builders before save.
 	BillingAddressValidator func(string) error
+	// DefaultTags holds the default value on creation for the "tags" field.
+	DefaultTags []string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -169,4 +195,18 @@ func ByBillingAddress(opts ...sql.OrderTermOption) OrderOption {
 // ByTaxIdentifier orders the results by the tax_identifier field.
 func ByTaxIdentifier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTaxIdentifier, opts...).ToFunc()
+}
+
+// ByOrgnaizationField orders the results by orgnaization field.
+func ByOrgnaizationField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrgnaizationStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newOrgnaizationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrgnaizationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, OrgnaizationTable, OrgnaizationColumn),
+	)
 }

@@ -25,6 +25,11 @@ func (GroupSettings) Fields() []ent.Field {
 			"application_only", "APPLICATION_ONLY",
 			"invite_or_application", "INVITE_OR_APPLICATION",
 		).Default("OPEN"),
+		field.JSON("tags", []string{}).
+			Comment("tags associated with the object").
+			Default([]string{}),
+		field.Bool("sync_to_slack").Default(false),
+		field.Bool("sync_to_github").Default(false),
 	}
 }
 

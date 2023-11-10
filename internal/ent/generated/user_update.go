@@ -17,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -112,20 +113,6 @@ func (uu *UserUpdate) SetNillableDisplayName(s *string) *UserUpdate {
 	return uu
 }
 
-// SetLocked sets the "locked" field.
-func (uu *UserUpdate) SetLocked(b bool) *UserUpdate {
-	uu.mutation.SetLocked(b)
-	return uu
-}
-
-// SetNillableLocked sets the "locked" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableLocked(b *bool) *UserUpdate {
-	if b != nil {
-		uu.SetLocked(*b)
-	}
-	return uu
-}
-
 // SetAvatarRemoteURL sets the "avatar_remote_url" field.
 func (uu *UserUpdate) SetAvatarRemoteURL(s string) *UserUpdate {
 	uu.mutation.SetAvatarRemoteURL(s)
@@ -186,63 +173,43 @@ func (uu *UserUpdate) ClearAvatarUpdatedAt() *UserUpdate {
 	return uu
 }
 
-// SetSilencedAt sets the "silenced_at" field.
-func (uu *UserUpdate) SetSilencedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetSilencedAt(t)
+// SetLastSeen sets the "last_seen" field.
+func (uu *UserUpdate) SetLastSeen(t time.Time) *UserUpdate {
+	uu.mutation.SetLastSeen(t)
 	return uu
 }
 
-// SetNillableSilencedAt sets the "silenced_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableSilencedAt(t *time.Time) *UserUpdate {
+// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLastSeen(t *time.Time) *UserUpdate {
 	if t != nil {
-		uu.SetSilencedAt(*t)
+		uu.SetLastSeen(*t)
 	}
 	return uu
 }
 
-// ClearSilencedAt clears the value of the "silenced_at" field.
-func (uu *UserUpdate) ClearSilencedAt() *UserUpdate {
-	uu.mutation.ClearSilencedAt()
+// ClearLastSeen clears the value of the "last_seen" field.
+func (uu *UserUpdate) ClearLastSeen() *UserUpdate {
+	uu.mutation.ClearLastSeen()
 	return uu
 }
 
-// SetSuspendedAt sets the "suspended_at" field.
-func (uu *UserUpdate) SetSuspendedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetSuspendedAt(t)
+// SetPasswordHash sets the "passwordHash" field.
+func (uu *UserUpdate) SetPasswordHash(s string) *UserUpdate {
+	uu.mutation.SetPasswordHash(s)
 	return uu
 }
 
-// SetNillableSuspendedAt sets the "suspended_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableSuspendedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetSuspendedAt(*t)
-	}
-	return uu
-}
-
-// ClearSuspendedAt clears the value of the "suspended_at" field.
-func (uu *UserUpdate) ClearSuspendedAt() *UserUpdate {
-	uu.mutation.ClearSuspendedAt()
-	return uu
-}
-
-// SetRecoveryCode sets the "recovery_code" field.
-func (uu *UserUpdate) SetRecoveryCode(s string) *UserUpdate {
-	uu.mutation.SetRecoveryCode(s)
-	return uu
-}
-
-// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableRecoveryCode(s *string) *UserUpdate {
+// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePasswordHash(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetRecoveryCode(*s)
+		uu.SetPasswordHash(*s)
 	}
 	return uu
 }
 
-// ClearRecoveryCode clears the value of the "recovery_code" field.
-func (uu *UserUpdate) ClearRecoveryCode() *UserUpdate {
-	uu.mutation.ClearRecoveryCode()
+// ClearPasswordHash clears the value of the "passwordHash" field.
+func (uu *UserUpdate) ClearPasswordHash() *UserUpdate {
+	uu.mutation.ClearPasswordHash()
 	return uu
 }
 
@@ -304,6 +271,17 @@ func (uu *UserUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserUp
 		ids[i] = p[i].ID
 	}
 	return uu.AddPersonalAccessTokenIDs(ids...)
+}
+
+// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+func (uu *UserUpdate) SetSettingID(id string) *UserUpdate {
+	uu.mutation.SetSettingID(id)
+	return uu
+}
+
+// SetSetting sets the "setting" edge to the UserSettings entity.
+func (uu *UserUpdate) SetSetting(u *UserSettings) *UserUpdate {
+	return uu.SetSettingID(u.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -395,6 +373,12 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 	return uu.RemovePersonalAccessTokenIDs(ids...)
 }
 
+// ClearSetting clears the "setting" edge to the UserSettings entity.
+func (uu *UserUpdate) ClearSetting() *UserUpdate {
+	uu.mutation.ClearSetting()
+	return uu
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 	if err := uu.defaults(); err != nil {
@@ -469,6 +453,9 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
+	if _, ok := uu.mutation.SettingID(); uu.mutation.SettingCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "User.setting"`)
+	}
 	return nil
 }
 
@@ -511,9 +498,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
 	}
-	if value, ok := uu.mutation.Locked(); ok {
-		_spec.SetField(user.FieldLocked, field.TypeBool, value)
-	}
 	if value, ok := uu.mutation.AvatarRemoteURL(); ok {
 		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
 	}
@@ -532,23 +516,17 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.AvatarUpdatedAtCleared() {
 		_spec.ClearField(user.FieldAvatarUpdatedAt, field.TypeTime)
 	}
-	if value, ok := uu.mutation.SilencedAt(); ok {
-		_spec.SetField(user.FieldSilencedAt, field.TypeTime, value)
+	if value, ok := uu.mutation.LastSeen(); ok {
+		_spec.SetField(user.FieldLastSeen, field.TypeTime, value)
 	}
-	if uu.mutation.SilencedAtCleared() {
-		_spec.ClearField(user.FieldSilencedAt, field.TypeTime)
+	if uu.mutation.LastSeenCleared() {
+		_spec.ClearField(user.FieldLastSeen, field.TypeTime)
 	}
-	if value, ok := uu.mutation.SuspendedAt(); ok {
-		_spec.SetField(user.FieldSuspendedAt, field.TypeTime, value)
+	if value, ok := uu.mutation.PasswordHash(); ok {
+		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
 	}
-	if uu.mutation.SuspendedAtCleared() {
-		_spec.ClearField(user.FieldSuspendedAt, field.TypeTime)
-	}
-	if value, ok := uu.mutation.RecoveryCode(); ok {
-		_spec.SetField(user.FieldRecoveryCode, field.TypeString, value)
-	}
-	if uu.mutation.RecoveryCodeCleared() {
-		_spec.ClearField(user.FieldRecoveryCode, field.TypeString)
+	if uu.mutation.PasswordHashCleared() {
+		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
 	}
 	if uu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -742,6 +720,37 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.SettingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.SettingTable,
+			Columns: []string{user.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserSettings
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.SettingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.SettingTable,
+			Columns: []string{user.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.UserSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = uu.schemaConfig.User
 	ctx = internal.NewSchemaConfigContext(ctx, uu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
@@ -842,20 +851,6 @@ func (uuo *UserUpdateOne) SetNillableDisplayName(s *string) *UserUpdateOne {
 	return uuo
 }
 
-// SetLocked sets the "locked" field.
-func (uuo *UserUpdateOne) SetLocked(b bool) *UserUpdateOne {
-	uuo.mutation.SetLocked(b)
-	return uuo
-}
-
-// SetNillableLocked sets the "locked" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableLocked(b *bool) *UserUpdateOne {
-	if b != nil {
-		uuo.SetLocked(*b)
-	}
-	return uuo
-}
-
 // SetAvatarRemoteURL sets the "avatar_remote_url" field.
 func (uuo *UserUpdateOne) SetAvatarRemoteURL(s string) *UserUpdateOne {
 	uuo.mutation.SetAvatarRemoteURL(s)
@@ -916,63 +911,43 @@ func (uuo *UserUpdateOne) ClearAvatarUpdatedAt() *UserUpdateOne {
 	return uuo
 }
 
-// SetSilencedAt sets the "silenced_at" field.
-func (uuo *UserUpdateOne) SetSilencedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetSilencedAt(t)
+// SetLastSeen sets the "last_seen" field.
+func (uuo *UserUpdateOne) SetLastSeen(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetLastSeen(t)
 	return uuo
 }
 
-// SetNillableSilencedAt sets the "silenced_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableSilencedAt(t *time.Time) *UserUpdateOne {
+// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLastSeen(t *time.Time) *UserUpdateOne {
 	if t != nil {
-		uuo.SetSilencedAt(*t)
+		uuo.SetLastSeen(*t)
 	}
 	return uuo
 }
 
-// ClearSilencedAt clears the value of the "silenced_at" field.
-func (uuo *UserUpdateOne) ClearSilencedAt() *UserUpdateOne {
-	uuo.mutation.ClearSilencedAt()
+// ClearLastSeen clears the value of the "last_seen" field.
+func (uuo *UserUpdateOne) ClearLastSeen() *UserUpdateOne {
+	uuo.mutation.ClearLastSeen()
 	return uuo
 }
 
-// SetSuspendedAt sets the "suspended_at" field.
-func (uuo *UserUpdateOne) SetSuspendedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetSuspendedAt(t)
+// SetPasswordHash sets the "passwordHash" field.
+func (uuo *UserUpdateOne) SetPasswordHash(s string) *UserUpdateOne {
+	uuo.mutation.SetPasswordHash(s)
 	return uuo
 }
 
-// SetNillableSuspendedAt sets the "suspended_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableSuspendedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetSuspendedAt(*t)
-	}
-	return uuo
-}
-
-// ClearSuspendedAt clears the value of the "suspended_at" field.
-func (uuo *UserUpdateOne) ClearSuspendedAt() *UserUpdateOne {
-	uuo.mutation.ClearSuspendedAt()
-	return uuo
-}
-
-// SetRecoveryCode sets the "recovery_code" field.
-func (uuo *UserUpdateOne) SetRecoveryCode(s string) *UserUpdateOne {
-	uuo.mutation.SetRecoveryCode(s)
-	return uuo
-}
-
-// SetNillableRecoveryCode sets the "recovery_code" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableRecoveryCode(s *string) *UserUpdateOne {
+// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePasswordHash(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetRecoveryCode(*s)
+		uuo.SetPasswordHash(*s)
 	}
 	return uuo
 }
 
-// ClearRecoveryCode clears the value of the "recovery_code" field.
-func (uuo *UserUpdateOne) ClearRecoveryCode() *UserUpdateOne {
-	uuo.mutation.ClearRecoveryCode()
+// ClearPasswordHash clears the value of the "passwordHash" field.
+func (uuo *UserUpdateOne) ClearPasswordHash() *UserUpdateOne {
+	uuo.mutation.ClearPasswordHash()
 	return uuo
 }
 
@@ -1034,6 +1009,17 @@ func (uuo *UserUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *Us
 		ids[i] = p[i].ID
 	}
 	return uuo.AddPersonalAccessTokenIDs(ids...)
+}
+
+// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+func (uuo *UserUpdateOne) SetSettingID(id string) *UserUpdateOne {
+	uuo.mutation.SetSettingID(id)
+	return uuo
+}
+
+// SetSetting sets the "setting" edge to the UserSettings entity.
+func (uuo *UserUpdateOne) SetSetting(u *UserSettings) *UserUpdateOne {
+	return uuo.SetSettingID(u.ID)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -1125,6 +1111,12 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 	return uuo.RemovePersonalAccessTokenIDs(ids...)
 }
 
+// ClearSetting clears the "setting" edge to the UserSettings entity.
+func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
+	uuo.mutation.ClearSetting()
+	return uuo
+}
+
 // Where appends a list predicates to the UserUpdate builder.
 func (uuo *UserUpdateOne) Where(ps ...predicate.User) *UserUpdateOne {
 	uuo.mutation.Where(ps...)
@@ -1212,6 +1204,9 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
+	if _, ok := uuo.mutation.SettingID(); uuo.mutation.SettingCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "User.setting"`)
+	}
 	return nil
 }
 
@@ -1271,9 +1266,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.DisplayName(); ok {
 		_spec.SetField(user.FieldDisplayName, field.TypeString, value)
 	}
-	if value, ok := uuo.mutation.Locked(); ok {
-		_spec.SetField(user.FieldLocked, field.TypeBool, value)
-	}
 	if value, ok := uuo.mutation.AvatarRemoteURL(); ok {
 		_spec.SetField(user.FieldAvatarRemoteURL, field.TypeString, value)
 	}
@@ -1292,23 +1284,17 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.AvatarUpdatedAtCleared() {
 		_spec.ClearField(user.FieldAvatarUpdatedAt, field.TypeTime)
 	}
-	if value, ok := uuo.mutation.SilencedAt(); ok {
-		_spec.SetField(user.FieldSilencedAt, field.TypeTime, value)
+	if value, ok := uuo.mutation.LastSeen(); ok {
+		_spec.SetField(user.FieldLastSeen, field.TypeTime, value)
 	}
-	if uuo.mutation.SilencedAtCleared() {
-		_spec.ClearField(user.FieldSilencedAt, field.TypeTime)
+	if uuo.mutation.LastSeenCleared() {
+		_spec.ClearField(user.FieldLastSeen, field.TypeTime)
 	}
-	if value, ok := uuo.mutation.SuspendedAt(); ok {
-		_spec.SetField(user.FieldSuspendedAt, field.TypeTime, value)
+	if value, ok := uuo.mutation.PasswordHash(); ok {
+		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
 	}
-	if uuo.mutation.SuspendedAtCleared() {
-		_spec.ClearField(user.FieldSuspendedAt, field.TypeTime)
-	}
-	if value, ok := uuo.mutation.RecoveryCode(); ok {
-		_spec.SetField(user.FieldRecoveryCode, field.TypeString, value)
-	}
-	if uuo.mutation.RecoveryCodeCleared() {
-		_spec.ClearField(user.FieldRecoveryCode, field.TypeString)
+	if uuo.mutation.PasswordHashCleared() {
+		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
 	}
 	if uuo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1497,6 +1483,37 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.PersonalAccessToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.SettingCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.SettingTable,
+			Columns: []string{user.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserSettings
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.SettingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.SettingTable,
+			Columns: []string{user.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.UserSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

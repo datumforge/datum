@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 )
 
 // Organization is the model entity for the Organization schema.
@@ -27,6 +28,8 @@ type Organization struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// The organization's displayed 'friendly' name
+	DisplayName string `json:"display_name,omitempty"`
 	// An optional description of the Organization
 	Description string `json:"description,omitempty"`
 	// The ID of the parent organization for the organization.
@@ -49,11 +52,13 @@ type OrganizationEdges struct {
 	Groups []*Group `json:"groups,omitempty"`
 	// Integrations holds the value of the integrations edge.
 	Integrations []*Integration `json:"integrations,omitempty"`
+	// Setting holds the value of the setting edge.
+	Setting *OrganizationSettings `json:"setting,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [6]map[string]int
 
 	namedChildren     map[string][]*Organization
 	namedUsers        map[string][]*User
@@ -110,12 +115,25 @@ func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
 	return nil, &NotLoadedError{edge: "integrations"}
 }
 
+// SettingOrErr returns the Setting value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrganizationEdges) SettingOrErr() (*OrganizationSettings, error) {
+	if e.loadedTypes[5] {
+		if e.Setting == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organizationsettings.Label}
+		}
+		return e.Setting, nil
+	}
+	return nil, &NotLoadedError{edge: "setting"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldName, organization.FieldDescription, organization.FieldParentOrganizationID:
+		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -170,6 +188,12 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.Name = value.String
 			}
+		case organization.FieldDisplayName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field display_name", values[i])
+			} else if value.Valid {
+				o.DisplayName = value.String
+			}
 		case organization.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -220,6 +244,11 @@ func (o *Organization) QueryIntegrations() *IntegrationQuery {
 	return NewOrganizationClient(o.config).QueryIntegrations(o)
 }
 
+// QuerySetting queries the "setting" edge of the Organization entity.
+func (o *Organization) QuerySetting() *OrganizationSettingsQuery {
+	return NewOrganizationClient(o.config).QuerySetting(o)
+}
+
 // Update returns a builder for updating this Organization.
 // Note that you need to call Organization.Unwrap() before calling this method if this Organization
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -257,6 +286,9 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(o.Name)
+	builder.WriteString(", ")
+	builder.WriteString("display_name=")
+	builder.WriteString(o.DisplayName)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(o.Description)

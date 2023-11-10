@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"strings"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
@@ -28,9 +30,26 @@ func (Organization) Fields() []ent.Field {
 		field.String("name").Unique().
 			MaxLen(orgNameMaxLen).
 			NotEmpty().
+			Unique(). // Org names should be globally unique; display / vanity names can be used for obfuscation purposes
 			Annotations(
 				entgql.OrderField("name"),
 				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("display_name").
+			Comment("The organization's displayed 'friendly' name").
+			MaxLen(nameMaxLen).
+			NotEmpty().
+			Default("unknown").
+			Annotations(
+				entgql.OrderField("display_name"),
+			).
+			Validate(
+				func(s string) error {
+					if strings.Contains(s, " ") {
+						return ErrContainsSpaces
+					}
+					return nil
+				},
 			),
 		field.String("description").
 			Comment("An optional description of the Organization").
@@ -64,6 +83,7 @@ func (Organization) Edges() []ent.Edge {
 		edge.From("users", User.Type).Ref("organizations"),
 		edge.To("groups", Group.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("integrations", Integration.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("setting", OrganizationSettings.Type).Required().Unique(),
 	}
 }
 

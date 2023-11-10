@@ -105,6 +105,20 @@ func (gu *GroupUpdate) SetLogoURL(s string) *GroupUpdate {
 	return gu
 }
 
+// SetDisplayName sets the "display_name" field.
+func (gu *GroupUpdate) SetDisplayName(s string) *GroupUpdate {
+	gu.mutation.SetDisplayName(s)
+	return gu
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDisplayName(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetDisplayName(*s)
+	}
+	return gu
+}
+
 // SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
 func (gu *GroupUpdate) SetSettingID(id string) *GroupUpdate {
 	gu.mutation.SetSettingID(id)
@@ -242,6 +256,11 @@ func (gu *GroupUpdate) check() error {
 			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
 		}
 	}
+	if v, ok := gu.mutation.DisplayName(); ok {
+		if err := group.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
+		}
+	}
 	if _, ok := gu.mutation.SettingID(); gu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
 	}
@@ -283,6 +302,9 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
+	}
+	if value, ok := gu.mutation.DisplayName(); ok {
+		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
 	}
 	if gu.mutation.SettingCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -488,6 +510,20 @@ func (guo *GroupUpdateOne) SetLogoURL(s string) *GroupUpdateOne {
 	return guo
 }
 
+// SetDisplayName sets the "display_name" field.
+func (guo *GroupUpdateOne) SetDisplayName(s string) *GroupUpdateOne {
+	guo.mutation.SetDisplayName(s)
+	return guo
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDisplayName(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetDisplayName(*s)
+	}
+	return guo
+}
+
 // SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
 func (guo *GroupUpdateOne) SetSettingID(id string) *GroupUpdateOne {
 	guo.mutation.SetSettingID(id)
@@ -638,6 +674,11 @@ func (guo *GroupUpdateOne) check() error {
 			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
 		}
 	}
+	if v, ok := guo.mutation.DisplayName(); ok {
+		if err := group.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
+		}
+	}
 	if _, ok := guo.mutation.SettingID(); guo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
 	}
@@ -696,6 +737,9 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
+	}
+	if value, ok := guo.mutation.DisplayName(); ok {
+		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
 	}
 	if guo.mutation.SettingCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -420,6 +420,12 @@
                     ],
                     "default": "OPEN"
                   },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "group": {
                     "type": "string"
                   }
@@ -428,7 +434,8 @@
                   "created_at",
                   "updated_at",
                   "visibility",
-                  "join_policy"
+                  "join_policy",
+                  "tags"
                 ]
               }
             }
@@ -590,6 +597,12 @@
                       "INVITE_OR_APPLICATION"
                     ],
                     "default": "OPEN"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "group": {
                     "type": "string"
@@ -765,6 +778,9 @@
                   "logo_url": {
                     "type": "string"
                   },
+                  "display_name": {
+                    "type": "string"
+                  },
                   "setting": {
                     "type": "string"
                   },
@@ -784,6 +800,7 @@
                   "name",
                   "description",
                   "logo_url",
+                  "display_name",
                   "setting"
                 ]
               }
@@ -936,6 +953,9 @@
                     "type": "string"
                   },
                   "logo_url": {
+                    "type": "string"
+                  },
+                  "display_name": {
                     "type": "string"
                   },
                   "setting": {
@@ -1921,6 +1941,15 @@
                   },
                   "tax_identifier": {
                     "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "orgnaization": {
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -2108,6 +2137,15 @@
                   },
                   "tax_identifier": {
                     "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "orgnaization": {
+                    "type": "string"
                   }
                 }
               }
@@ -2122,6 +2160,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OrganizationSettingsUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organization-settings/{id}/orgnaization": {
+      "get": {
+        "tags": [
+          "OrganizationSettings"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the OrganizationSettings with the given ID",
+        "operationId": "readOrganizationSettingsOrgnaization",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrganizationSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to OrganizationSettings with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationSettings_OrgnaizationRead"
                 }
               }
             }
@@ -2229,6 +2312,9 @@
                   "name": {
                     "type": "string"
                   },
+                  "display_name": {
+                    "type": "string"
+                  },
                   "description": {
                     "type": "string"
                   },
@@ -2261,12 +2347,17 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "setting": {
+                    "type": "string"
                   }
                 },
                 "required": [
                   "created_at",
                   "updated_at",
-                  "name"
+                  "name",
+                  "display_name",
+                  "setting"
                 ]
               }
             }
@@ -2414,6 +2505,9 @@
                   "name": {
                     "type": "string"
                   },
+                  "display_name": {
+                    "type": "string"
+                  },
                   "description": {
                     "type": "string"
                   },
@@ -2443,6 +2537,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "setting": {
+                    "type": "string"
                   }
                 }
               }
@@ -2694,6 +2791,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Organization_ParentRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/setting": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Find the attached OrganizationSettings",
+        "description": "Find the attached OrganizationSettings of the Organization with the given ID",
+        "operationId": "readOrganizationSetting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OrganizationSettings attached to Organization with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization_SettingRead"
                 }
               }
             }
@@ -3847,6 +3989,424 @@
         }
       }
     },
+    "/user-settings": {
+      "get": {
+        "tags": [
+          "UserSettings"
+        ],
+        "summary": "List UserSettings",
+        "description": "List UserSettings.",
+        "operationId": "listUserSettings",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result UserSettings list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserSettingsList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserSettings"
+        ],
+        "summary": "Create a new UserSettings",
+        "description": "Creates a new UserSettings and persists it to storage.",
+        "operationId": "createUserSettings",
+        "requestBody": {
+          "description": "UserSettings to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "locked": {
+                    "type": "boolean"
+                  },
+                  "silenced_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "suspended_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "recovery_code": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVE",
+                      "INACTIVE",
+                      "DEACTIVATED",
+                      "SUSPENDED"
+                    ],
+                    "default": "ACTIVE"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "USER",
+                      "ADMIN",
+                      "OWNER"
+                    ],
+                    "default": "USER"
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "email_confirmed": {
+                    "type": "boolean"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "user": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "locked",
+                  "status",
+                  "role",
+                  "permissions",
+                  "email_confirmed",
+                  "tags"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "UserSettings created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettingsCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/user-settings/{id}": {
+      "get": {
+        "tags": [
+          "UserSettings"
+        ],
+        "summary": "Find a UserSettings by ID",
+        "description": "Finds the UserSettings with the requested ID and returns it.",
+        "operationId": "readUserSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the UserSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UserSettings with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettingsRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserSettings"
+        ],
+        "summary": "Deletes a UserSettings by ID",
+        "description": "Deletes the UserSettings with the requested ID.",
+        "operationId": "deleteUserSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the UserSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "UserSettings with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "UserSettings"
+        ],
+        "summary": "Updates a UserSettings",
+        "description": "Updates a UserSettings and persists changes to storage.",
+        "operationId": "updateUserSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the UserSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "UserSettings properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "locked": {
+                    "type": "boolean"
+                  },
+                  "silenced_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "suspended_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "recovery_code": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "ACTIVE",
+                      "INACTIVE",
+                      "DEACTIVATED",
+                      "SUSPENDED"
+                    ],
+                    "default": "ACTIVE"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "USER",
+                      "ADMIN",
+                      "OWNER"
+                    ],
+                    "default": "USER"
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "email_confirmed": {
+                    "type": "boolean"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "user": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "UserSettings updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettingsUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/user-settings/{id}/user": {
+      "get": {
+        "tags": [
+          "UserSettings"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the UserSettings with the given ID",
+        "operationId": "readUserSettingsUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the UserSettings",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to UserSettings with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSettings_UserRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": [
@@ -3944,9 +4504,6 @@
                   "display_name": {
                     "type": "string"
                   },
-                  "locked": {
-                    "type": "boolean"
-                  },
                   "avatar_remote_url": {
                     "type": "string"
                   },
@@ -3957,15 +4514,11 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "silenced_at": {
+                  "last_seen": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "suspended_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "recovery_code": {
+                  "passwordHash": {
                     "type": "string"
                   },
                   "organizations": {
@@ -3991,6 +4544,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "setting": {
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -4000,7 +4556,7 @@
                   "first_name",
                   "last_name",
                   "display_name",
-                  "locked"
+                  "setting"
                 ]
               }
             }
@@ -4157,9 +4713,6 @@
                   "display_name": {
                     "type": "string"
                   },
-                  "locked": {
-                    "type": "boolean"
-                  },
                   "avatar_remote_url": {
                     "type": "string"
                   },
@@ -4170,15 +4723,11 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "silenced_at": {
+                  "last_seen": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "suspended_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "recovery_code": {
+                  "passwordHash": {
                     "type": "string"
                   },
                   "organizations": {
@@ -4204,6 +4753,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "setting": {
+                    "type": "string"
                   }
                 }
               }
@@ -4474,6 +5026,51 @@
                   "items": {
                     "$ref": "#/components/schemas/User_SessionsList"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{id}/setting": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Find the attached UserSettings",
+        "description": "Find the attached UserSettings of the User with the given ID",
+        "operationId": "readUserSetting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UserSettings attached to User with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User_SettingRead"
                 }
               }
             }
@@ -4780,6 +5377,9 @@
           "logo_url": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "setting": {
             "$ref": "#/components/schemas/GroupSettings"
           },
@@ -4800,6 +5400,7 @@
           "name",
           "description",
           "logo_url",
+          "display_name",
           "setting"
         ]
       },
@@ -4831,6 +5432,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -4839,7 +5443,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "GroupList": {
@@ -4870,6 +5475,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -4878,7 +5486,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "GroupRead": {
@@ -4909,6 +5518,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -4917,7 +5529,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "GroupSettings": {
@@ -4958,6 +5571,12 @@
             ],
             "default": "OPEN"
           },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "group": {
             "$ref": "#/components/schemas/Group"
           }
@@ -4967,7 +5586,8 @@
           "created_at",
           "updated_at",
           "visibility",
-          "join_policy"
+          "join_policy",
+          "tags"
         ]
       },
       "GroupSettingsCreate": {
@@ -5007,6 +5627,12 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "OPEN"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -5014,7 +5640,8 @@
           "created_at",
           "updated_at",
           "visibility",
-          "join_policy"
+          "join_policy",
+          "tags"
         ]
       },
       "GroupSettingsList": {
@@ -5054,6 +5681,12 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "OPEN"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -5061,7 +5694,8 @@
           "created_at",
           "updated_at",
           "visibility",
-          "join_policy"
+          "join_policy",
+          "tags"
         ]
       },
       "GroupSettingsRead": {
@@ -5101,6 +5735,12 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "OPEN"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -5108,7 +5748,8 @@
           "created_at",
           "updated_at",
           "visibility",
-          "join_policy"
+          "join_policy",
+          "tags"
         ]
       },
       "GroupSettingsUpdate": {
@@ -5148,6 +5789,12 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "OPEN"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -5155,7 +5802,8 @@
           "created_at",
           "updated_at",
           "visibility",
-          "join_policy"
+          "join_policy",
+          "tags"
         ]
       },
       "GroupSettings_GroupRead": {
@@ -5186,6 +5834,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -5194,7 +5845,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "GroupUpdate": {
@@ -5225,6 +5877,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -5233,7 +5888,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "Group_OwnerRead": {
@@ -5259,6 +5915,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -5270,7 +5929,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "Group_SettingRead": {
@@ -5310,6 +5970,12 @@
               "INVITE_OR_APPLICATION"
             ],
             "default": "OPEN"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -5317,7 +5983,8 @@
           "created_at",
           "updated_at",
           "visibility",
-          "join_policy"
+          "join_policy",
+          "tags"
         ]
       },
       "Group_UsersList": {
@@ -5352,9 +6019,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -5365,11 +6029,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -5381,8 +6041,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "Integration": {
@@ -5621,6 +6280,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -5632,7 +6294,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "OauthProvider": {
@@ -5988,6 +6651,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6020,13 +6686,18 @@
             "items": {
               "$ref": "#/components/schemas/Integration"
             }
+          },
+          "setting": {
+            "$ref": "#/components/schemas/OrganizationSettings"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name",
+          "setting"
         ]
       },
       "OrganizationCreate": {
@@ -6052,6 +6723,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6063,7 +6737,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "OrganizationList": {
@@ -6089,6 +6764,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6100,7 +6778,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "OrganizationRead": {
@@ -6126,6 +6805,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6137,7 +6819,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "OrganizationSettings": {
@@ -6189,6 +6872,15 @@
           },
           "tax_identifier": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "orgnaization": {
+            "$ref": "#/components/schemas/Organization"
           }
         },
         "required": [
@@ -6255,6 +6947,12 @@
           },
           "tax_identifier": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -6321,6 +7019,12 @@
           },
           "tax_identifier": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -6387,6 +7091,12 @@
           },
           "tax_identifier": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -6453,6 +7163,12 @@
           },
           "tax_identifier": {
             "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -6468,6 +7184,47 @@
           "billing_phone",
           "billing_address",
           "tax_identifier"
+        ]
+      },
+      "OrganizationSettings_OrgnaizationRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "display_name"
         ]
       },
       "OrganizationUpdate": {
@@ -6493,6 +7250,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6504,7 +7264,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "Organization_ChildrenList": {
@@ -6530,6 +7291,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6541,7 +7305,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "Organization_GroupsList": {
@@ -6572,6 +7337,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -6580,7 +7348,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "Organization_IntegrationsList": {
@@ -6648,6 +7417,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -6659,7 +7431,80 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
+        ]
+      },
+      "Organization_SettingRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sso_cert": {
+            "type": "string"
+          },
+          "sso_entrypoint": {
+            "type": "string"
+          },
+          "sso_issuer": {
+            "type": "string"
+          },
+          "billing_contact": {
+            "type": "string"
+          },
+          "billing_email": {
+            "type": "string"
+          },
+          "billing_phone": {
+            "type": "string"
+          },
+          "billing_address": {
+            "type": "string"
+          },
+          "tax_identifier": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "domains",
+          "sso_cert",
+          "sso_entrypoint",
+          "sso_issuer",
+          "billing_contact",
+          "billing_email",
+          "billing_phone",
+          "billing_address",
+          "tax_identifier"
         ]
       },
       "Organization_UsersList": {
@@ -6694,9 +7539,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -6707,11 +7549,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -6723,8 +7561,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "PersonalAccessToken": {
@@ -7017,9 +7854,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -7030,11 +7864,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -7046,8 +7876,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "RefreshToken": {
@@ -7710,9 +8539,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -7723,11 +8549,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -7739,8 +8561,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "User": {
@@ -7775,9 +8596,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -7788,15 +8606,11 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "recovery_code": {
+          "passwordHash": {
             "type": "string"
           },
           "organizations": {
@@ -7822,6 +8636,9 @@
             "items": {
               "$ref": "#/components/schemas/PersonalAccessToken"
             }
+          },
+          "setting": {
+            "$ref": "#/components/schemas/UserSettings"
           }
         },
         "required": [
@@ -7832,7 +8649,7 @@
           "first_name",
           "last_name",
           "display_name",
-          "locked"
+          "setting"
         ]
       },
       "UserCreate": {
@@ -7867,9 +8684,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -7880,11 +8694,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -7896,8 +8706,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "UserList": {
@@ -7932,9 +8741,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -7945,11 +8751,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -7961,8 +8763,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "UserRead": {
@@ -7997,9 +8798,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -8010,11 +8808,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -8026,8 +8820,460 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
+        ]
+      },
+      "UserSettings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "silenced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recovery_code": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "OWNER"
+            ],
+            "default": "USER"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "locked",
+          "status",
+          "role",
+          "permissions",
+          "email_confirmed",
+          "tags"
+        ]
+      },
+      "UserSettingsCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "silenced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "OWNER"
+            ],
+            "default": "USER"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "locked",
+          "status",
+          "role",
+          "permissions",
+          "email_confirmed",
+          "tags"
+        ]
+      },
+      "UserSettingsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "silenced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "OWNER"
+            ],
+            "default": "USER"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "locked",
+          "status",
+          "role",
+          "permissions",
+          "email_confirmed",
+          "tags"
+        ]
+      },
+      "UserSettingsRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "silenced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "OWNER"
+            ],
+            "default": "USER"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "locked",
+          "status",
+          "role",
+          "permissions",
+          "email_confirmed",
+          "tags"
+        ]
+      },
+      "UserSettingsUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "silenced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "OWNER"
+            ],
+            "default": "USER"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "locked",
+          "status",
+          "role",
+          "permissions",
+          "email_confirmed",
+          "tags"
+        ]
+      },
+      "UserSettings_UserRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name"
         ]
       },
       "UserUpdate": {
@@ -8062,9 +9308,6 @@
           "display_name": {
             "type": "string"
           },
-          "locked": {
-            "type": "boolean"
-          },
           "avatar_remote_url": {
             "type": "string"
           },
@@ -8075,11 +9318,7 @@
             "type": "string",
             "format": "date-time"
           },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
+          "last_seen": {
             "type": "string",
             "format": "date-time"
           }
@@ -8091,8 +9330,7 @@
           "email",
           "first_name",
           "last_name",
-          "display_name",
-          "locked"
+          "display_name"
         ]
       },
       "User_GroupsList": {
@@ -8123,6 +9361,9 @@
           },
           "logo_url": {
             "type": "string"
+          },
+          "display_name": {
+            "type": "string"
           }
         },
         "required": [
@@ -8131,7 +9372,8 @@
           "updated_at",
           "name",
           "description",
-          "logo_url"
+          "logo_url",
+          "display_name"
         ]
       },
       "User_OrganizationsList": {
@@ -8157,6 +9399,9 @@
           "name": {
             "type": "string"
           },
+          "display_name": {
+            "type": "string"
+          },
           "description": {
             "type": "string"
           },
@@ -8168,7 +9413,8 @@
           "id",
           "created_at",
           "updated_at",
-          "name"
+          "name",
+          "display_name"
         ]
       },
       "User_PersonalAccessTokensList": {
@@ -8270,6 +9516,84 @@
           "disabled",
           "token",
           "ips"
+        ]
+      },
+      "User_SettingRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "silenced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "suspended_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "DEACTIVATED",
+              "SUSPENDED"
+            ],
+            "default": "ACTIVE"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "OWNER"
+            ],
+            "default": "USER"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "email_confirmed": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "locked",
+          "status",
+          "role",
+          "permissions",
+          "email_confirmed",
+          "tags"
         ]
       }
     },

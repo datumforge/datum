@@ -6,7 +6,10 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
@@ -872,6 +875,45 @@ func TaxIdentifierEqualFold(v string) predicate.OrganizationSettings {
 // TaxIdentifierContainsFold applies the ContainsFold predicate on the "tax_identifier" field.
 func TaxIdentifierContainsFold(v string) predicate.OrganizationSettings {
 	return predicate.OrganizationSettings(sql.FieldContainsFold(FieldTaxIdentifier, v))
+}
+
+// TagsIsNil applies the IsNil predicate on the "tags" field.
+func TagsIsNil() predicate.OrganizationSettings {
+	return predicate.OrganizationSettings(sql.FieldIsNull(FieldTags))
+}
+
+// TagsNotNil applies the NotNil predicate on the "tags" field.
+func TagsNotNil() predicate.OrganizationSettings {
+	return predicate.OrganizationSettings(sql.FieldNotNull(FieldTags))
+}
+
+// HasOrgnaization applies the HasEdge predicate on the "orgnaization" edge.
+func HasOrgnaization() predicate.OrganizationSettings {
+	return predicate.OrganizationSettings(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, OrgnaizationTable, OrgnaizationColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationSettings
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOrgnaizationWith applies the HasEdge predicate on the "orgnaization" edge with a given conditions (other predicates).
+func HasOrgnaizationWith(preds ...predicate.Organization) predicate.OrganizationSettings {
+	return predicate.OrganizationSettings(func(s *sql.Selector) {
+		step := newOrgnaizationStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationSettings
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

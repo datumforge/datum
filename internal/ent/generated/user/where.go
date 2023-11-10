@@ -107,11 +107,6 @@ func DisplayName(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldDisplayName, v))
 }
 
-// Locked applies equality check predicate on the "locked" field. It's identical to LockedEQ.
-func Locked(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldLocked, v))
-}
-
 // AvatarRemoteURL applies equality check predicate on the "avatar_remote_url" field. It's identical to AvatarRemoteURLEQ.
 func AvatarRemoteURL(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldAvatarRemoteURL, v))
@@ -127,19 +122,14 @@ func AvatarUpdatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldAvatarUpdatedAt, v))
 }
 
-// SilencedAt applies equality check predicate on the "silenced_at" field. It's identical to SilencedAtEQ.
-func SilencedAt(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldSilencedAt, v))
+// LastSeen applies equality check predicate on the "last_seen" field. It's identical to LastSeenEQ.
+func LastSeen(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldLastSeen, v))
 }
 
-// SuspendedAt applies equality check predicate on the "suspended_at" field. It's identical to SuspendedAtEQ.
-func SuspendedAt(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldSuspendedAt, v))
-}
-
-// RecoveryCode applies equality check predicate on the "recovery_code" field. It's identical to RecoveryCodeEQ.
-func RecoveryCode(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldRecoveryCode, v))
+// PasswordHash applies equality check predicate on the "passwordHash" field. It's identical to PasswordHashEQ.
+func PasswordHash(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPasswordHash, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -632,16 +622,6 @@ func DisplayNameContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldDisplayName, v))
 }
 
-// LockedEQ applies the EQ predicate on the "locked" field.
-func LockedEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldLocked, v))
-}
-
-// LockedNEQ applies the NEQ predicate on the "locked" field.
-func LockedNEQ(v bool) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldLocked, v))
-}
-
 // AvatarRemoteURLEQ applies the EQ predicate on the "avatar_remote_url" field.
 func AvatarRemoteURLEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldAvatarRemoteURL, v))
@@ -842,179 +822,129 @@ func AvatarUpdatedAtNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldAvatarUpdatedAt))
 }
 
-// SilencedAtEQ applies the EQ predicate on the "silenced_at" field.
-func SilencedAtEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldSilencedAt, v))
+// LastSeenEQ applies the EQ predicate on the "last_seen" field.
+func LastSeenEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldLastSeen, v))
 }
 
-// SilencedAtNEQ applies the NEQ predicate on the "silenced_at" field.
-func SilencedAtNEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldSilencedAt, v))
+// LastSeenNEQ applies the NEQ predicate on the "last_seen" field.
+func LastSeenNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldLastSeen, v))
 }
 
-// SilencedAtIn applies the In predicate on the "silenced_at" field.
-func SilencedAtIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldIn(FieldSilencedAt, vs...))
+// LastSeenIn applies the In predicate on the "last_seen" field.
+func LastSeenIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldLastSeen, vs...))
 }
 
-// SilencedAtNotIn applies the NotIn predicate on the "silenced_at" field.
-func SilencedAtNotIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldSilencedAt, vs...))
+// LastSeenNotIn applies the NotIn predicate on the "last_seen" field.
+func LastSeenNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldLastSeen, vs...))
 }
 
-// SilencedAtGT applies the GT predicate on the "silenced_at" field.
-func SilencedAtGT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGT(FieldSilencedAt, v))
+// LastSeenGT applies the GT predicate on the "last_seen" field.
+func LastSeenGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldLastSeen, v))
 }
 
-// SilencedAtGTE applies the GTE predicate on the "silenced_at" field.
-func SilencedAtGTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldSilencedAt, v))
+// LastSeenGTE applies the GTE predicate on the "last_seen" field.
+func LastSeenGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldLastSeen, v))
 }
 
-// SilencedAtLT applies the LT predicate on the "silenced_at" field.
-func SilencedAtLT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLT(FieldSilencedAt, v))
+// LastSeenLT applies the LT predicate on the "last_seen" field.
+func LastSeenLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldLastSeen, v))
 }
 
-// SilencedAtLTE applies the LTE predicate on the "silenced_at" field.
-func SilencedAtLTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldSilencedAt, v))
+// LastSeenLTE applies the LTE predicate on the "last_seen" field.
+func LastSeenLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldLastSeen, v))
 }
 
-// SilencedAtIsNil applies the IsNil predicate on the "silenced_at" field.
-func SilencedAtIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldSilencedAt))
+// LastSeenIsNil applies the IsNil predicate on the "last_seen" field.
+func LastSeenIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldLastSeen))
 }
 
-// SilencedAtNotNil applies the NotNil predicate on the "silenced_at" field.
-func SilencedAtNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldSilencedAt))
+// LastSeenNotNil applies the NotNil predicate on the "last_seen" field.
+func LastSeenNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldLastSeen))
 }
 
-// SuspendedAtEQ applies the EQ predicate on the "suspended_at" field.
-func SuspendedAtEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldSuspendedAt, v))
+// PasswordHashEQ applies the EQ predicate on the "passwordHash" field.
+func PasswordHashEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPasswordHash, v))
 }
 
-// SuspendedAtNEQ applies the NEQ predicate on the "suspended_at" field.
-func SuspendedAtNEQ(v time.Time) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldSuspendedAt, v))
+// PasswordHashNEQ applies the NEQ predicate on the "passwordHash" field.
+func PasswordHashNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldPasswordHash, v))
 }
 
-// SuspendedAtIn applies the In predicate on the "suspended_at" field.
-func SuspendedAtIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldIn(FieldSuspendedAt, vs...))
+// PasswordHashIn applies the In predicate on the "passwordHash" field.
+func PasswordHashIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldPasswordHash, vs...))
 }
 
-// SuspendedAtNotIn applies the NotIn predicate on the "suspended_at" field.
-func SuspendedAtNotIn(vs ...time.Time) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldSuspendedAt, vs...))
+// PasswordHashNotIn applies the NotIn predicate on the "passwordHash" field.
+func PasswordHashNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldPasswordHash, vs...))
 }
 
-// SuspendedAtGT applies the GT predicate on the "suspended_at" field.
-func SuspendedAtGT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGT(FieldSuspendedAt, v))
+// PasswordHashGT applies the GT predicate on the "passwordHash" field.
+func PasswordHashGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldPasswordHash, v))
 }
 
-// SuspendedAtGTE applies the GTE predicate on the "suspended_at" field.
-func SuspendedAtGTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldSuspendedAt, v))
+// PasswordHashGTE applies the GTE predicate on the "passwordHash" field.
+func PasswordHashGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldPasswordHash, v))
 }
 
-// SuspendedAtLT applies the LT predicate on the "suspended_at" field.
-func SuspendedAtLT(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLT(FieldSuspendedAt, v))
+// PasswordHashLT applies the LT predicate on the "passwordHash" field.
+func PasswordHashLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldPasswordHash, v))
 }
 
-// SuspendedAtLTE applies the LTE predicate on the "suspended_at" field.
-func SuspendedAtLTE(v time.Time) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldSuspendedAt, v))
+// PasswordHashLTE applies the LTE predicate on the "passwordHash" field.
+func PasswordHashLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldPasswordHash, v))
 }
 
-// SuspendedAtIsNil applies the IsNil predicate on the "suspended_at" field.
-func SuspendedAtIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldSuspendedAt))
+// PasswordHashContains applies the Contains predicate on the "passwordHash" field.
+func PasswordHashContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldPasswordHash, v))
 }
 
-// SuspendedAtNotNil applies the NotNil predicate on the "suspended_at" field.
-func SuspendedAtNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldSuspendedAt))
+// PasswordHashHasPrefix applies the HasPrefix predicate on the "passwordHash" field.
+func PasswordHashHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldPasswordHash, v))
 }
 
-// RecoveryCodeEQ applies the EQ predicate on the "recovery_code" field.
-func RecoveryCodeEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldRecoveryCode, v))
+// PasswordHashHasSuffix applies the HasSuffix predicate on the "passwordHash" field.
+func PasswordHashHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldPasswordHash, v))
 }
 
-// RecoveryCodeNEQ applies the NEQ predicate on the "recovery_code" field.
-func RecoveryCodeNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldRecoveryCode, v))
+// PasswordHashIsNil applies the IsNil predicate on the "passwordHash" field.
+func PasswordHashIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldPasswordHash))
 }
 
-// RecoveryCodeIn applies the In predicate on the "recovery_code" field.
-func RecoveryCodeIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldRecoveryCode, vs...))
+// PasswordHashNotNil applies the NotNil predicate on the "passwordHash" field.
+func PasswordHashNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldPasswordHash))
 }
 
-// RecoveryCodeNotIn applies the NotIn predicate on the "recovery_code" field.
-func RecoveryCodeNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldRecoveryCode, vs...))
+// PasswordHashEqualFold applies the EqualFold predicate on the "passwordHash" field.
+func PasswordHashEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldPasswordHash, v))
 }
 
-// RecoveryCodeGT applies the GT predicate on the "recovery_code" field.
-func RecoveryCodeGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeGTE applies the GTE predicate on the "recovery_code" field.
-func RecoveryCodeGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeLT applies the LT predicate on the "recovery_code" field.
-func RecoveryCodeLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeLTE applies the LTE predicate on the "recovery_code" field.
-func RecoveryCodeLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeContains applies the Contains predicate on the "recovery_code" field.
-func RecoveryCodeContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeHasPrefix applies the HasPrefix predicate on the "recovery_code" field.
-func RecoveryCodeHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeHasSuffix applies the HasSuffix predicate on the "recovery_code" field.
-func RecoveryCodeHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeIsNil applies the IsNil predicate on the "recovery_code" field.
-func RecoveryCodeIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldRecoveryCode))
-}
-
-// RecoveryCodeNotNil applies the NotNil predicate on the "recovery_code" field.
-func RecoveryCodeNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldRecoveryCode))
-}
-
-// RecoveryCodeEqualFold applies the EqualFold predicate on the "recovery_code" field.
-func RecoveryCodeEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldRecoveryCode, v))
-}
-
-// RecoveryCodeContainsFold applies the ContainsFold predicate on the "recovery_code" field.
-func RecoveryCodeContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldRecoveryCode, v))
+// PasswordHashContainsFold applies the ContainsFold predicate on the "passwordHash" field.
+func PasswordHashContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldPasswordHash, v))
 }
 
 // HasOrganizations applies the HasEdge predicate on the "organizations" edge.
@@ -1125,6 +1055,35 @@ func HasPersonalAccessTokensWith(preds ...predicate.PersonalAccessToken) predica
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.PersonalAccessToken
 		step.Edge.Schema = schemaConfig.PersonalAccessToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasSetting applies the HasEdge predicate on the "setting" edge.
+func HasSetting() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.UserSettings
+		step.Edge.Schema = schemaConfig.UserSettings
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasSettingWith applies the HasEdge predicate on the "setting" edge with a given conditions (other predicates).
+func HasSettingWith(preds ...predicate.UserSettings) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newSettingStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.UserSettings
+		step.Edge.Schema = schemaConfig.UserSettings
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -26,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 	"gocloud.dev/secrets"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -58,6 +59,8 @@ type Client struct {
 	Session *SessionClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserSettings is the client for interacting with the UserSettings builders.
+	UserSettings *UserSettingsClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -82,6 +85,7 @@ func (c *Client) init() {
 	c.RefreshToken = NewRefreshTokenClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserSettings = NewUserSettingsClient(c.config)
 }
 
 type (
@@ -188,6 +192,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RefreshToken:         NewRefreshTokenClient(cfg),
 		Session:              NewSessionClient(cfg),
 		User:                 NewUserClient(cfg),
+		UserSettings:         NewUserSettingsClient(cfg),
 	}, nil
 }
 
@@ -218,6 +223,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RefreshToken:         NewRefreshTokenClient(cfg),
 		Session:              NewSessionClient(cfg),
 		User:                 NewUserClient(cfg),
+		UserSettings:         NewUserSettingsClient(cfg),
 	}, nil
 }
 
@@ -249,7 +255,7 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.OauthProvider,
 		c.Organization, c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken,
-		c.Session, c.User,
+		c.Session, c.User, c.UserSettings,
 	} {
 		n.Use(hooks...)
 	}
@@ -261,7 +267,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Entitlement, c.Group, c.GroupSettings, c.Integration, c.OauthProvider,
 		c.Organization, c.OrganizationSettings, c.PersonalAccessToken, c.RefreshToken,
-		c.Session, c.User,
+		c.Session, c.User, c.UserSettings,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -292,6 +298,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Session.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *UserSettingsMutation:
+		return c.UserSettings.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("generated: unknown mutation type %T", m)
 	}
@@ -1265,6 +1273,25 @@ func (c *OrganizationClient) QueryIntegrations(o *Organization) *IntegrationQuer
 	return query
 }
 
+// QuerySetting queries the setting edge of a Organization.
+func (c *OrganizationClient) QuerySetting(o *Organization) *OrganizationSettingsQuery {
+	query := (&OrganizationSettingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(organizationsettings.Table, organizationsettings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, organization.SettingTable, organization.SettingColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.OrganizationSettings
+		step.Edge.Schema = schemaConfig.OrganizationSettings
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *OrganizationClient) Hooks() []Hook {
 	hooks := c.hooks.Organization
@@ -1397,6 +1424,25 @@ func (c *OrganizationSettingsClient) GetX(ctx context.Context, id string) *Organ
 		panic(err)
 	}
 	return obj
+}
+
+// QueryOrgnaization queries the orgnaization edge of a OrganizationSettings.
+func (c *OrganizationSettingsClient) QueryOrgnaization(os *OrganizationSettings) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := os.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organizationsettings.Table, organizationsettings.FieldID, id),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, organizationsettings.OrgnaizationTable, organizationsettings.OrgnaizationColumn),
+		)
+		schemaConfig := os.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OrganizationSettings
+		fromV = sqlgraph.Neighbors(os.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -2048,6 +2094,25 @@ func (c *UserClient) QueryPersonalAccessTokens(u *User) *PersonalAccessTokenQuer
 	return query
 }
 
+// QuerySetting queries the setting edge of a User.
+func (c *UserClient) QuerySetting(u *User) *UserSettingsQuery {
+	query := (&UserSettingsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(usersettings.Table, usersettings.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.SettingTable, user.SettingColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.UserSettings
+		step.Edge.Schema = schemaConfig.UserSettings
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -2074,17 +2139,170 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// UserSettingsClient is a client for the UserSettings schema.
+type UserSettingsClient struct {
+	config
+}
+
+// NewUserSettingsClient returns a client for the UserSettings from the given config.
+func NewUserSettingsClient(c config) *UserSettingsClient {
+	return &UserSettingsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usersettings.Hooks(f(g(h())))`.
+func (c *UserSettingsClient) Use(hooks ...Hook) {
+	c.hooks.UserSettings = append(c.hooks.UserSettings, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usersettings.Intercept(f(g(h())))`.
+func (c *UserSettingsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserSettings = append(c.inters.UserSettings, interceptors...)
+}
+
+// Create returns a builder for creating a UserSettings entity.
+func (c *UserSettingsClient) Create() *UserSettingsCreate {
+	mutation := newUserSettingsMutation(c.config, OpCreate)
+	return &UserSettingsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserSettings entities.
+func (c *UserSettingsClient) CreateBulk(builders ...*UserSettingsCreate) *UserSettingsCreateBulk {
+	return &UserSettingsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserSettingsClient) MapCreateBulk(slice any, setFunc func(*UserSettingsCreate, int)) *UserSettingsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserSettingsCreateBulk{err: fmt.Errorf("calling to UserSettingsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserSettingsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserSettingsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserSettings.
+func (c *UserSettingsClient) Update() *UserSettingsUpdate {
+	mutation := newUserSettingsMutation(c.config, OpUpdate)
+	return &UserSettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserSettingsClient) UpdateOne(us *UserSettings) *UserSettingsUpdateOne {
+	mutation := newUserSettingsMutation(c.config, OpUpdateOne, withUserSettings(us))
+	return &UserSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserSettingsClient) UpdateOneID(id string) *UserSettingsUpdateOne {
+	mutation := newUserSettingsMutation(c.config, OpUpdateOne, withUserSettingsID(id))
+	return &UserSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserSettings.
+func (c *UserSettingsClient) Delete() *UserSettingsDelete {
+	mutation := newUserSettingsMutation(c.config, OpDelete)
+	return &UserSettingsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserSettingsClient) DeleteOne(us *UserSettings) *UserSettingsDeleteOne {
+	return c.DeleteOneID(us.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserSettingsClient) DeleteOneID(id string) *UserSettingsDeleteOne {
+	builder := c.Delete().Where(usersettings.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserSettingsDeleteOne{builder}
+}
+
+// Query returns a query builder for UserSettings.
+func (c *UserSettingsClient) Query() *UserSettingsQuery {
+	return &UserSettingsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserSettings},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserSettings entity by its id.
+func (c *UserSettingsClient) Get(ctx context.Context, id string) (*UserSettings, error) {
+	return c.Query().Where(usersettings.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserSettingsClient) GetX(ctx context.Context, id string) *UserSettings {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a UserSettings.
+func (c *UserSettingsClient) QueryUser(us *UserSettings) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := us.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(usersettings.Table, usersettings.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, usersettings.UserTable, usersettings.UserColumn),
+		)
+		schemaConfig := us.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.UserSettings
+		fromV = sqlgraph.Neighbors(us.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *UserSettingsClient) Hooks() []Hook {
+	hooks := c.hooks.UserSettings
+	return append(hooks[:len(hooks):len(hooks)], usersettings.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserSettingsClient) Interceptors() []Interceptor {
+	return c.inters.UserSettings
+}
+
+func (c *UserSettingsClient) mutate(ctx context.Context, m *UserSettingsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserSettingsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserSettingsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserSettingsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserSettingsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown UserSettings mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
 		Entitlement, Group, GroupSettings, Integration, OauthProvider, Organization,
-		OrganizationSettings, PersonalAccessToken, RefreshToken, Session,
-		User []ent.Hook
+		OrganizationSettings, PersonalAccessToken, RefreshToken, Session, User,
+		UserSettings []ent.Hook
 	}
 	inters struct {
 		Entitlement, Group, GroupSettings, Integration, OauthProvider, Organization,
-		OrganizationSettings, PersonalAccessToken, RefreshToken, Session,
-		User []ent.Interceptor
+		OrganizationSettings, PersonalAccessToken, RefreshToken, Session, User,
+		UserSettings []ent.Interceptor
 	}
 )
 

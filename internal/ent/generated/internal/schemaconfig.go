@@ -20,6 +20,7 @@ type SchemaConfig struct {
 	Session              string // Session table.
 	User                 string // User table.
 	UserOrganizations    string // User-organizations->Organization table.
+	UserSettings         string // UserSettings table.
 }
 
 type schemaCtxKey struct{}

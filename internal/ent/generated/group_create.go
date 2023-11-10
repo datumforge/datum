@@ -105,6 +105,20 @@ func (gc *GroupCreate) SetLogoURL(s string) *GroupCreate {
 	return gc
 }
 
+// SetDisplayName sets the "display_name" field.
+func (gc *GroupCreate) SetDisplayName(s string) *GroupCreate {
+	gc.mutation.SetDisplayName(s)
+	return gc
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableDisplayName(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetDisplayName(*s)
+	}
+	return gc
+}
+
 // SetID sets the "id" field.
 func (gc *GroupCreate) SetID(s string) *GroupCreate {
 	gc.mutation.SetID(s)
@@ -219,6 +233,10 @@ func (gc *GroupCreate) defaults() error {
 		v := group.DefaultDescription
 		gc.mutation.SetDescription(v)
 	}
+	if _, ok := gc.mutation.DisplayName(); !ok {
+		v := group.DefaultDisplayName
+		gc.mutation.SetDisplayName(v)
+	}
 	if _, ok := gc.mutation.ID(); !ok {
 		if group.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized group.DefaultID (forgotten import generated/runtime?)")
@@ -254,6 +272,14 @@ func (gc *GroupCreate) check() error {
 	if v, ok := gc.mutation.LogoURL(); ok {
 		if err := group.LogoURLValidator(v); err != nil {
 			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
+		}
+	}
+	if _, ok := gc.mutation.DisplayName(); !ok {
+		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "Group.display_name"`)}
+	}
+	if v, ok := gc.mutation.DisplayName(); ok {
+		if err := group.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
 	}
 	if _, ok := gc.mutation.SettingID(); !ok {
@@ -322,6 +348,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
 		_node.LogoURL = value
+	}
+	if value, ok := gc.mutation.DisplayName(); ok {
+		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
+		_node.DisplayName = value
 	}
 	if nodes := gc.mutation.SettingIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

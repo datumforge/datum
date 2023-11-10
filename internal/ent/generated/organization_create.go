@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -82,6 +83,20 @@ func (oc *OrganizationCreate) SetNillableUpdatedBy(s *string) *OrganizationCreat
 // SetName sets the "name" field.
 func (oc *OrganizationCreate) SetName(s string) *OrganizationCreate {
 	oc.mutation.SetName(s)
+	return oc
+}
+
+// SetDisplayName sets the "display_name" field.
+func (oc *OrganizationCreate) SetDisplayName(s string) *OrganizationCreate {
+	oc.mutation.SetDisplayName(s)
+	return oc
+}
+
+// SetNillableDisplayName sets the "display_name" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableDisplayName(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetDisplayName(*s)
+	}
 	return oc
 }
 
@@ -206,6 +221,17 @@ func (oc *OrganizationCreate) AddIntegrations(i ...*Integration) *OrganizationCr
 	return oc.AddIntegrationIDs(ids...)
 }
 
+// SetSettingID sets the "setting" edge to the OrganizationSettings entity by ID.
+func (oc *OrganizationCreate) SetSettingID(id string) *OrganizationCreate {
+	oc.mutation.SetSettingID(id)
+	return oc
+}
+
+// SetSetting sets the "setting" edge to the OrganizationSettings entity.
+func (oc *OrganizationCreate) SetSetting(o *OrganizationSettings) *OrganizationCreate {
+	return oc.SetSettingID(o.ID)
+}
+
 // Mutation returns the OrganizationMutation object of the builder.
 func (oc *OrganizationCreate) Mutation() *OrganizationMutation {
 	return oc.mutation
@@ -257,6 +283,10 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultUpdatedAt()
 		oc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := oc.mutation.DisplayName(); !ok {
+		v := organization.DefaultDisplayName
+		oc.mutation.SetDisplayName(v)
+	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized organization.DefaultID (forgotten import generated/runtime?)")
@@ -282,6 +312,17 @@ func (oc *OrganizationCreate) check() error {
 		if err := organization.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Organization.name": %w`, err)}
 		}
+	}
+	if _, ok := oc.mutation.DisplayName(); !ok {
+		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "Organization.display_name"`)}
+	}
+	if v, ok := oc.mutation.DisplayName(); ok {
+		if err := organization.DisplayNameValidator(v); err != nil {
+			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
+		}
+	}
+	if _, ok := oc.mutation.SettingID(); !ok {
+		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Organization.setting"`)}
 	}
 	return nil
 }
@@ -338,6 +379,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.Name(); ok {
 		_spec.SetField(organization.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := oc.mutation.DisplayName(); ok {
+		_spec.SetField(organization.FieldDisplayName, field.TypeString, value)
+		_node.DisplayName = value
 	}
 	if value, ok := oc.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
@@ -424,6 +469,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Integration
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.SettingIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   organization.SettingTable,
+			Columns: []string{organization.SettingColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrganizationSettings
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

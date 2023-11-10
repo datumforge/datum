@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up UserSettings by ID
+    """
+     UserSettings(
+        """
+        ID of the UserSettings
+        """
+        id: ID!
+    ):  UserSettings!
+}
+
+extend type Mutation{
+    """
+    Create a new UserSettings
+    """
+    CreateUserSettingsInput(
+        """
+        values of the UserSettings
+        """
+        input: CreateUserSettingsInput!
+    ): UserSettingsCreatePayload!
+    """
+    Update an existing UserSettings
+    """
+    UpdateUserSettingsInput(
+        """
+        ID of the UserSettings
+        """
+        id: ID!
+        """
+        New values for the UserSettings
+        """
+        input: UpdateUserSettingsInput!
+    ): UserSettingsUpdatePayload!
+    """
+    Delete an existing UserSettings
+    """
+    DeleteUserSettings(
+        """
+        ID of the UserSettings
+        """
+        id: ID!
+    ): UserSettingsDeletePayload!
+}
+
+"""
+Return response for createUserSettings mutation
+"""
+type UserSettingsCreatePayload {
+    """
+    Created UserSettings
+    """
+    UserSettings: UserSettings!
+}
+
+"""
+Return response for updateUserSettings mutation
+"""
+type UserSettingsUpdatePayload {
+    """
+    Updated UserSettings
+    """
+    UserSettings: UserSettings!
+}
+
+"""
+Return response for deleteUserSettings mutation
+"""
+type UserSettingsDeletePayload {
+    """
+    Deleted UserSettings ID
+    """
+    deletedID: ID!
+}

@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -59,6 +60,9 @@ func (n *Session) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *User) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *UserSettings) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -242,6 +246,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.User.Query().
 			Where(user.ID(id))
 		query, err := query.CollectFields(ctx, "User")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case usersettings.Table:
+		query := c.UserSettings.Query().
+			Where(usersettings.ID(id))
+		query, err := query.CollectFields(ctx, "UserSettings")
 		if err != nil {
 			return nil, err
 		}
@@ -487,6 +503,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.User.Query().
 			Where(user.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "User")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case usersettings.Table:
+		query := c.UserSettings.Query().
+			Where(usersettings.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserSettings")
 		if err != nil {
 			return nil, err
 		}

@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/usersettings"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -96,6 +97,7 @@ type ComplexityRoot struct {
 		CreatedAt   func(childComplexity int) int
 		CreatedBy   func(childComplexity int) int
 		Description func(childComplexity int) int
+		DisplayName func(childComplexity int) int
 		ID          func(childComplexity int) int
 		LogoURL     func(childComplexity int) int
 		Name        func(childComplexity int) int
@@ -130,6 +132,7 @@ type ComplexityRoot struct {
 		CreatedBy  func(childComplexity int) int
 		ID         func(childComplexity int) int
 		JoinPolicy func(childComplexity int) int
+		Tags       func(childComplexity int) int
 		UpdatedAt  func(childComplexity int) int
 		UpdatedBy  func(childComplexity int) int
 		Visibility func(childComplexity int) int
@@ -195,6 +198,7 @@ type ComplexityRoot struct {
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
 		CreateSession             func(childComplexity int, input generated.CreateSessionInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
+		CreateUserSettingsInput   func(childComplexity int, input generated.CreateUserSettingsInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
 		DeleteIntegration         func(childComplexity int, id string) int
@@ -203,6 +207,7 @@ type ComplexityRoot struct {
 		DeletePersonalAccessToken func(childComplexity int, id string) int
 		DeleteSession             func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
+		DeleteUserSettings        func(childComplexity int, id string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
 		UpdateGroup               func(childComplexity int, id string, input generated.UpdateGroupInput) int
 		UpdateIntegration         func(childComplexity int, id string, input generated.UpdateIntegrationInput) int
@@ -211,6 +216,7 @@ type ComplexityRoot struct {
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
 		UpdateSession             func(childComplexity int, id string, input generated.UpdateSessionInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
+		UpdateUserSettingsInput   func(childComplexity int, id string, input generated.UpdateUserSettingsInput) int
 	}
 
 	OauthProvider struct {
@@ -258,11 +264,13 @@ type ComplexityRoot struct {
 		CreatedAt    func(childComplexity int) int
 		CreatedBy    func(childComplexity int) int
 		Description  func(childComplexity int) int
+		DisplayName  func(childComplexity int) int
 		Groups       func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Integrations func(childComplexity int) int
 		Name         func(childComplexity int) int
 		Parent       func(childComplexity int) int
+		Setting      func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
 		UpdatedBy    func(childComplexity int) int
 		Users        func(childComplexity int) int
@@ -299,6 +307,7 @@ type ComplexityRoot struct {
 		SSOCert        func(childComplexity int) int
 		SSOEntrypoint  func(childComplexity int) int
 		SSOIssuer      func(childComplexity int) int
+		Tags           func(childComplexity int) int
 		TaxIdentifier  func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
 		UpdatedBy      func(childComplexity int) int
@@ -383,6 +392,8 @@ type ComplexityRoot struct {
 		Session                   func(childComplexity int, id string) int
 		Sessions                  func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) int
 		User                      func(childComplexity int, id string) int
+		UserSettings              func(childComplexity int, id string) int
+		UserSettingsSlice         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingsWhereInput) int
 		Users                     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
 		__resolve__service        func(childComplexity int) int
 	}
@@ -454,12 +465,11 @@ type ComplexityRoot struct {
 		Groups               func(childComplexity int) int
 		ID                   func(childComplexity int) int
 		LastName             func(childComplexity int) int
-		Locked               func(childComplexity int) int
+		LastSeen             func(childComplexity int) int
 		Organizations        func(childComplexity int) int
 		PersonalAccessTokens func(childComplexity int) int
 		Sessions             func(childComplexity int) int
-		SilencedAt           func(childComplexity int) int
-		SuspendedAt          func(childComplexity int) int
+		Setting              func(childComplexity int) int
 		UpdatedAt            func(childComplexity int) int
 		UpdatedBy            func(childComplexity int) int
 	}
@@ -481,6 +491,45 @@ type ComplexityRoot struct {
 	UserEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	UserSettings struct {
+		CreatedAt      func(childComplexity int) int
+		CreatedBy      func(childComplexity int) int
+		EmailConfirmed func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Locked         func(childComplexity int) int
+		Permissions    func(childComplexity int) int
+		Role           func(childComplexity int) int
+		SilencedAt     func(childComplexity int) int
+		Status         func(childComplexity int) int
+		SuspendedAt    func(childComplexity int) int
+		Tags           func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UpdatedBy      func(childComplexity int) int
+	}
+
+	UserSettingsConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	UserSettingsCreatePayload struct {
+		UserSettings func(childComplexity int) int
+	}
+
+	UserSettingsDeletePayload struct {
+		DeletedID func(childComplexity int) int
+	}
+
+	UserSettingsEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	UserSettingsUpdatePayload struct {
+		UserSettings func(childComplexity int) int
 	}
 
 	UserUpdatePayload struct {
@@ -517,6 +566,9 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
+	CreateUserSettingsInput(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error)
+	UpdateUserSettingsInput(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error)
+	DeleteUserSettings(ctx context.Context, id string) (*UserSettingsDeletePayload, error)
 }
 type OauthProviderResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.OauthProvider) (int, error)
@@ -534,6 +586,7 @@ type QueryResolver interface {
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
 	Sessions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) (*generated.SessionConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
+	UserSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingsWhereInput) (*generated.UserSettingsConnection, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
 	Group(ctx context.Context, id string) (*generated.Group, error)
 	Integration(ctx context.Context, id string) (*generated.Integration, error)
@@ -542,6 +595,7 @@ type QueryResolver interface {
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
 	Session(ctx context.Context, id string) (*generated.Session, error)
 	User(ctx context.Context, id string) (*generated.User, error)
+	UserSettings(ctx context.Context, id string) (*generated.UserSettings, error)
 }
 
 type CreateOauthProviderInputResolver interface {
@@ -727,6 +781,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.Description(childComplexity), true
 
+	case "Group.displayName":
+		if e.complexity.Group.DisplayName == nil {
+			break
+		}
+
+		return e.complexity.Group.DisplayName(childComplexity), true
+
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
 			break
@@ -859,6 +920,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GroupSettings.JoinPolicy(childComplexity), true
+
+	case "GroupSettings.tags":
+		if e.complexity.GroupSettings.Tags == nil {
+			break
+		}
+
+		return e.complexity.GroupSettings.Tags(childComplexity), true
 
 	case "GroupSettings.updatedAt":
 		if e.complexity.GroupSettings.UpdatedAt == nil {
@@ -1145,6 +1213,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(generated.CreateUserInput)), true
 
+	case "Mutation.CreateUserSettingsInput":
+		if e.complexity.Mutation.CreateUserSettingsInput == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_CreateUserSettingsInput_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUserSettingsInput(childComplexity, args["input"].(generated.CreateUserSettingsInput)), true
+
 	case "Mutation.deleteEntitlement":
 		if e.complexity.Mutation.DeleteEntitlement == nil {
 			break
@@ -1241,6 +1321,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
 
+	case "Mutation.DeleteUserSettings":
+		if e.complexity.Mutation.DeleteUserSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_DeleteUserSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteUserSettings(childComplexity, args["id"].(string)), true
+
 	case "Mutation.updateEntitlement":
 		if e.complexity.Mutation.UpdateEntitlement == nil {
 			break
@@ -1336,6 +1428,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserInput)), true
+
+	case "Mutation.UpdateUserSettingsInput":
+		if e.complexity.Mutation.UpdateUserSettingsInput == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_UpdateUserSettingsInput_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateUserSettingsInput(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserSettingsInput)), true
 
 	case "OauthProvider.authStyle":
 		if e.complexity.OauthProvider.AuthStyle == nil {
@@ -1524,6 +1628,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organization.Description(childComplexity), true
 
+	case "Organization.displayName":
+		if e.complexity.Organization.DisplayName == nil {
+			break
+		}
+
+		return e.complexity.Organization.DisplayName(childComplexity), true
+
 	case "Organization.groups":
 		if e.complexity.Organization.Groups == nil {
 			break
@@ -1558,6 +1669,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organization.Parent(childComplexity), true
+
+	case "Organization.setting":
+		if e.complexity.Organization.Setting == nil {
+			break
+		}
+
+		return e.complexity.Organization.Setting(childComplexity), true
 
 	case "Organization.updatedAt":
 		if e.complexity.Organization.UpdatedAt == nil {
@@ -1705,6 +1823,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationSettings.SSOIssuer(childComplexity), true
+
+	case "OrganizationSettings.tags":
+		if e.complexity.OrganizationSettings.Tags == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettings.Tags(childComplexity), true
 
 	case "OrganizationSettings.taxIdentifier":
 		if e.complexity.OrganizationSettings.TaxIdentifier == nil {
@@ -2158,6 +2283,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
+	case "Query.UserSettings":
+		if e.complexity.Query.UserSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Query_UserSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserSettings(childComplexity, args["id"].(string)), true
+
+	case "Query.userSettingsSlice":
+		if e.complexity.Query.UserSettingsSlice == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userSettingsSlice_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserSettingsSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.UserSettingsWhereInput)), true
+
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
 			break
@@ -2492,12 +2641,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.LastName(childComplexity), true
 
-	case "User.locked":
-		if e.complexity.User.Locked == nil {
+	case "User.lastSeen":
+		if e.complexity.User.LastSeen == nil {
 			break
 		}
 
-		return e.complexity.User.Locked(childComplexity), true
+		return e.complexity.User.LastSeen(childComplexity), true
 
 	case "User.organizations":
 		if e.complexity.User.Organizations == nil {
@@ -2520,19 +2669,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Sessions(childComplexity), true
 
-	case "User.silencedAt":
-		if e.complexity.User.SilencedAt == nil {
+	case "User.setting":
+		if e.complexity.User.Setting == nil {
 			break
 		}
 
-		return e.complexity.User.SilencedAt(childComplexity), true
-
-	case "User.suspendedAt":
-		if e.complexity.User.SuspendedAt == nil {
-			break
-		}
-
-		return e.complexity.User.SuspendedAt(childComplexity), true
+		return e.complexity.User.Setting(childComplexity), true
 
 	case "User.updatedAt":
 		if e.complexity.User.UpdatedAt == nil {
@@ -2597,6 +2739,153 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserEdge.Node(childComplexity), true
 
+	case "UserSettings.createdAt":
+		if e.complexity.UserSettings.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.CreatedAt(childComplexity), true
+
+	case "UserSettings.createdBy":
+		if e.complexity.UserSettings.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.CreatedBy(childComplexity), true
+
+	case "UserSettings.emailConfirmed":
+		if e.complexity.UserSettings.EmailConfirmed == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.EmailConfirmed(childComplexity), true
+
+	case "UserSettings.id":
+		if e.complexity.UserSettings.ID == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.ID(childComplexity), true
+
+	case "UserSettings.locked":
+		if e.complexity.UserSettings.Locked == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.Locked(childComplexity), true
+
+	case "UserSettings.permissions":
+		if e.complexity.UserSettings.Permissions == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.Permissions(childComplexity), true
+
+	case "UserSettings.role":
+		if e.complexity.UserSettings.Role == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.Role(childComplexity), true
+
+	case "UserSettings.silencedAt":
+		if e.complexity.UserSettings.SilencedAt == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.SilencedAt(childComplexity), true
+
+	case "UserSettings.status":
+		if e.complexity.UserSettings.Status == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.Status(childComplexity), true
+
+	case "UserSettings.suspendedAt":
+		if e.complexity.UserSettings.SuspendedAt == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.SuspendedAt(childComplexity), true
+
+	case "UserSettings.tags":
+		if e.complexity.UserSettings.Tags == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.Tags(childComplexity), true
+
+	case "UserSettings.updatedAt":
+		if e.complexity.UserSettings.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.UpdatedAt(childComplexity), true
+
+	case "UserSettings.updatedBy":
+		if e.complexity.UserSettings.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.UserSettings.UpdatedBy(childComplexity), true
+
+	case "UserSettingsConnection.edges":
+		if e.complexity.UserSettingsConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsConnection.Edges(childComplexity), true
+
+	case "UserSettingsConnection.pageInfo":
+		if e.complexity.UserSettingsConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsConnection.PageInfo(childComplexity), true
+
+	case "UserSettingsConnection.totalCount":
+		if e.complexity.UserSettingsConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsConnection.TotalCount(childComplexity), true
+
+	case "UserSettingsCreatePayload.UserSettings":
+		if e.complexity.UserSettingsCreatePayload.UserSettings == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsCreatePayload.UserSettings(childComplexity), true
+
+	case "UserSettingsDeletePayload.deletedID":
+		if e.complexity.UserSettingsDeletePayload.DeletedID == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsDeletePayload.DeletedID(childComplexity), true
+
+	case "UserSettingsEdge.cursor":
+		if e.complexity.UserSettingsEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsEdge.Cursor(childComplexity), true
+
+	case "UserSettingsEdge.node":
+		if e.complexity.UserSettingsEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsEdge.Node(childComplexity), true
+
+	case "UserSettingsUpdatePayload.UserSettings":
+		if e.complexity.UserSettingsUpdatePayload.UserSettings == nil {
+			break
+		}
+
+		return e.complexity.UserSettingsUpdatePayload.UserSettings(childComplexity), true
+
 	case "UserUpdatePayload.user":
 		if e.complexity.UserUpdatePayload.User == nil {
 			break
@@ -2629,6 +2918,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
 		ec.unmarshalInputCreateSessionInput,
 		ec.unmarshalInputCreateUserInput,
+		ec.unmarshalInputCreateUserSettingsInput,
 		ec.unmarshalInputEntitlementWhereInput,
 		ec.unmarshalInputGroupOrder,
 		ec.unmarshalInputGroupSettingsWhereInput,
@@ -2652,7 +2942,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
 		ec.unmarshalInputUpdateSessionInput,
 		ec.unmarshalInputUpdateUserInput,
+		ec.unmarshalInputUpdateUserSettingsInput,
 		ec.unmarshalInputUserOrder,
+		ec.unmarshalInputUserSettingsWhereInput,
 		ec.unmarshalInputUserWhereInput,
 	)
 	first := true
@@ -2780,6 +3072,8 @@ input CreateGroupInput {
   name: String!
   description: String
   logoURL: String!
+  """The group's displayed 'friendly' name"""
+  displayName: String
   settingID: ID!
   userIDs: [ID!]
   ownerID: ID
@@ -2795,6 +3089,8 @@ input CreateGroupSettingsInput {
   updatedBy: String
   visibility: GroupSettingsVisibility
   joinPolicy: GroupSettingsJoinPolicy
+  """tags associated with the object"""
+  tags: [String!]
 }
 """
 CreateIntegrationInput is used for create Integration object.
@@ -2849,12 +3145,15 @@ input CreateOrganizationInput {
   createdBy: String
   updatedBy: String
   name: String!
+  """The organization's displayed 'friendly' name"""
+  displayName: String
   """An optional description of the Organization"""
   description: String
   parentID: ID
   userIDs: [ID!]
   groupIDs: [ID!]
   integrationIDs: [ID!]
+  settingID: ID!
 }
 """
 CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -2865,6 +3164,7 @@ input CreateOrganizationSettingsInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """domains associated with the organization"""
   domains: [String!]!
   ssoCert: String
   ssoEntrypoint: String
@@ -2876,6 +3176,8 @@ input CreateOrganizationSettingsInput {
   billingAddress: String!
   """Usually government-issued tax ID or business ID such as ABN in Australia"""
   taxIdentifier: String!
+  """tags associated with the object"""
+  tags: [String!]
 }
 """
 CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -2928,24 +3230,45 @@ input CreateUserInput {
   lastName: String!
   """The user's displayed 'friendly' name"""
   displayName: String
-  """user account is locked if unconfirmed or explicitly locked"""
-  locked: Boolean
   """URL of the user's remote avatar"""
   avatarRemoteURL: String
   """The user's local avatar file"""
   avatarLocalFile: String
   """The time the user's (local) avatar was last updated"""
   avatarUpdatedAt: Time
-  """The time the user was silenced"""
-  silencedAt: Time
-  """The time the user was suspended"""
-  suspendedAt: Time
-  """local Actor password recovery code generated during account creation"""
-  recoveryCode: String
+  """the time the user was last seen"""
+  lastSeen: Time
+  """user bcrypt password hash"""
+  passwordhash: String
   organizationIDs: [ID!]
   sessionIDs: [ID!]
   groupIDs: [ID!]
   personalAccessTokenIDs: [ID!]
+  settingID: ID!
+}
+"""
+CreateUserSettingsInput is used for create UserSettings object.
+Input was generated by ent.
+"""
+input CreateUserSettingsInput {
+  createdAt: Time
+  updatedAt: Time
+  createdBy: String
+  updatedBy: String
+  """user account is locked if unconfirmed or explicitly locked"""
+  locked: Boolean
+  """The time notifications regarding the user were silenced"""
+  silencedAt: Time
+  """The time the user was suspended"""
+  suspendedAt: Time
+  """local user password recovery code generated during account creation - does not exist for oauth'd users"""
+  recoveryCode: String
+  status: UserSettingsStatus
+  role: UserSettingsRole
+  permissions: [String!]
+  emailConfirmed: Boolean
+  """tags associated with the object"""
+  tags: [String!]
 }
 """
 Define a Relay Cursor type:
@@ -3116,6 +3439,8 @@ type Group implements Node {
   name: String!
   description: String!
   logoURL: String!
+  """The group's displayed 'friendly' name"""
+  displayName: String!
   setting: GroupSettings!
   users: [User!]
   owner: Organization
@@ -3146,6 +3471,7 @@ input GroupOrder {
 """Properties by which Group connections can be ordered."""
 enum GroupOrderField {
   name
+  display_name
 }
 type GroupSettings implements Node {
   id: ID!
@@ -3155,6 +3481,8 @@ type GroupSettings implements Node {
   updatedBy: String
   visibility: GroupSettingsVisibility!
   joinPolicy: GroupSettingsJoinPolicy!
+  """tags associated with the object"""
+  tags: [String!]!
 }
 """A connection to a list of items."""
 type GroupSettingsConnection {
@@ -3347,6 +3675,20 @@ input GroupWhereInput {
   nameHasSuffix: String
   nameEqualFold: String
   nameContainsFold: String
+  """display_name field predicates"""
+  displayName: String
+  displayNameNEQ: String
+  displayNameIn: [String!]
+  displayNameNotIn: [String!]
+  displayNameGT: String
+  displayNameGTE: String
+  displayNameLT: String
+  displayNameLTE: String
+  displayNameContains: String
+  displayNameHasPrefix: String
+  displayNameHasSuffix: String
+  displayNameEqualFold: String
+  displayNameContainsFold: String
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [GroupSettingsWhereInput!]
@@ -3784,6 +4126,8 @@ type Organization implements Node {
   createdBy: String
   updatedBy: String
   name: String!
+  """The organization's displayed 'friendly' name"""
+  displayName: String!
   """An optional description of the Organization"""
   description: String
   parent: Organization
@@ -3809,6 +4153,7 @@ type Organization implements Node {
   users: [User!]
   groups: [Group!]
   integrations: [Integration!]
+  setting: OrganizationSettings!
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -3836,6 +4181,7 @@ input OrganizationOrder {
 """Properties by which Organization connections can be ordered."""
 enum OrganizationOrderField {
   name
+  display_name
 }
 type OrganizationSettings implements Node {
   id: ID!
@@ -3843,6 +4189,7 @@ type OrganizationSettings implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  """domains associated with the organization"""
   domains: [String!]!
   ssoCert: String!
   ssoEntrypoint: String!
@@ -3854,6 +4201,8 @@ type OrganizationSettings implements Node {
   billingAddress: String!
   """Usually government-issued tax ID or business ID such as ABN in Australia"""
   taxIdentifier: String!
+  """tags associated with the object"""
+  tags: [String!]
 }
 """A connection to a list of items."""
 type OrganizationSettingsConnection {
@@ -4122,6 +4471,20 @@ input OrganizationWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """display_name field predicates"""
+  displayName: String
+  displayNameNEQ: String
+  displayNameIn: [String!]
+  displayNameNotIn: [String!]
+  displayNameGT: String
+  displayNameGTE: String
+  displayNameLT: String
+  displayNameLTE: String
+  displayNameContains: String
+  displayNameHasPrefix: String
+  displayNameHasSuffix: String
+  displayNameEqualFold: String
+  displayNameContainsFold: String
   """parent_organization_id field predicates"""
   parentOrganizationID: ID
   parentOrganizationIDNEQ: ID
@@ -4153,6 +4516,9 @@ input OrganizationWhereInput {
   """integrations edge predicates"""
   hasIntegrations: Boolean
   hasIntegrationsWith: [IntegrationWhereInput!]
+  """setting edge predicates"""
+  hasSetting: Boolean
+  hasSettingWith: [OrganizationSettingsWhereInput!]
 }
 """
 Information about pagination in a connection.
@@ -4501,6 +4867,22 @@ type Query {
     """Filtering options for Users returned from the connection."""
     where: UserWhereInput
   ): UserConnection!
+  userSettingsSlice(
+    """Returns the elements in the list that come after the specified cursor."""
+    after: Cursor
+
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come before the specified cursor."""
+    before: Cursor
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """Filtering options for UserSettingsSlice returned from the connection."""
+    where: UserSettingsWhereInput
+  ): UserSettingsConnection!
 }
 type RefreshToken implements Node {
   id: ID!
@@ -4877,6 +5259,8 @@ input UpdateGroupInput {
   name: String
   description: String
   logoURL: String
+  """The group's displayed 'friendly' name"""
+  displayName: String
   settingID: ID
   addUserIDs: [ID!]
   removeUserIDs: [ID!]
@@ -4896,6 +5280,9 @@ input UpdateGroupSettingsInput {
   clearUpdatedBy: Boolean
   visibility: GroupSettingsVisibility
   joinPolicy: GroupSettingsJoinPolicy
+  """tags associated with the object"""
+  tags: [String!]
+  appendTags: [String!]
 }
 """
 UpdateIntegrationInput is used for update Integration object.
@@ -4953,6 +5340,8 @@ input UpdateOrganizationInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   name: String
+  """The organization's displayed 'friendly' name"""
+  displayName: String
   """An optional description of the Organization"""
   description: String
   clearDescription: Boolean
@@ -4965,6 +5354,7 @@ input UpdateOrganizationInput {
   addIntegrationIDs: [ID!]
   removeIntegrationIDs: [ID!]
   clearIntegrations: Boolean
+  settingID: ID
 }
 """
 UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
@@ -4976,6 +5366,7 @@ input UpdateOrganizationSettingsInput {
   clearCreatedBy: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
+  """domains associated with the organization"""
   domains: [String!]
   appendDomains: [String!]
   ssoCert: String
@@ -4988,6 +5379,10 @@ input UpdateOrganizationSettingsInput {
   billingAddress: String
   """Usually government-issued tax ID or business ID such as ABN in Australia"""
   taxIdentifier: String
+  """tags associated with the object"""
+  tags: [String!]
+  appendTags: [String!]
+  clearTags: Boolean
 }
 """
 UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.
@@ -5044,8 +5439,6 @@ input UpdateUserInput {
   lastName: String
   """The user's displayed 'friendly' name"""
   displayName: String
-  """user account is locked if unconfirmed or explicitly locked"""
-  locked: Boolean
   """URL of the user's remote avatar"""
   avatarRemoteURL: String
   clearAvatarRemoteURL: Boolean
@@ -5055,15 +5448,12 @@ input UpdateUserInput {
   """The time the user's (local) avatar was last updated"""
   avatarUpdatedAt: Time
   clearAvatarUpdatedAt: Boolean
-  """The time the user was silenced"""
-  silencedAt: Time
-  clearSilencedAt: Boolean
-  """The time the user was suspended"""
-  suspendedAt: Time
-  clearSuspendedAt: Boolean
-  """local Actor password recovery code generated during account creation"""
-  recoveryCode: String
-  clearRecoveryCode: Boolean
+  """the time the user was last seen"""
+  lastSeen: Time
+  clearLastSeen: Boolean
+  """user bcrypt password hash"""
+  passwordhash: String
+  clearPasswordHash: Boolean
   addOrganizationIDs: [ID!]
   removeOrganizationIDs: [ID!]
   clearOrganizations: Boolean
@@ -5076,6 +5466,37 @@ input UpdateUserInput {
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
+  settingID: ID
+}
+"""
+UpdateUserSettingsInput is used for update UserSettings object.
+Input was generated by ent.
+"""
+input UpdateUserSettingsInput {
+  updatedAt: Time
+  createdBy: String
+  clearCreatedBy: Boolean
+  updatedBy: String
+  clearUpdatedBy: Boolean
+  """user account is locked if unconfirmed or explicitly locked"""
+  locked: Boolean
+  """The time notifications regarding the user were silenced"""
+  silencedAt: Time
+  clearSilencedAt: Boolean
+  """The time the user was suspended"""
+  suspendedAt: Time
+  clearSuspendedAt: Boolean
+  """local user password recovery code generated during account creation - does not exist for oauth'd users"""
+  recoveryCode: String
+  clearRecoveryCode: Boolean
+  status: UserSettingsStatus
+  role: UserSettingsRole
+  permissions: [String!]
+  appendPermissions: [String!]
+  emailConfirmed: Boolean
+  """tags associated with the object"""
+  tags: [String!]
+  appendTags: [String!]
 }
 type User implements Node {
   id: ID!
@@ -5088,22 +5509,19 @@ type User implements Node {
   lastName: String!
   """The user's displayed 'friendly' name"""
   displayName: String!
-  """user account is locked if unconfirmed or explicitly locked"""
-  locked: Boolean!
   """URL of the user's remote avatar"""
   avatarRemoteURL: String
   """The user's local avatar file"""
   avatarLocalFile: String
   """The time the user's (local) avatar was last updated"""
   avatarUpdatedAt: Time
-  """The time the user was silenced"""
-  silencedAt: Time
-  """The time the user was suspended"""
-  suspendedAt: Time
+  """the time the user was last seen"""
+  lastSeen: Time
   organizations: [Organization!]
   sessions: [Session!]
   groups: [Group!]
   personalAccessTokens: [PersonalAccessToken!]
+  setting: UserSettings!
 }
 """A connection to a list of items."""
 type UserConnection {
@@ -5133,6 +5551,162 @@ enum UserOrderField {
   first_name
   last_name
   display_name
+}
+type UserSettings implements Node {
+  id: ID!
+  createdAt: Time!
+  updatedAt: Time!
+  createdBy: String
+  updatedBy: String
+  """user account is locked if unconfirmed or explicitly locked"""
+  locked: Boolean!
+  """The time notifications regarding the user were silenced"""
+  silencedAt: Time
+  """The time the user was suspended"""
+  suspendedAt: Time
+  status: UserSettingsStatus!
+  role: UserSettingsRole!
+  permissions: [String!]!
+  emailConfirmed: Boolean!
+  """tags associated with the object"""
+  tags: [String!]!
+}
+"""A connection to a list of items."""
+type UserSettingsConnection {
+  """A list of edges."""
+  edges: [UserSettingsEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+"""An edge in a connection."""
+type UserSettingsEdge {
+  """The item at the end of the edge."""
+  node: UserSettings
+  """A cursor for use in pagination."""
+  cursor: Cursor!
+}
+"""UserSettingsRole is enum for the field role"""
+enum UserSettingsRole @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersettings.Role") {
+  USER
+  ADMIN
+  OWNER
+}
+"""UserSettingsStatus is enum for the field status"""
+enum UserSettingsStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersettings.Status") {
+  ACTIVE
+  INACTIVE
+  DEACTIVATED
+  SUSPENDED
+}
+"""
+UserSettingsWhereInput is used for filtering UserSettings objects.
+Input was generated by ent.
+"""
+input UserSettingsWhereInput {
+  not: UserSettingsWhereInput
+  and: [UserSettingsWhereInput!]
+  or: [UserSettingsWhereInput!]
+  """id field predicates"""
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """created_at field predicates"""
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  """updated_at field predicates"""
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  """created_by field predicates"""
+  createdBy: String
+  createdByNEQ: String
+  createdByIn: [String!]
+  createdByNotIn: [String!]
+  createdByGT: String
+  createdByGTE: String
+  createdByLT: String
+  createdByLTE: String
+  createdByContains: String
+  createdByHasPrefix: String
+  createdByHasSuffix: String
+  createdByIsNil: Boolean
+  createdByNotNil: Boolean
+  createdByEqualFold: String
+  createdByContainsFold: String
+  """updated_by field predicates"""
+  updatedBy: String
+  updatedByNEQ: String
+  updatedByIn: [String!]
+  updatedByNotIn: [String!]
+  updatedByGT: String
+  updatedByGTE: String
+  updatedByLT: String
+  updatedByLTE: String
+  updatedByContains: String
+  updatedByHasPrefix: String
+  updatedByHasSuffix: String
+  updatedByIsNil: Boolean
+  updatedByNotNil: Boolean
+  updatedByEqualFold: String
+  updatedByContainsFold: String
+  """locked field predicates"""
+  locked: Boolean
+  lockedNEQ: Boolean
+  """silenced_at field predicates"""
+  silencedAt: Time
+  silencedAtNEQ: Time
+  silencedAtIn: [Time!]
+  silencedAtNotIn: [Time!]
+  silencedAtGT: Time
+  silencedAtGTE: Time
+  silencedAtLT: Time
+  silencedAtLTE: Time
+  silencedAtIsNil: Boolean
+  silencedAtNotNil: Boolean
+  """suspended_at field predicates"""
+  suspendedAt: Time
+  suspendedAtNEQ: Time
+  suspendedAtIn: [Time!]
+  suspendedAtNotIn: [Time!]
+  suspendedAtGT: Time
+  suspendedAtGTE: Time
+  suspendedAtLT: Time
+  suspendedAtLTE: Time
+  suspendedAtIsNil: Boolean
+  suspendedAtNotNil: Boolean
+  """status field predicates"""
+  status: UserSettingsStatus
+  statusNEQ: UserSettingsStatus
+  statusIn: [UserSettingsStatus!]
+  statusNotIn: [UserSettingsStatus!]
+  """role field predicates"""
+  role: UserSettingsRole
+  roleNEQ: UserSettingsRole
+  roleIn: [UserSettingsRole!]
+  roleNotIn: [UserSettingsRole!]
+  """email_confirmed field predicates"""
+  emailConfirmed: Boolean
+  emailConfirmedNEQ: Boolean
 }
 """
 UserWhereInput is used for filtering User objects.
@@ -5259,9 +5833,6 @@ input UserWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
-  """locked field predicates"""
-  locked: Boolean
-  lockedNEQ: Boolean
   """avatar_remote_url field predicates"""
   avatarRemoteURL: String
   avatarRemoteURLNEQ: String
@@ -5305,28 +5876,17 @@ input UserWhereInput {
   avatarUpdatedAtLTE: Time
   avatarUpdatedAtIsNil: Boolean
   avatarUpdatedAtNotNil: Boolean
-  """silenced_at field predicates"""
-  silencedAt: Time
-  silencedAtNEQ: Time
-  silencedAtIn: [Time!]
-  silencedAtNotIn: [Time!]
-  silencedAtGT: Time
-  silencedAtGTE: Time
-  silencedAtLT: Time
-  silencedAtLTE: Time
-  silencedAtIsNil: Boolean
-  silencedAtNotNil: Boolean
-  """suspended_at field predicates"""
-  suspendedAt: Time
-  suspendedAtNEQ: Time
-  suspendedAtIn: [Time!]
-  suspendedAtNotIn: [Time!]
-  suspendedAtGT: Time
-  suspendedAtGTE: Time
-  suspendedAtLT: Time
-  suspendedAtLTE: Time
-  suspendedAtIsNil: Boolean
-  suspendedAtNotNil: Boolean
+  """last_seen field predicates"""
+  lastSeen: Time
+  lastSeenNEQ: Time
+  lastSeenIn: [Time!]
+  lastSeenNotIn: [Time!]
+  lastSeenGT: Time
+  lastSeenGTE: Time
+  lastSeenLT: Time
+  lastSeenLTE: Time
+  lastSeenIsNil: Boolean
+  lastSeenNotNil: Boolean
   """organizations edge predicates"""
   hasOrganizations: Boolean
   hasOrganizationsWith: [OrganizationWhereInput!]
@@ -5339,6 +5899,9 @@ input UserWhereInput {
   """personal_access_tokens edge predicates"""
   hasPersonalAccessTokens: Boolean
   hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
+  """setting edge predicates"""
+  hasSetting: Boolean
+  hasSettingWith: [UserSettingsWhereInput!]
 }
 `, BuiltIn: false},
 	{Name: "../../schema/entitlement.graphql", Input: `extend type Query {
@@ -5944,6 +6507,81 @@ type UserDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
+	{Name: "../../schema/user_settings.graphql", Input: `extend type Query {
+    """
+    Look up UserSettings by ID
+    """
+     UserSettings(
+        """
+        ID of the UserSettings
+        """
+        id: ID!
+    ):  UserSettings!
+}
+
+extend type Mutation{
+    """
+    Create a new UserSettings
+    """
+    CreateUserSettingsInput(
+        """
+        values of the UserSettings
+        """
+        input: CreateUserSettingsInput!
+    ): UserSettingsCreatePayload!
+    """
+    Update an existing UserSettings
+    """
+    UpdateUserSettingsInput(
+        """
+        ID of the UserSettings
+        """
+        id: ID!
+        """
+        New values for the UserSettings
+        """
+        input: UpdateUserSettingsInput!
+    ): UserSettingsUpdatePayload!
+    """
+    Delete an existing UserSettings
+    """
+    DeleteUserSettings(
+        """
+        ID of the UserSettings
+        """
+        id: ID!
+    ): UserSettingsDeletePayload!
+}
+
+"""
+Return response for createUserSettings mutation
+"""
+type UserSettingsCreatePayload {
+    """
+    Created UserSettings
+    """
+    UserSettings: UserSettings!
+}
+
+"""
+Return response for updateUserSettings mutation
+"""
+type UserSettingsUpdatePayload {
+    """
+    Updated UserSettings
+    """
+    UserSettings: UserSettings!
+}
+
+"""
+Return response for deleteUserSettings mutation
+"""
+type UserSettingsDeletePayload {
+    """
+    Deleted UserSettings ID
+    """
+    deletedID: ID!
+}`, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
 	directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE
 	directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
@@ -5968,6 +6606,60 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_CreateUserSettingsInput_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateUserSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_DeleteUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_UpdateUserSettingsInput_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateUserSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createEntitlement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -6477,6 +7169,21 @@ func (ec *executionContext) field_Query_OauthProvider_args(ctx context.Context, 
 }
 
 func (ec *executionContext) field_Query_PersonalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_UserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -7089,6 +7796,57 @@ func (ec *executionContext) field_Query_sessions_args(ctx context.Context, rawAr
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
 		arg4, err = ec.unmarshalOSessionWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSessionWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userSettingsSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.UserSettingsWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalOUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -8409,6 +9167,50 @@ func (ec *executionContext) fieldContext_Group_logoURL(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Group_displayName(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Group_displayName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisplayName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Group_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Group_setting(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_setting(ctx, field)
 	if err != nil {
@@ -8462,6 +9264,8 @@ func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, fiel
 				return ec.fieldContext_GroupSettings_visibility(ctx, field)
 			case "joinPolicy":
 				return ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
+			case "tags":
+				return ec.fieldContext_GroupSettings_tags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type GroupSettings", field.Name)
 		},
@@ -8523,18 +9327,14 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -8543,6 +9343,8 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -8598,6 +9400,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -8610,6 +9414,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -8817,6 +9623,8 @@ func (ec *executionContext) fieldContext_GroupCreatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_description(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -8926,6 +9734,8 @@ func (ec *executionContext) fieldContext_GroupEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Group_description(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -9285,6 +10095,50 @@ func (ec *executionContext) fieldContext_GroupSettings_joinPolicy(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _GroupSettings_tags(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettings_tags(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettings_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _GroupSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_GroupSettingsConnection_edges(ctx, field)
 	if err != nil {
@@ -9480,6 +10334,8 @@ func (ec *executionContext) fieldContext_GroupSettingsEdge_node(ctx context.Cont
 				return ec.fieldContext_GroupSettings_visibility(ctx, field)
 			case "joinPolicy":
 				return ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
+			case "tags":
+				return ec.fieldContext_GroupSettings_tags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type GroupSettings", field.Name)
 		},
@@ -9586,6 +10442,8 @@ func (ec *executionContext) fieldContext_GroupUpdatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_description(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -10034,6 +10892,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -10046,6 +10906,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -11897,6 +12759,183 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_CreateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_CreateUserSettingsInput(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUserSettingsInput(rctx, fc.Args["input"].(generated.CreateUserSettingsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*UserSettingsCreatePayload)
+	fc.Result = res
+	return ec.marshalNUserSettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_CreateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "UserSettings":
+				return ec.fieldContext_UserSettingsCreatePayload_UserSettings(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingsCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_CreateUserSettingsInput_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_UpdateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_UpdateUserSettingsInput(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUserSettingsInput(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserSettingsInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*UserSettingsUpdatePayload)
+	fc.Result = res
+	return ec.marshalNUserSettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_UpdateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "UserSettings":
+				return ec.fieldContext_UserSettingsUpdatePayload_UserSettings(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingsUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_UpdateUserSettingsInput_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_DeleteUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_DeleteUserSettings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteUserSettings(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*UserSettingsDeletePayload)
+	fc.Result = res
+	return ec.marshalNUserSettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_DeleteUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_UserSettingsDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingsDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_DeleteUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OauthProvider_id(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OauthProvider_id(ctx, field)
 	if err != nil {
@@ -13217,6 +14256,50 @@ func (ec *executionContext) fieldContext_Organization_name(ctx context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_displayName(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_displayName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisplayName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Organization_description(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Organization_description(ctx, field)
 	if err != nil {
@@ -13306,6 +14389,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -13318,6 +14403,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -13442,18 +14529,14 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -13462,6 +14545,8 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -13521,6 +14606,8 @@ func (ec *executionContext) fieldContext_Organization_groups(ctx context.Context
 				return ec.fieldContext_Group_description(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -13592,6 +14679,82 @@ func (ec *executionContext) fieldContext_Organization_integrations(ctx context.C
 				return ec.fieldContext_Integration_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Integration", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Organization_setting(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_setting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Setting(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationSettings)
+	fc.Result = res
+	return ec.marshalNOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_setting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrganizationSettings_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrganizationSettings_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrganizationSettings_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrganizationSettings_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrganizationSettings_updatedBy(ctx, field)
+			case "domains":
+				return ec.fieldContext_OrganizationSettings_domains(ctx, field)
+			case "ssoCert":
+				return ec.fieldContext_OrganizationSettings_ssoCert(ctx, field)
+			case "ssoEntrypoint":
+				return ec.fieldContext_OrganizationSettings_ssoEntrypoint(ctx, field)
+			case "ssoIssuer":
+				return ec.fieldContext_OrganizationSettings_ssoIssuer(ctx, field)
+			case "billingContact":
+				return ec.fieldContext_OrganizationSettings_billingContact(ctx, field)
+			case "billingEmail":
+				return ec.fieldContext_OrganizationSettings_billingEmail(ctx, field)
+			case "billingPhone":
+				return ec.fieldContext_OrganizationSettings_billingPhone(ctx, field)
+			case "billingAddress":
+				return ec.fieldContext_OrganizationSettings_billingAddress(ctx, field)
+			case "taxIdentifier":
+				return ec.fieldContext_OrganizationSettings_taxIdentifier(ctx, field)
+			case "tags":
+				return ec.fieldContext_OrganizationSettings_tags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettings", field.Name)
 		},
 	}
 	return fc, nil
@@ -13793,6 +14956,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -13805,6 +14970,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -13904,6 +15071,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -13916,6 +15085,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -14577,6 +15748,47 @@ func (ec *executionContext) fieldContext_OrganizationSettings_taxIdentifier(ctx 
 	return fc, nil
 }
 
+func (ec *executionContext) _OrganizationSettings_tags(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettings_tags(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettings_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingsConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationSettingsConnection_edges(ctx, field)
 	if err != nil {
@@ -14786,6 +15998,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingsEdge_node(ctx conte
 				return ec.fieldContext_OrganizationSettings_billingAddress(ctx, field)
 			case "taxIdentifier":
 				return ec.fieldContext_OrganizationSettings_taxIdentifier(ctx, field)
+			case "tags":
+				return ec.fieldContext_OrganizationSettings_tags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettings", field.Name)
 		},
@@ -14888,6 +16102,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -14900,6 +16116,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -15562,18 +16780,14 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_user(ctx context.Co
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -15582,6 +16796,8 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_user(ctx context.Co
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -16760,6 +17976,69 @@ func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_userSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSettingsSlice(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserSettingsSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.UserSettingsWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettingsConnection)
+	fc.Result = res
+	return ec.marshalNUserSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_userSettingsSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_UserSettingsConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_UserSettingsConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_UserSettingsConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingsConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_userSettingsSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_entitlement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_entitlement(ctx, field)
 	if err != nil {
@@ -16892,6 +18171,8 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 				return ec.fieldContext_Group_description(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -17129,6 +18410,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -17141,6 +18424,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -17374,18 +18659,14 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -17394,6 +18675,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -17406,6 +18689,89 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_UserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_UserSettings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().UserSettings(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettings)
+	fc.Result = res
+	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_UserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserSettings_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+			case "locked":
+				return ec.fieldContext_UserSettings_locked(ctx, field)
+			case "silencedAt":
+				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+			case "suspendedAt":
+				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+			case "status":
+				return ec.fieldContext_UserSettings_status(ctx, field)
+			case "role":
+				return ec.fieldContext_UserSettings_role(ctx, field)
+			case "permissions":
+				return ec.fieldContext_UserSettings_permissions(ctx, field)
+			case "emailConfirmed":
+				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+			case "tags":
+				return ec.fieldContext_UserSettings_tags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_UserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18725,18 +20091,14 @@ func (ec *executionContext) fieldContext_Session_users(ctx context.Context, fiel
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -18745,6 +20107,8 @@ func (ec *executionContext) fieldContext_Session_users(ctx context.Context, fiel
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -19576,50 +20940,6 @@ func (ec *executionContext) fieldContext_User_displayName(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _User_locked(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_locked(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Locked, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_locked(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _User_avatarRemoteURL(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_avatarRemoteURL(ctx, field)
 	if err != nil {
@@ -19743,8 +21063,8 @@ func (ec *executionContext) fieldContext_User_avatarUpdatedAt(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _User_silencedAt(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_silencedAt(ctx, field)
+func (ec *executionContext) _User_lastSeen(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_lastSeen(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19757,7 +21077,7 @@ func (ec *executionContext) _User_silencedAt(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SilencedAt, nil
+		return obj.LastSeen, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19766,53 +21086,12 @@ func (ec *executionContext) _User_silencedAt(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_silencedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _User_suspendedAt(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_suspendedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SuspendedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_suspendedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_lastSeen(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -19873,6 +21152,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_updatedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
 			case "parent":
@@ -19885,6 +21166,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_groups(ctx, field)
 			case "integrations":
 				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -20009,6 +21292,8 @@ func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field 
 				return ec.fieldContext_Group_description(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -20082,6 +21367,78 @@ func (ec *executionContext) fieldContext_User_personalAccessTokens(ctx context.C
 				return ec.fieldContext_PersonalAccessToken_user(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PersonalAccessToken", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_setting(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_setting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Setting(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettings)
+	fc.Result = res
+	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserSettings_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+			case "locked":
+				return ec.fieldContext_UserSettings_locked(ctx, field)
+			case "silencedAt":
+				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+			case "suspendedAt":
+				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+			case "status":
+				return ec.fieldContext_UserSettings_status(ctx, field)
+			case "role":
+				return ec.fieldContext_UserSettings_role(ctx, field)
+			case "permissions":
+				return ec.fieldContext_UserSettings_permissions(ctx, field)
+			case "emailConfirmed":
+				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+			case "tags":
+				return ec.fieldContext_UserSettings_tags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
 		},
 	}
 	return fc, nil
@@ -20289,18 +21646,14 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -20309,6 +21662,8 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -20414,18 +21769,14 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -20434,6 +21785,8 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -20480,6 +21833,1012 @@ func (ec *executionContext) fieldContext_UserEdge_cursor(ctx context.Context, fi
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_id(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_updatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_locked(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_locked(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Locked, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_locked(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_silencedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_silencedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SilencedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_silencedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_suspendedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SuspendedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_suspendedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_status(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(usersettings.Status)
+	fc.Result = res
+	return ec.marshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UserSettingsStatus does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_role(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(usersettings.Role)
+	fc.Result = res
+	return ec.marshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UserSettingsRole does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_permissions(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_permissions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Permissions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_permissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_emailConfirmed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EmailConfirmed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_emailConfirmed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettings_tags(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettings_tags(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Tags, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettings_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.UserSettingsEdge)
+	fc.Result = res
+	return ec.marshalOUserSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_UserSettingsEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_UserSettingsEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingsEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsCreatePayload_UserSettings(ctx context.Context, field graphql.CollectedField, obj *UserSettingsCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsCreatePayload_UserSettings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserSettings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettings)
+	fc.Result = res
+	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsCreatePayload_UserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserSettings_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+			case "locked":
+				return ec.fieldContext_UserSettings_locked(ctx, field)
+			case "silencedAt":
+				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+			case "suspendedAt":
+				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+			case "status":
+				return ec.fieldContext_UserSettings_status(ctx, field)
+			case "role":
+				return ec.fieldContext_UserSettings_role(ctx, field)
+			case "permissions":
+				return ec.fieldContext_UserSettings_permissions(ctx, field)
+			case "emailConfirmed":
+				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+			case "tags":
+				return ec.fieldContext_UserSettings_tags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *UserSettingsDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsDeletePayload_deletedID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsDeletePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettings)
+	fc.Result = res
+	return ec.marshalOUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserSettings_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+			case "locked":
+				return ec.fieldContext_UserSettings_locked(ctx, field)
+			case "silencedAt":
+				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+			case "suspendedAt":
+				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+			case "status":
+				return ec.fieldContext_UserSettings_status(ctx, field)
+			case "role":
+				return ec.fieldContext_UserSettings_role(ctx, field)
+			case "permissions":
+				return ec.fieldContext_UserSettings_permissions(ctx, field)
+			case "emailConfirmed":
+				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+			case "tags":
+				return ec.fieldContext_UserSettings_tags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingsUpdatePayload_UserSettings(ctx context.Context, field graphql.CollectedField, obj *UserSettingsUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingsUpdatePayload_UserSettings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserSettings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.UserSettings)
+	fc.Result = res
+	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSettingsUpdatePayload_UserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSettingsUpdatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_UserSettings_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+			case "locked":
+				return ec.fieldContext_UserSettings_locked(ctx, field)
+			case "silencedAt":
+				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+			case "suspendedAt":
+				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+			case "status":
+				return ec.fieldContext_UserSettings_status(ctx, field)
+			case "role":
+				return ec.fieldContext_UserSettings_role(ctx, field)
+			case "permissions":
+				return ec.fieldContext_UserSettings_permissions(ctx, field)
+			case "emailConfirmed":
+				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+			case "tags":
+				return ec.fieldContext_UserSettings_tags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
 		},
 	}
 	return fc, nil
@@ -20542,18 +22901,14 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_lastName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_User_displayName(ctx, field)
-			case "locked":
-				return ec.fieldContext_User_locked(ctx, field)
 			case "avatarRemoteURL":
 				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
 			case "avatarLocalFile":
 				return ec.fieldContext_User_avatarLocalFile(ctx, field)
 			case "avatarUpdatedAt":
 				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "silencedAt":
-				return ec.fieldContext_User_silencedAt(ctx, field)
-			case "suspendedAt":
-				return ec.fieldContext_User_suspendedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -20562,6 +22917,8 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_groups(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -22491,7 +24848,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "logoURL", "settingID", "userIDs", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "logoURL", "displayName", "settingID", "userIDs", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22561,6 +24918,15 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.LogoURL = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
 		case "settingID":
 			var err error
 
@@ -22601,7 +24967,7 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "visibility", "joinPolicy"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "visibility", "joinPolicy", "tags"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22662,6 +25028,15 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 				return it, err
 			}
 			it.JoinPolicy = data
+		case "tags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tags = data
 		}
 	}
 
@@ -22915,7 +25290,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "parentID", "userIDs", "groupIDs", "integrationIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "parentID", "userIDs", "groupIDs", "integrationIDs", "settingID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22967,6 +25342,15 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.Name = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
 		case "description":
 			var err error
 
@@ -23012,6 +25396,15 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.IntegrationIDs = data
+		case "settingID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SettingID = data
 		}
 	}
 
@@ -23025,7 +25418,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingsInput(ctx co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -23149,6 +25542,15 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingsInput(ctx co
 				return it, err
 			}
 			it.TaxIdentifier = data
+		case "tags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tags = data
 		}
 	}
 
@@ -23382,7 +25784,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "locked", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "silencedAt", "suspendedAt", "recoveryCode", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "passwordhash", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -23461,15 +25863,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.DisplayName = data
-		case "locked":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Locked = data
 		case "avatarRemoteURL":
 			var err error
 
@@ -23497,33 +25890,24 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.AvatarUpdatedAt = data
-		case "silencedAt":
+		case "lastSeen":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAt"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeen"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAt = data
-		case "suspendedAt":
+			it.LastSeen = data
+		case "passwordhash":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAt = data
-		case "recoveryCode":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCode"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("passwordhash"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.RecoveryCode = data
+			it.PasswordHash = data
 		case "organizationIDs":
 			var err error
 
@@ -23560,6 +25944,152 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.PersonalAccessTokenIDs = data
+		case "settingID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SettingID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateUserSettingsInput(ctx context.Context, obj interface{}) (generated.CreateUserSettingsInput, error) {
+	var it generated.CreateUserSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "recoveryCode", "status", "role", "permissions", "emailConfirmed", "tags"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "createdAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "updatedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "createdBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "updatedBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "locked":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Locked = data
+		case "silencedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAt = data
+		case "suspendedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAt = data
+		case "recoveryCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCode"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RecoveryCode = data
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "role":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
+		case "permissions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("permissions"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Permissions = data
+		case "emailConfirmed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailConfirmed = data
+		case "tags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tags = data
 		}
 	}
 
@@ -25203,7 +27733,7 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -25858,6 +28388,123 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 				return it, err
 			}
 			it.NameContainsFold = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
+		case "displayNameNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameNEQ = data
+		case "displayNameIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameIn = data
+		case "displayNameNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameNotIn = data
+		case "displayNameGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameGT = data
+		case "displayNameGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameGTE = data
+		case "displayNameLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameLT = data
+		case "displayNameLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameLTE = data
+		case "displayNameContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameContains = data
+		case "displayNameHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameHasPrefix = data
+		case "displayNameHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameHasSuffix = data
+		case "displayNameEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameEqualFold = data
+		case "displayNameContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameContainsFold = data
 		case "hasSetting":
 			var err error
 
@@ -30126,7 +32773,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasUsers", "hasUsersWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasUsers", "hasUsersWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30664,6 +33311,123 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
+		case "displayNameNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameNEQ = data
+		case "displayNameIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameIn = data
+		case "displayNameNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameNotIn = data
+		case "displayNameGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameGT = data
+		case "displayNameGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameGTE = data
+		case "displayNameLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameLT = data
+		case "displayNameLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameLTE = data
+		case "displayNameContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameContains = data
+		case "displayNameHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameHasPrefix = data
+		case "displayNameHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameHasSuffix = data
+		case "displayNameEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameEqualFold = data
+		case "displayNameContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayNameContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayNameContainsFold = data
 		case "parentOrganizationID":
 			var err error
 
@@ -30889,6 +33653,24 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.HasIntegrationsWith = data
+		case "hasSetting":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSetting"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSetting = data
+		case "hasSettingWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSettingWith"))
+			data, err := ec.unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSettingWith = data
 		}
 	}
 
@@ -34276,7 +37058,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34355,6 +37137,15 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.LogoURL = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
 		case "settingID":
 			var err error
 
@@ -34422,7 +37213,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34492,6 +37283,24 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 				return it, err
 			}
 			it.JoinPolicy = data
+		case "tags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tags = data
+		case "appendTags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendTags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendTags = data
 		}
 	}
 
@@ -34763,7 +37572,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34824,6 +37633,15 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.Name = data
+		case "displayName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayName = data
 		case "description":
 			var err error
 
@@ -34923,6 +37741,15 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.ClearIntegrations = data
+		case "settingID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SettingID = data
 		}
 	}
 
@@ -34936,7 +37763,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingsInput(ctx co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35078,6 +37905,33 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingsInput(ctx co
 				return it, err
 			}
 			it.TaxIdentifier = data
+		case "tags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tags = data
+		case "appendTags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendTags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendTags = data
+		case "clearTags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTags"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearTags = data
 		}
 	}
 
@@ -35356,7 +38210,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "locked", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "passwordhash", "clearPasswordHash", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35444,15 +38298,6 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.DisplayName = data
-		case "locked":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Locked = data
 		case "avatarRemoteURL":
 			var err error
 
@@ -35507,60 +38352,42 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearAvatarUpdatedAt = data
-		case "silencedAt":
+		case "lastSeen":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAt"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeen"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAt = data
-		case "clearSilencedAt":
+			it.LastSeen = data
+		case "clearLastSeen":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSilencedAt"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearLastSeen"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearSilencedAt = data
-		case "suspendedAt":
+			it.ClearLastSeen = data
+		case "passwordhash":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAt = data
-		case "clearSuspendedAt":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSuspendedAt"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearSuspendedAt = data
-		case "recoveryCode":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCode"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("passwordhash"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.RecoveryCode = data
-		case "clearRecoveryCode":
+			it.PasswordHash = data
+		case "clearPasswordHash":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCode"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPasswordHash"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearRecoveryCode = data
+			it.ClearPasswordHash = data
 		case "addOrganizationIDs":
 			var err error
 
@@ -35669,6 +38496,206 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearPersonalAccessTokens = data
+		case "settingID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SettingID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateUserSettingsInput(ctx context.Context, obj interface{}) (generated.UpdateUserSettingsInput, error) {
+	var it generated.UpdateUserSettingsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "role", "permissions", "appendPermissions", "emailConfirmed", "tags", "appendTags"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updatedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "createdBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "clearCreatedBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearCreatedBy"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearCreatedBy = data
+		case "updatedBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "clearUpdatedBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedBy"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedBy = data
+		case "locked":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Locked = data
+		case "silencedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAt = data
+		case "clearSilencedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSilencedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSilencedAt = data
+		case "suspendedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAt = data
+		case "clearSuspendedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSuspendedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSuspendedAt = data
+		case "recoveryCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recoveryCode"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RecoveryCode = data
+		case "clearRecoveryCode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearRecoveryCode"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearRecoveryCode = data
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "role":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
+		case "permissions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("permissions"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Permissions = data
+		case "appendPermissions":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendPermissions"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendPermissions = data
+		case "emailConfirmed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailConfirmed = data
+		case "tags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Tags = data
+		case "appendTags":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendTags"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendTags = data
 		}
 	}
 
@@ -35717,6 +38744,845 @@ func (ec *executionContext) unmarshalInputUserOrder(ctx context.Context, obj int
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Context, obj interface{}) (generated.UserSettingsWhereInput, error) {
+	var it generated.UserSettingsWhereInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "emailConfirmed", "emailConfirmedNEQ"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "idEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDEqualFold = data
+		case "idContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDContainsFold = data
+		case "createdAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "createdAtNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNEQ = data
+		case "createdAtIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIn = data
+		case "createdAtNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotIn = data
+		case "createdAtGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGT = data
+		case "createdAtGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGTE = data
+		case "createdAtLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLT = data
+		case "createdAtLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLTE = data
+		case "updatedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "updatedAtNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNEQ = data
+		case "updatedAtIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIn = data
+		case "updatedAtNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotIn = data
+		case "updatedAtGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGT = data
+		case "updatedAtGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGTE = data
+		case "updatedAtLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLT = data
+		case "updatedAtLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLTE = data
+		case "createdBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedBy = data
+		case "createdByNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNEQ = data
+		case "createdByIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByIn = data
+		case "createdByNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNotIn = data
+		case "createdByGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByGT = data
+		case "createdByGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByGTE = data
+		case "createdByLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByLT = data
+		case "createdByLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByLTE = data
+		case "createdByContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByContains = data
+		case "createdByHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByHasPrefix = data
+		case "createdByHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByHasSuffix = data
+		case "createdByIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByIsNil = data
+		case "createdByNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByNotNil = data
+		case "createdByEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByEqualFold = data
+		case "createdByContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedByContainsFold = data
+		case "updatedBy":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedBy = data
+		case "updatedByNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNEQ = data
+		case "updatedByIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByIn = data
+		case "updatedByNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNotIn = data
+		case "updatedByGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByGT = data
+		case "updatedByGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByGTE = data
+		case "updatedByLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByLT = data
+		case "updatedByLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByLTE = data
+		case "updatedByContains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByContains = data
+		case "updatedByHasPrefix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByHasPrefix = data
+		case "updatedByHasSuffix":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByHasSuffix = data
+		case "updatedByIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByIsNil = data
+		case "updatedByNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByNotNil = data
+		case "updatedByEqualFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByEqualFold = data
+		case "updatedByContainsFold":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedByContainsFold = data
+		case "locked":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Locked = data
+		case "lockedNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lockedNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LockedNEQ = data
+		case "silencedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAt = data
+		case "silencedAtNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtNEQ = data
+		case "silencedAtIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtIn = data
+		case "silencedAtNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtNotIn = data
+		case "silencedAtGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtGT = data
+		case "silencedAtGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtGTE = data
+		case "silencedAtLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtLT = data
+		case "silencedAtLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtLTE = data
+		case "silencedAtIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtIsNil = data
+		case "silencedAtNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SilencedAtNotNil = data
+		case "suspendedAt":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAt = data
+		case "suspendedAtNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtNEQ = data
+		case "suspendedAtIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtIn = data
+		case "suspendedAtNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtNotIn = data
+		case "suspendedAtGT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtGT = data
+		case "suspendedAtGTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtGTE = data
+		case "suspendedAtLT":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtLT = data
+		case "suspendedAtLTE":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtLTE = data
+		case "suspendedAtIsNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtIsNil = data
+		case "suspendedAtNotNil":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SuspendedAtNotNil = data
+		case "status":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "statusNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNEQ"))
+			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StatusNEQ = data
+		case "statusIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusIn"))
+			data, err := ec.unmarshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StatusIn = data
+		case "statusNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNotIn"))
+			data, err := ec.unmarshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StatusNotIn = data
+		case "role":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
+		case "roleNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNEQ"))
+			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RoleNEQ = data
+		case "roleIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleIn"))
+			data, err := ec.unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RoleIn = data
+		case "roleNotIn":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNotIn"))
+			data, err := ec.unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RoleNotIn = data
+		case "emailConfirmed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmed"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailConfirmed = data
+		case "emailConfirmedNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfirmedNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EmailConfirmedNEQ = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, obj interface{}) (generated.UserWhereInput, error) {
 	var it generated.UserWhereInput
 	asMap := map[string]interface{}{}
@@ -35724,7 +39590,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "locked", "lockedNEQ", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "hasOrganizations", "hasOrganizationsWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "hasOrganizations", "hasOrganizationsWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36730,24 +40596,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.DisplayNameContainsFold = data
-		case "locked":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Locked = data
-		case "lockedNEQ":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lockedNEQ"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.LockedNEQ = data
 		case "avatarRemoteURL":
 			var err error
 
@@ -37108,186 +40956,96 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.AvatarUpdatedAtNotNil = data
-		case "silencedAt":
+		case "lastSeen":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAt"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeen"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAt = data
-		case "silencedAtNEQ":
+			it.LastSeen = data
+		case "lastSeenNEQ":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtNEQ"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenNEQ"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtNEQ = data
-		case "silencedAtIn":
+			it.LastSeenNEQ = data
+		case "lastSeenIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenIn"))
 			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtIn = data
-		case "silencedAtNotIn":
+			it.LastSeenIn = data
+		case "lastSeenNotIn":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtNotIn"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenNotIn"))
 			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtNotIn = data
-		case "silencedAtGT":
+			it.LastSeenNotIn = data
+		case "lastSeenGT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtGT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenGT"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtGT = data
-		case "silencedAtGTE":
+			it.LastSeenGT = data
+		case "lastSeenGTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtGTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenGTE"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtGTE = data
-		case "silencedAtLT":
+			it.LastSeenGTE = data
+		case "lastSeenLT":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtLT"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenLT"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtLT = data
-		case "silencedAtLTE":
+			it.LastSeenLT = data
+		case "lastSeenLTE":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtLTE"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenLTE"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtLTE = data
-		case "silencedAtIsNil":
+			it.LastSeenLTE = data
+		case "lastSeenIsNil":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtIsNil"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtIsNil = data
-		case "silencedAtNotNil":
+			it.LastSeenIsNil = data
+		case "lastSeenNotNil":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("silencedAtNotNil"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastSeenNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.SilencedAtNotNil = data
-		case "suspendedAt":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAt = data
-		case "suspendedAtNEQ":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtNEQ"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtNEQ = data
-		case "suspendedAtIn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtIn = data
-		case "suspendedAtNotIn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtNotIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtNotIn = data
-		case "suspendedAtGT":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtGT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtGT = data
-		case "suspendedAtGTE":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtGTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtGTE = data
-		case "suspendedAtLT":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtLT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtLT = data
-		case "suspendedAtLTE":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtLTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtLTE = data
-		case "suspendedAtIsNil":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtIsNil = data
-		case "suspendedAtNotNil":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("suspendedAtNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SuspendedAtNotNil = data
+			it.LastSeenNotNil = data
 		case "hasOrganizations":
 			var err error
 
@@ -37360,6 +41118,24 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasPersonalAccessTokensWith = data
+		case "hasSetting":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSetting"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSetting = data
+		case "hasSettingWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSettingWith"))
+			data, err := ec.unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSettingWith = data
 		}
 	}
 
@@ -37429,6 +41205,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._User(ctx, sel, obj)
+	case *generated.UserSettings:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._UserSettings(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -37753,6 +41534,11 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "logoURL":
 			out.Values[i] = ec._Group_logoURL(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "displayName":
+			out.Values[i] = ec._Group_displayName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -38083,6 +41869,11 @@ func (ec *executionContext) _GroupSettings(ctx context.Context, sel ast.Selectio
 			}
 		case "joinPolicy":
 			out.Values[i] = ec._GroupSettings_joinPolicy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "tags":
+			out.Values[i] = ec._GroupSettings_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -38729,6 +42520,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "CreateUserSettingsInput":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_CreateUserSettingsInput(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "UpdateUserSettingsInput":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_UpdateUserSettingsInput(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "DeleteUserSettings":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_DeleteUserSettings(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -39120,6 +42932,11 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "displayName":
+			out.Values[i] = ec._Organization_displayName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "description":
 			out.Values[i] = ec._Organization_description(ctx, field, obj)
 		case "parent":
@@ -39267,6 +43084,42 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._Organization_integrations(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "setting":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Organization_setting(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -39553,6 +43406,8 @@ func (ec *executionContext) _OrganizationSettings(ctx context.Context, sel ast.S
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "tags":
+			out.Values[i] = ec._OrganizationSettings_tags(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -40342,6 +44197,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "userSettingsSlice":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_userSettingsSlice(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "entitlement":
 			field := field
 
@@ -40506,6 +44383,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_user(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "UserSettings":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_UserSettings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -41033,21 +44932,14 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "locked":
-			out.Values[i] = ec._User_locked(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "avatarRemoteURL":
 			out.Values[i] = ec._User_avatarRemoteURL(ctx, field, obj)
 		case "avatarLocalFile":
 			out.Values[i] = ec._User_avatarLocalFile(ctx, field, obj)
 		case "avatarUpdatedAt":
 			out.Values[i] = ec._User_avatarUpdatedAt(ctx, field, obj)
-		case "silencedAt":
-			out.Values[i] = ec._User_silencedAt(ctx, field, obj)
-		case "suspendedAt":
-			out.Values[i] = ec._User_suspendedAt(ctx, field, obj)
+		case "lastSeen":
+			out.Values[i] = ec._User_lastSeen(ctx, field, obj)
 		case "organizations":
 			field := field
 
@@ -41157,6 +45049,42 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._User_personalAccessTokens(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "setting":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_setting(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -41342,6 +45270,297 @@ func (ec *executionContext) _UserEdge(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._UserEdge_node(ctx, field, obj)
 		case "cursor":
 			out.Values[i] = ec._UserEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingsImplementors = []string{"UserSettings", "Node"}
+
+func (ec *executionContext) _UserSettings(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettings) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettings")
+		case "id":
+			out.Values[i] = ec._UserSettings_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._UserSettings_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._UserSettings_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdBy":
+			out.Values[i] = ec._UserSettings_createdBy(ctx, field, obj)
+		case "updatedBy":
+			out.Values[i] = ec._UserSettings_updatedBy(ctx, field, obj)
+		case "locked":
+			out.Values[i] = ec._UserSettings_locked(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "silencedAt":
+			out.Values[i] = ec._UserSettings_silencedAt(ctx, field, obj)
+		case "suspendedAt":
+			out.Values[i] = ec._UserSettings_suspendedAt(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._UserSettings_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "role":
+			out.Values[i] = ec._UserSettings_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "permissions":
+			out.Values[i] = ec._UserSettings_permissions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "emailConfirmed":
+			out.Values[i] = ec._UserSettings_emailConfirmed(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "tags":
+			out.Values[i] = ec._UserSettings_tags(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingsConnectionImplementors = []string{"UserSettingsConnection"}
+
+func (ec *executionContext) _UserSettingsConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingsConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingsConnection")
+		case "edges":
+			out.Values[i] = ec._UserSettingsConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._UserSettingsConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._UserSettingsConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingsCreatePayloadImplementors = []string{"UserSettingsCreatePayload"}
+
+func (ec *executionContext) _UserSettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingsCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsCreatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingsCreatePayload")
+		case "UserSettings":
+			out.Values[i] = ec._UserSettingsCreatePayload_UserSettings(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingsDeletePayloadImplementors = []string{"UserSettingsDeletePayload"}
+
+func (ec *executionContext) _UserSettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingsDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsDeletePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingsDeletePayload")
+		case "deletedID":
+			out.Values[i] = ec._UserSettingsDeletePayload_deletedID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingsEdgeImplementors = []string{"UserSettingsEdge"}
+
+func (ec *executionContext) _UserSettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingsEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingsEdge")
+		case "node":
+			out.Values[i] = ec._UserSettingsEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._UserSettingsEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userSettingsUpdatePayloadImplementors = []string{"UserSettingsUpdatePayload"}
+
+func (ec *executionContext) _UserSettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingsUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsUpdatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserSettingsUpdatePayload")
+		case "UserSettings":
+			out.Values[i] = ec._UserSettingsUpdatePayload_UserSettings(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -41821,6 +46040,11 @@ func (ec *executionContext) unmarshalNCreateSessionInput2githubᚗcomᚋdatumfor
 
 func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserInput(ctx context.Context, v interface{}) (generated.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingsInput(ctx context.Context, v interface{}) (generated.CreateUserSettingsInput, error) {
+	res, err := ec.unmarshalInputCreateUserSettingsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -42407,6 +46631,16 @@ func (ec *executionContext) marshalNOrganizationOrderField2ᚖgithubᚗcomᚋdat
 	return v
 }
 
+func (ec *executionContext) marshalNOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettings) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSettings(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNOrganizationSettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationSettingsConnection) graphql.Marshaler {
 	return ec._OrganizationSettingsConnection(ctx, sel, &v)
 }
@@ -42716,6 +46950,11 @@ func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋdatumforge�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingsInput(ctx context.Context, v interface{}) (generated.UpdateUserSettingsInput, error) {
+	res, err := ec.unmarshalInputUpdateUserSettingsInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNUser2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUser(ctx context.Context, sel ast.SelectionSet, v generated.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
@@ -42786,6 +47025,101 @@ func (ec *executionContext) marshalNUserOrderField2ᚖgithubᚗcomᚋdatumforge�
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalNUserSettings2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx context.Context, sel ast.SelectionSet, v generated.UserSettings) graphql.Marshaler {
+	return ec._UserSettings(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettings) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserSettings(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserSettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.UserSettingsConnection) graphql.Marshaler {
+	return ec._UserSettingsConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsConnection(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingsConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserSettingsConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserSettingsCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingsCreatePayload) graphql.Marshaler {
+	return ec._UserSettingsCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserSettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingsCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserSettingsCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserSettingsDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingsDeletePayload) graphql.Marshaler {
+	return ec._UserSettingsDeletePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserSettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingsDeletePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserSettingsDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, v interface{}) (usersettings.Role, error) {
+	var res usersettings.Role
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, sel ast.SelectionSet, v usersettings.Role) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, v interface{}) (usersettings.Status, error) {
+	var res usersettings.Status
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, sel ast.SelectionSet, v usersettings.Status) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNUserSettingsUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingsUpdatePayload) graphql.Marshaler {
+	return ec._UserSettingsUpdatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserSettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingsUpdatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserSettingsUpdatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingsWhereInput, error) {
+	res, err := ec.unmarshalInputUserSettingsWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNUserUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserUpdatePayload(ctx context.Context, sel ast.SelectionSet, v UserUpdatePayload) graphql.Marshaler {
@@ -44837,6 +49171,255 @@ func (ec *executionContext) unmarshalOUserOrder2ᚖgithubᚗcomᚋdatumforgeᚋd
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputUserOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettings) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserSettings(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUserSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.UserSettingsEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUserSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOUserSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingsEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserSettingsEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx context.Context, v interface{}) ([]usersettings.Role, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]usersettings.Role, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []usersettings.Role) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, v interface{}) (*usersettings.Role, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(usersettings.Role)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, sel ast.SelectionSet, v *usersettings.Role) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx context.Context, v interface{}) ([]usersettings.Status, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]usersettings.Status, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []usersettings.Status) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, v interface{}) (*usersettings.Status, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(usersettings.Status)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, sel ast.SelectionSet, v *usersettings.Status) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.UserSettingsWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.UserSettingsWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingsWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUserSettingsWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -1,4 +1,4 @@
-h1:BxUmrxoc5uIr0AqRj+oStwZ6uTjEP19pXRAiWRN18UU=
+h1:VHsxGL9aafE8grTNuj0WeoTiI8oMwGrH7CHM2cUMAtY=
 20231031221758_init.sql h1:LTBvYXhIU560u+k9oMLJ55Tq+xbmjP2KXBcV+mqLHj4=
 20231104041148_nanox.sql h1:eJUI+XN2+9VgY3m49rrkTKlxesjZqS4hl0TBSqN5FbE=
 20231108183243_addRefreshToken.sql h1:96jPnQQLmetDrZ+YS7uvi3dwC+kABWmkAso6OUTVI6U=
@@ -9,3 +9,5 @@ h1:BxUmrxoc5uIr0AqRj+oStwZ6uTjEP19pXRAiWRN18UU=
 20231109213638_entitlementAnnotations.sql h1:MQkScrZNRGY2b0QIaJzjIhYJeCEc1xcoMKI3hXlci0A=
 20231109215956_personalaccesstoken.sql h1:HceDQ+VQsUR9rtfCTxnIoSqKxBLPHvDZYv66b/lKpVU=
 20231109232217_oauthprovider.sql h1:ku6RnBBMHgY7Ah3HXJcFdL5/+kjfAw5KXmVLYREDP50=
+20231110234916_userSettings.sql h1:bNYXhiadv8mVpwvKrRWKWpyWJxXxdUTjTs9FSnjT9fA=
+20231110235204_orgsettingsoptional.sql h1:VvOdjUbtspDxFA4luKIP7Gh4/bwhQrS0puykB8lEPSQ=

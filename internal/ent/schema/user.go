@@ -3,6 +3,7 @@ package schema
 import (
 	"net/mail"
 	"net/url"
+	"strings"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -49,12 +50,28 @@ func (User) Fields() []ent.Field {
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("first_name"),
+			).
+			Validate(
+				func(s string) error {
+					if strings.Contains(s, " ") {
+						return ErrContainsSpaces
+					}
+					return nil
+				},
 			),
 		field.String("last_name").
 			NotEmpty().
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("last_name"),
+			).
+			Validate(
+				func(s string) error {
+					if strings.Contains(s, " ") {
+						return ErrContainsSpaces
+					}
+					return nil
+				},
 			),
 		field.String("display_name").
 			Comment("The user's displayed 'friendly' name").
@@ -63,6 +80,14 @@ func (User) Fields() []ent.Field {
 			Default("unknown").
 			Annotations(
 				entgql.OrderField("display_name"),
+			).
+			Validate(
+				func(s string) error {
+					if strings.Contains(s, " ") {
+						return ErrContainsSpaces
+					}
+					return nil
+				},
 			),
 		field.String("avatar_remote_url").
 			Comment("URL of the user's remote avatar").
@@ -82,21 +107,14 @@ func (User) Fields() []ent.Field {
 			Comment("The time the user's (local) avatar was last updated").
 			Optional().
 			Nillable(),
-		// Fields present in local account types but not remote accounts
-		//
-		//		field.Bytes("passwordHash").
-		//			Comment("user bcrypt password hash").
-		//			Sensitive().
-		//			Nillable().
-		//			Optional(). // only local accounts have hashes. empty hashes will fail bcrypt.ConstantTimeCompare() regardless
-		//			MaxLen(60). // All hashes have a len of 60. MinLen not set (for non-local accounts)
-		//			Validate(func(b []byte) error {
-		//				if !bytes.HasPrefix(b, []byte("$2a$")) {
-		//					return fmt.Errorf("invalid bcrypt password hash")
-		//				}
-		//				return nil
-		//			}),
-
+		field.Time("last_seen").
+			Comment("the time the user was last seen").
+			Optional(),
+		field.String("passwordHash").
+			Comment("user bcrypt password hash").
+			Sensitive().
+			Nillable().
+			Optional(),
 	}
 }
 
@@ -121,6 +139,7 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
+		edge.To("setting", UserSettings.Type).Required().Unique(),
 	}
 }
 

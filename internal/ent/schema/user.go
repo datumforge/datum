@@ -64,19 +64,6 @@ func (User) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("display_name"),
 			),
-		field.Bool("locked").
-			Comment("user account is locked if unconfirmed or explicitly locked").
-			Default(false),
-		// TO DO figure out the right models to use to pass bytes
-		//		field.Bytes("pubkey").
-		//			Comment("user public key").
-		//			NotEmpty().
-		//			Default([]byte{}),
-		//		field.Bytes("privkey").
-		//			Comment("user private key").
-		//			Optional().
-		//			Sensitive().
-		//			Nillable(),
 		field.String("avatar_remote_url").
 			Comment("URL of the user's remote avatar").
 			MaxLen(urlMaxLen).
@@ -95,15 +82,6 @@ func (User) Fields() []ent.Field {
 			Comment("The time the user's (local) avatar was last updated").
 			Optional().
 			Nillable(),
-		field.Time("silenced_at").
-			Comment("The time the user was silenced").
-			Optional().
-			Nillable(),
-		field.Time("suspended_at").
-			Comment("The time the user was suspended").
-			Optional().
-			Nillable(),
-		//
 		// Fields present in local account types but not remote accounts
 		//
 		//		field.Bytes("passwordHash").
@@ -118,20 +96,7 @@ func (User) Fields() []ent.Field {
 		//				}
 		//				return nil
 		//			}),
-		field.String("recovery_code").
-			// BIP words?
-			Comment("local Actor password recovery code generated during account creation").
-			// TODO: specify len, validate
-			Sensitive().
-			Nillable().
-			Optional(),
-		// TO DO figure out what model to use for this
-		//		field.Enum("locale").
-		//			Comment("local user locale").
-		//			Values(
-		//				language.AmericanEnglish.String(),
-		//				// TODO: additional languages at some point, probably.
-		//			),
+
 	}
 }
 

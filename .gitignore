@@ -18,8 +18,7 @@
 go.work
 
 # local dev created files
-datum.db
-backup.db
+*.db
 datum
 server.crt 
 server.key 

@@ -2,6 +2,7 @@ version: "3"
 
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
+  TEST_DB_URL: "file:ent?mode=memory&cache=shared&_fk=1"
 
 tasks:
   clean:

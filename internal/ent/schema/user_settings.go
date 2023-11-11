@@ -59,7 +59,7 @@ func (UserSettings) Fields() []ent.Field {
 			Default("USER"),
 		field.JSON("permissions", []string{}).Default([]string{}),
 		// TO DO: not sure if this should be default true or false
-		field.Bool("email_confirmed").Default(true),
+		field.Bool("email_confirmed").Default(false),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").
 			Default([]string{}),

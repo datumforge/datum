@@ -50,28 +50,12 @@ func (User) Fields() []ent.Field {
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("first_name"),
-			).
-			Validate(
-				func(s string) error {
-					if strings.Contains(s, " ") {
-						return ErrContainsSpaces
-					}
-					return nil
-				},
 			),
 		field.String("last_name").
 			NotEmpty().
 			MaxLen(nameMaxLen).
 			Annotations(
 				entgql.OrderField("last_name"),
-			).
-			Validate(
-				func(s string) error {
-					if strings.Contains(s, " ") {
-						return ErrContainsSpaces
-					}
-					return nil
-				},
 			),
 		field.String("display_name").
 			Comment("The user's displayed 'friendly' name").

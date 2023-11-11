@@ -10,12 +10,17 @@ import (
 
 type OrganizationBuilder struct {
 	Name        string
+	DisplayName string
 	Description *string
 }
 
 func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organization {
 	if o.Name == "" {
 		o.Name = gofakeit.AppName()
+	}
+
+	if o.DisplayName == "" {
+		o.Name = gofakeit.LetterN(40)
 	}
 
 	if o.Description == nil {

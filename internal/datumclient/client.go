@@ -5,6 +5,7 @@ package datumclient
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -101,8 +102,13 @@ func (t *GetOrganizationByID_Organization_Parent) GetName() string {
 type GetOrganizationByID_Organization struct {
 	ID          string                                   "json:\"id\" graphql:\"id\""
 	Name        string                                   "json:\"name\" graphql:\"name\""
-	Parent      *GetOrganizationByID_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	Parent      *GetOrganizationByID_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	CreatedAt   time.Time                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetOrganizationByID_Organization) GetID() string {
@@ -117,11 +123,11 @@ func (t *GetOrganizationByID_Organization) GetName() string {
 	}
 	return t.Name
 }
-func (t *GetOrganizationByID_Organization) GetParent() *GetOrganizationByID_Organization_Parent {
+func (t *GetOrganizationByID_Organization) GetDisplayName() string {
 	if t == nil {
 		t = &GetOrganizationByID_Organization{}
 	}
-	return t.Parent
+	return t.DisplayName
 }
 func (t *GetOrganizationByID_Organization) GetDescription() *string {
 	if t == nil {
@@ -129,10 +135,41 @@ func (t *GetOrganizationByID_Organization) GetDescription() *string {
 	}
 	return t.Description
 }
+func (t *GetOrganizationByID_Organization) GetParent() *GetOrganizationByID_Organization_Parent {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.Parent
+}
+func (t *GetOrganizationByID_Organization) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetOrganizationByID_Organization) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.CreatedBy
+}
+func (t *GetOrganizationByID_Organization) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetOrganizationByID_Organization) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.UpdatedBy
+}
 
 type GetAllOrganizations_Organizations_Edges_Node struct {
 	ID          string  "json:\"id\" graphql:\"id\""
 	Name        string  "json:\"name\" graphql:\"name\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
 	Description *string "json:\"description,omitempty\" graphql:\"description\""
 }
 
@@ -147,6 +184,12 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetName() string {
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
 	return t.Name
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.DisplayName
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetDescription() *string {
 	if t == nil {
@@ -198,6 +241,7 @@ func (t *CreateOrganization_CreateOrganization_Organization_Parent) GetName() st
 type CreateOrganization_CreateOrganization_Organization struct {
 	ID          string                                                     "json:\"id\" graphql:\"id\""
 	Name        string                                                     "json:\"name\" graphql:\"name\""
+	DisplayName string                                                     "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                    "json:\"description,omitempty\" graphql:\"description\""
 	Parent      *CreateOrganization_CreateOrganization_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
 }
@@ -213,6 +257,12 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetName() string {
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
 	return t.Name
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetDisplayName() string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return t.DisplayName
 }
 func (t *CreateOrganization_CreateOrganization_Organization) GetDescription() *string {
 	if t == nil {
@@ -259,8 +309,9 @@ func (t *UpdateOrganization_UpdateOrganization_Organization_Parent) GetName() st
 type UpdateOrganization_UpdateOrganization_Organization struct {
 	ID          string                                                     "json:\"id\" graphql:\"id\""
 	Name        string                                                     "json:\"name\" graphql:\"name\""
-	Parent      *UpdateOrganization_UpdateOrganization_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	DisplayName string                                                     "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                    "json:\"description,omitempty\" graphql:\"description\""
+	Parent      *UpdateOrganization_UpdateOrganization_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
 }
 
 func (t *UpdateOrganization_UpdateOrganization_Organization) GetID() string {
@@ -275,17 +326,23 @@ func (t *UpdateOrganization_UpdateOrganization_Organization) GetName() string {
 	}
 	return t.Name
 }
-func (t *UpdateOrganization_UpdateOrganization_Organization) GetParent() *UpdateOrganization_UpdateOrganization_Organization_Parent {
+func (t *UpdateOrganization_UpdateOrganization_Organization) GetDisplayName() string {
 	if t == nil {
 		t = &UpdateOrganization_UpdateOrganization_Organization{}
 	}
-	return t.Parent
+	return t.DisplayName
 }
 func (t *UpdateOrganization_UpdateOrganization_Organization) GetDescription() *string {
 	if t == nil {
 		t = &UpdateOrganization_UpdateOrganization_Organization{}
 	}
 	return t.Description
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization) GetParent() *UpdateOrganization_UpdateOrganization_Organization_Parent {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization{}
+	}
+	return t.Parent
 }
 
 type UpdateOrganization_UpdateOrganization struct {
@@ -369,11 +426,16 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 	organization(id: $organizationId) {
 		id
 		name
+		displayName
+		description
 		parent {
 			id
 			name
 		}
-		description
+		createdAt
+		createdBy
+		updatedAt
+		updatedBy
 	}
 }
 `
@@ -401,6 +463,7 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 			node {
 				id
 				name
+				displayName
 				description
 			}
 		}
@@ -428,6 +491,7 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 		organization {
 			id
 			name
+			displayName
 			description
 			parent {
 				id
@@ -460,11 +524,12 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 		organization {
 			id
 			name
+			displayName
+			description
 			parent {
 				id
 				name
 			}
-			description
 		}
 	}
 }

@@ -98,6 +98,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	testCases := []struct {
 		name           string
 		orgName        string
+		displayName    string
 		orgDescription string
 		parentOrgID    string
 		errorMsg       string
@@ -105,6 +106,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 		{
 			name:           "happy path organization",
 			orgName:        gofakeit.Name(),
+			displayName:    gofakeit.AppName(),
 			orgDescription: gofakeit.HipsterSentence(10),
 			parentOrgID:    "", // root org
 		},
@@ -132,6 +134,25 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			orgDescription: "",
 			parentOrgID:    parentOrg.ID,
 		},
+		{
+			name:           "duplicate organization name",
+			orgName:        parentOrg.Name,
+			orgDescription: gofakeit.HipsterSentence(10),
+			errorMsg:       "UNIQUE constraint failed",
+		},
+		{
+			name:           "duplicate display name, should be allowed",
+			orgName:        gofakeit.LetterN(80),
+			displayName:    parentOrg.DisplayName,
+			orgDescription: gofakeit.HipsterSentence(10),
+		},
+		{
+			name:           "display name with spaces should fail",
+			orgName:        gofakeit.Name(),
+			displayName:    gofakeit.Sentence(3),
+			orgDescription: gofakeit.HipsterSentence(10),
+			errorMsg:       "field should not contain spaces",
+		},
 	}
 
 	for _, tc := range testCases {
@@ -140,6 +161,10 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			input := datumclient.CreateOrganizationInput{
 				Name:        tc.orgName,
 				Description: &tc.orgDescription,
+			}
+
+			if tc.displayName != "" {
+				input.DisplayName = &tc.displayName
 			}
 
 			if tc.parentOrgID != "" {
@@ -178,6 +203,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	ctx := context.Background()
 
 	nameUpdate := gofakeit.Name()
+	displayNameUpdate := gofakeit.LetterN(40)
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 	nameUpdateLong := gofakeit.LetterN(200)
 
@@ -197,6 +223,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate,
+				DisplayName: "unknown", // this is the default if not set
 				Description: &org.Description,
 			},
 		},
@@ -208,6 +235,19 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate, // this would have been updated on the prior test
+				DisplayName: "unknown",  // this is the default if not set
+				Description: &descriptionUpdate,
+			},
+		},
+		{
+			name: "update display name, happy path",
+			updateInput: datumclient.UpdateOrganizationInput{
+				DisplayName: &displayNameUpdate,
+			},
+			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
+				ID:          org.ID,
+				Name:        nameUpdate, // this would have been updated on the prior test
+				DisplayName: displayNameUpdate,
 				Description: &descriptionUpdate,
 			},
 		},

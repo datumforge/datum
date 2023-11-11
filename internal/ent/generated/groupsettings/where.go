@@ -87,6 +87,16 @@ func UpdatedBy(v string) predicate.GroupSettings {
 	return predicate.GroupSettings(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
+// SyncToSlack applies equality check predicate on the "sync_to_slack" field. It's identical to SyncToSlackEQ.
+func SyncToSlack(v bool) predicate.GroupSettings {
+	return predicate.GroupSettings(sql.FieldEQ(FieldSyncToSlack, v))
+}
+
+// SyncToGithub applies equality check predicate on the "sync_to_github" field. It's identical to SyncToGithubEQ.
+func SyncToGithub(v bool) predicate.GroupSettings {
+	return predicate.GroupSettings(sql.FieldEQ(FieldSyncToGithub, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.GroupSettings {
 	return predicate.GroupSettings(sql.FieldEQ(FieldCreatedAt, v))
@@ -355,6 +365,26 @@ func JoinPolicyIn(vs ...JoinPolicy) predicate.GroupSettings {
 // JoinPolicyNotIn applies the NotIn predicate on the "join_policy" field.
 func JoinPolicyNotIn(vs ...JoinPolicy) predicate.GroupSettings {
 	return predicate.GroupSettings(sql.FieldNotIn(FieldJoinPolicy, vs...))
+}
+
+// SyncToSlackEQ applies the EQ predicate on the "sync_to_slack" field.
+func SyncToSlackEQ(v bool) predicate.GroupSettings {
+	return predicate.GroupSettings(sql.FieldEQ(FieldSyncToSlack, v))
+}
+
+// SyncToSlackNEQ applies the NEQ predicate on the "sync_to_slack" field.
+func SyncToSlackNEQ(v bool) predicate.GroupSettings {
+	return predicate.GroupSettings(sql.FieldNEQ(FieldSyncToSlack, v))
+}
+
+// SyncToGithubEQ applies the EQ predicate on the "sync_to_github" field.
+func SyncToGithubEQ(v bool) predicate.GroupSettings {
+	return predicate.GroupSettings(sql.FieldEQ(FieldSyncToGithub, v))
+}
+
+// SyncToGithubNEQ applies the NEQ predicate on the "sync_to_github" field.
+func SyncToGithubNEQ(v bool) predicate.GroupSettings {
+	return predicate.GroupSettings(sql.FieldNEQ(FieldSyncToGithub, v))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

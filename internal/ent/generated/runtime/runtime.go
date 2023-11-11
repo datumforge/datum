@@ -144,6 +144,14 @@ func init() {
 	groupsettingsDescTags := groupsettingsFields[2].Descriptor()
 	// groupsettings.DefaultTags holds the default value on creation for the tags field.
 	groupsettings.DefaultTags = groupsettingsDescTags.Default.([]string)
+	// groupsettingsDescSyncToSlack is the schema descriptor for sync_to_slack field.
+	groupsettingsDescSyncToSlack := groupsettingsFields[3].Descriptor()
+	// groupsettings.DefaultSyncToSlack holds the default value on creation for the sync_to_slack field.
+	groupsettings.DefaultSyncToSlack = groupsettingsDescSyncToSlack.Default.(bool)
+	// groupsettingsDescSyncToGithub is the schema descriptor for sync_to_github field.
+	groupsettingsDescSyncToGithub := groupsettingsFields[4].Descriptor()
+	// groupsettings.DefaultSyncToGithub holds the default value on creation for the sync_to_github field.
+	groupsettings.DefaultSyncToGithub = groupsettingsDescSyncToGithub.Default.(bool)
 	// groupsettingsDescID is the schema descriptor for id field.
 	groupsettingsDescID := groupsettingsMixinFields1[0].Descriptor()
 	// groupsettings.DefaultID holds the default value on creation for the id field.

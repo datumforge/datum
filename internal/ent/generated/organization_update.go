@@ -186,6 +186,14 @@ func (ou *OrganizationUpdate) SetSettingID(id string) *OrganizationUpdate {
 	return ou
 }
 
+// SetNillableSettingID sets the "setting" edge to the OrganizationSettings entity by ID if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableSettingID(id *string) *OrganizationUpdate {
+	if id != nil {
+		ou = ou.SetSettingID(*id)
+	}
+	return ou
+}
+
 // SetSetting sets the "setting" edge to the OrganizationSettings entity.
 func (ou *OrganizationUpdate) SetSetting(o *OrganizationSettings) *OrganizationUpdate {
 	return ou.SetSettingID(o.ID)
@@ -339,9 +347,6 @@ func (ou *OrganizationUpdate) check() error {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
-	}
-	if _, ok := ou.mutation.SettingID(); ou.mutation.SettingCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Organization.setting"`)
 	}
 	return nil
 }
@@ -782,6 +787,14 @@ func (ouo *OrganizationUpdateOne) SetSettingID(id string) *OrganizationUpdateOne
 	return ouo
 }
 
+// SetNillableSettingID sets the "setting" edge to the OrganizationSettings entity by ID if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableSettingID(id *string) *OrganizationUpdateOne {
+	if id != nil {
+		ouo = ouo.SetSettingID(*id)
+	}
+	return ouo
+}
+
 // SetSetting sets the "setting" edge to the OrganizationSettings entity.
 func (ouo *OrganizationUpdateOne) SetSetting(o *OrganizationSettings) *OrganizationUpdateOne {
 	return ouo.SetSettingID(o.ID)
@@ -948,9 +961,6 @@ func (ouo *OrganizationUpdateOne) check() error {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
-	}
-	if _, ok := ouo.mutation.SettingID(); ouo.mutation.SettingCleared() && !ok {
-		return errors.New(`generated: clearing a required unique edge "Organization.setting"`)
 	}
 	return nil
 }

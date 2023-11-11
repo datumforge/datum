@@ -128,14 +128,16 @@ type ComplexityRoot struct {
 	}
 
 	GroupSettings struct {
-		CreatedAt  func(childComplexity int) int
-		CreatedBy  func(childComplexity int) int
-		ID         func(childComplexity int) int
-		JoinPolicy func(childComplexity int) int
-		Tags       func(childComplexity int) int
-		UpdatedAt  func(childComplexity int) int
-		UpdatedBy  func(childComplexity int) int
-		Visibility func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		CreatedBy    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		JoinPolicy   func(childComplexity int) int
+		SyncToGithub func(childComplexity int) int
+		SyncToSlack  func(childComplexity int) int
+		Tags         func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		UpdatedBy    func(childComplexity int) int
+		Visibility   func(childComplexity int) int
 	}
 
 	GroupSettingsConnection struct {
@@ -920,6 +922,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GroupSettings.JoinPolicy(childComplexity), true
+
+	case "GroupSettings.syncToGithub":
+		if e.complexity.GroupSettings.SyncToGithub == nil {
+			break
+		}
+
+		return e.complexity.GroupSettings.SyncToGithub(childComplexity), true
+
+	case "GroupSettings.syncToSlack":
+		if e.complexity.GroupSettings.SyncToSlack == nil {
+			break
+		}
+
+		return e.complexity.GroupSettings.SyncToSlack(childComplexity), true
 
 	case "GroupSettings.tags":
 		if e.complexity.GroupSettings.Tags == nil {
@@ -3091,6 +3107,8 @@ input CreateGroupSettingsInput {
   joinPolicy: GroupSettingsJoinPolicy
   """tags associated with the object"""
   tags: [String!]
+  syncToSlack: Boolean
+  syncToGithub: Boolean
 }
 """
 CreateIntegrationInput is used for create Integration object.
@@ -3153,7 +3171,7 @@ input CreateOrganizationInput {
   userIDs: [ID!]
   groupIDs: [ID!]
   integrationIDs: [ID!]
-  settingID: ID!
+  settingID: ID
 }
 """
 CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -3483,6 +3501,8 @@ type GroupSettings implements Node {
   joinPolicy: GroupSettingsJoinPolicy!
   """tags associated with the object"""
   tags: [String!]!
+  syncToSlack: Boolean!
+  syncToGithub: Boolean!
 }
 """A connection to a list of items."""
 type GroupSettingsConnection {
@@ -3591,6 +3611,12 @@ input GroupSettingsWhereInput {
   joinPolicyNEQ: GroupSettingsJoinPolicy
   joinPolicyIn: [GroupSettingsJoinPolicy!]
   joinPolicyNotIn: [GroupSettingsJoinPolicy!]
+  """sync_to_slack field predicates"""
+  syncToSlack: Boolean
+  syncToSlackNEQ: Boolean
+  """sync_to_github field predicates"""
+  syncToGithub: Boolean
+  syncToGithubNEQ: Boolean
 }
 """
 GroupWhereInput is used for filtering Group objects.
@@ -4153,7 +4179,7 @@ type Organization implements Node {
   users: [User!]
   groups: [Group!]
   integrations: [Integration!]
-  setting: OrganizationSettings!
+  setting: OrganizationSettings
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -5283,6 +5309,8 @@ input UpdateGroupSettingsInput {
   """tags associated with the object"""
   tags: [String!]
   appendTags: [String!]
+  syncToSlack: Boolean
+  syncToGithub: Boolean
 }
 """
 UpdateIntegrationInput is used for update Integration object.
@@ -5355,6 +5383,7 @@ input UpdateOrganizationInput {
   removeIntegrationIDs: [ID!]
   clearIntegrations: Boolean
   settingID: ID
+  clearSetting: Boolean
 }
 """
 UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
@@ -9266,6 +9295,10 @@ func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, fiel
 				return ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
 			case "tags":
 				return ec.fieldContext_GroupSettings_tags(ctx, field)
+			case "syncToSlack":
+				return ec.fieldContext_GroupSettings_syncToSlack(ctx, field)
+			case "syncToGithub":
+				return ec.fieldContext_GroupSettings_syncToGithub(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type GroupSettings", field.Name)
 		},
@@ -10139,6 +10172,94 @@ func (ec *executionContext) fieldContext_GroupSettings_tags(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _GroupSettings_syncToSlack(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettings_syncToSlack(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SyncToSlack, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettings_syncToSlack(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettings_syncToGithub(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettings_syncToGithub(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SyncToGithub, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettings_syncToGithub(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettings",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _GroupSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_GroupSettingsConnection_edges(ctx, field)
 	if err != nil {
@@ -10336,6 +10457,10 @@ func (ec *executionContext) fieldContext_GroupSettingsEdge_node(ctx context.Cont
 				return ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
 			case "tags":
 				return ec.fieldContext_GroupSettings_tags(ctx, field)
+			case "syncToSlack":
+				return ec.fieldContext_GroupSettings_syncToSlack(ctx, field)
+			case "syncToGithub":
+				return ec.fieldContext_GroupSettings_syncToGithub(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type GroupSettings", field.Name)
 		},
@@ -14705,14 +14830,11 @@ func (ec *executionContext) _Organization_setting(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*generated.OrganizationSettings)
 	fc.Result = res
-	return ec.marshalNOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx, field.Selections, res)
+	return ec.marshalOOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Organization_setting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -24967,7 +25089,7 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "visibility", "joinPolicy", "tags"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "visibility", "joinPolicy", "tags", "syncToSlack", "syncToGithub"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -25037,6 +25159,24 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 				return it, err
 			}
 			it.Tags = data
+		case "syncToSlack":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToSlack"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToSlack = data
+		case "syncToGithub":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToGithub"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToGithub = data
 		}
 	}
 
@@ -25400,7 +25540,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27110,7 +27250,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -27720,6 +27860,42 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 				return it, err
 			}
 			it.JoinPolicyNotIn = data
+		case "syncToSlack":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToSlack"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToSlack = data
+		case "syncToSlackNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToSlackNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToSlackNEQ = data
+		case "syncToGithub":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToGithub"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToGithub = data
+		case "syncToGithubNEQ":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToGithubNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToGithubNEQ = data
 		}
 	}
 
@@ -37213,7 +37389,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags", "syncToSlack", "syncToGithub"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37301,6 +37477,24 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 				return it, err
 			}
 			it.AppendTags = data
+		case "syncToSlack":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToSlack"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToSlack = data
+		case "syncToGithub":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("syncToGithub"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SyncToGithub = data
 		}
 	}
 
@@ -37572,7 +37766,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37750,6 +37944,15 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.SettingID = data
+		case "clearSetting":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSetting"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSetting = data
 		}
 	}
 
@@ -41877,6 +42080,16 @@ func (ec *executionContext) _GroupSettings(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "syncToSlack":
+			out.Values[i] = ec._GroupSettings_syncToSlack(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "syncToGithub":
+			out.Values[i] = ec._GroupSettings_syncToGithub(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -43117,9 +43330,6 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._Organization_setting(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
 				return res
 			}
 
@@ -46629,16 +46839,6 @@ func (ec *executionContext) marshalNOrganizationOrderField2ᚖgithubᚗcomᚋdat
 		return graphql.Null
 	}
 	return v
-}
-
-func (ec *executionContext) marshalNOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettings) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._OrganizationSettings(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNOrganizationSettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationSettingsConnection) graphql.Marshaler {

@@ -267,13 +267,15 @@ func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
 
 // CreateGroupSettingsInput represents a mutation input for creating groupsettingsslice.
 type CreateGroupSettingsInput struct {
-	CreatedAt  *time.Time
-	UpdatedAt  *time.Time
-	CreatedBy  *string
-	UpdatedBy  *string
-	Visibility *groupsettings.Visibility
-	JoinPolicy *groupsettings.JoinPolicy
-	Tags       []string
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	Visibility   *groupsettings.Visibility
+	JoinPolicy   *groupsettings.JoinPolicy
+	Tags         []string
+	SyncToSlack  *bool
+	SyncToGithub *bool
 }
 
 // Mutate applies the CreateGroupSettingsInput on the GroupSettingsMutation builder.
@@ -299,6 +301,12 @@ func (i *CreateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
+	if v := i.SyncToSlack; v != nil {
+		m.SetSyncToSlack(*v)
+	}
+	if v := i.SyncToGithub; v != nil {
+		m.SetSyncToGithub(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateGroupSettingsInput on the GroupSettingsCreate builder.
@@ -318,6 +326,8 @@ type UpdateGroupSettingsInput struct {
 	JoinPolicy     *groupsettings.JoinPolicy
 	Tags           []string
 	AppendTags     []string
+	SyncToSlack    *bool
+	SyncToGithub   *bool
 }
 
 // Mutate applies the UpdateGroupSettingsInput on the GroupSettingsMutation builder.
@@ -348,6 +358,12 @@ func (i *UpdateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
 	}
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
+	}
+	if v := i.SyncToSlack; v != nil {
+		m.SetSyncToSlack(*v)
+	}
+	if v := i.SyncToGithub; v != nil {
+		m.SetSyncToGithub(*v)
 	}
 }
 
@@ -604,7 +620,7 @@ type CreateOrganizationInput struct {
 	UserIDs        []string
 	GroupIDs       []string
 	IntegrationIDs []string
-	SettingID      string
+	SettingID      *string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -640,7 +656,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.IntegrationIDs; len(v) > 0 {
 		m.AddIntegrationIDs(v...)
 	}
-	m.SetSettingID(i.SettingID)
+	if v := i.SettingID; v != nil {
+		m.SetSettingID(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -669,6 +687,7 @@ type UpdateOrganizationInput struct {
 	ClearIntegrations    bool
 	AddIntegrationIDs    []string
 	RemoveIntegrationIDs []string
+	ClearSetting         bool
 	SettingID            *string
 }
 
@@ -727,6 +746,9 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveIntegrationIDs; len(v) > 0 {
 		m.RemoveIntegrationIDs(v...)
+	}
+	if i.ClearSetting {
+		m.ClearSetting()
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)

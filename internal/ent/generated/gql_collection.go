@@ -343,6 +343,16 @@ func (gs *GroupSettingsQuery) collectField(ctx context.Context, opCtx *graphql.O
 				selectedFields = append(selectedFields, groupsettings.FieldTags)
 				fieldSeen[groupsettings.FieldTags] = struct{}{}
 			}
+		case "syncToSlack":
+			if _, ok := fieldSeen[groupsettings.FieldSyncToSlack]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldSyncToSlack)
+				fieldSeen[groupsettings.FieldSyncToSlack] = struct{}{}
+			}
+		case "syncToGithub":
+			if _, ok := fieldSeen[groupsettings.FieldSyncToGithub]; !ok {
+				selectedFields = append(selectedFields, groupsettings.FieldSyncToGithub)
+				fieldSeen[groupsettings.FieldSyncToGithub] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

@@ -71,6 +71,8 @@ var (
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
 		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "OPEN"},
 		{Name: "tags", Type: field.TypeJSON},
+		{Name: "sync_to_slack", Type: field.TypeBool, Default: false},
+		{Name: "sync_to_github", Type: field.TypeBool, Default: false},
 		{Name: "group_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}
 	// GroupSettingsTable holds the schema information for the "group_settings" table.
@@ -81,7 +83,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "group_settings_groups_setting",
-				Columns:    []*schema.Column{GroupSettingsColumns[8]},
+				Columns:    []*schema.Column{GroupSettingsColumns[10]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -192,7 +194,7 @@ var (
 				Symbol:     "organization_settings_organizations_setting",
 				Columns:    []*schema.Column{OrganizationSettingsColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}

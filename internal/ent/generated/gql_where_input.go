@@ -1122,6 +1122,14 @@ type GroupSettingsWhereInput struct {
 	JoinPolicyNEQ   *groupsettings.JoinPolicy  `json:"joinPolicyNEQ,omitempty"`
 	JoinPolicyIn    []groupsettings.JoinPolicy `json:"joinPolicyIn,omitempty"`
 	JoinPolicyNotIn []groupsettings.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
+
+	// "sync_to_slack" field predicates.
+	SyncToSlack    *bool `json:"syncToSlack,omitempty"`
+	SyncToSlackNEQ *bool `json:"syncToSlackNEQ,omitempty"`
+
+	// "sync_to_github" field predicates.
+	SyncToGithub    *bool `json:"syncToGithub,omitempty"`
+	SyncToGithubNEQ *bool `json:"syncToGithubNEQ,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -1386,6 +1394,18 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 	}
 	if len(i.JoinPolicyNotIn) > 0 {
 		predicates = append(predicates, groupsettings.JoinPolicyNotIn(i.JoinPolicyNotIn...))
+	}
+	if i.SyncToSlack != nil {
+		predicates = append(predicates, groupsettings.SyncToSlackEQ(*i.SyncToSlack))
+	}
+	if i.SyncToSlackNEQ != nil {
+		predicates = append(predicates, groupsettings.SyncToSlackNEQ(*i.SyncToSlackNEQ))
+	}
+	if i.SyncToGithub != nil {
+		predicates = append(predicates, groupsettings.SyncToGithubEQ(*i.SyncToGithub))
+	}
+	if i.SyncToGithubNEQ != nil {
+		predicates = append(predicates, groupsettings.SyncToGithubNEQ(*i.SyncToGithubNEQ))
 	}
 
 	switch len(predicates) {

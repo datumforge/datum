@@ -55,7 +55,9 @@ type CreateGroupSettingsInput struct {
 	Visibility *groupsettings.Visibility `json:"visibility,omitempty"`
 	JoinPolicy *groupsettings.JoinPolicy `json:"joinPolicy,omitempty"`
 	// tags associated with the object
-	Tags []string `json:"tags,omitempty"`
+	Tags         []string `json:"tags,omitempty"`
+	SyncToSlack  *bool    `json:"syncToSlack,omitempty"`
+	SyncToGithub *bool    `json:"syncToGithub,omitempty"`
 }
 
 // CreateIntegrationInput is used for create Integration object.
@@ -115,7 +117,7 @@ type CreateOrganizationInput struct {
 	UserIDs        []string `json:"userIDs,omitempty"`
 	GroupIDs       []string `json:"groupIDs,omitempty"`
 	IntegrationIDs []string `json:"integrationIDs,omitempty"`
-	SettingID      string   `json:"settingID"`
+	SettingID      *string  `json:"settingID,omitempty"`
 }
 
 // CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -464,7 +466,9 @@ type GroupSettings struct {
 	Visibility groupsettings.Visibility `json:"visibility"`
 	JoinPolicy groupsettings.JoinPolicy `json:"joinPolicy"`
 	// tags associated with the object
-	Tags []string `json:"tags"`
+	Tags         []string `json:"tags"`
+	SyncToSlack  bool     `json:"syncToSlack"`
+	SyncToGithub bool     `json:"syncToGithub"`
 }
 
 func (GroupSettings) IsNode() {}
@@ -564,6 +568,12 @@ type GroupSettingsWhereInput struct {
 	JoinPolicyNeq   *groupsettings.JoinPolicy  `json:"joinPolicyNEQ,omitempty"`
 	JoinPolicyIn    []groupsettings.JoinPolicy `json:"joinPolicyIn,omitempty"`
 	JoinPolicyNotIn []groupsettings.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
+	// sync_to_slack field predicates
+	SyncToSlack    *bool `json:"syncToSlack,omitempty"`
+	SyncToSlackNeq *bool `json:"syncToSlackNEQ,omitempty"`
+	// sync_to_github field predicates
+	SyncToGithub    *bool `json:"syncToGithub,omitempty"`
+	SyncToGithubNeq *bool `json:"syncToGithubNEQ,omitempty"`
 }
 
 // Return response for updateGroup mutation
@@ -1137,7 +1147,7 @@ type Organization struct {
 	Users        []*User                `json:"users,omitempty"`
 	Groups       []*Group               `json:"groups,omitempty"`
 	Integrations []*Integration         `json:"integrations,omitempty"`
-	Setting      OrganizationSettings   `json:"setting"`
+	Setting      *OrganizationSettings  `json:"setting,omitempty"`
 }
 
 func (Organization) IsNode() {}
@@ -2120,8 +2130,10 @@ type UpdateGroupSettingsInput struct {
 	Visibility     *groupsettings.Visibility `json:"visibility,omitempty"`
 	JoinPolicy     *groupsettings.JoinPolicy `json:"joinPolicy,omitempty"`
 	// tags associated with the object
-	Tags       []string `json:"tags,omitempty"`
-	AppendTags []string `json:"appendTags,omitempty"`
+	Tags         []string `json:"tags,omitempty"`
+	AppendTags   []string `json:"appendTags,omitempty"`
+	SyncToSlack  *bool    `json:"syncToSlack,omitempty"`
+	SyncToGithub *bool    `json:"syncToGithub,omitempty"`
 }
 
 // UpdateIntegrationInput is used for update Integration object.
@@ -2191,6 +2203,7 @@ type UpdateOrganizationInput struct {
 	RemoveIntegrationIDs []string `json:"removeIntegrationIDs,omitempty"`
 	ClearIntegrations    *bool    `json:"clearIntegrations,omitempty"`
 	SettingID            *string  `json:"settingID,omitempty"`
+	ClearSetting         *bool    `json:"clearSetting,omitempty"`
 }
 
 // UpdateOrganizationSettingsInput is used for update OrganizationSettings object.

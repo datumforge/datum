@@ -1876,23 +1876,25 @@ func (m *GroupMutation) ResetEdge(name string) error {
 // GroupSettingsMutation represents an operation that mutates the GroupSettings nodes in the graph.
 type GroupSettingsMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	created_by    *string
-	updated_by    *string
-	visibility    *groupsettings.Visibility
-	join_policy   *groupsettings.JoinPolicy
-	tags          *[]string
-	appendtags    []string
-	clearedFields map[string]struct{}
-	group         *string
-	clearedgroup  bool
-	done          bool
-	oldValue      func(context.Context) (*GroupSettings, error)
-	predicates    []predicate.GroupSettings
+	op             Op
+	typ            string
+	id             *string
+	created_at     *time.Time
+	updated_at     *time.Time
+	created_by     *string
+	updated_by     *string
+	visibility     *groupsettings.Visibility
+	join_policy    *groupsettings.JoinPolicy
+	tags           *[]string
+	appendtags     []string
+	sync_to_slack  *bool
+	sync_to_github *bool
+	clearedFields  map[string]struct{}
+	group          *string
+	clearedgroup   bool
+	done           bool
+	oldValue       func(context.Context) (*GroupSettings, error)
+	predicates     []predicate.GroupSettings
 }
 
 var _ ent.Mutation = (*GroupSettingsMutation)(nil)
@@ -2292,6 +2294,78 @@ func (m *GroupSettingsMutation) ResetTags() {
 	m.appendtags = nil
 }
 
+// SetSyncToSlack sets the "sync_to_slack" field.
+func (m *GroupSettingsMutation) SetSyncToSlack(b bool) {
+	m.sync_to_slack = &b
+}
+
+// SyncToSlack returns the value of the "sync_to_slack" field in the mutation.
+func (m *GroupSettingsMutation) SyncToSlack() (r bool, exists bool) {
+	v := m.sync_to_slack
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSyncToSlack returns the old "sync_to_slack" field's value of the GroupSettings entity.
+// If the GroupSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupSettingsMutation) OldSyncToSlack(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSyncToSlack is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSyncToSlack requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSyncToSlack: %w", err)
+	}
+	return oldValue.SyncToSlack, nil
+}
+
+// ResetSyncToSlack resets all changes to the "sync_to_slack" field.
+func (m *GroupSettingsMutation) ResetSyncToSlack() {
+	m.sync_to_slack = nil
+}
+
+// SetSyncToGithub sets the "sync_to_github" field.
+func (m *GroupSettingsMutation) SetSyncToGithub(b bool) {
+	m.sync_to_github = &b
+}
+
+// SyncToGithub returns the value of the "sync_to_github" field in the mutation.
+func (m *GroupSettingsMutation) SyncToGithub() (r bool, exists bool) {
+	v := m.sync_to_github
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSyncToGithub returns the old "sync_to_github" field's value of the GroupSettings entity.
+// If the GroupSettings object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupSettingsMutation) OldSyncToGithub(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSyncToGithub is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSyncToGithub requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSyncToGithub: %w", err)
+	}
+	return oldValue.SyncToGithub, nil
+}
+
+// ResetSyncToGithub resets all changes to the "sync_to_github" field.
+func (m *GroupSettingsMutation) ResetSyncToGithub() {
+	m.sync_to_github = nil
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *GroupSettingsMutation) SetGroupID(id string) {
 	m.group = &id
@@ -2365,7 +2439,7 @@ func (m *GroupSettingsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupSettingsMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, groupsettings.FieldCreatedAt)
 	}
@@ -2386,6 +2460,12 @@ func (m *GroupSettingsMutation) Fields() []string {
 	}
 	if m.tags != nil {
 		fields = append(fields, groupsettings.FieldTags)
+	}
+	if m.sync_to_slack != nil {
+		fields = append(fields, groupsettings.FieldSyncToSlack)
+	}
+	if m.sync_to_github != nil {
+		fields = append(fields, groupsettings.FieldSyncToGithub)
 	}
 	return fields
 }
@@ -2409,6 +2489,10 @@ func (m *GroupSettingsMutation) Field(name string) (ent.Value, bool) {
 		return m.JoinPolicy()
 	case groupsettings.FieldTags:
 		return m.Tags()
+	case groupsettings.FieldSyncToSlack:
+		return m.SyncToSlack()
+	case groupsettings.FieldSyncToGithub:
+		return m.SyncToGithub()
 	}
 	return nil, false
 }
@@ -2432,6 +2516,10 @@ func (m *GroupSettingsMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldJoinPolicy(ctx)
 	case groupsettings.FieldTags:
 		return m.OldTags(ctx)
+	case groupsettings.FieldSyncToSlack:
+		return m.OldSyncToSlack(ctx)
+	case groupsettings.FieldSyncToGithub:
+		return m.OldSyncToGithub(ctx)
 	}
 	return nil, fmt.Errorf("unknown GroupSettings field %s", name)
 }
@@ -2489,6 +2577,20 @@ func (m *GroupSettingsMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTags(v)
+		return nil
+	case groupsettings.FieldSyncToSlack:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSyncToSlack(v)
+		return nil
+	case groupsettings.FieldSyncToGithub:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSyncToGithub(v)
 		return nil
 	}
 	return fmt.Errorf("unknown GroupSettings field %s", name)
@@ -2574,6 +2676,12 @@ func (m *GroupSettingsMutation) ResetField(name string) error {
 		return nil
 	case groupsettings.FieldTags:
 		m.ResetTags()
+		return nil
+	case groupsettings.FieldSyncToSlack:
+		m.ResetSyncToSlack()
+		return nil
+	case groupsettings.FieldSyncToGithub:
+		m.ResetSyncToGithub()
 		return nil
 	}
 	return fmt.Errorf("unknown GroupSettings field %s", name)

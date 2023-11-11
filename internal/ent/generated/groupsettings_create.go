@@ -111,6 +111,34 @@ func (gsc *GroupSettingsCreate) SetTags(s []string) *GroupSettingsCreate {
 	return gsc
 }
 
+// SetSyncToSlack sets the "sync_to_slack" field.
+func (gsc *GroupSettingsCreate) SetSyncToSlack(b bool) *GroupSettingsCreate {
+	gsc.mutation.SetSyncToSlack(b)
+	return gsc
+}
+
+// SetNillableSyncToSlack sets the "sync_to_slack" field if the given value is not nil.
+func (gsc *GroupSettingsCreate) SetNillableSyncToSlack(b *bool) *GroupSettingsCreate {
+	if b != nil {
+		gsc.SetSyncToSlack(*b)
+	}
+	return gsc
+}
+
+// SetSyncToGithub sets the "sync_to_github" field.
+func (gsc *GroupSettingsCreate) SetSyncToGithub(b bool) *GroupSettingsCreate {
+	gsc.mutation.SetSyncToGithub(b)
+	return gsc
+}
+
+// SetNillableSyncToGithub sets the "sync_to_github" field if the given value is not nil.
+func (gsc *GroupSettingsCreate) SetNillableSyncToGithub(b *bool) *GroupSettingsCreate {
+	if b != nil {
+		gsc.SetSyncToGithub(*b)
+	}
+	return gsc
+}
+
 // SetID sets the "id" field.
 func (gsc *GroupSettingsCreate) SetID(s string) *GroupSettingsCreate {
 	gsc.mutation.SetID(s)
@@ -207,6 +235,14 @@ func (gsc *GroupSettingsCreate) defaults() error {
 		v := groupsettings.DefaultTags
 		gsc.mutation.SetTags(v)
 	}
+	if _, ok := gsc.mutation.SyncToSlack(); !ok {
+		v := groupsettings.DefaultSyncToSlack
+		gsc.mutation.SetSyncToSlack(v)
+	}
+	if _, ok := gsc.mutation.SyncToGithub(); !ok {
+		v := groupsettings.DefaultSyncToGithub
+		gsc.mutation.SetSyncToGithub(v)
+	}
 	if _, ok := gsc.mutation.ID(); !ok {
 		if groupsettings.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized groupsettings.DefaultID (forgotten import generated/runtime?)")
@@ -243,6 +279,12 @@ func (gsc *GroupSettingsCreate) check() error {
 	}
 	if _, ok := gsc.mutation.Tags(); !ok {
 		return &ValidationError{Name: "tags", err: errors.New(`generated: missing required field "GroupSettings.tags"`)}
+	}
+	if _, ok := gsc.mutation.SyncToSlack(); !ok {
+		return &ValidationError{Name: "sync_to_slack", err: errors.New(`generated: missing required field "GroupSettings.sync_to_slack"`)}
+	}
+	if _, ok := gsc.mutation.SyncToGithub(); !ok {
+		return &ValidationError{Name: "sync_to_github", err: errors.New(`generated: missing required field "GroupSettings.sync_to_github"`)}
 	}
 	return nil
 }
@@ -307,6 +349,14 @@ func (gsc *GroupSettingsCreate) createSpec() (*GroupSettings, *sqlgraph.CreateSp
 	if value, ok := gsc.mutation.Tags(); ok {
 		_spec.SetField(groupsettings.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
+	}
+	if value, ok := gsc.mutation.SyncToSlack(); ok {
+		_spec.SetField(groupsettings.FieldSyncToSlack, field.TypeBool, value)
+		_node.SyncToSlack = value
+	}
+	if value, ok := gsc.mutation.SyncToGithub(); ok {
+		_spec.SetField(groupsettings.FieldSyncToGithub, field.TypeBool, value)
+		_node.SyncToGithub = value
 	}
 	if nodes := gsc.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

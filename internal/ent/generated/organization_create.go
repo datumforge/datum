@@ -227,6 +227,14 @@ func (oc *OrganizationCreate) SetSettingID(id string) *OrganizationCreate {
 	return oc
 }
 
+// SetNillableSettingID sets the "setting" edge to the OrganizationSettings entity by ID if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableSettingID(id *string) *OrganizationCreate {
+	if id != nil {
+		oc = oc.SetSettingID(*id)
+	}
+	return oc
+}
+
 // SetSetting sets the "setting" edge to the OrganizationSettings entity.
 func (oc *OrganizationCreate) SetSetting(o *OrganizationSettings) *OrganizationCreate {
 	return oc.SetSettingID(o.ID)
@@ -320,9 +328,6 @@ func (oc *OrganizationCreate) check() error {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
-	}
-	if _, ok := oc.mutation.SettingID(); !ok {
-		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Organization.setting"`)}
 	}
 	return nil
 }

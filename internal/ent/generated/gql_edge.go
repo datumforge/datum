@@ -114,7 +114,7 @@ func (o *Organization) Setting(ctx context.Context) (*OrganizationSettings, erro
 	if IsNotLoaded(err) {
 		result, err = o.QuerySetting().Only(ctx)
 	}
-	return result, err
+	return result, MaskNotFound(err)
 }
 
 func (pat *PersonalAccessToken) User(ctx context.Context) (*User, error) {

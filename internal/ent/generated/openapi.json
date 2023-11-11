@@ -426,6 +426,12 @@
                       "type": "string"
                     }
                   },
+                  "sync_to_slack": {
+                    "type": "boolean"
+                  },
+                  "sync_to_github": {
+                    "type": "boolean"
+                  },
                   "group": {
                     "type": "string"
                   }
@@ -435,7 +441,9 @@
                   "updated_at",
                   "visibility",
                   "join_policy",
-                  "tags"
+                  "tags",
+                  "sync_to_slack",
+                  "sync_to_github"
                 ]
               }
             }
@@ -603,6 +611,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "sync_to_slack": {
+                    "type": "boolean"
+                  },
+                  "sync_to_github": {
+                    "type": "boolean"
                   },
                   "group": {
                     "type": "string"
@@ -2356,8 +2370,7 @@
                   "created_at",
                   "updated_at",
                   "name",
-                  "display_name",
-                  "setting"
+                  "display_name"
                 ]
               }
             }
@@ -5577,6 +5590,12 @@
               "type": "string"
             }
           },
+          "sync_to_slack": {
+            "type": "boolean"
+          },
+          "sync_to_github": {
+            "type": "boolean"
+          },
           "group": {
             "$ref": "#/components/schemas/Group"
           }
@@ -5587,7 +5606,9 @@
           "updated_at",
           "visibility",
           "join_policy",
-          "tags"
+          "tags",
+          "sync_to_slack",
+          "sync_to_github"
         ]
       },
       "GroupSettingsCreate": {
@@ -5633,6 +5654,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "sync_to_slack": {
+            "type": "boolean"
+          },
+          "sync_to_github": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -5641,7 +5668,9 @@
           "updated_at",
           "visibility",
           "join_policy",
-          "tags"
+          "tags",
+          "sync_to_slack",
+          "sync_to_github"
         ]
       },
       "GroupSettingsList": {
@@ -5687,6 +5716,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "sync_to_slack": {
+            "type": "boolean"
+          },
+          "sync_to_github": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -5695,7 +5730,9 @@
           "updated_at",
           "visibility",
           "join_policy",
-          "tags"
+          "tags",
+          "sync_to_slack",
+          "sync_to_github"
         ]
       },
       "GroupSettingsRead": {
@@ -5741,6 +5778,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "sync_to_slack": {
+            "type": "boolean"
+          },
+          "sync_to_github": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -5749,7 +5792,9 @@
           "updated_at",
           "visibility",
           "join_policy",
-          "tags"
+          "tags",
+          "sync_to_slack",
+          "sync_to_github"
         ]
       },
       "GroupSettingsUpdate": {
@@ -5795,6 +5840,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "sync_to_slack": {
+            "type": "boolean"
+          },
+          "sync_to_github": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -5803,7 +5854,9 @@
           "updated_at",
           "visibility",
           "join_policy",
-          "tags"
+          "tags",
+          "sync_to_slack",
+          "sync_to_github"
         ]
       },
       "GroupSettings_GroupRead": {
@@ -5976,6 +6029,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "sync_to_slack": {
+            "type": "boolean"
+          },
+          "sync_to_github": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -5984,7 +6043,9 @@
           "updated_at",
           "visibility",
           "join_policy",
-          "tags"
+          "tags",
+          "sync_to_slack",
+          "sync_to_github"
         ]
       },
       "Group_UsersList": {
@@ -6696,8 +6757,7 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name",
-          "setting"
+          "display_name"
         ]
       },
       "OrganizationCreate": {

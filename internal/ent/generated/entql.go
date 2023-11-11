@@ -80,13 +80,15 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "GroupSettings",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			groupsettings.FieldCreatedAt:  {Type: field.TypeTime, Column: groupsettings.FieldCreatedAt},
-			groupsettings.FieldUpdatedAt:  {Type: field.TypeTime, Column: groupsettings.FieldUpdatedAt},
-			groupsettings.FieldCreatedBy:  {Type: field.TypeString, Column: groupsettings.FieldCreatedBy},
-			groupsettings.FieldUpdatedBy:  {Type: field.TypeString, Column: groupsettings.FieldUpdatedBy},
-			groupsettings.FieldVisibility: {Type: field.TypeEnum, Column: groupsettings.FieldVisibility},
-			groupsettings.FieldJoinPolicy: {Type: field.TypeEnum, Column: groupsettings.FieldJoinPolicy},
-			groupsettings.FieldTags:       {Type: field.TypeJSON, Column: groupsettings.FieldTags},
+			groupsettings.FieldCreatedAt:    {Type: field.TypeTime, Column: groupsettings.FieldCreatedAt},
+			groupsettings.FieldUpdatedAt:    {Type: field.TypeTime, Column: groupsettings.FieldUpdatedAt},
+			groupsettings.FieldCreatedBy:    {Type: field.TypeString, Column: groupsettings.FieldCreatedBy},
+			groupsettings.FieldUpdatedBy:    {Type: field.TypeString, Column: groupsettings.FieldUpdatedBy},
+			groupsettings.FieldVisibility:   {Type: field.TypeEnum, Column: groupsettings.FieldVisibility},
+			groupsettings.FieldJoinPolicy:   {Type: field.TypeEnum, Column: groupsettings.FieldJoinPolicy},
+			groupsettings.FieldTags:         {Type: field.TypeJSON, Column: groupsettings.FieldTags},
+			groupsettings.FieldSyncToSlack:  {Type: field.TypeBool, Column: groupsettings.FieldSyncToSlack},
+			groupsettings.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsettings.FieldSyncToGithub},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -837,6 +839,16 @@ func (f *GroupSettingsFilter) WhereJoinPolicy(p entql.StringP) {
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
 func (f *GroupSettingsFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(groupsettings.FieldTags))
+}
+
+// WhereSyncToSlack applies the entql bool predicate on the sync_to_slack field.
+func (f *GroupSettingsFilter) WhereSyncToSlack(p entql.BoolP) {
+	f.Where(p.Field(groupsettings.FieldSyncToSlack))
+}
+
+// WhereSyncToGithub applies the entql bool predicate on the sync_to_github field.
+func (f *GroupSettingsFilter) WhereSyncToGithub(p entql.BoolP) {
+	f.Where(p.Field(groupsettings.FieldSyncToGithub))
 }
 
 // WhereHasGroup applies a predicate to check if query has an edge group.

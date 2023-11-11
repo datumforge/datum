@@ -46,6 +46,8 @@ input CreateGroupSettingsInput {
   joinPolicy: GroupSettingsJoinPolicy
   """tags associated with the object"""
   tags: [String!]
+  syncToSlack: Boolean
+  syncToGithub: Boolean
 }
 """
 CreateIntegrationInput is used for create Integration object.
@@ -108,7 +110,7 @@ input CreateOrganizationInput {
   userIDs: [ID!]
   groupIDs: [ID!]
   integrationIDs: [ID!]
-  settingID: ID!
+  settingID: ID
 }
 """
 CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -438,6 +440,8 @@ type GroupSettings implements Node {
   joinPolicy: GroupSettingsJoinPolicy!
   """tags associated with the object"""
   tags: [String!]!
+  syncToSlack: Boolean!
+  syncToGithub: Boolean!
 }
 """A connection to a list of items."""
 type GroupSettingsConnection {
@@ -546,6 +550,12 @@ input GroupSettingsWhereInput {
   joinPolicyNEQ: GroupSettingsJoinPolicy
   joinPolicyIn: [GroupSettingsJoinPolicy!]
   joinPolicyNotIn: [GroupSettingsJoinPolicy!]
+  """sync_to_slack field predicates"""
+  syncToSlack: Boolean
+  syncToSlackNEQ: Boolean
+  """sync_to_github field predicates"""
+  syncToGithub: Boolean
+  syncToGithubNEQ: Boolean
 }
 """
 GroupWhereInput is used for filtering Group objects.
@@ -1108,7 +1118,7 @@ type Organization implements Node {
   users: [User!]
   groups: [Group!]
   integrations: [Integration!]
-  setting: OrganizationSettings!
+  setting: OrganizationSettings
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -2238,6 +2248,8 @@ input UpdateGroupSettingsInput {
   """tags associated with the object"""
   tags: [String!]
   appendTags: [String!]
+  syncToSlack: Boolean
+  syncToGithub: Boolean
 }
 """
 UpdateIntegrationInput is used for update Integration object.
@@ -2310,6 +2322,7 @@ input UpdateOrganizationInput {
   removeIntegrationIDs: [ID!]
   clearIntegrations: Boolean
   settingID: ID
+  clearSetting: Boolean
 }
 """
 UpdateOrganizationSettingsInput is used for update OrganizationSettings object.

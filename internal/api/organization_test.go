@@ -106,7 +106,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 		{
 			name:           "happy path organization",
 			orgName:        gofakeit.Name(),
-			displayName:    gofakeit.AppName(),
+			displayName:    gofakeit.LetterN(50),
 			orgDescription: gofakeit.HipsterSentence(10),
 			parentOrgID:    "", // root org
 		},

@@ -84,15 +84,39 @@ func (patu *PersonalAccessTokenUpdate) SetName(s string) *PersonalAccessTokenUpd
 	return patu
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (patu *PersonalAccessTokenUpdate) SetNillableName(s *string) *PersonalAccessTokenUpdate {
+	if s != nil {
+		patu.SetName(*s)
+	}
+	return patu
+}
+
 // SetUserID sets the "user_id" field.
 func (patu *PersonalAccessTokenUpdate) SetUserID(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetUserID(s)
 	return patu
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (patu *PersonalAccessTokenUpdate) SetNillableUserID(s *string) *PersonalAccessTokenUpdate {
+	if s != nil {
+		patu.SetUserID(*s)
+	}
+	return patu
+}
+
 // SetToken sets the "token" field.
 func (patu *PersonalAccessTokenUpdate) SetToken(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetToken(s)
+	return patu
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (patu *PersonalAccessTokenUpdate) SetNillableToken(s *string) *PersonalAccessTokenUpdate {
+	if s != nil {
+		patu.SetToken(*s)
+	}
 	return patu
 }
 
@@ -117,6 +141,14 @@ func (patu *PersonalAccessTokenUpdate) ClearAbilities() *PersonalAccessTokenUpda
 // SetExpirationAt sets the "expiration_at" field.
 func (patu *PersonalAccessTokenUpdate) SetExpirationAt(t time.Time) *PersonalAccessTokenUpdate {
 	patu.mutation.SetExpirationAt(t)
+	return patu
+}
+
+// SetNillableExpirationAt sets the "expiration_at" field if the given value is not nil.
+func (patu *PersonalAccessTokenUpdate) SetNillableExpirationAt(t *time.Time) *PersonalAccessTokenUpdate {
+	if t != nil {
+		patu.SetExpirationAt(*t)
+	}
 	return patu
 }
 
@@ -364,15 +396,39 @@ func (patuo *PersonalAccessTokenUpdateOne) SetName(s string) *PersonalAccessToke
 	return patuo
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (patuo *PersonalAccessTokenUpdateOne) SetNillableName(s *string) *PersonalAccessTokenUpdateOne {
+	if s != nil {
+		patuo.SetName(*s)
+	}
+	return patuo
+}
+
 // SetUserID sets the "user_id" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetUserID(s string) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetUserID(s)
 	return patuo
 }
 
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (patuo *PersonalAccessTokenUpdateOne) SetNillableUserID(s *string) *PersonalAccessTokenUpdateOne {
+	if s != nil {
+		patuo.SetUserID(*s)
+	}
+	return patuo
+}
+
 // SetToken sets the "token" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetToken(s string) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetToken(s)
+	return patuo
+}
+
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (patuo *PersonalAccessTokenUpdateOne) SetNillableToken(s *string) *PersonalAccessTokenUpdateOne {
+	if s != nil {
+		patuo.SetToken(*s)
+	}
 	return patuo
 }
 
@@ -397,6 +453,14 @@ func (patuo *PersonalAccessTokenUpdateOne) ClearAbilities() *PersonalAccessToken
 // SetExpirationAt sets the "expiration_at" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetExpirationAt(t time.Time) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetExpirationAt(t)
+	return patuo
+}
+
+// SetNillableExpirationAt sets the "expiration_at" field if the given value is not nil.
+func (patuo *PersonalAccessTokenUpdateOne) SetNillableExpirationAt(t *time.Time) *PersonalAccessTokenUpdateOne {
+	if t != nil {
+		patuo.SetExpirationAt(*t)
+	}
 	return patuo
 }
 

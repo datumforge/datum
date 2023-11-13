@@ -138,9 +138,25 @@ func (osu *OrganizationSettingsUpdate) SetBillingContact(s string) *Organization
 	return osu
 }
 
+// SetNillableBillingContact sets the "billing_contact" field if the given value is not nil.
+func (osu *OrganizationSettingsUpdate) SetNillableBillingContact(s *string) *OrganizationSettingsUpdate {
+	if s != nil {
+		osu.SetBillingContact(*s)
+	}
+	return osu
+}
+
 // SetBillingEmail sets the "billing_email" field.
 func (osu *OrganizationSettingsUpdate) SetBillingEmail(s string) *OrganizationSettingsUpdate {
 	osu.mutation.SetBillingEmail(s)
+	return osu
+}
+
+// SetNillableBillingEmail sets the "billing_email" field if the given value is not nil.
+func (osu *OrganizationSettingsUpdate) SetNillableBillingEmail(s *string) *OrganizationSettingsUpdate {
+	if s != nil {
+		osu.SetBillingEmail(*s)
+	}
 	return osu
 }
 
@@ -150,15 +166,39 @@ func (osu *OrganizationSettingsUpdate) SetBillingPhone(s string) *OrganizationSe
 	return osu
 }
 
+// SetNillableBillingPhone sets the "billing_phone" field if the given value is not nil.
+func (osu *OrganizationSettingsUpdate) SetNillableBillingPhone(s *string) *OrganizationSettingsUpdate {
+	if s != nil {
+		osu.SetBillingPhone(*s)
+	}
+	return osu
+}
+
 // SetBillingAddress sets the "billing_address" field.
 func (osu *OrganizationSettingsUpdate) SetBillingAddress(s string) *OrganizationSettingsUpdate {
 	osu.mutation.SetBillingAddress(s)
 	return osu
 }
 
+// SetNillableBillingAddress sets the "billing_address" field if the given value is not nil.
+func (osu *OrganizationSettingsUpdate) SetNillableBillingAddress(s *string) *OrganizationSettingsUpdate {
+	if s != nil {
+		osu.SetBillingAddress(*s)
+	}
+	return osu
+}
+
 // SetTaxIdentifier sets the "tax_identifier" field.
 func (osu *OrganizationSettingsUpdate) SetTaxIdentifier(s string) *OrganizationSettingsUpdate {
 	osu.mutation.SetTaxIdentifier(s)
+	return osu
+}
+
+// SetNillableTaxIdentifier sets the "tax_identifier" field if the given value is not nil.
+func (osu *OrganizationSettingsUpdate) SetNillableTaxIdentifier(s *string) *OrganizationSettingsUpdate {
+	if s != nil {
+		osu.SetTaxIdentifier(*s)
+	}
 	return osu
 }
 
@@ -506,9 +546,25 @@ func (osuo *OrganizationSettingsUpdateOne) SetBillingContact(s string) *Organiza
 	return osuo
 }
 
+// SetNillableBillingContact sets the "billing_contact" field if the given value is not nil.
+func (osuo *OrganizationSettingsUpdateOne) SetNillableBillingContact(s *string) *OrganizationSettingsUpdateOne {
+	if s != nil {
+		osuo.SetBillingContact(*s)
+	}
+	return osuo
+}
+
 // SetBillingEmail sets the "billing_email" field.
 func (osuo *OrganizationSettingsUpdateOne) SetBillingEmail(s string) *OrganizationSettingsUpdateOne {
 	osuo.mutation.SetBillingEmail(s)
+	return osuo
+}
+
+// SetNillableBillingEmail sets the "billing_email" field if the given value is not nil.
+func (osuo *OrganizationSettingsUpdateOne) SetNillableBillingEmail(s *string) *OrganizationSettingsUpdateOne {
+	if s != nil {
+		osuo.SetBillingEmail(*s)
+	}
 	return osuo
 }
 
@@ -518,15 +574,39 @@ func (osuo *OrganizationSettingsUpdateOne) SetBillingPhone(s string) *Organizati
 	return osuo
 }
 
+// SetNillableBillingPhone sets the "billing_phone" field if the given value is not nil.
+func (osuo *OrganizationSettingsUpdateOne) SetNillableBillingPhone(s *string) *OrganizationSettingsUpdateOne {
+	if s != nil {
+		osuo.SetBillingPhone(*s)
+	}
+	return osuo
+}
+
 // SetBillingAddress sets the "billing_address" field.
 func (osuo *OrganizationSettingsUpdateOne) SetBillingAddress(s string) *OrganizationSettingsUpdateOne {
 	osuo.mutation.SetBillingAddress(s)
 	return osuo
 }
 
+// SetNillableBillingAddress sets the "billing_address" field if the given value is not nil.
+func (osuo *OrganizationSettingsUpdateOne) SetNillableBillingAddress(s *string) *OrganizationSettingsUpdateOne {
+	if s != nil {
+		osuo.SetBillingAddress(*s)
+	}
+	return osuo
+}
+
 // SetTaxIdentifier sets the "tax_identifier" field.
 func (osuo *OrganizationSettingsUpdateOne) SetTaxIdentifier(s string) *OrganizationSettingsUpdateOne {
 	osuo.mutation.SetTaxIdentifier(s)
+	return osuo
+}
+
+// SetNillableTaxIdentifier sets the "tax_identifier" field if the given value is not nil.
+func (osuo *OrganizationSettingsUpdateOne) SetNillableTaxIdentifier(s *string) *OrganizationSettingsUpdateOne {
+	if s != nil {
+		osuo.SetTaxIdentifier(*s)
+	}
 	return osuo
 }
 

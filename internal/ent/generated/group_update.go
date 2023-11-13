@@ -85,6 +85,14 @@ func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	return gu
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableName(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetName(*s)
+	}
+	return gu
+}
+
 // SetDescription sets the "description" field.
 func (gu *GroupUpdate) SetDescription(s string) *GroupUpdate {
 	gu.mutation.SetDescription(s)
@@ -102,6 +110,14 @@ func (gu *GroupUpdate) SetNillableDescription(s *string) *GroupUpdate {
 // SetLogoURL sets the "logo_url" field.
 func (gu *GroupUpdate) SetLogoURL(s string) *GroupUpdate {
 	gu.mutation.SetLogoURL(s)
+	return gu
+}
+
+// SetNillableLogoURL sets the "logo_url" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableLogoURL(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetLogoURL(*s)
+	}
 	return gu
 }
 
@@ -490,6 +506,14 @@ func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	return guo
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableName(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetName(*s)
+	}
+	return guo
+}
+
 // SetDescription sets the "description" field.
 func (guo *GroupUpdateOne) SetDescription(s string) *GroupUpdateOne {
 	guo.mutation.SetDescription(s)
@@ -507,6 +531,14 @@ func (guo *GroupUpdateOne) SetNillableDescription(s *string) *GroupUpdateOne {
 // SetLogoURL sets the "logo_url" field.
 func (guo *GroupUpdateOne) SetLogoURL(s string) *GroupUpdateOne {
 	guo.mutation.SetLogoURL(s)
+	return guo
+}
+
+// SetNillableLogoURL sets the "logo_url" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableLogoURL(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetLogoURL(*s)
+	}
 	return guo
 }
 

@@ -37,6 +37,14 @@ func (rtu *RefreshTokenUpdate) SetClientID(s string) *RefreshTokenUpdate {
 	return rtu
 }
 
+// SetNillableClientID sets the "client_id" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClientID(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetClientID(*s)
+	}
+	return rtu
+}
+
 // SetScopes sets the "scopes" field.
 func (rtu *RefreshTokenUpdate) SetScopes(s []string) *RefreshTokenUpdate {
 	rtu.mutation.SetScopes(s)
@@ -61,9 +69,25 @@ func (rtu *RefreshTokenUpdate) SetNonce(s string) *RefreshTokenUpdate {
 	return rtu
 }
 
+// SetNillableNonce sets the "nonce" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableNonce(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetNonce(*s)
+	}
+	return rtu
+}
+
 // SetClaimsUserID sets the "claims_user_id" field.
 func (rtu *RefreshTokenUpdate) SetClaimsUserID(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetClaimsUserID(s)
+	return rtu
+}
+
+// SetNillableClaimsUserID sets the "claims_user_id" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClaimsUserID(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetClaimsUserID(*s)
+	}
 	return rtu
 }
 
@@ -73,15 +97,39 @@ func (rtu *RefreshTokenUpdate) SetClaimsUsername(s string) *RefreshTokenUpdate {
 	return rtu
 }
 
+// SetNillableClaimsUsername sets the "claims_username" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClaimsUsername(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetClaimsUsername(*s)
+	}
+	return rtu
+}
+
 // SetClaimsEmail sets the "claims_email" field.
 func (rtu *RefreshTokenUpdate) SetClaimsEmail(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetClaimsEmail(s)
 	return rtu
 }
 
+// SetNillableClaimsEmail sets the "claims_email" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClaimsEmail(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetClaimsEmail(*s)
+	}
+	return rtu
+}
+
 // SetClaimsEmailVerified sets the "claims_email_verified" field.
 func (rtu *RefreshTokenUpdate) SetClaimsEmailVerified(b bool) *RefreshTokenUpdate {
 	rtu.mutation.SetClaimsEmailVerified(b)
+	return rtu
+}
+
+// SetNillableClaimsEmailVerified sets the "claims_email_verified" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClaimsEmailVerified(b *bool) *RefreshTokenUpdate {
+	if b != nil {
+		rtu.SetClaimsEmailVerified(*b)
+	}
 	return rtu
 }
 
@@ -109,9 +157,25 @@ func (rtu *RefreshTokenUpdate) SetClaimsPreferredUsername(s string) *RefreshToke
 	return rtu
 }
 
+// SetNillableClaimsPreferredUsername sets the "claims_preferred_username" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableClaimsPreferredUsername(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetClaimsPreferredUsername(*s)
+	}
+	return rtu
+}
+
 // SetConnectorID sets the "connector_id" field.
 func (rtu *RefreshTokenUpdate) SetConnectorID(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetConnectorID(s)
+	return rtu
+}
+
+// SetNillableConnectorID sets the "connector_id" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableConnectorID(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetConnectorID(*s)
+	}
 	return rtu
 }
 
@@ -139,9 +203,25 @@ func (rtu *RefreshTokenUpdate) SetToken(s string) *RefreshTokenUpdate {
 	return rtu
 }
 
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableToken(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetToken(*s)
+	}
+	return rtu
+}
+
 // SetObsoleteToken sets the "obsolete_token" field.
 func (rtu *RefreshTokenUpdate) SetObsoleteToken(s string) *RefreshTokenUpdate {
 	rtu.mutation.SetObsoleteToken(s)
+	return rtu
+}
+
+// SetNillableObsoleteToken sets the "obsolete_token" field if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableObsoleteToken(s *string) *RefreshTokenUpdate {
+	if s != nil {
+		rtu.SetObsoleteToken(*s)
+	}
 	return rtu
 }
 
@@ -332,6 +412,14 @@ func (rtuo *RefreshTokenUpdateOne) SetClientID(s string) *RefreshTokenUpdateOne 
 	return rtuo
 }
 
+// SetNillableClientID sets the "client_id" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClientID(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetClientID(*s)
+	}
+	return rtuo
+}
+
 // SetScopes sets the "scopes" field.
 func (rtuo *RefreshTokenUpdateOne) SetScopes(s []string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetScopes(s)
@@ -356,9 +444,25 @@ func (rtuo *RefreshTokenUpdateOne) SetNonce(s string) *RefreshTokenUpdateOne {
 	return rtuo
 }
 
+// SetNillableNonce sets the "nonce" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableNonce(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetNonce(*s)
+	}
+	return rtuo
+}
+
 // SetClaimsUserID sets the "claims_user_id" field.
 func (rtuo *RefreshTokenUpdateOne) SetClaimsUserID(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetClaimsUserID(s)
+	return rtuo
+}
+
+// SetNillableClaimsUserID sets the "claims_user_id" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsUserID(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetClaimsUserID(*s)
+	}
 	return rtuo
 }
 
@@ -368,15 +472,39 @@ func (rtuo *RefreshTokenUpdateOne) SetClaimsUsername(s string) *RefreshTokenUpda
 	return rtuo
 }
 
+// SetNillableClaimsUsername sets the "claims_username" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsUsername(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetClaimsUsername(*s)
+	}
+	return rtuo
+}
+
 // SetClaimsEmail sets the "claims_email" field.
 func (rtuo *RefreshTokenUpdateOne) SetClaimsEmail(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetClaimsEmail(s)
 	return rtuo
 }
 
+// SetNillableClaimsEmail sets the "claims_email" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsEmail(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetClaimsEmail(*s)
+	}
+	return rtuo
+}
+
 // SetClaimsEmailVerified sets the "claims_email_verified" field.
 func (rtuo *RefreshTokenUpdateOne) SetClaimsEmailVerified(b bool) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetClaimsEmailVerified(b)
+	return rtuo
+}
+
+// SetNillableClaimsEmailVerified sets the "claims_email_verified" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsEmailVerified(b *bool) *RefreshTokenUpdateOne {
+	if b != nil {
+		rtuo.SetClaimsEmailVerified(*b)
+	}
 	return rtuo
 }
 
@@ -404,9 +532,25 @@ func (rtuo *RefreshTokenUpdateOne) SetClaimsPreferredUsername(s string) *Refresh
 	return rtuo
 }
 
+// SetNillableClaimsPreferredUsername sets the "claims_preferred_username" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableClaimsPreferredUsername(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetClaimsPreferredUsername(*s)
+	}
+	return rtuo
+}
+
 // SetConnectorID sets the "connector_id" field.
 func (rtuo *RefreshTokenUpdateOne) SetConnectorID(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetConnectorID(s)
+	return rtuo
+}
+
+// SetNillableConnectorID sets the "connector_id" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableConnectorID(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetConnectorID(*s)
+	}
 	return rtuo
 }
 
@@ -434,9 +578,25 @@ func (rtuo *RefreshTokenUpdateOne) SetToken(s string) *RefreshTokenUpdateOne {
 	return rtuo
 }
 
+// SetNillableToken sets the "token" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableToken(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetToken(*s)
+	}
+	return rtuo
+}
+
 // SetObsoleteToken sets the "obsolete_token" field.
 func (rtuo *RefreshTokenUpdateOne) SetObsoleteToken(s string) *RefreshTokenUpdateOne {
 	rtuo.mutation.SetObsoleteToken(s)
+	return rtuo
+}
+
+// SetNillableObsoleteToken sets the "obsolete_token" field if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableObsoleteToken(s *string) *RefreshTokenUpdateOne {
+	if s != nil {
+		rtuo.SetObsoleteToken(*s)
+	}
 	return rtuo
 }
 

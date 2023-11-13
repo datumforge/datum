@@ -86,6 +86,14 @@ func (ou *OrganizationUpdate) SetName(s string) *OrganizationUpdate {
 	return ou
 }
 
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableName(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetName(*s)
+	}
+	return ou
+}
+
 // SetDisplayName sets the "display_name" field.
 func (ou *OrganizationUpdate) SetDisplayName(s string) *OrganizationUpdate {
 	ou.mutation.SetDisplayName(s)
@@ -684,6 +692,14 @@ func (ouo *OrganizationUpdateOne) ClearUpdatedBy() *OrganizationUpdateOne {
 // SetName sets the "name" field.
 func (ouo *OrganizationUpdateOne) SetName(s string) *OrganizationUpdateOne {
 	ouo.mutation.SetName(s)
+	return ouo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableName(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetName(*s)
+	}
 	return ouo
 }
 

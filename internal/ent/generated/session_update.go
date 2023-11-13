@@ -83,6 +83,14 @@ func (su *SessionUpdate) SetDisabled(b bool) *SessionUpdate {
 	return su
 }
 
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableDisabled(b *bool) *SessionUpdate {
+	if b != nil {
+		su.SetDisabled(*b)
+	}
+	return su
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (su *SessionUpdate) SetUserAgent(s string) *SessionUpdate {
 	su.mutation.SetUserAgent(s)
@@ -106,6 +114,14 @@ func (su *SessionUpdate) ClearUserAgent() *SessionUpdate {
 // SetIps sets the "ips" field.
 func (su *SessionUpdate) SetIps(s string) *SessionUpdate {
 	su.mutation.SetIps(s)
+	return su
+}
+
+// SetNillableIps sets the "ips" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableIps(s *string) *SessionUpdate {
+	if s != nil {
+		su.SetIps(*s)
+	}
 	return su
 }
 
@@ -322,6 +338,14 @@ func (suo *SessionUpdateOne) SetDisabled(b bool) *SessionUpdateOne {
 	return suo
 }
 
+// SetNillableDisabled sets the "disabled" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableDisabled(b *bool) *SessionUpdateOne {
+	if b != nil {
+		suo.SetDisabled(*b)
+	}
+	return suo
+}
+
 // SetUserAgent sets the "user_agent" field.
 func (suo *SessionUpdateOne) SetUserAgent(s string) *SessionUpdateOne {
 	suo.mutation.SetUserAgent(s)
@@ -345,6 +369,14 @@ func (suo *SessionUpdateOne) ClearUserAgent() *SessionUpdateOne {
 // SetIps sets the "ips" field.
 func (suo *SessionUpdateOne) SetIps(s string) *SessionUpdateOne {
 	suo.mutation.SetIps(s)
+	return suo
+}
+
+// SetNillableIps sets the "ips" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableIps(s *string) *SessionUpdateOne {
+	if s != nil {
+		suo.SetIps(*s)
+	}
 	return suo
 }
 

@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/echox"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
+	"github.com/datumforge/datum/internal/fga"
 )
 
 const (
@@ -23,6 +24,8 @@ const (
 	defaultDBPrimaryURI          = "datum.db?mode=memory&_fk=1"
 	defaultDBSecondaryURI        = "backup.db?mode=memory&_fk=1"
 	defaultOIDCJWKSRemoteTimeout = 5 * time.Second
+	defaultFGAScheme             = "https"
+	defaultFGAHost               = ""
 )
 
 var (
@@ -92,6 +95,16 @@ func init() {
 
 	serveCmd.Flags().Duration("oidc-jwks-remote-timeout", defaultOIDCJWKSRemoteTimeout, "timeout for remote JWKS fetching")
 	viperBindFlag("oidc.jwks.remote-timeout", serveCmd.Flags().Lookup("oidc-jwks-remote-timeout"))
+
+	// OpenFGA configuration settings
+	serveCmd.Flags().String("fgaHost", defaultFGAHost, "fga host without the scheme (e.g. api.fga.example instead of https://api.fga.example)")
+	viperBindFlag("fga.host", serveCmd.Flags().Lookup("fgaHost"))
+
+	serveCmd.Flags().String("fgaScheme", defaultFGAScheme, "fga scheme")
+	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fgaScheme"))
+
+	serveCmd.Flags().String("fgaStoreID", "", "fga store ID")
+	viperBindFlag("fga.storeID", serveCmd.Flags().Lookup("fgaStoreID"))
 
 	// only available as a CLI arg because these should only be used in dev environments
 	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
@@ -174,7 +187,36 @@ func serve(ctx context.Context) error {
 		logger.Error("failed to create server", zap.Error(err))
 	}
 
-	r := api.NewResolver(client, logger.Named("resolvers"))
+	r := api.NewResolver(client).
+		WithLogger(logger.Named("resolvers"))
+
+	// only turn on authz validation when oidc is enabled
+	if viper.GetBool("oidc.enabled") {
+		// setup FGA client
+		logger.Infow(
+			"Setting up FGA Client",
+			"host",
+			viper.GetString("fga.host"),
+			"scheme",
+			viper.GetString("fga.scheme"),
+			"store_id",
+			viper.GetString("fga.storeID"),
+		)
+
+		fgaClient, err := fga.NewClient(
+			viper.GetString("fga.host"),
+			fga.WithScheme(viper.GetString("fga.scheme")),
+			fga.WithStoreID(viper.GetString("fga.storeID")),
+			// fga.WithAuthorizationModelID() // TODO - we should add this
+			fga.WithLogger(logger),
+		)
+		if err != nil {
+			return err
+		}
+
+		r = r.WithAuthz(fgaClient)
+	}
+
 	handler := r.Handler(enablePlayground, mw...)
 
 	srv.AddHandler(handler)

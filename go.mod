@@ -18,6 +18,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.77.0
+	github.com/openfga/go-sdk v0.2.3
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.17.0
@@ -41,6 +42,7 @@ require (
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
+	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/api v0.150.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231106174013-bbf56f31fb17 // indirect

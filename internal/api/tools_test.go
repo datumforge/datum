@@ -91,7 +91,7 @@ func graphTestClient() datumclient.DatumClient {
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
 			api.NewExecutableSchema(
-				api.Config{Resolvers: api.NewResolver(EntClient, zap.NewNop().Sugar())},
+				api.Config{Resolvers: api.NewResolver(EntClient).WithLogger(zap.NewNop().Sugar())},
 			))}},
 	}
 

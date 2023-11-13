@@ -244,6 +244,10 @@ type CreateOrganization_CreateOrganization_Organization struct {
 	DisplayName string                                                     "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                                    "json:\"description,omitempty\" graphql:\"description\""
 	Parent      *CreateOrganization_CreateOrganization_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	CreatedAt   time.Time                                                  "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                                  "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *CreateOrganization_CreateOrganization_Organization) GetID() string {
@@ -275,6 +279,30 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetParent() *Create
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
 	return t.Parent
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return &t.CreatedAt
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return &t.UpdatedAt
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return t.UpdatedBy
 }
 
 type CreateOrganization_CreateOrganization struct {
@@ -497,6 +525,10 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 				id
 				name
 			}
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
 		}
 	}
 }

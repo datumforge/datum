@@ -1,0 +1,13 @@
+package datum
+
+import "github.com/spf13/cobra"
+
+// reportCmd represents the base report command when called without any subcommands
+var orgCmd = &cobra.Command{
+	Use:   "org",
+	Short: "The subcommands for working with the datum organiation",
+}
+
+func init() {
+	rootCmd.AddCommand(orgCmd)
+}

@@ -39,6 +39,10 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
         id
         name
       }
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
     }
   }
 }

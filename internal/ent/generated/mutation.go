@@ -3978,8 +3978,8 @@ type OauthProviderMutation struct {
 	addauth_style *int8
 	info_url      *string
 	clearedFields map[string]struct{}
-	user          *string
-	cleareduser   bool
+	owner         *string
+	clearedowner  bool
 	done          bool
 	oldValue      func(context.Context) (*OauthProvider, error)
 	predicates    []predicate.OauthProvider
@@ -4603,43 +4603,43 @@ func (m *OauthProviderMutation) ResetInfoURL() {
 	m.info_url = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *OauthProviderMutation) SetUserID(id string) {
-	m.user = &id
+// SetOwnerID sets the "owner" edge to the Organization entity by id.
+func (m *OauthProviderMutation) SetOwnerID(id string) {
+	m.owner = &id
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (m *OauthProviderMutation) ClearUser() {
-	m.cleareduser = true
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *OauthProviderMutation) ClearOwner() {
+	m.clearedowner = true
 }
 
-// UserCleared reports if the "user" edge to the User entity was cleared.
-func (m *OauthProviderMutation) UserCleared() bool {
-	return m.cleareduser
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *OauthProviderMutation) OwnerCleared() bool {
+	return m.clearedowner
 }
 
-// UserID returns the "user" edge ID in the mutation.
-func (m *OauthProviderMutation) UserID() (id string, exists bool) {
-	if m.user != nil {
-		return *m.user, true
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *OauthProviderMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
 	}
 	return
 }
 
-// UserIDs returns the "user" edge IDs in the mutation.
+// OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// UserID instead. It exists only for internal usage by the builders.
-func (m *OauthProviderMutation) UserIDs() (ids []string) {
-	if id := m.user; id != nil {
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *OauthProviderMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetUser resets all changes to the "user" edge.
-func (m *OauthProviderMutation) ResetUser() {
-	m.user = nil
-	m.cleareduser = false
+// ResetOwner resets all changes to the "owner" edge.
+func (m *OauthProviderMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
 }
 
 // Where appends a list predicates to the OauthProviderMutation builder.
@@ -5010,8 +5010,8 @@ func (m *OauthProviderMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OauthProviderMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.user != nil {
-		edges = append(edges, oauthprovider.EdgeUser)
+	if m.owner != nil {
+		edges = append(edges, oauthprovider.EdgeOwner)
 	}
 	return edges
 }
@@ -5020,8 +5020,8 @@ func (m *OauthProviderMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *OauthProviderMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case oauthprovider.EdgeUser:
-		if id := m.user; id != nil {
+	case oauthprovider.EdgeOwner:
+		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -5043,8 +5043,8 @@ func (m *OauthProviderMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OauthProviderMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.cleareduser {
-		edges = append(edges, oauthprovider.EdgeUser)
+	if m.clearedowner {
+		edges = append(edges, oauthprovider.EdgeOwner)
 	}
 	return edges
 }
@@ -5053,8 +5053,8 @@ func (m *OauthProviderMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *OauthProviderMutation) EdgeCleared(name string) bool {
 	switch name {
-	case oauthprovider.EdgeUser:
-		return m.cleareduser
+	case oauthprovider.EdgeOwner:
+		return m.clearedowner
 	}
 	return false
 }
@@ -5063,8 +5063,8 @@ func (m *OauthProviderMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OauthProviderMutation) ClearEdge(name string) error {
 	switch name {
-	case oauthprovider.EdgeUser:
-		m.ClearUser()
+	case oauthprovider.EdgeOwner:
+		m.ClearOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown OauthProvider unique edge %s", name)
@@ -5074,8 +5074,8 @@ func (m *OauthProviderMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *OauthProviderMutation) ResetEdge(name string) error {
 	switch name {
-	case oauthprovider.EdgeUser:
-		m.ResetUser()
+	case oauthprovider.EdgeOwner:
+		m.ResetOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown OauthProvider edge %s", name)
@@ -5084,39 +5084,42 @@ func (m *OauthProviderMutation) ResetEdge(name string) error {
 // OrganizationMutation represents an operation that mutates the Organization nodes in the graph.
 type OrganizationMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *string
-	created_at          *time.Time
-	updated_at          *time.Time
-	created_by          *string
-	updated_by          *string
-	name                *string
-	display_name        *string
-	description         *string
-	clearedFields       map[string]struct{}
-	parent              *string
-	clearedparent       bool
-	children            map[string]struct{}
-	removedchildren     map[string]struct{}
-	clearedchildren     bool
-	users               map[string]struct{}
-	removedusers        map[string]struct{}
-	clearedusers        bool
-	groups              map[string]struct{}
-	removedgroups       map[string]struct{}
-	clearedgroups       bool
-	integrations        map[string]struct{}
-	removedintegrations map[string]struct{}
-	clearedintegrations bool
-	setting             *string
-	clearedsetting      bool
-	entitlements        map[string]struct{}
-	removedentitlements map[string]struct{}
-	clearedentitlements bool
-	done                bool
-	oldValue            func(context.Context) (*Organization, error)
-	predicates          []predicate.Organization
+	op                   Op
+	typ                  string
+	id                   *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	created_by           *string
+	updated_by           *string
+	name                 *string
+	display_name         *string
+	description          *string
+	clearedFields        map[string]struct{}
+	parent               *string
+	clearedparent        bool
+	children             map[string]struct{}
+	removedchildren      map[string]struct{}
+	clearedchildren      bool
+	users                map[string]struct{}
+	removedusers         map[string]struct{}
+	clearedusers         bool
+	groups               map[string]struct{}
+	removedgroups        map[string]struct{}
+	clearedgroups        bool
+	integrations         map[string]struct{}
+	removedintegrations  map[string]struct{}
+	clearedintegrations  bool
+	setting              *string
+	clearedsetting       bool
+	entitlements         map[string]struct{}
+	removedentitlements  map[string]struct{}
+	clearedentitlements  bool
+	oauthprovider        map[string]struct{}
+	removedoauthprovider map[string]struct{}
+	clearedoauthprovider bool
+	done                 bool
+	oldValue             func(context.Context) (*Organization, error)
+	predicates           []predicate.Organization
 }
 
 var _ ent.Mutation = (*OrganizationMutation)(nil)
@@ -5912,6 +5915,60 @@ func (m *OrganizationMutation) ResetEntitlements() {
 	m.removedentitlements = nil
 }
 
+// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by ids.
+func (m *OrganizationMutation) AddOauthproviderIDs(ids ...string) {
+	if m.oauthprovider == nil {
+		m.oauthprovider = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.oauthprovider[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOauthprovider clears the "oauthprovider" edge to the OauthProvider entity.
+func (m *OrganizationMutation) ClearOauthprovider() {
+	m.clearedoauthprovider = true
+}
+
+// OauthproviderCleared reports if the "oauthprovider" edge to the OauthProvider entity was cleared.
+func (m *OrganizationMutation) OauthproviderCleared() bool {
+	return m.clearedoauthprovider
+}
+
+// RemoveOauthproviderIDs removes the "oauthprovider" edge to the OauthProvider entity by IDs.
+func (m *OrganizationMutation) RemoveOauthproviderIDs(ids ...string) {
+	if m.removedoauthprovider == nil {
+		m.removedoauthprovider = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.oauthprovider, ids[i])
+		m.removedoauthprovider[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOauthprovider returns the removed IDs of the "oauthprovider" edge to the OauthProvider entity.
+func (m *OrganizationMutation) RemovedOauthproviderIDs() (ids []string) {
+	for id := range m.removedoauthprovider {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OauthproviderIDs returns the "oauthprovider" edge IDs in the mutation.
+func (m *OrganizationMutation) OauthproviderIDs() (ids []string) {
+	for id := range m.oauthprovider {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOauthprovider resets all changes to the "oauthprovider" edge.
+func (m *OrganizationMutation) ResetOauthprovider() {
+	m.oauthprovider = nil
+	m.clearedoauthprovider = false
+	m.removedoauthprovider = nil
+}
+
 // Where appends a list predicates to the OrganizationMutation builder.
 func (m *OrganizationMutation) Where(ps ...predicate.Organization) {
 	m.predicates = append(m.predicates, ps...)
@@ -6191,7 +6248,7 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.parent != nil {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -6212,6 +6269,9 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.entitlements != nil {
 		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.oauthprovider != nil {
+		edges = append(edges, organization.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -6258,13 +6318,19 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeOauthprovider:
+		ids := make([]ent.Value, 0, len(m.oauthprovider))
+		for id := range m.oauthprovider {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedchildren != nil {
 		edges = append(edges, organization.EdgeChildren)
 	}
@@ -6279,6 +6345,9 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	}
 	if m.removedentitlements != nil {
 		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.removedoauthprovider != nil {
+		edges = append(edges, organization.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -6317,13 +6386,19 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeOauthprovider:
+		ids := make([]ent.Value, 0, len(m.removedoauthprovider))
+		for id := range m.removedoauthprovider {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.clearedparent {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -6344,6 +6419,9 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	}
 	if m.clearedentitlements {
 		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.clearedoauthprovider {
+		edges = append(edges, organization.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -6366,6 +6444,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedsetting
 	case organization.EdgeEntitlements:
 		return m.clearedentitlements
+	case organization.EdgeOauthprovider:
+		return m.clearedoauthprovider
 	}
 	return false
 }
@@ -6408,6 +6488,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	case organization.EdgeEntitlements:
 		m.ResetEntitlements()
+		return nil
+	case organization.EdgeOauthprovider:
+		m.ResetOauthprovider()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
@@ -10715,9 +10798,6 @@ type UserMutation struct {
 	refreshtoken                  map[string]struct{}
 	removedrefreshtoken           map[string]struct{}
 	clearedrefreshtoken           bool
-	oauthprovider                 map[string]struct{}
-	removedoauthprovider          map[string]struct{}
-	clearedoauthprovider          bool
 	done                          bool
 	oldValue                      func(context.Context) (*User, error)
 	predicates                    []predicate.User
@@ -11695,60 +11775,6 @@ func (m *UserMutation) ResetRefreshtoken() {
 	m.removedrefreshtoken = nil
 }
 
-// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by ids.
-func (m *UserMutation) AddOauthproviderIDs(ids ...string) {
-	if m.oauthprovider == nil {
-		m.oauthprovider = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.oauthprovider[ids[i]] = struct{}{}
-	}
-}
-
-// ClearOauthprovider clears the "oauthprovider" edge to the OauthProvider entity.
-func (m *UserMutation) ClearOauthprovider() {
-	m.clearedoauthprovider = true
-}
-
-// OauthproviderCleared reports if the "oauthprovider" edge to the OauthProvider entity was cleared.
-func (m *UserMutation) OauthproviderCleared() bool {
-	return m.clearedoauthprovider
-}
-
-// RemoveOauthproviderIDs removes the "oauthprovider" edge to the OauthProvider entity by IDs.
-func (m *UserMutation) RemoveOauthproviderIDs(ids ...string) {
-	if m.removedoauthprovider == nil {
-		m.removedoauthprovider = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.oauthprovider, ids[i])
-		m.removedoauthprovider[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedOauthprovider returns the removed IDs of the "oauthprovider" edge to the OauthProvider entity.
-func (m *UserMutation) RemovedOauthproviderIDs() (ids []string) {
-	for id := range m.removedoauthprovider {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// OauthproviderIDs returns the "oauthprovider" edge IDs in the mutation.
-func (m *UserMutation) OauthproviderIDs() (ids []string) {
-	for id := range m.oauthprovider {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetOauthprovider resets all changes to the "oauthprovider" edge.
-func (m *UserMutation) ResetOauthprovider() {
-	m.oauthprovider = nil
-	m.clearedoauthprovider = false
-	m.removedoauthprovider = nil
-}
-
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -12131,7 +12157,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.organizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -12149,9 +12175,6 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.refreshtoken != nil {
 		edges = append(edges, user.EdgeRefreshtoken)
-	}
-	if m.oauthprovider != nil {
-		edges = append(edges, user.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -12194,19 +12217,13 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeOauthprovider:
-		ids := make([]ent.Value, 0, len(m.oauthprovider))
-		for id := range m.oauthprovider {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.removedorganizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -12221,9 +12238,6 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedrefreshtoken != nil {
 		edges = append(edges, user.EdgeRefreshtoken)
-	}
-	if m.removedoauthprovider != nil {
-		edges = append(edges, user.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -12262,19 +12276,13 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeOauthprovider:
-		ids := make([]ent.Value, 0, len(m.removedoauthprovider))
-		for id := range m.removedoauthprovider {
-			ids = append(ids, id)
-		}
-		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.clearedorganizations {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -12292,9 +12300,6 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedrefreshtoken {
 		edges = append(edges, user.EdgeRefreshtoken)
-	}
-	if m.clearedoauthprovider {
-		edges = append(edges, user.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -12315,8 +12320,6 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedsetting
 	case user.EdgeRefreshtoken:
 		return m.clearedrefreshtoken
-	case user.EdgeOauthprovider:
-		return m.clearedoauthprovider
 	}
 	return false
 }
@@ -12353,9 +12356,6 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeRefreshtoken:
 		m.ResetRefreshtoken()
-		return nil
-	case user.EdgeOauthprovider:
-		m.ResetOauthprovider()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

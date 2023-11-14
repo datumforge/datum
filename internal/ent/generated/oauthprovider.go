@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
-	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // OauthProvider is the model entity for the OauthProvider schema.
@@ -46,15 +46,15 @@ type OauthProvider struct {
 	InfoURL string `json:"info_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OauthProviderQuery when eager-loading is set.
-	Edges              OauthProviderEdges `json:"edges"`
-	user_oauthprovider *string
-	selectValues       sql.SelectValues
+	Edges                      OauthProviderEdges `json:"edges"`
+	organization_oauthprovider *string
+	selectValues               sql.SelectValues
 }
 
 // OauthProviderEdges holds the relations/edges for other nodes in the graph.
 type OauthProviderEdges struct {
-	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -62,17 +62,17 @@ type OauthProviderEdges struct {
 	totalCount [1]map[string]int
 }
 
-// UserOrErr returns the User value or an error if the edge
+// OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e OauthProviderEdges) UserOrErr() (*User, error) {
+func (e OauthProviderEdges) OwnerOrErr() (*Organization, error) {
 	if e.loadedTypes[0] {
-		if e.User == nil {
+		if e.Owner == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: user.Label}
+			return nil, &NotFoundError{label: organization.Label}
 		}
-		return e.User, nil
+		return e.Owner, nil
 	}
-	return nil, &NotLoadedError{edge: "user"}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -86,7 +86,7 @@ func (*OauthProvider) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case oauthprovider.FieldCreatedAt, oauthprovider.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case oauthprovider.ForeignKeys[0]: // user_oauthprovider
+		case oauthprovider.ForeignKeys[0]: // organization_oauthprovider
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -189,10 +189,10 @@ func (op *OauthProvider) assignValues(columns []string, values []any) error {
 			}
 		case oauthprovider.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_oauthprovider", values[i])
+				return fmt.Errorf("unexpected type %T for field organization_oauthprovider", values[i])
 			} else if value.Valid {
-				op.user_oauthprovider = new(string)
-				*op.user_oauthprovider = value.String
+				op.organization_oauthprovider = new(string)
+				*op.organization_oauthprovider = value.String
 			}
 		default:
 			op.selectValues.Set(columns[i], values[i])
@@ -207,9 +207,9 @@ func (op *OauthProvider) Value(name string) (ent.Value, error) {
 	return op.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the OauthProvider entity.
-func (op *OauthProvider) QueryUser() *UserQuery {
-	return NewOauthProviderClient(op.config).QueryUser(op)
+// QueryOwner queries the "owner" edge of the OauthProvider entity.
+func (op *OauthProvider) QueryOwner() *OrganizationQuery {
+	return NewOauthProviderClient(op.config).QueryOwner(op)
 }
 
 // Update returns a builder for updating this OauthProvider.

@@ -45,6 +45,8 @@ const (
 	EdgeSetting = "setting"
 	// EdgeEntitlements holds the string denoting the entitlements edge name in mutations.
 	EdgeEntitlements = "entitlements"
+	// EdgeOauthprovider holds the string denoting the oauthprovider edge name in mutations.
+	EdgeOauthprovider = "oauthprovider"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -88,6 +90,13 @@ const (
 	EntitlementsInverseTable = "entitlements"
 	// EntitlementsColumn is the table column denoting the entitlements relation/edge.
 	EntitlementsColumn = "organization_entitlements"
+	// OauthproviderTable is the table that holds the oauthprovider relation/edge.
+	OauthproviderTable = "oauth_providers"
+	// OauthproviderInverseTable is the table name for the OauthProvider entity.
+	// It exists in this package in order to avoid circular dependency with the "oauthprovider" package.
+	OauthproviderInverseTable = "oauth_providers"
+	// OauthproviderColumn is the table column denoting the oauthprovider relation/edge.
+	OauthproviderColumn = "organization_oauthprovider"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -273,6 +282,20 @@ func ByEntitlements(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newEntitlementsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByOauthproviderCount orders the results by oauthprovider count.
+func ByOauthproviderCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOauthproviderStep(), opts...)
+	}
+}
+
+// ByOauthprovider orders the results by oauthprovider terms.
+func ByOauthprovider(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOauthproviderStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -320,5 +343,12 @@ func newEntitlementsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntitlementsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EntitlementsTable, EntitlementsColumn),
+	)
+}
+func newOauthproviderStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OauthproviderInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OauthproviderTable, OauthproviderColumn),
 	)
 }

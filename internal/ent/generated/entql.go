@@ -387,16 +387,16 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Organization",
 	)
 	graph.MustAddE(
-		"user",
+		"owner",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   oauthprovider.UserTable,
-			Columns: []string{oauthprovider.UserColumn},
+			Table:   oauthprovider.OwnerTable,
+			Columns: []string{oauthprovider.OwnerColumn},
 			Bidi:    false,
 		},
 		"OauthProvider",
-		"User",
+		"Organization",
 	)
 	graph.MustAddE(
 		"parent",
@@ -481,6 +481,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"Organization",
 		"Entitlement",
+	)
+	graph.MustAddE(
+		"oauthprovider",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"OauthProvider",
 	)
 	graph.MustAddE(
 		"orgnaization",
@@ -601,18 +613,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"RefreshToken",
-	)
-	graph.MustAddE(
-		"oauthprovider",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-		},
-		"User",
-		"OauthProvider",
 	)
 	graph.MustAddE(
 		"user",
@@ -1174,14 +1174,14 @@ func (f *OauthProviderFilter) WhereInfoURL(p entql.StringP) {
 	f.Where(p.Field(oauthprovider.FieldInfoURL))
 }
 
-// WhereHasUser applies a predicate to check if query has an edge user.
-func (f *OauthProviderFilter) WhereHasUser() {
-	f.Where(entql.HasEdge("user"))
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *OauthProviderFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
 }
 
-// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
-func (f *OauthProviderFilter) WhereHasUserWith(preds ...predicate.User) {
-	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *OauthProviderFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1360,6 +1360,20 @@ func (f *OrganizationFilter) WhereHasEntitlements() {
 // WhereHasEntitlementsWith applies a predicate to check if query has an edge entitlements with a given conditions (other predicates).
 func (f *OrganizationFilter) WhereHasEntitlementsWith(preds ...predicate.Entitlement) {
 	f.Where(entql.HasEdgeWith("entitlements", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOauthprovider applies a predicate to check if query has an edge oauthprovider.
+func (f *OrganizationFilter) WhereHasOauthprovider() {
+	f.Where(entql.HasEdge("oauthprovider"))
+}
+
+// WhereHasOauthproviderWith applies a predicate to check if query has an edge oauthprovider with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasOauthproviderWith(preds ...predicate.OauthProvider) {
+	f.Where(entql.HasEdgeWith("oauthprovider", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -2000,20 +2014,6 @@ func (f *UserFilter) WhereHasRefreshtoken() {
 // WhereHasRefreshtokenWith applies a predicate to check if query has an edge refreshtoken with a given conditions (other predicates).
 func (f *UserFilter) WhereHasRefreshtokenWith(preds ...predicate.RefreshToken) {
 	f.Where(entql.HasEdgeWith("refreshtoken", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// WhereHasOauthprovider applies a predicate to check if query has an edge oauthprovider.
-func (f *UserFilter) WhereHasOauthprovider() {
-	f.Where(entql.HasEdge("oauthprovider"))
-}
-
-// WhereHasOauthproviderWith applies a predicate to check if query has an edge oauthprovider with a given conditions (other predicates).
-func (f *UserFilter) WhereHasOauthproviderWith(preds ...predicate.OauthProvider) {
-	f.Where(entql.HasEdgeWith("oauthprovider", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

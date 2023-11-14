@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -254,6 +255,21 @@ func (oc *OrganizationCreate) AddEntitlements(e ...*Entitlement) *OrganizationCr
 		ids[i] = e[i].ID
 	}
 	return oc.AddEntitlementIDs(ids...)
+}
+
+// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
+func (oc *OrganizationCreate) AddOauthproviderIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddOauthproviderIDs(ids...)
+	return oc
+}
+
+// AddOauthprovider adds the "oauthprovider" edges to the OauthProvider entity.
+func (oc *OrganizationCreate) AddOauthprovider(o ...*OauthProvider) *OrganizationCreate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return oc.AddOauthproviderIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -524,6 +540,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.OauthproviderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OauthProvider
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

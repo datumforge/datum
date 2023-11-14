@@ -108,7 +108,7 @@ type CreateOauthProviderInput struct {
 	AuthStyle int64 `json:"authStyle"`
 	// the URL to request user information by token
 	InfoURL string  `json:"infoURL"`
-	UserID  *string `json:"userID,omitempty"`
+	OwnerID *string `json:"ownerID,omitempty"`
 }
 
 // CreateOrganizationInput is used for create Organization object.
@@ -122,13 +122,14 @@ type CreateOrganizationInput struct {
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the Organization
-	Description    *string  `json:"description,omitempty"`
-	ParentID       *string  `json:"parentID,omitempty"`
-	UserIDs        []string `json:"userIDs,omitempty"`
-	GroupIDs       []string `json:"groupIDs,omitempty"`
-	IntegrationIDs []string `json:"integrationIDs,omitempty"`
-	SettingID      *string  `json:"settingID,omitempty"`
-	EntitlementIDs []string `json:"entitlementIDs,omitempty"`
+	Description      *string  `json:"description,omitempty"`
+	ParentID         *string  `json:"parentID,omitempty"`
+	UserIDs          []string `json:"userIDs,omitempty"`
+	GroupIDs         []string `json:"groupIDs,omitempty"`
+	IntegrationIDs   []string `json:"integrationIDs,omitempty"`
+	SettingID        *string  `json:"settingID,omitempty"`
+	EntitlementIDs   []string `json:"entitlementIDs,omitempty"`
+	OauthproviderIDs []string `json:"oauthproviderIDs,omitempty"`
 }
 
 // CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -217,7 +218,6 @@ type CreateUserInput struct {
 	PersonalAccessTokenIDs []string `json:"personalAccessTokenIDs,omitempty"`
 	SettingID              string   `json:"settingID"`
 	RefreshtokenIDs        []string `json:"refreshtokenIDs,omitempty"`
-	OauthproviderIDs       []string `json:"oauthproviderIDs,omitempty"`
 }
 
 // CreateUserSettingsInput is used for create UserSettings object.
@@ -977,8 +977,8 @@ type OauthProvider struct {
 	// the auth style, 0: auto detect 1: third party log in 2: log in with username and password
 	AuthStyle int64 `json:"authStyle"`
 	// the URL to request user information by token
-	InfoURL string `json:"infoURL"`
-	User    *User  `json:"user,omitempty"`
+	InfoURL string        `json:"infoURL"`
+	Owner   *Organization `json:"owner,omitempty"`
 }
 
 func (OauthProvider) IsNode() {}
@@ -1193,9 +1193,9 @@ type OauthProviderWhereInput struct {
 	InfoURLHasSuffix    *string  `json:"infoURLHasSuffix,omitempty"`
 	InfoURLEqualFold    *string  `json:"infoURLEqualFold,omitempty"`
 	InfoURLContainsFold *string  `json:"infoURLContainsFold,omitempty"`
-	// user edge predicates
-	HasUser     *bool             `json:"hasUser,omitempty"`
-	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// owner edge predicates
+	HasOwner     *bool                     `json:"hasOwner,omitempty"`
+	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 type Organization struct {
@@ -1208,14 +1208,15 @@ type Organization struct {
 	// The organization's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// An optional description of the Organization
-	Description  *string                `json:"description,omitempty"`
-	Parent       *Organization          `json:"parent,omitempty"`
-	Children     OrganizationConnection `json:"children"`
-	Users        []*User                `json:"users,omitempty"`
-	Groups       []*Group               `json:"groups,omitempty"`
-	Integrations []*Integration         `json:"integrations,omitempty"`
-	Setting      *OrganizationSettings  `json:"setting,omitempty"`
-	Entitlements []*Entitlement         `json:"entitlements,omitempty"`
+	Description   *string                `json:"description,omitempty"`
+	Parent        *Organization          `json:"parent,omitempty"`
+	Children      OrganizationConnection `json:"children"`
+	Users         []*User                `json:"users,omitempty"`
+	Groups        []*Group               `json:"groups,omitempty"`
+	Integrations  []*Integration         `json:"integrations,omitempty"`
+	Setting       *OrganizationSettings  `json:"setting,omitempty"`
+	Entitlements  []*Entitlement         `json:"entitlements,omitempty"`
+	Oauthprovider []*OauthProvider       `json:"oauthprovider,omitempty"`
 }
 
 func (Organization) IsNode() {}
@@ -1605,6 +1606,9 @@ type OrganizationWhereInput struct {
 	// entitlements edge predicates
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
 	HasEntitlementsWith []*EntitlementWhereInput `json:"hasEntitlementsWith,omitempty"`
+	// oauthprovider edge predicates
+	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
+	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
 }
 
 // Information about pagination in a connection.
@@ -2265,9 +2269,9 @@ type UpdateOauthProviderInput struct {
 	// the auth style, 0: auto detect 1: third party log in 2: log in with username and password
 	AuthStyle *int64 `json:"authStyle,omitempty"`
 	// the URL to request user information by token
-	InfoURL   *string `json:"infoURL,omitempty"`
-	UserID    *string `json:"userID,omitempty"`
-	ClearUser *bool   `json:"clearUser,omitempty"`
+	InfoURL    *string `json:"infoURL,omitempty"`
+	OwnerID    *string `json:"ownerID,omitempty"`
+	ClearOwner *bool   `json:"clearOwner,omitempty"`
 }
 
 // UpdateOrganizationInput is used for update Organization object.
@@ -2282,22 +2286,25 @@ type UpdateOrganizationInput struct {
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the Organization
-	Description          *string  `json:"description,omitempty"`
-	ClearDescription     *bool    `json:"clearDescription,omitempty"`
-	AddUserIDs           []string `json:"addUserIDs,omitempty"`
-	RemoveUserIDs        []string `json:"removeUserIDs,omitempty"`
-	ClearUsers           *bool    `json:"clearUsers,omitempty"`
-	AddGroupIDs          []string `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs       []string `json:"removeGroupIDs,omitempty"`
-	ClearGroups          *bool    `json:"clearGroups,omitempty"`
-	AddIntegrationIDs    []string `json:"addIntegrationIDs,omitempty"`
-	RemoveIntegrationIDs []string `json:"removeIntegrationIDs,omitempty"`
-	ClearIntegrations    *bool    `json:"clearIntegrations,omitempty"`
-	SettingID            *string  `json:"settingID,omitempty"`
-	ClearSetting         *bool    `json:"clearSetting,omitempty"`
-	AddEntitlementIDs    []string `json:"addEntitlementIDs,omitempty"`
-	RemoveEntitlementIDs []string `json:"removeEntitlementIDs,omitempty"`
-	ClearEntitlements    *bool    `json:"clearEntitlements,omitempty"`
+	Description            *string  `json:"description,omitempty"`
+	ClearDescription       *bool    `json:"clearDescription,omitempty"`
+	AddUserIDs             []string `json:"addUserIDs,omitempty"`
+	RemoveUserIDs          []string `json:"removeUserIDs,omitempty"`
+	ClearUsers             *bool    `json:"clearUsers,omitempty"`
+	AddGroupIDs            []string `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs         []string `json:"removeGroupIDs,omitempty"`
+	ClearGroups            *bool    `json:"clearGroups,omitempty"`
+	AddIntegrationIDs      []string `json:"addIntegrationIDs,omitempty"`
+	RemoveIntegrationIDs   []string `json:"removeIntegrationIDs,omitempty"`
+	ClearIntegrations      *bool    `json:"clearIntegrations,omitempty"`
+	SettingID              *string  `json:"settingID,omitempty"`
+	ClearSetting           *bool    `json:"clearSetting,omitempty"`
+	AddEntitlementIDs      []string `json:"addEntitlementIDs,omitempty"`
+	RemoveEntitlementIDs   []string `json:"removeEntitlementIDs,omitempty"`
+	ClearEntitlements      *bool    `json:"clearEntitlements,omitempty"`
+	AddOauthproviderIDs    []string `json:"addOauthproviderIDs,omitempty"`
+	RemoveOauthproviderIDs []string `json:"removeOauthproviderIDs,omitempty"`
+	ClearOauthprovider     *bool    `json:"clearOauthprovider,omitempty"`
 }
 
 // UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
@@ -2409,9 +2416,6 @@ type UpdateUserInput struct {
 	AddRefreshtokenIDs           []string `json:"addRefreshtokenIDs,omitempty"`
 	RemoveRefreshtokenIDs        []string `json:"removeRefreshtokenIDs,omitempty"`
 	ClearRefreshtoken            *bool    `json:"clearRefreshtoken,omitempty"`
-	AddOauthproviderIDs          []string `json:"addOauthproviderIDs,omitempty"`
-	RemoveOauthproviderIDs       []string `json:"removeOauthproviderIDs,omitempty"`
-	ClearOauthprovider           *bool    `json:"clearOauthprovider,omitempty"`
 }
 
 // UpdateUserSettingsInput is used for update UserSettings object.
@@ -2468,7 +2472,6 @@ type User struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	Setting              UserSettings           `json:"setting"`
 	Refreshtoken         []*RefreshToken        `json:"refreshtoken,omitempty"`
-	Oauthprovider        []*OauthProvider       `json:"oauthprovider,omitempty"`
 }
 
 func (User) IsNode() {}
@@ -2877,9 +2880,6 @@ type UserWhereInput struct {
 	// refreshtoken edge predicates
 	HasRefreshtoken     *bool                     `json:"hasRefreshtoken,omitempty"`
 	HasRefreshtokenWith []*RefreshTokenWhereInput `json:"hasRefreshtokenWith,omitempty"`
-	// oauthprovider edge predicates
-	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
-	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
 }
 
 type Service struct {

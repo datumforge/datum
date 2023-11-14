@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
-	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // OauthProviderCreate is the builder for creating a OauthProvider entity.
@@ -145,23 +145,23 @@ func (opc *OauthProviderCreate) SetNillableID(s *string) *OauthProviderCreate {
 	return opc
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (opc *OauthProviderCreate) SetUserID(id string) *OauthProviderCreate {
-	opc.mutation.SetUserID(id)
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (opc *OauthProviderCreate) SetOwnerID(id string) *OauthProviderCreate {
+	opc.mutation.SetOwnerID(id)
 	return opc
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (opc *OauthProviderCreate) SetNillableUserID(id *string) *OauthProviderCreate {
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (opc *OauthProviderCreate) SetNillableOwnerID(id *string) *OauthProviderCreate {
 	if id != nil {
-		opc = opc.SetUserID(*id)
+		opc = opc.SetOwnerID(*id)
 	}
 	return opc
 }
 
-// SetUser sets the "user" edge to the User entity.
-func (opc *OauthProviderCreate) SetUser(u *User) *OauthProviderCreate {
-	return opc.SetUserID(u.ID)
+// SetOwner sets the "owner" edge to the Organization entity.
+func (opc *OauthProviderCreate) SetOwner(o *Organization) *OauthProviderCreate {
+	return opc.SetOwnerID(o.ID)
 }
 
 // Mutation returns the OauthProviderMutation object of the builder.
@@ -348,22 +348,22 @@ func (opc *OauthProviderCreate) createSpec() (*OauthProvider, *sqlgraph.CreateSp
 		_spec.SetField(oauthprovider.FieldInfoURL, field.TypeString, value)
 		_node.InfoURL = value
 	}
-	if nodes := opc.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := opc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   oauthprovider.UserTable,
-			Columns: []string{oauthprovider.UserColumn},
+			Table:   oauthprovider.OwnerTable,
+			Columns: []string{oauthprovider.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = opc.schemaConfig.OauthProvider
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_oauthprovider = &nodes[0]
+		_node.organization_oauthprovider = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

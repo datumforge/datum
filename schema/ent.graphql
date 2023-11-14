@@ -100,7 +100,7 @@ input CreateOauthProviderInput {
   authStyle: Int!
   """the URL to request user information by token"""
   infoURL: String!
-  userID: ID
+  ownerID: ID
 }
 """
 CreateOrganizationInput is used for create Organization object.
@@ -122,6 +122,7 @@ input CreateOrganizationInput {
   integrationIDs: [ID!]
   settingID: ID
   entitlementIDs: [ID!]
+  oauthproviderIDs: [ID!]
 }
 """
 CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -214,7 +215,6 @@ input CreateUserInput {
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   refreshtokenIDs: [ID!]
-  oauthproviderIDs: [ID!]
 }
 """
 CreateUserSettingsInput is used for create UserSettings object.
@@ -946,7 +946,7 @@ type OauthProvider implements Node {
   authStyle: Int!
   """the URL to request user information by token"""
   infoURL: String!
-  user: User
+  owner: Organization
 }
 """A connection to a list of items."""
 type OauthProviderConnection {
@@ -1140,9 +1140,9 @@ input OauthProviderWhereInput {
   infoURLHasSuffix: String
   infoURLEqualFold: String
   infoURLContainsFold: String
-  """user edge predicates"""
-  hasUser: Boolean
-  hasUserWith: [UserWhereInput!]
+  """owner edge predicates"""
+  hasOwner: Boolean
+  hasOwnerWith: [OrganizationWhereInput!]
 }
 """Possible directions in which to order a list of items when provided an `orderBy` argument."""
 enum OrderDirection {
@@ -1187,6 +1187,7 @@ type Organization implements Node {
   integrations: [Integration!]
   setting: OrganizationSettings
   entitlements: [Entitlement!]
+  oauthprovider: [OauthProvider!]
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -1555,6 +1556,9 @@ input OrganizationWhereInput {
   """entitlements edge predicates"""
   hasEntitlements: Boolean
   hasEntitlementsWith: [EntitlementWhereInput!]
+  """oauthprovider edge predicates"""
+  hasOauthprovider: Boolean
+  hasOauthproviderWith: [OauthProviderWhereInput!]
 }
 """
 Information about pagination in a connection.
@@ -2384,8 +2388,8 @@ input UpdateOauthProviderInput {
   authStyle: Int
   """the URL to request user information by token"""
   infoURL: String
-  userID: ID
-  clearUser: Boolean
+  ownerID: ID
+  clearOwner: Boolean
 }
 """
 UpdateOrganizationInput is used for update Organization object.
@@ -2417,6 +2421,9 @@ input UpdateOrganizationInput {
   addEntitlementIDs: [ID!]
   removeEntitlementIDs: [ID!]
   clearEntitlements: Boolean
+  addOauthproviderIDs: [ID!]
+  removeOauthproviderIDs: [ID!]
+  clearOauthprovider: Boolean
 }
 """
 UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
@@ -2532,9 +2539,6 @@ input UpdateUserInput {
   addRefreshtokenIDs: [ID!]
   removeRefreshtokenIDs: [ID!]
   clearRefreshtoken: Boolean
-  addOauthproviderIDs: [ID!]
-  removeOauthproviderIDs: [ID!]
-  clearOauthprovider: Boolean
 }
 """
 UpdateUserSettingsInput is used for update UserSettings object.
@@ -2591,7 +2595,6 @@ type User implements Node {
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSettings!
   refreshtoken: [RefreshToken!]
-  oauthprovider: [OauthProvider!]
 }
 """A connection to a list of items."""
 type UserConnection {
@@ -2975,7 +2978,4 @@ input UserWhereInput {
   """refreshtoken edge predicates"""
   hasRefreshtoken: Boolean
   hasRefreshtokenWith: [RefreshTokenWhereInput!]
-  """oauthprovider edge predicates"""
-  hasOauthprovider: Boolean
-  hasOauthproviderWith: [OauthProviderWhereInput!]
 }

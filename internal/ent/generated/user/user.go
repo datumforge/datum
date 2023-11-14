@@ -53,8 +53,6 @@ const (
 	EdgeSetting = "setting"
 	// EdgeRefreshtoken holds the string denoting the refreshtoken edge name in mutations.
 	EdgeRefreshtoken = "refreshtoken"
-	// EdgeOauthprovider holds the string denoting the oauthprovider edge name in mutations.
-	EdgeOauthprovider = "oauthprovider"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -95,13 +93,6 @@ const (
 	RefreshtokenInverseTable = "refresh_tokens"
 	// RefreshtokenColumn is the table column denoting the refreshtoken relation/edge.
 	RefreshtokenColumn = "user_refreshtoken"
-	// OauthproviderTable is the table that holds the oauthprovider relation/edge.
-	OauthproviderTable = "oauth_providers"
-	// OauthproviderInverseTable is the table name for the OauthProvider entity.
-	// It exists in this package in order to avoid circular dependency with the "oauthprovider" package.
-	OauthproviderInverseTable = "oauth_providers"
-	// OauthproviderColumn is the table column denoting the oauthprovider relation/edge.
-	OauthproviderColumn = "user_oauthprovider"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -326,20 +317,6 @@ func ByRefreshtoken(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newRefreshtokenStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
-
-// ByOauthproviderCount orders the results by oauthprovider count.
-func ByOauthproviderCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newOauthproviderStep(), opts...)
-	}
-}
-
-// ByOauthprovider orders the results by oauthprovider terms.
-func ByOauthprovider(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOauthproviderStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -380,12 +357,5 @@ func newRefreshtokenStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(RefreshtokenInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RefreshtokenTable, RefreshtokenColumn),
-	)
-}
-func newOauthproviderStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OauthproviderInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, OauthproviderTable, OauthproviderColumn),
 	)
 }

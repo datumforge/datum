@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -25,24 +26,26 @@ import (
 // OrganizationQuery is the builder for querying Organization entities.
 type OrganizationQuery struct {
 	config
-	ctx                   *QueryContext
-	order                 []organization.OrderOption
-	inters                []Interceptor
-	predicates            []predicate.Organization
-	withParent            *OrganizationQuery
-	withChildren          *OrganizationQuery
-	withUsers             *UserQuery
-	withGroups            *GroupQuery
-	withIntegrations      *IntegrationQuery
-	withSetting           *OrganizationSettingsQuery
-	withEntitlements      *EntitlementQuery
-	modifiers             []func(*sql.Selector)
-	loadTotal             []func(context.Context, []*Organization) error
-	withNamedChildren     map[string]*OrganizationQuery
-	withNamedUsers        map[string]*UserQuery
-	withNamedGroups       map[string]*GroupQuery
-	withNamedIntegrations map[string]*IntegrationQuery
-	withNamedEntitlements map[string]*EntitlementQuery
+	ctx                    *QueryContext
+	order                  []organization.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.Organization
+	withParent             *OrganizationQuery
+	withChildren           *OrganizationQuery
+	withUsers              *UserQuery
+	withGroups             *GroupQuery
+	withIntegrations       *IntegrationQuery
+	withSetting            *OrganizationSettingsQuery
+	withEntitlements       *EntitlementQuery
+	withOauthprovider      *OauthProviderQuery
+	modifiers              []func(*sql.Selector)
+	loadTotal              []func(context.Context, []*Organization) error
+	withNamedChildren      map[string]*OrganizationQuery
+	withNamedUsers         map[string]*UserQuery
+	withNamedGroups        map[string]*GroupQuery
+	withNamedIntegrations  map[string]*IntegrationQuery
+	withNamedEntitlements  map[string]*EntitlementQuery
+	withNamedOauthprovider map[string]*OauthProviderQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -254,6 +257,31 @@ func (oq *OrganizationQuery) QueryEntitlements() *EntitlementQuery {
 	return query
 }
 
+// QueryOauthprovider chains the current query on the "oauthprovider" edge.
+func (oq *OrganizationQuery) QueryOauthprovider() *OauthProviderQuery {
+	query := (&OauthProviderClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(oauthprovider.Table, oauthprovider.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.OauthproviderTable, organization.OauthproviderColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.OauthProvider
+		step.Edge.Schema = schemaConfig.OauthProvider
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Organization entity from the query.
 // Returns a *NotFoundError when no Organization was found.
 func (oq *OrganizationQuery) First(ctx context.Context) (*Organization, error) {
@@ -441,18 +469,19 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		return nil
 	}
 	return &OrganizationQuery{
-		config:           oq.config,
-		ctx:              oq.ctx.Clone(),
-		order:            append([]organization.OrderOption{}, oq.order...),
-		inters:           append([]Interceptor{}, oq.inters...),
-		predicates:       append([]predicate.Organization{}, oq.predicates...),
-		withParent:       oq.withParent.Clone(),
-		withChildren:     oq.withChildren.Clone(),
-		withUsers:        oq.withUsers.Clone(),
-		withGroups:       oq.withGroups.Clone(),
-		withIntegrations: oq.withIntegrations.Clone(),
-		withSetting:      oq.withSetting.Clone(),
-		withEntitlements: oq.withEntitlements.Clone(),
+		config:            oq.config,
+		ctx:               oq.ctx.Clone(),
+		order:             append([]organization.OrderOption{}, oq.order...),
+		inters:            append([]Interceptor{}, oq.inters...),
+		predicates:        append([]predicate.Organization{}, oq.predicates...),
+		withParent:        oq.withParent.Clone(),
+		withChildren:      oq.withChildren.Clone(),
+		withUsers:         oq.withUsers.Clone(),
+		withGroups:        oq.withGroups.Clone(),
+		withIntegrations:  oq.withIntegrations.Clone(),
+		withSetting:       oq.withSetting.Clone(),
+		withEntitlements:  oq.withEntitlements.Clone(),
+		withOauthprovider: oq.withOauthprovider.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -536,6 +565,17 @@ func (oq *OrganizationQuery) WithEntitlements(opts ...func(*EntitlementQuery)) *
 	return oq
 }
 
+// WithOauthprovider tells the query-builder to eager-load the nodes that are connected to
+// the "oauthprovider" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithOauthprovider(opts ...func(*OauthProviderQuery)) *OrganizationQuery {
+	query := (&OauthProviderClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withOauthprovider = query
+	return oq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -614,7 +654,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [8]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withUsers != nil,
@@ -622,6 +662,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withIntegrations != nil,
 			oq.withSetting != nil,
 			oq.withEntitlements != nil,
+			oq.withOauthprovider != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -694,6 +735,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			return nil, err
 		}
 	}
+	if query := oq.withOauthprovider; query != nil {
+		if err := oq.loadOauthprovider(ctx, query, nodes,
+			func(n *Organization) { n.Edges.Oauthprovider = []*OauthProvider{} },
+			func(n *Organization, e *OauthProvider) { n.Edges.Oauthprovider = append(n.Edges.Oauthprovider, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range oq.withNamedChildren {
 		if err := oq.loadChildren(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedChildren(name) },
@@ -726,6 +774,13 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadEntitlements(ctx, query, nodes,
 			func(n *Organization) { n.appendNamedEntitlements(name) },
 			func(n *Organization, e *Entitlement) { n.appendNamedEntitlements(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range oq.withNamedOauthprovider {
+		if err := oq.loadOauthprovider(ctx, query, nodes,
+			func(n *Organization) { n.appendNamedOauthprovider(name) },
+			func(n *Organization, e *OauthProvider) { n.appendNamedOauthprovider(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -979,6 +1034,37 @@ func (oq *OrganizationQuery) loadEntitlements(ctx context.Context, query *Entitl
 	}
 	return nil
 }
+func (oq *OrganizationQuery) loadOauthprovider(ctx context.Context, query *OauthProviderQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OauthProvider)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Organization)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.OauthProvider(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(organization.OauthproviderColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.organization_oauthprovider
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "organization_oauthprovider" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "organization_oauthprovider" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (oq *OrganizationQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := oq.querySpec()
@@ -1139,6 +1225,20 @@ func (oq *OrganizationQuery) WithNamedEntitlements(name string, opts ...func(*En
 		oq.withNamedEntitlements = make(map[string]*EntitlementQuery)
 	}
 	oq.withNamedEntitlements[name] = query
+	return oq
+}
+
+// WithNamedOauthprovider tells the query-builder to eager-load the nodes that are connected to the "oauthprovider"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithNamedOauthprovider(name string, opts ...func(*OauthProviderQuery)) *OrganizationQuery {
+	query := (&OauthProviderClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if oq.withNamedOauthprovider == nil {
+		oq.withNamedOauthprovider = make(map[string]*OauthProviderQuery)
+	}
+	oq.withNamedOauthprovider[name] = query
 	return oq
 }
 

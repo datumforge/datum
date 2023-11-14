@@ -579,16 +579,16 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.O
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "user":
+		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&UserClient{config: op.config}).Query()
+				query = (&OrganizationClient{config: op.config}).Query()
 			)
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			op.withUser = query
+			op.withOwner = query
 		case "createdAt":
 			if _, ok := fieldSeen[oauthprovider.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldCreatedAt)
@@ -865,6 +865,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				return err
 			}
 			o.WithNamedEntitlements(alias, func(wq *EntitlementQuery) {
+				*wq = *query
+			})
+		case "oauthprovider":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OauthProviderClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedOauthprovider(alias, func(wq *OauthProviderQuery) {
 				*wq = *query
 			})
 		case "createdAt":
@@ -1566,18 +1578,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.WithNamedRefreshtoken(alias, func(wq *RefreshTokenQuery) {
-				*wq = *query
-			})
-		case "oauthprovider":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&OauthProviderClient{config: u.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			u.WithNamedOauthprovider(alias, func(wq *OauthProviderQuery) {
 				*wq = *query
 			})
 		case "createdAt":

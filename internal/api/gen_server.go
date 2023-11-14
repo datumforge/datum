@@ -235,12 +235,12 @@ type ComplexityRoot struct {
 		ID          func(childComplexity int) int
 		InfoURL     func(childComplexity int) int
 		Name        func(childComplexity int) int
+		Owner       func(childComplexity int) int
 		RedirectURL func(childComplexity int) int
 		Scopes      func(childComplexity int) int
 		TokenURL    func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UpdatedBy   func(childComplexity int) int
-		User        func(childComplexity int) int
 	}
 
 	OauthProviderConnection struct {
@@ -267,21 +267,22 @@ type ComplexityRoot struct {
 	}
 
 	Organization struct {
-		Children     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
-		CreatedAt    func(childComplexity int) int
-		CreatedBy    func(childComplexity int) int
-		Description  func(childComplexity int) int
-		DisplayName  func(childComplexity int) int
-		Entitlements func(childComplexity int) int
-		Groups       func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Integrations func(childComplexity int) int
-		Name         func(childComplexity int) int
-		Parent       func(childComplexity int) int
-		Setting      func(childComplexity int) int
-		UpdatedAt    func(childComplexity int) int
-		UpdatedBy    func(childComplexity int) int
-		Users        func(childComplexity int) int
+		Children      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
+		CreatedAt     func(childComplexity int) int
+		CreatedBy     func(childComplexity int) int
+		Description   func(childComplexity int) int
+		DisplayName   func(childComplexity int) int
+		Entitlements  func(childComplexity int) int
+		Groups        func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Integrations  func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Oauthprovider func(childComplexity int) int
+		Parent        func(childComplexity int) int
+		Setting       func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UpdatedBy     func(childComplexity int) int
+		Users         func(childComplexity int) int
 	}
 
 	OrganizationConnection struct {
@@ -475,7 +476,6 @@ type ComplexityRoot struct {
 		ID                   func(childComplexity int) int
 		LastName             func(childComplexity int) int
 		LastSeen             func(childComplexity int) int
-		Oauthprovider        func(childComplexity int) int
 		Organizations        func(childComplexity int) int
 		PersonalAccessTokens func(childComplexity int) int
 		Refreshtoken         func(childComplexity int) int
@@ -1557,6 +1557,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OauthProvider.Name(childComplexity), true
 
+	case "OauthProvider.owner":
+		if e.complexity.OauthProvider.Owner == nil {
+			break
+		}
+
+		return e.complexity.OauthProvider.Owner(childComplexity), true
+
 	case "OauthProvider.redirectURL":
 		if e.complexity.OauthProvider.RedirectURL == nil {
 			break
@@ -1591,13 +1598,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OauthProvider.UpdatedBy(childComplexity), true
-
-	case "OauthProvider.user":
-		if e.complexity.OauthProvider.User == nil {
-			break
-		}
-
-		return e.complexity.OauthProvider.User(childComplexity), true
 
 	case "OauthProviderConnection.edges":
 		if e.complexity.OauthProviderConnection.Edges == nil {
@@ -1729,6 +1729,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organization.Name(childComplexity), true
+
+	case "Organization.oauthprovider":
+		if e.complexity.Organization.Oauthprovider == nil {
+			break
+		}
+
+		return e.complexity.Organization.Oauthprovider(childComplexity), true
 
 	case "Organization.parent":
 		if e.complexity.Organization.Parent == nil {
@@ -2722,13 +2729,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.LastSeen(childComplexity), true
 
-	case "User.oauthprovider":
-		if e.complexity.User.Oauthprovider == nil {
-			break
-		}
-
-		return e.complexity.User.Oauthprovider(childComplexity), true
-
 	case "User.organizations":
 		if e.complexity.User.Organizations == nil {
 			break
@@ -3233,7 +3233,7 @@ input CreateOauthProviderInput {
   authStyle: Int!
   """the URL to request user information by token"""
   infoURL: String!
-  userID: ID
+  ownerID: ID
 }
 """
 CreateOrganizationInput is used for create Organization object.
@@ -3255,6 +3255,7 @@ input CreateOrganizationInput {
   integrationIDs: [ID!]
   settingID: ID
   entitlementIDs: [ID!]
+  oauthproviderIDs: [ID!]
 }
 """
 CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -3347,7 +3348,6 @@ input CreateUserInput {
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   refreshtokenIDs: [ID!]
-  oauthproviderIDs: [ID!]
 }
 """
 CreateUserSettingsInput is used for create UserSettings object.
@@ -4079,7 +4079,7 @@ type OauthProvider implements Node {
   authStyle: Int!
   """the URL to request user information by token"""
   infoURL: String!
-  user: User
+  owner: Organization
 }
 """A connection to a list of items."""
 type OauthProviderConnection {
@@ -4273,9 +4273,9 @@ input OauthProviderWhereInput {
   infoURLHasSuffix: String
   infoURLEqualFold: String
   infoURLContainsFold: String
-  """user edge predicates"""
-  hasUser: Boolean
-  hasUserWith: [UserWhereInput!]
+  """owner edge predicates"""
+  hasOwner: Boolean
+  hasOwnerWith: [OrganizationWhereInput!]
 }
 """Possible directions in which to order a list of items when provided an ` + "`" + `orderBy` + "`" + ` argument."""
 enum OrderDirection {
@@ -4320,6 +4320,7 @@ type Organization implements Node {
   integrations: [Integration!]
   setting: OrganizationSettings
   entitlements: [Entitlement!]
+  oauthprovider: [OauthProvider!]
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -4688,6 +4689,9 @@ input OrganizationWhereInput {
   """entitlements edge predicates"""
   hasEntitlements: Boolean
   hasEntitlementsWith: [EntitlementWhereInput!]
+  """oauthprovider edge predicates"""
+  hasOauthprovider: Boolean
+  hasOauthproviderWith: [OauthProviderWhereInput!]
 }
 """
 Information about pagination in a connection.
@@ -5517,8 +5521,8 @@ input UpdateOauthProviderInput {
   authStyle: Int
   """the URL to request user information by token"""
   infoURL: String
-  userID: ID
-  clearUser: Boolean
+  ownerID: ID
+  clearOwner: Boolean
 }
 """
 UpdateOrganizationInput is used for update Organization object.
@@ -5550,6 +5554,9 @@ input UpdateOrganizationInput {
   addEntitlementIDs: [ID!]
   removeEntitlementIDs: [ID!]
   clearEntitlements: Boolean
+  addOauthproviderIDs: [ID!]
+  removeOauthproviderIDs: [ID!]
+  clearOauthprovider: Boolean
 }
 """
 UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
@@ -5665,9 +5672,6 @@ input UpdateUserInput {
   addRefreshtokenIDs: [ID!]
   removeRefreshtokenIDs: [ID!]
   clearRefreshtoken: Boolean
-  addOauthproviderIDs: [ID!]
-  removeOauthproviderIDs: [ID!]
-  clearOauthprovider: Boolean
 }
 """
 UpdateUserSettingsInput is used for update UserSettings object.
@@ -5724,7 +5728,6 @@ type User implements Node {
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSettings!
   refreshtoken: [RefreshToken!]
-  oauthprovider: [OauthProvider!]
 }
 """A connection to a list of items."""
 type UserConnection {
@@ -6108,9 +6111,6 @@ input UserWhereInput {
   """refreshtoken edge predicates"""
   hasRefreshtoken: Boolean
   hasRefreshtokenWith: [RefreshTokenWhereInput!]
-  """oauthprovider edge predicates"""
-  hasOauthprovider: Boolean
-  hasOauthproviderWith: [OauthProviderWhereInput!]
 }
 `, BuiltIn: false},
 	{Name: "../../schema/entitlement.graphql", Input: `extend type Query {
@@ -8832,6 +8832,8 @@ func (ec *executionContext) fieldContext_Entitlement_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -9827,8 +9829,6 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -9902,6 +9902,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -11488,6 +11490,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -14082,8 +14086,8 @@ func (ec *executionContext) fieldContext_OauthProvider_infoURL(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _OauthProvider_user(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OauthProvider_user(ctx, field)
+func (ec *executionContext) _OauthProvider_owner(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProvider_owner(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -14096,7 +14100,7 @@ func (ec *executionContext) _OauthProvider_user(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.User(ctx)
+		return obj.Owner(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14105,12 +14109,12 @@ func (ec *executionContext) _OauthProvider_user(ctx context.Context, field graph
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.User)
+	res := resTmp.(*generated.Organization)
 	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUser(ctx, field.Selections, res)
+	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OauthProvider_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OauthProvider_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OauthProvider",
 		Field:      field,
@@ -14119,47 +14123,39 @@ func (ec *executionContext) fieldContext_OauthProvider_user(ctx context.Context,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_User_id(ctx, field)
+				return ec.fieldContext_Organization_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
+				return ec.fieldContext_Organization_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
+				return ec.fieldContext_Organization_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_User_createdBy(ctx, field)
+				return ec.fieldContext_Organization_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_User_updatedBy(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
+				return ec.fieldContext_Organization_updatedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_Organization_name(ctx, field)
 			case "displayName":
-				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
-			case "avatarLocalFile":
-				return ec.fieldContext_User_avatarLocalFile(ctx, field)
-			case "avatarUpdatedAt":
-				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "lastSeen":
-				return ec.fieldContext_User_lastSeen(ctx, field)
-			case "organizations":
-				return ec.fieldContext_User_organizations(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
+				return ec.fieldContext_Organization_displayName(ctx, field)
+			case "description":
+				return ec.fieldContext_Organization_description(ctx, field)
+			case "parent":
+				return ec.fieldContext_Organization_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_Organization_children(ctx, field)
+			case "users":
+				return ec.fieldContext_Organization_users(ctx, field)
 			case "groups":
-				return ec.fieldContext_User_groups(ctx, field)
-			case "personalAccessTokens":
-				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+				return ec.fieldContext_Organization_groups(ctx, field)
+			case "integrations":
+				return ec.fieldContext_Organization_integrations(ctx, field)
 			case "setting":
-				return ec.fieldContext_User_setting(ctx, field)
-			case "refreshtoken":
-				return ec.fieldContext_User_refreshtoken(ctx, field)
+				return ec.fieldContext_Organization_setting(ctx, field)
+			case "entitlements":
+				return ec.fieldContext_Organization_entitlements(ctx, field)
 			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
 	}
 	return fc, nil
@@ -14375,8 +14371,8 @@ func (ec *executionContext) fieldContext_OauthProviderCreatePayload_OauthProvide
 				return ec.fieldContext_OauthProvider_authStyle(ctx, field)
 			case "infoURL":
 				return ec.fieldContext_OauthProvider_infoURL(ctx, field)
-			case "user":
-				return ec.fieldContext_OauthProvider_user(ctx, field)
+			case "owner":
+				return ec.fieldContext_OauthProvider_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OauthProvider", field.Name)
 		},
@@ -14490,8 +14486,8 @@ func (ec *executionContext) fieldContext_OauthProviderEdge_node(ctx context.Cont
 				return ec.fieldContext_OauthProvider_authStyle(ctx, field)
 			case "infoURL":
 				return ec.fieldContext_OauthProvider_infoURL(ctx, field)
-			case "user":
-				return ec.fieldContext_OauthProvider_user(ctx, field)
+			case "owner":
+				return ec.fieldContext_OauthProvider_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OauthProvider", field.Name)
 		},
@@ -14608,8 +14604,8 @@ func (ec *executionContext) fieldContext_OauthProviderUpdatePayload_OauthProvide
 				return ec.fieldContext_OauthProvider_authStyle(ctx, field)
 			case "infoURL":
 				return ec.fieldContext_OauthProvider_infoURL(ctx, field)
-			case "user":
-				return ec.fieldContext_OauthProvider_user(ctx, field)
+			case "owner":
+				return ec.fieldContext_OauthProvider_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OauthProvider", field.Name)
 		},
@@ -15026,6 +15022,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -15170,8 +15168,6 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -15455,6 +15451,77 @@ func (ec *executionContext) fieldContext_Organization_entitlements(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_oauthprovider(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_oauthprovider(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Oauthprovider(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.OauthProvider)
+	fc.Result = res
+	return ec.marshalOOauthProvider2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_oauthprovider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OauthProvider_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OauthProvider_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OauthProvider_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_OauthProvider_name(ctx, field)
+			case "clientID":
+				return ec.fieldContext_OauthProvider_clientID(ctx, field)
+			case "redirectURL":
+				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
+			case "scopes":
+				return ec.fieldContext_OauthProvider_scopes(ctx, field)
+			case "authURL":
+				return ec.fieldContext_OauthProvider_authURL(ctx, field)
+			case "tokenURL":
+				return ec.fieldContext_OauthProvider_tokenURL(ctx, field)
+			case "authStyle":
+				return ec.fieldContext_OauthProvider_authStyle(ctx, field)
+			case "infoURL":
+				return ec.fieldContext_OauthProvider_infoURL(ctx, field)
+			case "owner":
+				return ec.fieldContext_OauthProvider_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthProvider", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OrganizationConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OrganizationConnection_edges(ctx, field)
 	if err != nil {
@@ -15669,6 +15736,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -15786,6 +15855,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -16819,6 +16890,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -17501,8 +17574,6 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_user(ctx context.Co
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -19054,8 +19125,8 @@ func (ec *executionContext) fieldContext_Query_OauthProvider(ctx context.Context
 				return ec.fieldContext_OauthProvider_authStyle(ctx, field)
 			case "infoURL":
 				return ec.fieldContext_OauthProvider_infoURL(ctx, field)
-			case "user":
-				return ec.fieldContext_OauthProvider_user(ctx, field)
+			case "owner":
+				return ec.fieldContext_OauthProvider_owner(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OauthProvider", field.Name)
 		},
@@ -19143,6 +19214,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -19396,8 +19469,6 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -20401,8 +20472,6 @@ func (ec *executionContext) fieldContext_RefreshToken_user(ctx context.Context, 
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -20915,8 +20984,6 @@ func (ec *executionContext) fieldContext_Session_users(ctx context.Context, fiel
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -21978,6 +22045,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_setting(ctx, field)
 			case "entitlements":
 				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -22329,77 +22398,6 @@ func (ec *executionContext) fieldContext_User_refreshtoken(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _User_oauthprovider(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_oauthprovider(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Oauthprovider(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*generated.OauthProvider)
-	fc.Result = res
-	return ec.marshalOOauthProvider2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_oauthprovider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_OauthProvider_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_OauthProvider_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_OauthProvider_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
-			case "name":
-				return ec.fieldContext_OauthProvider_name(ctx, field)
-			case "clientID":
-				return ec.fieldContext_OauthProvider_clientID(ctx, field)
-			case "redirectURL":
-				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
-			case "scopes":
-				return ec.fieldContext_OauthProvider_scopes(ctx, field)
-			case "authURL":
-				return ec.fieldContext_OauthProvider_authURL(ctx, field)
-			case "tokenURL":
-				return ec.fieldContext_OauthProvider_tokenURL(ctx, field)
-			case "authStyle":
-				return ec.fieldContext_OauthProvider_authStyle(ctx, field)
-			case "infoURL":
-				return ec.fieldContext_OauthProvider_infoURL(ctx, field)
-			case "user":
-				return ec.fieldContext_OauthProvider_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OauthProvider", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UserConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserConnection_edges(ctx, field)
 	if err != nil {
@@ -22622,8 +22620,6 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -22749,8 +22745,6 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -23885,8 +23879,6 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_setting(ctx, field)
 			case "refreshtoken":
 				return ec.fieldContext_User_refreshtoken(ctx, field)
-			case "oauthprovider":
-				return ec.fieldContext_User_oauthprovider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
@@ -26182,7 +26174,7 @@ func (ec *executionContext) unmarshalInputCreateOauthProviderInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "clientID", "clientSecret", "redirectURL", "scopes", "authURL", "tokenURL", "authStyle", "infoURL", "userID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "clientID", "clientSecret", "redirectURL", "scopes", "authURL", "tokenURL", "authStyle", "infoURL", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -26308,15 +26300,15 @@ func (ec *executionContext) unmarshalInputCreateOauthProviderInput(ctx context.C
 				return it, err
 			}
 			it.InfoURL = data
-		case "userID":
+		case "ownerID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.UserID = data
+			it.OwnerID = data
 		}
 	}
 
@@ -26330,7 +26322,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "parentID", "userIDs", "groupIDs", "integrationIDs", "settingID", "entitlementIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "parentID", "userIDs", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -26454,6 +26446,15 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.EntitlementIDs = data
+		case "oauthproviderIDs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthproviderIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OauthproviderIDs = data
 		}
 	}
 
@@ -26833,7 +26834,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "passwordhash", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID", "refreshtokenIDs", "oauthproviderIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "passwordhash", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID", "refreshtokenIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -27011,15 +27012,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.RefreshtokenIDs = data
-		case "oauthproviderIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthproviderIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OauthproviderIDs = data
 		}
 	}
 
@@ -31240,7 +31232,7 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "redirectURL", "redirectURLNEQ", "redirectURLIn", "redirectURLNotIn", "redirectURLGT", "redirectURLGTE", "redirectURLLT", "redirectURLLTE", "redirectURLContains", "redirectURLHasPrefix", "redirectURLHasSuffix", "redirectURLEqualFold", "redirectURLContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesEqualFold", "scopesContainsFold", "authURL", "authURLNEQ", "authURLIn", "authURLNotIn", "authURLGT", "authURLGTE", "authURLLT", "authURLLTE", "authURLContains", "authURLHasPrefix", "authURLHasSuffix", "authURLEqualFold", "authURLContainsFold", "tokenURL", "tokenURLNEQ", "tokenURLIn", "tokenURLNotIn", "tokenURLGT", "tokenURLGTE", "tokenURLLT", "tokenURLLTE", "tokenURLContains", "tokenURLHasPrefix", "tokenURLHasSuffix", "tokenURLEqualFold", "tokenURLContainsFold", "authStyle", "authStyleNEQ", "authStyleIn", "authStyleNotIn", "authStyleGT", "authStyleGTE", "authStyleLT", "authStyleLTE", "infoURL", "infoURLNEQ", "infoURLIn", "infoURLNotIn", "infoURLGT", "infoURLGTE", "infoURLLT", "infoURLLTE", "infoURLContains", "infoURLHasPrefix", "infoURLHasSuffix", "infoURLEqualFold", "infoURLContainsFold", "hasUser", "hasUserWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "redirectURL", "redirectURLNEQ", "redirectURLIn", "redirectURLNotIn", "redirectURLGT", "redirectURLGTE", "redirectURLLT", "redirectURLLTE", "redirectURLContains", "redirectURLHasPrefix", "redirectURLHasSuffix", "redirectURLEqualFold", "redirectURLContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesEqualFold", "scopesContainsFold", "authURL", "authURLNEQ", "authURLIn", "authURLNotIn", "authURLGT", "authURLGTE", "authURLLT", "authURLLTE", "authURLContains", "authURLHasPrefix", "authURLHasSuffix", "authURLEqualFold", "authURLContainsFold", "tokenURL", "tokenURLNEQ", "tokenURLIn", "tokenURLNotIn", "tokenURLGT", "tokenURLGTE", "tokenURLLT", "tokenURLLTE", "tokenURLContains", "tokenURLHasPrefix", "tokenURLHasSuffix", "tokenURLEqualFold", "tokenURLContainsFold", "authStyle", "authStyleNEQ", "authStyleIn", "authStyleNotIn", "authStyleGT", "authStyleGTE", "authStyleLT", "authStyleLTE", "infoURL", "infoURLNEQ", "infoURLIn", "infoURLNotIn", "infoURLGT", "infoURLGTE", "infoURLLT", "infoURLLTE", "infoURLContains", "infoURLHasPrefix", "infoURLHasSuffix", "infoURLEqualFold", "infoURLContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -32685,24 +32677,24 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 				return it, err
 			}
 			it.InfoURLContainsFold = data
-		case "hasUser":
+		case "hasOwner":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUser"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwner"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasUser = data
-		case "hasUserWith":
+			it.HasOwner = data
+		case "hasOwnerWith":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserWith"))
-			data, err := ec.unmarshalOUserWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserWhereInputᚄ(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwnerWith"))
+			data, err := ec.unmarshalOOrganizationWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasUserWith = data
+			it.HasOwnerWith = data
 		}
 	}
 
@@ -34245,7 +34237,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasUsers", "hasUsersWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasUsers", "hasUsersWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasOauthprovider", "hasOauthproviderWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35161,6 +35153,24 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.HasEntitlementsWith = data
+		case "hasOauthprovider":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOauthprovider"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasOauthprovider = data
+		case "hasOauthproviderWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOauthproviderWith"))
+			data, err := ec.unmarshalOOauthProviderWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasOauthproviderWith = data
 		}
 	}
 
@@ -39040,7 +39050,7 @@ func (ec *executionContext) unmarshalInputUpdateOauthProviderInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "clientID", "clientSecret", "redirectURL", "scopes", "authURL", "tokenURL", "authStyle", "infoURL", "userID", "clearUser"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "clientID", "clientSecret", "redirectURL", "scopes", "authURL", "tokenURL", "authStyle", "infoURL", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39175,24 +39185,24 @@ func (ec *executionContext) unmarshalInputUpdateOauthProviderInput(ctx context.C
 				return it, err
 			}
 			it.InfoURL = data
-		case "userID":
+		case "ownerID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.UserID = data
-		case "clearUser":
+			it.OwnerID = data
+		case "clearOwner":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUser"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOwner"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearUser = data
+			it.ClearOwner = data
 		}
 	}
 
@@ -39206,7 +39216,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addUserIDs", "removeUserIDs", "clearUsers", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39420,6 +39430,33 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.ClearEntitlements = data
+		case "addOauthproviderIDs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addOauthproviderIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddOauthproviderIDs = data
+		case "removeOauthproviderIDs":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeOauthproviderIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveOauthproviderIDs = data
+		case "clearOauthprovider":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOauthprovider"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearOauthprovider = data
 		}
 	}
 
@@ -39880,7 +39917,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "passwordhash", "clearPasswordHash", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addRefreshtokenIDs", "removeRefreshtokenIDs", "clearRefreshtoken", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "passwordhash", "clearPasswordHash", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addRefreshtokenIDs", "removeRefreshtokenIDs", "clearRefreshtoken"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40202,33 +40239,6 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearRefreshtoken = data
-		case "addOauthproviderIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addOauthproviderIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AddOauthproviderIDs = data
-		case "removeOauthproviderIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeOauthproviderIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RemoveOauthproviderIDs = data
-		case "clearOauthprovider":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOauthprovider"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearOauthprovider = data
 		}
 	}
 
@@ -41314,7 +41324,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "hasOrganizations", "hasOrganizationsWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasRefreshtoken", "hasRefreshtokenWith", "hasOauthprovider", "hasOauthproviderWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "hasOrganizations", "hasOrganizationsWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasRefreshtoken", "hasRefreshtokenWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42878,24 +42888,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasRefreshtokenWith = data
-		case "hasOauthprovider":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOauthprovider"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasOauthprovider = data
-		case "hasOauthproviderWith":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOauthproviderWith"))
-			data, err := ec.unmarshalOOauthProviderWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProviderWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasOauthproviderWith = data
 		}
 	}
 
@@ -44476,7 +44468,7 @@ func (ec *executionContext) _OauthProvider(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "user":
+		case "owner":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -44485,7 +44477,7 @@ func (ec *executionContext) _OauthProvider(ctx context.Context, sel ast.Selectio
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._OauthProvider_user(ctx, field, obj)
+				res = ec._OauthProvider_owner(ctx, field, obj)
 				return res
 			}
 
@@ -44989,6 +44981,39 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._Organization_entitlements(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "oauthprovider":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Organization_oauthprovider(ctx, field, obj)
 				return res
 			}
 
@@ -47020,39 +47045,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._User_refreshtoken(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "oauthprovider":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_oauthprovider(ctx, field, obj)
 				return res
 			}
 

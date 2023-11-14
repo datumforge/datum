@@ -128,7 +128,6 @@ func (User) Edges() []ent.Edge {
 			}),
 		edge.To("setting", UserSettings.Type).Required().Unique(),
 		edge.To("refreshtoken", RefreshToken.Type),
-		edge.To("oauthprovider", OauthProvider.Type),
 	}
 }
 

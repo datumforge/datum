@@ -2421,9 +2421,9 @@ type OauthProviderWhereInput struct {
 	InfoURLEqualFold    *string  `json:"infoURLEqualFold,omitempty"`
 	InfoURLContainsFold *string  `json:"infoURLContainsFold,omitempty"`
 
-	// "user" edge predicates.
-	HasUser     *bool             `json:"hasUser,omitempty"`
-	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// "owner" edge predicates.
+	HasOwner     *bool                     `json:"hasOwner,omitempty"`
+	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -3002,23 +3002,23 @@ func (i *OauthProviderWhereInput) P() (predicate.OauthProvider, error) {
 		predicates = append(predicates, oauthprovider.InfoURLContainsFold(*i.InfoURLContainsFold))
 	}
 
-	if i.HasUser != nil {
-		p := oauthprovider.HasUser()
-		if !*i.HasUser {
+	if i.HasOwner != nil {
+		p := oauthprovider.HasOwner()
+		if !*i.HasOwner {
 			p = oauthprovider.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasUserWith) > 0 {
-		with := make([]predicate.User, 0, len(i.HasUserWith))
-		for _, w := range i.HasUserWith {
+	if len(i.HasOwnerWith) > 0 {
+		with := make([]predicate.Organization, 0, len(i.HasOwnerWith))
+		for _, w := range i.HasOwnerWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasUserWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasOwnerWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, oauthprovider.HasUserWith(with...))
+		predicates = append(predicates, oauthprovider.HasOwnerWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -3162,6 +3162,10 @@ type OrganizationWhereInput struct {
 	// "entitlements" edge predicates.
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
 	HasEntitlementsWith []*EntitlementWhereInput `json:"hasEntitlementsWith,omitempty"`
+
+	// "oauthprovider" edge predicates.
+	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
+	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -3613,6 +3617,24 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, organization.HasEntitlementsWith(with...))
+	}
+	if i.HasOauthprovider != nil {
+		p := organization.HasOauthprovider()
+		if !*i.HasOauthprovider {
+			p = organization.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOauthproviderWith) > 0 {
+		with := make([]predicate.OauthProvider, 0, len(i.HasOauthproviderWith))
+		for _, w := range i.HasOauthproviderWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOauthproviderWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, organization.HasOauthproviderWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -6423,10 +6445,6 @@ type UserWhereInput struct {
 	// "refreshtoken" edge predicates.
 	HasRefreshtoken     *bool                     `json:"hasRefreshtoken,omitempty"`
 	HasRefreshtokenWith []*RefreshTokenWhereInput `json:"hasRefreshtokenWith,omitempty"`
-
-	// "oauthprovider" edge predicates.
-	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
-	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -7127,24 +7145,6 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, user.HasRefreshtokenWith(with...))
-	}
-	if i.HasOauthprovider != nil {
-		p := user.HasOauthprovider()
-		if !*i.HasOauthprovider {
-			p = user.Not(p)
-		}
-		predicates = append(predicates, p)
-	}
-	if len(i.HasOauthproviderWith) > 0 {
-		with := make([]predicate.OauthProvider, 0, len(i.HasOauthproviderWith))
-		for _, w := range i.HasOauthproviderWith {
-			p, err := w.P()
-			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasOauthproviderWith'", err)
-			}
-			with = append(with, p)
-		}
-		predicates = append(predicates, user.HasOauthproviderWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

@@ -64,20 +64,17 @@ type UserEdges struct {
 	Setting *UserSettings `json:"setting,omitempty"`
 	// Refreshtoken holds the value of the refreshtoken edge.
 	Refreshtoken []*RefreshToken `json:"refreshtoken,omitempty"`
-	// Oauthprovider holds the value of the oauthprovider edge.
-	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [7]map[string]int
+	totalCount [6]map[string]int
 
 	namedOrganizations        map[string][]*Organization
 	namedSessions             map[string][]*Session
 	namedGroups               map[string][]*Group
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
 	namedRefreshtoken         map[string][]*RefreshToken
-	namedOauthprovider        map[string][]*OauthProvider
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -136,15 +133,6 @@ func (e UserEdges) RefreshtokenOrErr() ([]*RefreshToken, error) {
 		return e.Refreshtoken, nil
 	}
 	return nil, &NotLoadedError{edge: "refreshtoken"}
-}
-
-// OauthproviderOrErr returns the Oauthprovider value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
-	if e.loadedTypes[6] {
-		return e.Oauthprovider, nil
-	}
-	return nil, &NotLoadedError{edge: "oauthprovider"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -300,11 +288,6 @@ func (u *User) QuerySetting() *UserSettingsQuery {
 // QueryRefreshtoken queries the "refreshtoken" edge of the User entity.
 func (u *User) QueryRefreshtoken() *RefreshTokenQuery {
 	return NewUserClient(u.config).QueryRefreshtoken(u)
-}
-
-// QueryOauthprovider queries the "oauthprovider" edge of the User entity.
-func (u *User) QueryOauthprovider() *OauthProviderQuery {
-	return NewUserClient(u.config).QueryOauthprovider(u)
 }
 
 // Update returns a builder for updating this User.
@@ -494,30 +477,6 @@ func (u *User) appendNamedRefreshtoken(name string, edges ...*RefreshToken) {
 		u.Edges.namedRefreshtoken[name] = []*RefreshToken{}
 	} else {
 		u.Edges.namedRefreshtoken[name] = append(u.Edges.namedRefreshtoken[name], edges...)
-	}
-}
-
-// NamedOauthprovider returns the Oauthprovider named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (u *User) NamedOauthprovider(name string) ([]*OauthProvider, error) {
-	if u.Edges.namedOauthprovider == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := u.Edges.namedOauthprovider[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (u *User) appendNamedOauthprovider(name string, edges ...*OauthProvider) {
-	if u.Edges.namedOauthprovider == nil {
-		u.Edges.namedOauthprovider = make(map[string][]*OauthProvider)
-	}
-	if len(edges) == 0 {
-		u.Edges.namedOauthprovider[name] = []*OauthProvider{}
-	} else {
-		u.Edges.namedOauthprovider[name] = append(u.Edges.namedOauthprovider[name], edges...)
 	}
 }
 

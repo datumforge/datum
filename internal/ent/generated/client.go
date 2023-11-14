@@ -1068,18 +1068,18 @@ func (c *OauthProviderClient) GetX(ctx context.Context, id string) *OauthProvide
 	return obj
 }
 
-// QueryUser queries the user edge of a OauthProvider.
-func (c *OauthProviderClient) QueryUser(op *OauthProvider) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
+// QueryOwner queries the owner edge of a OauthProvider.
+func (c *OauthProviderClient) QueryOwner(op *OauthProvider) *OrganizationQuery {
+	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := op.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(oauthprovider.Table, oauthprovider.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, oauthprovider.UserTable, oauthprovider.UserColumn),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, oauthprovider.OwnerTable, oauthprovider.OwnerColumn),
 		)
 		schemaConfig := op.schemaConfig
-		step.To.Schema = schemaConfig.User
+		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OauthProvider
 		fromV = sqlgraph.Neighbors(op.driver.Dialect(), step)
 		return fromV, nil
@@ -1348,6 +1348,25 @@ func (c *OrganizationClient) QueryEntitlements(o *Organization) *EntitlementQuer
 		schemaConfig := o.schemaConfig
 		step.To.Schema = schemaConfig.Entitlement
 		step.Edge.Schema = schemaConfig.Entitlement
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOauthprovider queries the oauthprovider edge of a Organization.
+func (c *OrganizationClient) QueryOauthprovider(o *Organization) *OauthProviderQuery {
+	query := (&OauthProviderClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(oauthprovider.Table, oauthprovider.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, organization.OauthproviderTable, organization.OauthproviderColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.OauthProvider
+		step.Edge.Schema = schemaConfig.OauthProvider
 		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -2207,25 +2226,6 @@ func (c *UserClient) QueryRefreshtoken(u *User) *RefreshTokenQuery {
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.RefreshToken
 		step.Edge.Schema = schemaConfig.RefreshToken
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryOauthprovider queries the oauthprovider edge of a User.
-func (c *UserClient) QueryOauthprovider(u *User) *OauthProviderQuery {
-	query := (&OauthProviderClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(oauthprovider.Table, oauthprovider.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.OauthproviderTable, user.OauthproviderColumn),
-		)
-		schemaConfig := u.schemaConfig
-		step.To.Schema = schemaConfig.OauthProvider
-		step.Edge.Schema = schemaConfig.OauthProvider
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}

@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
@@ -283,21 +282,6 @@ func (uc *UserCreate) AddRefreshtoken(r ...*RefreshToken) *UserCreate {
 		ids[i] = r[i].ID
 	}
 	return uc.AddRefreshtokenIDs(ids...)
-}
-
-// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
-func (uc *UserCreate) AddOauthproviderIDs(ids ...string) *UserCreate {
-	uc.mutation.AddOauthproviderIDs(ids...)
-	return uc
-}
-
-// AddOauthprovider adds the "oauthprovider" edges to the OauthProvider entity.
-func (uc *UserCreate) AddOauthprovider(o ...*OauthProvider) *UserCreate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return uc.AddOauthproviderIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -603,23 +587,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.RefreshToken
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.OauthproviderIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uc.schemaConfig.OauthProvider
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

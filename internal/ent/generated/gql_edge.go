@@ -52,10 +52,10 @@ func (i *Integration) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
-func (op *OauthProvider) User(ctx context.Context) (*User, error) {
-	result, err := op.Edges.UserOrErr()
+func (op *OauthProvider) Owner(ctx context.Context) (*Organization, error) {
+	result, err := op.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
-		result, err = op.QueryUser().Only(ctx)
+		result, err = op.QueryOwner().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -141,6 +141,18 @@ func (o *Organization) Entitlements(ctx context.Context) (result []*Entitlement,
 	}
 	if IsNotLoaded(err) {
 		result, err = o.QueryEntitlements().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Oauthprovider(ctx context.Context) (result []*OauthProvider, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedOauthprovider(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.OauthproviderOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryOauthprovider().All(ctx)
 	}
 	return result, err
 }
@@ -233,18 +245,6 @@ func (u *User) Refreshtoken(ctx context.Context) (result []*RefreshToken, err er
 	}
 	if IsNotLoaded(err) {
 		result, err = u.QueryRefreshtoken().All(ctx)
-	}
-	return result, err
-}
-
-func (u *User) Oauthprovider(ctx context.Context) (result []*OauthProvider, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedOauthprovider(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = u.Edges.OauthproviderOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = u.QueryOauthprovider().All(ctx)
 	}
 	return result, err
 }

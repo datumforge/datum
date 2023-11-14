@@ -922,26 +922,26 @@ func InfoURLContainsFold(v string) predicate.OauthProvider {
 	return predicate.OauthProvider(sql.FieldContainsFold(FieldInfoURL, v))
 }
 
-// HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.OauthProvider {
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.OauthProvider {
 	return predicate.OauthProvider(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.User
+		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OauthProvider
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.User) predicate.OauthProvider {
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.Organization) predicate.OauthProvider {
 	return predicate.OauthProvider(func(s *sql.Selector) {
-		step := newUserStep()
+		step := newOwnerStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.User
+		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OauthProvider
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

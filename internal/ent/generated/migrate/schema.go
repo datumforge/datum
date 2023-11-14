@@ -145,7 +145,7 @@ var (
 		{Name: "token_url", Type: field.TypeString},
 		{Name: "auth_style", Type: field.TypeUint8},
 		{Name: "info_url", Type: field.TypeString},
-		{Name: "user_oauthprovider", Type: field.TypeString, Nullable: true},
+		{Name: "organization_oauthprovider", Type: field.TypeString, Nullable: true},
 	}
 	// OauthProvidersTable holds the schema information for the "oauth_providers" table.
 	OauthProvidersTable = &schema.Table{
@@ -154,9 +154,9 @@ var (
 		PrimaryKey: []*schema.Column{OauthProvidersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "oauth_providers_users_oauthprovider",
+				Symbol:     "oauth_providers_organizations_oauthprovider",
 				Columns:    []*schema.Column{OauthProvidersColumns[14]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -466,7 +466,7 @@ func init() {
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
-	OauthProvidersTable.ForeignKeys[0].RefTable = UsersTable
+	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable

@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -309,21 +308,6 @@ func (uu *UserUpdate) AddRefreshtoken(r ...*RefreshToken) *UserUpdate {
 	return uu.AddRefreshtokenIDs(ids...)
 }
 
-// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
-func (uu *UserUpdate) AddOauthproviderIDs(ids ...string) *UserUpdate {
-	uu.mutation.AddOauthproviderIDs(ids...)
-	return uu
-}
-
-// AddOauthprovider adds the "oauthprovider" edges to the OauthProvider entity.
-func (uu *UserUpdate) AddOauthprovider(o ...*OauthProvider) *UserUpdate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return uu.AddOauthproviderIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -438,27 +422,6 @@ func (uu *UserUpdate) RemoveRefreshtoken(r ...*RefreshToken) *UserUpdate {
 		ids[i] = r[i].ID
 	}
 	return uu.RemoveRefreshtokenIDs(ids...)
-}
-
-// ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
-func (uu *UserUpdate) ClearOauthprovider() *UserUpdate {
-	uu.mutation.ClearOauthprovider()
-	return uu
-}
-
-// RemoveOauthproviderIDs removes the "oauthprovider" edge to OauthProvider entities by IDs.
-func (uu *UserUpdate) RemoveOauthproviderIDs(ids ...string) *UserUpdate {
-	uu.mutation.RemoveOauthproviderIDs(ids...)
-	return uu
-}
-
-// RemoveOauthprovider removes "oauthprovider" edges to OauthProvider entities.
-func (uu *UserUpdate) RemoveOauthprovider(o ...*OauthProvider) *UserUpdate {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return uu.RemoveOauthproviderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -895,54 +858,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.OauthproviderCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.OauthProvider
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedOauthproviderIDs(); len(nodes) > 0 && !uu.mutation.OauthproviderCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.OauthProvider
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.OauthproviderIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.OauthProvider
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	_spec.Node.Schema = uu.schemaConfig.User
 	ctx = internal.NewSchemaConfigContext(ctx, uu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
@@ -1237,21 +1152,6 @@ func (uuo *UserUpdateOne) AddRefreshtoken(r ...*RefreshToken) *UserUpdateOne {
 	return uuo.AddRefreshtokenIDs(ids...)
 }
 
-// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
-func (uuo *UserUpdateOne) AddOauthproviderIDs(ids ...string) *UserUpdateOne {
-	uuo.mutation.AddOauthproviderIDs(ids...)
-	return uuo
-}
-
-// AddOauthprovider adds the "oauthprovider" edges to the OauthProvider entity.
-func (uuo *UserUpdateOne) AddOauthprovider(o ...*OauthProvider) *UserUpdateOne {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return uuo.AddOauthproviderIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1366,27 +1266,6 @@ func (uuo *UserUpdateOne) RemoveRefreshtoken(r ...*RefreshToken) *UserUpdateOne 
 		ids[i] = r[i].ID
 	}
 	return uuo.RemoveRefreshtokenIDs(ids...)
-}
-
-// ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
-func (uuo *UserUpdateOne) ClearOauthprovider() *UserUpdateOne {
-	uuo.mutation.ClearOauthprovider()
-	return uuo
-}
-
-// RemoveOauthproviderIDs removes the "oauthprovider" edge to OauthProvider entities by IDs.
-func (uuo *UserUpdateOne) RemoveOauthproviderIDs(ids ...string) *UserUpdateOne {
-	uuo.mutation.RemoveOauthproviderIDs(ids...)
-	return uuo
-}
-
-// RemoveOauthprovider removes "oauthprovider" edges to OauthProvider entities.
-func (uuo *UserUpdateOne) RemoveOauthprovider(o ...*OauthProvider) *UserUpdateOne {
-	ids := make([]string, len(o))
-	for i := range o {
-		ids[i] = o[i].ID
-	}
-	return uuo.RemoveOauthproviderIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1848,54 +1727,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.RefreshToken
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if uuo.mutation.OauthproviderCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.OauthProvider
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedOauthproviderIDs(); len(nodes) > 0 && !uuo.mutation.OauthproviderCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.OauthProvider
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.OauthproviderIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.OauthproviderTable,
-			Columns: []string{user.OauthproviderColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.OauthProvider
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

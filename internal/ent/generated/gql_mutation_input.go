@@ -558,7 +558,7 @@ type CreateOauthProviderInput struct {
 	TokenURL     string
 	AuthStyle    uint8
 	InfoURL      string
-	UserID       *string
+	OwnerID      *string
 }
 
 // Mutate applies the CreateOauthProviderInput on the OauthProviderMutation builder.
@@ -584,8 +584,8 @@ func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	m.SetTokenURL(i.TokenURL)
 	m.SetAuthStyle(i.AuthStyle)
 	m.SetInfoURL(i.InfoURL)
-	if v := i.UserID; v != nil {
-		m.SetUserID(*v)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 }
 
@@ -611,8 +611,8 @@ type UpdateOauthProviderInput struct {
 	TokenURL       *string
 	AuthStyle      *uint8
 	InfoURL        *string
-	ClearUser      bool
-	UserID         *string
+	ClearOwner     bool
+	OwnerID        *string
 }
 
 // Mutate applies the UpdateOauthProviderInput on the OauthProviderMutation builder.
@@ -659,11 +659,11 @@ func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	if v := i.InfoURL; v != nil {
 		m.SetInfoURL(*v)
 	}
-	if i.ClearUser {
-		m.ClearUser()
+	if i.ClearOwner {
+		m.ClearOwner()
 	}
-	if v := i.UserID; v != nil {
-		m.SetUserID(*v)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 }
 
@@ -681,19 +681,20 @@ func (c *OauthProviderUpdateOne) SetInput(i UpdateOauthProviderInput) *OauthProv
 
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Name           string
-	DisplayName    *string
-	Description    *string
-	ParentID       *string
-	UserIDs        []string
-	GroupIDs       []string
-	IntegrationIDs []string
-	SettingID      *string
-	EntitlementIDs []string
+	CreatedAt        *time.Time
+	UpdatedAt        *time.Time
+	CreatedBy        *string
+	UpdatedBy        *string
+	Name             string
+	DisplayName      *string
+	Description      *string
+	ParentID         *string
+	UserIDs          []string
+	GroupIDs         []string
+	IntegrationIDs   []string
+	SettingID        *string
+	EntitlementIDs   []string
+	OauthproviderIDs []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -735,6 +736,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.EntitlementIDs; len(v) > 0 {
 		m.AddEntitlementIDs(v...)
 	}
+	if v := i.OauthproviderIDs; len(v) > 0 {
+		m.AddOauthproviderIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -745,29 +749,32 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
-	UpdatedAt            *time.Time
-	ClearCreatedBy       bool
-	CreatedBy            *string
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	Name                 *string
-	DisplayName          *string
-	ClearDescription     bool
-	Description          *string
-	ClearUsers           bool
-	AddUserIDs           []string
-	RemoveUserIDs        []string
-	ClearGroups          bool
-	AddGroupIDs          []string
-	RemoveGroupIDs       []string
-	ClearIntegrations    bool
-	AddIntegrationIDs    []string
-	RemoveIntegrationIDs []string
-	ClearSetting         bool
-	SettingID            *string
-	ClearEntitlements    bool
-	AddEntitlementIDs    []string
-	RemoveEntitlementIDs []string
+	UpdatedAt              *time.Time
+	ClearCreatedBy         bool
+	CreatedBy              *string
+	ClearUpdatedBy         bool
+	UpdatedBy              *string
+	Name                   *string
+	DisplayName            *string
+	ClearDescription       bool
+	Description            *string
+	ClearUsers             bool
+	AddUserIDs             []string
+	RemoveUserIDs          []string
+	ClearGroups            bool
+	AddGroupIDs            []string
+	RemoveGroupIDs         []string
+	ClearIntegrations      bool
+	AddIntegrationIDs      []string
+	RemoveIntegrationIDs   []string
+	ClearSetting           bool
+	SettingID              *string
+	ClearEntitlements      bool
+	AddEntitlementIDs      []string
+	RemoveEntitlementIDs   []string
+	ClearOauthprovider     bool
+	AddOauthproviderIDs    []string
+	RemoveOauthproviderIDs []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -840,6 +847,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveEntitlementIDs; len(v) > 0 {
 		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearOauthprovider {
+		m.ClearOauthprovider()
+	}
+	if v := i.AddOauthproviderIDs; len(v) > 0 {
+		m.AddOauthproviderIDs(v...)
+	}
+	if v := i.RemoveOauthproviderIDs; len(v) > 0 {
+		m.RemoveOauthproviderIDs(v...)
 	}
 }
 
@@ -1262,7 +1278,6 @@ type CreateUserInput struct {
 	PersonalAccessTokenIDs []string
 	SettingID              string
 	RefreshtokenIDs        []string
-	OauthproviderIDs       []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1316,9 +1331,6 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.RefreshtokenIDs; len(v) > 0 {
 		m.AddRefreshtokenIDs(v...)
 	}
-	if v := i.OauthproviderIDs; len(v) > 0 {
-		m.AddOauthproviderIDs(v...)
-	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -1364,9 +1376,6 @@ type UpdateUserInput struct {
 	ClearRefreshtoken            bool
 	AddRefreshtokenIDs           []string
 	RemoveRefreshtokenIDs        []string
-	ClearOauthprovider           bool
-	AddOauthproviderIDs          []string
-	RemoveOauthproviderIDs       []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1475,15 +1484,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveRefreshtokenIDs; len(v) > 0 {
 		m.RemoveRefreshtokenIDs(v...)
-	}
-	if i.ClearOauthprovider {
-		m.ClearOauthprovider()
-	}
-	if v := i.AddOauthproviderIDs; len(v) > 0 {
-		m.AddOauthproviderIDs(v...)
-	}
-	if v := i.RemoveOauthproviderIDs; len(v) > 0 {
-		m.RemoveOauthproviderIDs(v...)
 	}
 }
 

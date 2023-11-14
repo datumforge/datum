@@ -1,0 +1,7 @@
+version: "3"
+
+tasks:
+  org:create:
+    aliases: [createorg]
+    cmds:
+      - go run cmd/cli/main.go org create -n your_new_org -d "my new org again"

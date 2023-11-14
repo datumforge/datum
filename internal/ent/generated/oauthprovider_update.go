@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -209,9 +210,34 @@ func (opu *OauthProviderUpdate) SetNillableInfoURL(s *string) *OauthProviderUpda
 	return opu
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (opu *OauthProviderUpdate) SetUserID(id string) *OauthProviderUpdate {
+	opu.mutation.SetUserID(id)
+	return opu
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (opu *OauthProviderUpdate) SetNillableUserID(id *string) *OauthProviderUpdate {
+	if id != nil {
+		opu = opu.SetUserID(*id)
+	}
+	return opu
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (opu *OauthProviderUpdate) SetUser(u *User) *OauthProviderUpdate {
+	return opu.SetUserID(u.ID)
+}
+
 // Mutation returns the OauthProviderMutation object of the builder.
 func (opu *OauthProviderUpdate) Mutation() *OauthProviderMutation {
 	return opu.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (opu *OauthProviderUpdate) ClearUser() *OauthProviderUpdate {
+	opu.mutation.ClearUser()
+	return opu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -309,6 +335,37 @@ func (opu *OauthProviderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := opu.mutation.InfoURL(); ok {
 		_spec.SetField(oauthprovider.FieldInfoURL, field.TypeString, value)
+	}
+	if opu.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   oauthprovider.UserTable,
+			Columns: []string{oauthprovider.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = opu.schemaConfig.OauthProvider
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := opu.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   oauthprovider.UserTable,
+			Columns: []string{oauthprovider.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = opu.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = opu.schemaConfig.OauthProvider
 	ctx = internal.NewSchemaConfigContext(ctx, opu.schemaConfig)
@@ -511,9 +568,34 @@ func (opuo *OauthProviderUpdateOne) SetNillableInfoURL(s *string) *OauthProvider
 	return opuo
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (opuo *OauthProviderUpdateOne) SetUserID(id string) *OauthProviderUpdateOne {
+	opuo.mutation.SetUserID(id)
+	return opuo
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (opuo *OauthProviderUpdateOne) SetNillableUserID(id *string) *OauthProviderUpdateOne {
+	if id != nil {
+		opuo = opuo.SetUserID(*id)
+	}
+	return opuo
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (opuo *OauthProviderUpdateOne) SetUser(u *User) *OauthProviderUpdateOne {
+	return opuo.SetUserID(u.ID)
+}
+
 // Mutation returns the OauthProviderMutation object of the builder.
 func (opuo *OauthProviderUpdateOne) Mutation() *OauthProviderMutation {
 	return opuo.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (opuo *OauthProviderUpdateOne) ClearUser() *OauthProviderUpdateOne {
+	opuo.mutation.ClearUser()
+	return opuo
 }
 
 // Where appends a list predicates to the OauthProviderUpdate builder.
@@ -641,6 +723,37 @@ func (opuo *OauthProviderUpdateOne) sqlSave(ctx context.Context) (_node *OauthPr
 	}
 	if value, ok := opuo.mutation.InfoURL(); ok {
 		_spec.SetField(oauthprovider.FieldInfoURL, field.TypeString, value)
+	}
+	if opuo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   oauthprovider.UserTable,
+			Columns: []string{oauthprovider.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = opuo.schemaConfig.OauthProvider
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := opuo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   oauthprovider.UserTable,
+			Columns: []string{oauthprovider.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = opuo.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = opuo.schemaConfig.OauthProvider
 	ctx = internal.NewSchemaConfigContext(ctx, opuo.schemaConfig)

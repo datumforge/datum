@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -23,6 +24,8 @@ type OauthProviderQuery struct {
 	order      []oauthprovider.OrderOption
 	inters     []Interceptor
 	predicates []predicate.OauthProvider
+	withUser   *UserQuery
+	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*OauthProvider) error
 	// intermediate query (i.e. traversal path).
@@ -59,6 +62,31 @@ func (opq *OauthProviderQuery) Unique(unique bool) *OauthProviderQuery {
 func (opq *OauthProviderQuery) Order(o ...oauthprovider.OrderOption) *OauthProviderQuery {
 	opq.order = append(opq.order, o...)
 	return opq
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (opq *OauthProviderQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: opq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := opq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := opq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(oauthprovider.Table, oauthprovider.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, oauthprovider.UserTable, oauthprovider.UserColumn),
+		)
+		schemaConfig := opq.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.OauthProvider
+		fromU = sqlgraph.SetNeighbors(opq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first OauthProvider entity from the query.
@@ -253,10 +281,22 @@ func (opq *OauthProviderQuery) Clone() *OauthProviderQuery {
 		order:      append([]oauthprovider.OrderOption{}, opq.order...),
 		inters:     append([]Interceptor{}, opq.inters...),
 		predicates: append([]predicate.OauthProvider{}, opq.predicates...),
+		withUser:   opq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  opq.sql.Clone(),
 		path: opq.path,
 	}
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (opq *OauthProviderQuery) WithUser(opts ...func(*UserQuery)) *OauthProviderQuery {
+	query := (&UserClient{config: opq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	opq.withUser = query
+	return opq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -335,15 +375,26 @@ func (opq *OauthProviderQuery) prepareQuery(ctx context.Context) error {
 
 func (opq *OauthProviderQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*OauthProvider, error) {
 	var (
-		nodes = []*OauthProvider{}
-		_spec = opq.querySpec()
+		nodes       = []*OauthProvider{}
+		withFKs     = opq.withFKs
+		_spec       = opq.querySpec()
+		loadedTypes = [1]bool{
+			opq.withUser != nil,
+		}
 	)
+	if opq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, oauthprovider.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*OauthProvider).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &OauthProvider{config: opq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	_spec.Node.Schema = opq.schemaConfig.OauthProvider
@@ -360,12 +411,51 @@ func (opq *OauthProviderQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := opq.withUser; query != nil {
+		if err := opq.loadUser(ctx, query, nodes, nil,
+			func(n *OauthProvider, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range opq.loadTotal {
 		if err := opq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (opq *OauthProviderQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*OauthProvider, init func(*OauthProvider), assign func(*OauthProvider, *User)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*OauthProvider)
+	for i := range nodes {
+		if nodes[i].user_oauthprovider == nil {
+			continue
+		}
+		fk := *nodes[i].user_oauthprovider
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_oauthprovider" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (opq *OauthProviderQuery) sqlCount(ctx context.Context) (int, error) {

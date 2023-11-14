@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // EntitlementCreate is the builder for creating a Entitlement entity.
@@ -90,30 +91,30 @@ func (ec *EntitlementCreate) SetNillableTier(e *entitlement.Tier) *EntitlementCr
 	return ec
 }
 
-// SetStripeCustomerID sets the "stripe_customer_id" field.
-func (ec *EntitlementCreate) SetStripeCustomerID(s string) *EntitlementCreate {
-	ec.mutation.SetStripeCustomerID(s)
+// SetExternalCustomerID sets the "external_customer_id" field.
+func (ec *EntitlementCreate) SetExternalCustomerID(s string) *EntitlementCreate {
+	ec.mutation.SetExternalCustomerID(s)
 	return ec
 }
 
-// SetNillableStripeCustomerID sets the "stripe_customer_id" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableStripeCustomerID(s *string) *EntitlementCreate {
+// SetNillableExternalCustomerID sets the "external_customer_id" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableExternalCustomerID(s *string) *EntitlementCreate {
 	if s != nil {
-		ec.SetStripeCustomerID(*s)
+		ec.SetExternalCustomerID(*s)
 	}
 	return ec
 }
 
-// SetStripeSubscriptionID sets the "stripe_subscription_id" field.
-func (ec *EntitlementCreate) SetStripeSubscriptionID(s string) *EntitlementCreate {
-	ec.mutation.SetStripeSubscriptionID(s)
+// SetExternalSubscriptionID sets the "external_subscription_id" field.
+func (ec *EntitlementCreate) SetExternalSubscriptionID(s string) *EntitlementCreate {
+	ec.mutation.SetExternalSubscriptionID(s)
 	return ec
 }
 
-// SetNillableStripeSubscriptionID sets the "stripe_subscription_id" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableStripeSubscriptionID(s *string) *EntitlementCreate {
+// SetNillableExternalSubscriptionID sets the "external_subscription_id" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableExternalSubscriptionID(s *string) *EntitlementCreate {
 	if s != nil {
-		ec.SetStripeSubscriptionID(*s)
+		ec.SetExternalSubscriptionID(*s)
 	}
 	return ec
 }
@@ -128,6 +129,62 @@ func (ec *EntitlementCreate) SetExpiresAt(t time.Time) *EntitlementCreate {
 func (ec *EntitlementCreate) SetNillableExpiresAt(t *time.Time) *EntitlementCreate {
 	if t != nil {
 		ec.SetExpiresAt(*t)
+	}
+	return ec
+}
+
+// SetUpgradedAt sets the "upgraded_at" field.
+func (ec *EntitlementCreate) SetUpgradedAt(t time.Time) *EntitlementCreate {
+	ec.mutation.SetUpgradedAt(t)
+	return ec
+}
+
+// SetNillableUpgradedAt sets the "upgraded_at" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableUpgradedAt(t *time.Time) *EntitlementCreate {
+	if t != nil {
+		ec.SetUpgradedAt(*t)
+	}
+	return ec
+}
+
+// SetUpgradedTier sets the "upgraded_tier" field.
+func (ec *EntitlementCreate) SetUpgradedTier(s string) *EntitlementCreate {
+	ec.mutation.SetUpgradedTier(s)
+	return ec
+}
+
+// SetNillableUpgradedTier sets the "upgraded_tier" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableUpgradedTier(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetUpgradedTier(*s)
+	}
+	return ec
+}
+
+// SetDowngradedAt sets the "downgraded_at" field.
+func (ec *EntitlementCreate) SetDowngradedAt(t time.Time) *EntitlementCreate {
+	ec.mutation.SetDowngradedAt(t)
+	return ec
+}
+
+// SetNillableDowngradedAt sets the "downgraded_at" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableDowngradedAt(t *time.Time) *EntitlementCreate {
+	if t != nil {
+		ec.SetDowngradedAt(*t)
+	}
+	return ec
+}
+
+// SetDowngradedTier sets the "downgraded_tier" field.
+func (ec *EntitlementCreate) SetDowngradedTier(s string) *EntitlementCreate {
+	ec.mutation.SetDowngradedTier(s)
+	return ec
+}
+
+// SetNillableDowngradedTier sets the "downgraded_tier" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableDowngradedTier(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetDowngradedTier(*s)
 	}
 	return ec
 }
@@ -158,6 +215,25 @@ func (ec *EntitlementCreate) SetNillableID(s *string) *EntitlementCreate {
 		ec.SetID(*s)
 	}
 	return ec
+}
+
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (ec *EntitlementCreate) SetOwnerID(id string) *EntitlementCreate {
+	ec.mutation.SetOwnerID(id)
+	return ec
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableOwnerID(id *string) *EntitlementCreate {
+	if id != nil {
+		ec = ec.SetOwnerID(*id)
+	}
+	return ec
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (ec *EntitlementCreate) SetOwner(o *Organization) *EntitlementCreate {
+	return ec.SetOwnerID(o.ID)
 }
 
 // Mutation returns the EntitlementMutation object of the builder.
@@ -304,21 +380,55 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
 		_node.Tier = value
 	}
-	if value, ok := ec.mutation.StripeCustomerID(); ok {
-		_spec.SetField(entitlement.FieldStripeCustomerID, field.TypeString, value)
-		_node.StripeCustomerID = value
+	if value, ok := ec.mutation.ExternalCustomerID(); ok {
+		_spec.SetField(entitlement.FieldExternalCustomerID, field.TypeString, value)
+		_node.ExternalCustomerID = value
 	}
-	if value, ok := ec.mutation.StripeSubscriptionID(); ok {
-		_spec.SetField(entitlement.FieldStripeSubscriptionID, field.TypeString, value)
-		_node.StripeSubscriptionID = value
+	if value, ok := ec.mutation.ExternalSubscriptionID(); ok {
+		_spec.SetField(entitlement.FieldExternalSubscriptionID, field.TypeString, value)
+		_node.ExternalSubscriptionID = value
 	}
 	if value, ok := ec.mutation.ExpiresAt(); ok {
 		_spec.SetField(entitlement.FieldExpiresAt, field.TypeTime, value)
 		_node.ExpiresAt = value
 	}
+	if value, ok := ec.mutation.UpgradedAt(); ok {
+		_spec.SetField(entitlement.FieldUpgradedAt, field.TypeTime, value)
+		_node.UpgradedAt = value
+	}
+	if value, ok := ec.mutation.UpgradedTier(); ok {
+		_spec.SetField(entitlement.FieldUpgradedTier, field.TypeString, value)
+		_node.UpgradedTier = value
+	}
+	if value, ok := ec.mutation.DowngradedAt(); ok {
+		_spec.SetField(entitlement.FieldDowngradedAt, field.TypeTime, value)
+		_node.DowngradedAt = value
+	}
+	if value, ok := ec.mutation.DowngradedTier(); ok {
+		_spec.SetField(entitlement.FieldDowngradedTier, field.TypeString, value)
+		_node.DowngradedTier = value
+	}
 	if value, ok := ec.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
 		_node.Cancelled = value
+	}
+	if nodes := ec.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OwnerTable,
+			Columns: []string{entitlement.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ec.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.organization_entitlements = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

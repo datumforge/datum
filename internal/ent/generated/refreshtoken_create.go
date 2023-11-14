@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // RefreshTokenCreate is the builder for creating a RefreshToken entity.
@@ -124,6 +125,25 @@ func (rtc *RefreshTokenCreate) SetNillableID(s *string) *RefreshTokenCreate {
 		rtc.SetID(*s)
 	}
 	return rtc
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rtc *RefreshTokenCreate) SetUserID(id string) *RefreshTokenCreate {
+	rtc.mutation.SetUserID(id)
+	return rtc
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (rtc *RefreshTokenCreate) SetNillableUserID(id *string) *RefreshTokenCreate {
+	if id != nil {
+		rtc = rtc.SetUserID(*id)
+	}
+	return rtc
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (rtc *RefreshTokenCreate) SetUser(u *User) *RefreshTokenCreate {
+	return rtc.SetUserID(u.ID)
 }
 
 // Mutation returns the RefreshTokenMutation object of the builder.
@@ -327,6 +347,24 @@ func (rtc *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec
 	if value, ok := rtc.mutation.LastUsed(); ok {
 		_spec.SetField(refreshtoken.FieldLastUsed, field.TypeTime, value)
 		_node.LastUsed = value
+	}
+	if nodes := rtc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   refreshtoken.UserTable,
+			Columns: []string{refreshtoken.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = rtc.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_refreshtoken = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

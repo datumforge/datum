@@ -10,10 +10,19 @@ input CreateEntitlementInput {
 	createdBy: String
 	updatedBy: String
 	tier: EntitlementTier
-	stripeCustomerID: String
-	stripeSubscriptionID: String
+	"""used to store references to external systems, e.g. Stripe"""
+	externalCustomerID: String
+	"""used to store references to external systems, e.g. Stripe"""
+	externalSubscriptionID: String
 	expiresAt: Time
+	upgradedAt: Time
+	"""the tier the customer upgraded from"""
+	upgradedTier: String
+	downgradedAt: Time
+	"""the tier the customer downgraded from"""
+	downgradedTier: String
 	cancelled: Boolean
+	ownerID: ID
 }
 """
 CreateGroupInput is used for create Group object.
@@ -91,6 +100,7 @@ input CreateOauthProviderInput {
 	authStyle: Int!
 	"""the URL to request user information by token"""
 	infoURL: String!
+	userID: ID
 }
 """
 CreateOrganizationInput is used for create Organization object.
@@ -111,6 +121,7 @@ input CreateOrganizationInput {
 	groupIDs: [ID!]
 	integrationIDs: [ID!]
 	settingID: ID
+	entitlementIDs: [ID!]
 }
 """
 CreateOrganizationSettingsInput is used for create OrganizationSettings object.
@@ -202,6 +213,8 @@ input CreateUserInput {
 	groupIDs: [ID!]
 	personalAccessTokenIDs: [ID!]
 	settingID: ID!
+	refreshtokenIDs: [ID!]
+	oauthproviderIDs: [ID!]
 }
 """
 CreateUserSettingsInput is used for create UserSettings object.
@@ -239,10 +252,19 @@ type Entitlement implements Node {
 	createdBy: String
 	updatedBy: String
 	tier: EntitlementTier!
-	stripeCustomerID: String
-	stripeSubscriptionID: String
+	"""used to store references to external systems, e.g. Stripe"""
+	externalCustomerID: String
+	"""used to store references to external systems, e.g. Stripe"""
+	externalSubscriptionID: String
 	expiresAt: Time
+	upgradedAt: Time
+	"""the tier the customer upgraded from"""
+	upgradedTier: String
+	downgradedAt: Time
+	"""the tier the customer downgraded from"""
+	downgradedTier: String
 	cancelled: Boolean!
+	owner: Organization
 }
 """A connection to a list of items."""
 type EntitlementConnection {
@@ -355,38 +377,38 @@ input EntitlementWhereInput {
 	tierNEQ: EntitlementTier
 	tierIn: [EntitlementTier!]
 	tierNotIn: [EntitlementTier!]
-	"""stripe_customer_id field predicates"""
-	stripeCustomerID: String
-	stripeCustomerIDNEQ: String
-	stripeCustomerIDIn: [String!]
-	stripeCustomerIDNotIn: [String!]
-	stripeCustomerIDGT: String
-	stripeCustomerIDGTE: String
-	stripeCustomerIDLT: String
-	stripeCustomerIDLTE: String
-	stripeCustomerIDContains: String
-	stripeCustomerIDHasPrefix: String
-	stripeCustomerIDHasSuffix: String
-	stripeCustomerIDIsNil: Boolean
-	stripeCustomerIDNotNil: Boolean
-	stripeCustomerIDEqualFold: String
-	stripeCustomerIDContainsFold: String
-	"""stripe_subscription_id field predicates"""
-	stripeSubscriptionID: String
-	stripeSubscriptionIDNEQ: String
-	stripeSubscriptionIDIn: [String!]
-	stripeSubscriptionIDNotIn: [String!]
-	stripeSubscriptionIDGT: String
-	stripeSubscriptionIDGTE: String
-	stripeSubscriptionIDLT: String
-	stripeSubscriptionIDLTE: String
-	stripeSubscriptionIDContains: String
-	stripeSubscriptionIDHasPrefix: String
-	stripeSubscriptionIDHasSuffix: String
-	stripeSubscriptionIDIsNil: Boolean
-	stripeSubscriptionIDNotNil: Boolean
-	stripeSubscriptionIDEqualFold: String
-	stripeSubscriptionIDContainsFold: String
+	"""external_customer_id field predicates"""
+	externalCustomerID: String
+	externalCustomerIDNEQ: String
+	externalCustomerIDIn: [String!]
+	externalCustomerIDNotIn: [String!]
+	externalCustomerIDGT: String
+	externalCustomerIDGTE: String
+	externalCustomerIDLT: String
+	externalCustomerIDLTE: String
+	externalCustomerIDContains: String
+	externalCustomerIDHasPrefix: String
+	externalCustomerIDHasSuffix: String
+	externalCustomerIDIsNil: Boolean
+	externalCustomerIDNotNil: Boolean
+	externalCustomerIDEqualFold: String
+	externalCustomerIDContainsFold: String
+	"""external_subscription_id field predicates"""
+	externalSubscriptionID: String
+	externalSubscriptionIDNEQ: String
+	externalSubscriptionIDIn: [String!]
+	externalSubscriptionIDNotIn: [String!]
+	externalSubscriptionIDGT: String
+	externalSubscriptionIDGTE: String
+	externalSubscriptionIDLT: String
+	externalSubscriptionIDLTE: String
+	externalSubscriptionIDContains: String
+	externalSubscriptionIDHasPrefix: String
+	externalSubscriptionIDHasSuffix: String
+	externalSubscriptionIDIsNil: Boolean
+	externalSubscriptionIDNotNil: Boolean
+	externalSubscriptionIDEqualFold: String
+	externalSubscriptionIDContainsFold: String
 	"""expires_at field predicates"""
 	expiresAt: Time
 	expiresAtNEQ: Time
@@ -398,9 +420,66 @@ input EntitlementWhereInput {
 	expiresAtLTE: Time
 	expiresAtIsNil: Boolean
 	expiresAtNotNil: Boolean
+	"""upgraded_at field predicates"""
+	upgradedAt: Time
+	upgradedAtNEQ: Time
+	upgradedAtIn: [Time!]
+	upgradedAtNotIn: [Time!]
+	upgradedAtGT: Time
+	upgradedAtGTE: Time
+	upgradedAtLT: Time
+	upgradedAtLTE: Time
+	upgradedAtIsNil: Boolean
+	upgradedAtNotNil: Boolean
+	"""upgraded_tier field predicates"""
+	upgradedTier: String
+	upgradedTierNEQ: String
+	upgradedTierIn: [String!]
+	upgradedTierNotIn: [String!]
+	upgradedTierGT: String
+	upgradedTierGTE: String
+	upgradedTierLT: String
+	upgradedTierLTE: String
+	upgradedTierContains: String
+	upgradedTierHasPrefix: String
+	upgradedTierHasSuffix: String
+	upgradedTierIsNil: Boolean
+	upgradedTierNotNil: Boolean
+	upgradedTierEqualFold: String
+	upgradedTierContainsFold: String
+	"""downgraded_at field predicates"""
+	downgradedAt: Time
+	downgradedAtNEQ: Time
+	downgradedAtIn: [Time!]
+	downgradedAtNotIn: [Time!]
+	downgradedAtGT: Time
+	downgradedAtGTE: Time
+	downgradedAtLT: Time
+	downgradedAtLTE: Time
+	downgradedAtIsNil: Boolean
+	downgradedAtNotNil: Boolean
+	"""downgraded_tier field predicates"""
+	downgradedTier: String
+	downgradedTierNEQ: String
+	downgradedTierIn: [String!]
+	downgradedTierNotIn: [String!]
+	downgradedTierGT: String
+	downgradedTierGTE: String
+	downgradedTierLT: String
+	downgradedTierLTE: String
+	downgradedTierContains: String
+	downgradedTierHasPrefix: String
+	downgradedTierHasSuffix: String
+	downgradedTierIsNil: Boolean
+	downgradedTierNotNil: Boolean
+	downgradedTierEqualFold: String
+	downgradedTierContainsFold: String
 	"""cancelled field predicates"""
 	cancelled: Boolean
 	cancelledNEQ: Boolean
+	"""owner edge predicates"""
+	hasOwner: Boolean
+	hasOwnerWith: [OrganizationWhereInput!]
 }
 type Group implements Node {
 	id: ID!
@@ -1064,8 +1143,6 @@ type OauthProvider implements Node {
 	name: String!
 	"""the client id"""
 	clientID: String!
-	"""the client secret"""
-	clientSecret: String!
 	"""the redirect url"""
 	redirectURL: String!
 	"""the scopes"""
@@ -1078,6 +1155,7 @@ type OauthProvider implements Node {
 	authStyle: Int!
 	"""the URL to request user information by token"""
 	infoURL: String!
+	user: User
 }
 """A connection to a list of items."""
 type OauthProviderConnection {
@@ -1207,20 +1285,6 @@ input OauthProviderWhereInput {
 	clientIDHasSuffix: String
 	clientIDEqualFold: String
 	clientIDContainsFold: String
-	"""client_secret field predicates"""
-	clientSecret: String
-	clientSecretNEQ: String
-	clientSecretIn: [String!]
-	clientSecretNotIn: [String!]
-	clientSecretGT: String
-	clientSecretGTE: String
-	clientSecretLT: String
-	clientSecretLTE: String
-	clientSecretContains: String
-	clientSecretHasPrefix: String
-	clientSecretHasSuffix: String
-	clientSecretEqualFold: String
-	clientSecretContainsFold: String
 	"""redirect_url field predicates"""
 	redirectURL: String
 	redirectURLNEQ: String
@@ -1300,6 +1364,9 @@ input OauthProviderWhereInput {
 	infoURLHasSuffix: String
 	infoURLEqualFold: String
 	infoURLContainsFold: String
+	"""user edge predicates"""
+	hasUser: Boolean
+	hasUserWith: [UserWhereInput!]
 }
 """Possible directions in which to order a list of items when provided an `orderBy` argument."""
 enum OrderDirection {
@@ -1343,6 +1410,7 @@ type Organization implements Node {
 	groups: [Group!]
 	integrations: [Integration!]
 	setting: OrganizationSettings
+	entitlements: [Entitlement!]
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -1723,6 +1791,9 @@ input OrganizationWhereInput {
 	"""setting edge predicates"""
 	hasSetting: Boolean
 	hasSettingWith: [OrganizationSettingsWhereInput!]
+	"""entitlements edge predicates"""
+	hasEntitlements: Boolean
+	hasEntitlementsWith: [EntitlementWhereInput!]
 }
 """
 Information about pagination in a connection.
@@ -2165,6 +2236,7 @@ type RefreshToken implements Node {
 	token: String!
 	obsoleteToken: String!
 	lastUsed: Time!
+	user: User
 }
 """
 RefreshTokenWhereInput is used for filtering RefreshToken objects.
@@ -2323,6 +2395,9 @@ input RefreshTokenWhereInput {
 	lastUsedGTE: Time
 	lastUsedLT: Time
 	lastUsedLTE: Time
+	"""user edge predicates"""
+	hasUser: Boolean
+	hasUserWith: [UserWhereInput!]
 }
 type Session implements Node {
 	id: ID!
@@ -2520,13 +2595,27 @@ input UpdateEntitlementInput {
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	tier: EntitlementTier
-	stripeCustomerID: String
-	clearStripeCustomerID: Boolean
-	stripeSubscriptionID: String
-	clearStripeSubscriptionID: Boolean
+	"""used to store references to external systems, e.g. Stripe"""
+	externalCustomerID: String
+	clearExternalCustomerID: Boolean
+	"""used to store references to external systems, e.g. Stripe"""
+	externalSubscriptionID: String
+	clearExternalSubscriptionID: Boolean
 	expiresAt: Time
 	clearExpiresAt: Boolean
+	upgradedAt: Time
+	clearUpgradedAt: Boolean
+	"""the tier the customer upgraded from"""
+	upgradedTier: String
+	clearUpgradedTier: Boolean
+	downgradedAt: Time
+	clearDowngradedAt: Boolean
+	"""the tier the customer downgraded from"""
+	downgradedTier: String
+	clearDowngradedTier: Boolean
 	cancelled: Boolean
+	ownerID: ID
+	clearOwner: Boolean
 }
 """
 UpdateGroupInput is used for update Group object.
@@ -2612,6 +2701,8 @@ input UpdateOauthProviderInput {
 	authStyle: Int
 	"""the URL to request user information by token"""
 	infoURL: String
+	userID: ID
+	clearUser: Boolean
 }
 """
 UpdateOrganizationInput is used for update Organization object.
@@ -2640,6 +2731,9 @@ input UpdateOrganizationInput {
 	clearIntegrations: Boolean
 	settingID: ID
 	clearSetting: Boolean
+	addEntitlementIDs: [ID!]
+	removeEntitlementIDs: [ID!]
+	clearEntitlements: Boolean
 }
 """
 UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
@@ -2752,6 +2846,12 @@ input UpdateUserInput {
 	removePersonalAccessTokenIDs: [ID!]
 	clearPersonalAccessTokens: Boolean
 	settingID: ID
+	addRefreshtokenIDs: [ID!]
+	removeRefreshtokenIDs: [ID!]
+	clearRefreshtoken: Boolean
+	addOauthproviderIDs: [ID!]
+	removeOauthproviderIDs: [ID!]
+	clearOauthprovider: Boolean
 }
 """
 UpdateUserSettingsInput is used for update UserSettings object.
@@ -2807,6 +2907,8 @@ type User implements Node {
 	groups: [Group!]
 	personalAccessTokens: [PersonalAccessToken!]
 	setting: UserSettings!
+	refreshtoken: [RefreshToken!]
+	oauthprovider: [OauthProvider!]
 }
 """A connection to a list of items."""
 type UserConnection {
@@ -3217,6 +3319,12 @@ input UserWhereInput {
 	"""setting edge predicates"""
 	hasSetting: Boolean
 	hasSettingWith: [UserSettingsWhereInput!]
+	"""refreshtoken edge predicates"""
+	hasRefreshtoken: Boolean
+	hasRefreshtokenWith: [RefreshTokenWhereInput!]
+	"""oauthprovider edge predicates"""
+	hasOauthprovider: Boolean
+	hasOauthproviderWith: [OauthProviderWhereInput!]
 }
 type _Service {
 	sdl: String

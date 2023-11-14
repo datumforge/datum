@@ -791,6 +791,35 @@ func HasSettingWith(preds ...predicate.OrganizationSettings) predicate.Organizat
 	})
 }
 
+// HasEntitlements applies the HasEdge predicate on the "entitlements" edge.
+func HasEntitlements() predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, EntitlementsTable, EntitlementsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entitlement
+		step.Edge.Schema = schemaConfig.Entitlement
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntitlementsWith applies the HasEdge predicate on the "entitlements" edge with a given conditions (other predicates).
+func HasEntitlementsWith(preds ...predicate.Entitlement) predicate.Organization {
+	return predicate.Organization(func(s *sql.Selector) {
+		step := newEntitlementsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Entitlement
+		step.Edge.Schema = schemaConfig.Entitlement
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.Organization) predicate.Organization {
 	return predicate.Organization(sql.AndPredicates(predicates...))

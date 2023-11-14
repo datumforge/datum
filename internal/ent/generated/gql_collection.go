@@ -45,6 +45,16 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: e.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			e.withOwner = query
 		case "createdAt":
 			if _, ok := fieldSeen[entitlement.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldCreatedAt)
@@ -70,20 +80,40 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				selectedFields = append(selectedFields, entitlement.FieldTier)
 				fieldSeen[entitlement.FieldTier] = struct{}{}
 			}
-		case "stripeCustomerID":
-			if _, ok := fieldSeen[entitlement.FieldStripeCustomerID]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldStripeCustomerID)
-				fieldSeen[entitlement.FieldStripeCustomerID] = struct{}{}
+		case "externalCustomerID":
+			if _, ok := fieldSeen[entitlement.FieldExternalCustomerID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldExternalCustomerID)
+				fieldSeen[entitlement.FieldExternalCustomerID] = struct{}{}
 			}
-		case "stripeSubscriptionID":
-			if _, ok := fieldSeen[entitlement.FieldStripeSubscriptionID]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldStripeSubscriptionID)
-				fieldSeen[entitlement.FieldStripeSubscriptionID] = struct{}{}
+		case "externalSubscriptionID":
+			if _, ok := fieldSeen[entitlement.FieldExternalSubscriptionID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldExternalSubscriptionID)
+				fieldSeen[entitlement.FieldExternalSubscriptionID] = struct{}{}
 			}
 		case "expiresAt":
 			if _, ok := fieldSeen[entitlement.FieldExpiresAt]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldExpiresAt)
 				fieldSeen[entitlement.FieldExpiresAt] = struct{}{}
+			}
+		case "upgradedAt":
+			if _, ok := fieldSeen[entitlement.FieldUpgradedAt]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldUpgradedAt)
+				fieldSeen[entitlement.FieldUpgradedAt] = struct{}{}
+			}
+		case "upgradedTier":
+			if _, ok := fieldSeen[entitlement.FieldUpgradedTier]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldUpgradedTier)
+				fieldSeen[entitlement.FieldUpgradedTier] = struct{}{}
+			}
+		case "downgradedAt":
+			if _, ok := fieldSeen[entitlement.FieldDowngradedAt]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldDowngradedAt)
+				fieldSeen[entitlement.FieldDowngradedAt] = struct{}{}
+			}
+		case "downgradedTier":
+			if _, ok := fieldSeen[entitlement.FieldDowngradedTier]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldDowngradedTier)
+				fieldSeen[entitlement.FieldDowngradedTier] = struct{}{}
 			}
 		case "cancelled":
 			if _, ok := fieldSeen[entitlement.FieldCancelled]; !ok {
@@ -549,6 +579,16 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.O
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: op.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			op.withUser = query
 		case "createdAt":
 			if _, ok := fieldSeen[oauthprovider.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldCreatedAt)
@@ -578,11 +618,6 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.O
 			if _, ok := fieldSeen[oauthprovider.FieldClientID]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldClientID)
 				fieldSeen[oauthprovider.FieldClientID] = struct{}{}
-			}
-		case "clientSecret":
-			if _, ok := fieldSeen[oauthprovider.FieldClientSecret]; !ok {
-				selectedFields = append(selectedFields, oauthprovider.FieldClientSecret)
-				fieldSeen[oauthprovider.FieldClientSecret] = struct{}{}
 			}
 		case "redirectURL":
 			if _, ok := fieldSeen[oauthprovider.FieldRedirectURL]; !ok {
@@ -820,6 +855,18 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				return err
 			}
 			o.withSetting = query
+		case "entitlements":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&EntitlementClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedEntitlements(alias, func(wq *EntitlementQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[organization.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, organization.FieldCreatedAt)
@@ -1192,6 +1239,16 @@ func (rt *RefreshTokenQuery) collectField(ctx context.Context, opCtx *graphql.Op
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: rt.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			rt.withUser = query
 		case "clientID":
 			if _, ok := fieldSeen[refreshtoken.FieldClientID]; !ok {
 				selectedFields = append(selectedFields, refreshtoken.FieldClientID)
@@ -1499,6 +1556,30 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.withSetting = query
+		case "refreshtoken":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RefreshTokenClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedRefreshtoken(alias, func(wq *RefreshTokenQuery) {
+				*wq = *query
+			})
+		case "oauthprovider":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OauthProviderClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedOauthprovider(alias, func(wq *OauthProviderQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, user.FieldCreatedAt)

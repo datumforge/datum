@@ -48,7 +48,7 @@ func init() {
 	// entitlement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	entitlement.UpdateDefaultUpdatedAt = entitlementDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// entitlementDescCancelled is the schema descriptor for cancelled field.
-	entitlementDescCancelled := entitlementFields[4].Descriptor()
+	entitlementDescCancelled := entitlementFields[8].Descriptor()
 	// entitlement.DefaultCancelled holds the default value on creation for the cancelled field.
 	entitlement.DefaultCancelled = entitlementDescCancelled.Default.(bool)
 	// entitlementDescID is the schema descriptor for id field.
@@ -342,6 +342,10 @@ func init() {
 	personalaccesstoken.DefaultUpdatedAt = personalaccesstokenDescUpdatedAt.Default.(func() time.Time)
 	// personalaccesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	personalaccesstoken.UpdateDefaultUpdatedAt = personalaccesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// personalaccesstokenDescLastUsedAt is the schema descriptor for last_used_at field.
+	personalaccesstokenDescLastUsedAt := personalaccesstokenFields[5].Descriptor()
+	// personalaccesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
+	personalaccesstoken.UpdateDefaultLastUsedAt = personalaccesstokenDescLastUsedAt.UpdateDefault.(func() time.Time)
 	// personalaccesstokenDescID is the schema descriptor for id field.
 	personalaccesstokenDescID := personalaccesstokenMixinFields1[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
@@ -524,6 +528,14 @@ func init() {
 	userDescAvatarLocalFile := userFields[5].Descriptor()
 	// user.AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
 	user.AvatarLocalFileValidator = userDescAvatarLocalFile.Validators[0].(func(string) error)
+	// userDescAvatarUpdatedAt is the schema descriptor for avatar_updated_at field.
+	userDescAvatarUpdatedAt := userFields[6].Descriptor()
+	// user.UpdateDefaultAvatarUpdatedAt holds the default value on update for the avatar_updated_at field.
+	user.UpdateDefaultAvatarUpdatedAt = userDescAvatarUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescLastSeen is the schema descriptor for last_seen field.
+	userDescLastSeen := userFields[7].Descriptor()
+	// user.UpdateDefaultLastSeen holds the default value on update for the last_seen field.
+	user.UpdateDefaultLastSeen = userDescLastSeen.UpdateDefault.(func() time.Time)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

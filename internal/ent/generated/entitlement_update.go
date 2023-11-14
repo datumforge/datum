@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -90,43 +91,43 @@ func (eu *EntitlementUpdate) SetNillableTier(e *entitlement.Tier) *EntitlementUp
 	return eu
 }
 
-// SetStripeCustomerID sets the "stripe_customer_id" field.
-func (eu *EntitlementUpdate) SetStripeCustomerID(s string) *EntitlementUpdate {
-	eu.mutation.SetStripeCustomerID(s)
+// SetExternalCustomerID sets the "external_customer_id" field.
+func (eu *EntitlementUpdate) SetExternalCustomerID(s string) *EntitlementUpdate {
+	eu.mutation.SetExternalCustomerID(s)
 	return eu
 }
 
-// SetNillableStripeCustomerID sets the "stripe_customer_id" field if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableStripeCustomerID(s *string) *EntitlementUpdate {
+// SetNillableExternalCustomerID sets the "external_customer_id" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableExternalCustomerID(s *string) *EntitlementUpdate {
 	if s != nil {
-		eu.SetStripeCustomerID(*s)
+		eu.SetExternalCustomerID(*s)
 	}
 	return eu
 }
 
-// ClearStripeCustomerID clears the value of the "stripe_customer_id" field.
-func (eu *EntitlementUpdate) ClearStripeCustomerID() *EntitlementUpdate {
-	eu.mutation.ClearStripeCustomerID()
+// ClearExternalCustomerID clears the value of the "external_customer_id" field.
+func (eu *EntitlementUpdate) ClearExternalCustomerID() *EntitlementUpdate {
+	eu.mutation.ClearExternalCustomerID()
 	return eu
 }
 
-// SetStripeSubscriptionID sets the "stripe_subscription_id" field.
-func (eu *EntitlementUpdate) SetStripeSubscriptionID(s string) *EntitlementUpdate {
-	eu.mutation.SetStripeSubscriptionID(s)
+// SetExternalSubscriptionID sets the "external_subscription_id" field.
+func (eu *EntitlementUpdate) SetExternalSubscriptionID(s string) *EntitlementUpdate {
+	eu.mutation.SetExternalSubscriptionID(s)
 	return eu
 }
 
-// SetNillableStripeSubscriptionID sets the "stripe_subscription_id" field if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableStripeSubscriptionID(s *string) *EntitlementUpdate {
+// SetNillableExternalSubscriptionID sets the "external_subscription_id" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableExternalSubscriptionID(s *string) *EntitlementUpdate {
 	if s != nil {
-		eu.SetStripeSubscriptionID(*s)
+		eu.SetExternalSubscriptionID(*s)
 	}
 	return eu
 }
 
-// ClearStripeSubscriptionID clears the value of the "stripe_subscription_id" field.
-func (eu *EntitlementUpdate) ClearStripeSubscriptionID() *EntitlementUpdate {
-	eu.mutation.ClearStripeSubscriptionID()
+// ClearExternalSubscriptionID clears the value of the "external_subscription_id" field.
+func (eu *EntitlementUpdate) ClearExternalSubscriptionID() *EntitlementUpdate {
+	eu.mutation.ClearExternalSubscriptionID()
 	return eu
 }
 
@@ -150,6 +151,86 @@ func (eu *EntitlementUpdate) ClearExpiresAt() *EntitlementUpdate {
 	return eu
 }
 
+// SetUpgradedAt sets the "upgraded_at" field.
+func (eu *EntitlementUpdate) SetUpgradedAt(t time.Time) *EntitlementUpdate {
+	eu.mutation.SetUpgradedAt(t)
+	return eu
+}
+
+// SetNillableUpgradedAt sets the "upgraded_at" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableUpgradedAt(t *time.Time) *EntitlementUpdate {
+	if t != nil {
+		eu.SetUpgradedAt(*t)
+	}
+	return eu
+}
+
+// ClearUpgradedAt clears the value of the "upgraded_at" field.
+func (eu *EntitlementUpdate) ClearUpgradedAt() *EntitlementUpdate {
+	eu.mutation.ClearUpgradedAt()
+	return eu
+}
+
+// SetUpgradedTier sets the "upgraded_tier" field.
+func (eu *EntitlementUpdate) SetUpgradedTier(s string) *EntitlementUpdate {
+	eu.mutation.SetUpgradedTier(s)
+	return eu
+}
+
+// SetNillableUpgradedTier sets the "upgraded_tier" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableUpgradedTier(s *string) *EntitlementUpdate {
+	if s != nil {
+		eu.SetUpgradedTier(*s)
+	}
+	return eu
+}
+
+// ClearUpgradedTier clears the value of the "upgraded_tier" field.
+func (eu *EntitlementUpdate) ClearUpgradedTier() *EntitlementUpdate {
+	eu.mutation.ClearUpgradedTier()
+	return eu
+}
+
+// SetDowngradedAt sets the "downgraded_at" field.
+func (eu *EntitlementUpdate) SetDowngradedAt(t time.Time) *EntitlementUpdate {
+	eu.mutation.SetDowngradedAt(t)
+	return eu
+}
+
+// SetNillableDowngradedAt sets the "downgraded_at" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableDowngradedAt(t *time.Time) *EntitlementUpdate {
+	if t != nil {
+		eu.SetDowngradedAt(*t)
+	}
+	return eu
+}
+
+// ClearDowngradedAt clears the value of the "downgraded_at" field.
+func (eu *EntitlementUpdate) ClearDowngradedAt() *EntitlementUpdate {
+	eu.mutation.ClearDowngradedAt()
+	return eu
+}
+
+// SetDowngradedTier sets the "downgraded_tier" field.
+func (eu *EntitlementUpdate) SetDowngradedTier(s string) *EntitlementUpdate {
+	eu.mutation.SetDowngradedTier(s)
+	return eu
+}
+
+// SetNillableDowngradedTier sets the "downgraded_tier" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableDowngradedTier(s *string) *EntitlementUpdate {
+	if s != nil {
+		eu.SetDowngradedTier(*s)
+	}
+	return eu
+}
+
+// ClearDowngradedTier clears the value of the "downgraded_tier" field.
+func (eu *EntitlementUpdate) ClearDowngradedTier() *EntitlementUpdate {
+	eu.mutation.ClearDowngradedTier()
+	return eu
+}
+
 // SetCancelled sets the "cancelled" field.
 func (eu *EntitlementUpdate) SetCancelled(b bool) *EntitlementUpdate {
 	eu.mutation.SetCancelled(b)
@@ -164,9 +245,34 @@ func (eu *EntitlementUpdate) SetNillableCancelled(b *bool) *EntitlementUpdate {
 	return eu
 }
 
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (eu *EntitlementUpdate) SetOwnerID(id string) *EntitlementUpdate {
+	eu.mutation.SetOwnerID(id)
+	return eu
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableOwnerID(id *string) *EntitlementUpdate {
+	if id != nil {
+		eu = eu.SetOwnerID(*id)
+	}
+	return eu
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (eu *EntitlementUpdate) SetOwner(o *Organization) *EntitlementUpdate {
+	return eu.SetOwnerID(o.ID)
+}
+
 // Mutation returns the EntitlementMutation object of the builder.
 func (eu *EntitlementUpdate) Mutation() *EntitlementMutation {
 	return eu.mutation
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (eu *EntitlementUpdate) ClearOwner() *EntitlementUpdate {
+	eu.mutation.ClearOwner()
+	return eu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -251,17 +357,17 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.Tier(); ok {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
 	}
-	if value, ok := eu.mutation.StripeCustomerID(); ok {
-		_spec.SetField(entitlement.FieldStripeCustomerID, field.TypeString, value)
+	if value, ok := eu.mutation.ExternalCustomerID(); ok {
+		_spec.SetField(entitlement.FieldExternalCustomerID, field.TypeString, value)
 	}
-	if eu.mutation.StripeCustomerIDCleared() {
-		_spec.ClearField(entitlement.FieldStripeCustomerID, field.TypeString)
+	if eu.mutation.ExternalCustomerIDCleared() {
+		_spec.ClearField(entitlement.FieldExternalCustomerID, field.TypeString)
 	}
-	if value, ok := eu.mutation.StripeSubscriptionID(); ok {
-		_spec.SetField(entitlement.FieldStripeSubscriptionID, field.TypeString, value)
+	if value, ok := eu.mutation.ExternalSubscriptionID(); ok {
+		_spec.SetField(entitlement.FieldExternalSubscriptionID, field.TypeString, value)
 	}
-	if eu.mutation.StripeSubscriptionIDCleared() {
-		_spec.ClearField(entitlement.FieldStripeSubscriptionID, field.TypeString)
+	if eu.mutation.ExternalSubscriptionIDCleared() {
+		_spec.ClearField(entitlement.FieldExternalSubscriptionID, field.TypeString)
 	}
 	if value, ok := eu.mutation.ExpiresAt(); ok {
 		_spec.SetField(entitlement.FieldExpiresAt, field.TypeTime, value)
@@ -269,8 +375,63 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if eu.mutation.ExpiresAtCleared() {
 		_spec.ClearField(entitlement.FieldExpiresAt, field.TypeTime)
 	}
+	if value, ok := eu.mutation.UpgradedAt(); ok {
+		_spec.SetField(entitlement.FieldUpgradedAt, field.TypeTime, value)
+	}
+	if eu.mutation.UpgradedAtCleared() {
+		_spec.ClearField(entitlement.FieldUpgradedAt, field.TypeTime)
+	}
+	if value, ok := eu.mutation.UpgradedTier(); ok {
+		_spec.SetField(entitlement.FieldUpgradedTier, field.TypeString, value)
+	}
+	if eu.mutation.UpgradedTierCleared() {
+		_spec.ClearField(entitlement.FieldUpgradedTier, field.TypeString)
+	}
+	if value, ok := eu.mutation.DowngradedAt(); ok {
+		_spec.SetField(entitlement.FieldDowngradedAt, field.TypeTime, value)
+	}
+	if eu.mutation.DowngradedAtCleared() {
+		_spec.ClearField(entitlement.FieldDowngradedAt, field.TypeTime)
+	}
+	if value, ok := eu.mutation.DowngradedTier(); ok {
+		_spec.SetField(entitlement.FieldDowngradedTier, field.TypeString, value)
+	}
+	if eu.mutation.DowngradedTierCleared() {
+		_spec.ClearField(entitlement.FieldDowngradedTier, field.TypeString)
+	}
 	if value, ok := eu.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
+	}
+	if eu.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OwnerTable,
+			Columns: []string{entitlement.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Entitlement
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OwnerTable,
+			Columns: []string{entitlement.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = eu.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = eu.schemaConfig.Entitlement
 	ctx = internal.NewSchemaConfigContext(ctx, eu.schemaConfig)
@@ -354,43 +515,43 @@ func (euo *EntitlementUpdateOne) SetNillableTier(e *entitlement.Tier) *Entitleme
 	return euo
 }
 
-// SetStripeCustomerID sets the "stripe_customer_id" field.
-func (euo *EntitlementUpdateOne) SetStripeCustomerID(s string) *EntitlementUpdateOne {
-	euo.mutation.SetStripeCustomerID(s)
+// SetExternalCustomerID sets the "external_customer_id" field.
+func (euo *EntitlementUpdateOne) SetExternalCustomerID(s string) *EntitlementUpdateOne {
+	euo.mutation.SetExternalCustomerID(s)
 	return euo
 }
 
-// SetNillableStripeCustomerID sets the "stripe_customer_id" field if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableStripeCustomerID(s *string) *EntitlementUpdateOne {
+// SetNillableExternalCustomerID sets the "external_customer_id" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableExternalCustomerID(s *string) *EntitlementUpdateOne {
 	if s != nil {
-		euo.SetStripeCustomerID(*s)
+		euo.SetExternalCustomerID(*s)
 	}
 	return euo
 }
 
-// ClearStripeCustomerID clears the value of the "stripe_customer_id" field.
-func (euo *EntitlementUpdateOne) ClearStripeCustomerID() *EntitlementUpdateOne {
-	euo.mutation.ClearStripeCustomerID()
+// ClearExternalCustomerID clears the value of the "external_customer_id" field.
+func (euo *EntitlementUpdateOne) ClearExternalCustomerID() *EntitlementUpdateOne {
+	euo.mutation.ClearExternalCustomerID()
 	return euo
 }
 
-// SetStripeSubscriptionID sets the "stripe_subscription_id" field.
-func (euo *EntitlementUpdateOne) SetStripeSubscriptionID(s string) *EntitlementUpdateOne {
-	euo.mutation.SetStripeSubscriptionID(s)
+// SetExternalSubscriptionID sets the "external_subscription_id" field.
+func (euo *EntitlementUpdateOne) SetExternalSubscriptionID(s string) *EntitlementUpdateOne {
+	euo.mutation.SetExternalSubscriptionID(s)
 	return euo
 }
 
-// SetNillableStripeSubscriptionID sets the "stripe_subscription_id" field if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableStripeSubscriptionID(s *string) *EntitlementUpdateOne {
+// SetNillableExternalSubscriptionID sets the "external_subscription_id" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableExternalSubscriptionID(s *string) *EntitlementUpdateOne {
 	if s != nil {
-		euo.SetStripeSubscriptionID(*s)
+		euo.SetExternalSubscriptionID(*s)
 	}
 	return euo
 }
 
-// ClearStripeSubscriptionID clears the value of the "stripe_subscription_id" field.
-func (euo *EntitlementUpdateOne) ClearStripeSubscriptionID() *EntitlementUpdateOne {
-	euo.mutation.ClearStripeSubscriptionID()
+// ClearExternalSubscriptionID clears the value of the "external_subscription_id" field.
+func (euo *EntitlementUpdateOne) ClearExternalSubscriptionID() *EntitlementUpdateOne {
+	euo.mutation.ClearExternalSubscriptionID()
 	return euo
 }
 
@@ -414,6 +575,86 @@ func (euo *EntitlementUpdateOne) ClearExpiresAt() *EntitlementUpdateOne {
 	return euo
 }
 
+// SetUpgradedAt sets the "upgraded_at" field.
+func (euo *EntitlementUpdateOne) SetUpgradedAt(t time.Time) *EntitlementUpdateOne {
+	euo.mutation.SetUpgradedAt(t)
+	return euo
+}
+
+// SetNillableUpgradedAt sets the "upgraded_at" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableUpgradedAt(t *time.Time) *EntitlementUpdateOne {
+	if t != nil {
+		euo.SetUpgradedAt(*t)
+	}
+	return euo
+}
+
+// ClearUpgradedAt clears the value of the "upgraded_at" field.
+func (euo *EntitlementUpdateOne) ClearUpgradedAt() *EntitlementUpdateOne {
+	euo.mutation.ClearUpgradedAt()
+	return euo
+}
+
+// SetUpgradedTier sets the "upgraded_tier" field.
+func (euo *EntitlementUpdateOne) SetUpgradedTier(s string) *EntitlementUpdateOne {
+	euo.mutation.SetUpgradedTier(s)
+	return euo
+}
+
+// SetNillableUpgradedTier sets the "upgraded_tier" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableUpgradedTier(s *string) *EntitlementUpdateOne {
+	if s != nil {
+		euo.SetUpgradedTier(*s)
+	}
+	return euo
+}
+
+// ClearUpgradedTier clears the value of the "upgraded_tier" field.
+func (euo *EntitlementUpdateOne) ClearUpgradedTier() *EntitlementUpdateOne {
+	euo.mutation.ClearUpgradedTier()
+	return euo
+}
+
+// SetDowngradedAt sets the "downgraded_at" field.
+func (euo *EntitlementUpdateOne) SetDowngradedAt(t time.Time) *EntitlementUpdateOne {
+	euo.mutation.SetDowngradedAt(t)
+	return euo
+}
+
+// SetNillableDowngradedAt sets the "downgraded_at" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableDowngradedAt(t *time.Time) *EntitlementUpdateOne {
+	if t != nil {
+		euo.SetDowngradedAt(*t)
+	}
+	return euo
+}
+
+// ClearDowngradedAt clears the value of the "downgraded_at" field.
+func (euo *EntitlementUpdateOne) ClearDowngradedAt() *EntitlementUpdateOne {
+	euo.mutation.ClearDowngradedAt()
+	return euo
+}
+
+// SetDowngradedTier sets the "downgraded_tier" field.
+func (euo *EntitlementUpdateOne) SetDowngradedTier(s string) *EntitlementUpdateOne {
+	euo.mutation.SetDowngradedTier(s)
+	return euo
+}
+
+// SetNillableDowngradedTier sets the "downgraded_tier" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableDowngradedTier(s *string) *EntitlementUpdateOne {
+	if s != nil {
+		euo.SetDowngradedTier(*s)
+	}
+	return euo
+}
+
+// ClearDowngradedTier clears the value of the "downgraded_tier" field.
+func (euo *EntitlementUpdateOne) ClearDowngradedTier() *EntitlementUpdateOne {
+	euo.mutation.ClearDowngradedTier()
+	return euo
+}
+
 // SetCancelled sets the "cancelled" field.
 func (euo *EntitlementUpdateOne) SetCancelled(b bool) *EntitlementUpdateOne {
 	euo.mutation.SetCancelled(b)
@@ -428,9 +669,34 @@ func (euo *EntitlementUpdateOne) SetNillableCancelled(b *bool) *EntitlementUpdat
 	return euo
 }
 
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (euo *EntitlementUpdateOne) SetOwnerID(id string) *EntitlementUpdateOne {
+	euo.mutation.SetOwnerID(id)
+	return euo
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableOwnerID(id *string) *EntitlementUpdateOne {
+	if id != nil {
+		euo = euo.SetOwnerID(*id)
+	}
+	return euo
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (euo *EntitlementUpdateOne) SetOwner(o *Organization) *EntitlementUpdateOne {
+	return euo.SetOwnerID(o.ID)
+}
+
 // Mutation returns the EntitlementMutation object of the builder.
 func (euo *EntitlementUpdateOne) Mutation() *EntitlementMutation {
 	return euo.mutation
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (euo *EntitlementUpdateOne) ClearOwner() *EntitlementUpdateOne {
+	euo.mutation.ClearOwner()
+	return euo
 }
 
 // Where appends a list predicates to the EntitlementUpdate builder.
@@ -545,17 +811,17 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 	if value, ok := euo.mutation.Tier(); ok {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
 	}
-	if value, ok := euo.mutation.StripeCustomerID(); ok {
-		_spec.SetField(entitlement.FieldStripeCustomerID, field.TypeString, value)
+	if value, ok := euo.mutation.ExternalCustomerID(); ok {
+		_spec.SetField(entitlement.FieldExternalCustomerID, field.TypeString, value)
 	}
-	if euo.mutation.StripeCustomerIDCleared() {
-		_spec.ClearField(entitlement.FieldStripeCustomerID, field.TypeString)
+	if euo.mutation.ExternalCustomerIDCleared() {
+		_spec.ClearField(entitlement.FieldExternalCustomerID, field.TypeString)
 	}
-	if value, ok := euo.mutation.StripeSubscriptionID(); ok {
-		_spec.SetField(entitlement.FieldStripeSubscriptionID, field.TypeString, value)
+	if value, ok := euo.mutation.ExternalSubscriptionID(); ok {
+		_spec.SetField(entitlement.FieldExternalSubscriptionID, field.TypeString, value)
 	}
-	if euo.mutation.StripeSubscriptionIDCleared() {
-		_spec.ClearField(entitlement.FieldStripeSubscriptionID, field.TypeString)
+	if euo.mutation.ExternalSubscriptionIDCleared() {
+		_spec.ClearField(entitlement.FieldExternalSubscriptionID, field.TypeString)
 	}
 	if value, ok := euo.mutation.ExpiresAt(); ok {
 		_spec.SetField(entitlement.FieldExpiresAt, field.TypeTime, value)
@@ -563,8 +829,63 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 	if euo.mutation.ExpiresAtCleared() {
 		_spec.ClearField(entitlement.FieldExpiresAt, field.TypeTime)
 	}
+	if value, ok := euo.mutation.UpgradedAt(); ok {
+		_spec.SetField(entitlement.FieldUpgradedAt, field.TypeTime, value)
+	}
+	if euo.mutation.UpgradedAtCleared() {
+		_spec.ClearField(entitlement.FieldUpgradedAt, field.TypeTime)
+	}
+	if value, ok := euo.mutation.UpgradedTier(); ok {
+		_spec.SetField(entitlement.FieldUpgradedTier, field.TypeString, value)
+	}
+	if euo.mutation.UpgradedTierCleared() {
+		_spec.ClearField(entitlement.FieldUpgradedTier, field.TypeString)
+	}
+	if value, ok := euo.mutation.DowngradedAt(); ok {
+		_spec.SetField(entitlement.FieldDowngradedAt, field.TypeTime, value)
+	}
+	if euo.mutation.DowngradedAtCleared() {
+		_spec.ClearField(entitlement.FieldDowngradedAt, field.TypeTime)
+	}
+	if value, ok := euo.mutation.DowngradedTier(); ok {
+		_spec.SetField(entitlement.FieldDowngradedTier, field.TypeString, value)
+	}
+	if euo.mutation.DowngradedTierCleared() {
+		_spec.ClearField(entitlement.FieldDowngradedTier, field.TypeString)
+	}
 	if value, ok := euo.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
+	}
+	if euo.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OwnerTable,
+			Columns: []string{entitlement.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Entitlement
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OwnerTable,
+			Columns: []string{entitlement.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = euo.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = euo.schemaConfig.Entitlement
 	ctx = internal.NewSchemaConfigContext(ctx, euo.schemaConfig)

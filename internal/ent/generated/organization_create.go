@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -238,6 +239,21 @@ func (oc *OrganizationCreate) SetNillableSettingID(id *string) *OrganizationCrea
 // SetSetting sets the "setting" edge to the OrganizationSettings entity.
 func (oc *OrganizationCreate) SetSetting(o *OrganizationSettings) *OrganizationCreate {
 	return oc.SetSettingID(o.ID)
+}
+
+// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
+func (oc *OrganizationCreate) AddEntitlementIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddEntitlementIDs(ids...)
+	return oc
+}
+
+// AddEntitlements adds the "entitlements" edges to the Entitlement entity.
+func (oc *OrganizationCreate) AddEntitlements(e ...*Entitlement) *OrganizationCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return oc.AddEntitlementIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -491,6 +507,23 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.OrganizationSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.EntitlementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Entitlement
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

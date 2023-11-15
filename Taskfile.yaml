@@ -3,6 +3,7 @@ version: "3"
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
   TEST_DB_URL: "file:ent?mode=memory&cache=shared&_fk=1"
+  TEST_FGA_URL: "localhost:8080"
 
 tasks:
   clean:
@@ -69,13 +70,15 @@ tasks:
   run-dev:
     - go run main.go serve  --debug --pretty --dev --oidc=false
   run-dev-auth:
-    - go run main.go serve  --debug --pretty --dev ---jwt-secretkey=mysupersecretkey
+    - go run main.go serve  --debug --pretty --dev --jwt-secretkey=mysupersecretkey  --fga-host=localhost:8080 --fga-scheme=http --fga-create-store
   go:lint:
     cmds:
       - golangci-lint run -v
   go:test:
+    deps: [compose:fga]
     cmds:
-      - go test -v ./...
+      - go test -v ./... 
+      - defer: { task: compose:fga:down }
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]
@@ -91,10 +94,35 @@ tasks:
   compose:fga:
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
+  fga:open:
+    cmds: 
       - 'open "http://localhost:3000/playground"'
+  fga:up:
+    cmds:
+      - task: compose:fga
+      - task: fga:open
+  compose:fga:down:
+    cmds: 
+      - docker compose -p fga down
+  docker:build:
+    cmds:
+      - docker build -f docker/Dockerfile . 
   compose:datum:
+    deps: [docker:build]
     cmds:
       - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
+  compose:datum:down:
+    cmds:
+      - "docker compose -p datum down"
+  compose:all:up:
+    cmds:
+      - task: fga:up
+      - task: compose:datum
+      - task: rover
+  compose:all:down: 
+    cmds:
+      - task: compose:fga:down
+      - task: compose:datum:down
   pr:
     cmds:
       - task: generate

@@ -9,13 +9,14 @@ services:
       - --debug
       - --pretty
       - --dev
-      - --jwt-secretkey=mysupersecretkey
+      - --jwt-secretkey
+      - mysupersecretkey
       # - --oidc=false # uncomment to bypass auth checks
-      - --fgaStoreID
-      - "01HDH9C221KYNTPTEDDDYPA9SV" ## TODO: This is a local test store
-      - --fgaHost
+      - --fga-create-store ## create store using fga/testdata/datum.model
+      - "true"
+      - --fga-host
       - openfga:8080
-      - --fgaScheme
+      - --fga-scheme
       - "http"
     ports:
       - "17608:17608"

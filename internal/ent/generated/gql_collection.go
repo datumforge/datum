@@ -162,18 +162,6 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				return err
 			}
 			gr.withSetting = query
-		case "users":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&UserClient{config: gr.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			gr.WithNamedUsers(alias, func(wq *UserQuery) {
-				*wq = *query
-			})
 		case "owner":
 			var (
 				alias = field.Alias

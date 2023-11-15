@@ -39,10 +39,9 @@ type CreateGroupInput struct {
 	Description *string    `json:"description,omitempty"`
 	LogoURL     string     `json:"logoURL"`
 	// The group's displayed 'friendly' name
-	DisplayName *string  `json:"displayName,omitempty"`
-	SettingID   string   `json:"settingID"`
-	UserIDs     []string `json:"userIDs,omitempty"`
-	OwnerID     *string  `json:"ownerID,omitempty"`
+	DisplayName *string `json:"displayName,omitempty"`
+	SettingID   string  `json:"settingID"`
+	OwnerID     *string `json:"ownerID,omitempty"`
 }
 
 // CreateGroupSettingsInput is used for create GroupSettings object.
@@ -413,7 +412,6 @@ type Group struct {
 	// The group's displayed 'friendly' name
 	DisplayName string        `json:"displayName"`
 	Setting     GroupSettings `json:"setting"`
-	Users       []*User       `json:"users,omitempty"`
 	Owner       *Organization `json:"owner,omitempty"`
 }
 
@@ -680,9 +678,6 @@ type GroupWhereInput struct {
 	// setting edge predicates
 	HasSetting     *bool                      `json:"hasSetting,omitempty"`
 	HasSettingWith []*GroupSettingsWhereInput `json:"hasSettingWith,omitempty"`
-	// users edge predicates
-	HasUsers     *bool             `json:"hasUsers,omitempty"`
-	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
 	// owner edge predicates
 	HasOwner     *bool                     `json:"hasOwner,omitempty"`
 	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
@@ -2110,13 +2105,10 @@ type UpdateGroupInput struct {
 	Description    *string    `json:"description,omitempty"`
 	LogoURL        *string    `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName   *string  `json:"displayName,omitempty"`
-	SettingID     *string  `json:"settingID,omitempty"`
-	AddUserIDs    []string `json:"addUserIDs,omitempty"`
-	RemoveUserIDs []string `json:"removeUserIDs,omitempty"`
-	ClearUsers    *bool    `json:"clearUsers,omitempty"`
-	OwnerID       *string  `json:"ownerID,omitempty"`
-	ClearOwner    *bool    `json:"clearOwner,omitempty"`
+	DisplayName *string `json:"displayName,omitempty"`
+	SettingID   *string `json:"settingID,omitempty"`
+	OwnerID     *string `json:"ownerID,omitempty"`
+	ClearOwner  *bool   `json:"clearOwner,omitempty"`
 }
 
 // UpdateGroupSettingsInput is used for update GroupSettings object.

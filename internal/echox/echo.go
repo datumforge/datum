@@ -73,3 +73,6 @@ func GetActorSubject(c echo.Context) (string, error) {
 
 	return sub, nil
 }
+
+// func GetUserIDFromSubject(c echo.Context) (string, error)
+// }

@@ -105,7 +105,6 @@ type ComplexityRoot struct {
 		Setting     func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UpdatedBy   func(childComplexity int) int
-		Users       func(childComplexity int) int
 	}
 
 	GroupConnection struct {
@@ -838,13 +837,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.UpdatedBy(childComplexity), true
-
-	case "Group.users":
-		if e.complexity.Group.Users == nil {
-			break
-		}
-
-		return e.complexity.Group.Users(childComplexity), true
 
 	case "GroupConnection.edges":
 		if e.complexity.GroupConnection.Edges == nil {
@@ -3091,7 +3083,6 @@ input CreateGroupInput {
   """The group's displayed 'friendly' name"""
   displayName: String
   settingID: ID!
-  userIDs: [ID!]
   ownerID: ID
 }
 """
@@ -3460,7 +3451,6 @@ type Group implements Node {
   """The group's displayed 'friendly' name"""
   displayName: String!
   setting: GroupSettings!
-  users: [User!]
   owner: Organization
 }
 """A connection to a list of items."""
@@ -3718,9 +3708,6 @@ input GroupWhereInput {
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [GroupSettingsWhereInput!]
-  """users edge predicates"""
-  hasUsers: Boolean
-  hasUsersWith: [UserWhereInput!]
   """owner edge predicates"""
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
@@ -5288,9 +5275,6 @@ input UpdateGroupInput {
   """The group's displayed 'friendly' name"""
   displayName: String
   settingID: ID
-  addUserIDs: [ID!]
-  removeUserIDs: [ID!]
-  clearUsers: Boolean
   ownerID: ID
   clearOwner: Boolean
 }
@@ -9306,85 +9290,6 @@ func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Group_users(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Group_users(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Users(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*generated.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Group",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_User_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_User_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_User_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_User_updatedBy(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "firstName":
-				return ec.fieldContext_User_firstName(ctx, field)
-			case "lastName":
-				return ec.fieldContext_User_lastName(ctx, field)
-			case "displayName":
-				return ec.fieldContext_User_displayName(ctx, field)
-			case "avatarRemoteURL":
-				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
-			case "avatarLocalFile":
-				return ec.fieldContext_User_avatarLocalFile(ctx, field)
-			case "avatarUpdatedAt":
-				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
-			case "lastSeen":
-				return ec.fieldContext_User_lastSeen(ctx, field)
-			case "organizations":
-				return ec.fieldContext_User_organizations(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
-			case "groups":
-				return ec.fieldContext_User_groups(ctx, field)
-			case "personalAccessTokens":
-				return ec.fieldContext_User_personalAccessTokens(ctx, field)
-			case "setting":
-				return ec.fieldContext_User_setting(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Group_owner(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_owner(ctx, field)
 	if err != nil {
@@ -9660,8 +9565,6 @@ func (ec *executionContext) fieldContext_GroupCreatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
-			case "users":
-				return ec.fieldContext_Group_users(ctx, field)
 			case "owner":
 				return ec.fieldContext_Group_owner(ctx, field)
 			}
@@ -9771,8 +9674,6 @@ func (ec *executionContext) fieldContext_GroupEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
-			case "users":
-				return ec.fieldContext_Group_users(ctx, field)
 			case "owner":
 				return ec.fieldContext_Group_owner(ctx, field)
 			}
@@ -10571,8 +10472,6 @@ func (ec *executionContext) fieldContext_GroupUpdatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
-			case "users":
-				return ec.fieldContext_Group_users(ctx, field)
 			case "owner":
 				return ec.fieldContext_Group_owner(ctx, field)
 			}
@@ -14735,8 +14634,6 @@ func (ec *executionContext) fieldContext_Organization_groups(ctx context.Context
 				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
-			case "users":
-				return ec.fieldContext_Group_users(ctx, field)
 			case "owner":
 				return ec.fieldContext_Group_owner(ctx, field)
 			}
@@ -18297,8 +18194,6 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
-			case "users":
-				return ec.fieldContext_Group_users(ctx, field)
 			case "owner":
 				return ec.fieldContext_Group_owner(ctx, field)
 			}
@@ -21418,8 +21313,6 @@ func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field 
 				return ec.fieldContext_Group_displayName(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
-			case "users":
-				return ec.fieldContext_Group_users(ctx, field)
 			case "owner":
 				return ec.fieldContext_Group_owner(ctx, field)
 			}
@@ -24970,7 +24863,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "logoURL", "displayName", "settingID", "userIDs", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "logoURL", "displayName", "settingID", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -25058,15 +24951,6 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.SettingID = data
-		case "userIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserIDs = data
 		case "ownerID":
 			var err error
 
@@ -27909,7 +27793,7 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasSetting", "hasSettingWith", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -28699,24 +28583,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 				return it, err
 			}
 			it.HasSettingWith = data
-		case "hasUsers":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUsers"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasUsers = data
-		case "hasUsersWith":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUsersWith"))
-			data, err := ec.unmarshalOUserWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserWhereInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasUsersWith = data
 		case "hasOwner":
 			var err error
 
@@ -37234,7 +37100,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "displayName", "settingID", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37331,33 +37197,6 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.SettingID = data
-		case "addUserIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addUserIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AddUserIDs = data
-		case "removeUserIDs":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeUserIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RemoveUserIDs = data
-		case "clearUsers":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUsers"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearUsers = data
 		case "ownerID":
 			var err error
 
@@ -41758,39 +41597,6 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "users":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Group_users(ctx, field, obj)
 				return res
 			}
 

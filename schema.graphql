@@ -30,7 +30,6 @@ input CreateGroupInput {
 	"""The group's displayed 'friendly' name"""
 	displayName: String
 	settingID: ID!
-	userIDs: [ID!]
 	ownerID: ID
 }
 """
@@ -414,7 +413,6 @@ type Group implements Node {
 	"""The group's displayed 'friendly' name"""
 	displayName: String!
 	setting: GroupSettings!
-	users: [User!]
 	owner: Organization
 }
 """A connection to a list of items."""
@@ -687,9 +685,6 @@ input GroupWhereInput {
 	"""setting edge predicates"""
 	hasSetting: Boolean
 	hasSettingWith: [GroupSettingsWhereInput!]
-	"""users edge predicates"""
-	hasUsers: Boolean
-	hasUsersWith: [UserWhereInput!]
 	"""owner edge predicates"""
 	hasOwner: Boolean
 	hasOwnerWith: [OrganizationWhereInput!]
@@ -2544,9 +2539,6 @@ input UpdateGroupInput {
 	"""The group's displayed 'friendly' name"""
 	displayName: String
 	settingID: ID
-	addUserIDs: [ID!]
-	removeUserIDs: [ID!]
-	clearUsers: Boolean
 	ownerID: ID
 	clearOwner: Boolean
 }

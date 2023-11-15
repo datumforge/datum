@@ -97,14 +97,20 @@ func init() {
 	viperBindFlag("oidc.jwks.remote-timeout", serveCmd.Flags().Lookup("oidc-jwks-remote-timeout"))
 
 	// OpenFGA configuration settings
-	serveCmd.Flags().String("fgaHost", defaultFGAHost, "fga host without the scheme (e.g. api.fga.example instead of https://api.fga.example)")
-	viperBindFlag("fga.host", serveCmd.Flags().Lookup("fgaHost"))
+	serveCmd.Flags().String("fga-host", defaultFGAHost, "fga host without the scheme (e.g. api.fga.example instead of https://api.fga.example)")
+	viperBindFlag("fga.host", serveCmd.Flags().Lookup("fga-host"))
 
-	serveCmd.Flags().String("fgaScheme", defaultFGAScheme, "fga scheme")
-	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fgaScheme"))
+	serveCmd.Flags().String("fga-scheme", defaultFGAScheme, "fga scheme (http vs. https)")
+	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fga-scheme"))
 
-	serveCmd.Flags().String("fgaStoreID", "", "fga store ID")
-	viperBindFlag("fga.storeID", serveCmd.Flags().Lookup("fgaStoreID"))
+	serveCmd.Flags().String("fga-store-id", "", "fga store ID")
+	viperBindFlag("fga.store-id", serveCmd.Flags().Lookup("fga-store-id"))
+
+	serveCmd.Flags().String("fga-model-id", "", "fga authorization model ID")
+	viperBindFlag("fga.model-id", serveCmd.Flags().Lookup("fga-model-id"))
+
+	serveCmd.Flags().Bool("fga-create-store", false, "create new FGA store on startup, should not be used in production")
+	viperBindFlag("fga.create-store", serveCmd.Flags().Lookup("fga-create-store"))
 
 	// only available as a CLI arg because these should only be used in dev environments
 	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
@@ -194,20 +200,44 @@ func serve(ctx context.Context) error {
 	if viper.GetBool("oidc.enabled") {
 		// setup FGA client
 		logger.Infow(
-			"Setting up FGA Client",
+			"setting up fga client",
 			"host",
 			viper.GetString("fga.host"),
 			"scheme",
 			viper.GetString("fga.scheme"),
-			"store_id",
-			viper.GetString("fga.storeID"),
 		)
 
-		fgaClient, err := fga.NewClient(
+		// create store, if requested
+		var (
+			fgaClient *fga.Client
+		)
+		if viper.GetBool("fga.create-store") {
+			fgaClient, err = fga.NewClient(
+				viper.GetString("fga.host"),
+				fga.WithScheme(viper.GetString("fga.scheme")),
+				fga.WithLogger(logger),
+			)
+			if err != nil {
+				return err
+			}
+
+			// Create new store
+			logger.Infow("creating store", "name", "datum_dev")
+			if _, err := fgaClient.CreateStore(ctx, "datum_dev"); err != nil {
+				return err
+			}
+
+			// Create model
+			if _, err := fgaClient.CreateModel(ctx, "internal/fga/testdata/datum.json"); err != nil {
+				return err
+			}
+		}
+
+		fgaClient, err = fga.NewClient(
 			viper.GetString("fga.host"),
 			fga.WithScheme(viper.GetString("fga.scheme")),
-			fga.WithStoreID(viper.GetString("fga.storeID")),
-			// fga.WithAuthorizationModelID() // TODO - we should add this
+			fga.WithStoreID(viper.GetString("fga.store-id")),
+			fga.WithAuthorizationModelID(viper.GetString("fga.model-id")),
 			fga.WithLogger(logger),
 		)
 		if err != nil {

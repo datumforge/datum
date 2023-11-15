@@ -16,18 +16,6 @@ func (gr *Group) Setting(ctx context.Context) (*GroupSettings, error) {
 	return result, err
 }
 
-func (gr *Group) Users(ctx context.Context) (result []*User, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = gr.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = gr.Edges.UsersOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = gr.QueryUsers().All(ctx)
-	}
-	return result, err
-}
-
 func (gr *Group) Owner(ctx context.Context) (*Organization, error) {
 	result, err := gr.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {

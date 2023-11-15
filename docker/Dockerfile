@@ -16,4 +16,4 @@ COPY --from=builder /go/bin/datum /bin/datum
 
 # Run the web service on container startup.
 ENTRYPOINT [ "/bin/datum" ]
-CMD ["serve","--debug","--pretty","--dev"]
+CMD ["serve"]

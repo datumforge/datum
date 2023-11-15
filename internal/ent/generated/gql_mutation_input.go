@@ -144,7 +144,6 @@ type CreateGroupInput struct {
 	LogoURL     string
 	DisplayName *string
 	SettingID   string
-	UserIDs     []string
 	OwnerID     *string
 }
 
@@ -171,9 +170,6 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 		m.SetDisplayName(*v)
 	}
 	m.SetSettingID(i.SettingID)
-	if v := i.UserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -197,9 +193,6 @@ type UpdateGroupInput struct {
 	LogoURL        *string
 	DisplayName    *string
 	SettingID      *string
-	ClearUsers     bool
-	AddUserIDs     []string
-	RemoveUserIDs  []string
 	ClearOwner     bool
 	OwnerID        *string
 }
@@ -235,15 +228,6 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
-	}
-	if i.ClearUsers {
-		m.ClearUsers()
-	}
-	if v := i.AddUserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
-	if v := i.RemoveUserIDs; len(v) > 0 {
-		m.RemoveUserIDs(v...)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()

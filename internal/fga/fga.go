@@ -2,6 +2,11 @@
 package fga
 
 import (
+	"context"
+	"encoding/json"
+	"os"
+
+	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/openfga/go-sdk/credentials"
 	"go.uber.org/zap"
@@ -86,4 +91,53 @@ func WithLogger(l *zap.SugaredLogger) Option {
 	return func(c *Client) {
 		c.Logger = l
 	}
+}
+
+// CreateStore creates a new fine grained authorization store
+// Should only be used in tests, production environment should be stood up with an existing store
+func (c *Client) CreateStore(ctx context.Context, storeName string) (string, error) {
+	// Create new store
+	resp, _, err := c.O.OpenFgaApi.CreateStore(context.Background()).Body(openfga.CreateStoreRequest{
+		Name: storeName,
+	}).Execute()
+	if err != nil {
+		return "", err
+	}
+
+	storeID := resp.GetId()
+
+	c.Logger.Infow("fga store created", "store_id", storeID)
+
+	c.O.SetStoreId(storeID)
+
+	return storeID, nil
+}
+
+// CreateModel creates a new fine grained authorization model
+// Should only be used in tests, production environment should be stood up with an existing mdoel
+func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
+	// Create new model
+	var dslJson []byte
+	var err error
+
+	if dslJson, err = os.ReadFile(fn); err != nil {
+		return "", err
+	}
+
+	var body openfga.WriteAuthorizationModelRequest
+	if err := json.Unmarshal(dslJson, &body); err != nil {
+		return "", err
+	}
+
+	modelId := ""
+	resp, _, err := c.O.OpenFgaApi.WriteAuthorizationModel(context.Background()).Body(body).Execute()
+	if err != nil {
+		return "", err
+	}
+
+	modelId = resp.GetAuthorizationModelId()
+
+	c.Logger.Infow("fga model created", "model_id", modelId)
+
+	return modelId, nil
 }

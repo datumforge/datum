@@ -647,10 +647,6 @@ type GroupWhereInput struct {
 	HasSetting     *bool                      `json:"hasSetting,omitempty"`
 	HasSettingWith []*GroupSettingsWhereInput `json:"hasSettingWith,omitempty"`
 
-	// "users" edge predicates.
-	HasUsers     *bool             `json:"hasUsers,omitempty"`
-	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
-
 	// "owner" edge predicates.
 	HasOwner     *bool                     `json:"hasOwner,omitempty"`
 	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
@@ -991,24 +987,6 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, group.HasSettingWith(with...))
-	}
-	if i.HasUsers != nil {
-		p := group.HasUsers()
-		if !*i.HasUsers {
-			p = group.Not(p)
-		}
-		predicates = append(predicates, p)
-	}
-	if len(i.HasUsersWith) > 0 {
-		with := make([]predicate.User, 0, len(i.HasUsersWith))
-		for _, w := range i.HasUsersWith {
-			p, err := w.P()
-			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasUsersWith'", err)
-			}
-			with = append(with, p)
-		}
-		predicates = append(predicates, group.HasUsersWith(with...))
 	}
 	if i.HasOwner != nil {
 		p := group.HasOwner()

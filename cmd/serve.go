@@ -211,6 +211,7 @@ func serve(ctx context.Context) error {
 		var (
 			fgaClient *fga.Client
 		)
+
 		if viper.GetBool("fga.create-store") {
 			fgaClient, err = fga.NewClient(
 				viper.GetString("fga.host"),
@@ -222,7 +223,6 @@ func serve(ctx context.Context) error {
 			}
 
 			// Create new store
-			logger.Infow("creating store", "name", "datum_dev")
 			if _, err := fgaClient.CreateStore(ctx, "datum_dev"); err != nil {
 				return err
 			}

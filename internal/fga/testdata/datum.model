@@ -1,0 +1,41 @@
+model
+  schema 1.1
+type user
+  relations
+    define associated_subscription_tier: [subscription_tier]
+    define access: subscriber_member from associated_subscription_tier
+type group
+  relations
+    define member: [user]
+type role
+  relations
+    define assignee: [user,group#member,organization#member]
+type organization
+  relations
+    define member: [user] or owner
+    define owner: [user]
+    define user_in_context: [user]
+    define project_manager: [user] and user_in_context
+    define base_project_editor: [user] or project_manager
+    define project_editor: base_project_editor and user_in_context
+    define role_assigner: [role#assignee] or owner
+    define role_creator: [role#assignee] or owner
+    define group_assigner: [role#assignee] or owner
+    define group_creator: [role#assignee] or owner
+type project
+  relations
+    define owner: [organization]
+    define partner: [organization]
+    define manager: project_manager from owner
+    define editor: manager or project_editor from owner or project_editor from partner
+    define can_delete: manager
+    define can_edit: editor
+    define can_view: editor
+type subscription_tier
+  relations
+    define subscriber: [organization]
+    define subscriber_member: member from subscriber
+type feature
+  relations
+    define associated_subscription_tier: [subscription_tier]
+    define access: [user] or subscriber_member from associated_subscription_tier

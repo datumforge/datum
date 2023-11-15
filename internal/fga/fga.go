@@ -117,27 +117,24 @@ func (c *Client) CreateStore(ctx context.Context, storeName string) (string, err
 // Should only be used in tests, production environment should be stood up with an existing mdoel
 func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
 	// Create new model
-	var dslJson []byte
-	var err error
-
-	if dslJson, err = os.ReadFile(fn); err != nil {
+	dslJSON, err := os.ReadFile(fn)
+	if err != nil {
 		return "", err
 	}
 
 	var body openfga.WriteAuthorizationModelRequest
-	if err := json.Unmarshal(dslJson, &body); err != nil {
+	if err := json.Unmarshal(dslJSON, &body); err != nil {
 		return "", err
 	}
 
-	modelId := ""
 	resp, _, err := c.O.OpenFgaApi.WriteAuthorizationModel(context.Background()).Body(body).Execute()
 	if err != nil {
 		return "", err
 	}
 
-	modelId = resp.GetAuthorizationModelId()
+	modelID := resp.GetAuthorizationModelId()
 
-	c.Logger.Infow("fga model created", "model_id", modelId)
+	c.Logger.Infow("fga model created", "model_id", modelID)
 
-	return modelId, nil
+	return modelID, nil
 }

@@ -2,6 +2,7 @@ version: "3"
 
 tasks:
   org:create:
+    desc: creates an organization against a running local instance of the datum server - see the CLI help commands for other variables
     aliases: [createorg]
     cmds:
       - go run cmd/cli/main.go org create -n your_new_org -d "my new org again"

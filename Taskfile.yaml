@@ -9,19 +9,21 @@ env:
 
 tasks:
   clean:
+    desc: cleans ent / gqlgen generated files to be re-generated
     cmds:
       - |
         echo "Enter the name of the ent schema object name to clean:"
         read clean;
         go run ./internal/entclean/main.go --path=internal/ent ${clean};
-      - "rm -rf internal/ent/generated/^doc.go"
-      - "rm -rf internal/api/^resolver.go"
       - "rm -f schema/ent.graphql"
       - "rm -f schema.graphql"
       - "rm -rf internal/datumclient/"
   ent:
-    - go generate ./...
+    desc: runs go generate against ent schema - see the entc.go file
+    cmds:
+      - go generate ./...
   install:
+    desc: installs tools and packages needed to develop against the datum repo
     cmds:
       - "go install github.com/go-task/task/v3/cmd/task@latest"
       - "go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest"
@@ -32,46 +34,63 @@ tasks:
       - "go get -u github.com/openfga/go-sdk"
       - defer: { task: go:tidy }
   graph:
+    desc: runs scripts/gen_graphql.sh to stub out files in the schema/ directory
     cmds:
         - bash scripts/gen_graphql.sh
   gqlgen:
+    desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
     cmds:
       - go run github.com/99designs/gqlgen generate --verbose
       - task: tidy
       - go run ./gen_schema.go
       - go run github.com/Yamashou/gqlgenc generate --configdir schema
   generate:
+    desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
     cmds:
       - task: ent
       - task: graph
       - task: gqlgen
   atlas:
+    desc: runs the atlas create, migrate, and lint commands
     aliases: [atlas]
     cmds:
       - task: atlas:create
       - task: atlas:migrate
       - task: atlas:lint
   atlas:create:
+    desc: creates an atlas migration if one is needed based on the ent schema definitons
     cmds:
       - |
         echo "If there is no schema to generate, this will not create a file (hint: name it your branch name if you're not sure) - enter the name of the migration:"
         read migration;
         go run db/create_migrations.go ${migration};
   atlas:lint:
-    - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
+    desc: lints the pushed migration files
+    cmds:
+      - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
   atlas:migrate:
-    - atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations"
+    desc: pushes the generated migration files to atlas cloud
+    cmds:
+      - atlas migrate push datum --dev-url "sqlite://dev?mode=memory&_fk=1" --dir "file://db/migrations"
   atlas:resethash:
-    - atlas migrate hash --dir="file://db/migrations"
+    desc: re-sets the checksum created by the atlas package so that a complete migration can be re-created if deleted
+    cmds:
+      - atlas migrate hash --dir="file://db/migrations"
   rover:
-    - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
-    - 'open "http://localhost:4000"'
+    desc: launches an interactive browser to navigate the configured graph schema
+    cmds:
+      - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
+      - 'open "http://localhost:4000"'
   run-dev:
-    - go run main.go serve  --debug --pretty --dev --oidc=false
+    desc: runs the datum server with oidc disabled for easy local testing / querying
+    cmds:
+      - go run main.go serve  --debug --pretty --dev --oidc=false
   go:lint:
+    desc: runs golangci-lint, the most annoying opininated linter ever
     cmds:
       - golangci-lint run -v
   go:test:
+    desc: runs and outputs results of created go tests
     cmds:
       - go test -v ./...
   go:tidy:
@@ -87,13 +106,16 @@ tasks:
       - task: go:lint
       - task: go:test
   compose:fga:
+    desc: brings up the compose environment for openfga development
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
       - 'open "http://localhost:3000/playground"'
   compose:datum:
+    desc: brings up the compose environment for the datum server
     cmds:
       - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
   pr:
+    desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:
       - task: generate
       - task: atlas

@@ -7,11 +7,20 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/datumforge/datum/internal/echox"
 
 	"github.com/openfga/go-sdk/client"
 )
+
+type TupleKey struct {
+	Subject  Entity
+	Object   Entity
+	Relation Relation `json:"relation"`
+}
+
+func NewTupleKey() TupleKey { return TupleKey{} }
 
 // entityRegex is used to validate that a string represents an Entity/EntitySet
 // and helps to convert from a string representation into an Entity struct.
@@ -36,27 +45,33 @@ func (r Relation) String() string {
 // Entity represents an entity/entity-set in OpenFGA.
 // Example: `user:<user-id>`, `org:<org-id>#member`
 type Entity struct {
-	Kind     Kind
-	ID       string
-	Relation Relation
+	Kind       Kind
+	Identifier string
+	Relation   Relation
 }
 
 // String returns a string representation of the entity/entity-set.
 func (e *Entity) String() string {
 	if e.Relation == "" {
-		return e.Kind.String() + ":" + e.ID
+		return e.Kind.String() + ":" + e.Identifier
 	}
 
-	return e.Kind.String() + ":" + e.ID + "#" + e.Relation.String()
+	return e.Kind.String() + ":" + e.Identifier + "#" + e.Relation.String()
 }
 
 // ParseEntity will parse a string representation into an Entity. It expects to
 // find entities of the form:
-//   - <entityType>:<ID>
-//     eg. organization:canonical
-//   - <entityType>:<ID>#<relationship-set>
-//     eg. organization:canonical#member
+//   - <entityType>:<Identifier>
+//     eg. organization:datum
+//   - <entityType>:<Identifier>#<relationship-set>
+//     eg. organization:datum#member
 func ParseEntity(s string) (Entity, error) {
+	// entities should only contain a single colon
+	c := strings.Count(s, ":")
+	if c != 1 {
+		return Entity{}, newInvalidEntityError(s)
+	}
+
 	match := entityRegex.FindStringSubmatch(s)
 	if match == nil {
 		return Entity{}, newInvalidEntityError(s)
@@ -64,14 +79,22 @@ func ParseEntity(s string) (Entity, error) {
 
 	// Extract and return the relevant information from the sub-matches.
 	return Entity{
-		Kind:     Kind(match[1]),
-		ID:       match[2],
-		Relation: Relation(match[4]),
+		Kind:       Kind(match[1]),
+		Identifier: match[2],
+		Relation:   Relation(match[4]),
 	}, nil
 }
 
 // CreateCheckTupleWithUser gets the user id (currently the jwt sub, but that will change) and creates a Check Request for openFGA
 func (c *Client) CreateCheckTupleWithUser(ctx context.Context, relation, object string) (*client.ClientCheckRequest, error) {
+	if relation == "" {
+		return nil, ErrMissingRelation
+	}
+
+	if object == "" {
+		return nil, ErrMissingObject
+	}
+
 	ec, err := echox.EchoContextFromContext(ctx)
 	if err != nil {
 		c.Logger.Errorw("unable to get echo context", "error", err)

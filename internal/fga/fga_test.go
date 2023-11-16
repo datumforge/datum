@@ -9,11 +9,15 @@ import (
 )
 
 const (
-	modelFile = "testdata/datum.json"
+	modelFile     = "testdata/datum.json"
+	defaultFGAURL = "localhost:8080"
 )
 
 func TestFGAClient(t *testing.T) {
 	url := os.Getenv("TEST_FGA_URL")
+	if url == "" {
+		url = defaultFGAURL
+	}
 
 	// TODO: create test tuples and run through model
 	_ = newTestFGAClient(t, url)

@@ -151,7 +151,7 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			ec, err := echox.NewContextWithValidUser()
+			ec, err := echox.NewTestContextWithValidUser()
 			if err != nil {
 				t.Fatal()
 			}

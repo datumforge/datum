@@ -10,13 +10,13 @@ import (
 
 func Test_GetActorSubject(t *testing.T) {
 	// context with no user set
-	basicContext := newEchoContext()
+	basicContext := newTestEchoContext()
 
-	missingSubCtx := newEchoContext()
+	missingSubCtx := newTestEchoContext()
 	jBasic := jwt.New(jwt.SigningMethodHS256)
 	missingSubCtx.Set("user", jBasic)
 
-	validCtx, err := NewContextWithValidUser()
+	validCtx, err := NewTestContextWithValidUser()
 	if err != nil {
 		t.Fatal()
 	}

@@ -17,7 +17,7 @@ require (
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v0.77.0
+	github.com/ogen-go/ogen v0.78.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.17.0

@@ -264,8 +264,6 @@ github.com/mitchellh/go-wordwrap v1.0.1 h1:TLuKupo69TCn6TQSyGxwI1EblZZEsQ0vMlAFQ
 github.com/mitchellh/go-wordwrap v1.0.1/go.mod h1:R62XHJLzvMFRBbcrT7m7WgmE1eOyTSsCt+hzestvNj0=
 github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
 github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
-github.com/ogen-go/ogen v0.77.0 h1:yREPDg3cDuXkDyp7FPXdPEUz+azPZFUGKmYer8fJpmM=
-github.com/ogen-go/ogen v0.77.0/go.mod h1:/bl+MubIppovr7F1fKAaDxzFF+oF2EiMtyVylyqDtQ8=
 github.com/ogen-go/ogen v0.78.0 h1:3OIlrvdmVQ4LfoayxbdyLa4cGbtrACW0XxpdRfYzQfs=
 github.com/ogen-go/ogen v0.78.0/go.mod h1:xc4jgbzGEEMvnVumt1uBMP9HQNV45UMs3SjAukxxo8I=
 github.com/pelletier/go-toml/v2 v2.1.0 h1:FnwAJ4oYMvbT/34k9zzHuZNrhlz48GB3/s6at6/MHO4=

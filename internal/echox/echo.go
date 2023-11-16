@@ -69,7 +69,7 @@ func GetActorSubject(c echo.Context) (string, error) {
 
 	claims, ok := token.Claims.(jwt.MapClaims) // by default claims is of type `jwt.MapClaims`
 	if !ok {
-		return "", ErrJWTMissingInvalid
+		return "", ErrJWTClaimsInvalid
 	}
 
 	sub, ok := claims["sub"].(string)

@@ -141,7 +141,7 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 			errRes:      ErrMissingRelation,
 		},
 		{
-			name:        "error, missing relation",
+			name:        "error, missing object",
 			object:      "",
 			relation:    "can_view",
 			expectedRes: nil,
@@ -150,7 +150,7 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run(tc.name, func(t *testing.T) {
 			ec, err := echox.NewTestContextWithValidUser()
 			if err != nil {
 				t.Fatal()
@@ -181,6 +181,71 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 			assert.NoError(t, err)
 			assert.NotEmpty(t, cr)
 			assert.Equal(t, tc.expectedRes, cr)
+		})
+	}
+}
+
+func Test_CreateRelationshipTupleWithUser(t *testing.T) {
+	testCases := []struct {
+		name        string
+		relation    string
+		object      string
+		expectedRes string
+		errRes      string
+	}{
+		{
+			name:        "happy path with relation",
+			object:      "organization:datum",
+			relation:    "member",
+			expectedRes: "",
+			errRes:      "",
+		},
+		{
+			name:        "error, missing relation",
+			object:      "organization:datum",
+			relation:    "",
+			expectedRes: "",
+			errRes:      "Reason: the 'relation' field is malformed",
+		},
+		{
+			name:        "error, missing object",
+			object:      "",
+			relation:    "member",
+			expectedRes: "",
+			errRes:      "Reason: invalid 'object' field format",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			ec, err := echox.NewTestContextWithValidUser()
+			if err != nil {
+				t.Fatal()
+			}
+
+			echoContext := *ec
+
+			ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+
+			echoContext.SetRequest(echoContext.Request().WithContext(ctx))
+
+			url := os.Getenv("TEST_FGA_URL")
+			if url == "" {
+				url = defaultFGAURL
+			}
+
+			fc := newTestFGAClient(t, url)
+
+			err = fc.CreateRelationshipTupleWithUser(ctx, tc.relation, tc.object)
+
+			if tc.errRes != "" {
+				assert.Error(t, err)
+				assert.ErrorContains(t, err, tc.errRes)
+
+				return
+			}
+
+			assert.NoError(t, err)
 		})
 	}
 }

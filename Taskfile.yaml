@@ -118,9 +118,9 @@ tasks:
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
   fga:create:
-    desc: creates a new fga store
+    desc: creates a new fga store with the testdata model
     cmds:
-      - fga store create --name "datum dev"
+      - fga store create --name "datum dev" --model internal/fga/testdata/datum.fga
   fga:open:
     desc: opens the fga playground in a browser
     cmds: 

@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersettings"
@@ -35,12 +36,14 @@ type UserQuery struct {
 	withGroups                    *GroupQuery
 	withPersonalAccessTokens      *PersonalAccessTokenQuery
 	withSetting                   *UserSettingsQuery
+	withRefreshtoken              *RefreshTokenQuery
 	modifiers                     []func(*sql.Selector)
 	loadTotal                     []func(context.Context, []*User) error
 	withNamedOrganizations        map[string]*OrganizationQuery
 	withNamedSessions             map[string]*SessionQuery
 	withNamedGroups               map[string]*GroupQuery
 	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
+	withNamedRefreshtoken         map[string]*RefreshTokenQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -196,6 +199,31 @@ func (uq *UserQuery) QuerySetting() *UserSettingsQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.UserSettings
 		step.Edge.Schema = schemaConfig.UserSettings
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryRefreshtoken chains the current query on the "refreshtoken" edge.
+func (uq *UserQuery) QueryRefreshtoken() *RefreshTokenQuery {
+	query := (&RefreshTokenClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(refreshtoken.Table, refreshtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RefreshtokenTable, user.RefreshtokenColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.RefreshToken
+		step.Edge.Schema = schemaConfig.RefreshToken
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -399,6 +427,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withGroups:               uq.withGroups.Clone(),
 		withPersonalAccessTokens: uq.withPersonalAccessTokens.Clone(),
 		withSetting:              uq.withSetting.Clone(),
+		withRefreshtoken:         uq.withRefreshtoken.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -457,6 +486,17 @@ func (uq *UserQuery) WithSetting(opts ...func(*UserSettingsQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withSetting = query
+	return uq
+}
+
+// WithRefreshtoken tells the query-builder to eager-load the nodes that are connected to
+// the "refreshtoken" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithRefreshtoken(opts ...func(*RefreshTokenQuery)) *UserQuery {
+	query := (&RefreshTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withRefreshtoken = query
 	return uq
 }
 
@@ -544,12 +584,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			uq.withOrganizations != nil,
 			uq.withSessions != nil,
 			uq.withGroups != nil,
 			uq.withPersonalAccessTokens != nil,
 			uq.withSetting != nil,
+			uq.withRefreshtoken != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -611,6 +652,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := uq.withRefreshtoken; query != nil {
+		if err := uq.loadRefreshtoken(ctx, query, nodes,
+			func(n *User) { n.Edges.Refreshtoken = []*RefreshToken{} },
+			func(n *User, e *RefreshToken) { n.Edges.Refreshtoken = append(n.Edges.Refreshtoken, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range uq.withNamedOrganizations {
 		if err := uq.loadOrganizations(ctx, query, nodes,
 			func(n *User) { n.appendNamedOrganizations(name) },
@@ -636,6 +684,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
 			func(n *User) { n.appendNamedPersonalAccessTokens(name) },
 			func(n *User, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedRefreshtoken {
+		if err := uq.loadRefreshtoken(ctx, query, nodes,
+			func(n *User) { n.appendNamedRefreshtoken(name) },
+			func(n *User, e *RefreshToken) { n.appendNamedRefreshtoken(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -860,6 +915,37 @@ func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingsQuery, 
 	}
 	return nil
 }
+func (uq *UserQuery) loadRefreshtoken(ctx context.Context, query *RefreshTokenQuery, nodes []*User, init func(*User), assign func(*User, *RefreshToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.RefreshToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.RefreshtokenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_refreshtoken
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_refreshtoken" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_refreshtoken" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := uq.querySpec()
@@ -1003,6 +1089,20 @@ func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*Pe
 		uq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
 	}
 	uq.withNamedPersonalAccessTokens[name] = query
+	return uq
+}
+
+// WithNamedRefreshtoken tells the query-builder to eager-load the nodes that are connected to the "refreshtoken"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedRefreshtoken(name string, opts ...func(*RefreshTokenQuery)) *UserQuery {
+	query := (&RefreshTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedRefreshtoken == nil {
+		uq.withNamedRefreshtoken = make(map[string]*RefreshTokenQuery)
+	}
+	uq.withNamedRefreshtoken[name] = query
 	return uq
 }
 

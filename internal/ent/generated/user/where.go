@@ -1092,6 +1092,35 @@ func HasSettingWith(preds ...predicate.UserSettings) predicate.User {
 	})
 }
 
+// HasRefreshtoken applies the HasEdge predicate on the "refreshtoken" edge.
+func HasRefreshtoken() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, RefreshtokenTable, RefreshtokenColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.RefreshToken
+		step.Edge.Schema = schemaConfig.RefreshToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRefreshtokenWith applies the HasEdge predicate on the "refreshtoken" edge with a given conditions (other predicates).
+func HasRefreshtokenWith(preds ...predicate.RefreshToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newRefreshtokenStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.RefreshToken
+		step.Edge.Schema = schemaConfig.RefreshToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

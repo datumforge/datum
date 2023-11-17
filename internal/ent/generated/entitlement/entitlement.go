@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -27,16 +28,33 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldTier holds the string denoting the tier field in the database.
 	FieldTier = "tier"
-	// FieldStripeCustomerID holds the string denoting the stripe_customer_id field in the database.
-	FieldStripeCustomerID = "stripe_customer_id"
-	// FieldStripeSubscriptionID holds the string denoting the stripe_subscription_id field in the database.
-	FieldStripeSubscriptionID = "stripe_subscription_id"
+	// FieldExternalCustomerID holds the string denoting the external_customer_id field in the database.
+	FieldExternalCustomerID = "external_customer_id"
+	// FieldExternalSubscriptionID holds the string denoting the external_subscription_id field in the database.
+	FieldExternalSubscriptionID = "external_subscription_id"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
 	FieldExpiresAt = "expires_at"
+	// FieldUpgradedAt holds the string denoting the upgraded_at field in the database.
+	FieldUpgradedAt = "upgraded_at"
+	// FieldUpgradedTier holds the string denoting the upgraded_tier field in the database.
+	FieldUpgradedTier = "upgraded_tier"
+	// FieldDowngradedAt holds the string denoting the downgraded_at field in the database.
+	FieldDowngradedAt = "downgraded_at"
+	// FieldDowngradedTier holds the string denoting the downgraded_tier field in the database.
+	FieldDowngradedTier = "downgraded_tier"
 	// FieldCancelled holds the string denoting the cancelled field in the database.
 	FieldCancelled = "cancelled"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// Table holds the table name of the entitlement in the database.
 	Table = "entitlements"
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "entitlements"
+	// OwnerInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OwnerInverseTable = "organizations"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "organization_entitlements"
 )
 
 // Columns holds all SQL columns for entitlement fields.
@@ -47,16 +65,31 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldTier,
-	FieldStripeCustomerID,
-	FieldStripeSubscriptionID,
+	FieldExternalCustomerID,
+	FieldExternalSubscriptionID,
 	FieldExpiresAt,
+	FieldUpgradedAt,
+	FieldUpgradedTier,
+	FieldDowngradedAt,
+	FieldDowngradedTier,
 	FieldCancelled,
+}
+
+// ForeignKeys holds the SQL foreign-keys that are owned by the "entitlements"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"organization_entitlements",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -142,14 +175,14 @@ func ByTier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTier, opts...).ToFunc()
 }
 
-// ByStripeCustomerID orders the results by the stripe_customer_id field.
-func ByStripeCustomerID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStripeCustomerID, opts...).ToFunc()
+// ByExternalCustomerID orders the results by the external_customer_id field.
+func ByExternalCustomerID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalCustomerID, opts...).ToFunc()
 }
 
-// ByStripeSubscriptionID orders the results by the stripe_subscription_id field.
-func ByStripeSubscriptionID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldStripeSubscriptionID, opts...).ToFunc()
+// ByExternalSubscriptionID orders the results by the external_subscription_id field.
+func ByExternalSubscriptionID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalSubscriptionID, opts...).ToFunc()
 }
 
 // ByExpiresAt orders the results by the expires_at field.
@@ -157,9 +190,43 @@ func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiresAt, opts...).ToFunc()
 }
 
+// ByUpgradedAt orders the results by the upgraded_at field.
+func ByUpgradedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpgradedAt, opts...).ToFunc()
+}
+
+// ByUpgradedTier orders the results by the upgraded_tier field.
+func ByUpgradedTier(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpgradedTier, opts...).ToFunc()
+}
+
+// ByDowngradedAt orders the results by the downgraded_at field.
+func ByDowngradedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDowngradedAt, opts...).ToFunc()
+}
+
+// ByDowngradedTier orders the results by the downgraded_tier field.
+func ByDowngradedTier(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDowngradedTier, opts...).ToFunc()
+}
+
 // ByCancelled orders the results by the cancelled field.
 func ByCancelled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCancelled, opts...).ToFunc()
+}
+
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newOwnerStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
 }
 
 // MarshalGQL implements graphql.Marshaler interface.

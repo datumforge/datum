@@ -11,8 +11,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -207,6 +209,36 @@ func (ou *OrganizationUpdate) SetSetting(o *OrganizationSettings) *OrganizationU
 	return ou.SetSettingID(o.ID)
 }
 
+// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
+func (ou *OrganizationUpdate) AddEntitlementIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddEntitlementIDs(ids...)
+	return ou
+}
+
+// AddEntitlements adds the "entitlements" edges to the Entitlement entity.
+func (ou *OrganizationUpdate) AddEntitlements(e ...*Entitlement) *OrganizationUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ou.AddEntitlementIDs(ids...)
+}
+
+// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
+func (ou *OrganizationUpdate) AddOauthproviderIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.AddOauthproviderIDs(ids...)
+	return ou
+}
+
+// AddOauthprovider adds the "oauthprovider" edges to the OauthProvider entity.
+func (ou *OrganizationUpdate) AddOauthprovider(o ...*OauthProvider) *OrganizationUpdate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ou.AddOauthproviderIDs(ids...)
+}
+
 // Mutation returns the OrganizationMutation object of the builder.
 func (ou *OrganizationUpdate) Mutation() *OrganizationMutation {
 	return ou.mutation
@@ -300,6 +332,48 @@ func (ou *OrganizationUpdate) RemoveIntegrations(i ...*Integration) *Organizatio
 func (ou *OrganizationUpdate) ClearSetting() *OrganizationUpdate {
 	ou.mutation.ClearSetting()
 	return ou
+}
+
+// ClearEntitlements clears all "entitlements" edges to the Entitlement entity.
+func (ou *OrganizationUpdate) ClearEntitlements() *OrganizationUpdate {
+	ou.mutation.ClearEntitlements()
+	return ou
+}
+
+// RemoveEntitlementIDs removes the "entitlements" edge to Entitlement entities by IDs.
+func (ou *OrganizationUpdate) RemoveEntitlementIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveEntitlementIDs(ids...)
+	return ou
+}
+
+// RemoveEntitlements removes "entitlements" edges to Entitlement entities.
+func (ou *OrganizationUpdate) RemoveEntitlements(e ...*Entitlement) *OrganizationUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ou.RemoveEntitlementIDs(ids...)
+}
+
+// ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
+func (ou *OrganizationUpdate) ClearOauthprovider() *OrganizationUpdate {
+	ou.mutation.ClearOauthprovider()
+	return ou
+}
+
+// RemoveOauthproviderIDs removes the "oauthprovider" edge to OauthProvider entities by IDs.
+func (ou *OrganizationUpdate) RemoveOauthproviderIDs(ids ...string) *OrganizationUpdate {
+	ou.mutation.RemoveOauthproviderIDs(ids...)
+	return ou
+}
+
+// RemoveOauthprovider removes "oauthprovider" edges to OauthProvider entities.
+func (ou *OrganizationUpdate) RemoveOauthprovider(o ...*OauthProvider) *OrganizationUpdate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ou.RemoveOauthproviderIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -621,6 +695,102 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.EntitlementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Entitlement
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedEntitlementsIDs(); len(nodes) > 0 && !ou.mutation.EntitlementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.EntitlementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ou.mutation.OauthproviderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OauthProvider
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.RemovedOauthproviderIDs(); len(nodes) > 0 && !ou.mutation.OauthproviderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.OauthproviderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = ou.schemaConfig.Organization
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
@@ -816,6 +986,36 @@ func (ouo *OrganizationUpdateOne) SetSetting(o *OrganizationSettings) *Organizat
 	return ouo.SetSettingID(o.ID)
 }
 
+// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by IDs.
+func (ouo *OrganizationUpdateOne) AddEntitlementIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddEntitlementIDs(ids...)
+	return ouo
+}
+
+// AddEntitlements adds the "entitlements" edges to the Entitlement entity.
+func (ouo *OrganizationUpdateOne) AddEntitlements(e ...*Entitlement) *OrganizationUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ouo.AddEntitlementIDs(ids...)
+}
+
+// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by IDs.
+func (ouo *OrganizationUpdateOne) AddOauthproviderIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.AddOauthproviderIDs(ids...)
+	return ouo
+}
+
+// AddOauthprovider adds the "oauthprovider" edges to the OauthProvider entity.
+func (ouo *OrganizationUpdateOne) AddOauthprovider(o ...*OauthProvider) *OrganizationUpdateOne {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ouo.AddOauthproviderIDs(ids...)
+}
+
 // Mutation returns the OrganizationMutation object of the builder.
 func (ouo *OrganizationUpdateOne) Mutation() *OrganizationMutation {
 	return ouo.mutation
@@ -909,6 +1109,48 @@ func (ouo *OrganizationUpdateOne) RemoveIntegrations(i ...*Integration) *Organiz
 func (ouo *OrganizationUpdateOne) ClearSetting() *OrganizationUpdateOne {
 	ouo.mutation.ClearSetting()
 	return ouo
+}
+
+// ClearEntitlements clears all "entitlements" edges to the Entitlement entity.
+func (ouo *OrganizationUpdateOne) ClearEntitlements() *OrganizationUpdateOne {
+	ouo.mutation.ClearEntitlements()
+	return ouo
+}
+
+// RemoveEntitlementIDs removes the "entitlements" edge to Entitlement entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveEntitlementIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveEntitlementIDs(ids...)
+	return ouo
+}
+
+// RemoveEntitlements removes "entitlements" edges to Entitlement entities.
+func (ouo *OrganizationUpdateOne) RemoveEntitlements(e ...*Entitlement) *OrganizationUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return ouo.RemoveEntitlementIDs(ids...)
+}
+
+// ClearOauthprovider clears all "oauthprovider" edges to the OauthProvider entity.
+func (ouo *OrganizationUpdateOne) ClearOauthprovider() *OrganizationUpdateOne {
+	ouo.mutation.ClearOauthprovider()
+	return ouo
+}
+
+// RemoveOauthproviderIDs removes the "oauthprovider" edge to OauthProvider entities by IDs.
+func (ouo *OrganizationUpdateOne) RemoveOauthproviderIDs(ids ...string) *OrganizationUpdateOne {
+	ouo.mutation.RemoveOauthproviderIDs(ids...)
+	return ouo
+}
+
+// RemoveOauthprovider removes "oauthprovider" edges to OauthProvider entities.
+func (ouo *OrganizationUpdateOne) RemoveOauthprovider(o ...*OauthProvider) *OrganizationUpdateOne {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return ouo.RemoveOauthproviderIDs(ids...)
 }
 
 // Where appends a list predicates to the OrganizationUpdate builder.
@@ -1255,6 +1497,102 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.OrganizationSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.EntitlementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Entitlement
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedEntitlementsIDs(); len(nodes) > 0 && !ouo.mutation.EntitlementsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.EntitlementsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitlement.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Entitlement
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.OauthproviderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OauthProvider
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.RemovedOauthproviderIDs(); len(nodes) > 0 && !ouo.mutation.OauthproviderCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.OauthproviderIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauthprovider.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.OauthProvider
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

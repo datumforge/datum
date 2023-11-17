@@ -4,6 +4,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -19,7 +20,7 @@ func (OauthProvider) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Comment("the provider's name"),
 		field.String("client_id").Comment("the client id"),
-		field.String("client_secret").Comment("the client secret"),
+		field.String("client_secret").Sensitive().Comment("the client secret"),
 		field.String("redirect_url").Comment("the redirect url"),
 		field.String("scopes").Comment("the scopes"),
 		field.String("auth_url").Comment("the auth url of the provider"),
@@ -31,7 +32,9 @@ func (OauthProvider) Fields() []ent.Field {
 
 // Edges of the OauthProvider
 func (OauthProvider) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.From("owner", Organization.Type).Ref("oauthprovider").Unique(),
+	}
 }
 
 // Annotations of the OauthProvider

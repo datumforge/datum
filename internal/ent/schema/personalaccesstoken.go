@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -26,6 +28,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 			Optional(),
 		field.Time("expiration_at"),
 		field.Time("last_used_at").
+			UpdateDefault(time.Now).
 			Optional().
 			Nillable(),
 	}

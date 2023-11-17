@@ -52,22 +52,28 @@ const (
 // EntitlementMutation represents an operation that mutates the Entitlement nodes in the graph.
 type EntitlementMutation struct {
 	config
-	op                     Op
-	typ                    string
-	id                     *string
-	created_at             *time.Time
-	updated_at             *time.Time
-	created_by             *string
-	updated_by             *string
-	tier                   *entitlement.Tier
-	stripe_customer_id     *string
-	stripe_subscription_id *string
-	expires_at             *time.Time
-	cancelled              *bool
-	clearedFields          map[string]struct{}
-	done                   bool
-	oldValue               func(context.Context) (*Entitlement, error)
-	predicates             []predicate.Entitlement
+	op                       Op
+	typ                      string
+	id                       *string
+	created_at               *time.Time
+	updated_at               *time.Time
+	created_by               *string
+	updated_by               *string
+	tier                     *entitlement.Tier
+	external_customer_id     *string
+	external_subscription_id *string
+	expires_at               *time.Time
+	upgraded_at              *time.Time
+	upgraded_tier            *string
+	downgraded_at            *time.Time
+	downgraded_tier          *string
+	cancelled                *bool
+	clearedFields            map[string]struct{}
+	owner                    *string
+	clearedowner             bool
+	done                     bool
+	oldValue                 func(context.Context) (*Entitlement, error)
+	predicates               []predicate.Entitlement
 }
 
 var _ ent.Mutation = (*EntitlementMutation)(nil)
@@ -380,102 +386,102 @@ func (m *EntitlementMutation) ResetTier() {
 	m.tier = nil
 }
 
-// SetStripeCustomerID sets the "stripe_customer_id" field.
-func (m *EntitlementMutation) SetStripeCustomerID(s string) {
-	m.stripe_customer_id = &s
+// SetExternalCustomerID sets the "external_customer_id" field.
+func (m *EntitlementMutation) SetExternalCustomerID(s string) {
+	m.external_customer_id = &s
 }
 
-// StripeCustomerID returns the value of the "stripe_customer_id" field in the mutation.
-func (m *EntitlementMutation) StripeCustomerID() (r string, exists bool) {
-	v := m.stripe_customer_id
+// ExternalCustomerID returns the value of the "external_customer_id" field in the mutation.
+func (m *EntitlementMutation) ExternalCustomerID() (r string, exists bool) {
+	v := m.external_customer_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldStripeCustomerID returns the old "stripe_customer_id" field's value of the Entitlement entity.
+// OldExternalCustomerID returns the old "external_customer_id" field's value of the Entitlement entity.
 // If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntitlementMutation) OldStripeCustomerID(ctx context.Context) (v string, err error) {
+func (m *EntitlementMutation) OldExternalCustomerID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStripeCustomerID is only allowed on UpdateOne operations")
+		return v, errors.New("OldExternalCustomerID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStripeCustomerID requires an ID field in the mutation")
+		return v, errors.New("OldExternalCustomerID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStripeCustomerID: %w", err)
+		return v, fmt.Errorf("querying old value for OldExternalCustomerID: %w", err)
 	}
-	return oldValue.StripeCustomerID, nil
+	return oldValue.ExternalCustomerID, nil
 }
 
-// ClearStripeCustomerID clears the value of the "stripe_customer_id" field.
-func (m *EntitlementMutation) ClearStripeCustomerID() {
-	m.stripe_customer_id = nil
-	m.clearedFields[entitlement.FieldStripeCustomerID] = struct{}{}
+// ClearExternalCustomerID clears the value of the "external_customer_id" field.
+func (m *EntitlementMutation) ClearExternalCustomerID() {
+	m.external_customer_id = nil
+	m.clearedFields[entitlement.FieldExternalCustomerID] = struct{}{}
 }
 
-// StripeCustomerIDCleared returns if the "stripe_customer_id" field was cleared in this mutation.
-func (m *EntitlementMutation) StripeCustomerIDCleared() bool {
-	_, ok := m.clearedFields[entitlement.FieldStripeCustomerID]
+// ExternalCustomerIDCleared returns if the "external_customer_id" field was cleared in this mutation.
+func (m *EntitlementMutation) ExternalCustomerIDCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldExternalCustomerID]
 	return ok
 }
 
-// ResetStripeCustomerID resets all changes to the "stripe_customer_id" field.
-func (m *EntitlementMutation) ResetStripeCustomerID() {
-	m.stripe_customer_id = nil
-	delete(m.clearedFields, entitlement.FieldStripeCustomerID)
+// ResetExternalCustomerID resets all changes to the "external_customer_id" field.
+func (m *EntitlementMutation) ResetExternalCustomerID() {
+	m.external_customer_id = nil
+	delete(m.clearedFields, entitlement.FieldExternalCustomerID)
 }
 
-// SetStripeSubscriptionID sets the "stripe_subscription_id" field.
-func (m *EntitlementMutation) SetStripeSubscriptionID(s string) {
-	m.stripe_subscription_id = &s
+// SetExternalSubscriptionID sets the "external_subscription_id" field.
+func (m *EntitlementMutation) SetExternalSubscriptionID(s string) {
+	m.external_subscription_id = &s
 }
 
-// StripeSubscriptionID returns the value of the "stripe_subscription_id" field in the mutation.
-func (m *EntitlementMutation) StripeSubscriptionID() (r string, exists bool) {
-	v := m.stripe_subscription_id
+// ExternalSubscriptionID returns the value of the "external_subscription_id" field in the mutation.
+func (m *EntitlementMutation) ExternalSubscriptionID() (r string, exists bool) {
+	v := m.external_subscription_id
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldStripeSubscriptionID returns the old "stripe_subscription_id" field's value of the Entitlement entity.
+// OldExternalSubscriptionID returns the old "external_subscription_id" field's value of the Entitlement entity.
 // If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntitlementMutation) OldStripeSubscriptionID(ctx context.Context) (v string, err error) {
+func (m *EntitlementMutation) OldExternalSubscriptionID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldStripeSubscriptionID is only allowed on UpdateOne operations")
+		return v, errors.New("OldExternalSubscriptionID is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldStripeSubscriptionID requires an ID field in the mutation")
+		return v, errors.New("OldExternalSubscriptionID requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldStripeSubscriptionID: %w", err)
+		return v, fmt.Errorf("querying old value for OldExternalSubscriptionID: %w", err)
 	}
-	return oldValue.StripeSubscriptionID, nil
+	return oldValue.ExternalSubscriptionID, nil
 }
 
-// ClearStripeSubscriptionID clears the value of the "stripe_subscription_id" field.
-func (m *EntitlementMutation) ClearStripeSubscriptionID() {
-	m.stripe_subscription_id = nil
-	m.clearedFields[entitlement.FieldStripeSubscriptionID] = struct{}{}
+// ClearExternalSubscriptionID clears the value of the "external_subscription_id" field.
+func (m *EntitlementMutation) ClearExternalSubscriptionID() {
+	m.external_subscription_id = nil
+	m.clearedFields[entitlement.FieldExternalSubscriptionID] = struct{}{}
 }
 
-// StripeSubscriptionIDCleared returns if the "stripe_subscription_id" field was cleared in this mutation.
-func (m *EntitlementMutation) StripeSubscriptionIDCleared() bool {
-	_, ok := m.clearedFields[entitlement.FieldStripeSubscriptionID]
+// ExternalSubscriptionIDCleared returns if the "external_subscription_id" field was cleared in this mutation.
+func (m *EntitlementMutation) ExternalSubscriptionIDCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldExternalSubscriptionID]
 	return ok
 }
 
-// ResetStripeSubscriptionID resets all changes to the "stripe_subscription_id" field.
-func (m *EntitlementMutation) ResetStripeSubscriptionID() {
-	m.stripe_subscription_id = nil
-	delete(m.clearedFields, entitlement.FieldStripeSubscriptionID)
+// ResetExternalSubscriptionID resets all changes to the "external_subscription_id" field.
+func (m *EntitlementMutation) ResetExternalSubscriptionID() {
+	m.external_subscription_id = nil
+	delete(m.clearedFields, entitlement.FieldExternalSubscriptionID)
 }
 
 // SetExpiresAt sets the "expires_at" field.
@@ -527,6 +533,202 @@ func (m *EntitlementMutation) ResetExpiresAt() {
 	delete(m.clearedFields, entitlement.FieldExpiresAt)
 }
 
+// SetUpgradedAt sets the "upgraded_at" field.
+func (m *EntitlementMutation) SetUpgradedAt(t time.Time) {
+	m.upgraded_at = &t
+}
+
+// UpgradedAt returns the value of the "upgraded_at" field in the mutation.
+func (m *EntitlementMutation) UpgradedAt() (r time.Time, exists bool) {
+	v := m.upgraded_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpgradedAt returns the old "upgraded_at" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldUpgradedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpgradedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpgradedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpgradedAt: %w", err)
+	}
+	return oldValue.UpgradedAt, nil
+}
+
+// ClearUpgradedAt clears the value of the "upgraded_at" field.
+func (m *EntitlementMutation) ClearUpgradedAt() {
+	m.upgraded_at = nil
+	m.clearedFields[entitlement.FieldUpgradedAt] = struct{}{}
+}
+
+// UpgradedAtCleared returns if the "upgraded_at" field was cleared in this mutation.
+func (m *EntitlementMutation) UpgradedAtCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldUpgradedAt]
+	return ok
+}
+
+// ResetUpgradedAt resets all changes to the "upgraded_at" field.
+func (m *EntitlementMutation) ResetUpgradedAt() {
+	m.upgraded_at = nil
+	delete(m.clearedFields, entitlement.FieldUpgradedAt)
+}
+
+// SetUpgradedTier sets the "upgraded_tier" field.
+func (m *EntitlementMutation) SetUpgradedTier(s string) {
+	m.upgraded_tier = &s
+}
+
+// UpgradedTier returns the value of the "upgraded_tier" field in the mutation.
+func (m *EntitlementMutation) UpgradedTier() (r string, exists bool) {
+	v := m.upgraded_tier
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpgradedTier returns the old "upgraded_tier" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldUpgradedTier(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpgradedTier is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpgradedTier requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpgradedTier: %w", err)
+	}
+	return oldValue.UpgradedTier, nil
+}
+
+// ClearUpgradedTier clears the value of the "upgraded_tier" field.
+func (m *EntitlementMutation) ClearUpgradedTier() {
+	m.upgraded_tier = nil
+	m.clearedFields[entitlement.FieldUpgradedTier] = struct{}{}
+}
+
+// UpgradedTierCleared returns if the "upgraded_tier" field was cleared in this mutation.
+func (m *EntitlementMutation) UpgradedTierCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldUpgradedTier]
+	return ok
+}
+
+// ResetUpgradedTier resets all changes to the "upgraded_tier" field.
+func (m *EntitlementMutation) ResetUpgradedTier() {
+	m.upgraded_tier = nil
+	delete(m.clearedFields, entitlement.FieldUpgradedTier)
+}
+
+// SetDowngradedAt sets the "downgraded_at" field.
+func (m *EntitlementMutation) SetDowngradedAt(t time.Time) {
+	m.downgraded_at = &t
+}
+
+// DowngradedAt returns the value of the "downgraded_at" field in the mutation.
+func (m *EntitlementMutation) DowngradedAt() (r time.Time, exists bool) {
+	v := m.downgraded_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDowngradedAt returns the old "downgraded_at" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldDowngradedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDowngradedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDowngradedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDowngradedAt: %w", err)
+	}
+	return oldValue.DowngradedAt, nil
+}
+
+// ClearDowngradedAt clears the value of the "downgraded_at" field.
+func (m *EntitlementMutation) ClearDowngradedAt() {
+	m.downgraded_at = nil
+	m.clearedFields[entitlement.FieldDowngradedAt] = struct{}{}
+}
+
+// DowngradedAtCleared returns if the "downgraded_at" field was cleared in this mutation.
+func (m *EntitlementMutation) DowngradedAtCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldDowngradedAt]
+	return ok
+}
+
+// ResetDowngradedAt resets all changes to the "downgraded_at" field.
+func (m *EntitlementMutation) ResetDowngradedAt() {
+	m.downgraded_at = nil
+	delete(m.clearedFields, entitlement.FieldDowngradedAt)
+}
+
+// SetDowngradedTier sets the "downgraded_tier" field.
+func (m *EntitlementMutation) SetDowngradedTier(s string) {
+	m.downgraded_tier = &s
+}
+
+// DowngradedTier returns the value of the "downgraded_tier" field in the mutation.
+func (m *EntitlementMutation) DowngradedTier() (r string, exists bool) {
+	v := m.downgraded_tier
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDowngradedTier returns the old "downgraded_tier" field's value of the Entitlement entity.
+// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EntitlementMutation) OldDowngradedTier(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDowngradedTier is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDowngradedTier requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDowngradedTier: %w", err)
+	}
+	return oldValue.DowngradedTier, nil
+}
+
+// ClearDowngradedTier clears the value of the "downgraded_tier" field.
+func (m *EntitlementMutation) ClearDowngradedTier() {
+	m.downgraded_tier = nil
+	m.clearedFields[entitlement.FieldDowngradedTier] = struct{}{}
+}
+
+// DowngradedTierCleared returns if the "downgraded_tier" field was cleared in this mutation.
+func (m *EntitlementMutation) DowngradedTierCleared() bool {
+	_, ok := m.clearedFields[entitlement.FieldDowngradedTier]
+	return ok
+}
+
+// ResetDowngradedTier resets all changes to the "downgraded_tier" field.
+func (m *EntitlementMutation) ResetDowngradedTier() {
+	m.downgraded_tier = nil
+	delete(m.clearedFields, entitlement.FieldDowngradedTier)
+}
+
 // SetCancelled sets the "cancelled" field.
 func (m *EntitlementMutation) SetCancelled(b bool) {
 	m.cancelled = &b
@@ -563,6 +765,45 @@ func (m *EntitlementMutation) ResetCancelled() {
 	m.cancelled = nil
 }
 
+// SetOwnerID sets the "owner" edge to the Organization entity by id.
+func (m *EntitlementMutation) SetOwnerID(id string) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *EntitlementMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *EntitlementMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *EntitlementMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *EntitlementMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *EntitlementMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
 // Where appends a list predicates to the EntitlementMutation builder.
 func (m *EntitlementMutation) Where(ps ...predicate.Entitlement) {
 	m.predicates = append(m.predicates, ps...)
@@ -597,7 +838,7 @@ func (m *EntitlementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, entitlement.FieldCreatedAt)
 	}
@@ -613,14 +854,26 @@ func (m *EntitlementMutation) Fields() []string {
 	if m.tier != nil {
 		fields = append(fields, entitlement.FieldTier)
 	}
-	if m.stripe_customer_id != nil {
-		fields = append(fields, entitlement.FieldStripeCustomerID)
+	if m.external_customer_id != nil {
+		fields = append(fields, entitlement.FieldExternalCustomerID)
 	}
-	if m.stripe_subscription_id != nil {
-		fields = append(fields, entitlement.FieldStripeSubscriptionID)
+	if m.external_subscription_id != nil {
+		fields = append(fields, entitlement.FieldExternalSubscriptionID)
 	}
 	if m.expires_at != nil {
 		fields = append(fields, entitlement.FieldExpiresAt)
+	}
+	if m.upgraded_at != nil {
+		fields = append(fields, entitlement.FieldUpgradedAt)
+	}
+	if m.upgraded_tier != nil {
+		fields = append(fields, entitlement.FieldUpgradedTier)
+	}
+	if m.downgraded_at != nil {
+		fields = append(fields, entitlement.FieldDowngradedAt)
+	}
+	if m.downgraded_tier != nil {
+		fields = append(fields, entitlement.FieldDowngradedTier)
 	}
 	if m.cancelled != nil {
 		fields = append(fields, entitlement.FieldCancelled)
@@ -643,12 +896,20 @@ func (m *EntitlementMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case entitlement.FieldTier:
 		return m.Tier()
-	case entitlement.FieldStripeCustomerID:
-		return m.StripeCustomerID()
-	case entitlement.FieldStripeSubscriptionID:
-		return m.StripeSubscriptionID()
+	case entitlement.FieldExternalCustomerID:
+		return m.ExternalCustomerID()
+	case entitlement.FieldExternalSubscriptionID:
+		return m.ExternalSubscriptionID()
 	case entitlement.FieldExpiresAt:
 		return m.ExpiresAt()
+	case entitlement.FieldUpgradedAt:
+		return m.UpgradedAt()
+	case entitlement.FieldUpgradedTier:
+		return m.UpgradedTier()
+	case entitlement.FieldDowngradedAt:
+		return m.DowngradedAt()
+	case entitlement.FieldDowngradedTier:
+		return m.DowngradedTier()
 	case entitlement.FieldCancelled:
 		return m.Cancelled()
 	}
@@ -670,12 +931,20 @@ func (m *EntitlementMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldUpdatedBy(ctx)
 	case entitlement.FieldTier:
 		return m.OldTier(ctx)
-	case entitlement.FieldStripeCustomerID:
-		return m.OldStripeCustomerID(ctx)
-	case entitlement.FieldStripeSubscriptionID:
-		return m.OldStripeSubscriptionID(ctx)
+	case entitlement.FieldExternalCustomerID:
+		return m.OldExternalCustomerID(ctx)
+	case entitlement.FieldExternalSubscriptionID:
+		return m.OldExternalSubscriptionID(ctx)
 	case entitlement.FieldExpiresAt:
 		return m.OldExpiresAt(ctx)
+	case entitlement.FieldUpgradedAt:
+		return m.OldUpgradedAt(ctx)
+	case entitlement.FieldUpgradedTier:
+		return m.OldUpgradedTier(ctx)
+	case entitlement.FieldDowngradedAt:
+		return m.OldDowngradedAt(ctx)
+	case entitlement.FieldDowngradedTier:
+		return m.OldDowngradedTier(ctx)
 	case entitlement.FieldCancelled:
 		return m.OldCancelled(ctx)
 	}
@@ -722,19 +991,19 @@ func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTier(v)
 		return nil
-	case entitlement.FieldStripeCustomerID:
+	case entitlement.FieldExternalCustomerID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetStripeCustomerID(v)
+		m.SetExternalCustomerID(v)
 		return nil
-	case entitlement.FieldStripeSubscriptionID:
+	case entitlement.FieldExternalSubscriptionID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetStripeSubscriptionID(v)
+		m.SetExternalSubscriptionID(v)
 		return nil
 	case entitlement.FieldExpiresAt:
 		v, ok := value.(time.Time)
@@ -742,6 +1011,34 @@ func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExpiresAt(v)
+		return nil
+	case entitlement.FieldUpgradedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpgradedAt(v)
+		return nil
+	case entitlement.FieldUpgradedTier:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpgradedTier(v)
+		return nil
+	case entitlement.FieldDowngradedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDowngradedAt(v)
+		return nil
+	case entitlement.FieldDowngradedTier:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDowngradedTier(v)
 		return nil
 	case entitlement.FieldCancelled:
 		v, ok := value.(bool)
@@ -786,14 +1083,26 @@ func (m *EntitlementMutation) ClearedFields() []string {
 	if m.FieldCleared(entitlement.FieldUpdatedBy) {
 		fields = append(fields, entitlement.FieldUpdatedBy)
 	}
-	if m.FieldCleared(entitlement.FieldStripeCustomerID) {
-		fields = append(fields, entitlement.FieldStripeCustomerID)
+	if m.FieldCleared(entitlement.FieldExternalCustomerID) {
+		fields = append(fields, entitlement.FieldExternalCustomerID)
 	}
-	if m.FieldCleared(entitlement.FieldStripeSubscriptionID) {
-		fields = append(fields, entitlement.FieldStripeSubscriptionID)
+	if m.FieldCleared(entitlement.FieldExternalSubscriptionID) {
+		fields = append(fields, entitlement.FieldExternalSubscriptionID)
 	}
 	if m.FieldCleared(entitlement.FieldExpiresAt) {
 		fields = append(fields, entitlement.FieldExpiresAt)
+	}
+	if m.FieldCleared(entitlement.FieldUpgradedAt) {
+		fields = append(fields, entitlement.FieldUpgradedAt)
+	}
+	if m.FieldCleared(entitlement.FieldUpgradedTier) {
+		fields = append(fields, entitlement.FieldUpgradedTier)
+	}
+	if m.FieldCleared(entitlement.FieldDowngradedAt) {
+		fields = append(fields, entitlement.FieldDowngradedAt)
+	}
+	if m.FieldCleared(entitlement.FieldDowngradedTier) {
+		fields = append(fields, entitlement.FieldDowngradedTier)
 	}
 	return fields
 }
@@ -815,14 +1124,26 @@ func (m *EntitlementMutation) ClearField(name string) error {
 	case entitlement.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
-	case entitlement.FieldStripeCustomerID:
-		m.ClearStripeCustomerID()
+	case entitlement.FieldExternalCustomerID:
+		m.ClearExternalCustomerID()
 		return nil
-	case entitlement.FieldStripeSubscriptionID:
-		m.ClearStripeSubscriptionID()
+	case entitlement.FieldExternalSubscriptionID:
+		m.ClearExternalSubscriptionID()
 		return nil
 	case entitlement.FieldExpiresAt:
 		m.ClearExpiresAt()
+		return nil
+	case entitlement.FieldUpgradedAt:
+		m.ClearUpgradedAt()
+		return nil
+	case entitlement.FieldUpgradedTier:
+		m.ClearUpgradedTier()
+		return nil
+	case entitlement.FieldDowngradedAt:
+		m.ClearDowngradedAt()
+		return nil
+	case entitlement.FieldDowngradedTier:
+		m.ClearDowngradedTier()
 		return nil
 	}
 	return fmt.Errorf("unknown Entitlement nullable field %s", name)
@@ -847,14 +1168,26 @@ func (m *EntitlementMutation) ResetField(name string) error {
 	case entitlement.FieldTier:
 		m.ResetTier()
 		return nil
-	case entitlement.FieldStripeCustomerID:
-		m.ResetStripeCustomerID()
+	case entitlement.FieldExternalCustomerID:
+		m.ResetExternalCustomerID()
 		return nil
-	case entitlement.FieldStripeSubscriptionID:
-		m.ResetStripeSubscriptionID()
+	case entitlement.FieldExternalSubscriptionID:
+		m.ResetExternalSubscriptionID()
 		return nil
 	case entitlement.FieldExpiresAt:
 		m.ResetExpiresAt()
+		return nil
+	case entitlement.FieldUpgradedAt:
+		m.ResetUpgradedAt()
+		return nil
+	case entitlement.FieldUpgradedTier:
+		m.ResetUpgradedTier()
+		return nil
+	case entitlement.FieldDowngradedAt:
+		m.ResetDowngradedAt()
+		return nil
+	case entitlement.FieldDowngradedTier:
+		m.ResetDowngradedTier()
 		return nil
 	case entitlement.FieldCancelled:
 		m.ResetCancelled()
@@ -865,19 +1198,28 @@ func (m *EntitlementMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EntitlementMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.owner != nil {
+		edges = append(edges, entitlement.EdgeOwner)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *EntitlementMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case entitlement.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EntitlementMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -889,25 +1231,42 @@ func (m *EntitlementMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EntitlementMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedowner {
+		edges = append(edges, entitlement.EdgeOwner)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *EntitlementMutation) EdgeCleared(name string) bool {
+	switch name {
+	case entitlement.EdgeOwner:
+		return m.clearedowner
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *EntitlementMutation) ClearEdge(name string) error {
+	switch name {
+	case entitlement.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
 	return fmt.Errorf("unknown Entitlement unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *EntitlementMutation) ResetEdge(name string) error {
+	switch name {
+	case entitlement.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	}
 	return fmt.Errorf("unknown Entitlement edge %s", name)
 }
 
@@ -3619,6 +3978,8 @@ type OauthProviderMutation struct {
 	addauth_style *int8
 	info_url      *string
 	clearedFields map[string]struct{}
+	owner         *string
+	clearedowner  bool
 	done          bool
 	oldValue      func(context.Context) (*OauthProvider, error)
 	predicates    []predicate.OauthProvider
@@ -4242,6 +4603,45 @@ func (m *OauthProviderMutation) ResetInfoURL() {
 	m.info_url = nil
 }
 
+// SetOwnerID sets the "owner" edge to the Organization entity by id.
+func (m *OauthProviderMutation) SetOwnerID(id string) {
+	m.owner = &id
+}
+
+// ClearOwner clears the "owner" edge to the Organization entity.
+func (m *OauthProviderMutation) ClearOwner() {
+	m.clearedowner = true
+}
+
+// OwnerCleared reports if the "owner" edge to the Organization entity was cleared.
+func (m *OauthProviderMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *OauthProviderMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *OauthProviderMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *OauthProviderMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
 // Where appends a list predicates to the OauthProviderMutation builder.
 func (m *OauthProviderMutation) Where(ps ...predicate.OauthProvider) {
 	m.predicates = append(m.predicates, ps...)
@@ -4609,19 +5009,28 @@ func (m *OauthProviderMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OauthProviderMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.owner != nil {
+		edges = append(edges, oauthprovider.EdgeOwner)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *OauthProviderMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case oauthprovider.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OauthProviderMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -4633,61 +5042,84 @@ func (m *OauthProviderMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OauthProviderMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedowner {
+		edges = append(edges, oauthprovider.EdgeOwner)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *OauthProviderMutation) EdgeCleared(name string) bool {
+	switch name {
+	case oauthprovider.EdgeOwner:
+		return m.clearedowner
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *OauthProviderMutation) ClearEdge(name string) error {
+	switch name {
+	case oauthprovider.EdgeOwner:
+		m.ClearOwner()
+		return nil
+	}
 	return fmt.Errorf("unknown OauthProvider unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *OauthProviderMutation) ResetEdge(name string) error {
+	switch name {
+	case oauthprovider.EdgeOwner:
+		m.ResetOwner()
+		return nil
+	}
 	return fmt.Errorf("unknown OauthProvider edge %s", name)
 }
 
 // OrganizationMutation represents an operation that mutates the Organization nodes in the graph.
 type OrganizationMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *string
-	created_at          *time.Time
-	updated_at          *time.Time
-	created_by          *string
-	updated_by          *string
-	name                *string
-	display_name        *string
-	description         *string
-	clearedFields       map[string]struct{}
-	parent              *string
-	clearedparent       bool
-	children            map[string]struct{}
-	removedchildren     map[string]struct{}
-	clearedchildren     bool
-	users               map[string]struct{}
-	removedusers        map[string]struct{}
-	clearedusers        bool
-	groups              map[string]struct{}
-	removedgroups       map[string]struct{}
-	clearedgroups       bool
-	integrations        map[string]struct{}
-	removedintegrations map[string]struct{}
-	clearedintegrations bool
-	setting             *string
-	clearedsetting      bool
-	done                bool
-	oldValue            func(context.Context) (*Organization, error)
-	predicates          []predicate.Organization
+	op                   Op
+	typ                  string
+	id                   *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	created_by           *string
+	updated_by           *string
+	name                 *string
+	display_name         *string
+	description          *string
+	clearedFields        map[string]struct{}
+	parent               *string
+	clearedparent        bool
+	children             map[string]struct{}
+	removedchildren      map[string]struct{}
+	clearedchildren      bool
+	users                map[string]struct{}
+	removedusers         map[string]struct{}
+	clearedusers         bool
+	groups               map[string]struct{}
+	removedgroups        map[string]struct{}
+	clearedgroups        bool
+	integrations         map[string]struct{}
+	removedintegrations  map[string]struct{}
+	clearedintegrations  bool
+	setting              *string
+	clearedsetting       bool
+	entitlements         map[string]struct{}
+	removedentitlements  map[string]struct{}
+	clearedentitlements  bool
+	oauthprovider        map[string]struct{}
+	removedoauthprovider map[string]struct{}
+	clearedoauthprovider bool
+	done                 bool
+	oldValue             func(context.Context) (*Organization, error)
+	predicates           []predicate.Organization
 }
 
 var _ ent.Mutation = (*OrganizationMutation)(nil)
@@ -5429,6 +5861,114 @@ func (m *OrganizationMutation) ResetSetting() {
 	m.clearedsetting = false
 }
 
+// AddEntitlementIDs adds the "entitlements" edge to the Entitlement entity by ids.
+func (m *OrganizationMutation) AddEntitlementIDs(ids ...string) {
+	if m.entitlements == nil {
+		m.entitlements = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.entitlements[ids[i]] = struct{}{}
+	}
+}
+
+// ClearEntitlements clears the "entitlements" edge to the Entitlement entity.
+func (m *OrganizationMutation) ClearEntitlements() {
+	m.clearedentitlements = true
+}
+
+// EntitlementsCleared reports if the "entitlements" edge to the Entitlement entity was cleared.
+func (m *OrganizationMutation) EntitlementsCleared() bool {
+	return m.clearedentitlements
+}
+
+// RemoveEntitlementIDs removes the "entitlements" edge to the Entitlement entity by IDs.
+func (m *OrganizationMutation) RemoveEntitlementIDs(ids ...string) {
+	if m.removedentitlements == nil {
+		m.removedentitlements = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.entitlements, ids[i])
+		m.removedentitlements[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedEntitlements returns the removed IDs of the "entitlements" edge to the Entitlement entity.
+func (m *OrganizationMutation) RemovedEntitlementsIDs() (ids []string) {
+	for id := range m.removedentitlements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// EntitlementsIDs returns the "entitlements" edge IDs in the mutation.
+func (m *OrganizationMutation) EntitlementsIDs() (ids []string) {
+	for id := range m.entitlements {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetEntitlements resets all changes to the "entitlements" edge.
+func (m *OrganizationMutation) ResetEntitlements() {
+	m.entitlements = nil
+	m.clearedentitlements = false
+	m.removedentitlements = nil
+}
+
+// AddOauthproviderIDs adds the "oauthprovider" edge to the OauthProvider entity by ids.
+func (m *OrganizationMutation) AddOauthproviderIDs(ids ...string) {
+	if m.oauthprovider == nil {
+		m.oauthprovider = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.oauthprovider[ids[i]] = struct{}{}
+	}
+}
+
+// ClearOauthprovider clears the "oauthprovider" edge to the OauthProvider entity.
+func (m *OrganizationMutation) ClearOauthprovider() {
+	m.clearedoauthprovider = true
+}
+
+// OauthproviderCleared reports if the "oauthprovider" edge to the OauthProvider entity was cleared.
+func (m *OrganizationMutation) OauthproviderCleared() bool {
+	return m.clearedoauthprovider
+}
+
+// RemoveOauthproviderIDs removes the "oauthprovider" edge to the OauthProvider entity by IDs.
+func (m *OrganizationMutation) RemoveOauthproviderIDs(ids ...string) {
+	if m.removedoauthprovider == nil {
+		m.removedoauthprovider = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.oauthprovider, ids[i])
+		m.removedoauthprovider[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOauthprovider returns the removed IDs of the "oauthprovider" edge to the OauthProvider entity.
+func (m *OrganizationMutation) RemovedOauthproviderIDs() (ids []string) {
+	for id := range m.removedoauthprovider {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OauthproviderIDs returns the "oauthprovider" edge IDs in the mutation.
+func (m *OrganizationMutation) OauthproviderIDs() (ids []string) {
+	for id := range m.oauthprovider {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOauthprovider resets all changes to the "oauthprovider" edge.
+func (m *OrganizationMutation) ResetOauthprovider() {
+	m.oauthprovider = nil
+	m.clearedoauthprovider = false
+	m.removedoauthprovider = nil
+}
+
 // Where appends a list predicates to the OrganizationMutation builder.
 func (m *OrganizationMutation) Where(ps ...predicate.Organization) {
 	m.predicates = append(m.predicates, ps...)
@@ -5708,7 +6248,7 @@ func (m *OrganizationMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 8)
 	if m.parent != nil {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -5726,6 +6266,12 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.setting != nil {
 		edges = append(edges, organization.EdgeSetting)
+	}
+	if m.entitlements != nil {
+		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.oauthprovider != nil {
+		edges = append(edges, organization.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -5766,13 +6312,25 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 		if id := m.setting; id != nil {
 			return []ent.Value{*id}
 		}
+	case organization.EdgeEntitlements:
+		ids := make([]ent.Value, 0, len(m.entitlements))
+		for id := range m.entitlements {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeOauthprovider:
+		ids := make([]ent.Value, 0, len(m.oauthprovider))
+		for id := range m.oauthprovider {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 8)
 	if m.removedchildren != nil {
 		edges = append(edges, organization.EdgeChildren)
 	}
@@ -5784,6 +6342,12 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	}
 	if m.removedintegrations != nil {
 		edges = append(edges, organization.EdgeIntegrations)
+	}
+	if m.removedentitlements != nil {
+		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.removedoauthprovider != nil {
+		edges = append(edges, organization.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -5816,13 +6380,25 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeEntitlements:
+		ids := make([]ent.Value, 0, len(m.removedentitlements))
+		for id := range m.removedentitlements {
+			ids = append(ids, id)
+		}
+		return ids
+	case organization.EdgeOauthprovider:
+		ids := make([]ent.Value, 0, len(m.removedoauthprovider))
+		for id := range m.removedoauthprovider {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 8)
 	if m.clearedparent {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -5840,6 +6416,12 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	}
 	if m.clearedsetting {
 		edges = append(edges, organization.EdgeSetting)
+	}
+	if m.clearedentitlements {
+		edges = append(edges, organization.EdgeEntitlements)
+	}
+	if m.clearedoauthprovider {
+		edges = append(edges, organization.EdgeOauthprovider)
 	}
 	return edges
 }
@@ -5860,6 +6442,10 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedintegrations
 	case organization.EdgeSetting:
 		return m.clearedsetting
+	case organization.EdgeEntitlements:
+		return m.clearedentitlements
+	case organization.EdgeOauthprovider:
+		return m.clearedoauthprovider
 	}
 	return false
 }
@@ -5899,6 +6485,12 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	case organization.EdgeSetting:
 		m.ResetSetting()
+		return nil
+	case organization.EdgeEntitlements:
+		m.ResetEntitlements()
+		return nil
+	case organization.EdgeOauthprovider:
+		m.ResetOauthprovider()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
@@ -8090,6 +8682,8 @@ type RefreshTokenMutation struct {
 	obsolete_token            *string
 	last_used                 *time.Time
 	clearedFields             map[string]struct{}
+	user                      *string
+	cleareduser               bool
 	done                      bool
 	oldValue                  func(context.Context) (*RefreshToken, error)
 	predicates                []predicate.RefreshToken
@@ -8790,6 +9384,45 @@ func (m *RefreshTokenMutation) ResetLastUsed() {
 	m.last_used = nil
 }
 
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *RefreshTokenMutation) SetUserID(id string) {
+	m.user = &id
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *RefreshTokenMutation) ClearUser() {
+	m.cleareduser = true
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *RefreshTokenMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserID returns the "user" edge ID in the mutation.
+func (m *RefreshTokenMutation) UserID() (id string, exists bool) {
+	if m.user != nil {
+		return *m.user, true
+	}
+	return
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *RefreshTokenMutation) UserIDs() (ids []string) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *RefreshTokenMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
 // Where appends a list predicates to the RefreshTokenMutation builder.
 func (m *RefreshTokenMutation) Where(ps ...predicate.RefreshToken) {
 	m.predicates = append(m.predicates, ps...)
@@ -9165,19 +9798,28 @@ func (m *RefreshTokenMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *RefreshTokenMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, refreshtoken.EdgeUser)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *RefreshTokenMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case refreshtoken.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *RefreshTokenMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -9189,25 +9831,42 @@ func (m *RefreshTokenMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *RefreshTokenMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, refreshtoken.EdgeUser)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *RefreshTokenMutation) EdgeCleared(name string) bool {
+	switch name {
+	case refreshtoken.EdgeUser:
+		return m.cleareduser
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *RefreshTokenMutation) ClearEdge(name string) error {
+	switch name {
+	case refreshtoken.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
 	return fmt.Errorf("unknown RefreshToken unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *RefreshTokenMutation) ResetEdge(name string) error {
+	switch name {
+	case refreshtoken.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
 	return fmt.Errorf("unknown RefreshToken edge %s", name)
 }
 
@@ -10136,6 +10795,9 @@ type UserMutation struct {
 	clearedpersonal_access_tokens bool
 	setting                       *string
 	clearedsetting                bool
+	refreshtoken                  map[string]struct{}
+	removedrefreshtoken           map[string]struct{}
+	clearedrefreshtoken           bool
 	done                          bool
 	oldValue                      func(context.Context) (*User, error)
 	predicates                    []predicate.User
@@ -11059,6 +11721,60 @@ func (m *UserMutation) ResetSetting() {
 	m.clearedsetting = false
 }
 
+// AddRefreshtokenIDs adds the "refreshtoken" edge to the RefreshToken entity by ids.
+func (m *UserMutation) AddRefreshtokenIDs(ids ...string) {
+	if m.refreshtoken == nil {
+		m.refreshtoken = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.refreshtoken[ids[i]] = struct{}{}
+	}
+}
+
+// ClearRefreshtoken clears the "refreshtoken" edge to the RefreshToken entity.
+func (m *UserMutation) ClearRefreshtoken() {
+	m.clearedrefreshtoken = true
+}
+
+// RefreshtokenCleared reports if the "refreshtoken" edge to the RefreshToken entity was cleared.
+func (m *UserMutation) RefreshtokenCleared() bool {
+	return m.clearedrefreshtoken
+}
+
+// RemoveRefreshtokenIDs removes the "refreshtoken" edge to the RefreshToken entity by IDs.
+func (m *UserMutation) RemoveRefreshtokenIDs(ids ...string) {
+	if m.removedrefreshtoken == nil {
+		m.removedrefreshtoken = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.refreshtoken, ids[i])
+		m.removedrefreshtoken[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedRefreshtoken returns the removed IDs of the "refreshtoken" edge to the RefreshToken entity.
+func (m *UserMutation) RemovedRefreshtokenIDs() (ids []string) {
+	for id := range m.removedrefreshtoken {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// RefreshtokenIDs returns the "refreshtoken" edge IDs in the mutation.
+func (m *UserMutation) RefreshtokenIDs() (ids []string) {
+	for id := range m.refreshtoken {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetRefreshtoken resets all changes to the "refreshtoken" edge.
+func (m *UserMutation) ResetRefreshtoken() {
+	m.refreshtoken = nil
+	m.clearedrefreshtoken = false
+	m.removedrefreshtoken = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -11441,7 +12157,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.organizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -11456,6 +12172,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.setting != nil {
 		edges = append(edges, user.EdgeSetting)
+	}
+	if m.refreshtoken != nil {
+		edges = append(edges, user.EdgeRefreshtoken)
 	}
 	return edges
 }
@@ -11492,13 +12211,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.setting; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeRefreshtoken:
+		ids := make([]ent.Value, 0, len(m.refreshtoken))
+		for id := range m.refreshtoken {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.removedorganizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -11510,6 +12235,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedpersonal_access_tokens != nil {
 		edges = append(edges, user.EdgePersonalAccessTokens)
+	}
+	if m.removedrefreshtoken != nil {
+		edges = append(edges, user.EdgeRefreshtoken)
 	}
 	return edges
 }
@@ -11542,13 +12270,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeRefreshtoken:
+		ids := make([]ent.Value, 0, len(m.removedrefreshtoken))
+		for id := range m.removedrefreshtoken {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 5)
+	edges := make([]string, 0, 6)
 	if m.clearedorganizations {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -11563,6 +12297,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedsetting {
 		edges = append(edges, user.EdgeSetting)
+	}
+	if m.clearedrefreshtoken {
+		edges = append(edges, user.EdgeRefreshtoken)
 	}
 	return edges
 }
@@ -11581,6 +12318,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedpersonal_access_tokens
 	case user.EdgeSetting:
 		return m.clearedsetting
+	case user.EdgeRefreshtoken:
+		return m.clearedrefreshtoken
 	}
 	return false
 }
@@ -11614,6 +12353,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeSetting:
 		m.ResetSetting()
+		return nil
+	case user.EdgeRefreshtoken:
+		m.ResetRefreshtoken()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

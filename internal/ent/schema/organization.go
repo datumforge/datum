@@ -83,6 +83,8 @@ func (Organization) Edges() []ent.Edge {
 		edge.To("groups", Group.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("integrations", Integration.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("setting", OrganizationSettings.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("entitlements", Entitlement.Type),
+		edge.To("oauthprovider", OauthProvider.Type),
 	}
 }
 

@@ -54,7 +54,7 @@ type GroupEdges struct {
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
 
 	namedUsers map[string][]*User
 }

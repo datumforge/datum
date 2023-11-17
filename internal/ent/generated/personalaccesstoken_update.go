@@ -158,14 +158,6 @@ func (patu *PersonalAccessTokenUpdate) SetLastUsedAt(t time.Time) *PersonalAcces
 	return patu
 }
 
-// SetNillableLastUsedAt sets the "last_used_at" field if the given value is not nil.
-func (patu *PersonalAccessTokenUpdate) SetNillableLastUsedAt(t *time.Time) *PersonalAccessTokenUpdate {
-	if t != nil {
-		patu.SetLastUsedAt(*t)
-	}
-	return patu
-}
-
 // ClearLastUsedAt clears the value of the "last_used_at" field.
 func (patu *PersonalAccessTokenUpdate) ClearLastUsedAt() *PersonalAccessTokenUpdate {
 	patu.mutation.ClearLastUsedAt()
@@ -226,6 +218,13 @@ func (patu *PersonalAccessTokenUpdate) defaults() error {
 		}
 		v := personalaccesstoken.UpdateDefaultUpdatedAt()
 		patu.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := patu.mutation.LastUsedAt(); !ok && !patu.mutation.LastUsedAtCleared() {
+		if personalaccesstoken.UpdateDefaultLastUsedAt == nil {
+			return fmt.Errorf("generated: uninitialized personalaccesstoken.UpdateDefaultLastUsedAt (forgotten import generated/runtime?)")
+		}
+		v := personalaccesstoken.UpdateDefaultLastUsedAt()
+		patu.mutation.SetLastUsedAt(v)
 	}
 	return nil
 }
@@ -470,14 +469,6 @@ func (patuo *PersonalAccessTokenUpdateOne) SetLastUsedAt(t time.Time) *PersonalA
 	return patuo
 }
 
-// SetNillableLastUsedAt sets the "last_used_at" field if the given value is not nil.
-func (patuo *PersonalAccessTokenUpdateOne) SetNillableLastUsedAt(t *time.Time) *PersonalAccessTokenUpdateOne {
-	if t != nil {
-		patuo.SetLastUsedAt(*t)
-	}
-	return patuo
-}
-
 // ClearLastUsedAt clears the value of the "last_used_at" field.
 func (patuo *PersonalAccessTokenUpdateOne) ClearLastUsedAt() *PersonalAccessTokenUpdateOne {
 	patuo.mutation.ClearLastUsedAt()
@@ -551,6 +542,13 @@ func (patuo *PersonalAccessTokenUpdateOne) defaults() error {
 		}
 		v := personalaccesstoken.UpdateDefaultUpdatedAt()
 		patuo.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := patuo.mutation.LastUsedAt(); !ok && !patuo.mutation.LastUsedAtCleared() {
+		if personalaccesstoken.UpdateDefaultLastUsedAt == nil {
+			return fmt.Errorf("generated: uninitialized personalaccesstoken.UpdateDefaultLastUsedAt (forgotten import generated/runtime?)")
+		}
+		v := personalaccesstoken.UpdateDefaultLastUsedAt()
+		patuo.mutation.SetLastUsedAt(v)
 	}
 	return nil
 }

@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -23,6 +24,8 @@ type RefreshTokenQuery struct {
 	order      []refreshtoken.OrderOption
 	inters     []Interceptor
 	predicates []predicate.RefreshToken
+	withUser   *UserQuery
+	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*RefreshToken) error
 	// intermediate query (i.e. traversal path).
@@ -59,6 +62,31 @@ func (rtq *RefreshTokenQuery) Unique(unique bool) *RefreshTokenQuery {
 func (rtq *RefreshTokenQuery) Order(o ...refreshtoken.OrderOption) *RefreshTokenQuery {
 	rtq.order = append(rtq.order, o...)
 	return rtq
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (rtq *RefreshTokenQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: rtq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := rtq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := rtq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(refreshtoken.Table, refreshtoken.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, refreshtoken.UserTable, refreshtoken.UserColumn),
+		)
+		schemaConfig := rtq.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.RefreshToken
+		fromU = sqlgraph.SetNeighbors(rtq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first RefreshToken entity from the query.
@@ -253,10 +281,22 @@ func (rtq *RefreshTokenQuery) Clone() *RefreshTokenQuery {
 		order:      append([]refreshtoken.OrderOption{}, rtq.order...),
 		inters:     append([]Interceptor{}, rtq.inters...),
 		predicates: append([]predicate.RefreshToken{}, rtq.predicates...),
+		withUser:   rtq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  rtq.sql.Clone(),
 		path: rtq.path,
 	}
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (rtq *RefreshTokenQuery) WithUser(opts ...func(*UserQuery)) *RefreshTokenQuery {
+	query := (&UserClient{config: rtq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	rtq.withUser = query
+	return rtq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -335,15 +375,26 @@ func (rtq *RefreshTokenQuery) prepareQuery(ctx context.Context) error {
 
 func (rtq *RefreshTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*RefreshToken, error) {
 	var (
-		nodes = []*RefreshToken{}
-		_spec = rtq.querySpec()
+		nodes       = []*RefreshToken{}
+		withFKs     = rtq.withFKs
+		_spec       = rtq.querySpec()
+		loadedTypes = [1]bool{
+			rtq.withUser != nil,
+		}
 	)
+	if rtq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, refreshtoken.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*RefreshToken).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &RefreshToken{config: rtq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	_spec.Node.Schema = rtq.schemaConfig.RefreshToken
@@ -360,12 +411,51 @@ func (rtq *RefreshTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := rtq.withUser; query != nil {
+		if err := rtq.loadUser(ctx, query, nodes, nil,
+			func(n *RefreshToken, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range rtq.loadTotal {
 		if err := rtq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (rtq *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*RefreshToken, init func(*RefreshToken), assign func(*RefreshToken, *User)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*RefreshToken)
+	for i := range nodes {
+		if nodes[i].user_refreshtoken == nil {
+			continue
+		}
+		fk := *nodes[i].user_refreshtoken
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_refreshtoken" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (rtq *RefreshTokenQuery) sqlCount(ctx context.Context) (int, error) {

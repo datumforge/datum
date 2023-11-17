@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersettings"
@@ -183,14 +184,6 @@ func (uu *UserUpdate) SetAvatarUpdatedAt(t time.Time) *UserUpdate {
 	return uu
 }
 
-// SetNillableAvatarUpdatedAt sets the "avatar_updated_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableAvatarUpdatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetAvatarUpdatedAt(*t)
-	}
-	return uu
-}
-
 // ClearAvatarUpdatedAt clears the value of the "avatar_updated_at" field.
 func (uu *UserUpdate) ClearAvatarUpdatedAt() *UserUpdate {
 	uu.mutation.ClearAvatarUpdatedAt()
@@ -200,14 +193,6 @@ func (uu *UserUpdate) ClearAvatarUpdatedAt() *UserUpdate {
 // SetLastSeen sets the "last_seen" field.
 func (uu *UserUpdate) SetLastSeen(t time.Time) *UserUpdate {
 	uu.mutation.SetLastSeen(t)
-	return uu
-}
-
-// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableLastSeen(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetLastSeen(*t)
-	}
 	return uu
 }
 
@@ -308,6 +293,21 @@ func (uu *UserUpdate) SetSetting(u *UserSettings) *UserUpdate {
 	return uu.SetSettingID(u.ID)
 }
 
+// AddRefreshtokenIDs adds the "refreshtoken" edge to the RefreshToken entity by IDs.
+func (uu *UserUpdate) AddRefreshtokenIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddRefreshtokenIDs(ids...)
+	return uu
+}
+
+// AddRefreshtoken adds the "refreshtoken" edges to the RefreshToken entity.
+func (uu *UserUpdate) AddRefreshtoken(r ...*RefreshToken) *UserUpdate {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddRefreshtokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -403,6 +403,27 @@ func (uu *UserUpdate) ClearSetting() *UserUpdate {
 	return uu
 }
 
+// ClearRefreshtoken clears all "refreshtoken" edges to the RefreshToken entity.
+func (uu *UserUpdate) ClearRefreshtoken() *UserUpdate {
+	uu.mutation.ClearRefreshtoken()
+	return uu
+}
+
+// RemoveRefreshtokenIDs removes the "refreshtoken" edge to RefreshToken entities by IDs.
+func (uu *UserUpdate) RemoveRefreshtokenIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveRefreshtokenIDs(ids...)
+	return uu
+}
+
+// RemoveRefreshtoken removes "refreshtoken" edges to RefreshToken entities.
+func (uu *UserUpdate) RemoveRefreshtoken(r ...*RefreshToken) *UserUpdate {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveRefreshtokenIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
 	if err := uu.defaults(); err != nil {
@@ -441,6 +462,20 @@ func (uu *UserUpdate) defaults() error {
 		}
 		v := user.UpdateDefaultUpdatedAt()
 		uu.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := uu.mutation.AvatarUpdatedAt(); !ok && !uu.mutation.AvatarUpdatedAtCleared() {
+		if user.UpdateDefaultAvatarUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized user.UpdateDefaultAvatarUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := user.UpdateDefaultAvatarUpdatedAt()
+		uu.mutation.SetAvatarUpdatedAt(v)
+	}
+	if _, ok := uu.mutation.LastSeen(); !ok && !uu.mutation.LastSeenCleared() {
+		if user.UpdateDefaultLastSeen == nil {
+			return fmt.Errorf("generated: uninitialized user.UpdateDefaultLastSeen (forgotten import generated/runtime?)")
+		}
+		v := user.UpdateDefaultLastSeen()
+		uu.mutation.SetLastSeen(v)
 	}
 	return nil
 }
@@ -775,6 +810,54 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.RefreshtokenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.RefreshToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedRefreshtokenIDs(); len(nodes) > 0 && !uu.mutation.RefreshtokenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RefreshtokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = uu.schemaConfig.User
 	ctx = internal.NewSchemaConfigContext(ctx, uu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
@@ -945,14 +1028,6 @@ func (uuo *UserUpdateOne) SetAvatarUpdatedAt(t time.Time) *UserUpdateOne {
 	return uuo
 }
 
-// SetNillableAvatarUpdatedAt sets the "avatar_updated_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableAvatarUpdatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetAvatarUpdatedAt(*t)
-	}
-	return uuo
-}
-
 // ClearAvatarUpdatedAt clears the value of the "avatar_updated_at" field.
 func (uuo *UserUpdateOne) ClearAvatarUpdatedAt() *UserUpdateOne {
 	uuo.mutation.ClearAvatarUpdatedAt()
@@ -962,14 +1037,6 @@ func (uuo *UserUpdateOne) ClearAvatarUpdatedAt() *UserUpdateOne {
 // SetLastSeen sets the "last_seen" field.
 func (uuo *UserUpdateOne) SetLastSeen(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetLastSeen(t)
-	return uuo
-}
-
-// SetNillableLastSeen sets the "last_seen" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableLastSeen(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetLastSeen(*t)
-	}
 	return uuo
 }
 
@@ -1070,6 +1137,21 @@ func (uuo *UserUpdateOne) SetSetting(u *UserSettings) *UserUpdateOne {
 	return uuo.SetSettingID(u.ID)
 }
 
+// AddRefreshtokenIDs adds the "refreshtoken" edge to the RefreshToken entity by IDs.
+func (uuo *UserUpdateOne) AddRefreshtokenIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddRefreshtokenIDs(ids...)
+	return uuo
+}
+
+// AddRefreshtoken adds the "refreshtoken" edges to the RefreshToken entity.
+func (uuo *UserUpdateOne) AddRefreshtoken(r ...*RefreshToken) *UserUpdateOne {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddRefreshtokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1165,6 +1247,27 @@ func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
 	return uuo
 }
 
+// ClearRefreshtoken clears all "refreshtoken" edges to the RefreshToken entity.
+func (uuo *UserUpdateOne) ClearRefreshtoken() *UserUpdateOne {
+	uuo.mutation.ClearRefreshtoken()
+	return uuo
+}
+
+// RemoveRefreshtokenIDs removes the "refreshtoken" edge to RefreshToken entities by IDs.
+func (uuo *UserUpdateOne) RemoveRefreshtokenIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveRefreshtokenIDs(ids...)
+	return uuo
+}
+
+// RemoveRefreshtoken removes "refreshtoken" edges to RefreshToken entities.
+func (uuo *UserUpdateOne) RemoveRefreshtoken(r ...*RefreshToken) *UserUpdateOne {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveRefreshtokenIDs(ids...)
+}
+
 // Where appends a list predicates to the UserUpdate builder.
 func (uuo *UserUpdateOne) Where(ps ...predicate.User) *UserUpdateOne {
 	uuo.mutation.Where(ps...)
@@ -1216,6 +1319,20 @@ func (uuo *UserUpdateOne) defaults() error {
 		}
 		v := user.UpdateDefaultUpdatedAt()
 		uuo.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := uuo.mutation.AvatarUpdatedAt(); !ok && !uuo.mutation.AvatarUpdatedAtCleared() {
+		if user.UpdateDefaultAvatarUpdatedAt == nil {
+			return fmt.Errorf("generated: uninitialized user.UpdateDefaultAvatarUpdatedAt (forgotten import generated/runtime?)")
+		}
+		v := user.UpdateDefaultAvatarUpdatedAt()
+		uuo.mutation.SetAvatarUpdatedAt(v)
+	}
+	if _, ok := uuo.mutation.LastSeen(); !ok && !uuo.mutation.LastSeenCleared() {
+		if user.UpdateDefaultLastSeen == nil {
+			return fmt.Errorf("generated: uninitialized user.UpdateDefaultLastSeen (forgotten import generated/runtime?)")
+		}
+		v := user.UpdateDefaultLastSeen()
+		uuo.mutation.SetLastSeen(v)
 	}
 	return nil
 }
@@ -1562,6 +1679,54 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.UserSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.RefreshtokenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.RefreshToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedRefreshtokenIDs(); len(nodes) > 0 && !uuo.mutation.RefreshtokenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RefreshtokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.RefreshToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

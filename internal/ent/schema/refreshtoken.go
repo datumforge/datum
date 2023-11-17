@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -46,7 +47,9 @@ func (RefreshToken) Fields() []ent.Field {
 
 // Edges of the RefreshToken
 func (RefreshToken) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.From("user", User.Type).Ref("refreshtoken").Unique(),
+	}
 }
 
 // Mixin of the RefreshToken

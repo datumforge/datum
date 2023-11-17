@@ -18,6 +18,8 @@ Datum's core server operates with the following utilities:
 
 Setup [Taskfile](https://taskfile.dev/installation/) by following the instructions and using one of the various convenient package managers or installation scripts. You can then simply run `task install` to load the associated dependencies. Nearly everything in this repository assumes you already have a local golang environment setup so this is not included. Please see the associated documentation.
 
+To include Taskfile's created in other directories / to call the respective tasks, you would add an `includes` per the Taskfile documentation and then reference it by name, e.g. `task cli:createorg`
+
 ### Pre-requisites to a PR
 
 This repository contains a number of code generating functions / utilities which take schema modifications and scaffold out resolvers, graphql API schemas, openAPI specifications, among other things. To ensure you've generated all the necessary dependencies run `task pr`; this will run the entirety of the commands required to safely generate a PR. If for some reason one of the commands fails / encounters an error, you will need to debug the individual steps. It should be decently easy to follow the `Taskfile` in the root of this repository.

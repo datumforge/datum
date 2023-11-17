@@ -54,16 +54,22 @@ type OrganizationEdges struct {
 	Integrations []*Integration `json:"integrations,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *OrganizationSettings `json:"setting,omitempty"`
+	// Entitlements holds the value of the entitlements edge.
+	Entitlements []*Entitlement `json:"entitlements,omitempty"`
+	// Oauthprovider holds the value of the oauthprovider edge.
+	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [8]bool
 	// totalCount holds the count of the edges above.
-	totalCount [6]map[string]int
+	totalCount [8]map[string]int
 
-	namedChildren     map[string][]*Organization
-	namedUsers        map[string][]*User
-	namedGroups       map[string][]*Group
-	namedIntegrations map[string][]*Integration
+	namedChildren      map[string][]*Organization
+	namedUsers         map[string][]*User
+	namedGroups        map[string][]*Group
+	namedIntegrations  map[string][]*Integration
+	namedEntitlements  map[string][]*Entitlement
+	namedOauthprovider map[string][]*OauthProvider
 }
 
 // ParentOrErr returns the Parent value or an error if the edge
@@ -126,6 +132,24 @@ func (e OrganizationEdges) SettingOrErr() (*OrganizationSettings, error) {
 		return e.Setting, nil
 	}
 	return nil, &NotLoadedError{edge: "setting"}
+}
+
+// EntitlementsOrErr returns the Entitlements value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) EntitlementsOrErr() ([]*Entitlement, error) {
+	if e.loadedTypes[6] {
+		return e.Entitlements, nil
+	}
+	return nil, &NotLoadedError{edge: "entitlements"}
+}
+
+// OauthproviderOrErr returns the Oauthprovider value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
+	if e.loadedTypes[7] {
+		return e.Oauthprovider, nil
+	}
+	return nil, &NotLoadedError{edge: "oauthprovider"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -247,6 +271,16 @@ func (o *Organization) QueryIntegrations() *IntegrationQuery {
 // QuerySetting queries the "setting" edge of the Organization entity.
 func (o *Organization) QuerySetting() *OrganizationSettingsQuery {
 	return NewOrganizationClient(o.config).QuerySetting(o)
+}
+
+// QueryEntitlements queries the "entitlements" edge of the Organization entity.
+func (o *Organization) QueryEntitlements() *EntitlementQuery {
+	return NewOrganizationClient(o.config).QueryEntitlements(o)
+}
+
+// QueryOauthprovider queries the "oauthprovider" edge of the Organization entity.
+func (o *Organization) QueryOauthprovider() *OauthProviderQuery {
+	return NewOrganizationClient(o.config).QueryOauthprovider(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -392,6 +426,54 @@ func (o *Organization) appendNamedIntegrations(name string, edges ...*Integratio
 		o.Edges.namedIntegrations[name] = []*Integration{}
 	} else {
 		o.Edges.namedIntegrations[name] = append(o.Edges.namedIntegrations[name], edges...)
+	}
+}
+
+// NamedEntitlements returns the Entitlements named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedEntitlements(name string) ([]*Entitlement, error) {
+	if o.Edges.namedEntitlements == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedEntitlements[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedEntitlements(name string, edges ...*Entitlement) {
+	if o.Edges.namedEntitlements == nil {
+		o.Edges.namedEntitlements = make(map[string][]*Entitlement)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedEntitlements[name] = []*Entitlement{}
+	} else {
+		o.Edges.namedEntitlements[name] = append(o.Edges.namedEntitlements[name], edges...)
+	}
+}
+
+// NamedOauthprovider returns the Oauthprovider named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedOauthprovider(name string) ([]*OauthProvider, error) {
+	if o.Edges.namedOauthprovider == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedOauthprovider[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedOauthprovider(name string, edges ...*OauthProvider) {
+	if o.Edges.namedOauthprovider == nil {
+		o.Edges.namedOauthprovider = make(map[string][]*OauthProvider)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedOauthprovider[name] = []*OauthProvider{}
+	} else {
+		o.Edges.namedOauthprovider[name] = append(o.Edges.namedOauthprovider[name], edges...)
 	}
 }
 

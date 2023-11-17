@@ -6,7 +6,10 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
@@ -917,6 +920,35 @@ func InfoURLEqualFold(v string) predicate.OauthProvider {
 // InfoURLContainsFold applies the ContainsFold predicate on the "info_url" field.
 func InfoURLContainsFold(v string) predicate.OauthProvider {
 	return predicate.OauthProvider(sql.FieldContainsFold(FieldInfoURL, v))
+}
+
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.OauthProvider {
+	return predicate.OauthProvider(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OauthProvider
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.Organization) predicate.OauthProvider {
+	return predicate.OauthProvider(func(s *sql.Selector) {
+		step := newOwnerStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.OauthProvider
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

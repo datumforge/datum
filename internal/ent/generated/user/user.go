@@ -51,6 +51,8 @@ const (
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
+	// EdgeRefreshtoken holds the string denoting the refreshtoken edge name in mutations.
+	EdgeRefreshtoken = "refreshtoken"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -84,6 +86,13 @@ const (
 	SettingInverseTable = "user_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "user_setting"
+	// RefreshtokenTable is the table that holds the refreshtoken relation/edge.
+	RefreshtokenTable = "refresh_tokens"
+	// RefreshtokenInverseTable is the table name for the RefreshToken entity.
+	// It exists in this package in order to avoid circular dependency with the "refreshtoken" package.
+	RefreshtokenInverseTable = "refresh_tokens"
+	// RefreshtokenColumn is the table column denoting the refreshtoken relation/edge.
+	RefreshtokenColumn = "user_refreshtoken"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -151,6 +160,10 @@ var (
 	AvatarRemoteURLValidator func(string) error
 	// AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
 	AvatarLocalFileValidator func(string) error
+	// UpdateDefaultAvatarUpdatedAt holds the default value on update for the "avatar_updated_at" field.
+	UpdateDefaultAvatarUpdatedAt func() time.Time
+	// UpdateDefaultLastSeen holds the default value on update for the "last_seen" field.
+	UpdateDefaultLastSeen func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -290,6 +303,20 @@ func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSettingStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByRefreshtokenCount orders the results by refreshtoken count.
+func ByRefreshtokenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRefreshtokenStep(), opts...)
+	}
+}
+
+// ByRefreshtoken orders the results by refreshtoken terms.
+func ByRefreshtoken(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRefreshtokenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -323,5 +350,12 @@ func newSettingStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SettingInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
+	)
+}
+func newRefreshtokenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RefreshtokenInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, RefreshtokenTable, RefreshtokenColumn),
 	)
 }

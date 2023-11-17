@@ -7,6 +7,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -40,8 +41,17 @@ const (
 	FieldAuthStyle = "auth_style"
 	// FieldInfoURL holds the string denoting the info_url field in the database.
 	FieldInfoURL = "info_url"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// Table holds the table name of the oauthprovider in the database.
 	Table = "oauth_providers"
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "oauth_providers"
+	// OwnerInverseTable is the table name for the Organization entity.
+	// It exists in this package in order to avoid circular dependency with the "organization" package.
+	OwnerInverseTable = "organizations"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "organization_oauthprovider"
 )
 
 // Columns holds all SQL columns for oauthprovider fields.
@@ -62,10 +72,21 @@ var Columns = []string{
 	FieldInfoURL,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "oauth_providers"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"organization_oauthprovider",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -160,4 +181,18 @@ func ByAuthStyle(opts ...sql.OrderTermOption) OrderOption {
 // ByInfoURL orders the results by the info_url field.
 func ByInfoURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInfoURL, opts...).ToFunc()
+}
+
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newOwnerStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
 }

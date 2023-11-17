@@ -6,7 +6,10 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+
+	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
 
 // ID filters vertices based on their ID field.
@@ -84,19 +87,39 @@ func UpdatedBy(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// StripeCustomerID applies equality check predicate on the "stripe_customer_id" field. It's identical to StripeCustomerIDEQ.
-func StripeCustomerID(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldStripeCustomerID, v))
+// ExternalCustomerID applies equality check predicate on the "external_customer_id" field. It's identical to ExternalCustomerIDEQ.
+func ExternalCustomerID(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldExternalCustomerID, v))
 }
 
-// StripeSubscriptionID applies equality check predicate on the "stripe_subscription_id" field. It's identical to StripeSubscriptionIDEQ.
-func StripeSubscriptionID(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionID applies equality check predicate on the "external_subscription_id" field. It's identical to ExternalSubscriptionIDEQ.
+func ExternalSubscriptionID(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldExternalSubscriptionID, v))
 }
 
 // ExpiresAt applies equality check predicate on the "expires_at" field. It's identical to ExpiresAtEQ.
 func ExpiresAt(v time.Time) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldExpiresAt, v))
+}
+
+// UpgradedAt applies equality check predicate on the "upgraded_at" field. It's identical to UpgradedAtEQ.
+func UpgradedAt(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedAt, v))
+}
+
+// UpgradedTier applies equality check predicate on the "upgraded_tier" field. It's identical to UpgradedTierEQ.
+func UpgradedTier(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedTier, v))
+}
+
+// DowngradedAt applies equality check predicate on the "downgraded_at" field. It's identical to DowngradedAtEQ.
+func DowngradedAt(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedAt, v))
+}
+
+// DowngradedTier applies equality check predicate on the "downgraded_tier" field. It's identical to DowngradedTierEQ.
+func DowngradedTier(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedTier, v))
 }
 
 // Cancelled applies equality check predicate on the "cancelled" field. It's identical to CancelledEQ.
@@ -354,154 +377,154 @@ func TierNotIn(vs ...Tier) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldNotIn(FieldTier, vs...))
 }
 
-// StripeCustomerIDEQ applies the EQ predicate on the "stripe_customer_id" field.
-func StripeCustomerIDEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldStripeCustomerID, v))
+// ExternalCustomerIDEQ applies the EQ predicate on the "external_customer_id" field.
+func ExternalCustomerIDEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDNEQ applies the NEQ predicate on the "stripe_customer_id" field.
-func StripeCustomerIDNEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldStripeCustomerID, v))
+// ExternalCustomerIDNEQ applies the NEQ predicate on the "external_customer_id" field.
+func ExternalCustomerIDNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDIn applies the In predicate on the "stripe_customer_id" field.
-func StripeCustomerIDIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldStripeCustomerID, vs...))
+// ExternalCustomerIDIn applies the In predicate on the "external_customer_id" field.
+func ExternalCustomerIDIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldExternalCustomerID, vs...))
 }
 
-// StripeCustomerIDNotIn applies the NotIn predicate on the "stripe_customer_id" field.
-func StripeCustomerIDNotIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldStripeCustomerID, vs...))
+// ExternalCustomerIDNotIn applies the NotIn predicate on the "external_customer_id" field.
+func ExternalCustomerIDNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldExternalCustomerID, vs...))
 }
 
-// StripeCustomerIDGT applies the GT predicate on the "stripe_customer_id" field.
-func StripeCustomerIDGT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldStripeCustomerID, v))
+// ExternalCustomerIDGT applies the GT predicate on the "external_customer_id" field.
+func ExternalCustomerIDGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDGTE applies the GTE predicate on the "stripe_customer_id" field.
-func StripeCustomerIDGTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldStripeCustomerID, v))
+// ExternalCustomerIDGTE applies the GTE predicate on the "external_customer_id" field.
+func ExternalCustomerIDGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDLT applies the LT predicate on the "stripe_customer_id" field.
-func StripeCustomerIDLT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldStripeCustomerID, v))
+// ExternalCustomerIDLT applies the LT predicate on the "external_customer_id" field.
+func ExternalCustomerIDLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDLTE applies the LTE predicate on the "stripe_customer_id" field.
-func StripeCustomerIDLTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldStripeCustomerID, v))
+// ExternalCustomerIDLTE applies the LTE predicate on the "external_customer_id" field.
+func ExternalCustomerIDLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDContains applies the Contains predicate on the "stripe_customer_id" field.
-func StripeCustomerIDContains(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContains(FieldStripeCustomerID, v))
+// ExternalCustomerIDContains applies the Contains predicate on the "external_customer_id" field.
+func ExternalCustomerIDContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDHasPrefix applies the HasPrefix predicate on the "stripe_customer_id" field.
-func StripeCustomerIDHasPrefix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasPrefix(FieldStripeCustomerID, v))
+// ExternalCustomerIDHasPrefix applies the HasPrefix predicate on the "external_customer_id" field.
+func ExternalCustomerIDHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDHasSuffix applies the HasSuffix predicate on the "stripe_customer_id" field.
-func StripeCustomerIDHasSuffix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasSuffix(FieldStripeCustomerID, v))
+// ExternalCustomerIDHasSuffix applies the HasSuffix predicate on the "external_customer_id" field.
+func ExternalCustomerIDHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDIsNil applies the IsNil predicate on the "stripe_customer_id" field.
-func StripeCustomerIDIsNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIsNull(FieldStripeCustomerID))
+// ExternalCustomerIDIsNil applies the IsNil predicate on the "external_customer_id" field.
+func ExternalCustomerIDIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldExternalCustomerID))
 }
 
-// StripeCustomerIDNotNil applies the NotNil predicate on the "stripe_customer_id" field.
-func StripeCustomerIDNotNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotNull(FieldStripeCustomerID))
+// ExternalCustomerIDNotNil applies the NotNil predicate on the "external_customer_id" field.
+func ExternalCustomerIDNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldExternalCustomerID))
 }
 
-// StripeCustomerIDEqualFold applies the EqualFold predicate on the "stripe_customer_id" field.
-func StripeCustomerIDEqualFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEqualFold(FieldStripeCustomerID, v))
+// ExternalCustomerIDEqualFold applies the EqualFold predicate on the "external_customer_id" field.
+func ExternalCustomerIDEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldExternalCustomerID, v))
 }
 
-// StripeCustomerIDContainsFold applies the ContainsFold predicate on the "stripe_customer_id" field.
-func StripeCustomerIDContainsFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContainsFold(FieldStripeCustomerID, v))
+// ExternalCustomerIDContainsFold applies the ContainsFold predicate on the "external_customer_id" field.
+func ExternalCustomerIDContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldExternalCustomerID, v))
 }
 
-// StripeSubscriptionIDEQ applies the EQ predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDEQ applies the EQ predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDNEQ applies the NEQ predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDNEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDNEQ applies the NEQ predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDIn applies the In predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldStripeSubscriptionID, vs...))
+// ExternalSubscriptionIDIn applies the In predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldExternalSubscriptionID, vs...))
 }
 
-// StripeSubscriptionIDNotIn applies the NotIn predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDNotIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldStripeSubscriptionID, vs...))
+// ExternalSubscriptionIDNotIn applies the NotIn predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldExternalSubscriptionID, vs...))
 }
 
-// StripeSubscriptionIDGT applies the GT predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDGT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDGT applies the GT predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDGTE applies the GTE predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDGTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDGTE applies the GTE predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDLT applies the LT predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDLT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDLT applies the LT predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDLTE applies the LTE predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDLTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDLTE applies the LTE predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDContains applies the Contains predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDContains(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContains(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDContains applies the Contains predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDHasPrefix applies the HasPrefix predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDHasPrefix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasPrefix(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDHasPrefix applies the HasPrefix predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDHasSuffix applies the HasSuffix predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDHasSuffix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasSuffix(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDHasSuffix applies the HasSuffix predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDIsNil applies the IsNil predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDIsNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIsNull(FieldStripeSubscriptionID))
+// ExternalSubscriptionIDIsNil applies the IsNil predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldExternalSubscriptionID))
 }
 
-// StripeSubscriptionIDNotNil applies the NotNil predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDNotNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotNull(FieldStripeSubscriptionID))
+// ExternalSubscriptionIDNotNil applies the NotNil predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldExternalSubscriptionID))
 }
 
-// StripeSubscriptionIDEqualFold applies the EqualFold predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDEqualFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEqualFold(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDEqualFold applies the EqualFold predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldExternalSubscriptionID, v))
 }
 
-// StripeSubscriptionIDContainsFold applies the ContainsFold predicate on the "stripe_subscription_id" field.
-func StripeSubscriptionIDContainsFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContainsFold(FieldStripeSubscriptionID, v))
+// ExternalSubscriptionIDContainsFold applies the ContainsFold predicate on the "external_subscription_id" field.
+func ExternalSubscriptionIDContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldExternalSubscriptionID, v))
 }
 
 // ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
@@ -554,6 +577,256 @@ func ExpiresAtNotNil() predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldNotNull(FieldExpiresAt))
 }
 
+// UpgradedAtEQ applies the EQ predicate on the "upgraded_at" field.
+func UpgradedAtEQ(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedAt, v))
+}
+
+// UpgradedAtNEQ applies the NEQ predicate on the "upgraded_at" field.
+func UpgradedAtNEQ(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldUpgradedAt, v))
+}
+
+// UpgradedAtIn applies the In predicate on the "upgraded_at" field.
+func UpgradedAtIn(vs ...time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldUpgradedAt, vs...))
+}
+
+// UpgradedAtNotIn applies the NotIn predicate on the "upgraded_at" field.
+func UpgradedAtNotIn(vs ...time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldUpgradedAt, vs...))
+}
+
+// UpgradedAtGT applies the GT predicate on the "upgraded_at" field.
+func UpgradedAtGT(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldUpgradedAt, v))
+}
+
+// UpgradedAtGTE applies the GTE predicate on the "upgraded_at" field.
+func UpgradedAtGTE(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldUpgradedAt, v))
+}
+
+// UpgradedAtLT applies the LT predicate on the "upgraded_at" field.
+func UpgradedAtLT(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldUpgradedAt, v))
+}
+
+// UpgradedAtLTE applies the LTE predicate on the "upgraded_at" field.
+func UpgradedAtLTE(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldUpgradedAt, v))
+}
+
+// UpgradedAtIsNil applies the IsNil predicate on the "upgraded_at" field.
+func UpgradedAtIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldUpgradedAt))
+}
+
+// UpgradedAtNotNil applies the NotNil predicate on the "upgraded_at" field.
+func UpgradedAtNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldUpgradedAt))
+}
+
+// UpgradedTierEQ applies the EQ predicate on the "upgraded_tier" field.
+func UpgradedTierEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedTier, v))
+}
+
+// UpgradedTierNEQ applies the NEQ predicate on the "upgraded_tier" field.
+func UpgradedTierNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldUpgradedTier, v))
+}
+
+// UpgradedTierIn applies the In predicate on the "upgraded_tier" field.
+func UpgradedTierIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldUpgradedTier, vs...))
+}
+
+// UpgradedTierNotIn applies the NotIn predicate on the "upgraded_tier" field.
+func UpgradedTierNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldUpgradedTier, vs...))
+}
+
+// UpgradedTierGT applies the GT predicate on the "upgraded_tier" field.
+func UpgradedTierGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldUpgradedTier, v))
+}
+
+// UpgradedTierGTE applies the GTE predicate on the "upgraded_tier" field.
+func UpgradedTierGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldUpgradedTier, v))
+}
+
+// UpgradedTierLT applies the LT predicate on the "upgraded_tier" field.
+func UpgradedTierLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldUpgradedTier, v))
+}
+
+// UpgradedTierLTE applies the LTE predicate on the "upgraded_tier" field.
+func UpgradedTierLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldUpgradedTier, v))
+}
+
+// UpgradedTierContains applies the Contains predicate on the "upgraded_tier" field.
+func UpgradedTierContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldUpgradedTier, v))
+}
+
+// UpgradedTierHasPrefix applies the HasPrefix predicate on the "upgraded_tier" field.
+func UpgradedTierHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldUpgradedTier, v))
+}
+
+// UpgradedTierHasSuffix applies the HasSuffix predicate on the "upgraded_tier" field.
+func UpgradedTierHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldUpgradedTier, v))
+}
+
+// UpgradedTierIsNil applies the IsNil predicate on the "upgraded_tier" field.
+func UpgradedTierIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldUpgradedTier))
+}
+
+// UpgradedTierNotNil applies the NotNil predicate on the "upgraded_tier" field.
+func UpgradedTierNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldUpgradedTier))
+}
+
+// UpgradedTierEqualFold applies the EqualFold predicate on the "upgraded_tier" field.
+func UpgradedTierEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldUpgradedTier, v))
+}
+
+// UpgradedTierContainsFold applies the ContainsFold predicate on the "upgraded_tier" field.
+func UpgradedTierContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldUpgradedTier, v))
+}
+
+// DowngradedAtEQ applies the EQ predicate on the "downgraded_at" field.
+func DowngradedAtEQ(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedAt, v))
+}
+
+// DowngradedAtNEQ applies the NEQ predicate on the "downgraded_at" field.
+func DowngradedAtNEQ(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldDowngradedAt, v))
+}
+
+// DowngradedAtIn applies the In predicate on the "downgraded_at" field.
+func DowngradedAtIn(vs ...time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldDowngradedAt, vs...))
+}
+
+// DowngradedAtNotIn applies the NotIn predicate on the "downgraded_at" field.
+func DowngradedAtNotIn(vs ...time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldDowngradedAt, vs...))
+}
+
+// DowngradedAtGT applies the GT predicate on the "downgraded_at" field.
+func DowngradedAtGT(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldDowngradedAt, v))
+}
+
+// DowngradedAtGTE applies the GTE predicate on the "downgraded_at" field.
+func DowngradedAtGTE(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldDowngradedAt, v))
+}
+
+// DowngradedAtLT applies the LT predicate on the "downgraded_at" field.
+func DowngradedAtLT(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldDowngradedAt, v))
+}
+
+// DowngradedAtLTE applies the LTE predicate on the "downgraded_at" field.
+func DowngradedAtLTE(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldDowngradedAt, v))
+}
+
+// DowngradedAtIsNil applies the IsNil predicate on the "downgraded_at" field.
+func DowngradedAtIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldDowngradedAt))
+}
+
+// DowngradedAtNotNil applies the NotNil predicate on the "downgraded_at" field.
+func DowngradedAtNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldDowngradedAt))
+}
+
+// DowngradedTierEQ applies the EQ predicate on the "downgraded_tier" field.
+func DowngradedTierEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedTier, v))
+}
+
+// DowngradedTierNEQ applies the NEQ predicate on the "downgraded_tier" field.
+func DowngradedTierNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldDowngradedTier, v))
+}
+
+// DowngradedTierIn applies the In predicate on the "downgraded_tier" field.
+func DowngradedTierIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldDowngradedTier, vs...))
+}
+
+// DowngradedTierNotIn applies the NotIn predicate on the "downgraded_tier" field.
+func DowngradedTierNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldDowngradedTier, vs...))
+}
+
+// DowngradedTierGT applies the GT predicate on the "downgraded_tier" field.
+func DowngradedTierGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldDowngradedTier, v))
+}
+
+// DowngradedTierGTE applies the GTE predicate on the "downgraded_tier" field.
+func DowngradedTierGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldDowngradedTier, v))
+}
+
+// DowngradedTierLT applies the LT predicate on the "downgraded_tier" field.
+func DowngradedTierLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldDowngradedTier, v))
+}
+
+// DowngradedTierLTE applies the LTE predicate on the "downgraded_tier" field.
+func DowngradedTierLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldDowngradedTier, v))
+}
+
+// DowngradedTierContains applies the Contains predicate on the "downgraded_tier" field.
+func DowngradedTierContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldDowngradedTier, v))
+}
+
+// DowngradedTierHasPrefix applies the HasPrefix predicate on the "downgraded_tier" field.
+func DowngradedTierHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldDowngradedTier, v))
+}
+
+// DowngradedTierHasSuffix applies the HasSuffix predicate on the "downgraded_tier" field.
+func DowngradedTierHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldDowngradedTier, v))
+}
+
+// DowngradedTierIsNil applies the IsNil predicate on the "downgraded_tier" field.
+func DowngradedTierIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldDowngradedTier))
+}
+
+// DowngradedTierNotNil applies the NotNil predicate on the "downgraded_tier" field.
+func DowngradedTierNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldDowngradedTier))
+}
+
+// DowngradedTierEqualFold applies the EqualFold predicate on the "downgraded_tier" field.
+func DowngradedTierEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldDowngradedTier, v))
+}
+
+// DowngradedTierContainsFold applies the ContainsFold predicate on the "downgraded_tier" field.
+func DowngradedTierContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldDowngradedTier, v))
+}
+
 // CancelledEQ applies the EQ predicate on the "cancelled" field.
 func CancelledEQ(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldCancelled, v))
@@ -562,6 +835,35 @@ func CancelledEQ(v bool) predicate.Entitlement {
 // CancelledNEQ applies the NEQ predicate on the "cancelled" field.
 func CancelledNEQ(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldNEQ(FieldCancelled, v))
+}
+
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.Entitlement {
+	return predicate.Entitlement(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Entitlement
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.Organization) predicate.Entitlement {
+	return predicate.Entitlement(func(s *sql.Selector) {
+		step := newOwnerStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Entitlement
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

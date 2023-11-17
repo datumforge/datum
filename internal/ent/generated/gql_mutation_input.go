@@ -13,15 +13,20 @@ import (
 
 // CreateEntitlementInput represents a mutation input for creating entitlements.
 type CreateEntitlementInput struct {
-	CreatedAt            *time.Time
-	UpdatedAt            *time.Time
-	CreatedBy            *string
-	UpdatedBy            *string
-	Tier                 *entitlement.Tier
-	StripeCustomerID     *string
-	StripeSubscriptionID *string
-	ExpiresAt            *time.Time
-	Cancelled            *bool
+	CreatedAt              *time.Time
+	UpdatedAt              *time.Time
+	CreatedBy              *string
+	UpdatedBy              *string
+	Tier                   *entitlement.Tier
+	ExternalCustomerID     *string
+	ExternalSubscriptionID *string
+	ExpiresAt              *time.Time
+	UpgradedAt             *time.Time
+	UpgradedTier           *string
+	DowngradedAt           *time.Time
+	DowngradedTier         *string
+	Cancelled              *bool
+	OwnerID                *string
 }
 
 // Mutate applies the CreateEntitlementInput on the EntitlementMutation builder.
@@ -41,17 +46,32 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Tier; v != nil {
 		m.SetTier(*v)
 	}
-	if v := i.StripeCustomerID; v != nil {
-		m.SetStripeCustomerID(*v)
+	if v := i.ExternalCustomerID; v != nil {
+		m.SetExternalCustomerID(*v)
 	}
-	if v := i.StripeSubscriptionID; v != nil {
-		m.SetStripeSubscriptionID(*v)
+	if v := i.ExternalSubscriptionID; v != nil {
+		m.SetExternalSubscriptionID(*v)
 	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
 	}
+	if v := i.UpgradedAt; v != nil {
+		m.SetUpgradedAt(*v)
+	}
+	if v := i.UpgradedTier; v != nil {
+		m.SetUpgradedTier(*v)
+	}
+	if v := i.DowngradedAt; v != nil {
+		m.SetDowngradedAt(*v)
+	}
+	if v := i.DowngradedTier; v != nil {
+		m.SetDowngradedTier(*v)
+	}
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 }
 
@@ -63,19 +83,29 @@ func (c *EntitlementCreate) SetInput(i CreateEntitlementInput) *EntitlementCreat
 
 // UpdateEntitlementInput represents a mutation input for updating entitlements.
 type UpdateEntitlementInput struct {
-	UpdatedAt                 *time.Time
-	ClearCreatedBy            bool
-	CreatedBy                 *string
-	ClearUpdatedBy            bool
-	UpdatedBy                 *string
-	Tier                      *entitlement.Tier
-	ClearStripeCustomerID     bool
-	StripeCustomerID          *string
-	ClearStripeSubscriptionID bool
-	StripeSubscriptionID      *string
-	ClearExpiresAt            bool
-	ExpiresAt                 *time.Time
-	Cancelled                 *bool
+	UpdatedAt                   *time.Time
+	ClearCreatedBy              bool
+	CreatedBy                   *string
+	ClearUpdatedBy              bool
+	UpdatedBy                   *string
+	Tier                        *entitlement.Tier
+	ClearExternalCustomerID     bool
+	ExternalCustomerID          *string
+	ClearExternalSubscriptionID bool
+	ExternalSubscriptionID      *string
+	ClearExpiresAt              bool
+	ExpiresAt                   *time.Time
+	ClearUpgradedAt             bool
+	UpgradedAt                  *time.Time
+	ClearUpgradedTier           bool
+	UpgradedTier                *string
+	ClearDowngradedAt           bool
+	DowngradedAt                *time.Time
+	ClearDowngradedTier         bool
+	DowngradedTier              *string
+	Cancelled                   *bool
+	ClearOwner                  bool
+	OwnerID                     *string
 }
 
 // Mutate applies the UpdateEntitlementInput on the EntitlementMutation builder.
@@ -98,17 +128,17 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Tier; v != nil {
 		m.SetTier(*v)
 	}
-	if i.ClearStripeCustomerID {
-		m.ClearStripeCustomerID()
+	if i.ClearExternalCustomerID {
+		m.ClearExternalCustomerID()
 	}
-	if v := i.StripeCustomerID; v != nil {
-		m.SetStripeCustomerID(*v)
+	if v := i.ExternalCustomerID; v != nil {
+		m.SetExternalCustomerID(*v)
 	}
-	if i.ClearStripeSubscriptionID {
-		m.ClearStripeSubscriptionID()
+	if i.ClearExternalSubscriptionID {
+		m.ClearExternalSubscriptionID()
 	}
-	if v := i.StripeSubscriptionID; v != nil {
-		m.SetStripeSubscriptionID(*v)
+	if v := i.ExternalSubscriptionID; v != nil {
+		m.SetExternalSubscriptionID(*v)
 	}
 	if i.ClearExpiresAt {
 		m.ClearExpiresAt()
@@ -116,8 +146,38 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
 	}
+	if i.ClearUpgradedAt {
+		m.ClearUpgradedAt()
+	}
+	if v := i.UpgradedAt; v != nil {
+		m.SetUpgradedAt(*v)
+	}
+	if i.ClearUpgradedTier {
+		m.ClearUpgradedTier()
+	}
+	if v := i.UpgradedTier; v != nil {
+		m.SetUpgradedTier(*v)
+	}
+	if i.ClearDowngradedAt {
+		m.ClearDowngradedAt()
+	}
+	if v := i.DowngradedAt; v != nil {
+		m.SetDowngradedAt(*v)
+	}
+	if i.ClearDowngradedTier {
+		m.ClearDowngradedTier()
+	}
+	if v := i.DowngradedTier; v != nil {
+		m.SetDowngradedTier(*v)
+	}
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 }
 
@@ -144,6 +204,7 @@ type CreateGroupInput struct {
 	LogoURL     string
 	DisplayName *string
 	SettingID   string
+	UserIDs     []string
 	OwnerID     *string
 }
 
@@ -170,6 +231,9 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 		m.SetDisplayName(*v)
 	}
 	m.SetSettingID(i.SettingID)
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -193,6 +257,9 @@ type UpdateGroupInput struct {
 	LogoURL        *string
 	DisplayName    *string
 	SettingID      *string
+	ClearUsers     bool
+	AddUserIDs     []string
+	RemoveUserIDs  []string
 	ClearOwner     bool
 	OwnerID        *string
 }
@@ -228,6 +295,15 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if i.ClearUsers {
+		m.ClearUsers()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()
@@ -482,6 +558,7 @@ type CreateOauthProviderInput struct {
 	TokenURL     string
 	AuthStyle    uint8
 	InfoURL      string
+	OwnerID      *string
 }
 
 // Mutate applies the CreateOauthProviderInput on the OauthProviderMutation builder.
@@ -507,6 +584,9 @@ func (i *CreateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	m.SetTokenURL(i.TokenURL)
 	m.SetAuthStyle(i.AuthStyle)
 	m.SetInfoURL(i.InfoURL)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateOauthProviderInput on the OauthProviderCreate builder.
@@ -531,6 +611,8 @@ type UpdateOauthProviderInput struct {
 	TokenURL       *string
 	AuthStyle      *uint8
 	InfoURL        *string
+	ClearOwner     bool
+	OwnerID        *string
 }
 
 // Mutate applies the UpdateOauthProviderInput on the OauthProviderMutation builder.
@@ -577,6 +659,12 @@ func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	if v := i.InfoURL; v != nil {
 		m.SetInfoURL(*v)
 	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 }
 
 // SetInput applies the change-set in the UpdateOauthProviderInput on the OauthProviderUpdate builder.
@@ -593,18 +681,20 @@ func (c *OauthProviderUpdateOne) SetInput(i UpdateOauthProviderInput) *OauthProv
 
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
-	CreatedBy      *string
-	UpdatedBy      *string
-	Name           string
-	DisplayName    *string
-	Description    *string
-	ParentID       *string
-	UserIDs        []string
-	GroupIDs       []string
-	IntegrationIDs []string
-	SettingID      *string
+	CreatedAt        *time.Time
+	UpdatedAt        *time.Time
+	CreatedBy        *string
+	UpdatedBy        *string
+	Name             string
+	DisplayName      *string
+	Description      *string
+	ParentID         *string
+	UserIDs          []string
+	GroupIDs         []string
+	IntegrationIDs   []string
+	SettingID        *string
+	EntitlementIDs   []string
+	OauthproviderIDs []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -643,6 +733,12 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
 	}
+	if v := i.EntitlementIDs; len(v) > 0 {
+		m.AddEntitlementIDs(v...)
+	}
+	if v := i.OauthproviderIDs; len(v) > 0 {
+		m.AddOauthproviderIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -653,26 +749,32 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
-	UpdatedAt            *time.Time
-	ClearCreatedBy       bool
-	CreatedBy            *string
-	ClearUpdatedBy       bool
-	UpdatedBy            *string
-	Name                 *string
-	DisplayName          *string
-	ClearDescription     bool
-	Description          *string
-	ClearUsers           bool
-	AddUserIDs           []string
-	RemoveUserIDs        []string
-	ClearGroups          bool
-	AddGroupIDs          []string
-	RemoveGroupIDs       []string
-	ClearIntegrations    bool
-	AddIntegrationIDs    []string
-	RemoveIntegrationIDs []string
-	ClearSetting         bool
-	SettingID            *string
+	UpdatedAt              *time.Time
+	ClearCreatedBy         bool
+	CreatedBy              *string
+	ClearUpdatedBy         bool
+	UpdatedBy              *string
+	Name                   *string
+	DisplayName            *string
+	ClearDescription       bool
+	Description            *string
+	ClearUsers             bool
+	AddUserIDs             []string
+	RemoveUserIDs          []string
+	ClearGroups            bool
+	AddGroupIDs            []string
+	RemoveGroupIDs         []string
+	ClearIntegrations      bool
+	AddIntegrationIDs      []string
+	RemoveIntegrationIDs   []string
+	ClearSetting           bool
+	SettingID              *string
+	ClearEntitlements      bool
+	AddEntitlementIDs      []string
+	RemoveEntitlementIDs   []string
+	ClearOauthprovider     bool
+	AddOauthproviderIDs    []string
+	RemoveOauthproviderIDs []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -736,6 +838,24 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if i.ClearEntitlements {
+		m.ClearEntitlements()
+	}
+	if v := i.AddEntitlementIDs; len(v) > 0 {
+		m.AddEntitlementIDs(v...)
+	}
+	if v := i.RemoveEntitlementIDs; len(v) > 0 {
+		m.RemoveEntitlementIDs(v...)
+	}
+	if i.ClearOauthprovider {
+		m.ClearOauthprovider()
+	}
+	if v := i.AddOauthproviderIDs; len(v) > 0 {
+		m.AddOauthproviderIDs(v...)
+	}
+	if v := i.RemoveOauthproviderIDs; len(v) > 0 {
+		m.RemoveOauthproviderIDs(v...)
 	}
 }
 
@@ -1157,6 +1277,7 @@ type CreateUserInput struct {
 	GroupIDs               []string
 	PersonalAccessTokenIDs []string
 	SettingID              string
+	RefreshtokenIDs        []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1207,6 +1328,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
+	if v := i.RefreshtokenIDs; len(v) > 0 {
+		m.AddRefreshtokenIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -1249,6 +1373,9 @@ type UpdateUserInput struct {
 	AddPersonalAccessTokenIDs    []string
 	RemovePersonalAccessTokenIDs []string
 	SettingID                    *string
+	ClearRefreshtoken            bool
+	AddRefreshtokenIDs           []string
+	RemoveRefreshtokenIDs        []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1348,6 +1475,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if i.ClearRefreshtoken {
+		m.ClearRefreshtoken()
+	}
+	if v := i.AddRefreshtokenIDs; len(v) > 0 {
+		m.AddRefreshtokenIDs(v...)
+	}
+	if v := i.RemoveRefreshtokenIDs; len(v) > 0 {
+		m.RemoveRefreshtokenIDs(v...)
 	}
 }
 

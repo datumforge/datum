@@ -2,12 +2,12 @@ package fga
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
-	"github.com/datumforge/datum/internal/echox"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/datumforge/datum/internal/echox"
 )
 
 func Test_CheckDirectUser(t *testing.T) {
@@ -31,7 +31,9 @@ func Test_CheckDirectUser(t *testing.T) {
 
 	// seed some relations
 
-	fc.CreateRelationshipTupleWithUser(ctx, "member", "organization:datum")
+	if err = fc.CreateRelationshipTupleWithUser(ctx, "member", "organization:datum"); err != nil {
+		t.Fatal()
+	}
 
 	testCases := []struct {
 		name        string
@@ -51,7 +53,7 @@ func Test_CheckDirectUser(t *testing.T) {
 			name:        "tuple does not exist",
 			relation:    "member",
 			object:      "organization:google",
-			expectedRes: true,
+			expectedRes: false,
 			errRes:      "",
 		},
 	}
@@ -59,7 +61,6 @@ func Test_CheckDirectUser(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			valid, err := fc.CheckDirectUser(ctx, tc.relation, tc.object)
-			fmt.Printf("error: %v", err)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)
@@ -71,7 +72,6 @@ func Test_CheckDirectUser(t *testing.T) {
 
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expectedRes, valid)
-
 		})
 	}
 }

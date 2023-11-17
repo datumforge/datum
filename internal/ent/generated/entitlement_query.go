@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -23,6 +24,8 @@ type EntitlementQuery struct {
 	order      []entitlement.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Entitlement
+	withOwner  *OrganizationQuery
+	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*Entitlement) error
 	// intermediate query (i.e. traversal path).
@@ -59,6 +62,31 @@ func (eq *EntitlementQuery) Unique(unique bool) *EntitlementQuery {
 func (eq *EntitlementQuery) Order(o ...entitlement.OrderOption) *EntitlementQuery {
 	eq.order = append(eq.order, o...)
 	return eq
+}
+
+// QueryOwner chains the current query on the "owner" edge.
+func (eq *EntitlementQuery) QueryOwner() *OrganizationQuery {
+	query := (&OrganizationClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitlement.Table, entitlement.FieldID, selector),
+			sqlgraph.To(organization.Table, organization.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entitlement.OwnerTable, entitlement.OwnerColumn),
+		)
+		schemaConfig := eq.schemaConfig
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Entitlement
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Entitlement entity from the query.
@@ -253,10 +281,22 @@ func (eq *EntitlementQuery) Clone() *EntitlementQuery {
 		order:      append([]entitlement.OrderOption{}, eq.order...),
 		inters:     append([]Interceptor{}, eq.inters...),
 		predicates: append([]predicate.Entitlement{}, eq.predicates...),
+		withOwner:  eq.withOwner.Clone(),
 		// clone intermediate query.
 		sql:  eq.sql.Clone(),
 		path: eq.path,
 	}
+}
+
+// WithOwner tells the query-builder to eager-load the nodes that are connected to
+// the "owner" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntitlementQuery) WithOwner(opts ...func(*OrganizationQuery)) *EntitlementQuery {
+	query := (&OrganizationClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withOwner = query
+	return eq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -335,15 +375,26 @@ func (eq *EntitlementQuery) prepareQuery(ctx context.Context) error {
 
 func (eq *EntitlementQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entitlement, error) {
 	var (
-		nodes = []*Entitlement{}
-		_spec = eq.querySpec()
+		nodes       = []*Entitlement{}
+		withFKs     = eq.withFKs
+		_spec       = eq.querySpec()
+		loadedTypes = [1]bool{
+			eq.withOwner != nil,
+		}
 	)
+	if eq.withOwner != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, entitlement.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Entitlement).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Entitlement{config: eq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	_spec.Node.Schema = eq.schemaConfig.Entitlement
@@ -360,12 +411,51 @@ func (eq *EntitlementQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := eq.withOwner; query != nil {
+		if err := eq.loadOwner(ctx, query, nodes, nil,
+			func(n *Entitlement, e *Organization) { n.Edges.Owner = e }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range eq.loadTotal {
 		if err := eq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (eq *EntitlementQuery) loadOwner(ctx context.Context, query *OrganizationQuery, nodes []*Entitlement, init func(*Entitlement), assign func(*Entitlement, *Organization)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Entitlement)
+	for i := range nodes {
+		if nodes[i].organization_entitlements == nil {
+			continue
+		}
+		fk := *nodes[i].organization_entitlements
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(organization.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "organization_entitlements" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (eq *EntitlementQuery) sqlCount(ctx context.Context) (int, error) {

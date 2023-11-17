@@ -16,16 +16,29 @@ var (
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "tier", Type: field.TypeEnum, Enums: []string{"free", "pro", "enterprise"}, Default: "free"},
-		{Name: "stripe_customer_id", Type: field.TypeString, Nullable: true},
-		{Name: "stripe_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
+		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "upgraded_at", Type: field.TypeTime, Nullable: true},
+		{Name: "upgraded_tier", Type: field.TypeString, Nullable: true},
+		{Name: "downgraded_at", Type: field.TypeTime, Nullable: true},
+		{Name: "downgraded_tier", Type: field.TypeString, Nullable: true},
 		{Name: "cancelled", Type: field.TypeBool, Default: false},
+		{Name: "organization_entitlements", Type: field.TypeString, Nullable: true},
 	}
 	// EntitlementsTable holds the schema information for the "entitlements" table.
 	EntitlementsTable = &schema.Table{
 		Name:       "entitlements",
 		Columns:    EntitlementsColumns,
 		PrimaryKey: []*schema.Column{EntitlementsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entitlements_organizations_entitlements",
+				Columns:    []*schema.Column{EntitlementsColumns[14]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
@@ -132,12 +145,21 @@ var (
 		{Name: "token_url", Type: field.TypeString},
 		{Name: "auth_style", Type: field.TypeUint8},
 		{Name: "info_url", Type: field.TypeString},
+		{Name: "organization_oauthprovider", Type: field.TypeString, Nullable: true},
 	}
 	// OauthProvidersTable holds the schema information for the "oauth_providers" table.
 	OauthProvidersTable = &schema.Table{
 		Name:       "oauth_providers",
 		Columns:    OauthProvidersColumns,
 		PrimaryKey: []*schema.Column{OauthProvidersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "oauth_providers_organizations_oauthprovider",
+				Columns:    []*schema.Column{OauthProvidersColumns[14]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
@@ -250,12 +272,21 @@ var (
 		{Name: "token", Type: field.TypeString, Size: 2147483647},
 		{Name: "obsolete_token", Type: field.TypeString, Size: 2147483647},
 		{Name: "last_used", Type: field.TypeTime},
+		{Name: "user_refreshtoken", Type: field.TypeString, Nullable: true},
 	}
 	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
 	RefreshTokensTable = &schema.Table{
 		Name:       "refresh_tokens",
 		Columns:    RefreshTokensColumns,
 		PrimaryKey: []*schema.Column{RefreshTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "refresh_tokens_users_refreshtoken",
+				Columns:    []*schema.Column{RefreshTokensColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
@@ -431,12 +462,15 @@ var (
 )
 
 func init() {
+	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
+	RefreshTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[1].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable

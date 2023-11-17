@@ -100,18 +100,35 @@
                     ],
                     "default": "free"
                   },
-                  "stripe_customer_id": {
+                  "external_customer_id": {
                     "type": "string"
                   },
-                  "stripe_subscription_id": {
+                  "external_subscription_id": {
                     "type": "string"
                   },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
+                  "upgraded_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "upgraded_tier": {
+                    "type": "string"
+                  },
+                  "downgraded_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "downgraded_tier": {
+                    "type": "string"
+                  },
                   "cancelled": {
                     "type": "boolean"
+                  },
+                  "owner": {
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -272,18 +289,35 @@
                     ],
                     "default": "free"
                   },
-                  "stripe_customer_id": {
+                  "external_customer_id": {
                     "type": "string"
                   },
-                  "stripe_subscription_id": {
+                  "external_subscription_id": {
                     "type": "string"
                   },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
+                  "upgraded_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "upgraded_tier": {
+                    "type": "string"
+                  },
+                  "downgraded_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "downgraded_tier": {
+                    "type": "string"
+                  },
                   "cancelled": {
                     "type": "boolean"
+                  },
+                  "owner": {
+                    "type": "string"
                   }
                 }
               }
@@ -298,6 +332,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/EntitlementUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/entitlements/{id}/owner": {
+      "get": {
+        "tags": [
+          "Entitlement"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the Entitlement with the given ID",
+        "operationId": "readEntitlementOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Entitlement",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to Entitlement with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Entitlement_OwnerRead"
                 }
               }
             }
@@ -1621,6 +1700,9 @@
                   },
                   "info_url": {
                     "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -1808,6 +1890,9 @@
                   },
                   "info_url": {
                     "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
                   }
                 }
               }
@@ -1822,6 +1907,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/OauthProviderUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/oauth-providers/{id}/owner": {
+      "get": {
+        "tags": [
+          "OauthProvider"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the OauthProvider with the given ID",
+        "operationId": "readOauthProviderOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OauthProvider",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to OauthProvider with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OauthProvider_OwnerRead"
                 }
               }
             }
@@ -2364,6 +2494,18 @@
                   },
                   "setting": {
                     "type": "string"
+                  },
+                  "entitlements": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "oauthprovider": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -2553,6 +2695,18 @@
                   },
                   "setting": {
                     "type": "string"
+                  },
+                  "entitlements": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "oauthprovider": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -2630,6 +2784,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization_ChildrenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/entitlements": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Entitlements",
+        "description": "List attached Entitlements.",
+        "operationId": "listOrganizationEntitlements",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_EntitlementsList"
                   }
                 }
               }
@@ -2758,6 +2976,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization_IntegrationsList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/oauthprovider": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Oauthproviders",
+        "description": "List attached Oauthproviders.",
+        "operationId": "listOrganizationOauthprovider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_OauthproviderList"
                   }
                 }
               }
@@ -3421,6 +3703,9 @@
                   "last_used": {
                     "type": "string",
                     "format": "date-time"
+                  },
+                  "user": {
+                    "type": "string"
                   }
                 },
                 "required": [
@@ -3620,6 +3905,9 @@
                   "last_used": {
                     "type": "string",
                     "format": "date-time"
+                  },
+                  "user": {
+                    "type": "string"
                   }
                 }
               }
@@ -3634,6 +3922,51 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RefreshTokenUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/refresh-tokens/{id}/user": {
+      "get": {
+        "tags": [
+          "RefreshToken"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the RefreshToken with the given ID",
+        "operationId": "readRefreshTokenUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the RefreshToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to RefreshToken with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshToken_UserRead"
                 }
               }
             }
@@ -4560,6 +4893,12 @@
                   },
                   "setting": {
                     "type": "string"
+                  },
+                  "refreshtoken": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -4769,6 +5108,12 @@
                   },
                   "setting": {
                     "type": "string"
+                  },
+                  "refreshtoken": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -4994,6 +5339,70 @@
         }
       }
     },
+    "/users/{id}/refreshtoken": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached Refreshtokens",
+        "description": "List attached Refreshtokens.",
+        "operationId": "listUserRefreshtoken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_RefreshtokenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/users/{id}/sessions": {
       "get": {
         "tags": [
@@ -5135,18 +5544,35 @@
             ],
             "default": "free"
           },
-          "stripe_customer_id": {
+          "external_customer_id": {
             "type": "string"
           },
-          "stripe_subscription_id": {
+          "external_subscription_id": {
             "type": "string"
           },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
+          "upgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_tier": {
+            "type": "string"
+          },
+          "downgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downgraded_tier": {
+            "type": "string"
+          },
           "cancelled": {
             "type": "boolean"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
           }
         },
         "required": [
@@ -5186,15 +5612,29 @@
             ],
             "default": "free"
           },
-          "stripe_customer_id": {
+          "external_customer_id": {
             "type": "string"
           },
-          "stripe_subscription_id": {
+          "external_subscription_id": {
             "type": "string"
           },
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "upgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_tier": {
+            "type": "string"
+          },
+          "downgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downgraded_tier": {
+            "type": "string"
           },
           "cancelled": {
             "type": "boolean"
@@ -5237,15 +5677,29 @@
             ],
             "default": "free"
           },
-          "stripe_customer_id": {
+          "external_customer_id": {
             "type": "string"
           },
-          "stripe_subscription_id": {
+          "external_subscription_id": {
             "type": "string"
           },
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "upgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_tier": {
+            "type": "string"
+          },
+          "downgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downgraded_tier": {
+            "type": "string"
           },
           "cancelled": {
             "type": "boolean"
@@ -5288,15 +5742,29 @@
             ],
             "default": "free"
           },
-          "stripe_customer_id": {
+          "external_customer_id": {
             "type": "string"
           },
-          "stripe_subscription_id": {
+          "external_subscription_id": {
             "type": "string"
           },
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "upgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_tier": {
+            "type": "string"
+          },
+          "downgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downgraded_tier": {
+            "type": "string"
           },
           "cancelled": {
             "type": "boolean"
@@ -5339,15 +5807,29 @@
             ],
             "default": "free"
           },
-          "stripe_customer_id": {
+          "external_customer_id": {
             "type": "string"
           },
-          "stripe_subscription_id": {
+          "external_subscription_id": {
             "type": "string"
           },
           "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "upgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_tier": {
+            "type": "string"
+          },
+          "downgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downgraded_tier": {
+            "type": "string"
           },
           "cancelled": {
             "type": "boolean"
@@ -5359,6 +5841,47 @@
           "updated_at",
           "tier",
           "cancelled"
+        ]
+      },
+      "Entitlement_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "display_name"
         ]
       },
       "Group": {
@@ -6408,6 +6931,9 @@
           },
           "info_url": {
             "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
           }
         },
         "required": [
@@ -6451,9 +6977,6 @@
           "client_id": {
             "type": "string"
           },
-          "client_secret": {
-            "type": "string"
-          },
           "redirect_url": {
             "type": "string"
           },
@@ -6482,7 +7005,6 @@
           "updated_at",
           "name",
           "client_id",
-          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -6517,9 +7039,6 @@
           "client_id": {
             "type": "string"
           },
-          "client_secret": {
-            "type": "string"
-          },
           "redirect_url": {
             "type": "string"
           },
@@ -6548,7 +7067,6 @@
           "updated_at",
           "name",
           "client_id",
-          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -6583,9 +7101,6 @@
           "client_id": {
             "type": "string"
           },
-          "client_secret": {
-            "type": "string"
-          },
           "redirect_url": {
             "type": "string"
           },
@@ -6614,7 +7129,6 @@
           "updated_at",
           "name",
           "client_id",
-          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -6649,9 +7163,6 @@
           "client_id": {
             "type": "string"
           },
-          "client_secret": {
-            "type": "string"
-          },
           "redirect_url": {
             "type": "string"
           },
@@ -6680,13 +7191,53 @@
           "updated_at",
           "name",
           "client_id",
-          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
           "token_url",
           "auth_style",
           "info_url"
+        ]
+      },
+      "OauthProvider_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "display_name"
         ]
       },
       "Organization": {
@@ -6750,6 +7301,18 @@
           },
           "setting": {
             "$ref": "#/components/schemas/OrganizationSettings"
+          },
+          "entitlements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Entitlement"
+            }
+          },
+          "oauthprovider": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OauthProvider"
+            }
           }
         },
         "required": [
@@ -7369,6 +7932,71 @@
           "display_name"
         ]
       },
+      "Organization_EntitlementsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "free",
+              "pro",
+              "enterprise"
+            ],
+            "default": "free"
+          },
+          "external_customer_id": {
+            "type": "string"
+          },
+          "external_subscription_id": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upgraded_tier": {
+            "type": "string"
+          },
+          "downgraded_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "downgraded_tier": {
+            "type": "string"
+          },
+          "cancelled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "tier",
+          "cancelled"
+        ]
+      },
       "Organization_GroupsList": {
         "type": "object",
         "properties": {
@@ -7452,6 +8080,68 @@
           "name",
           "kind",
           "secret_name"
+        ]
+      },
+      "Organization_OauthproviderList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "redirect_url": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "string"
+          },
+          "auth_url": {
+            "type": "string"
+          },
+          "token_url": {
+            "type": "string"
+          },
+          "auth_style": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "info_url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "client_id",
+          "redirect_url",
+          "scopes",
+          "auth_url",
+          "token_url",
+          "auth_style",
+          "info_url"
         ]
       },
       "Organization_ParentRead": {
@@ -7996,6 +8686,9 @@
           "last_used": {
             "type": "string",
             "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
           }
         },
         "required": [
@@ -8307,6 +9000,63 @@
           "token",
           "obsolete_token",
           "last_used"
+        ]
+      },
+      "RefreshToken_UserRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name"
         ]
       },
       "Session": {
@@ -8699,6 +9449,12 @@
           },
           "setting": {
             "$ref": "#/components/schemas/UserSettings"
+          },
+          "refreshtoken": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RefreshToken"
+            }
           }
         },
         "required": [
@@ -9525,6 +10281,80 @@
           "name",
           "user_id",
           "expiration_at"
+        ]
+      },
+      "User_RefreshtokenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "token": {
+            "type": "string"
+          },
+          "obsolete_token": {
+            "type": "string"
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "token",
+          "obsolete_token",
+          "last_used"
         ]
       },
       "User_SessionsList": {

@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -239,9 +240,34 @@ func (rtu *RefreshTokenUpdate) SetNillableLastUsed(t *time.Time) *RefreshTokenUp
 	return rtu
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rtu *RefreshTokenUpdate) SetUserID(id string) *RefreshTokenUpdate {
+	rtu.mutation.SetUserID(id)
+	return rtu
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (rtu *RefreshTokenUpdate) SetNillableUserID(id *string) *RefreshTokenUpdate {
+	if id != nil {
+		rtu = rtu.SetUserID(*id)
+	}
+	return rtu
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (rtu *RefreshTokenUpdate) SetUser(u *User) *RefreshTokenUpdate {
+	return rtu.SetUserID(u.ID)
+}
+
 // Mutation returns the RefreshTokenMutation object of the builder.
 func (rtu *RefreshTokenUpdate) Mutation() *RefreshTokenMutation {
 	return rtu.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (rtu *RefreshTokenUpdate) ClearUser() *RefreshTokenUpdate {
+	rtu.mutation.ClearUser()
+	return rtu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -383,6 +409,37 @@ func (rtu *RefreshTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := rtu.mutation.LastUsed(); ok {
 		_spec.SetField(refreshtoken.FieldLastUsed, field.TypeTime, value)
+	}
+	if rtu.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   refreshtoken.UserTable,
+			Columns: []string{refreshtoken.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = rtu.schemaConfig.RefreshToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rtu.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   refreshtoken.UserTable,
+			Columns: []string{refreshtoken.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = rtu.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = rtu.schemaConfig.RefreshToken
 	ctx = internal.NewSchemaConfigContext(ctx, rtu.schemaConfig)
@@ -614,9 +671,34 @@ func (rtuo *RefreshTokenUpdateOne) SetNillableLastUsed(t *time.Time) *RefreshTok
 	return rtuo
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (rtuo *RefreshTokenUpdateOne) SetUserID(id string) *RefreshTokenUpdateOne {
+	rtuo.mutation.SetUserID(id)
+	return rtuo
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (rtuo *RefreshTokenUpdateOne) SetNillableUserID(id *string) *RefreshTokenUpdateOne {
+	if id != nil {
+		rtuo = rtuo.SetUserID(*id)
+	}
+	return rtuo
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (rtuo *RefreshTokenUpdateOne) SetUser(u *User) *RefreshTokenUpdateOne {
+	return rtuo.SetUserID(u.ID)
+}
+
 // Mutation returns the RefreshTokenMutation object of the builder.
 func (rtuo *RefreshTokenUpdateOne) Mutation() *RefreshTokenMutation {
 	return rtuo.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (rtuo *RefreshTokenUpdateOne) ClearUser() *RefreshTokenUpdateOne {
+	rtuo.mutation.ClearUser()
+	return rtuo
 }
 
 // Where appends a list predicates to the RefreshTokenUpdate builder.
@@ -788,6 +870,37 @@ func (rtuo *RefreshTokenUpdateOne) sqlSave(ctx context.Context) (_node *RefreshT
 	}
 	if value, ok := rtuo.mutation.LastUsed(); ok {
 		_spec.SetField(refreshtoken.FieldLastUsed, field.TypeTime, value)
+	}
+	if rtuo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   refreshtoken.UserTable,
+			Columns: []string{refreshtoken.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = rtuo.schemaConfig.RefreshToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := rtuo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   refreshtoken.UserTable,
+			Columns: []string{refreshtoken.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = rtuo.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = rtuo.schemaConfig.RefreshToken
 	ctx = internal.NewSchemaConfigContext(ctx, rtuo.schemaConfig)

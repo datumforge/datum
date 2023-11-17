@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // Entitlement is the model entity for the Entitlement schema.
@@ -27,15 +28,51 @@ type Entitlement struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// Tier holds the value of the "tier" field.
 	Tier entitlement.Tier `json:"tier,omitempty"`
-	// StripeCustomerID holds the value of the "stripe_customer_id" field.
-	StripeCustomerID string `json:"stripe_customer_id,omitempty"`
-	// StripeSubscriptionID holds the value of the "stripe_subscription_id" field.
-	StripeSubscriptionID string `json:"stripe_subscription_id,omitempty"`
+	// used to store references to external systems, e.g. Stripe
+	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	// used to store references to external systems, e.g. Stripe
+	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
 	// ExpiresAt holds the value of the "expires_at" field.
 	ExpiresAt time.Time `json:"expires_at,omitempty"`
+	// UpgradedAt holds the value of the "upgraded_at" field.
+	UpgradedAt time.Time `json:"upgraded_at,omitempty"`
+	// the tier the customer upgraded from
+	UpgradedTier string `json:"upgraded_tier,omitempty"`
+	// DowngradedAt holds the value of the "downgraded_at" field.
+	DowngradedAt time.Time `json:"downgraded_at,omitempty"`
+	// the tier the customer downgraded from
+	DowngradedTier string `json:"downgraded_tier,omitempty"`
 	// Cancelled holds the value of the "cancelled" field.
-	Cancelled    bool `json:"cancelled,omitempty"`
-	selectValues sql.SelectValues
+	Cancelled bool `json:"cancelled,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the EntitlementQuery when eager-loading is set.
+	Edges                     EntitlementEdges `json:"edges"`
+	organization_entitlements *string
+	selectValues              sql.SelectValues
+}
+
+// EntitlementEdges holds the relations/edges for other nodes in the graph.
+type EntitlementEdges struct {
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+}
+
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntitlementEdges) OwnerOrErr() (*Organization, error) {
+	if e.loadedTypes[0] {
+		if e.Owner == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Owner, nil
+	}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -45,10 +82,12 @@ func (*Entitlement) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case entitlement.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldTier, entitlement.FieldStripeCustomerID, entitlement.FieldStripeSubscriptionID:
+		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID, entitlement.FieldUpgradedTier, entitlement.FieldDowngradedTier:
 			values[i] = new(sql.NullString)
-		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldExpiresAt:
+		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldExpiresAt, entitlement.FieldUpgradedAt, entitlement.FieldDowngradedAt:
 			values[i] = new(sql.NullTime)
+		case entitlement.ForeignKeys[0]: // organization_entitlements
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -100,17 +139,17 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.Tier = entitlement.Tier(value.String)
 			}
-		case entitlement.FieldStripeCustomerID:
+		case entitlement.FieldExternalCustomerID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field stripe_customer_id", values[i])
+				return fmt.Errorf("unexpected type %T for field external_customer_id", values[i])
 			} else if value.Valid {
-				e.StripeCustomerID = value.String
+				e.ExternalCustomerID = value.String
 			}
-		case entitlement.FieldStripeSubscriptionID:
+		case entitlement.FieldExternalSubscriptionID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field stripe_subscription_id", values[i])
+				return fmt.Errorf("unexpected type %T for field external_subscription_id", values[i])
 			} else if value.Valid {
-				e.StripeSubscriptionID = value.String
+				e.ExternalSubscriptionID = value.String
 			}
 		case entitlement.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -118,11 +157,42 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.ExpiresAt = value.Time
 			}
+		case entitlement.FieldUpgradedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field upgraded_at", values[i])
+			} else if value.Valid {
+				e.UpgradedAt = value.Time
+			}
+		case entitlement.FieldUpgradedTier:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field upgraded_tier", values[i])
+			} else if value.Valid {
+				e.UpgradedTier = value.String
+			}
+		case entitlement.FieldDowngradedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field downgraded_at", values[i])
+			} else if value.Valid {
+				e.DowngradedAt = value.Time
+			}
+		case entitlement.FieldDowngradedTier:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field downgraded_tier", values[i])
+			} else if value.Valid {
+				e.DowngradedTier = value.String
+			}
 		case entitlement.FieldCancelled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field cancelled", values[i])
 			} else if value.Valid {
 				e.Cancelled = value.Bool
+			}
+		case entitlement.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_entitlements", values[i])
+			} else if value.Valid {
+				e.organization_entitlements = new(string)
+				*e.organization_entitlements = value.String
 			}
 		default:
 			e.selectValues.Set(columns[i], values[i])
@@ -135,6 +205,11 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (e *Entitlement) Value(name string) (ent.Value, error) {
 	return e.selectValues.Get(name)
+}
+
+// QueryOwner queries the "owner" edge of the Entitlement entity.
+func (e *Entitlement) QueryOwner() *OrganizationQuery {
+	return NewEntitlementClient(e.config).QueryOwner(e)
 }
 
 // Update returns a builder for updating this Entitlement.
@@ -175,14 +250,26 @@ func (e *Entitlement) String() string {
 	builder.WriteString("tier=")
 	builder.WriteString(fmt.Sprintf("%v", e.Tier))
 	builder.WriteString(", ")
-	builder.WriteString("stripe_customer_id=")
-	builder.WriteString(e.StripeCustomerID)
+	builder.WriteString("external_customer_id=")
+	builder.WriteString(e.ExternalCustomerID)
 	builder.WriteString(", ")
-	builder.WriteString("stripe_subscription_id=")
-	builder.WriteString(e.StripeSubscriptionID)
+	builder.WriteString("external_subscription_id=")
+	builder.WriteString(e.ExternalSubscriptionID)
 	builder.WriteString(", ")
 	builder.WriteString("expires_at=")
 	builder.WriteString(e.ExpiresAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("upgraded_at=")
+	builder.WriteString(e.UpgradedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("upgraded_tier=")
+	builder.WriteString(e.UpgradedTier)
+	builder.WriteString(", ")
+	builder.WriteString("downgraded_at=")
+	builder.WriteString(e.DowngradedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("downgraded_tier=")
+	builder.WriteString(e.DowngradedTier)
 	builder.WriteString(", ")
 	builder.WriteString("cancelled=")
 	builder.WriteString(fmt.Sprintf("%v", e.Cancelled))

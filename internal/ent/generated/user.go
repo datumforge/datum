@@ -62,16 +62,19 @@ type UserEdges struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSettings `json:"setting,omitempty"`
+	// Refreshtoken holds the value of the refreshtoken edge.
+	Refreshtoken []*RefreshToken `json:"refreshtoken,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [6]map[string]int
 
 	namedOrganizations        map[string][]*Organization
 	namedSessions             map[string][]*Session
 	namedGroups               map[string][]*Group
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
+	namedRefreshtoken         map[string][]*RefreshToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -121,6 +124,15 @@ func (e UserEdges) SettingOrErr() (*UserSettings, error) {
 		return e.Setting, nil
 	}
 	return nil, &NotLoadedError{edge: "setting"}
+}
+
+// RefreshtokenOrErr returns the Refreshtoken value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RefreshtokenOrErr() ([]*RefreshToken, error) {
+	if e.loadedTypes[5] {
+		return e.Refreshtoken, nil
+	}
+	return nil, &NotLoadedError{edge: "refreshtoken"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -271,6 +283,11 @@ func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 // QuerySetting queries the "setting" edge of the User entity.
 func (u *User) QuerySetting() *UserSettingsQuery {
 	return NewUserClient(u.config).QuerySetting(u)
+}
+
+// QueryRefreshtoken queries the "refreshtoken" edge of the User entity.
+func (u *User) QueryRefreshtoken() *RefreshTokenQuery {
+	return NewUserClient(u.config).QueryRefreshtoken(u)
 }
 
 // Update returns a builder for updating this User.
@@ -436,6 +453,30 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
+	}
+}
+
+// NamedRefreshtoken returns the Refreshtoken named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedRefreshtoken(name string) ([]*RefreshToken, error) {
+	if u.Edges.namedRefreshtoken == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedRefreshtoken[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedRefreshtoken(name string, edges ...*RefreshToken) {
+	if u.Edges.namedRefreshtoken == nil {
+		u.Edges.namedRefreshtoken = make(map[string][]*RefreshToken)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedRefreshtoken[name] = []*RefreshToken{}
+	} else {
+		u.Edges.namedRefreshtoken[name] = append(u.Edges.namedRefreshtoken[name], edges...)
 	}
 }
 

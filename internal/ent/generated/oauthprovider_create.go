@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
 // OauthProviderCreate is the builder for creating a OauthProvider entity.
@@ -142,6 +143,25 @@ func (opc *OauthProviderCreate) SetNillableID(s *string) *OauthProviderCreate {
 		opc.SetID(*s)
 	}
 	return opc
+}
+
+// SetOwnerID sets the "owner" edge to the Organization entity by ID.
+func (opc *OauthProviderCreate) SetOwnerID(id string) *OauthProviderCreate {
+	opc.mutation.SetOwnerID(id)
+	return opc
+}
+
+// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
+func (opc *OauthProviderCreate) SetNillableOwnerID(id *string) *OauthProviderCreate {
+	if id != nil {
+		opc = opc.SetOwnerID(*id)
+	}
+	return opc
+}
+
+// SetOwner sets the "owner" edge to the Organization entity.
+func (opc *OauthProviderCreate) SetOwner(o *Organization) *OauthProviderCreate {
+	return opc.SetOwnerID(o.ID)
 }
 
 // Mutation returns the OauthProviderMutation object of the builder.
@@ -327,6 +347,24 @@ func (opc *OauthProviderCreate) createSpec() (*OauthProvider, *sqlgraph.CreateSp
 	if value, ok := opc.mutation.InfoURL(); ok {
 		_spec.SetField(oauthprovider.FieldInfoURL, field.TypeString, value)
 		_node.InfoURL = value
+	}
+	if nodes := opc.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   oauthprovider.OwnerTable,
+			Columns: []string{oauthprovider.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = opc.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.organization_oauthprovider = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

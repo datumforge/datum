@@ -8,10 +8,30 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (e *Entitlement) Owner(ctx context.Context) (*Organization, error) {
+	result, err := e.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = e.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (gr *Group) Setting(ctx context.Context) (*GroupSettings, error) {
 	result, err := gr.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = gr.QuerySetting().Only(ctx)
+	}
+	return result, err
+}
+
+func (gr *Group) Users(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = gr.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = gr.Edges.UsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = gr.QueryUsers().All(ctx)
 	}
 	return result, err
 }
@@ -28,6 +48,14 @@ func (i *Integration) Owner(ctx context.Context) (*Organization, error) {
 	result, err := i.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = i.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (op *OauthProvider) Owner(ctx context.Context) (*Organization, error) {
+	result, err := op.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = op.QueryOwner().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -105,12 +133,44 @@ func (o *Organization) Setting(ctx context.Context) (*OrganizationSettings, erro
 	return result, MaskNotFound(err)
 }
 
+func (o *Organization) Entitlements(ctx context.Context) (result []*Entitlement, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedEntitlements(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.EntitlementsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryEntitlements().All(ctx)
+	}
+	return result, err
+}
+
+func (o *Organization) Oauthprovider(ctx context.Context) (result []*OauthProvider, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = o.NamedOauthprovider(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = o.Edges.OauthproviderOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = o.QueryOauthprovider().All(ctx)
+	}
+	return result, err
+}
+
 func (pat *PersonalAccessToken) User(ctx context.Context) (*User, error) {
 	result, err := pat.Edges.UserOrErr()
 	if IsNotLoaded(err) {
 		result, err = pat.QueryUser().Only(ctx)
 	}
 	return result, err
+}
+
+func (rt *RefreshToken) User(ctx context.Context) (*User, error) {
+	result, err := rt.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = rt.QueryUser().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (s *Session) Users(ctx context.Context) (*User, error) {
@@ -173,6 +233,18 @@ func (u *User) Setting(ctx context.Context) (*UserSettings, error) {
 	result, err := u.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QuerySetting().Only(ctx)
+	}
+	return result, err
+}
+
+func (u *User) Refreshtoken(ctx context.Context) (result []*RefreshToken, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedRefreshtoken(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.RefreshtokenOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryRefreshtoken().All(ctx)
 	}
 	return result, err
 }

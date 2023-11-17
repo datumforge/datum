@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersettings"
@@ -266,6 +267,21 @@ func (uc *UserCreate) SetSettingID(id string) *UserCreate {
 // SetSetting sets the "setting" edge to the UserSettings entity.
 func (uc *UserCreate) SetSetting(u *UserSettings) *UserCreate {
 	return uc.SetSettingID(u.ID)
+}
+
+// AddRefreshtokenIDs adds the "refreshtoken" edge to the RefreshToken entity by IDs.
+func (uc *UserCreate) AddRefreshtokenIDs(ids ...string) *UserCreate {
+	uc.mutation.AddRefreshtokenIDs(ids...)
+	return uc
+}
+
+// AddRefreshtoken adds the "refreshtoken" edges to the RefreshToken entity.
+func (uc *UserCreate) AddRefreshtoken(r ...*RefreshToken) *UserCreate {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRefreshtokenIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -554,6 +570,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.UserSettings
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RefreshtokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.RefreshToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

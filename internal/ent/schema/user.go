@@ -4,6 +4,7 @@ import (
 	"net/mail"
 	"net/url"
 	"strings"
+	"time"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
@@ -89,10 +90,12 @@ func (User) Fields() []ent.Field {
 			Nillable(),
 		field.Time("avatar_updated_at").
 			Comment("The time the user's (local) avatar was last updated").
+			UpdateDefault(time.Now).
 			Optional().
 			Nillable(),
 		field.Time("last_seen").
 			Comment("the time the user was last seen").
+			UpdateDefault(time.Now).
 			Optional(),
 		field.String("passwordHash").
 			Comment("user bcrypt password hash").
@@ -124,6 +127,7 @@ func (User) Edges() []ent.Edge {
 				OnDelete: entsql.Cascade,
 			}),
 		edge.To("setting", UserSettings.Type).Required().Unique(),
+		edge.To("refreshtoken", RefreshToken.Type),
 	}
 }
 

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // RefreshToken is the model entity for the RefreshToken schema.
@@ -45,8 +46,36 @@ type RefreshToken struct {
 	// ObsoleteToken holds the value of the "obsolete_token" field.
 	ObsoleteToken string `json:"obsolete_token,omitempty"`
 	// LastUsed holds the value of the "last_used" field.
-	LastUsed     time.Time `json:"last_used,omitempty"`
-	selectValues sql.SelectValues
+	LastUsed time.Time `json:"last_used,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
+	Edges             RefreshTokenEdges `json:"edges"`
+	user_refreshtoken *string
+	selectValues      sql.SelectValues
+}
+
+// RefreshTokenEdges holds the relations/edges for other nodes in the graph.
+type RefreshTokenEdges struct {
+	// User holds the value of the user edge.
+	User *User `json:"user,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+}
+
+// UserOrErr returns the User value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e RefreshTokenEdges) UserOrErr() (*User, error) {
+	if e.loadedTypes[0] {
+		if e.User == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.User, nil
+	}
+	return nil, &NotLoadedError{edge: "user"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -62,6 +91,8 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldLastUsed:
 			values[i] = new(sql.NullTime)
+		case refreshtoken.ForeignKeys[0]: // user_refreshtoken
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -173,6 +204,13 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				rt.LastUsed = value.Time
 			}
+		case refreshtoken.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_refreshtoken", values[i])
+			} else if value.Valid {
+				rt.user_refreshtoken = new(string)
+				*rt.user_refreshtoken = value.String
+			}
 		default:
 			rt.selectValues.Set(columns[i], values[i])
 		}
@@ -184,6 +222,11 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (rt *RefreshToken) Value(name string) (ent.Value, error) {
 	return rt.selectValues.Get(name)
+}
+
+// QueryUser queries the "user" edge of the RefreshToken entity.
+func (rt *RefreshToken) QueryUser() *UserQuery {
+	return NewRefreshTokenClient(rt.config).QueryUser(rt)
 }
 
 // Update returns a builder for updating this RefreshToken.

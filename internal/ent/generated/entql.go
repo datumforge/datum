@@ -37,15 +37,19 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Entitlement",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			entitlement.FieldCreatedAt:            {Type: field.TypeTime, Column: entitlement.FieldCreatedAt},
-			entitlement.FieldUpdatedAt:            {Type: field.TypeTime, Column: entitlement.FieldUpdatedAt},
-			entitlement.FieldCreatedBy:            {Type: field.TypeString, Column: entitlement.FieldCreatedBy},
-			entitlement.FieldUpdatedBy:            {Type: field.TypeString, Column: entitlement.FieldUpdatedBy},
-			entitlement.FieldTier:                 {Type: field.TypeEnum, Column: entitlement.FieldTier},
-			entitlement.FieldStripeCustomerID:     {Type: field.TypeString, Column: entitlement.FieldStripeCustomerID},
-			entitlement.FieldStripeSubscriptionID: {Type: field.TypeString, Column: entitlement.FieldStripeSubscriptionID},
-			entitlement.FieldExpiresAt:            {Type: field.TypeTime, Column: entitlement.FieldExpiresAt},
-			entitlement.FieldCancelled:            {Type: field.TypeBool, Column: entitlement.FieldCancelled},
+			entitlement.FieldCreatedAt:              {Type: field.TypeTime, Column: entitlement.FieldCreatedAt},
+			entitlement.FieldUpdatedAt:              {Type: field.TypeTime, Column: entitlement.FieldUpdatedAt},
+			entitlement.FieldCreatedBy:              {Type: field.TypeString, Column: entitlement.FieldCreatedBy},
+			entitlement.FieldUpdatedBy:              {Type: field.TypeString, Column: entitlement.FieldUpdatedBy},
+			entitlement.FieldTier:                   {Type: field.TypeEnum, Column: entitlement.FieldTier},
+			entitlement.FieldExternalCustomerID:     {Type: field.TypeString, Column: entitlement.FieldExternalCustomerID},
+			entitlement.FieldExternalSubscriptionID: {Type: field.TypeString, Column: entitlement.FieldExternalSubscriptionID},
+			entitlement.FieldExpiresAt:              {Type: field.TypeTime, Column: entitlement.FieldExpiresAt},
+			entitlement.FieldUpgradedAt:             {Type: field.TypeTime, Column: entitlement.FieldUpgradedAt},
+			entitlement.FieldUpgradedTier:           {Type: field.TypeString, Column: entitlement.FieldUpgradedTier},
+			entitlement.FieldDowngradedAt:           {Type: field.TypeTime, Column: entitlement.FieldDowngradedAt},
+			entitlement.FieldDowngradedTier:         {Type: field.TypeString, Column: entitlement.FieldDowngradedTier},
+			entitlement.FieldCancelled:              {Type: field.TypeBool, Column: entitlement.FieldCancelled},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -311,6 +315,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 	}
 	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entitlement.OwnerTable,
+			Columns: []string{entitlement.OwnerColumn},
+			Bidi:    false,
+		},
+		"Entitlement",
+		"Organization",
+	)
+	graph.MustAddE(
 		"setting",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -368,6 +384,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"Integration",
+		"Organization",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   oauthprovider.OwnerTable,
+			Columns: []string{oauthprovider.OwnerColumn},
+			Bidi:    false,
+		},
+		"OauthProvider",
 		"Organization",
 	)
 	graph.MustAddE(
@@ -443,6 +471,30 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"OrganizationSettings",
 	)
 	graph.MustAddE(
+		"entitlements",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.EntitlementsTable,
+			Columns: []string{organization.EntitlementsColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"Entitlement",
+	)
+	graph.MustAddE(
+		"oauthprovider",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   organization.OauthproviderTable,
+			Columns: []string{organization.OauthproviderColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"OauthProvider",
+	)
+	graph.MustAddE(
 		"orgnaization",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -464,6 +516,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"PersonalAccessToken",
+		"User",
+	)
+	graph.MustAddE(
+		"user",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   refreshtoken.UserTable,
+			Columns: []string{refreshtoken.UserColumn},
+			Bidi:    false,
+		},
+		"RefreshToken",
 		"User",
 	)
 	graph.MustAddE(
@@ -537,6 +601,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"UserSettings",
+	)
+	graph.MustAddE(
+		"refreshtoken",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.RefreshtokenTable,
+			Columns: []string{user.RefreshtokenColumn},
+			Bidi:    false,
+		},
+		"User",
+		"RefreshToken",
 	)
 	graph.MustAddE(
 		"user",
@@ -624,14 +700,14 @@ func (f *EntitlementFilter) WhereTier(p entql.StringP) {
 	f.Where(p.Field(entitlement.FieldTier))
 }
 
-// WhereStripeCustomerID applies the entql string predicate on the stripe_customer_id field.
-func (f *EntitlementFilter) WhereStripeCustomerID(p entql.StringP) {
-	f.Where(p.Field(entitlement.FieldStripeCustomerID))
+// WhereExternalCustomerID applies the entql string predicate on the external_customer_id field.
+func (f *EntitlementFilter) WhereExternalCustomerID(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldExternalCustomerID))
 }
 
-// WhereStripeSubscriptionID applies the entql string predicate on the stripe_subscription_id field.
-func (f *EntitlementFilter) WhereStripeSubscriptionID(p entql.StringP) {
-	f.Where(p.Field(entitlement.FieldStripeSubscriptionID))
+// WhereExternalSubscriptionID applies the entql string predicate on the external_subscription_id field.
+func (f *EntitlementFilter) WhereExternalSubscriptionID(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldExternalSubscriptionID))
 }
 
 // WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
@@ -639,9 +715,43 @@ func (f *EntitlementFilter) WhereExpiresAt(p entql.TimeP) {
 	f.Where(p.Field(entitlement.FieldExpiresAt))
 }
 
+// WhereUpgradedAt applies the entql time.Time predicate on the upgraded_at field.
+func (f *EntitlementFilter) WhereUpgradedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlement.FieldUpgradedAt))
+}
+
+// WhereUpgradedTier applies the entql string predicate on the upgraded_tier field.
+func (f *EntitlementFilter) WhereUpgradedTier(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldUpgradedTier))
+}
+
+// WhereDowngradedAt applies the entql time.Time predicate on the downgraded_at field.
+func (f *EntitlementFilter) WhereDowngradedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlement.FieldDowngradedAt))
+}
+
+// WhereDowngradedTier applies the entql string predicate on the downgraded_tier field.
+func (f *EntitlementFilter) WhereDowngradedTier(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldDowngradedTier))
+}
+
 // WhereCancelled applies the entql bool predicate on the cancelled field.
 func (f *EntitlementFilter) WhereCancelled(p entql.BoolP) {
 	f.Where(p.Field(entitlement.FieldCancelled))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *EntitlementFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *EntitlementFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -1064,6 +1174,20 @@ func (f *OauthProviderFilter) WhereInfoURL(p entql.StringP) {
 	f.Where(p.Field(oauthprovider.FieldInfoURL))
 }
 
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *OauthProviderFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *OauthProviderFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (oq *OrganizationQuery) addPredicate(pred func(s *sql.Selector)) {
 	oq.predicates = append(oq.predicates, pred)
@@ -1222,6 +1346,34 @@ func (f *OrganizationFilter) WhereHasSetting() {
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
 func (f *OrganizationFilter) WhereHasSettingWith(preds ...predicate.OrganizationSettings) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasEntitlements applies a predicate to check if query has an edge entitlements.
+func (f *OrganizationFilter) WhereHasEntitlements() {
+	f.Where(entql.HasEdge("entitlements"))
+}
+
+// WhereHasEntitlementsWith applies a predicate to check if query has an edge entitlements with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasEntitlementsWith(preds ...predicate.Entitlement) {
+	f.Where(entql.HasEdgeWith("entitlements", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOauthprovider applies a predicate to check if query has an edge oauthprovider.
+func (f *OrganizationFilter) WhereHasOauthprovider() {
+	f.Where(entql.HasEdge("oauthprovider"))
+}
+
+// WhereHasOauthproviderWith applies a predicate to check if query has an edge oauthprovider with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasOauthproviderWith(preds ...predicate.OauthProvider) {
+	f.Where(entql.HasEdgeWith("oauthprovider", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1566,6 +1718,20 @@ func (f *RefreshTokenFilter) WhereLastUsed(p entql.TimeP) {
 	f.Where(p.Field(refreshtoken.FieldLastUsed))
 }
 
+// WhereHasUser applies a predicate to check if query has an edge user.
+func (f *RefreshTokenFilter) WhereHasUser() {
+	f.Where(entql.HasEdge("user"))
+}
+
+// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
+func (f *RefreshTokenFilter) WhereHasUserWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (sq *SessionQuery) addPredicate(pred func(s *sql.Selector)) {
 	sq.predicates = append(sq.predicates, pred)
@@ -1834,6 +2000,20 @@ func (f *UserFilter) WhereHasSetting() {
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
 func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSettings) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasRefreshtoken applies a predicate to check if query has an edge refreshtoken.
+func (f *UserFilter) WhereHasRefreshtoken() {
+	f.Where(entql.HasEdge("refreshtoken"))
+}
+
+// WhereHasRefreshtokenWith applies a predicate to check if query has an edge refreshtoken with a given conditions (other predicates).
+func (f *UserFilter) WhereHasRefreshtokenWith(preds ...predicate.RefreshToken) {
+	f.Where(entql.HasEdgeWith("refreshtoken", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

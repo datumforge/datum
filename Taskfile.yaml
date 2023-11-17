@@ -91,6 +91,7 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
+      - task: fga:test
   compose:fga:
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
@@ -101,6 +102,9 @@ tasks:
     cmds:
       - task: compose:fga
       - task: fga:open
+  fga:test:
+     cmds: 
+      - fga model test --tests internal/fga/testdata/tests.yaml 
   compose:fga:down:
     cmds: 
       - docker compose -p fga down

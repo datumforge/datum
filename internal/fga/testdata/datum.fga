@@ -4,20 +4,21 @@ type user
 type organization
   relations
     define parent: [organization]
-    define owner: [user]
-    define admin: [user] or owner
-    define member: [user] or owner
+    define owner: [user] or owner from parent
+    define admin: [user] or admin from parent
+    define member: [user] or owner or admin or member from parent
     define user_in_context: [user]
     define can_delete: owner 
-    define can_edit: admin
-    define can_view: member
+    define can_edit: admin or owner
+    define can_view: member or admin or owner
 type group
   relations
-    define admin: [organization]
-    define member: [user]
+    define parent: [organization]
+    define admin: [user] and member from parent
+    define member: [user] and member from parent
     define can_delete: admin
     define can_edit: admin
-    define can_view: member
+    define can_view: member or admin
 type subscription_tier
   relations
     define subscriber: [organization]

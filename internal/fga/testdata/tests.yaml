@@ -3,42 +3,174 @@ name: Datum
 model_file: ./datum.fga
 
 tuples:
-  # setup project with owner
-  - user: organization:datum 
+  # setup parent child org relationship
+  - user: organization:datum
+    relation: parent
+    object: organization:catum
+  # setup org primary owner
+  - user: user:nano-id-of-owner
+    relation: owner
+    object: organization:datum
+  # setup org admin
+  - user: user:nano-id-of-admin
     relation: admin
-    object: group:cat-lovers
+    object: organization:datum
+  # setup org member
+  - user: user:nano-id-of-member
+    relation: member
+    object: organization:datum
 tests: 
   - name: test organization
     description: test organization relationships
     tuples:
-      - user: user:nano-id-of-owner
-        relation: owner
-        object: organization:datum
-      - user: user:nano-id-of-member
-        relation: member
-        object: organization:datum
+    # add test local tuples here
     check: 
-      - user: user:nano-id-of-owner # org owner
-        object: organization:datum
+      - user: user:nano-id-of-owner 
+        object: organization:datum # parent org
         assertions:
           member: true
+          admin: false
           owner: true
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:nano-id-of-member # org member
-        object: organization:datum
+      - user: user:nano-id-of-member 
+        object: organization:datum # parent org
         assertions:
           member: true
+          admin: false
           owner: false
           can_delete: false
           can_edit: false
           can_view: true
+      - user: user:nano-id-of-admin 
+        object: organization:datum # parent org
+        assertions:
+          member: true
+          admin: true
+          owner: false
+          can_delete: false
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-owner 
+        object: organization:catum #child org
+        assertions:
+          member: true
+          admin: false
+          owner: true
+          can_delete: true
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-member  
+        object: organization:catum # child org
+        assertions:
+          member: true
+          admin: false
+          owner: false
+          can_delete: false
+          can_edit: false
+          can_view: true
+      - user: user:nano-id-of-admin 
+        object: organization:catum # child org
+        assertions:
+          member: true
+          admin: true
+          owner: false
+          can_delete: false
+          can_edit: true
+          can_view: true
     list_objects:
-      # - user: user:nano-id-of-owner
-      #   type: group
-      #   assertions:
-      #     admin:
-      #       - group:cat-lovers
-      #     member:
-      #       - group:cat-lovers
+      - user: user:nano-id-of-owner
+        type: organization
+        assertions:
+          owner: 
+            - organization:catum
+            - organization:datum
+          admin:
+          member:
+            - organization:catum
+            - organization:datum
+      - user: user:nano-id-of-member
+        type: organization
+        assertions:
+          owner:
+          admin: 
+          member:
+            - organization:catum
+            - organization:datum
+      - user: user:nano-id-of-admin
+        type: organization
+        assertions:
+          owner:
+          admin: 
+            - organization:catum
+            - organization:datum
+          member:
+            - organization:catum
+            - organization:datum
+  - name: test groups
+    description: test group relationships
+    tuples:
+      # setup group with owner
+      - user: organization:datum 
+        relation: parent
+        object: group:cat-lovers
+      # add group admin
+      - user: user:nano-id-of-owner 
+        relation: admin
+        object: group:cat-lovers
+      # add group member but not a member of the org
+      - user: user:nano-id-of-cat-lover-member
+        relation: member
+        object: group:cat-lovers
+      # add group admin
+      - user: user:nano-id-of-member 
+        relation: member
+        object: group:cat-lovers
+    check: 
+      - user: organization:datum
+        object: group:cat-lovers
+        assertions:
+          parent: true
+      - user: user:nano-id-of-owner 
+        object: group:cat-lovers
+        assertions:
+          admin: true
+          member: false
+          can_delete: true
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-cat-lover-member 
+        object: group:cat-lovers
+        assertions:
+          admin: false
+          member: false # not an org member so should be false
+          can_delete: false
+          can_edit: false
+          can_view: false
+      - user: user:nano-id-of-member 
+        object: group:cat-lovers
+        assertions:
+          admin: false
+          member: true
+          can_delete: false
+          can_edit: false
+          can_view: true
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: group
+        assertions:
+          admin:
+            - group:cat-lovers
+          member:
+      - user: user:nano-id-of-member
+        type: group
+        assertions:
+          admin: 
+          member:
+            - group:cat-lovers
+      - user: user:nano-id-of-admin # user wasn't added to group
+        type: group
+        assertions:
+          admin: 
+          member:

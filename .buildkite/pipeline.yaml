@@ -13,12 +13,19 @@ steps:
         environment: 
           - "GOTOOLCHAIN=auto"
 
-- label: ":test_tube: test"
+- label: ":test_tube: go test"
   key: "test"
   plugins:
     - docker#v5.9.0:
         image: golang:1.21.4
         command: ["go", "test", "./..."]
+
+- label: ":auth0: fga model test"
+  key: "fga_test"
+  plugins:
+    - docker#v5.9.0:
+        image: openfga/cli
+        command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
 
 - label: ":golang: build"
   key: "gobuild"

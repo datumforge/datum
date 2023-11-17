@@ -1,0 +1,331 @@
+---
+name: Datum
+model_file: ../model/datum.fga
+
+tuples:
+  # setup parent child org relationship
+  - user: organization:datum
+    relation: parent
+    object: organization:catum
+  # setup org primary owner
+  - user: user:nano-id-of-owner
+    relation: owner
+    object: organization:datum
+  # setup org admin
+  - user: user:nano-id-of-admin
+    relation: admin
+    object: organization:datum
+  # setup org member
+  - user: user:nano-id-of-member
+    relation: member
+    object: organization:datum
+tests: 
+  - name: organization
+    description: test organization relationships 
+    tuples:
+    # add test local tuples here
+    check: 
+      - user: user:nano-id-of-owner 
+        object: organization:datum # parent org
+        assertions:
+          member: true
+          admin: false
+          owner: true
+          can_delete: true
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-member 
+        object: organization:datum # parent org
+        assertions:
+          member: true
+          admin: false
+          owner: false
+          can_delete: false
+          can_edit: false
+          can_view: true
+      - user: user:nano-id-of-admin 
+        object: organization:datum # parent org
+        assertions:
+          member: true
+          admin: true
+          owner: false
+          can_delete: false
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-owner 
+        object: organization:catum #child org
+        assertions:
+          member: true
+          admin: false
+          owner: true
+          can_delete: true
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-member  
+        object: organization:catum # child org
+        assertions:
+          member: true
+          admin: false
+          owner: false
+          can_delete: false
+          can_edit: false
+          can_view: true
+      - user: user:nano-id-of-admin 
+        object: organization:catum # child org
+        assertions:
+          member: true
+          admin: true
+          owner: false
+          can_delete: false
+          can_edit: true
+          can_view: true
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: organization
+        assertions:
+          owner: 
+            - organization:catum
+            - organization:datum
+          admin:
+          member:
+            - organization:catum
+            - organization:datum
+      - user: user:nano-id-of-member
+        type: organization
+        assertions:
+          owner:
+          admin: 
+          member:
+            - organization:catum
+            - organization:datum
+      - user: user:nano-id-of-admin
+        type: organization
+        assertions:
+          owner:
+          admin: 
+            - organization:catum
+            - organization:datum
+          member:
+            - organization:catum
+            - organization:datum
+  - name: groups
+    description: test group relationships to their parent (organization)
+    tuples:
+      # setup group with owner
+      - user: organization:datum 
+        relation: parent
+        object: group:cat-lovers
+      # add group admin
+      - user: user:nano-id-of-owner 
+        relation: admin
+        object: group:cat-lovers
+      # add group member but not a member of the org
+      - user: user:nano-id-of-cat-lover-member
+        relation: member
+        object: group:cat-lovers
+      # add group admin
+      - user: user:nano-id-of-member 
+        relation: member
+        object: group:cat-lovers
+    check: 
+      - user: organization:datum
+        object: group:cat-lovers
+        assertions:
+          parent: true
+      - user: user:nano-id-of-owner 
+        object: group:cat-lovers
+        assertions:
+          admin: true
+          member: false
+          can_delete: true
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-cat-lover-member 
+        object: group:cat-lovers
+        assertions:
+          admin: false
+          member: false # not an org member so should be false
+          can_delete: false
+          can_edit: false
+          can_view: false
+      - user: user:nano-id-of-member 
+        object: group:cat-lovers
+        assertions:
+          admin: false
+          member: true
+          can_delete: false
+          can_edit: false
+          can_view: true
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: group
+        assertions:
+          admin:
+            - group:cat-lovers
+          member:
+      - user: user:nano-id-of-member
+        type: group
+        assertions:
+          admin: 
+          member:
+            - group:cat-lovers
+      - user: user:nano-id-of-admin # user wasn't added to group
+        type: group
+        assertions:
+          admin: 
+          member:
+  - name: subscription tier
+    description: subscription tiers are associated to organizations, and members are part of that organization
+    tuples:
+      # setup organization with pro tier
+      - user: organization:datum 
+        relation: subscriber
+        object: subscription_tier:pro
+      # setup organization with free tier
+      - user: organization:startup 
+        relation: subscriber
+        object: subscription_tier:free
+    check: 
+      - user: organization:datum
+        object: subscription_tier:pro
+        assertions:
+          subscriber: true
+          subscriber_member: false
+      - user: organization:datum
+        object: subscription_tier:free
+        assertions:
+          subscriber: false
+          subscriber_member: false
+      - user: organization:startup
+        object: subscription_tier:free
+        assertions:
+          subscriber: true
+          subscriber_member: false
+      - user: user:nano-id-of-member
+        object: subscription_tier:pro
+        assertions:
+          subscriber: false
+          subscriber_member: true
+      - user: user:nano-id-of-owner
+        object: subscription_tier:pro
+        assertions:
+          subscriber: false
+          subscriber_member: true
+      - user: user:nano-id-of-admin
+        object: subscription_tier:pro
+        assertions:
+          subscriber: false
+          subscriber_member: true
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+            - subscription_tier:pro 
+          subscriber:
+      - user: user:nano-id-of-admin
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+            - subscription_tier:pro
+          subscriber:
+      - user: user:nano-id-of-member
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+            - subscription_tier:pro
+          subscriber:
+      - user: organization:datum
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+          subscriber:
+            - subscription_tier:pro
+      - user: organization:startup
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+          subscriber:
+            - subscription_tier:free
+      - user: organization:none
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+          subscriber:
+  - name: features
+    description: features tiers are associated to subscription tiers, and users can access features based on their subscription tier of their organization
+    tuples:
+      # setup organization with pro tier
+      - user: organization:datum 
+        relation: subscriber
+        object: subscription_tier:pro
+      # setup organization with free tier
+      - user: organization:startup 
+        relation: subscriber
+        object: subscription_tier:free
+      # setup org member
+      - user: user:nano-id-of-startup-member
+        relation: member
+        object: organization:startup
+      - user: subscription_tier:free
+        relation: associated_subscription_tier
+        object: feature:asset-management
+      - user: subscription_tier:pro
+        relation: associated_subscription_tier
+        object: feature:sso
+    check: 
+      - user: user:nano-id-of-startup-member
+        object: feature:asset-management
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: user:nano-id-of-admin
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: user:nano-id-of-owner
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: user:nano-id-of-member
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: subscription_tier:pro
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: true
+          access: false
+      - user: subscription_tier:free
+        object: feature:asset-management
+        assertions:
+          associated_subscription_tier: true
+          access: false
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: feature
+        assertions:
+          associated_subscription_tier:
+          access:
+            - feature:sso
+      - user: user:nano-id-of-startup-member
+        type: feature
+        assertions:
+          associated_subscription_tier:
+          access:
+            - feature:asset-management
+      - user: subscription_tier:free
+        type: feature
+        assertions:
+          associated_subscription_tier:
+            - feature:asset-management
+          access:
+      - user: subscription_tier:pro
+        type: feature
+        assertions:
+          associated_subscription_tier:
+            - feature:sso
+          access:

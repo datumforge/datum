@@ -17,15 +17,15 @@ steps:
   key: "test"
   plugins:
     - docker#v5.9.0:
-        image: openfga/cli
-        command: ["fga", "model", "test", "--tests", "internal/fga/testdata/tests.yaml"]
+        image: golang:1.21.4
+        command: ["go", "test", "./..."]
 
 - label: ":auth0: fga model test"
   key: "fga_test"
   plugins:
     - docker#v5.9.0:
-        image: golang:1.21.4
-        command: ["go", "test", "./..."]
+        image: openfga/cli
+        command: ["fga", "model", "test", "--tests", "internal/fga/testdata/tests.yaml"]
 
 
 - label: ":golang: build"

@@ -1,107 +1,113 @@
 package fga
 
-// func Test_EntityString(t *testing.T) {
-// 	memberRelation := Relation("member")
+import (
+	"testing"
 
-// 	testCases := []struct {
-// 		name        string
-// 		entity      Entity
-// 		expectedRes string
-// 	}{
-// 		{
-// 			name: "relationship empty",
-// 			entity: Entity{
-// 				Kind:       "user",
-// 				Identifier: "bz0yOLsL460V-6L9HauX4",
-// 				Relation:   "",
-// 			},
-// 			expectedRes: "user:bz0yOLsL460V-6L9HauX4",
-// 		},
-// 		{
-// 			name: "relationship member",
-// 			entity: Entity{
-// 				Kind:       "organization",
-// 				Identifier: "yKreKfzq3-iG-rhj0N9o9",
-// 				Relation:   memberRelation,
-// 			},
-// 			expectedRes: "organization:yKreKfzq3-iG-rhj0N9o9#member",
-// 		},
-// 	}
+	"github.com/stretchr/testify/assert"
+)
 
-// 	for _, tc := range testCases {
-// 		t.Run("Get "+tc.name, func(t *testing.T) {
-// 			res := tc.entity.String()
+func Test_EntityString(t *testing.T) {
+	memberRelation := Relation("member")
 
-// 			// result should never be empty
-// 			assert.NotEmpty(t, res)
-// 			assert.Equal(t, tc.expectedRes, res)
-// 		})
-// 	}
-// }
+	testCases := []struct {
+		name        string
+		entity      Entity
+		expectedRes string
+	}{
+		{
+			name: "relationship empty",
+			entity: Entity{
+				Kind:       "user",
+				Identifier: "bz0yOLsL460V-6L9HauX4",
+				Relation:   "",
+			},
+			expectedRes: "user:bz0yOLsL460V-6L9HauX4",
+		},
+		{
+			name: "relationship member",
+			entity: Entity{
+				Kind:       "organization",
+				Identifier: "yKreKfzq3-iG-rhj0N9o9",
+				Relation:   memberRelation,
+			},
+			expectedRes: "organization:yKreKfzq3-iG-rhj0N9o9#member",
+		},
+	}
 
-// func Test_ParseEntity(t *testing.T) {
-// 	memberRelation := Relation("member")
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			res := tc.entity.String()
 
-// 	testCases := []struct {
-// 		name        string
-// 		entity      string
-// 		expectedRes Entity
-// 		errRes      string
-// 	}{
-// 		{
-// 			name: "happy path, user",
+			// result should never be empty
+			assert.NotEmpty(t, res)
+			assert.Equal(t, tc.expectedRes, res)
+		})
+	}
+}
 
-// 			entity: "user:bz0yOLsL460V-6L9HauX4",
-// 			expectedRes: Entity{
-// 				Kind:       "user",
-// 				Identifier: "bz0yOLsL460V-6L9HauX4",
-// 				Relation:   "",
-// 			},
-// 			errRes: "",
-// 		},
-// 		{
-// 			name:   "relationship member",
-// 			entity: "organization:yKreKfzq3-iG-rhj0N9o9#member",
-// 			expectedRes: Entity{
-// 				Kind:       "organization",
-// 				Identifier: "yKreKfzq3-iG-rhj0N9o9",
-// 				Relation:   memberRelation,
-// 			},
-// 			errRes: "",
-// 		},
-// 		{
-// 			name:        "missing parts",
-// 			entity:      "organization",
-// 			expectedRes: Entity{},
-// 			errRes:      "invalid entity representation",
-// 		},
-// 		{
-// 			name:        "too many parts",
-// 			entity:      "organization:yKreKfzq3-iG-rhj0N9o9#member:user:bz0yOLsL460V-6L9HauX4",
-// 			expectedRes: Entity{},
-// 			errRes:      "invalid entity representation",
-// 		},
-// 	}
+func Test_ParseEntity(t *testing.T) {
+	memberRelation := Relation("member")
 
-// 	for _, tc := range testCases {
-// 		t.Run("Get "+tc.name, func(t *testing.T) {
-// 			res, err := ParseEntity(tc.entity)
+	testCases := []struct {
+		name        string
+		entity      string
+		expectedRes Entity
+		errRes      string
+	}{
+		{
+			name: "happy path, user",
 
-// 			// if we expect an error, check that first
-// 			if tc.errRes != "" {
-// 				assert.Error(t, err)
-// 				assert.ErrorContains(t, err, tc.errRes)
-// 				assert.Empty(t, res)
+			entity: "user:bz0yOLsL460V-6L9HauX4",
+			expectedRes: Entity{
+				Kind:       "user",
+				Identifier: "bz0yOLsL460V-6L9HauX4",
+				Relation:   "",
+			},
+			errRes: "",
+		},
+		{
+			name:   "relationship member",
+			entity: "organization:yKreKfzq3-iG-rhj0N9o9#member",
+			expectedRes: Entity{
+				Kind:       "organization",
+				Identifier: "yKreKfzq3-iG-rhj0N9o9",
+				Relation:   memberRelation,
+			},
+			errRes: "",
+		},
+		{
+			name:        "missing parts",
+			entity:      "organization",
+			expectedRes: Entity{},
+			errRes:      "invalid entity representation",
+		},
+		{
+			name:        "too many parts",
+			entity:      "organization:yKreKfzq3-iG-rhj0N9o9#member:user:bz0yOLsL460V-6L9HauX4",
+			expectedRes: Entity{},
+			errRes:      "invalid entity representation",
+		},
+	}
 
-// 				return
-// 			}
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			res, err := ParseEntity(tc.entity)
 
-// 			assert.NoError(t, err)
-// 			assert.NotEmpty(t, res)
-// 			assert.Equal(t, tc.expectedRes, res)
-// 		})
-// 	}
-// }
+			// if we expect an error, check that first
+			if tc.errRes != "" {
+				assert.Error(t, err)
+				assert.ErrorContains(t, err, tc.errRes)
+				assert.Empty(t, res)
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.NotEmpty(t, res)
+			assert.Equal(t, tc.expectedRes, res)
+		})
+	}
+}
 
 // func Test_CreateCheckTupleWithUser(t *testing.T) {
 // 	testCases := []struct {

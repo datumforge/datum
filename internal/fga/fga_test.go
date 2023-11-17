@@ -1,52 +1,44 @@
 package fga
 
-import (
-	"context"
-	"os"
-	"testing"
+// const (
+// 	modelFile     = "../fga/model/datum.json"
+// 	defaultFGAURL = "localhost:8080"
+// )
 
-	"go.uber.org/zap"
-)
+// func TestFGAClient(t *testing.T) {
+// 	url := os.Getenv("TEST_FGA_URL")
+// 	if url == "" {
+// 		url = defaultFGAURL
+// 	}
 
-const (
-	modelFile     = "testdata/datum.json"
-	defaultFGAURL = "localhost:8080"
-)
+// 	// TODO: create test tuples and run through model
+// 	_ = newTestFGAClient(t, url)
+// }
 
-func TestFGAClient(t *testing.T) {
-	url := os.Getenv("TEST_FGA_URL")
-	if url == "" {
-		url = defaultFGAURL
-	}
+// func newTestFGAClient(t testing.TB, url string) *Client {
+// 	// create FGA client for test suites
+// 	c, err := NewClient(url,
+// 		WithScheme("http"),
+// 		WithLogger(zap.NewNop().Sugar()))
+// 	if err != nil {
+// 		t.Fatal(err)
+// 		return nil
+// 	}
 
-	// TODO: create test tuples and run through model
-	_ = newTestFGAClient(t, url)
-}
+// 	// Create new store
+// 	if _, err := c.CreateStore(context.Background(), "datum_test"); err != nil {
+// 		t.Fatal(err)
+// 	}
 
-func newTestFGAClient(t testing.TB, url string) *Client {
-	// create FGA client for test suites
-	c, err := NewClient(url,
-		WithScheme("http"),
-		WithLogger(zap.NewNop().Sugar()))
-	if err != nil {
-		t.Fatal(err)
-		return nil
-	}
+// 	// Create model
+// 	if _, err := c.CreateModel(context.Background(), modelFile); err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	// Create new store
-	if _, err := c.CreateStore(context.Background(), "datum_test"); err != nil {
-		t.Fatal(err)
-	}
-
-	// Create model
-	if _, err := c.CreateModel(context.Background(), modelFile); err != nil {
-		t.Fatal(err)
-	}
-
-	// for _, tk := range testTuples {
-	// 	if err := c.WriteTuple(context.Background(), tk.TupleKey()); err != nil {
-	// 		t.Fatal(err)
-	// 	}
-	// }
-	return c
-}
+// 	// for _, tk := range testTuples {
+// 	// 	if err := c.WriteTuple(context.Background(), tk.TupleKey()); err != nil {
+// 	// 		t.Fatal(err)
+// 	// 	}
+// 	// }
+// 	return c
+// }

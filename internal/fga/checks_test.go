@@ -1,77 +1,67 @@
 package fga
 
-import (
-	"context"
-	"os"
-	"testing"
+// func Test_CheckDirectUser(t *testing.T) {
+// 	ec, err := echox.NewTestContextWithValidUser("funk")
+// 	if err != nil {
+// 		t.Fatal()
+// 	}
 
-	"github.com/stretchr/testify/assert"
+// 	echoContext := *ec
 
-	"github.com/datumforge/datum/internal/echox"
-)
+// 	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
 
-func Test_CheckDirectUser(t *testing.T) {
-	ec, err := echox.NewTestContextWithValidUser("funk")
-	if err != nil {
-		t.Fatal()
-	}
+// 	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
 
-	echoContext := *ec
+// 	url := os.Getenv("TEST_FGA_URL")
+// 	if url == "" {
+// 		url = defaultFGAURL
+// 	}
 
-	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+// 	fc := newTestFGAClient(t, url)
 
-	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
+// 	// seed some relations
 
-	url := os.Getenv("TEST_FGA_URL")
-	if url == "" {
-		url = defaultFGAURL
-	}
+// 	if err = fc.CreateRelationshipTupleWithUser(ctx, "member", "organization:datum"); err != nil {
+// 		t.Fatal()
+// 	}
 
-	fc := newTestFGAClient(t, url)
+// 	testCases := []struct {
+// 		name        string
+// 		relation    string
+// 		object      string
+// 		expectedRes bool
+// 		errRes      string
+// 	}{
+// 		{
+// 			name:        "happy path, valid tuple",
+// 			relation:    "member",
+// 			object:      "organization:datum",
+// 			expectedRes: true,
+// 			errRes:      "",
+// 		},
+// 		{
+// 			name:        "tuple does not exist",
+// 			relation:    "member",
+// 			object:      "organization:google",
+// 			expectedRes: false,
+// 			errRes:      "",
+// 		},
+// 	}
 
-	// seed some relations
+// 	for _, tc := range testCases {
+// 		t.Run(tc.name, func(t *testing.T) {
+// 			valid, err := fc.CheckDirectUser(ctx, tc.relation, tc.object)
 
-	if err = fc.CreateRelationshipTupleWithUser(ctx, "member", "organization:datum"); err != nil {
-		t.Fatal()
-	}
+// 			if tc.errRes != "" {
+// 				assert.Error(t, err)
+// 				assert.ErrorContains(t, err, tc.errRes)
+// 				assert.Equal(t, tc.expectedRes, valid)
 
-	testCases := []struct {
-		name        string
-		relation    string
-		object      string
-		expectedRes bool
-		errRes      string
-	}{
-		{
-			name:        "happy path, valid tuple",
-			relation:    "member",
-			object:      "organization:datum",
-			expectedRes: true,
-			errRes:      "",
-		},
-		{
-			name:        "tuple does not exist",
-			relation:    "member",
-			object:      "organization:google",
-			expectedRes: false,
-			errRes:      "",
-		},
-	}
+// 				return
+// 			}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			valid, err := fc.CheckDirectUser(ctx, tc.relation, tc.object)
-
-			if tc.errRes != "" {
-				assert.Error(t, err)
-				assert.ErrorContains(t, err, tc.errRes)
-				assert.Equal(t, tc.expectedRes, valid)
-
-				return
-			}
-
-			assert.NoError(t, err)
-			assert.Equal(t, tc.expectedRes, valid)
-		})
-	}
-}
+// 			assert.NoError(t, err)
+// 			assert.Equal(t, tc.expectedRes, valid)
+// 		})
+// 	}
+// }

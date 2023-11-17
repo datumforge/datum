@@ -21,13 +21,13 @@ func newTestEchoContext() echo.Context {
 }
 
 // newValidSignedJWT creates a jwt with a fake subject for testing purposes ONLY
-func newValidSignedJWT() (*jwt.Token, error) {
+func newValidSignedJWT(subject string) (*jwt.Token, error) {
 	iat := time.Now().Unix()
 	nbf := time.Now().Unix()
 	exp := time.Now().Add(time.Hour).Unix()
 
 	claims := jwt.MapClaims{
-		"sub":    "foobar",
+		"sub":    subject,
 		"issuer": "test suite",
 		"iat":    iat,
 		"nbf":    nbf,
@@ -40,10 +40,10 @@ func newValidSignedJWT() (*jwt.Token, error) {
 }
 
 // NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
-func NewTestContextWithValidUser() (*echo.Context, error) {
+func NewTestContextWithValidUser(subject string) (*echo.Context, error) {
 	ec := newTestEchoContext()
 
-	j, err := newValidSignedJWT()
+	j, err := newValidSignedJWT(subject)
 	if err != nil {
 		return nil, err
 	}

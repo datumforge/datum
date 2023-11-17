@@ -127,7 +127,7 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 			object:   "organization:datum",
 			relation: "member",
 			expectedRes: &client.ClientCheckRequest{
-				User:     "user:foobar",
+				User:     "user:funk",
 				Relation: "member",
 				Object:   "organization:datum",
 			},
@@ -151,7 +151,7 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ec, err := echox.NewTestContextWithValidUser()
+			ec, err := echox.NewTestContextWithValidUser("funk")
 			if err != nil {
 				t.Fatal()
 			}
@@ -218,7 +218,7 @@ func Test_CreateRelationshipTupleWithUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ec, err := echox.NewTestContextWithValidUser()
+			ec, err := echox.NewTestContextWithValidUser("funk")
 			if err != nil {
 				t.Fatal()
 			}

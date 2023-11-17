@@ -16,7 +16,7 @@ func Test_GetActorSubject(t *testing.T) {
 	jBasic := jwt.New(jwt.SigningMethodHS256)
 	missingSubCtx.Set("user", jBasic)
 
-	validCtx, err := NewTestContextWithValidUser()
+	validCtx, err := NewTestContextWithValidUser("foobar")
 	if err != nil {
 		t.Fatal()
 	}

@@ -1,0 +1,44 @@
+---
+name: Datum
+model_file: ./datum.fga
+
+tuples:
+  # setup project with owner
+  - user: organization:datum 
+    relation: admin
+    object: group:cat-lovers
+tests: 
+  - name: test organization
+    description: test organization relationships
+    tuples:
+      - user: user:nano-id-of-owner
+        relation: owner
+        object: organization:datum
+      - user: user:nano-id-of-member
+        relation: member
+        object: organization:datum
+    check: 
+      - user: user:nano-id-of-owner # org owner
+        object: organization:datum
+        assertions:
+          member: true
+          owner: true
+          can_delete: true
+          can_edit: true
+          can_view: true
+      - user: user:nano-id-of-member # org member
+        object: organization:datum
+        assertions:
+          member: true
+          owner: false
+          can_delete: false
+          can_edit: false
+          can_view: true
+    list_objects:
+      # - user: user:nano-id-of-owner
+      #   type: group
+      #   assertions:
+      #     admin:
+      #       - group:cat-lovers
+      #     member:
+      #       - group:cat-lovers

@@ -22,12 +22,6 @@ type CustomContext struct {
 	ctx context.Context
 }
 
-func NewCustomContext(ec echo.Context, c context.Context) CustomContext {
-	return CustomContext{
-		ec, c,
-	}
-}
-
 // EchoContextToContextMiddleware is the middleware that adds the echo.Context to the parent context
 func EchoContextToContextMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -79,6 +73,3 @@ func GetActorSubject(c echo.Context) (string, error) {
 
 	return sub, nil
 }
-
-// func GetUserIDFromSubject(c echo.Context) (string, error)
-// }

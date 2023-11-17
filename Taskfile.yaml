@@ -120,7 +120,7 @@ tasks:
   fga:create:
     desc: creates a new fga store with the testdata model
     cmds:
-      - fga store create --name "datum dev" --model internal/fga/testdata/datum.fga
+      - fga store create --name "datum dev" --model fga/model/datum.fga
   fga:open:
     desc: opens the fga playground in a browser
     cmds: 
@@ -133,7 +133,7 @@ tasks:
   fga:test:
      desc: runs the fga model tests
      cmds: 
-      - fga model test --tests internal/fga/testdata/tests.yaml 
+      - fga model test --tests fga/tests/tests.yaml 
   compose:fga:down:
     desc: brings the fga compose environment down
     cmds: 

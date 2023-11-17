@@ -1,6 +1,6 @@
 ---
 name: Datum
-model_file: ./datum.fga
+model_file: ../model/datum.fga
 
 tuples:
   # setup parent child org relationship

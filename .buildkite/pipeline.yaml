@@ -25,7 +25,7 @@ steps:
   plugins:
     - docker#v5.9.0:
         image: openfga/cli
-        command: ["model", "test", "--tests", "internal/fga/testdata/tests.yaml"]
+        command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
 
 - label: ":golang: build"
   key: "gobuild"

@@ -174,3 +174,158 @@ tests:
         assertions:
           admin: 
           member:
+  - name: test subscription tier
+    description: subscription tiers are associated to organizations, and members are part of that organization
+    tuples:
+      # setup organization with pro tier
+      - user: organization:datum 
+        relation: subscriber
+        object: subscription_tier:pro
+      # setup organization with free tier
+      - user: organization:startup 
+        relation: subscriber
+        object: subscription_tier:free
+    check: 
+      - user: organization:datum
+        object: subscription_tier:pro
+        assertions:
+          subscriber: true
+          subscriber_member: false
+      - user: organization:datum
+        object: subscription_tier:free
+        assertions:
+          subscriber: false
+          subscriber_member: false
+      - user: organization:startup
+        object: subscription_tier:free
+        assertions:
+          subscriber: true
+          subscriber_member: false
+      - user: user:nano-id-of-member
+        object: subscription_tier:pro
+        assertions:
+          subscriber: false
+          subscriber_member: true
+      - user: user:nano-id-of-owner
+        object: subscription_tier:pro
+        assertions:
+          subscriber: false
+          subscriber_member: true
+      - user: user:nano-id-of-admin
+        object: subscription_tier:pro
+        assertions:
+          subscriber: false
+          subscriber_member: true
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+            - subscription_tier:pro 
+          subscriber:
+      - user: user:nano-id-of-admin
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+            - subscription_tier:pro
+          subscriber:
+      - user: user:nano-id-of-member
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+            - subscription_tier:pro
+          subscriber:
+      - user: organization:datum
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+          subscriber:
+            - subscription_tier:pro
+      - user: organization:startup
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+          subscriber:
+            - subscription_tier:free
+      - user: organization:none
+        type: subscription_tier
+        assertions:
+          subscriber_member:
+          subscriber:
+  - name: test features
+    description: features tiers are associated to subscription tiers, and users can access features based on their subscription tier of their organization
+    tuples:
+      # setup organization with pro tier
+      - user: organization:datum 
+        relation: subscriber
+        object: subscription_tier:pro
+      # setup organization with free tier
+      - user: organization:startup 
+        relation: subscriber
+        object: subscription_tier:free
+      # setup org member
+      - user: user:nano-id-of-startup-member
+        relation: member
+        object: organization:startup
+      - user: subscription_tier:free
+        relation: associated_subscription_tier
+        object: feature:asset-management
+      - user: subscription_tier:pro
+        relation: associated_subscription_tier
+        object: feature:sso
+    check: 
+      - user: user:nano-id-of-startup-member
+        object: feature:asset-management
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: user:nano-id-of-admin
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: user:nano-id-of-owner
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: user:nano-id-of-member
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: false
+          access: true
+      - user: subscription_tier:pro
+        object: feature:sso
+        assertions:
+          associated_subscription_tier: true
+          access: false
+      - user: subscription_tier:free
+        object: feature:asset-management
+        assertions:
+          associated_subscription_tier: true
+          access: false
+    list_objects:
+      - user: user:nano-id-of-owner
+        type: feature
+        assertions:
+          associated_subscription_tier:
+          access:
+            - feature:sso
+      - user: user:nano-id-of-startup-member
+        type: feature
+        assertions:
+          associated_subscription_tier:
+          access:
+            - feature:asset-management
+      - user: subscription_tier:free
+        type: feature
+        assertions:
+          associated_subscription_tier:
+            - feature:asset-management
+          access:
+      - user: subscription_tier:pro
+        type: feature
+        assertions:
+          associated_subscription_tier:
+            - feature:sso
+          access:

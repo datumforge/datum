@@ -6,6 +6,7 @@ includes:
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
   TEST_DB_URL: "file:ent?mode=memory&cache=shared&_fk=1"
+  TEST_FGA_URL: "localhost:8080"
 
 tasks:
   clean:
@@ -32,6 +33,7 @@ tasks:
       - "curl -sSf https://atlasgo.sh | sh"
       - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
       - "go get -u github.com/openfga/go-sdk"
+      - "brew install openfga/tap/fga"
       - defer: { task: go:tidy }
   graph:
     desc: runs scripts/gen_graphql.sh to stub out files in the schema/ directory
@@ -58,7 +60,7 @@ tasks:
       - task: atlas:migrate
       - task: atlas:lint
   atlas:create:
-    desc: creates an atlas migration if one is needed based on the ent schema definitons
+    desc: creates an atlas migration if one is needed based on the ent schema definitions
     cmds:
       - |
         echo "If there is no schema to generate, this will not create a file (hint: name it your branch name if you're not sure) - enter the name of the migration:"
@@ -81,6 +83,10 @@ tasks:
     cmds:
       - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
       - 'open "http://localhost:4000"'
+  run-dev-auth:
+    desc: runs the datum server with oidc enabled
+    cmds: 
+    - go run main.go serve  --debug --pretty --dev --jwt-secretkey=mysupersecretkey  --fga-host=localhost:8080 --fga-scheme=http --fga-create-store
   run-dev:
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
@@ -91,8 +97,10 @@ tasks:
       - golangci-lint run -v
   go:test:
     desc: runs and outputs results of created go tests
+    deps: [compose:fga]
     cmds:
-      - go test -v ./...
+      - go test -v ./... 
+      - defer: { task: compose:fga:down }
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]
@@ -105,15 +113,56 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
+      - task: fga:test
   compose:fga:
     desc: brings up the compose environment for openfga development
     cmds:
       - "docker compose -f ./docker/docker-compose-fga.yml -p fga up -d"
+  fga:create:
+    desc: creates a new fga store
+    cmds:
+      - fga store create --name "datum dev"
+  fga:open:
+    desc: opens the fga playground in a browser
+    cmds: 
       - 'open "http://localhost:3000/playground"'
+  fga:up:
+    desc: brings the fga compose environment up and opens the fga playground
+    cmds:
+      - task: compose:fga
+      - task: fga:open
+  fga:test:
+     desc: runs the fga model tests
+     cmds: 
+      - fga model test --tests internal/fga/testdata/tests.yaml 
+  compose:fga:down:
+    desc: brings the fga compose environment down
+    cmds: 
+      - docker compose -p fga down
+  docker:build:
+    desc: builds the datum docker image
+    cmds:
+      - docker build -f docker/Dockerfile . 
   compose:datum:
     desc: brings up the compose environment for the datum server
+    deps: [docker:build]
     cmds:
       - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
+  compose:datum:down:
+    desc: brings the datum compose environment down
+    cmds:
+      - "docker compose -p datum down"
+  compose:all:up:
+    desc: brings up the full docker compose development environment including datum server, fga, and rover
+    cmds:
+      - task: fga:up
+      - task: compose:datum
+      - task: rover
+  compose:all:down: 
+    desc: brings down both fga and datum server compose environments 
+    cmds:
+      - task: compose:fga:down
+      - task: compose:datum:down
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:

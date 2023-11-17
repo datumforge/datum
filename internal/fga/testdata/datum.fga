@@ -1,0 +1,29 @@
+model
+  schema 1.1
+type user
+type organization
+  relations
+    define parent: [organization]
+    define owner: [user] or owner from parent
+    define admin: [user] or admin from parent
+    define member: [user] or owner or admin or member from parent
+    define user_in_context: [user]
+    define can_delete: owner 
+    define can_edit: admin or owner
+    define can_view: member or admin or owner
+type group
+  relations
+    define parent: [organization]
+    define admin: [user] and member from parent
+    define member: [user] and member from parent
+    define can_delete: admin
+    define can_edit: admin
+    define can_view: member or admin
+type subscription_tier
+  relations
+    define subscriber: [organization]
+    define subscriber_member: member from subscriber 
+type feature
+  relations
+    define associated_subscription_tier: [subscription_tier] 
+    define access: [user] or subscriber_member from associated_subscription_tier

@@ -20,8 +20,8 @@ tuples:
     relation: member
     object: organization:datum
 tests: 
-  - name: test organization
-    description: test organization relationships
+  - name: organization
+    description: test organization relationships 
     tuples:
     # add test local tuples here
     check: 
@@ -108,8 +108,8 @@ tests:
           member:
             - organization:catum
             - organization:datum
-  - name: test groups
-    description: test group relationships
+  - name: groups
+    description: test group relationships to their parent (organization)
     tuples:
       # setup group with owner
       - user: organization:datum 
@@ -174,7 +174,7 @@ tests:
         assertions:
           admin: 
           member:
-  - name: test subscription tier
+  - name: subscription tier
     description: subscription tiers are associated to organizations, and members are part of that organization
     tuples:
       # setup organization with pro tier
@@ -252,7 +252,7 @@ tests:
         assertions:
           subscriber_member:
           subscriber:
-  - name: test features
+  - name: features
     description: features tiers are associated to subscription tiers, and users can access features based on their subscription tier of their organization
     tuples:
       # setup organization with pro tier

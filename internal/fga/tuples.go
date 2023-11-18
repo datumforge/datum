@@ -110,9 +110,10 @@ func (c *Client) CreateCheckTupleWithUser(ctx context.Context, relation, object 
 	// TODO: convert jwt sub --> uuid
 
 	return &client.ClientCheckRequest{
-		User:     fmt.Sprintf("user:%s", actor),
-		Relation: relation,
-		Object:   object,
+		User:             fmt.Sprintf("user:%s", actor),
+		Relation:         relation,
+		Object:           object,
+		ContextualTuples: nil, // todo: allow contextual tuples
 	}, nil
 }
 
@@ -144,7 +145,7 @@ func (c *Client) CreateRelationshipTupleWithUser(ctx context.Context, relation, 
 
 // CreateRelationshipTuple creates a relationship tuple in the openFGA store
 func (c *Client) createRelationshipTuple(ctx context.Context, tuples []client.ClientTupleKey) error {
-	if _, err := c.O.WriteTuples(ctx).Body(tuples).Execute(); err != nil {
+	if _, err := c.Ofga.WriteTuples(ctx).Body(tuples).Execute(); err != nil {
 		c.Logger.Infof("CreateRelationshipTuple error: [%s][%v]", err.Error())
 
 		return err

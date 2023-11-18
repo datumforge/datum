@@ -86,7 +86,7 @@ tasks:
   run-dev-auth:
     desc: runs the datum server with oidc enabled
     cmds: 
-    - go run main.go serve  --debug --pretty --dev --jwt-secretkey=mysupersecretkey  --fga-host=localhost:8080 --fga-scheme=http --fga-create-store
+    - go run main.go serve  --debug --pretty --dev --jwt-secretkey=mysupersecretkey  --fga-host=localhost:8080 --fga-scheme=http
   run-dev:
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
@@ -111,7 +111,6 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
-      - task: fga:test
   compose:fga:
     desc: brings up the compose environment for openfga development
     cmds:
@@ -124,6 +123,10 @@ tasks:
     desc: opens the fga playground in a browser
     cmds: 
       - 'open "http://localhost:3000/playground"'
+  fga:model:transform:
+    desc: transforms the fga model to json
+    cmds:
+      - fga model transform --file=fga/model/datum.fga |jq  > fga/model/datum.json
   fga:up:
     desc: brings the fga compose environment up and opens the fga playground
     cmds:

@@ -1,67 +1,104 @@
 package fga
 
-// func Test_CheckDirectUser(t *testing.T) {
-// 	ec, err := echox.NewTestContextWithValidUser("funk")
-// 	if err != nil {
-// 		t.Fatal()
-// 	}
+import (
+	"context"
+	"testing"
 
-// 	echoContext := *ec
+	openfga "github.com/openfga/go-sdk"
+	ofgaclient "github.com/openfga/go-sdk/client"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 
-// 	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	"github.com/datumforge/datum/internal/echox"
+	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+)
 
-// 	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
+func Test_CheckDirectUser(t *testing.T) {
+	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
+	if err != nil {
+		t.Fatal()
+	}
 
-// 	url := os.Getenv("TEST_FGA_URL")
-// 	if url == "" {
-// 		url = defaultFGAURL
-// 	}
+	echoContext := *ec
 
-// 	fc := newTestFGAClient(t, url)
+	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
 
-// 	// seed some relations
+	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
 
-// 	if err = fc.CreateRelationshipTupleWithUser(ctx, "member", "organization:datum"); err != nil {
-// 		t.Fatal()
-// 	}
+	testCases := []struct {
+		name        string
+		relation    string
+		object      string
+		expectedRes bool
+		errRes      string
+	}{
+		{
+			name:        "happy path, valid tuple",
+			relation:    "member",
+			object:      "organization:datum",
+			expectedRes: true,
+			errRes:      "",
+		},
+		{
+			name:        "tuple does not exist",
+			relation:    "member",
+			object:      "organization:cat-friends",
+			expectedRes: false,
+			errRes:      "",
+		},
+	}
 
-// 	testCases := []struct {
-// 		name        string
-// 		relation    string
-// 		object      string
-// 		expectedRes bool
-// 		errRes      string
-// 	}{
-// 		{
-// 			name:        "happy path, valid tuple",
-// 			relation:    "member",
-// 			object:      "organization:datum",
-// 			expectedRes: true,
-// 			errRes:      "",
-// 		},
-// 		{
-// 			name:        "tuple does not exist",
-// 			relation:    "member",
-// 			object:      "organization:google",
-// 			expectedRes: false,
-// 			errRes:      "",
-// 		},
-// 	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			// setup mock controller
+			mockCtrl := gomock.NewController(t)
+			c := mock_client.NewMockSdkClient(mockCtrl)
 
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			valid, err := fc.CheckDirectUser(ctx, tc.relation, tc.object)
+			fc, err := newTestFGAClient(t, mockCtrl, c)
+			if err != nil {
+				t.Fatal()
+			}
 
-// 			if tc.errRes != "" {
-// 				assert.Error(t, err)
-// 				assert.ErrorContains(t, err, tc.errRes)
-// 				assert.Equal(t, tc.expectedRes, valid)
+			// mock response for input
+			body := ofgaclient.ClientCheckRequest{
+				User:     "user:nano-id-of-member",
+				Relation: tc.relation,
+				Object:   tc.object,
+			}
 
-// 				return
-// 			}
+			mockCheck(mockCtrl, c, ctx, body, tc.expectedRes)
 
-// 			assert.NoError(t, err)
-// 			assert.Equal(t, tc.expectedRes, valid)
-// 		})
-// 	}
-// }
+			// do request
+			valid, err := fc.CheckDirectUser(ctx, tc.relation, tc.object)
+
+			if tc.errRes != "" {
+				assert.Error(t, err)
+				assert.ErrorContains(t, err, tc.errRes)
+				assert.Equal(t, tc.expectedRes, valid)
+
+				return
+			}
+
+			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedRes, valid)
+		})
+	}
+}
+
+func mockCheck(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, body ofgaclient.ClientCheckRequest, allowed bool) {
+	mockExecute := mock_client.NewMockSdkClientCheckRequestInterface(mockCtrl)
+
+	resp := ofgaclient.ClientCheckResponse{
+		CheckResponse: openfga.CheckResponse{
+			Allowed: openfga.PtrBool(allowed),
+		},
+	}
+
+	mockExecute.EXPECT().Execute().Return(&resp, nil)
+
+	mockBody := mock_client.NewMockSdkClientCheckRequestInterface(mockCtrl)
+
+	mockBody.EXPECT().Body(body).Return(mockExecute)
+
+	c.EXPECT().Check(ctx).Return(mockBody)
+}

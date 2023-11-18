@@ -8,7 +8,7 @@ import (
 
 // checkTuple checks the openFGA store for provided relationship tuple
 func (c *Client) checkTuple(ctx context.Context, check client.ClientCheckRequest) (bool, error) {
-	data, err := c.O.Check(ctx).Body(check).Execute()
+	data, err := c.Ofga.Check(ctx).Body(check).Execute()
 	if err != nil {
 		c.Logger.Infof("GetCheck error: [%s]", err.Error())
 

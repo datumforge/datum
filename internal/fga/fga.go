@@ -4,6 +4,7 @@ package fga
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	openfga "github.com/openfga/go-sdk"
@@ -14,12 +15,20 @@ import (
 
 // Client is an event bus client with some configuration
 type Client struct {
-	// O is the openFGA client
-	O *ofgaclient.OpenFgaClient
+	// Ofga is the openFGA client
+	Ofga ofgaclient.SdkClient
 	// Config is the client configuration
 	Config ofgaclient.ClientConfiguration
 	// Logger is the provided Logger
 	Logger *zap.SugaredLogger
+}
+
+type Config struct {
+	Name    string
+	Host    string
+	Scheme  string
+	StoreID string
+	ModelID string
 }
 
 // Option is a functional configuration option for openFGA client
@@ -48,7 +57,7 @@ func NewClient(host string, opts ...Option) (*Client, error) {
 		return nil, err
 	}
 
-	client.O = fgaClient
+	client.Ofga = fgaClient
 
 	return &client, err
 }
@@ -93,11 +102,78 @@ func WithLogger(l *zap.SugaredLogger) Option {
 	}
 }
 
-// CreateStore creates a new fine grained authorization store
-// Should only be used in tests, production environment should be stood up with an existing store
+// CreateFGAClientWithStore returns a Client with a store and model configured
+func CreateFGAClientWithStore(ctx context.Context, config Config, logger *zap.SugaredLogger) (*Client, error) {
+	// create store if an ID was not configured
+	if config.StoreID == "" {
+		// Create new store
+		fgaClient, err := NewClient(
+			config.Host,
+			WithScheme(config.Scheme),
+			WithLogger(logger),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		config.StoreID, err = fgaClient.CreateStore(ctx, config.Name)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// create model if ID was not configured
+	if config.ModelID == "" {
+		// create fga client with store ID
+		fgaClient, err := NewClient(
+			config.Host,
+			WithScheme(config.Scheme),
+			WithStoreID(config.StoreID),
+			WithLogger(logger),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Create model if one does not already exist
+		if _, err := fgaClient.CreateModel(ctx, "fga/model/datum.json"); err != nil {
+			return nil, err
+		}
+	}
+
+	// create fga client with store ID
+	return NewClient(
+		config.Host,
+		WithScheme(config.Scheme),
+		WithStoreID(config.StoreID),
+		WithAuthorizationModelID(config.ModelID),
+		WithLogger(logger),
+	)
+}
+
+// CreateStore creates a new fine grained authorization store and returns the store ID
 func (c *Client) CreateStore(ctx context.Context, storeName string) (string, error) {
+	options := ofgaclient.ClientListStoresOptions{
+		ContinuationToken: openfga.PtrString(""),
+	}
+
+	stores, err := c.Ofga.ListStores(context.Background()).Options(options).Execute()
+	if err != nil {
+		return "", err
+	}
+
+	// Only create a new test store if one does not exist
+	if len(stores.GetStores()) > 0 {
+		storeID := *stores.GetStores()[0].Id
+		c.Logger.Infow("fga store exists", "store_id", storeID)
+
+		return storeID, nil
+	}
+
 	// Create new store
-	resp, _, err := c.O.OpenFgaApi.CreateStore(context.Background()).Body(openfga.CreateStoreRequest{
+	storeReq := c.Ofga.CreateStore(context.Background())
+
+	resp, err := storeReq.Body(ofgaclient.ClientCreateStoreRequest{
 		Name: storeName,
 	}).Execute()
 	if err != nil {
@@ -108,27 +184,40 @@ func (c *Client) CreateStore(ctx context.Context, storeName string) (string, err
 
 	c.Logger.Infow("fga store created", "store_id", storeID)
 
-	c.O.SetStoreId(storeID)
-
 	return storeID, nil
 }
 
-// CreateModel creates a new fine grained authorization model
-// Should only be used in tests, production environment should be stood up with an existing mdoel
+// CreateModel creates a new fine grained authorization model and returns the model ID
 func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
+	options := ofgaclient.ClientReadAuthorizationModelsOptions{}
+
+	models, err := c.Ofga.ReadAuthorizationModels(context.Background()).Options(options).Execute()
+	if err != nil {
+		return "", err
+	}
+
+	// Only create a new test model if one does not exist
+	if len(*models.AuthorizationModels) > 0 {
+		modelID := *models.GetAuthorizationModels()[0].Id
+		c.Logger.Infow("fga model exists", "model_id", modelID)
+
+		return modelID, nil
+	}
+
 	// Create new model
 	dslJSON, err := os.ReadFile(fn)
 	if err != nil {
 		return "", err
 	}
 
-	var body openfga.WriteAuthorizationModelRequest
+	var body ofgaclient.ClientWriteAuthorizationModelRequest
 	if err := json.Unmarshal(dslJSON, &body); err != nil {
 		return "", err
 	}
 
-	resp, _, err := c.O.OpenFgaApi.WriteAuthorizationModel(context.Background()).Body(body).Execute()
+	resp, err := c.Ofga.WriteAuthorizationModel(ctx).Body(body).Execute()
 	if err != nil {
+		fmt.Println("here 1")
 		return "", err
 	}
 

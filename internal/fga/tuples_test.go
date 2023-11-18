@@ -1,9 +1,16 @@
 package fga
 
 import (
+	"context"
+	"errors"
 	"testing"
 
+	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
+
+	"github.com/datumforge/datum/internal/echox"
+	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 )
 
 func Test_EntityString(t *testing.T) {
@@ -109,138 +116,184 @@ func Test_ParseEntity(t *testing.T) {
 	}
 }
 
-// func Test_CreateCheckTupleWithUser(t *testing.T) {
-// 	testCases := []struct {
-// 		name        string
-// 		relation    string
-// 		object      string
-// 		expectedRes *client.ClientCheckRequest
-// 		errRes      error
-// 	}{
-// 		{
-// 			name:     "happy path with relation",
-// 			object:   "organization:datum",
-// 			relation: "member",
-// 			expectedRes: &client.ClientCheckRequest{
-// 				User:     "user:funk",
-// 				Relation: "member",
-// 				Object:   "organization:datum",
-// 			},
-// 			errRes: nil,
-// 		},
-// 		{
-// 			name:        "error, missing relation",
-// 			object:      "organization:datum",
-// 			relation:    "",
-// 			expectedRes: nil,
-// 			errRes:      ErrMissingRelation,
-// 		},
-// 		{
-// 			name:        "error, missing object",
-// 			object:      "",
-// 			relation:    "can_view",
-// 			expectedRes: nil,
-// 			errRes:      ErrMissingObject,
-// 		},
-// 	}
+func Test_CreateCheckTupleWithUser(t *testing.T) {
+	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
+	if err != nil {
+		t.Fatal()
+	}
 
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			ec, err := echox.NewTestContextWithValidUser("funk")
-// 			if err != nil {
-// 				t.Fatal()
-// 			}
+	echoContext := *ec
 
-// 			echoContext := *ec
+	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
 
-// 			ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
 
-// 			echoContext.SetRequest(echoContext.Request().WithContext(ctx))
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
+	c := mock_client.NewMockSdkClient(mockCtrl)
 
-// 			url := os.Getenv("TEST_FGA_URL")
-// 			if url == "" {
-// 				url = defaultFGAURL
-// 			}
+	fc, err := newTestFGAClient(t, mockCtrl, c)
+	if err != nil {
+		t.Fatal()
+	}
 
-// 			fc := newTestFGAClient(t, url)
+	testCases := []struct {
+		name        string
+		relation    string
+		object      string
+		expectedRes *ofgaclient.ClientCheckRequest
+		errRes      error
+	}{
+		{
+			name:     "happy path with relation",
+			object:   "organization:datum",
+			relation: "member",
+			expectedRes: &ofgaclient.ClientCheckRequest{
+				User:     "user:nano-id-of-member",
+				Relation: "member",
+				Object:   "organization:datum",
+			},
+			errRes: nil,
+		},
+		{
+			name:        "error, missing relation",
+			object:      "organization:datum",
+			relation:    "",
+			expectedRes: nil,
+			errRes:      ErrMissingRelation,
+		},
+		{
+			name:        "error, missing object",
+			object:      "",
+			relation:    "can_view",
+			expectedRes: nil,
+			errRes:      ErrMissingObject,
+		},
+	}
 
-// 			cr, err := fc.CreateCheckTupleWithUser(ctx, tc.relation, tc.object)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			cr, err := fc.CreateCheckTupleWithUser(ctx, tc.relation, tc.object)
 
-// 			if tc.errRes != nil {
-// 				assert.Error(t, err)
-// 				assert.ErrorIs(t, err, tc.errRes)
+			if tc.errRes != nil {
+				assert.Error(t, err)
+				assert.ErrorIs(t, err, tc.errRes)
 
-// 				return
-// 			}
+				return
+			}
 
-// 			assert.NoError(t, err)
-// 			assert.NotEmpty(t, cr)
-// 			assert.Equal(t, tc.expectedRes, cr)
-// 		})
-// 	}
-// }
+			assert.NoError(t, err)
+			assert.NotEmpty(t, cr)
+			assert.Equal(t, tc.expectedRes, cr)
+		})
+	}
+}
 
-// func Test_CreateRelationshipTupleWithUser(t *testing.T) {
-// 	testCases := []struct {
-// 		name        string
-// 		relation    string
-// 		object      string
-// 		expectedRes string
-// 		errRes      string
-// 	}{
-// 		{
-// 			name:        "happy path with relation",
-// 			object:      "organization:datum",
-// 			relation:    "member",
-// 			expectedRes: "",
-// 			errRes:      "",
-// 		},
-// 		{
-// 			name:        "error, missing relation",
-// 			object:      "organization:datum",
-// 			relation:    "",
-// 			expectedRes: "",
-// 			errRes:      "Reason: the 'relation' field is malformed",
-// 		},
-// 		{
-// 			name:        "error, missing object",
-// 			object:      "",
-// 			relation:    "member",
-// 			expectedRes: "",
-// 			errRes:      "Reason: invalid 'object' field format",
-// 		},
-// 	}
+func Test_CreateRelationshipTupleWithUser(t *testing.T) {
+	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
+	if err != nil {
+		t.Fatal()
+	}
 
-// 	for _, tc := range testCases {
-// 		t.Run(tc.name, func(t *testing.T) {
-// 			ec, err := echox.NewTestContextWithValidUser("funk")
-// 			if err != nil {
-// 				t.Fatal()
-// 			}
+	echoContext := *ec
 
-// 			echoContext := *ec
+	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
 
-// 			ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
 
-// 			echoContext.SetRequest(echoContext.Request().WithContext(ctx))
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
+	c := mock_client.NewMockSdkClient(mockCtrl)
 
-// 			url := os.Getenv("TEST_FGA_URL")
-// 			if url == "" {
-// 				url = defaultFGAURL
-// 			}
+	fc, err := newTestFGAClient(t, mockCtrl, c)
+	if err != nil {
+		t.Fatal()
+	}
 
-// 			fc := newTestFGAClient(t, url)
+	testCases := []struct {
+		name        string
+		relation    string
+		object      string
+		expectedRes string
+		errRes      string
+	}{
+		{
+			name:        "happy path with relation",
+			object:      "organization:datum",
+			relation:    "member",
+			expectedRes: "",
+			errRes:      "",
+		},
+		{
+			name:        "error, missing relation",
+			object:      "organization:datum",
+			relation:    "",
+			expectedRes: "",
+			errRes:      "Reason: the 'relation' field is malformed",
+		},
+		{
+			name:        "error, missing object",
+			object:      "",
+			relation:    "member",
+			expectedRes: "",
+			errRes:      "Reason: invalid 'object' field format",
+		},
+	}
 
-// 			err = fc.CreateRelationshipTupleWithUser(ctx, tc.relation, tc.object)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			tuples := []ofgaclient.ClientTupleKey{
+				{
+					User:     "user:nano-id-of-member",
+					Relation: tc.relation,
+					Object:   tc.object,
+				},
+			}
 
-// 			if tc.errRes != "" {
-// 				assert.Error(t, err)
-// 				assert.ErrorContains(t, err, tc.errRes)
+			mockWriteTuples(mockCtrl, c, ctx, tuples, tc.errRes)
 
-// 				return
-// 			}
+			err = fc.CreateRelationshipTupleWithUser(ctx, tc.relation, tc.object)
 
-// 			assert.NoError(t, err)
-// 		})
-// 	}
-// }
+			if tc.errRes != "" {
+				assert.Error(t, err)
+				assert.ErrorContains(t, err, tc.errRes)
+
+				return
+			}
+
+			assert.NoError(t, err)
+		})
+	}
+}
+
+// mockWriteTuples creates mock responses based on the mock FGA client
+func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, tuples []ofgaclient.ClientTupleKey, errMsg string) {
+	mockExecute := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+
+	if errMsg == "" {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteSingleResponse{
+				{
+					TupleKey: tuples[0],
+					Status:   ofgaclient.SUCCESS,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
+	} else {
+		var err error
+
+		if errMsg != "" {
+			err = errors.New(errMsg) // nolint:goerr113
+		}
+
+		mockExecute.EXPECT().Execute().Return(nil, err)
+	}
+
+	mockBody := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+
+	mockBody.EXPECT().Body(tuples).Return(mockExecute)
+
+	c.EXPECT().WriteTuples(ctx).Return(mockBody)
+}

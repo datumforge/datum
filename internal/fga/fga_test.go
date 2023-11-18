@@ -1,44 +1,89 @@
 package fga
 
-// const (
-// 	modelFile     = "../fga/model/datum.json"
-// 	defaultFGAURL = "localhost:8080"
-// )
+import (
+	"context"
+	"testing"
+	"time"
 
-// func TestFGAClient(t *testing.T) {
-// 	url := os.Getenv("TEST_FGA_URL")
-// 	if url == "" {
-// 		url = defaultFGAURL
-// 	}
+	openfga "github.com/openfga/go-sdk"
+	ofgaclient "github.com/openfga/go-sdk/client"
+	"go.uber.org/mock/gomock"
+	"go.uber.org/zap"
 
-// 	// TODO: create test tuples and run through model
-// 	_ = newTestFGAClient(t, url)
-// }
+	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+)
 
-// func newTestFGAClient(t testing.TB, url string) *Client {
-// 	// create FGA client for test suites
-// 	c, err := NewClient(url,
-// 		WithScheme("http"),
-// 		WithLogger(zap.NewNop().Sugar()))
-// 	if err != nil {
-// 		t.Fatal(err)
-// 		return nil
-// 	}
+const (
+	storeName = "datum_test"
+)
 
-// 	// Create new store
-// 	if _, err := c.CreateStore(context.Background(), "datum_test"); err != nil {
-// 		t.Fatal(err)
-// 	}
+func newTestFGAClient(t testing.TB, mockCtrl *gomock.Controller, c *mock_client.MockSdkClient) (*Client, error) {
+	// setup required mocks
+	mockListStores(c, mockCtrl)
+	mockCreateStore(c, mockCtrl)
 
-// 	// Create model
-// 	if _, err := c.CreateModel(context.Background(), modelFile); err != nil {
-// 		t.Fatal(err)
-// 	}
+	client := Client{
+		Config: ofgaclient.ClientConfiguration{
+			// The api host is the only required field when setting up a new FGA client connection
+			ApiHost: "fga.datum.net",
+		},
+		Ofga:   c,
+		Logger: zap.NewNop().Sugar(),
+	}
 
-// 	// for _, tk := range testTuples {
-// 	// 	if err := c.WriteTuple(context.Background(), tk.TupleKey()); err != nil {
-// 	// 		t.Fatal(err)
-// 	// 	}
-// 	// }
-// 	return c
-// }
+	// Create new store
+	_, err := client.CreateStore(context.Background(), storeName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &client, nil
+}
+
+// mockListStores for testing functionality
+func mockListStores(c *mock_client.MockSdkClient, mockCtrl *gomock.Controller) {
+	mockExecute := mock_client.NewMockSdkClientListStoresRequestInterface(mockCtrl)
+
+	// No stores exist, tests will create a store
+	var stores *[]openfga.Store
+
+	response := openfga.ListStoresResponse{
+		ContinuationToken: openfga.PtrString(""),
+		Stores:            stores,
+	}
+
+	mockExecute.EXPECT().Execute().Return(&response, nil)
+
+	mockRequest := mock_client.NewMockSdkClientListStoresRequestInterface(mockCtrl)
+	options := ofgaclient.ClientListStoresOptions{
+		ContinuationToken: openfga.PtrString(""),
+	}
+
+	mockRequest.EXPECT().Options(options).Return(mockExecute)
+
+	c.EXPECT().ListStores(context.Background()).Return(mockRequest)
+}
+
+// mockCreateStore for testing functionality
+func mockCreateStore(c *mock_client.MockSdkClient, mockCtrl *gomock.Controller) {
+	mockExecute := mock_client.NewMockSdkClientCreateStoreRequestInterface(mockCtrl)
+	expectedTime := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
+
+	expectedResponse := ofgaclient.ClientCreateStoreResponse{
+		Id:        openfga.PtrString("01HFJ0PR7XGSNP1H747YW0KZ6R"),
+		Name:      openfga.PtrString(storeName),
+		CreatedAt: openfga.PtrTime(expectedTime),
+		UpdatedAt: openfga.PtrTime(expectedTime),
+	}
+
+	mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
+
+	mockBody := mock_client.NewMockSdkClientCreateStoreRequestInterface(mockCtrl)
+
+	body := ofgaclient.ClientCreateStoreRequest{
+		Name: storeName,
+	}
+	mockBody.EXPECT().Body(body).Return(mockExecute)
+
+	c.EXPECT().CreateStore(context.Background()).Return(mockBody)
+}

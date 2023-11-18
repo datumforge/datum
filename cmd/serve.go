@@ -109,9 +109,6 @@ func init() {
 	serveCmd.Flags().String("fga-model-id", "", "fga authorization model ID")
 	viperBindFlag("fga.model-id", serveCmd.Flags().Lookup("fga-model-id"))
 
-	serveCmd.Flags().Bool("fga-create-store", false, "create new FGA store on startup, should not be used in production")
-	viperBindFlag("fga.create-store", serveCmd.Flags().Lookup("fga-create-store"))
-
 	// only available as a CLI arg because these should only be used in dev environments
 	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
 	serveCmd.Flags().BoolVar(&enablePlayground, "playground", false, "enable the graph playground")
@@ -120,8 +117,9 @@ func init() {
 func serve(ctx context.Context) error {
 	// setup db connection for server
 	var (
-		client *ent.Client
-		err    error
+		client      *ent.Client
+		err         error
+		oidcEnabled = viper.GetBool("oidc.enabled")
 	)
 
 	entConfig := entdb.EntClientConfig{
@@ -155,7 +153,7 @@ func serve(ctx context.Context) error {
 	}
 
 	// add jwt middleware
-	if viper.GetBool("oidc.enabled") {
+	if oidcEnabled {
 		secretKey := viper.GetString("jtw.secretkey")
 		jwtConfig := createJwtMiddleware([]byte(secretKey))
 
@@ -197,49 +195,25 @@ func serve(ctx context.Context) error {
 		WithLogger(logger.Named("resolvers"))
 
 	// only turn on authz validation when oidc is enabled
-	if viper.GetBool("oidc.enabled") {
+	if oidcEnabled {
 		// setup FGA client
+		config := fga.Config{
+			Name:    "datum",
+			Host:    viper.GetString("fga.host"),
+			Scheme:  viper.GetString("fga.scheme"),
+			StoreID: viper.GetString("fga.store-id"),
+			ModelID: viper.GetString("fga.model-id"),
+		}
+
 		logger.Infow(
 			"setting up fga client",
 			"host",
-			viper.GetString("fga.host"),
+			config.Host,
 			"scheme",
-			viper.GetString("fga.scheme"),
+			config.Scheme,
 		)
 
-		// create store, if requested
-		var (
-			fgaClient *fga.Client
-		)
-
-		if viper.GetBool("fga.create-store") {
-			fgaClient, err = fga.NewClient(
-				viper.GetString("fga.host"),
-				fga.WithScheme(viper.GetString("fga.scheme")),
-				fga.WithLogger(logger),
-			)
-			if err != nil {
-				return err
-			}
-
-			// Create new store
-			if _, err := fgaClient.CreateStore(ctx, "datum_dev"); err != nil {
-				return err
-			}
-
-			// Create model
-			if _, err := fgaClient.CreateModel(ctx, "internal/fga/testdata/datum.json"); err != nil {
-				return err
-			}
-		}
-
-		fgaClient, err = fga.NewClient(
-			viper.GetString("fga.host"),
-			fga.WithScheme(viper.GetString("fga.scheme")),
-			fga.WithStoreID(viper.GetString("fga.store-id")),
-			fga.WithAuthorizationModelID(viper.GetString("fga.model-id")),
-			fga.WithLogger(logger),
-		)
+		fgaClient, err := fga.CreateFGAClientWithStore(ctx, config, logger)
 		if err != nil {
 			return err
 		}

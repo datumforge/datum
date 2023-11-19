@@ -20,7 +20,7 @@ tasks:
       - "rm -f schema.graphql"
       - "rm -rf internal/datumclient/"
   ent:
-    desc: runs go generate against ent schema - see the entc.go file
+    desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
     cmds:
       - go generate ./...
   install:

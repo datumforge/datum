@@ -170,4 +170,5 @@ tasks:
       - task: generate
       - task: atlas
       - task: go
+      - task: fga:model:transform
       - task: fga:test

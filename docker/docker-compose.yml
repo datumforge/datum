@@ -12,8 +12,6 @@ services:
       - --jwt-secretkey
       - mysupersecretkey
       # - --oidc=false # uncomment to bypass auth checks
-      - --fga-create-store ## create store using fga/testdata/datum.model
-      - "true"
       - --fga-host
       - openfga:8080
       - --fga-scheme

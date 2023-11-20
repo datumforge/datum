@@ -225,3 +225,44 @@ func (c *Client) deleteRelationshipTuple(ctx context.Context, tuples []ofgaclien
 
 	return resp, nil
 }
+
+func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) error {
+	// validate object is not empty
+	if object == "" {
+		return ErrMissingObjectOnDeletion
+	}
+
+	match := entityRegex.FindStringSubmatch(object)
+	if match == nil {
+		return newInvalidEntityError(object)
+	}
+
+	// TODO: update page size for pagination
+	opts := ofgaclient.ClientReadOptions{}
+
+	resp, err := c.Ofga.Read(ctx).Options(opts).Execute()
+	if err != nil {
+		c.Logger.Errorw("error deleting relationship tuples", "error", err.Error())
+
+		return err
+	}
+
+	var tuplesToDelete []ofgaclient.ClientTupleKey
+
+	// check all the tuples for the object?
+	for _, t := range resp.GetTuples() {
+		if *t.Key.Object == object {
+			k := ofgaclient.ClientTupleKey{
+				User:     *t.Key.User,
+				Relation: *t.Key.Relation,
+				Object:   *t.Key.Object,
+			}
+			tuplesToDelete = append(tuplesToDelete, k)
+		}
+	}
+
+	// Notes: Writes only allow 10 tuples per call, this will need to be fixed
+	_, err = c.deleteRelationshipTuple(ctx, tuplesToDelete)
+
+	return err
+}

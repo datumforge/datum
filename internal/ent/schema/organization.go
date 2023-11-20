@@ -116,25 +116,77 @@ func (Organization) Mixin() []ent.Mixin {
 // Hooks of the Organization
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
+		// Hook to create tuple on organization creation
 		hook.On(
-			func(next ent.Mutator) ent.Mutator {
-				return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
-					// Add relationship tuples if authz is enabled
-					if m.Authz.Ofga != nil {
-						objID, exists := m.ID()
-						if exists {
-							if err := m.Authz.CreateRelationshipTupleWithUser(ctx, ownerRelation, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
-								m.Logger.Errorw("failed to create relationship tuple", "error", err)
-
-								return nil, ErrInternalServerError
-							}
-						}
-					}
-					return next.Mutate(ctx, m)
-				})
-			},
+			HookOrganizationCreate(),
 			// Limit the hook only for these operations.
 			ent.OpCreate,
 		),
+		// Hook to delete tuples on organization deletion
+		hook.On(
+			HookOrganizationDelete(),
+			// Limit the hook only for these operations.
+			ent.OpDeleteOne|ent.OpDelete,
+		),
+	}
+}
+
+// HookOrganizationCreate runs on organization creation mutations to setup relationship tuples
+func HookOrganizationCreate() ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
+			// do the mutation, and then create the relationship
+			retValue, err := next.Mutate(ctx, m)
+			if err != nil {
+				// if we error, do not attempt to create the relationships
+				return retValue, err
+			}
+
+			// Add relationship tuples if authz is enabled
+			if m.Authz.Ofga != nil {
+				objID, exists := m.ID()
+				m.Logger.Infow("creating relationship tuples", "object_id", objID)
+
+				if exists {
+					if err := m.Authz.CreateRelationshipTupleWithUser(ctx, ownerRelation, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
+						m.Logger.Errorw("failed to create relationship tuple", "error", err)
+
+						// TODO: rollback mutation if tuple creation fails
+						return nil, ErrInternalServerError
+					}
+				}
+
+				m.Logger.Infow("created relationship tuples", "object_id", objID)
+			}
+
+			return retValue, err
+		})
+	}
+}
+
+func HookOrganizationDelete() ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
+			// do the mutation, and then delete the relationships
+			retValue, err := next.Mutate(ctx, m)
+			if err != nil {
+				return retValue, err
+			}
+
+			objID, _ := m.ID()
+			m.Logger.Infow("going to relationship tuples", "object_id", objID)
+
+			// Add relationship tuples if authz is enabled
+			if m.Authz.Ofga != nil {
+				if err := m.Authz.DeleteAllObjectRelations(ctx, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
+					m.Logger.Errorw("failed to delete relationship tuples", "error", err)
+
+					return nil, ErrInternalServerError
+				}
+
+				m.Logger.Infow("deleted relationship tuples", "object_id", objID)
+			}
+			return retValue, err
+		})
 	}
 }

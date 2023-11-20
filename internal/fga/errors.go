@@ -14,6 +14,9 @@ var (
 
 	// ErrMissingObject is returned when a object is empty in a tuple creation
 	ErrMissingObject = errors.New("unable to create tuple, missing object")
+
+	// ErrMissingObjectOnDeletion is returned when a object is empty in a tuple deletion
+	ErrMissingObjectOnDeletion = errors.New("unable to delete tuple, missing object")
 )
 
 // InvalidEntityError is returned when an invalid openFGA entity is configured

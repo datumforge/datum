@@ -205,7 +205,7 @@ type ComplexityRoot struct {
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
 		CreateSession             func(childComplexity int, input generated.CreateSessionInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
-		CreateUserSettingsInput   func(childComplexity int, input generated.CreateUserSettingsInput) int
+		CreateUserSettings        func(childComplexity int, input generated.CreateUserSettingsInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
 		DeleteIntegration         func(childComplexity int, id string) int
@@ -215,6 +215,7 @@ type ComplexityRoot struct {
 		DeleteSession             func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
 		DeleteUserSettings        func(childComplexity int, id string) int
+		PdateUserSettings         func(childComplexity int, id string, input generated.UpdateUserSettingsInput) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
 		UpdateGroup               func(childComplexity int, id string, input generated.UpdateGroupInput) int
 		UpdateIntegration         func(childComplexity int, id string, input generated.UpdateIntegrationInput) int
@@ -223,7 +224,6 @@ type ComplexityRoot struct {
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
 		UpdateSession             func(childComplexity int, id string, input generated.UpdateSessionInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
-		UpdateUserSettingsInput   func(childComplexity int, id string, input generated.UpdateUserSettingsInput) int
 	}
 
 	OauthProvider struct {
@@ -577,8 +577,8 @@ type MutationResolver interface {
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
-	CreateUserSettingsInput(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error)
-	UpdateUserSettingsInput(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error)
+	CreateUserSettings(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error)
+	PdateUserSettings(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error)
 	DeleteUserSettings(ctx context.Context, id string) (*UserSettingsDeletePayload, error)
 }
 type OauthProviderResolver interface {
@@ -1273,17 +1273,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(generated.CreateUserInput)), true
 
-	case "Mutation.CreateUserSettingsInput":
-		if e.complexity.Mutation.CreateUserSettingsInput == nil {
+	case "Mutation.createUserSettings":
+		if e.complexity.Mutation.CreateUserSettings == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_CreateUserSettingsInput_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createUserSettings_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUserSettingsInput(childComplexity, args["input"].(generated.CreateUserSettingsInput)), true
+		return e.complexity.Mutation.CreateUserSettings(childComplexity, args["input"].(generated.CreateUserSettingsInput)), true
 
 	case "Mutation.deleteEntitlement":
 		if e.complexity.Mutation.DeleteEntitlement == nil {
@@ -1381,17 +1381,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
 
-	case "Mutation.DeleteUserSettings":
+	case "Mutation.deleteUserSettings":
 		if e.complexity.Mutation.DeleteUserSettings == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_DeleteUserSettings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteUserSettings_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.DeleteUserSettings(childComplexity, args["id"].(string)), true
+
+	case "Mutation.pdateUserSettings":
+		if e.complexity.Mutation.PdateUserSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_pdateUserSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.PdateUserSettings(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserSettingsInput)), true
 
 	case "Mutation.updateEntitlement":
 		if e.complexity.Mutation.UpdateEntitlement == nil {
@@ -1488,18 +1500,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserInput)), true
-
-	case "Mutation.UpdateUserSettingsInput":
-		if e.complexity.Mutation.UpdateUserSettingsInput == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_UpdateUserSettingsInput_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateUserSettingsInput(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserSettingsInput)), true
 
 	case "OauthProvider.authStyle":
 		if e.complexity.OauthProvider.AuthStyle == nil {
@@ -2357,12 +2357,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
-	case "Query.UserSettings":
+	case "Query.userSettings":
 		if e.complexity.Query.UserSettings == nil {
 			break
 		}
 
-		args, err := ec.field_Query_UserSettings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_userSettings_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -6718,9 +6718,9 @@ type UserDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/user_settings.graphql", Input: `extend type Query {
     """
-    Look up UserSettings by ID
+    Look up userSettings by ID
     """
-     UserSettings(
+     userSettings(
         """
         ID of the UserSettings
         """
@@ -6730,33 +6730,33 @@ type UserDeletePayload {
 
 extend type Mutation{
     """
-    Create a new UserSettings
+    Create a new userSettings
     """
-    CreateUserSettingsInput(
+    createUserSettings(
         """
-        values of the UserSettings
+        values of the userSettings
         """
         input: CreateUserSettingsInput!
     ): UserSettingsCreatePayload!
     """
-    Update an existing UserSettings
+    Update an existing userSettings
     """
-    UpdateUserSettingsInput(
+    pdateUserSettings(
         """
-        ID of the UserSettings
+        ID of the userSettings
         """
         id: ID!
         """
-        New values for the UserSettings
+        New values for the userSettings
         """
         input: UpdateUserSettingsInput!
     ): UserSettingsUpdatePayload!
     """
-    Delete an existing UserSettings
+    Delete an existing userSettings
     """
-    DeleteUserSettings(
+    deleteUserSettings(
         """
-        ID of the UserSettings
+        ID of the userSettings
         """
         id: ID!
     ): UserSettingsDeletePayload!
@@ -6767,7 +6767,7 @@ Return response for createUserSettings mutation
 """
 type UserSettingsCreatePayload {
     """
-    Created UserSettings
+    Created userSettings
     """
     UserSettings: UserSettings!
 }
@@ -6777,7 +6777,7 @@ Return response for updateUserSettings mutation
 """
 type UserSettingsUpdatePayload {
     """
-    Updated UserSettings
+    Updated userSettings
     """
     UserSettings: UserSettings!
 }
@@ -6787,7 +6787,7 @@ Return response for deleteUserSettings mutation
 """
 type UserSettingsDeletePayload {
     """
-    Deleted UserSettings ID
+    Deleted userSettings ID
     """
     deletedID: ID!
 }`, BuiltIn: false},
@@ -6815,60 +6815,6 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
-
-func (ec *executionContext) field_Mutation_CreateUserSettingsInput_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 generated.CreateUserSettingsInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingsInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_DeleteUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_UpdateUserSettingsInput_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 generated.UpdateUserSettingsInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingsInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg1
-	return args, nil
-}
 
 func (ec *executionContext) field_Mutation_createEntitlement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -6967,6 +6913,21 @@ func (ec *executionContext) field_Mutation_createSession_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCreateSessionInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateSessionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateUserSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingsInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7095,6 +7056,21 @@ func (ec *executionContext) field_Mutation_deleteSession_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7107,6 +7083,30 @@ func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, 
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_pdateUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateUserSettingsInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingsInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -7378,21 +7378,6 @@ func (ec *executionContext) field_Query_OauthProvider_args(ctx context.Context, 
 }
 
 func (ec *executionContext) field_Query_PersonalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_UserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -8061,6 +8046,21 @@ func (ec *executionContext) field_Query_userSettingsSlice_args(ctx context.Conte
 		}
 	}
 	args["where"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -13343,8 +13343,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_CreateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_CreateUserSettingsInput(ctx, field)
+func (ec *executionContext) _Mutation_createUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUserSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13357,7 +13357,7 @@ func (ec *executionContext) _Mutation_CreateUserSettingsInput(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUserSettingsInput(rctx, fc.Args["input"].(generated.CreateUserSettingsInput))
+		return ec.resolvers.Mutation().CreateUserSettings(rctx, fc.Args["input"].(generated.CreateUserSettingsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13374,7 +13374,7 @@ func (ec *executionContext) _Mutation_CreateUserSettingsInput(ctx context.Contex
 	return ec.marshalNUserSettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_CreateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -13395,15 +13395,15 @@ func (ec *executionContext) fieldContext_Mutation_CreateUserSettingsInput(ctx co
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_CreateUserSettingsInput_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_UpdateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_UpdateUserSettingsInput(ctx, field)
+func (ec *executionContext) _Mutation_pdateUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_pdateUserSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13416,7 +13416,7 @@ func (ec *executionContext) _Mutation_UpdateUserSettingsInput(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUserSettingsInput(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserSettingsInput))
+		return ec.resolvers.Mutation().PdateUserSettings(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserSettingsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13433,7 +13433,7 @@ func (ec *executionContext) _Mutation_UpdateUserSettingsInput(ctx context.Contex
 	return ec.marshalNUserSettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_UpdateUserSettingsInput(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_pdateUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -13454,15 +13454,15 @@ func (ec *executionContext) fieldContext_Mutation_UpdateUserSettingsInput(ctx co
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_UpdateUserSettingsInput_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_pdateUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_DeleteUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_DeleteUserSettings(ctx, field)
+func (ec *executionContext) _Mutation_deleteUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteUserSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13492,7 +13492,7 @@ func (ec *executionContext) _Mutation_DeleteUserSettings(ctx context.Context, fi
 	return ec.marshalNUserSettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_DeleteUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -13513,7 +13513,7 @@ func (ec *executionContext) fieldContext_Mutation_DeleteUserSettings(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_DeleteUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -19487,8 +19487,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_UserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_UserSettings(ctx, field)
+func (ec *executionContext) _Query_userSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19518,7 +19518,7 @@ func (ec *executionContext) _Query_UserSettings(ctx context.Context, field graph
 	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_UserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -19563,7 +19563,7 @@ func (ec *executionContext) fieldContext_Query_UserSettings(ctx context.Context,
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_UserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_userSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -44323,23 +44323,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "CreateUserSettingsInput":
+		case "createUserSettings":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_CreateUserSettingsInput(ctx, field)
+				return ec._Mutation_createUserSettings(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "UpdateUserSettingsInput":
+		case "pdateUserSettings":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_UpdateUserSettingsInput(ctx, field)
+				return ec._Mutation_pdateUserSettings(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "DeleteUserSettings":
+		case "deleteUserSettings":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_DeleteUserSettings(ctx, field)
+				return ec._Mutation_deleteUserSettings(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -46289,7 +46289,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "UserSettings":
+		case "userSettings":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -46298,7 +46298,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_UserSettings(ctx, field)
+				res = ec._Query_userSettings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

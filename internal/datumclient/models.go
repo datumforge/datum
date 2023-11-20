@@ -2548,13 +2548,13 @@ type UserSettingsConnection struct {
 
 // Return response for createUserSettings mutation
 type UserSettingsCreatePayload struct {
-	// Created UserSettings
+	// Created userSettings
 	UserSettings UserSettings `json:"UserSettings"`
 }
 
 // Return response for deleteUserSettings mutation
 type UserSettingsDeletePayload struct {
-	// Deleted UserSettings ID
+	// Deleted userSettings ID
 	DeletedID string `json:"deletedID"`
 }
 
@@ -2568,7 +2568,7 @@ type UserSettingsEdge struct {
 
 // Return response for updateUserSettings mutation
 type UserSettingsUpdatePayload struct {
-	// Updated UserSettings
+	// Updated userSettings
 	UserSettings UserSettings `json:"UserSettings"`
 }
 

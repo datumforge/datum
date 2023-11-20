@@ -11,14 +11,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
-// CreateUserSettingsInput is the resolver for the CreateUserSettingsInput field.
-func (r *mutationResolver) CreateUserSettingsInput(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateUserSettingsInput - CreateUserSettingsInput"))
+// CreateUserSettings is the resolver for the createUserSettings field.
+func (r *mutationResolver) CreateUserSettings(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateUserSettings - createUserSettings"))
 }
 
-// UpdateUserSettingsInput is the resolver for the UpdateUserSettingsInput field.
-func (r *mutationResolver) UpdateUserSettingsInput(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateUserSettingsInput - UpdateUserSettingsInput"))
+// PdateUserSettings is the resolver for the pdateUserSettings field.
+func (r *mutationResolver) PdateUserSettings(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error) {
+	panic(fmt.Errorf("not implemented: PdateUserSettings - pdateUserSettings"))
 }
 
 // DeleteUserSettings is the resolver for the DeleteUserSettings field.
@@ -29,4 +29,17 @@ func (r *mutationResolver) DeleteUserSettings(ctx context.Context, id string) (*
 // UserSettings is the resolver for the UserSettings field.
 func (r *queryResolver) UserSettings(ctx context.Context, id string) (*generated.UserSettings, error) {
 	panic(fmt.Errorf("not implemented: UserSettings - UserSettings"))
+}
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *mutationResolver) CreateUserSettingsInput(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error) {
+	panic(fmt.Errorf("not implemented: CreateUserSettingsInput - CreateUserSettingsInput"))
+}
+func (r *mutationResolver) UpdateUserSettingsInput(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error) {
+	panic(fmt.Errorf("not implemented: UpdateUserSettingsInput - UpdateUserSettingsInput"))
 }

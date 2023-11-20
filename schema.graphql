@@ -1106,22 +1106,22 @@ type Mutation {
 		"""ID of the user"""
 		id: ID!
 	): UserDeletePayload!
-	"""Create a new UserSettings"""
-	CreateUserSettingsInput(
-		"""values of the UserSettings"""
+	"""Create a new userSettings"""
+	createUserSettings(
+		"""values of the userSettings"""
 		input: CreateUserSettingsInput!
 	): UserSettingsCreatePayload!
-	"""Update an existing UserSettings"""
-	UpdateUserSettingsInput(
-		"""ID of the UserSettings"""
+	"""Update an existing userSettings"""
+	pdateUserSettings(
+		"""ID of the userSettings"""
 		id: ID!
 
-		"""New values for the UserSettings"""
+		"""New values for the userSettings"""
 		input: UpdateUserSettingsInput!
 	): UserSettingsUpdatePayload!
-	"""Delete an existing UserSettings"""
-	DeleteUserSettings(
-		"""ID of the UserSettings"""
+	"""Delete an existing userSettings"""
+	deleteUserSettings(
+		"""ID of the userSettings"""
 		id: ID!
 	): UserSettingsDeletePayload!
 }
@@ -2217,8 +2217,8 @@ type Query {
 		"""ID of the user"""
 		id: ID!
 	): User!
-	"""Look up UserSettings by ID"""
-	UserSettings(
+	"""Look up userSettings by ID"""
+	userSettings(
 		"""ID of the UserSettings"""
 		id: ID!
 	): UserSettings!
@@ -2982,12 +2982,12 @@ type UserSettingsConnection {
 }
 """Return response for createUserSettings mutation"""
 type UserSettingsCreatePayload {
-	"""Created UserSettings"""
+	"""Created userSettings"""
 	UserSettings: UserSettings!
 }
 """Return response for deleteUserSettings mutation"""
 type UserSettingsDeletePayload {
-	"""Deleted UserSettings ID"""
+	"""Deleted userSettings ID"""
 	deletedID: ID!
 }
 """An edge in a connection."""
@@ -3012,7 +3012,7 @@ enum UserSettingsStatus @goModel(model: "github.com/datumforge/datum/internal/en
 }
 """Return response for updateUserSettings mutation"""
 type UserSettingsUpdatePayload {
-	"""Updated UserSettings"""
+	"""Updated userSettings"""
 	UserSettings: UserSettings!
 }
 """

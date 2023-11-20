@@ -5,6 +5,7 @@ package generated
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -646,6 +647,12 @@ func (oq *OrganizationQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		oq.sql = prev
+	}
+	if organization.Policy == nil {
+		return errors.New("generated: uninitialized organization.Policy (forgotten import generated/runtime?)")
+	}
+	if err := organization.Policy.EvalQuery(ctx, oq); err != nil {
+		return err
 	}
 	return nil
 }

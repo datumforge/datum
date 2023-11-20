@@ -121,7 +121,9 @@ func (Organization) Policy() ent.Policy {
 			privacy.AlwaysDenyRule(),
 		},
 		Query: privacy.QueryPolicy{
-			privacy.AlwaysAllowRule(),
+			rule.DenyIfNoViewer(),
+			rule.AllowIfAdmin(),
+			privacy.AlwaysDenyRule(),
 		},
 	}
 }

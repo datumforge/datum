@@ -56,18 +56,8 @@ func init() {
 	// entitlement.DefaultID holds the default value on creation for the id field.
 	entitlement.DefaultID = entitlementDescID.Default.(func() string)
 	groupMixin := schema.Group{}.Mixin()
-	group.Policy = privacy.NewPolicies(groupMixin[1], schema.Group{})
-	group.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := group.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
 	groupMixinHooks0 := groupMixin[0].Hooks()
-
-	group.Hooks[1] = groupMixinHooks0[0]
+	group.Hooks[0] = groupMixinHooks0[0]
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
 	groupMixinFields2 := groupMixin[2].Fields()
@@ -207,10 +197,21 @@ func init() {
 	// oauthprovider.DefaultID holds the default value on creation for the id field.
 	oauthprovider.DefaultID = oauthproviderDescID.Default.(func() string)
 	organizationMixin := schema.Organization{}.Mixin()
+	organization.Policy = privacy.NewPolicies(schema.Organization{})
+	organization.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := organization.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	organizationMixinHooks0 := organizationMixin[0].Hooks()
 	organizationHooks := schema.Organization{}.Hooks()
-	organization.Hooks[0] = organizationMixinHooks0[0]
-	organization.Hooks[1] = organizationHooks[0]
+
+	organization.Hooks[1] = organizationMixinHooks0[0]
+
+	organization.Hooks[2] = organizationHooks[0]
 	organizationMixinFields0 := organizationMixin[0].Fields()
 	_ = organizationMixinFields0
 	organizationMixinFields1 := organizationMixin[1].Fields()
@@ -419,18 +420,8 @@ func init() {
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
-	user.Policy = privacy.NewPolicies(userMixin[1], schema.User{})
-	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
-		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-			if err := user.Policy.EvalMutation(ctx, m); err != nil {
-				return nil, err
-			}
-			return next.Mutate(ctx, m)
-		})
-	}
 	userMixinHooks0 := userMixin[0].Hooks()
-
-	user.Hooks[1] = userMixinHooks0[0]
+	user.Hooks[0] = userMixinHooks0[0]
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
 	userMixinFields2 := userMixin[2].Fields()

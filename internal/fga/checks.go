@@ -6,11 +6,11 @@ import (
 	"github.com/openfga/go-sdk/client"
 )
 
-// checkTuple checks the openFGA store for provided relationship tuple
-func (c *Client) checkTuple(ctx context.Context, check client.ClientCheckRequest) (bool, error) {
+// CheckTuple checks the openFGA store for provided relationship tuple
+func (c *Client) CheckTuple(ctx context.Context, check client.ClientCheckRequest) (bool, error) {
 	data, err := c.Ofga.Check(ctx).Body(check).Execute()
 	if err != nil {
-		c.Logger.Infof("GetCheck error: [%s]", err.Error())
+		c.Logger.Errorw("error checking tuple", "tuple", check, "error", err.Error())
 
 		return false, err
 	}
@@ -35,5 +35,5 @@ func (c *Client) CheckDirectUser(ctx context.Context, relation, object string) (
 		tuple.Relation,
 	)
 
-	return c.checkTuple(ctx, *tuple)
+	return c.CheckTuple(ctx, *tuple)
 }

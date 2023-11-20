@@ -81,7 +81,7 @@ func init() {
 
 	// echo-jwt flags
 	serveCmd.Flags().String("jwt-secretkey", "", "secret key for echojwt config")
-	viperBindFlag("jtw.secretkey", serveCmd.Flags().Lookup("jwt-secretkey"))
+	viperBindFlag("jwt.secretkey", serveCmd.Flags().Lookup("jwt-secretkey"))
 
 	// OIDC Flags
 	serveCmd.Flags().Bool("oidc", true, "use oidc auth")
@@ -183,7 +183,7 @@ func serve(ctx context.Context) error {
 
 	// add jwt middleware
 	if oidcEnabled {
-		secretKey := viper.GetString("jtw.secretkey")
+		secretKey := viper.GetString("jwt.secretkey")
 		jwtConfig := createJwtMiddleware([]byte(secretKey))
 
 		mw = append(mw, jwtConfig)

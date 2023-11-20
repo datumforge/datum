@@ -208,7 +208,9 @@ func init() {
 	oauthprovider.DefaultID = oauthproviderDescID.Default.(func() string)
 	organizationMixin := schema.Organization{}.Mixin()
 	organizationMixinHooks0 := organizationMixin[0].Hooks()
+	organizationHooks := schema.Organization{}.Hooks()
 	organization.Hooks[0] = organizationMixinHooks0[0]
+	organization.Hooks[1] = organizationHooks[0]
 	organizationMixinFields0 := organizationMixin[0].Fields()
 	_ = organizationMixinFields0
 	organizationMixinFields1 := organizationMixin[1].Fields()

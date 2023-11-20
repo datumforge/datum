@@ -43,7 +43,7 @@ func setupDB() {
 		return
 	}
 
-	logger := zap.NewNop()
+	logger := zap.NewNop().Sugar()
 
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
@@ -54,13 +54,16 @@ func setupDB() {
 	entConfig := entdb.EntClientConfig{
 		Debug:           true,
 		DriverName:      dialect.SQLite,
-		Logger:          *logger.Sugar(),
+		Logger:          *logger,
 		PrimaryDBSource: testDBURI,
 	}
 
 	ctx := context.Background()
 
-	c, err := entConfig.NewEntDBDriver(ctx)
+	// TODO: add fga client for authz testing
+	opts := []ent.Option{ent.Logger(*logger)}
+
+	c, err := entConfig.NewEntDBDriver(ctx, opts)
 	if err != nil {
 		errPanic("failed opening connection to database:", err)
 	}

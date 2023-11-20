@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
 	"entgo.io/contrib/entgql"
@@ -12,14 +14,17 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/ogen-go/ogen"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
 const (
 	orgNameMaxLen = 160
 
-	// objectType     = "organization"
-	// memberRelation = "member"
+	objectType     = "organization"
+	memberRelation = "member"
+	ownerRelation  = "owner"
 )
 
 // Organization holds the schema definition for the Organization entity - organizations are the top level tenancy construct in the system
@@ -108,29 +113,28 @@ func (Organization) Mixin() []ent.Mixin {
 	}
 }
 
-// // Hooks of the Organization
-// func (Organization) Hooks() []ent.Hook {
-// 	return []ent.Hook{
-// 		// First hook.
-// 		hook.On(
-// 			func(next ent.Mutator) ent.Mutator {
-// 				return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
-// 					// Add relationship tuples
-// 					objID, exists := m.ID()
-// 					if exists {
-// 						if err := authz.CreateRelationshipTupleWithUser(ctx, memberRelation, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
-// 							// TODO - rollback creation if permissions fail to be created
-// 							logger.Errorw("failed to create relationship tuple", "error", err)
+// Hooks of the Organization
+func (Organization) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hook.On(
+			func(next ent.Mutator) ent.Mutator {
+				return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
+					// Add relationship tuples if authz is enabled
+					if m.Authz.Ofga != nil {
+						objID, exists := m.ID()
+						if exists {
+							if err := m.Authz.CreateRelationshipTupleWithUser(ctx, ownerRelation, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
+								m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-// 							return nil, ErrInternalServerError
-// 						}
-
-// 					}
-// 					return next.Mutate(ctx, m)
-// 				})
-// 			},
-// 			// Limit the hook only for these operations.
-// 			ent.OpCreate,
-// 		),
-// 	}
-// }
+								return nil, ErrInternalServerError
+							}
+						}
+					}
+					return next.Mutate(ctx, m)
+				})
+			},
+			// Limit the hook only for these operations.
+			ent.OpCreate,
+		),
+	}
+}

@@ -42,13 +42,15 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 }
 
 // NewEntDBDriver returns a ent db client
-func (c *EntClientConfig) NewEntDBDriver(ctx context.Context) (*ent.Client, error) {
+func (c *EntClientConfig) NewEntDBDriver(ctx context.Context, opts []ent.Option) (*ent.Client, error) {
 	db, err := c.newEntDB(c.PrimaryDBSource)
 	if err != nil {
 		return nil, err
 	}
 
 	cOpts := []ent.Option{ent.Driver(db)}
+
+	cOpts = append(cOpts, opts...)
 
 	if c.Debug {
 		cOpts = append(cOpts,
@@ -70,7 +72,7 @@ func (c *EntClientConfig) NewEntDBDriver(ctx context.Context) (*ent.Client, erro
 }
 
 // NewMultiDriverDBClient returns a ent client with a primary and secondary write database
-func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context) (*ent.Client, error) {
+func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent.Option) (*ent.Client, error) {
 	primaryDB, err := c.newEntDB(c.PrimaryDBSource)
 	if err != nil {
 		return nil, err
@@ -91,6 +93,8 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context) (*ent.Clie
 
 	// Create Multiwrite driver
 	cOpts := []ent.Option{ent.Driver(&MultiWriteDriver{Wp: primaryDB, Ws: secondaryDB})}
+
+	cOpts = append(cOpts, opts...)
 	if c.Debug {
 		cOpts = append(cOpts,
 			ent.Log(c.Logger.Named("ent").Debugln),

@@ -129,16 +129,45 @@ func serve(ctx context.Context) error {
 		PrimaryDBSource: viper.GetString("server.db-primary"),
 	}
 
+	// create ent dependency injection
+	opts := []ent.Option{ent.Logger(*logger)}
+
+	// add the fga client if oidc is enabled
+	if oidcEnabled {
+		config := fga.Config{
+			Name:    "datum",
+			Host:    viper.GetString("fga.host"),
+			Scheme:  viper.GetString("fga.scheme"),
+			StoreID: viper.GetString("fga.store-id"),
+			ModelID: viper.GetString("fga.model-id"),
+		}
+
+		logger.Infow(
+			"setting up fga client",
+			"host",
+			config.Host,
+			"scheme",
+			config.Scheme,
+		)
+
+		fgaClient, err := fga.CreateFGAClientWithStore(ctx, config, logger)
+		if err != nil {
+			return err
+		}
+
+		opts = append(opts, ent.Authz(*fgaClient))
+	}
+
 	// create new ent db client
 	if viper.GetBool("server.db.multi-write") {
 		entConfig.SecondaryDBSource = viper.GetString("server.db-secondary")
 
-		client, err = entConfig.NewMultiDriverDBClient(ctx)
+		client, err = entConfig.NewMultiDriverDBClient(ctx, opts)
 		if err != nil {
 			return err
 		}
 	} else {
-		client, err = entConfig.NewEntDBDriver(ctx)
+		client, err = entConfig.NewEntDBDriver(ctx, opts)
 		if err != nil {
 			return err
 		}
@@ -193,33 +222,6 @@ func serve(ctx context.Context) error {
 
 	r := api.NewResolver(client).
 		WithLogger(logger.Named("resolvers"))
-
-	// only turn on authz validation when oidc is enabled
-	if oidcEnabled {
-		// setup FGA client
-		config := fga.Config{
-			Name:    "datum",
-			Host:    viper.GetString("fga.host"),
-			Scheme:  viper.GetString("fga.scheme"),
-			StoreID: viper.GetString("fga.store-id"),
-			ModelID: viper.GetString("fga.model-id"),
-		}
-
-		logger.Infow(
-			"setting up fga client",
-			"host",
-			config.Host,
-			"scheme",
-			config.Scheme,
-		)
-
-		fgaClient, err := fga.CreateFGAClientWithStore(ctx, config, logger)
-		if err != nil {
-			return err
-		}
-
-		r = r.WithAuthz(fgaClient)
-	}
 
 	handler := r.Handler(enablePlayground, mw...)
 

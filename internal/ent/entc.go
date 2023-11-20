@@ -14,9 +14,11 @@ import (
 	"entgo.io/ent/entc/gen"
 	"github.com/hedwigz/entviz"
 	"github.com/ogen-go/ogen"
+	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
 	"github.com/datumforge/datum/internal/entx"
+	"github.com/datumforge/datum/internal/fga"
 )
 
 func main() {
@@ -65,6 +67,14 @@ func main() {
 	},
 		entc.Dependency(
 			entc.DependencyType(&secrets.Keeper{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Authz"),
+			entc.DependencyType(fga.Client{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Logger"),
+			entc.DependencyType(zap.SugaredLogger{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

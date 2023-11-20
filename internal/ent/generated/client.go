@@ -27,6 +27,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/fga"
+	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
@@ -100,6 +102,8 @@ type (
 		// interceptors to execute on queries.
 		inters        *inters
 		SecretsKeeper *secrets.Keeper
+		Authz         fga.Client
+		Logger        zap.SugaredLogger
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -149,6 +153,20 @@ func Driver(driver dialect.Driver) Option {
 func SecretsKeeper(v *secrets.Keeper) Option {
 	return func(c *config) {
 		c.SecretsKeeper = v
+	}
+}
+
+// Authz configures the Authz.
+func Authz(v fga.Client) Option {
+	return func(c *config) {
+		c.Authz = v
+	}
+}
+
+// Logger configures the Logger.
+func Logger(v zap.SugaredLogger) Option {
+	return func(c *config) {
+		c.Logger = v
 	}
 }
 

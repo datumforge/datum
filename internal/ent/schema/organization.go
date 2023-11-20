@@ -18,8 +18,8 @@ import (
 const (
 	orgNameMaxLen = 160
 
-	objectType     = "organization"
-	memberRelation = "member"
+	// objectType     = "organization"
+	// memberRelation = "member"
 )
 
 // Organization holds the schema definition for the Organization entity - organizations are the top level tenancy construct in the system

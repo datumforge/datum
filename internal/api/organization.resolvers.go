@@ -11,6 +11,11 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 )
 
+const (
+	objectType     = "organization"
+	memberRelation = "member"
+)
+
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
 	// TODO - add permissions checks
@@ -35,6 +40,14 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		r.logger.Errorw("failed to create organization", "error", err)
 		return nil, ErrInternalServerError
 	}
+
+	// // Add relationship tuples
+	// if err = r.authz.CreateRelationshipTupleWithUser(ctx, memberRelation, fmt.Sprintf("%s:%s", objectType, org.ID)); err != nil {
+	// 	// TODO - rollback creation if permissions fail to be created
+	// 	r.logger.Errorw("failed to create relationship tuple", "error", err)
+
+	// 	return nil, ErrInternalServerError
+	// }
 
 	return &OrganizationCreatePayload{Organization: org}, nil
 }

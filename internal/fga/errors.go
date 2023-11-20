@@ -31,3 +31,27 @@ func newInvalidEntityError(s string) *InvalidEntityError {
 		EntityRepresentation: s,
 	}
 }
+
+// WritingTuplesError is returned when an error is returned writing a relationship tuple
+type WritingTuplesError struct {
+	User          string
+	Relation      string
+	Object        string
+	Operation     string
+	ErrorResponse error
+}
+
+// Error returns the InvalidEntityError in string format
+func (e *WritingTuplesError) Error() string {
+	return fmt.Sprintf("failed to %s tuple to OpenFGA store: (user: %s; relation: %s; object: %s), error: %v", e.Operation, e.User, e.Relation, e.Object, e.ErrorResponse.Error())
+}
+
+func newWritingTuplesError(user, relation, object, operation string, err error) *WritingTuplesError {
+	return &WritingTuplesError{
+		User:          user,
+		Relation:      relation,
+		Object:        object,
+		Operation:     operation,
+		ErrorResponse: err,
+	}
+}

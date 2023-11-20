@@ -11,7 +11,8 @@ import (
 
 	"github.com/datumforge/datum/internal/echox"
 
-	"github.com/openfga/go-sdk/client"
+	openfga "github.com/openfga/go-sdk"
+	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
 type TupleKey struct {
@@ -86,7 +87,7 @@ func ParseEntity(s string) (Entity, error) {
 }
 
 // CreateCheckTupleWithUser gets the user id (currently the jwt sub, but that will change) and creates a Check Request for openFGA
-func (c *Client) CreateCheckTupleWithUser(ctx context.Context, relation, object string) (*client.ClientCheckRequest, error) {
+func (c *Client) CreateCheckTupleWithUser(ctx context.Context, relation, object string) (*ofgaclient.ClientCheckRequest, error) {
 	if relation == "" {
 		return nil, ErrMissingRelation
 	}
@@ -109,7 +110,7 @@ func (c *Client) CreateCheckTupleWithUser(ctx context.Context, relation, object 
 
 	// TODO: convert jwt sub --> uuid
 
-	return &client.ClientCheckRequest{
+	return &ofgaclient.ClientCheckRequest{
 		User:             fmt.Sprintf("user:%s", actor),
 		Relation:         relation,
 		Object:           object,
@@ -134,22 +135,93 @@ func (c *Client) CreateRelationshipTupleWithUser(ctx context.Context, relation, 
 
 	// TODO: convert jwt sub --> uuid
 
-	tuples := []client.ClientTupleKey{{
+	tuples := []ofgaclient.ClientTupleKey{{
 		User:     fmt.Sprintf("user:%s", actor),
 		Relation: relation,
 		Object:   object,
 	}}
 
-	return c.createRelationshipTuple(ctx, tuples)
+	_, err = c.createRelationshipTuple(ctx, tuples)
+
+	return err
 }
 
-// CreateRelationshipTuple creates a relationship tuple in the openFGA store
-func (c *Client) createRelationshipTuple(ctx context.Context, tuples []client.ClientTupleKey) error {
-	if _, err := c.Ofga.WriteTuples(ctx).Body(tuples).Execute(); err != nil {
-		c.Logger.Infof("CreateRelationshipTuple error: [%s][%v]", err.Error())
+// DeleteRelationshipTupleWithUser gets the user id (currently the jwt sub, but that will change) and deletes a relationship tuple
+// with the given relation and object reference
+func (c *Client) DeleteRelationshipTupleWithUser(ctx context.Context, relation, object string) error {
+	ec, err := echox.EchoContextFromContext(ctx)
+	if err != nil {
+		c.Logger.Errorw("unable to get echo context", "error", err)
 
 		return err
 	}
 
-	return nil
+	actor, err := echox.GetActorSubject(*ec)
+	if err != nil {
+		return err
+	}
+
+	// TODO: convert jwt sub --> uuid
+
+	tuples := []ofgaclient.ClientTupleKey{{
+		User:     fmt.Sprintf("user:%s", actor),
+		Relation: relation,
+		Object:   object,
+	}}
+
+	_, err = c.deleteRelationshipTuple(ctx, tuples)
+
+	return err
+}
+
+// CreateRelationshipTuple creates a relationship tuple in the openFGA store
+func (c *Client) createRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
+	if len(tuples) == 0 {
+		return nil, nil
+	}
+
+	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(*c.Config.AuthorizationModelId)}
+
+	resp, err := c.Ofga.WriteTuples(ctx).Body(tuples).Options(opts).Execute()
+	if err != nil {
+		c.Logger.Infow("error creating relationship tuples", "error", err.Error(), "user", resp.Writes)
+
+		return resp, err
+	}
+
+	for _, writes := range resp.Writes {
+		if writes.Error != nil {
+			c.Logger.Errorw("error deleting relationship tuples", "user", writes.TupleKey.User, "relation", writes.TupleKey.Relation, "object", writes.TupleKey.Object)
+
+			return resp, newWritingTuplesError(writes.TupleKey.User, writes.TupleKey.Relation, writes.TupleKey.Object, "writing", err)
+		}
+	}
+
+	return resp, nil
+}
+
+// deleteRelationshipTuple deletes a relationship tuple in the openFGA store
+func (c *Client) deleteRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
+	if len(tuples) == 0 {
+		return nil, nil
+	}
+
+	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(*c.Config.AuthorizationModelId)}
+
+	resp, err := c.Ofga.DeleteTuples(ctx).Body(tuples).Options(opts).Execute()
+	if err != nil {
+		c.Logger.Errorw("error deleting relationship tuples", "error", err.Error())
+
+		return resp, err
+	}
+
+	for _, del := range resp.Deletes {
+		if del.Error != nil {
+			c.Logger.Errorw("error deleting relationship tuples", "user", del.TupleKey.User, "relation", del.TupleKey.Relation, "object", del.TupleKey.Object)
+
+			return resp, newWritingTuplesError(del.TupleKey.User, del.TupleKey.Relation, del.TupleKey.Object, "deleting", err)
+		}
+	}
+
+	return resp, nil
 }

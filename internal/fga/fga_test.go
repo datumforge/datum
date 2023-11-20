@@ -25,7 +25,9 @@ func newTestFGAClient(t testing.TB, mockCtrl *gomock.Controller, c *mock_client.
 	client := Client{
 		Config: ofgaclient.ClientConfiguration{
 			// The api host is the only required field when setting up a new FGA client connection
-			ApiHost: "fga.datum.net",
+			ApiHost:              "fga.datum.net",
+			AuthorizationModelId: openfga.PtrString("test-model-id"),
+			StoreId:              *openfga.PtrString("test-store-id"),
 		},
 		Ofga:   c,
 		Logger: zap.NewNop().Sugar(),

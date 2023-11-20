@@ -17,6 +17,9 @@ import (
 
 const (
 	orgNameMaxLen = 160
+
+	objectType     = "organization"
+	memberRelation = "member"
 )
 
 // Organization holds the schema definition for the Organization entity - organizations are the top level tenancy construct in the system
@@ -104,3 +107,30 @@ func (Organization) Mixin() []ent.Mixin {
 		mixin.IDMixin{},
 	}
 }
+
+// // Hooks of the Organization
+// func (Organization) Hooks() []ent.Hook {
+// 	return []ent.Hook{
+// 		// First hook.
+// 		hook.On(
+// 			func(next ent.Mutator) ent.Mutator {
+// 				return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
+// 					// Add relationship tuples
+// 					objID, exists := m.ID()
+// 					if exists {
+// 						if err := authz.CreateRelationshipTupleWithUser(ctx, memberRelation, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
+// 							// TODO - rollback creation if permissions fail to be created
+// 							logger.Errorw("failed to create relationship tuple", "error", err)
+
+// 							return nil, ErrInternalServerError
+// 						}
+
+// 					}
+// 					return next.Mutate(ctx, m)
+// 				})
+// 			},
+// 			// Limit the hook only for these operations.
+// 			ent.OpCreate,
+// 		),
+// 	}
+// }

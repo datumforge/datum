@@ -16,15 +16,14 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/fga"
 )
 
 const (
 	orgNameMaxLen = 160
-
-	objectType     = "organization"
-	memberRelation = "member"
-	ownerRelation  = "owner"
 )
 
 // Organization holds the schema definition for the Organization entity - organizations are the top level tenancy construct in the system
@@ -113,6 +112,20 @@ func (Organization) Mixin() []ent.Mixin {
 	}
 }
 
+// Policy defines the privacy policy of the Organization.
+func (Organization) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoViewer(),
+			rule.AllowIfAdmin(),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.AlwaysAllowRule(),
+		},
+	}
+}
+
 // Hooks of the Organization
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
@@ -148,10 +161,13 @@ func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutati
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
 		objID, exists := m.ID()
-		m.Logger.Infow("creating relationship tuples", "object_id", objID)
+		objType := strings.ToLower(m.Type())
+		object := fmt.Sprintf("%s:%s", objType, objID)
+
+		m.Logger.Infow("creating relationship tuples", "relation", fga.OwnerRelation, "object", object)
 
 		if exists {
-			if err := m.Authz.CreateRelationshipTupleWithUser(ctx, ownerRelation, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
+			if err := m.Authz.CreateRelationshipTupleWithUser(ctx, fga.OwnerRelation, object); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 				// TODO: rollback mutation if tuple creation fails
@@ -159,7 +175,7 @@ func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutati
 			}
 		}
 
-		m.Logger.Infow("created relationship tuples", "object_id", objID)
+		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", object)
 	}
 
 	return nil
@@ -169,17 +185,20 @@ func organizationDeleteHook(ctx context.Context, m *generated.OrganizationMutati
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
 		objID, _ := m.ID()
-		m.Logger.Infow("going to relationship tuples", "object_id", objID)
+		objType := strings.ToLower(m.Type())
+		object := fmt.Sprintf("%s:%s", objType, objID)
+
+		m.Logger.Infow("deleting relationship tuples", "object", object)
 
 		// Add relationship tuples if authz is enabled
 		if m.Authz.Ofga != nil {
-			if err := m.Authz.DeleteAllObjectRelations(ctx, fmt.Sprintf("%s:%s", objectType, objID)); err != nil {
+			if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
 				m.Logger.Errorw("failed to delete relationship tuples", "error", err)
 
 				return ErrInternalServerError
 			}
 
-			m.Logger.Infow("deleted relationship tuples", "object_id", objID)
+			m.Logger.Infow("deleted relationship tuples", "object", object)
 		}
 	}
 

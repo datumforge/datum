@@ -15,6 +15,13 @@ import (
 	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
+const (
+	// setup relations for use in creating tuples
+	MemberRelation = "member"
+	AdminRelation  = "admin"
+	OwnerRelation  = "owner"
+)
+
 type TupleKey struct {
 	Subject  Entity
 	Object   Entity

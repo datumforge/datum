@@ -36,18 +36,6 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		return nil, ErrInternalServerError
 	}
 
-	// // Add relationship tuples
-	// // When an organization is created, the user that created the org should have access
-	// // By default, that user should have an owner relationship
-	// // All other users assigned to the org will have a member relationship
-	// // Users can be promoted to admin of the organization
-	// if err = r.authz.CreateRelationshipTupleWithUser(ctx, ownerRelationship, fmt.Sprintf("%s:%s", objectType, org.ID)); err != nil {
-	// 	// TODO - rollback creation if permissions fail to be created
-	// 	r.logger.Errorw("failed to create relationship tuple", "error", err)
-
-	// 	return nil, ErrInternalServerError
-	// }
-
 	return &OrganizationCreatePayload{Organization: org}, nil
 }
 

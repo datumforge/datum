@@ -8,16 +8,16 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/ent/schema"
 
 	"entgo.io/ent"
@@ -121,41 +121,41 @@ func init() {
 	groupDescID := groupMixinFields2[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
 	group.DefaultID = groupDescID.Default.(func() string)
-	groupsettingsMixin := schema.GroupSettings{}.Mixin()
-	groupsettingsMixinHooks0 := groupsettingsMixin[0].Hooks()
-	groupsettings.Hooks[0] = groupsettingsMixinHooks0[0]
-	groupsettingsMixinFields0 := groupsettingsMixin[0].Fields()
-	_ = groupsettingsMixinFields0
-	groupsettingsMixinFields1 := groupsettingsMixin[1].Fields()
-	_ = groupsettingsMixinFields1
-	groupsettingsFields := schema.GroupSettings{}.Fields()
-	_ = groupsettingsFields
-	// groupsettingsDescCreatedAt is the schema descriptor for created_at field.
-	groupsettingsDescCreatedAt := groupsettingsMixinFields0[0].Descriptor()
-	// groupsettings.DefaultCreatedAt holds the default value on creation for the created_at field.
-	groupsettings.DefaultCreatedAt = groupsettingsDescCreatedAt.Default.(func() time.Time)
-	// groupsettingsDescUpdatedAt is the schema descriptor for updated_at field.
-	groupsettingsDescUpdatedAt := groupsettingsMixinFields0[1].Descriptor()
-	// groupsettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	groupsettings.DefaultUpdatedAt = groupsettingsDescUpdatedAt.Default.(func() time.Time)
-	// groupsettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	groupsettings.UpdateDefaultUpdatedAt = groupsettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// groupsettingsDescTags is the schema descriptor for tags field.
-	groupsettingsDescTags := groupsettingsFields[2].Descriptor()
-	// groupsettings.DefaultTags holds the default value on creation for the tags field.
-	groupsettings.DefaultTags = groupsettingsDescTags.Default.([]string)
-	// groupsettingsDescSyncToSlack is the schema descriptor for sync_to_slack field.
-	groupsettingsDescSyncToSlack := groupsettingsFields[3].Descriptor()
-	// groupsettings.DefaultSyncToSlack holds the default value on creation for the sync_to_slack field.
-	groupsettings.DefaultSyncToSlack = groupsettingsDescSyncToSlack.Default.(bool)
-	// groupsettingsDescSyncToGithub is the schema descriptor for sync_to_github field.
-	groupsettingsDescSyncToGithub := groupsettingsFields[4].Descriptor()
-	// groupsettings.DefaultSyncToGithub holds the default value on creation for the sync_to_github field.
-	groupsettings.DefaultSyncToGithub = groupsettingsDescSyncToGithub.Default.(bool)
-	// groupsettingsDescID is the schema descriptor for id field.
-	groupsettingsDescID := groupsettingsMixinFields1[0].Descriptor()
-	// groupsettings.DefaultID holds the default value on creation for the id field.
-	groupsettings.DefaultID = groupsettingsDescID.Default.(func() string)
+	groupsettingMixin := schema.GroupSetting{}.Mixin()
+	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
+	groupsetting.Hooks[0] = groupsettingMixinHooks0[0]
+	groupsettingMixinFields0 := groupsettingMixin[0].Fields()
+	_ = groupsettingMixinFields0
+	groupsettingMixinFields1 := groupsettingMixin[1].Fields()
+	_ = groupsettingMixinFields1
+	groupsettingFields := schema.GroupSetting{}.Fields()
+	_ = groupsettingFields
+	// groupsettingDescCreatedAt is the schema descriptor for created_at field.
+	groupsettingDescCreatedAt := groupsettingMixinFields0[0].Descriptor()
+	// groupsetting.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupsetting.DefaultCreatedAt = groupsettingDescCreatedAt.Default.(func() time.Time)
+	// groupsettingDescUpdatedAt is the schema descriptor for updated_at field.
+	groupsettingDescUpdatedAt := groupsettingMixinFields0[1].Descriptor()
+	// groupsetting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	groupsetting.DefaultUpdatedAt = groupsettingDescUpdatedAt.Default.(func() time.Time)
+	// groupsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	groupsetting.UpdateDefaultUpdatedAt = groupsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupsettingDescTags is the schema descriptor for tags field.
+	groupsettingDescTags := groupsettingFields[2].Descriptor()
+	// groupsetting.DefaultTags holds the default value on creation for the tags field.
+	groupsetting.DefaultTags = groupsettingDescTags.Default.([]string)
+	// groupsettingDescSyncToSlack is the schema descriptor for sync_to_slack field.
+	groupsettingDescSyncToSlack := groupsettingFields[3].Descriptor()
+	// groupsetting.DefaultSyncToSlack holds the default value on creation for the sync_to_slack field.
+	groupsetting.DefaultSyncToSlack = groupsettingDescSyncToSlack.Default.(bool)
+	// groupsettingDescSyncToGithub is the schema descriptor for sync_to_github field.
+	groupsettingDescSyncToGithub := groupsettingFields[4].Descriptor()
+	// groupsetting.DefaultSyncToGithub holds the default value on creation for the sync_to_github field.
+	groupsetting.DefaultSyncToGithub = groupsettingDescSyncToGithub.Default.(bool)
+	// groupsettingDescID is the schema descriptor for id field.
+	groupsettingDescID := groupsettingMixinFields1[0].Descriptor()
+	// groupsetting.DefaultID holds the default value on creation for the id field.
+	groupsetting.DefaultID = groupsettingDescID.Default.(func() string)
 	integrationMixin := schema.Integration{}.Mixin()
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
 	integration.Hooks[0] = integrationMixinHooks0[0]
@@ -268,61 +268,61 @@ func init() {
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() string)
-	organizationsettingsMixin := schema.OrganizationSettings{}.Mixin()
-	organizationsettingsMixinHooks0 := organizationsettingsMixin[0].Hooks()
-	organizationsettings.Hooks[0] = organizationsettingsMixinHooks0[0]
-	organizationsettingsMixinFields0 := organizationsettingsMixin[0].Fields()
-	_ = organizationsettingsMixinFields0
-	organizationsettingsMixinFields1 := organizationsettingsMixin[1].Fields()
-	_ = organizationsettingsMixinFields1
-	organizationsettingsFields := schema.OrganizationSettings{}.Fields()
-	_ = organizationsettingsFields
-	// organizationsettingsDescCreatedAt is the schema descriptor for created_at field.
-	organizationsettingsDescCreatedAt := organizationsettingsMixinFields0[0].Descriptor()
-	// organizationsettings.DefaultCreatedAt holds the default value on creation for the created_at field.
-	organizationsettings.DefaultCreatedAt = organizationsettingsDescCreatedAt.Default.(func() time.Time)
-	// organizationsettingsDescUpdatedAt is the schema descriptor for updated_at field.
-	organizationsettingsDescUpdatedAt := organizationsettingsMixinFields0[1].Descriptor()
-	// organizationsettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	organizationsettings.DefaultUpdatedAt = organizationsettingsDescUpdatedAt.Default.(func() time.Time)
-	// organizationsettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	organizationsettings.UpdateDefaultUpdatedAt = organizationsettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// organizationsettingsDescSSOCert is the schema descriptor for sso_cert field.
-	organizationsettingsDescSSOCert := organizationsettingsFields[1].Descriptor()
-	// organizationsettings.DefaultSSOCert holds the default value on creation for the sso_cert field.
-	organizationsettings.DefaultSSOCert = organizationsettingsDescSSOCert.Default.(string)
-	// organizationsettingsDescSSOEntrypoint is the schema descriptor for sso_entrypoint field.
-	organizationsettingsDescSSOEntrypoint := organizationsettingsFields[2].Descriptor()
-	// organizationsettings.DefaultSSOEntrypoint holds the default value on creation for the sso_entrypoint field.
-	organizationsettings.DefaultSSOEntrypoint = organizationsettingsDescSSOEntrypoint.Default.(string)
-	// organizationsettingsDescSSOIssuer is the schema descriptor for sso_issuer field.
-	organizationsettingsDescSSOIssuer := organizationsettingsFields[3].Descriptor()
-	// organizationsettings.DefaultSSOIssuer holds the default value on creation for the sso_issuer field.
-	organizationsettings.DefaultSSOIssuer = organizationsettingsDescSSOIssuer.Default.(string)
-	// organizationsettingsDescBillingContact is the schema descriptor for billing_contact field.
-	organizationsettingsDescBillingContact := organizationsettingsFields[4].Descriptor()
-	// organizationsettings.BillingContactValidator is a validator for the "billing_contact" field. It is called by the builders before save.
-	organizationsettings.BillingContactValidator = organizationsettingsDescBillingContact.Validators[0].(func(string) error)
-	// organizationsettingsDescBillingEmail is the schema descriptor for billing_email field.
-	organizationsettingsDescBillingEmail := organizationsettingsFields[5].Descriptor()
-	// organizationsettings.BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
-	organizationsettings.BillingEmailValidator = organizationsettingsDescBillingEmail.Validators[0].(func(string) error)
-	// organizationsettingsDescBillingPhone is the schema descriptor for billing_phone field.
-	organizationsettingsDescBillingPhone := organizationsettingsFields[6].Descriptor()
-	// organizationsettings.BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
-	organizationsettings.BillingPhoneValidator = organizationsettingsDescBillingPhone.Validators[0].(func(string) error)
-	// organizationsettingsDescBillingAddress is the schema descriptor for billing_address field.
-	organizationsettingsDescBillingAddress := organizationsettingsFields[7].Descriptor()
-	// organizationsettings.BillingAddressValidator is a validator for the "billing_address" field. It is called by the builders before save.
-	organizationsettings.BillingAddressValidator = organizationsettingsDescBillingAddress.Validators[0].(func(string) error)
-	// organizationsettingsDescTags is the schema descriptor for tags field.
-	organizationsettingsDescTags := organizationsettingsFields[9].Descriptor()
-	// organizationsettings.DefaultTags holds the default value on creation for the tags field.
-	organizationsettings.DefaultTags = organizationsettingsDescTags.Default.([]string)
-	// organizationsettingsDescID is the schema descriptor for id field.
-	organizationsettingsDescID := organizationsettingsMixinFields1[0].Descriptor()
-	// organizationsettings.DefaultID holds the default value on creation for the id field.
-	organizationsettings.DefaultID = organizationsettingsDescID.Default.(func() string)
+	organizationsettingMixin := schema.OrganizationSetting{}.Mixin()
+	organizationsettingMixinHooks0 := organizationsettingMixin[0].Hooks()
+	organizationsetting.Hooks[0] = organizationsettingMixinHooks0[0]
+	organizationsettingMixinFields0 := organizationsettingMixin[0].Fields()
+	_ = organizationsettingMixinFields0
+	organizationsettingMixinFields1 := organizationsettingMixin[1].Fields()
+	_ = organizationsettingMixinFields1
+	organizationsettingFields := schema.OrganizationSetting{}.Fields()
+	_ = organizationsettingFields
+	// organizationsettingDescCreatedAt is the schema descriptor for created_at field.
+	organizationsettingDescCreatedAt := organizationsettingMixinFields0[0].Descriptor()
+	// organizationsetting.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organizationsetting.DefaultCreatedAt = organizationsettingDescCreatedAt.Default.(func() time.Time)
+	// organizationsettingDescUpdatedAt is the schema descriptor for updated_at field.
+	organizationsettingDescUpdatedAt := organizationsettingMixinFields0[1].Descriptor()
+	// organizationsetting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	organizationsetting.DefaultUpdatedAt = organizationsettingDescUpdatedAt.Default.(func() time.Time)
+	// organizationsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	organizationsetting.UpdateDefaultUpdatedAt = organizationsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organizationsettingDescSSOCert is the schema descriptor for sso_cert field.
+	organizationsettingDescSSOCert := organizationsettingFields[1].Descriptor()
+	// organizationsetting.DefaultSSOCert holds the default value on creation for the sso_cert field.
+	organizationsetting.DefaultSSOCert = organizationsettingDescSSOCert.Default.(string)
+	// organizationsettingDescSSOEntrypoint is the schema descriptor for sso_entrypoint field.
+	organizationsettingDescSSOEntrypoint := organizationsettingFields[2].Descriptor()
+	// organizationsetting.DefaultSSOEntrypoint holds the default value on creation for the sso_entrypoint field.
+	organizationsetting.DefaultSSOEntrypoint = organizationsettingDescSSOEntrypoint.Default.(string)
+	// organizationsettingDescSSOIssuer is the schema descriptor for sso_issuer field.
+	organizationsettingDescSSOIssuer := organizationsettingFields[3].Descriptor()
+	// organizationsetting.DefaultSSOIssuer holds the default value on creation for the sso_issuer field.
+	organizationsetting.DefaultSSOIssuer = organizationsettingDescSSOIssuer.Default.(string)
+	// organizationsettingDescBillingContact is the schema descriptor for billing_contact field.
+	organizationsettingDescBillingContact := organizationsettingFields[4].Descriptor()
+	// organizationsetting.BillingContactValidator is a validator for the "billing_contact" field. It is called by the builders before save.
+	organizationsetting.BillingContactValidator = organizationsettingDescBillingContact.Validators[0].(func(string) error)
+	// organizationsettingDescBillingEmail is the schema descriptor for billing_email field.
+	organizationsettingDescBillingEmail := organizationsettingFields[5].Descriptor()
+	// organizationsetting.BillingEmailValidator is a validator for the "billing_email" field. It is called by the builders before save.
+	organizationsetting.BillingEmailValidator = organizationsettingDescBillingEmail.Validators[0].(func(string) error)
+	// organizationsettingDescBillingPhone is the schema descriptor for billing_phone field.
+	organizationsettingDescBillingPhone := organizationsettingFields[6].Descriptor()
+	// organizationsetting.BillingPhoneValidator is a validator for the "billing_phone" field. It is called by the builders before save.
+	organizationsetting.BillingPhoneValidator = organizationsettingDescBillingPhone.Validators[0].(func(string) error)
+	// organizationsettingDescBillingAddress is the schema descriptor for billing_address field.
+	organizationsettingDescBillingAddress := organizationsettingFields[7].Descriptor()
+	// organizationsetting.BillingAddressValidator is a validator for the "billing_address" field. It is called by the builders before save.
+	organizationsetting.BillingAddressValidator = organizationsettingDescBillingAddress.Validators[0].(func(string) error)
+	// organizationsettingDescTags is the schema descriptor for tags field.
+	organizationsettingDescTags := organizationsettingFields[9].Descriptor()
+	// organizationsetting.DefaultTags holds the default value on creation for the tags field.
+	organizationsetting.DefaultTags = organizationsettingDescTags.Default.([]string)
+	// organizationsettingDescID is the schema descriptor for id field.
+	organizationsettingDescID := organizationsettingMixinFields1[0].Descriptor()
+	// organizationsetting.DefaultID holds the default value on creation for the id field.
+	organizationsetting.DefaultID = organizationsettingDescID.Default.(func() string)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
 	personalaccesstoken.Hooks[0] = personalaccesstokenMixinHooks0[0]
@@ -540,45 +540,45 @@ func init() {
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
-	usersettingsMixin := schema.UserSettings{}.Mixin()
-	usersettingsMixinHooks0 := usersettingsMixin[0].Hooks()
-	usersettings.Hooks[0] = usersettingsMixinHooks0[0]
-	usersettingsMixinFields0 := usersettingsMixin[0].Fields()
-	_ = usersettingsMixinFields0
-	usersettingsMixinFields1 := usersettingsMixin[1].Fields()
-	_ = usersettingsMixinFields1
-	usersettingsFields := schema.UserSettings{}.Fields()
-	_ = usersettingsFields
-	// usersettingsDescCreatedAt is the schema descriptor for created_at field.
-	usersettingsDescCreatedAt := usersettingsMixinFields0[0].Descriptor()
-	// usersettings.DefaultCreatedAt holds the default value on creation for the created_at field.
-	usersettings.DefaultCreatedAt = usersettingsDescCreatedAt.Default.(func() time.Time)
-	// usersettingsDescUpdatedAt is the schema descriptor for updated_at field.
-	usersettingsDescUpdatedAt := usersettingsMixinFields0[1].Descriptor()
-	// usersettings.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	usersettings.DefaultUpdatedAt = usersettingsDescUpdatedAt.Default.(func() time.Time)
-	// usersettings.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	usersettings.UpdateDefaultUpdatedAt = usersettingsDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// usersettingsDescLocked is the schema descriptor for locked field.
-	usersettingsDescLocked := usersettingsFields[0].Descriptor()
-	// usersettings.DefaultLocked holds the default value on creation for the locked field.
-	usersettings.DefaultLocked = usersettingsDescLocked.Default.(bool)
-	// usersettingsDescPermissions is the schema descriptor for permissions field.
-	usersettingsDescPermissions := usersettingsFields[6].Descriptor()
-	// usersettings.DefaultPermissions holds the default value on creation for the permissions field.
-	usersettings.DefaultPermissions = usersettingsDescPermissions.Default.([]string)
-	// usersettingsDescEmailConfirmed is the schema descriptor for email_confirmed field.
-	usersettingsDescEmailConfirmed := usersettingsFields[7].Descriptor()
-	// usersettings.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
-	usersettings.DefaultEmailConfirmed = usersettingsDescEmailConfirmed.Default.(bool)
-	// usersettingsDescTags is the schema descriptor for tags field.
-	usersettingsDescTags := usersettingsFields[8].Descriptor()
-	// usersettings.DefaultTags holds the default value on creation for the tags field.
-	usersettings.DefaultTags = usersettingsDescTags.Default.([]string)
-	// usersettingsDescID is the schema descriptor for id field.
-	usersettingsDescID := usersettingsMixinFields1[0].Descriptor()
-	// usersettings.DefaultID holds the default value on creation for the id field.
-	usersettings.DefaultID = usersettingsDescID.Default.(func() string)
+	usersettingMixin := schema.UserSetting{}.Mixin()
+	usersettingMixinHooks0 := usersettingMixin[0].Hooks()
+	usersetting.Hooks[0] = usersettingMixinHooks0[0]
+	usersettingMixinFields0 := usersettingMixin[0].Fields()
+	_ = usersettingMixinFields0
+	usersettingMixinFields1 := usersettingMixin[1].Fields()
+	_ = usersettingMixinFields1
+	usersettingFields := schema.UserSetting{}.Fields()
+	_ = usersettingFields
+	// usersettingDescCreatedAt is the schema descriptor for created_at field.
+	usersettingDescCreatedAt := usersettingMixinFields0[0].Descriptor()
+	// usersetting.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usersetting.DefaultCreatedAt = usersettingDescCreatedAt.Default.(func() time.Time)
+	// usersettingDescUpdatedAt is the schema descriptor for updated_at field.
+	usersettingDescUpdatedAt := usersettingMixinFields0[1].Descriptor()
+	// usersetting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usersetting.DefaultUpdatedAt = usersettingDescUpdatedAt.Default.(func() time.Time)
+	// usersetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usersetting.UpdateDefaultUpdatedAt = usersettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// usersettingDescLocked is the schema descriptor for locked field.
+	usersettingDescLocked := usersettingFields[0].Descriptor()
+	// usersetting.DefaultLocked holds the default value on creation for the locked field.
+	usersetting.DefaultLocked = usersettingDescLocked.Default.(bool)
+	// usersettingDescPermissions is the schema descriptor for permissions field.
+	usersettingDescPermissions := usersettingFields[6].Descriptor()
+	// usersetting.DefaultPermissions holds the default value on creation for the permissions field.
+	usersetting.DefaultPermissions = usersettingDescPermissions.Default.([]string)
+	// usersettingDescEmailConfirmed is the schema descriptor for email_confirmed field.
+	usersettingDescEmailConfirmed := usersettingFields[7].Descriptor()
+	// usersetting.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
+	usersetting.DefaultEmailConfirmed = usersettingDescEmailConfirmed.Default.(bool)
+	// usersettingDescTags is the schema descriptor for tags field.
+	usersettingDescTags := usersettingFields[8].Descriptor()
+	// usersetting.DefaultTags holds the default value on creation for the tags field.
+	usersetting.DefaultTags = usersettingDescTags.Default.([]string)
+	// usersettingDescID is the schema descriptor for id field.
+	usersettingDescID := usersettingMixinFields1[0].Descriptor()
+	// usersetting.DefaultID holds the default value on creation for the id field.
+	usersetting.DefaultID = usersettingDescID.Default.(func() string)
 }
 
 const (

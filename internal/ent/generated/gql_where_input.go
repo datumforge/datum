@@ -9,17 +9,17 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // EntitlementWhereInput represents a where input for filtering Entitlement queries.
@@ -874,8 +874,8 @@ type GroupWhereInput struct {
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
 
 	// "setting" edge predicates.
-	HasSetting     *bool                      `json:"hasSetting,omitempty"`
-	HasSettingWith []*GroupSettingsWhereInput `json:"hasSettingWith,omitempty"`
+	HasSetting     *bool                     `json:"hasSetting,omitempty"`
+	HasSettingWith []*GroupSettingWhereInput `json:"hasSettingWith,omitempty"`
 
 	// "users" edge predicates.
 	HasUsers     *bool             `json:"hasUsers,omitempty"`
@@ -1212,7 +1212,7 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasSettingWith) > 0 {
-		with := make([]predicate.GroupSettings, 0, len(i.HasSettingWith))
+		with := make([]predicate.GroupSetting, 0, len(i.HasSettingWith))
 		for _, w := range i.HasSettingWith {
 			p, err := w.P()
 			if err != nil {
@@ -1268,12 +1268,12 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	}
 }
 
-// GroupSettingsWhereInput represents a where input for filtering GroupSettings queries.
-type GroupSettingsWhereInput struct {
-	Predicates []predicate.GroupSettings  `json:"-"`
-	Not        *GroupSettingsWhereInput   `json:"not,omitempty"`
-	Or         []*GroupSettingsWhereInput `json:"or,omitempty"`
-	And        []*GroupSettingsWhereInput `json:"and,omitempty"`
+// GroupSettingWhereInput represents a where input for filtering GroupSetting queries.
+type GroupSettingWhereInput struct {
+	Predicates []predicate.GroupSetting  `json:"-"`
+	Not        *GroupSettingWhereInput   `json:"not,omitempty"`
+	Or         []*GroupSettingWhereInput `json:"or,omitempty"`
+	And        []*GroupSettingWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID             *string  `json:"id,omitempty"`
@@ -1342,16 +1342,16 @@ type GroupSettingsWhereInput struct {
 	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
 	// "visibility" field predicates.
-	Visibility      *groupsettings.Visibility  `json:"visibility,omitempty"`
-	VisibilityNEQ   *groupsettings.Visibility  `json:"visibilityNEQ,omitempty"`
-	VisibilityIn    []groupsettings.Visibility `json:"visibilityIn,omitempty"`
-	VisibilityNotIn []groupsettings.Visibility `json:"visibilityNotIn,omitempty"`
+	Visibility      *groupsetting.Visibility  `json:"visibility,omitempty"`
+	VisibilityNEQ   *groupsetting.Visibility  `json:"visibilityNEQ,omitempty"`
+	VisibilityIn    []groupsetting.Visibility `json:"visibilityIn,omitempty"`
+	VisibilityNotIn []groupsetting.Visibility `json:"visibilityNotIn,omitempty"`
 
 	// "join_policy" field predicates.
-	JoinPolicy      *groupsettings.JoinPolicy  `json:"joinPolicy,omitempty"`
-	JoinPolicyNEQ   *groupsettings.JoinPolicy  `json:"joinPolicyNEQ,omitempty"`
-	JoinPolicyIn    []groupsettings.JoinPolicy `json:"joinPolicyIn,omitempty"`
-	JoinPolicyNotIn []groupsettings.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
+	JoinPolicy      *groupsetting.JoinPolicy  `json:"joinPolicy,omitempty"`
+	JoinPolicyNEQ   *groupsetting.JoinPolicy  `json:"joinPolicyNEQ,omitempty"`
+	JoinPolicyIn    []groupsetting.JoinPolicy `json:"joinPolicyIn,omitempty"`
+	JoinPolicyNotIn []groupsetting.JoinPolicy `json:"joinPolicyNotIn,omitempty"`
 
 	// "sync_to_slack" field predicates.
 	SyncToSlack    *bool `json:"syncToSlack,omitempty"`
@@ -1360,21 +1360,25 @@ type GroupSettingsWhereInput struct {
 	// "sync_to_github" field predicates.
 	SyncToGithub    *bool `json:"syncToGithub,omitempty"`
 	SyncToGithubNEQ *bool `json:"syncToGithubNEQ,omitempty"`
+
+	// "group" edge predicates.
+	HasGroup     *bool              `json:"hasGroup,omitempty"`
+	HasGroupWith []*GroupWhereInput `json:"hasGroupWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *GroupSettingsWhereInput) AddPredicates(predicates ...predicate.GroupSettings) {
+func (i *GroupSettingWhereInput) AddPredicates(predicates ...predicate.GroupSetting) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the GroupSettingsWhereInput filter on the GroupSettingsQuery builder.
-func (i *GroupSettingsWhereInput) Filter(q *GroupSettingsQuery) (*GroupSettingsQuery, error) {
+// Filter applies the GroupSettingWhereInput filter on the GroupSettingQuery builder.
+func (i *GroupSettingWhereInput) Filter(q *GroupSettingQuery) (*GroupSettingQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyGroupSettingsWhereInput {
+		if err == ErrEmptyGroupSettingWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -1382,19 +1386,19 @@ func (i *GroupSettingsWhereInput) Filter(q *GroupSettingsQuery) (*GroupSettingsQ
 	return q.Where(p), nil
 }
 
-// ErrEmptyGroupSettingsWhereInput is returned in case the GroupSettingsWhereInput is empty.
-var ErrEmptyGroupSettingsWhereInput = errors.New("generated: empty predicate GroupSettingsWhereInput")
+// ErrEmptyGroupSettingWhereInput is returned in case the GroupSettingWhereInput is empty.
+var ErrEmptyGroupSettingWhereInput = errors.New("generated: empty predicate GroupSettingWhereInput")
 
-// P returns a predicate for filtering groupsettingsslice.
+// P returns a predicate for filtering groupsettings.
 // An error is returned if the input is empty or invalid.
-func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
-	var predicates []predicate.GroupSettings
+func (i *GroupSettingWhereInput) P() (predicate.GroupSetting, error) {
+	var predicates []predicate.GroupSetting
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, groupsettings.Not(p))
+		predicates = append(predicates, groupsetting.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -1404,7 +1408,7 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.GroupSettings, 0, n)
+		or := make([]predicate.GroupSetting, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -1412,7 +1416,7 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, groupsettings.Or(or...))
+		predicates = append(predicates, groupsetting.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -1422,7 +1426,7 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.GroupSettings, 0, n)
+		and := make([]predicate.GroupSetting, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -1430,221 +1434,239 @@ func (i *GroupSettingsWhereInput) P() (predicate.GroupSettings, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, groupsettings.And(and...))
+		predicates = append(predicates, groupsetting.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, groupsettings.IDEQ(*i.ID))
+		predicates = append(predicates, groupsetting.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, groupsettings.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, groupsetting.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, groupsettings.IDIn(i.IDIn...))
+		predicates = append(predicates, groupsetting.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, groupsettings.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, groupsetting.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, groupsettings.IDGT(*i.IDGT))
+		predicates = append(predicates, groupsetting.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, groupsettings.IDGTE(*i.IDGTE))
+		predicates = append(predicates, groupsetting.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, groupsettings.IDLT(*i.IDLT))
+		predicates = append(predicates, groupsetting.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, groupsettings.IDLTE(*i.IDLTE))
+		predicates = append(predicates, groupsetting.IDLTE(*i.IDLTE))
 	}
 	if i.IDEqualFold != nil {
-		predicates = append(predicates, groupsettings.IDEqualFold(*i.IDEqualFold))
+		predicates = append(predicates, groupsetting.IDEqualFold(*i.IDEqualFold))
 	}
 	if i.IDContainsFold != nil {
-		predicates = append(predicates, groupsettings.IDContainsFold(*i.IDContainsFold))
+		predicates = append(predicates, groupsetting.IDContainsFold(*i.IDContainsFold))
 	}
 	if i.CreatedAt != nil {
-		predicates = append(predicates, groupsettings.CreatedAtEQ(*i.CreatedAt))
+		predicates = append(predicates, groupsetting.CreatedAtEQ(*i.CreatedAt))
 	}
 	if i.CreatedAtNEQ != nil {
-		predicates = append(predicates, groupsettings.CreatedAtNEQ(*i.CreatedAtNEQ))
+		predicates = append(predicates, groupsetting.CreatedAtNEQ(*i.CreatedAtNEQ))
 	}
 	if len(i.CreatedAtIn) > 0 {
-		predicates = append(predicates, groupsettings.CreatedAtIn(i.CreatedAtIn...))
+		predicates = append(predicates, groupsetting.CreatedAtIn(i.CreatedAtIn...))
 	}
 	if len(i.CreatedAtNotIn) > 0 {
-		predicates = append(predicates, groupsettings.CreatedAtNotIn(i.CreatedAtNotIn...))
+		predicates = append(predicates, groupsetting.CreatedAtNotIn(i.CreatedAtNotIn...))
 	}
 	if i.CreatedAtGT != nil {
-		predicates = append(predicates, groupsettings.CreatedAtGT(*i.CreatedAtGT))
+		predicates = append(predicates, groupsetting.CreatedAtGT(*i.CreatedAtGT))
 	}
 	if i.CreatedAtGTE != nil {
-		predicates = append(predicates, groupsettings.CreatedAtGTE(*i.CreatedAtGTE))
+		predicates = append(predicates, groupsetting.CreatedAtGTE(*i.CreatedAtGTE))
 	}
 	if i.CreatedAtLT != nil {
-		predicates = append(predicates, groupsettings.CreatedAtLT(*i.CreatedAtLT))
+		predicates = append(predicates, groupsetting.CreatedAtLT(*i.CreatedAtLT))
 	}
 	if i.CreatedAtLTE != nil {
-		predicates = append(predicates, groupsettings.CreatedAtLTE(*i.CreatedAtLTE))
+		predicates = append(predicates, groupsetting.CreatedAtLTE(*i.CreatedAtLTE))
 	}
 	if i.UpdatedAt != nil {
-		predicates = append(predicates, groupsettings.UpdatedAtEQ(*i.UpdatedAt))
+		predicates = append(predicates, groupsetting.UpdatedAtEQ(*i.UpdatedAt))
 	}
 	if i.UpdatedAtNEQ != nil {
-		predicates = append(predicates, groupsettings.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+		predicates = append(predicates, groupsetting.UpdatedAtNEQ(*i.UpdatedAtNEQ))
 	}
 	if len(i.UpdatedAtIn) > 0 {
-		predicates = append(predicates, groupsettings.UpdatedAtIn(i.UpdatedAtIn...))
+		predicates = append(predicates, groupsetting.UpdatedAtIn(i.UpdatedAtIn...))
 	}
 	if len(i.UpdatedAtNotIn) > 0 {
-		predicates = append(predicates, groupsettings.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+		predicates = append(predicates, groupsetting.UpdatedAtNotIn(i.UpdatedAtNotIn...))
 	}
 	if i.UpdatedAtGT != nil {
-		predicates = append(predicates, groupsettings.UpdatedAtGT(*i.UpdatedAtGT))
+		predicates = append(predicates, groupsetting.UpdatedAtGT(*i.UpdatedAtGT))
 	}
 	if i.UpdatedAtGTE != nil {
-		predicates = append(predicates, groupsettings.UpdatedAtGTE(*i.UpdatedAtGTE))
+		predicates = append(predicates, groupsetting.UpdatedAtGTE(*i.UpdatedAtGTE))
 	}
 	if i.UpdatedAtLT != nil {
-		predicates = append(predicates, groupsettings.UpdatedAtLT(*i.UpdatedAtLT))
+		predicates = append(predicates, groupsetting.UpdatedAtLT(*i.UpdatedAtLT))
 	}
 	if i.UpdatedAtLTE != nil {
-		predicates = append(predicates, groupsettings.UpdatedAtLTE(*i.UpdatedAtLTE))
+		predicates = append(predicates, groupsetting.UpdatedAtLTE(*i.UpdatedAtLTE))
 	}
 	if i.CreatedBy != nil {
-		predicates = append(predicates, groupsettings.CreatedByEQ(*i.CreatedBy))
+		predicates = append(predicates, groupsetting.CreatedByEQ(*i.CreatedBy))
 	}
 	if i.CreatedByNEQ != nil {
-		predicates = append(predicates, groupsettings.CreatedByNEQ(*i.CreatedByNEQ))
+		predicates = append(predicates, groupsetting.CreatedByNEQ(*i.CreatedByNEQ))
 	}
 	if len(i.CreatedByIn) > 0 {
-		predicates = append(predicates, groupsettings.CreatedByIn(i.CreatedByIn...))
+		predicates = append(predicates, groupsetting.CreatedByIn(i.CreatedByIn...))
 	}
 	if len(i.CreatedByNotIn) > 0 {
-		predicates = append(predicates, groupsettings.CreatedByNotIn(i.CreatedByNotIn...))
+		predicates = append(predicates, groupsetting.CreatedByNotIn(i.CreatedByNotIn...))
 	}
 	if i.CreatedByGT != nil {
-		predicates = append(predicates, groupsettings.CreatedByGT(*i.CreatedByGT))
+		predicates = append(predicates, groupsetting.CreatedByGT(*i.CreatedByGT))
 	}
 	if i.CreatedByGTE != nil {
-		predicates = append(predicates, groupsettings.CreatedByGTE(*i.CreatedByGTE))
+		predicates = append(predicates, groupsetting.CreatedByGTE(*i.CreatedByGTE))
 	}
 	if i.CreatedByLT != nil {
-		predicates = append(predicates, groupsettings.CreatedByLT(*i.CreatedByLT))
+		predicates = append(predicates, groupsetting.CreatedByLT(*i.CreatedByLT))
 	}
 	if i.CreatedByLTE != nil {
-		predicates = append(predicates, groupsettings.CreatedByLTE(*i.CreatedByLTE))
+		predicates = append(predicates, groupsetting.CreatedByLTE(*i.CreatedByLTE))
 	}
 	if i.CreatedByContains != nil {
-		predicates = append(predicates, groupsettings.CreatedByContains(*i.CreatedByContains))
+		predicates = append(predicates, groupsetting.CreatedByContains(*i.CreatedByContains))
 	}
 	if i.CreatedByHasPrefix != nil {
-		predicates = append(predicates, groupsettings.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+		predicates = append(predicates, groupsetting.CreatedByHasPrefix(*i.CreatedByHasPrefix))
 	}
 	if i.CreatedByHasSuffix != nil {
-		predicates = append(predicates, groupsettings.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+		predicates = append(predicates, groupsetting.CreatedByHasSuffix(*i.CreatedByHasSuffix))
 	}
 	if i.CreatedByIsNil {
-		predicates = append(predicates, groupsettings.CreatedByIsNil())
+		predicates = append(predicates, groupsetting.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
-		predicates = append(predicates, groupsettings.CreatedByNotNil())
+		predicates = append(predicates, groupsetting.CreatedByNotNil())
 	}
 	if i.CreatedByEqualFold != nil {
-		predicates = append(predicates, groupsettings.CreatedByEqualFold(*i.CreatedByEqualFold))
+		predicates = append(predicates, groupsetting.CreatedByEqualFold(*i.CreatedByEqualFold))
 	}
 	if i.CreatedByContainsFold != nil {
-		predicates = append(predicates, groupsettings.CreatedByContainsFold(*i.CreatedByContainsFold))
+		predicates = append(predicates, groupsetting.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
-		predicates = append(predicates, groupsettings.UpdatedByEQ(*i.UpdatedBy))
+		predicates = append(predicates, groupsetting.UpdatedByEQ(*i.UpdatedBy))
 	}
 	if i.UpdatedByNEQ != nil {
-		predicates = append(predicates, groupsettings.UpdatedByNEQ(*i.UpdatedByNEQ))
+		predicates = append(predicates, groupsetting.UpdatedByNEQ(*i.UpdatedByNEQ))
 	}
 	if len(i.UpdatedByIn) > 0 {
-		predicates = append(predicates, groupsettings.UpdatedByIn(i.UpdatedByIn...))
+		predicates = append(predicates, groupsetting.UpdatedByIn(i.UpdatedByIn...))
 	}
 	if len(i.UpdatedByNotIn) > 0 {
-		predicates = append(predicates, groupsettings.UpdatedByNotIn(i.UpdatedByNotIn...))
+		predicates = append(predicates, groupsetting.UpdatedByNotIn(i.UpdatedByNotIn...))
 	}
 	if i.UpdatedByGT != nil {
-		predicates = append(predicates, groupsettings.UpdatedByGT(*i.UpdatedByGT))
+		predicates = append(predicates, groupsetting.UpdatedByGT(*i.UpdatedByGT))
 	}
 	if i.UpdatedByGTE != nil {
-		predicates = append(predicates, groupsettings.UpdatedByGTE(*i.UpdatedByGTE))
+		predicates = append(predicates, groupsetting.UpdatedByGTE(*i.UpdatedByGTE))
 	}
 	if i.UpdatedByLT != nil {
-		predicates = append(predicates, groupsettings.UpdatedByLT(*i.UpdatedByLT))
+		predicates = append(predicates, groupsetting.UpdatedByLT(*i.UpdatedByLT))
 	}
 	if i.UpdatedByLTE != nil {
-		predicates = append(predicates, groupsettings.UpdatedByLTE(*i.UpdatedByLTE))
+		predicates = append(predicates, groupsetting.UpdatedByLTE(*i.UpdatedByLTE))
 	}
 	if i.UpdatedByContains != nil {
-		predicates = append(predicates, groupsettings.UpdatedByContains(*i.UpdatedByContains))
+		predicates = append(predicates, groupsetting.UpdatedByContains(*i.UpdatedByContains))
 	}
 	if i.UpdatedByHasPrefix != nil {
-		predicates = append(predicates, groupsettings.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+		predicates = append(predicates, groupsetting.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
 	}
 	if i.UpdatedByHasSuffix != nil {
-		predicates = append(predicates, groupsettings.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+		predicates = append(predicates, groupsetting.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
 	}
 	if i.UpdatedByIsNil {
-		predicates = append(predicates, groupsettings.UpdatedByIsNil())
+		predicates = append(predicates, groupsetting.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
-		predicates = append(predicates, groupsettings.UpdatedByNotNil())
+		predicates = append(predicates, groupsetting.UpdatedByNotNil())
 	}
 	if i.UpdatedByEqualFold != nil {
-		predicates = append(predicates, groupsettings.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+		predicates = append(predicates, groupsetting.UpdatedByEqualFold(*i.UpdatedByEqualFold))
 	}
 	if i.UpdatedByContainsFold != nil {
-		predicates = append(predicates, groupsettings.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+		predicates = append(predicates, groupsetting.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Visibility != nil {
-		predicates = append(predicates, groupsettings.VisibilityEQ(*i.Visibility))
+		predicates = append(predicates, groupsetting.VisibilityEQ(*i.Visibility))
 	}
 	if i.VisibilityNEQ != nil {
-		predicates = append(predicates, groupsettings.VisibilityNEQ(*i.VisibilityNEQ))
+		predicates = append(predicates, groupsetting.VisibilityNEQ(*i.VisibilityNEQ))
 	}
 	if len(i.VisibilityIn) > 0 {
-		predicates = append(predicates, groupsettings.VisibilityIn(i.VisibilityIn...))
+		predicates = append(predicates, groupsetting.VisibilityIn(i.VisibilityIn...))
 	}
 	if len(i.VisibilityNotIn) > 0 {
-		predicates = append(predicates, groupsettings.VisibilityNotIn(i.VisibilityNotIn...))
+		predicates = append(predicates, groupsetting.VisibilityNotIn(i.VisibilityNotIn...))
 	}
 	if i.JoinPolicy != nil {
-		predicates = append(predicates, groupsettings.JoinPolicyEQ(*i.JoinPolicy))
+		predicates = append(predicates, groupsetting.JoinPolicyEQ(*i.JoinPolicy))
 	}
 	if i.JoinPolicyNEQ != nil {
-		predicates = append(predicates, groupsettings.JoinPolicyNEQ(*i.JoinPolicyNEQ))
+		predicates = append(predicates, groupsetting.JoinPolicyNEQ(*i.JoinPolicyNEQ))
 	}
 	if len(i.JoinPolicyIn) > 0 {
-		predicates = append(predicates, groupsettings.JoinPolicyIn(i.JoinPolicyIn...))
+		predicates = append(predicates, groupsetting.JoinPolicyIn(i.JoinPolicyIn...))
 	}
 	if len(i.JoinPolicyNotIn) > 0 {
-		predicates = append(predicates, groupsettings.JoinPolicyNotIn(i.JoinPolicyNotIn...))
+		predicates = append(predicates, groupsetting.JoinPolicyNotIn(i.JoinPolicyNotIn...))
 	}
 	if i.SyncToSlack != nil {
-		predicates = append(predicates, groupsettings.SyncToSlackEQ(*i.SyncToSlack))
+		predicates = append(predicates, groupsetting.SyncToSlackEQ(*i.SyncToSlack))
 	}
 	if i.SyncToSlackNEQ != nil {
-		predicates = append(predicates, groupsettings.SyncToSlackNEQ(*i.SyncToSlackNEQ))
+		predicates = append(predicates, groupsetting.SyncToSlackNEQ(*i.SyncToSlackNEQ))
 	}
 	if i.SyncToGithub != nil {
-		predicates = append(predicates, groupsettings.SyncToGithubEQ(*i.SyncToGithub))
+		predicates = append(predicates, groupsetting.SyncToGithubEQ(*i.SyncToGithub))
 	}
 	if i.SyncToGithubNEQ != nil {
-		predicates = append(predicates, groupsettings.SyncToGithubNEQ(*i.SyncToGithubNEQ))
+		predicates = append(predicates, groupsetting.SyncToGithubNEQ(*i.SyncToGithubNEQ))
 	}
 
+	if i.HasGroup != nil {
+		p := groupsetting.HasGroup()
+		if !*i.HasGroup {
+			p = groupsetting.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasGroupWith) > 0 {
+		with := make([]predicate.Group, 0, len(i.HasGroupWith))
+		for _, w := range i.HasGroupWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasGroupWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, groupsetting.HasGroupWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyGroupSettingsWhereInput
+		return nil, ErrEmptyGroupSettingWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return groupsettings.And(predicates...), nil
+		return groupsetting.And(predicates...), nil
 	}
 }
 
@@ -3156,8 +3178,8 @@ type OrganizationWhereInput struct {
 	HasIntegrationsWith []*IntegrationWhereInput `json:"hasIntegrationsWith,omitempty"`
 
 	// "setting" edge predicates.
-	HasSetting     *bool                             `json:"hasSetting,omitempty"`
-	HasSettingWith []*OrganizationSettingsWhereInput `json:"hasSettingWith,omitempty"`
+	HasSetting     *bool                            `json:"hasSetting,omitempty"`
+	HasSettingWith []*OrganizationSettingWhereInput `json:"hasSettingWith,omitempty"`
 
 	// "entitlements" edge predicates.
 	HasEntitlements     *bool                    `json:"hasEntitlements,omitempty"`
@@ -3590,7 +3612,7 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasSettingWith) > 0 {
-		with := make([]predicate.OrganizationSettings, 0, len(i.HasSettingWith))
+		with := make([]predicate.OrganizationSetting, 0, len(i.HasSettingWith))
 		for _, w := range i.HasSettingWith {
 			p, err := w.P()
 			if err != nil {
@@ -3646,12 +3668,12 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	}
 }
 
-// OrganizationSettingsWhereInput represents a where input for filtering OrganizationSettings queries.
-type OrganizationSettingsWhereInput struct {
-	Predicates []predicate.OrganizationSettings  `json:"-"`
-	Not        *OrganizationSettingsWhereInput   `json:"not,omitempty"`
-	Or         []*OrganizationSettingsWhereInput `json:"or,omitempty"`
-	And        []*OrganizationSettingsWhereInput `json:"and,omitempty"`
+// OrganizationSettingWhereInput represents a where input for filtering OrganizationSetting queries.
+type OrganizationSettingWhereInput struct {
+	Predicates []predicate.OrganizationSetting  `json:"-"`
+	Not        *OrganizationSettingWhereInput   `json:"not,omitempty"`
+	Or         []*OrganizationSettingWhereInput `json:"or,omitempty"`
+	And        []*OrganizationSettingWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID             *string  `json:"id,omitempty"`
@@ -3838,21 +3860,25 @@ type OrganizationSettingsWhereInput struct {
 	TaxIdentifierHasSuffix    *string  `json:"taxIdentifierHasSuffix,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
+
+	// "orgnaization" edge predicates.
+	HasOrgnaization     *bool                     `json:"hasOrgnaization,omitempty"`
+	HasOrgnaizationWith []*OrganizationWhereInput `json:"hasOrgnaizationWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *OrganizationSettingsWhereInput) AddPredicates(predicates ...predicate.OrganizationSettings) {
+func (i *OrganizationSettingWhereInput) AddPredicates(predicates ...predicate.OrganizationSetting) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the OrganizationSettingsWhereInput filter on the OrganizationSettingsQuery builder.
-func (i *OrganizationSettingsWhereInput) Filter(q *OrganizationSettingsQuery) (*OrganizationSettingsQuery, error) {
+// Filter applies the OrganizationSettingWhereInput filter on the OrganizationSettingQuery builder.
+func (i *OrganizationSettingWhereInput) Filter(q *OrganizationSettingQuery) (*OrganizationSettingQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyOrganizationSettingsWhereInput {
+		if err == ErrEmptyOrganizationSettingWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -3860,19 +3886,19 @@ func (i *OrganizationSettingsWhereInput) Filter(q *OrganizationSettingsQuery) (*
 	return q.Where(p), nil
 }
 
-// ErrEmptyOrganizationSettingsWhereInput is returned in case the OrganizationSettingsWhereInput is empty.
-var ErrEmptyOrganizationSettingsWhereInput = errors.New("generated: empty predicate OrganizationSettingsWhereInput")
+// ErrEmptyOrganizationSettingWhereInput is returned in case the OrganizationSettingWhereInput is empty.
+var ErrEmptyOrganizationSettingWhereInput = errors.New("generated: empty predicate OrganizationSettingWhereInput")
 
-// P returns a predicate for filtering organizationsettingsslice.
+// P returns a predicate for filtering organizationsettings.
 // An error is returned if the input is empty or invalid.
-func (i *OrganizationSettingsWhereInput) P() (predicate.OrganizationSettings, error) {
-	var predicates []predicate.OrganizationSettings
+func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, error) {
+	var predicates []predicate.OrganizationSetting
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, organizationsettings.Not(p))
+		predicates = append(predicates, organizationsetting.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -3882,7 +3908,7 @@ func (i *OrganizationSettingsWhereInput) P() (predicate.OrganizationSettings, er
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.OrganizationSettings, 0, n)
+		or := make([]predicate.OrganizationSetting, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -3890,7 +3916,7 @@ func (i *OrganizationSettingsWhereInput) P() (predicate.OrganizationSettings, er
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, organizationsettings.Or(or...))
+		predicates = append(predicates, organizationsetting.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -3900,7 +3926,7 @@ func (i *OrganizationSettingsWhereInput) P() (predicate.OrganizationSettings, er
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.OrganizationSettings, 0, n)
+		and := make([]predicate.OrganizationSetting, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -3908,497 +3934,515 @@ func (i *OrganizationSettingsWhereInput) P() (predicate.OrganizationSettings, er
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, organizationsettings.And(and...))
+		predicates = append(predicates, organizationsetting.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, organizationsettings.IDEQ(*i.ID))
+		predicates = append(predicates, organizationsetting.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, organizationsettings.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, organizationsetting.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, organizationsettings.IDIn(i.IDIn...))
+		predicates = append(predicates, organizationsetting.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, organizationsetting.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, organizationsettings.IDGT(*i.IDGT))
+		predicates = append(predicates, organizationsetting.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, organizationsettings.IDGTE(*i.IDGTE))
+		predicates = append(predicates, organizationsetting.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, organizationsettings.IDLT(*i.IDLT))
+		predicates = append(predicates, organizationsetting.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, organizationsettings.IDLTE(*i.IDLTE))
+		predicates = append(predicates, organizationsetting.IDLTE(*i.IDLTE))
 	}
 	if i.IDEqualFold != nil {
-		predicates = append(predicates, organizationsettings.IDEqualFold(*i.IDEqualFold))
+		predicates = append(predicates, organizationsetting.IDEqualFold(*i.IDEqualFold))
 	}
 	if i.IDContainsFold != nil {
-		predicates = append(predicates, organizationsettings.IDContainsFold(*i.IDContainsFold))
+		predicates = append(predicates, organizationsetting.IDContainsFold(*i.IDContainsFold))
 	}
 	if i.CreatedAt != nil {
-		predicates = append(predicates, organizationsettings.CreatedAtEQ(*i.CreatedAt))
+		predicates = append(predicates, organizationsetting.CreatedAtEQ(*i.CreatedAt))
 	}
 	if i.CreatedAtNEQ != nil {
-		predicates = append(predicates, organizationsettings.CreatedAtNEQ(*i.CreatedAtNEQ))
+		predicates = append(predicates, organizationsetting.CreatedAtNEQ(*i.CreatedAtNEQ))
 	}
 	if len(i.CreatedAtIn) > 0 {
-		predicates = append(predicates, organizationsettings.CreatedAtIn(i.CreatedAtIn...))
+		predicates = append(predicates, organizationsetting.CreatedAtIn(i.CreatedAtIn...))
 	}
 	if len(i.CreatedAtNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.CreatedAtNotIn(i.CreatedAtNotIn...))
+		predicates = append(predicates, organizationsetting.CreatedAtNotIn(i.CreatedAtNotIn...))
 	}
 	if i.CreatedAtGT != nil {
-		predicates = append(predicates, organizationsettings.CreatedAtGT(*i.CreatedAtGT))
+		predicates = append(predicates, organizationsetting.CreatedAtGT(*i.CreatedAtGT))
 	}
 	if i.CreatedAtGTE != nil {
-		predicates = append(predicates, organizationsettings.CreatedAtGTE(*i.CreatedAtGTE))
+		predicates = append(predicates, organizationsetting.CreatedAtGTE(*i.CreatedAtGTE))
 	}
 	if i.CreatedAtLT != nil {
-		predicates = append(predicates, organizationsettings.CreatedAtLT(*i.CreatedAtLT))
+		predicates = append(predicates, organizationsetting.CreatedAtLT(*i.CreatedAtLT))
 	}
 	if i.CreatedAtLTE != nil {
-		predicates = append(predicates, organizationsettings.CreatedAtLTE(*i.CreatedAtLTE))
+		predicates = append(predicates, organizationsetting.CreatedAtLTE(*i.CreatedAtLTE))
 	}
 	if i.UpdatedAt != nil {
-		predicates = append(predicates, organizationsettings.UpdatedAtEQ(*i.UpdatedAt))
+		predicates = append(predicates, organizationsetting.UpdatedAtEQ(*i.UpdatedAt))
 	}
 	if i.UpdatedAtNEQ != nil {
-		predicates = append(predicates, organizationsettings.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+		predicates = append(predicates, organizationsetting.UpdatedAtNEQ(*i.UpdatedAtNEQ))
 	}
 	if len(i.UpdatedAtIn) > 0 {
-		predicates = append(predicates, organizationsettings.UpdatedAtIn(i.UpdatedAtIn...))
+		predicates = append(predicates, organizationsetting.UpdatedAtIn(i.UpdatedAtIn...))
 	}
 	if len(i.UpdatedAtNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+		predicates = append(predicates, organizationsetting.UpdatedAtNotIn(i.UpdatedAtNotIn...))
 	}
 	if i.UpdatedAtGT != nil {
-		predicates = append(predicates, organizationsettings.UpdatedAtGT(*i.UpdatedAtGT))
+		predicates = append(predicates, organizationsetting.UpdatedAtGT(*i.UpdatedAtGT))
 	}
 	if i.UpdatedAtGTE != nil {
-		predicates = append(predicates, organizationsettings.UpdatedAtGTE(*i.UpdatedAtGTE))
+		predicates = append(predicates, organizationsetting.UpdatedAtGTE(*i.UpdatedAtGTE))
 	}
 	if i.UpdatedAtLT != nil {
-		predicates = append(predicates, organizationsettings.UpdatedAtLT(*i.UpdatedAtLT))
+		predicates = append(predicates, organizationsetting.UpdatedAtLT(*i.UpdatedAtLT))
 	}
 	if i.UpdatedAtLTE != nil {
-		predicates = append(predicates, organizationsettings.UpdatedAtLTE(*i.UpdatedAtLTE))
+		predicates = append(predicates, organizationsetting.UpdatedAtLTE(*i.UpdatedAtLTE))
 	}
 	if i.CreatedBy != nil {
-		predicates = append(predicates, organizationsettings.CreatedByEQ(*i.CreatedBy))
+		predicates = append(predicates, organizationsetting.CreatedByEQ(*i.CreatedBy))
 	}
 	if i.CreatedByNEQ != nil {
-		predicates = append(predicates, organizationsettings.CreatedByNEQ(*i.CreatedByNEQ))
+		predicates = append(predicates, organizationsetting.CreatedByNEQ(*i.CreatedByNEQ))
 	}
 	if len(i.CreatedByIn) > 0 {
-		predicates = append(predicates, organizationsettings.CreatedByIn(i.CreatedByIn...))
+		predicates = append(predicates, organizationsetting.CreatedByIn(i.CreatedByIn...))
 	}
 	if len(i.CreatedByNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.CreatedByNotIn(i.CreatedByNotIn...))
+		predicates = append(predicates, organizationsetting.CreatedByNotIn(i.CreatedByNotIn...))
 	}
 	if i.CreatedByGT != nil {
-		predicates = append(predicates, organizationsettings.CreatedByGT(*i.CreatedByGT))
+		predicates = append(predicates, organizationsetting.CreatedByGT(*i.CreatedByGT))
 	}
 	if i.CreatedByGTE != nil {
-		predicates = append(predicates, organizationsettings.CreatedByGTE(*i.CreatedByGTE))
+		predicates = append(predicates, organizationsetting.CreatedByGTE(*i.CreatedByGTE))
 	}
 	if i.CreatedByLT != nil {
-		predicates = append(predicates, organizationsettings.CreatedByLT(*i.CreatedByLT))
+		predicates = append(predicates, organizationsetting.CreatedByLT(*i.CreatedByLT))
 	}
 	if i.CreatedByLTE != nil {
-		predicates = append(predicates, organizationsettings.CreatedByLTE(*i.CreatedByLTE))
+		predicates = append(predicates, organizationsetting.CreatedByLTE(*i.CreatedByLTE))
 	}
 	if i.CreatedByContains != nil {
-		predicates = append(predicates, organizationsettings.CreatedByContains(*i.CreatedByContains))
+		predicates = append(predicates, organizationsetting.CreatedByContains(*i.CreatedByContains))
 	}
 	if i.CreatedByHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+		predicates = append(predicates, organizationsetting.CreatedByHasPrefix(*i.CreatedByHasPrefix))
 	}
 	if i.CreatedByHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+		predicates = append(predicates, organizationsetting.CreatedByHasSuffix(*i.CreatedByHasSuffix))
 	}
 	if i.CreatedByIsNil {
-		predicates = append(predicates, organizationsettings.CreatedByIsNil())
+		predicates = append(predicates, organizationsetting.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
-		predicates = append(predicates, organizationsettings.CreatedByNotNil())
+		predicates = append(predicates, organizationsetting.CreatedByNotNil())
 	}
 	if i.CreatedByEqualFold != nil {
-		predicates = append(predicates, organizationsettings.CreatedByEqualFold(*i.CreatedByEqualFold))
+		predicates = append(predicates, organizationsetting.CreatedByEqualFold(*i.CreatedByEqualFold))
 	}
 	if i.CreatedByContainsFold != nil {
-		predicates = append(predicates, organizationsettings.CreatedByContainsFold(*i.CreatedByContainsFold))
+		predicates = append(predicates, organizationsetting.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByEQ(*i.UpdatedBy))
+		predicates = append(predicates, organizationsetting.UpdatedByEQ(*i.UpdatedBy))
 	}
 	if i.UpdatedByNEQ != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByNEQ(*i.UpdatedByNEQ))
+		predicates = append(predicates, organizationsetting.UpdatedByNEQ(*i.UpdatedByNEQ))
 	}
 	if len(i.UpdatedByIn) > 0 {
-		predicates = append(predicates, organizationsettings.UpdatedByIn(i.UpdatedByIn...))
+		predicates = append(predicates, organizationsetting.UpdatedByIn(i.UpdatedByIn...))
 	}
 	if len(i.UpdatedByNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.UpdatedByNotIn(i.UpdatedByNotIn...))
+		predicates = append(predicates, organizationsetting.UpdatedByNotIn(i.UpdatedByNotIn...))
 	}
 	if i.UpdatedByGT != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByGT(*i.UpdatedByGT))
+		predicates = append(predicates, organizationsetting.UpdatedByGT(*i.UpdatedByGT))
 	}
 	if i.UpdatedByGTE != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByGTE(*i.UpdatedByGTE))
+		predicates = append(predicates, organizationsetting.UpdatedByGTE(*i.UpdatedByGTE))
 	}
 	if i.UpdatedByLT != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByLT(*i.UpdatedByLT))
+		predicates = append(predicates, organizationsetting.UpdatedByLT(*i.UpdatedByLT))
 	}
 	if i.UpdatedByLTE != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByLTE(*i.UpdatedByLTE))
+		predicates = append(predicates, organizationsetting.UpdatedByLTE(*i.UpdatedByLTE))
 	}
 	if i.UpdatedByContains != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByContains(*i.UpdatedByContains))
+		predicates = append(predicates, organizationsetting.UpdatedByContains(*i.UpdatedByContains))
 	}
 	if i.UpdatedByHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+		predicates = append(predicates, organizationsetting.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
 	}
 	if i.UpdatedByHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+		predicates = append(predicates, organizationsetting.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
 	}
 	if i.UpdatedByIsNil {
-		predicates = append(predicates, organizationsettings.UpdatedByIsNil())
+		predicates = append(predicates, organizationsetting.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
-		predicates = append(predicates, organizationsettings.UpdatedByNotNil())
+		predicates = append(predicates, organizationsetting.UpdatedByNotNil())
 	}
 	if i.UpdatedByEqualFold != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+		predicates = append(predicates, organizationsetting.UpdatedByEqualFold(*i.UpdatedByEqualFold))
 	}
 	if i.UpdatedByContainsFold != nil {
-		predicates = append(predicates, organizationsettings.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+		predicates = append(predicates, organizationsetting.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.SSOCert != nil {
-		predicates = append(predicates, organizationsettings.SSOCertEQ(*i.SSOCert))
+		predicates = append(predicates, organizationsetting.SSOCertEQ(*i.SSOCert))
 	}
 	if i.SSOCertNEQ != nil {
-		predicates = append(predicates, organizationsettings.SSOCertNEQ(*i.SSOCertNEQ))
+		predicates = append(predicates, organizationsetting.SSOCertNEQ(*i.SSOCertNEQ))
 	}
 	if len(i.SSOCertIn) > 0 {
-		predicates = append(predicates, organizationsettings.SSOCertIn(i.SSOCertIn...))
+		predicates = append(predicates, organizationsetting.SSOCertIn(i.SSOCertIn...))
 	}
 	if len(i.SSOCertNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.SSOCertNotIn(i.SSOCertNotIn...))
+		predicates = append(predicates, organizationsetting.SSOCertNotIn(i.SSOCertNotIn...))
 	}
 	if i.SSOCertGT != nil {
-		predicates = append(predicates, organizationsettings.SSOCertGT(*i.SSOCertGT))
+		predicates = append(predicates, organizationsetting.SSOCertGT(*i.SSOCertGT))
 	}
 	if i.SSOCertGTE != nil {
-		predicates = append(predicates, organizationsettings.SSOCertGTE(*i.SSOCertGTE))
+		predicates = append(predicates, organizationsetting.SSOCertGTE(*i.SSOCertGTE))
 	}
 	if i.SSOCertLT != nil {
-		predicates = append(predicates, organizationsettings.SSOCertLT(*i.SSOCertLT))
+		predicates = append(predicates, organizationsetting.SSOCertLT(*i.SSOCertLT))
 	}
 	if i.SSOCertLTE != nil {
-		predicates = append(predicates, organizationsettings.SSOCertLTE(*i.SSOCertLTE))
+		predicates = append(predicates, organizationsetting.SSOCertLTE(*i.SSOCertLTE))
 	}
 	if i.SSOCertContains != nil {
-		predicates = append(predicates, organizationsettings.SSOCertContains(*i.SSOCertContains))
+		predicates = append(predicates, organizationsetting.SSOCertContains(*i.SSOCertContains))
 	}
 	if i.SSOCertHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.SSOCertHasPrefix(*i.SSOCertHasPrefix))
+		predicates = append(predicates, organizationsetting.SSOCertHasPrefix(*i.SSOCertHasPrefix))
 	}
 	if i.SSOCertHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.SSOCertHasSuffix(*i.SSOCertHasSuffix))
+		predicates = append(predicates, organizationsetting.SSOCertHasSuffix(*i.SSOCertHasSuffix))
 	}
 	if i.SSOCertEqualFold != nil {
-		predicates = append(predicates, organizationsettings.SSOCertEqualFold(*i.SSOCertEqualFold))
+		predicates = append(predicates, organizationsetting.SSOCertEqualFold(*i.SSOCertEqualFold))
 	}
 	if i.SSOCertContainsFold != nil {
-		predicates = append(predicates, organizationsettings.SSOCertContainsFold(*i.SSOCertContainsFold))
+		predicates = append(predicates, organizationsetting.SSOCertContainsFold(*i.SSOCertContainsFold))
 	}
 	if i.SSOEntrypoint != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointEQ(*i.SSOEntrypoint))
+		predicates = append(predicates, organizationsetting.SSOEntrypointEQ(*i.SSOEntrypoint))
 	}
 	if i.SSOEntrypointNEQ != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointNEQ(*i.SSOEntrypointNEQ))
+		predicates = append(predicates, organizationsetting.SSOEntrypointNEQ(*i.SSOEntrypointNEQ))
 	}
 	if len(i.SSOEntrypointIn) > 0 {
-		predicates = append(predicates, organizationsettings.SSOEntrypointIn(i.SSOEntrypointIn...))
+		predicates = append(predicates, organizationsetting.SSOEntrypointIn(i.SSOEntrypointIn...))
 	}
 	if len(i.SSOEntrypointNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.SSOEntrypointNotIn(i.SSOEntrypointNotIn...))
+		predicates = append(predicates, organizationsetting.SSOEntrypointNotIn(i.SSOEntrypointNotIn...))
 	}
 	if i.SSOEntrypointGT != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointGT(*i.SSOEntrypointGT))
+		predicates = append(predicates, organizationsetting.SSOEntrypointGT(*i.SSOEntrypointGT))
 	}
 	if i.SSOEntrypointGTE != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointGTE(*i.SSOEntrypointGTE))
+		predicates = append(predicates, organizationsetting.SSOEntrypointGTE(*i.SSOEntrypointGTE))
 	}
 	if i.SSOEntrypointLT != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointLT(*i.SSOEntrypointLT))
+		predicates = append(predicates, organizationsetting.SSOEntrypointLT(*i.SSOEntrypointLT))
 	}
 	if i.SSOEntrypointLTE != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointLTE(*i.SSOEntrypointLTE))
+		predicates = append(predicates, organizationsetting.SSOEntrypointLTE(*i.SSOEntrypointLTE))
 	}
 	if i.SSOEntrypointContains != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointContains(*i.SSOEntrypointContains))
+		predicates = append(predicates, organizationsetting.SSOEntrypointContains(*i.SSOEntrypointContains))
 	}
 	if i.SSOEntrypointHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointHasPrefix(*i.SSOEntrypointHasPrefix))
+		predicates = append(predicates, organizationsetting.SSOEntrypointHasPrefix(*i.SSOEntrypointHasPrefix))
 	}
 	if i.SSOEntrypointHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointHasSuffix(*i.SSOEntrypointHasSuffix))
+		predicates = append(predicates, organizationsetting.SSOEntrypointHasSuffix(*i.SSOEntrypointHasSuffix))
 	}
 	if i.SSOEntrypointEqualFold != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointEqualFold(*i.SSOEntrypointEqualFold))
+		predicates = append(predicates, organizationsetting.SSOEntrypointEqualFold(*i.SSOEntrypointEqualFold))
 	}
 	if i.SSOEntrypointContainsFold != nil {
-		predicates = append(predicates, organizationsettings.SSOEntrypointContainsFold(*i.SSOEntrypointContainsFold))
+		predicates = append(predicates, organizationsetting.SSOEntrypointContainsFold(*i.SSOEntrypointContainsFold))
 	}
 	if i.SSOIssuer != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerEQ(*i.SSOIssuer))
+		predicates = append(predicates, organizationsetting.SSOIssuerEQ(*i.SSOIssuer))
 	}
 	if i.SSOIssuerNEQ != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerNEQ(*i.SSOIssuerNEQ))
+		predicates = append(predicates, organizationsetting.SSOIssuerNEQ(*i.SSOIssuerNEQ))
 	}
 	if len(i.SSOIssuerIn) > 0 {
-		predicates = append(predicates, organizationsettings.SSOIssuerIn(i.SSOIssuerIn...))
+		predicates = append(predicates, organizationsetting.SSOIssuerIn(i.SSOIssuerIn...))
 	}
 	if len(i.SSOIssuerNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.SSOIssuerNotIn(i.SSOIssuerNotIn...))
+		predicates = append(predicates, organizationsetting.SSOIssuerNotIn(i.SSOIssuerNotIn...))
 	}
 	if i.SSOIssuerGT != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerGT(*i.SSOIssuerGT))
+		predicates = append(predicates, organizationsetting.SSOIssuerGT(*i.SSOIssuerGT))
 	}
 	if i.SSOIssuerGTE != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerGTE(*i.SSOIssuerGTE))
+		predicates = append(predicates, organizationsetting.SSOIssuerGTE(*i.SSOIssuerGTE))
 	}
 	if i.SSOIssuerLT != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerLT(*i.SSOIssuerLT))
+		predicates = append(predicates, organizationsetting.SSOIssuerLT(*i.SSOIssuerLT))
 	}
 	if i.SSOIssuerLTE != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerLTE(*i.SSOIssuerLTE))
+		predicates = append(predicates, organizationsetting.SSOIssuerLTE(*i.SSOIssuerLTE))
 	}
 	if i.SSOIssuerContains != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerContains(*i.SSOIssuerContains))
+		predicates = append(predicates, organizationsetting.SSOIssuerContains(*i.SSOIssuerContains))
 	}
 	if i.SSOIssuerHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerHasPrefix(*i.SSOIssuerHasPrefix))
+		predicates = append(predicates, organizationsetting.SSOIssuerHasPrefix(*i.SSOIssuerHasPrefix))
 	}
 	if i.SSOIssuerHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerHasSuffix(*i.SSOIssuerHasSuffix))
+		predicates = append(predicates, organizationsetting.SSOIssuerHasSuffix(*i.SSOIssuerHasSuffix))
 	}
 	if i.SSOIssuerEqualFold != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerEqualFold(*i.SSOIssuerEqualFold))
+		predicates = append(predicates, organizationsetting.SSOIssuerEqualFold(*i.SSOIssuerEqualFold))
 	}
 	if i.SSOIssuerContainsFold != nil {
-		predicates = append(predicates, organizationsettings.SSOIssuerContainsFold(*i.SSOIssuerContainsFold))
+		predicates = append(predicates, organizationsetting.SSOIssuerContainsFold(*i.SSOIssuerContainsFold))
 	}
 	if i.BillingContact != nil {
-		predicates = append(predicates, organizationsettings.BillingContactEQ(*i.BillingContact))
+		predicates = append(predicates, organizationsetting.BillingContactEQ(*i.BillingContact))
 	}
 	if i.BillingContactNEQ != nil {
-		predicates = append(predicates, organizationsettings.BillingContactNEQ(*i.BillingContactNEQ))
+		predicates = append(predicates, organizationsetting.BillingContactNEQ(*i.BillingContactNEQ))
 	}
 	if len(i.BillingContactIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingContactIn(i.BillingContactIn...))
+		predicates = append(predicates, organizationsetting.BillingContactIn(i.BillingContactIn...))
 	}
 	if len(i.BillingContactNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingContactNotIn(i.BillingContactNotIn...))
+		predicates = append(predicates, organizationsetting.BillingContactNotIn(i.BillingContactNotIn...))
 	}
 	if i.BillingContactGT != nil {
-		predicates = append(predicates, organizationsettings.BillingContactGT(*i.BillingContactGT))
+		predicates = append(predicates, organizationsetting.BillingContactGT(*i.BillingContactGT))
 	}
 	if i.BillingContactGTE != nil {
-		predicates = append(predicates, organizationsettings.BillingContactGTE(*i.BillingContactGTE))
+		predicates = append(predicates, organizationsetting.BillingContactGTE(*i.BillingContactGTE))
 	}
 	if i.BillingContactLT != nil {
-		predicates = append(predicates, organizationsettings.BillingContactLT(*i.BillingContactLT))
+		predicates = append(predicates, organizationsetting.BillingContactLT(*i.BillingContactLT))
 	}
 	if i.BillingContactLTE != nil {
-		predicates = append(predicates, organizationsettings.BillingContactLTE(*i.BillingContactLTE))
+		predicates = append(predicates, organizationsetting.BillingContactLTE(*i.BillingContactLTE))
 	}
 	if i.BillingContactContains != nil {
-		predicates = append(predicates, organizationsettings.BillingContactContains(*i.BillingContactContains))
+		predicates = append(predicates, organizationsetting.BillingContactContains(*i.BillingContactContains))
 	}
 	if i.BillingContactHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.BillingContactHasPrefix(*i.BillingContactHasPrefix))
+		predicates = append(predicates, organizationsetting.BillingContactHasPrefix(*i.BillingContactHasPrefix))
 	}
 	if i.BillingContactHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.BillingContactHasSuffix(*i.BillingContactHasSuffix))
+		predicates = append(predicates, organizationsetting.BillingContactHasSuffix(*i.BillingContactHasSuffix))
 	}
 	if i.BillingContactEqualFold != nil {
-		predicates = append(predicates, organizationsettings.BillingContactEqualFold(*i.BillingContactEqualFold))
+		predicates = append(predicates, organizationsetting.BillingContactEqualFold(*i.BillingContactEqualFold))
 	}
 	if i.BillingContactContainsFold != nil {
-		predicates = append(predicates, organizationsettings.BillingContactContainsFold(*i.BillingContactContainsFold))
+		predicates = append(predicates, organizationsetting.BillingContactContainsFold(*i.BillingContactContainsFold))
 	}
 	if i.BillingEmail != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailEQ(*i.BillingEmail))
+		predicates = append(predicates, organizationsetting.BillingEmailEQ(*i.BillingEmail))
 	}
 	if i.BillingEmailNEQ != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailNEQ(*i.BillingEmailNEQ))
+		predicates = append(predicates, organizationsetting.BillingEmailNEQ(*i.BillingEmailNEQ))
 	}
 	if len(i.BillingEmailIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingEmailIn(i.BillingEmailIn...))
+		predicates = append(predicates, organizationsetting.BillingEmailIn(i.BillingEmailIn...))
 	}
 	if len(i.BillingEmailNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingEmailNotIn(i.BillingEmailNotIn...))
+		predicates = append(predicates, organizationsetting.BillingEmailNotIn(i.BillingEmailNotIn...))
 	}
 	if i.BillingEmailGT != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailGT(*i.BillingEmailGT))
+		predicates = append(predicates, organizationsetting.BillingEmailGT(*i.BillingEmailGT))
 	}
 	if i.BillingEmailGTE != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailGTE(*i.BillingEmailGTE))
+		predicates = append(predicates, organizationsetting.BillingEmailGTE(*i.BillingEmailGTE))
 	}
 	if i.BillingEmailLT != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailLT(*i.BillingEmailLT))
+		predicates = append(predicates, organizationsetting.BillingEmailLT(*i.BillingEmailLT))
 	}
 	if i.BillingEmailLTE != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailLTE(*i.BillingEmailLTE))
+		predicates = append(predicates, organizationsetting.BillingEmailLTE(*i.BillingEmailLTE))
 	}
 	if i.BillingEmailContains != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailContains(*i.BillingEmailContains))
+		predicates = append(predicates, organizationsetting.BillingEmailContains(*i.BillingEmailContains))
 	}
 	if i.BillingEmailHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailHasPrefix(*i.BillingEmailHasPrefix))
+		predicates = append(predicates, organizationsetting.BillingEmailHasPrefix(*i.BillingEmailHasPrefix))
 	}
 	if i.BillingEmailHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailHasSuffix(*i.BillingEmailHasSuffix))
+		predicates = append(predicates, organizationsetting.BillingEmailHasSuffix(*i.BillingEmailHasSuffix))
 	}
 	if i.BillingEmailEqualFold != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailEqualFold(*i.BillingEmailEqualFold))
+		predicates = append(predicates, organizationsetting.BillingEmailEqualFold(*i.BillingEmailEqualFold))
 	}
 	if i.BillingEmailContainsFold != nil {
-		predicates = append(predicates, organizationsettings.BillingEmailContainsFold(*i.BillingEmailContainsFold))
+		predicates = append(predicates, organizationsetting.BillingEmailContainsFold(*i.BillingEmailContainsFold))
 	}
 	if i.BillingPhone != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneEQ(*i.BillingPhone))
+		predicates = append(predicates, organizationsetting.BillingPhoneEQ(*i.BillingPhone))
 	}
 	if i.BillingPhoneNEQ != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneNEQ(*i.BillingPhoneNEQ))
+		predicates = append(predicates, organizationsetting.BillingPhoneNEQ(*i.BillingPhoneNEQ))
 	}
 	if len(i.BillingPhoneIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingPhoneIn(i.BillingPhoneIn...))
+		predicates = append(predicates, organizationsetting.BillingPhoneIn(i.BillingPhoneIn...))
 	}
 	if len(i.BillingPhoneNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingPhoneNotIn(i.BillingPhoneNotIn...))
+		predicates = append(predicates, organizationsetting.BillingPhoneNotIn(i.BillingPhoneNotIn...))
 	}
 	if i.BillingPhoneGT != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneGT(*i.BillingPhoneGT))
+		predicates = append(predicates, organizationsetting.BillingPhoneGT(*i.BillingPhoneGT))
 	}
 	if i.BillingPhoneGTE != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneGTE(*i.BillingPhoneGTE))
+		predicates = append(predicates, organizationsetting.BillingPhoneGTE(*i.BillingPhoneGTE))
 	}
 	if i.BillingPhoneLT != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneLT(*i.BillingPhoneLT))
+		predicates = append(predicates, organizationsetting.BillingPhoneLT(*i.BillingPhoneLT))
 	}
 	if i.BillingPhoneLTE != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneLTE(*i.BillingPhoneLTE))
+		predicates = append(predicates, organizationsetting.BillingPhoneLTE(*i.BillingPhoneLTE))
 	}
 	if i.BillingPhoneContains != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneContains(*i.BillingPhoneContains))
+		predicates = append(predicates, organizationsetting.BillingPhoneContains(*i.BillingPhoneContains))
 	}
 	if i.BillingPhoneHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneHasPrefix(*i.BillingPhoneHasPrefix))
+		predicates = append(predicates, organizationsetting.BillingPhoneHasPrefix(*i.BillingPhoneHasPrefix))
 	}
 	if i.BillingPhoneHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneHasSuffix(*i.BillingPhoneHasSuffix))
+		predicates = append(predicates, organizationsetting.BillingPhoneHasSuffix(*i.BillingPhoneHasSuffix))
 	}
 	if i.BillingPhoneEqualFold != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneEqualFold(*i.BillingPhoneEqualFold))
+		predicates = append(predicates, organizationsetting.BillingPhoneEqualFold(*i.BillingPhoneEqualFold))
 	}
 	if i.BillingPhoneContainsFold != nil {
-		predicates = append(predicates, organizationsettings.BillingPhoneContainsFold(*i.BillingPhoneContainsFold))
+		predicates = append(predicates, organizationsetting.BillingPhoneContainsFold(*i.BillingPhoneContainsFold))
 	}
 	if i.BillingAddress != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressEQ(*i.BillingAddress))
+		predicates = append(predicates, organizationsetting.BillingAddressEQ(*i.BillingAddress))
 	}
 	if i.BillingAddressNEQ != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressNEQ(*i.BillingAddressNEQ))
+		predicates = append(predicates, organizationsetting.BillingAddressNEQ(*i.BillingAddressNEQ))
 	}
 	if len(i.BillingAddressIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingAddressIn(i.BillingAddressIn...))
+		predicates = append(predicates, organizationsetting.BillingAddressIn(i.BillingAddressIn...))
 	}
 	if len(i.BillingAddressNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.BillingAddressNotIn(i.BillingAddressNotIn...))
+		predicates = append(predicates, organizationsetting.BillingAddressNotIn(i.BillingAddressNotIn...))
 	}
 	if i.BillingAddressGT != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressGT(*i.BillingAddressGT))
+		predicates = append(predicates, organizationsetting.BillingAddressGT(*i.BillingAddressGT))
 	}
 	if i.BillingAddressGTE != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressGTE(*i.BillingAddressGTE))
+		predicates = append(predicates, organizationsetting.BillingAddressGTE(*i.BillingAddressGTE))
 	}
 	if i.BillingAddressLT != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressLT(*i.BillingAddressLT))
+		predicates = append(predicates, organizationsetting.BillingAddressLT(*i.BillingAddressLT))
 	}
 	if i.BillingAddressLTE != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressLTE(*i.BillingAddressLTE))
+		predicates = append(predicates, organizationsetting.BillingAddressLTE(*i.BillingAddressLTE))
 	}
 	if i.BillingAddressContains != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressContains(*i.BillingAddressContains))
+		predicates = append(predicates, organizationsetting.BillingAddressContains(*i.BillingAddressContains))
 	}
 	if i.BillingAddressHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressHasPrefix(*i.BillingAddressHasPrefix))
+		predicates = append(predicates, organizationsetting.BillingAddressHasPrefix(*i.BillingAddressHasPrefix))
 	}
 	if i.BillingAddressHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressHasSuffix(*i.BillingAddressHasSuffix))
+		predicates = append(predicates, organizationsetting.BillingAddressHasSuffix(*i.BillingAddressHasSuffix))
 	}
 	if i.BillingAddressEqualFold != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressEqualFold(*i.BillingAddressEqualFold))
+		predicates = append(predicates, organizationsetting.BillingAddressEqualFold(*i.BillingAddressEqualFold))
 	}
 	if i.BillingAddressContainsFold != nil {
-		predicates = append(predicates, organizationsettings.BillingAddressContainsFold(*i.BillingAddressContainsFold))
+		predicates = append(predicates, organizationsetting.BillingAddressContainsFold(*i.BillingAddressContainsFold))
 	}
 	if i.TaxIdentifier != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierEQ(*i.TaxIdentifier))
+		predicates = append(predicates, organizationsetting.TaxIdentifierEQ(*i.TaxIdentifier))
 	}
 	if i.TaxIdentifierNEQ != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierNEQ(*i.TaxIdentifierNEQ))
+		predicates = append(predicates, organizationsetting.TaxIdentifierNEQ(*i.TaxIdentifierNEQ))
 	}
 	if len(i.TaxIdentifierIn) > 0 {
-		predicates = append(predicates, organizationsettings.TaxIdentifierIn(i.TaxIdentifierIn...))
+		predicates = append(predicates, organizationsetting.TaxIdentifierIn(i.TaxIdentifierIn...))
 	}
 	if len(i.TaxIdentifierNotIn) > 0 {
-		predicates = append(predicates, organizationsettings.TaxIdentifierNotIn(i.TaxIdentifierNotIn...))
+		predicates = append(predicates, organizationsetting.TaxIdentifierNotIn(i.TaxIdentifierNotIn...))
 	}
 	if i.TaxIdentifierGT != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierGT(*i.TaxIdentifierGT))
+		predicates = append(predicates, organizationsetting.TaxIdentifierGT(*i.TaxIdentifierGT))
 	}
 	if i.TaxIdentifierGTE != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierGTE(*i.TaxIdentifierGTE))
+		predicates = append(predicates, organizationsetting.TaxIdentifierGTE(*i.TaxIdentifierGTE))
 	}
 	if i.TaxIdentifierLT != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierLT(*i.TaxIdentifierLT))
+		predicates = append(predicates, organizationsetting.TaxIdentifierLT(*i.TaxIdentifierLT))
 	}
 	if i.TaxIdentifierLTE != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierLTE(*i.TaxIdentifierLTE))
+		predicates = append(predicates, organizationsetting.TaxIdentifierLTE(*i.TaxIdentifierLTE))
 	}
 	if i.TaxIdentifierContains != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierContains(*i.TaxIdentifierContains))
+		predicates = append(predicates, organizationsetting.TaxIdentifierContains(*i.TaxIdentifierContains))
 	}
 	if i.TaxIdentifierHasPrefix != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierHasPrefix(*i.TaxIdentifierHasPrefix))
+		predicates = append(predicates, organizationsetting.TaxIdentifierHasPrefix(*i.TaxIdentifierHasPrefix))
 	}
 	if i.TaxIdentifierHasSuffix != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierHasSuffix(*i.TaxIdentifierHasSuffix))
+		predicates = append(predicates, organizationsetting.TaxIdentifierHasSuffix(*i.TaxIdentifierHasSuffix))
 	}
 	if i.TaxIdentifierEqualFold != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierEqualFold(*i.TaxIdentifierEqualFold))
+		predicates = append(predicates, organizationsetting.TaxIdentifierEqualFold(*i.TaxIdentifierEqualFold))
 	}
 	if i.TaxIdentifierContainsFold != nil {
-		predicates = append(predicates, organizationsettings.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
+		predicates = append(predicates, organizationsetting.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
 	}
 
+	if i.HasOrgnaization != nil {
+		p := organizationsetting.HasOrgnaization()
+		if !*i.HasOrgnaization {
+			p = organizationsetting.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOrgnaizationWith) > 0 {
+		with := make([]predicate.Organization, 0, len(i.HasOrgnaizationWith))
+		for _, w := range i.HasOrgnaizationWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOrgnaizationWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, organizationsetting.HasOrgnaizationWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyOrganizationSettingsWhereInput
+		return nil, ErrEmptyOrganizationSettingWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return organizationsettings.And(predicates...), nil
+		return organizationsetting.And(predicates...), nil
 	}
 }
 
@@ -6439,8 +6483,8 @@ type UserWhereInput struct {
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
 
 	// "setting" edge predicates.
-	HasSetting     *bool                     `json:"hasSetting,omitempty"`
-	HasSettingWith []*UserSettingsWhereInput `json:"hasSettingWith,omitempty"`
+	HasSetting     *bool                    `json:"hasSetting,omitempty"`
+	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
 
 	// "refreshtoken" edge predicates.
 	HasRefreshtoken     *bool                     `json:"hasRefreshtoken,omitempty"`
@@ -7118,7 +7162,7 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		predicates = append(predicates, p)
 	}
 	if len(i.HasSettingWith) > 0 {
-		with := make([]predicate.UserSettings, 0, len(i.HasSettingWith))
+		with := make([]predicate.UserSetting, 0, len(i.HasSettingWith))
 		for _, w := range i.HasSettingWith {
 			p, err := w.P()
 			if err != nil {
@@ -7156,12 +7200,12 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 }
 
-// UserSettingsWhereInput represents a where input for filtering UserSettings queries.
-type UserSettingsWhereInput struct {
-	Predicates []predicate.UserSettings  `json:"-"`
-	Not        *UserSettingsWhereInput   `json:"not,omitempty"`
-	Or         []*UserSettingsWhereInput `json:"or,omitempty"`
-	And        []*UserSettingsWhereInput `json:"and,omitempty"`
+// UserSettingWhereInput represents a where input for filtering UserSetting queries.
+type UserSettingWhereInput struct {
+	Predicates []predicate.UserSetting  `json:"-"`
+	Not        *UserSettingWhereInput   `json:"not,omitempty"`
+	Or         []*UserSettingWhereInput `json:"or,omitempty"`
+	And        []*UserSettingWhereInput `json:"and,omitempty"`
 
 	// "id" field predicates.
 	ID             *string  `json:"id,omitempty"`
@@ -7275,35 +7319,39 @@ type UserSettingsWhereInput struct {
 	RecoveryCodeContainsFold *string  `json:"recoveryCodeContainsFold,omitempty"`
 
 	// "status" field predicates.
-	Status      *usersettings.Status  `json:"status,omitempty"`
-	StatusNEQ   *usersettings.Status  `json:"statusNEQ,omitempty"`
-	StatusIn    []usersettings.Status `json:"statusIn,omitempty"`
-	StatusNotIn []usersettings.Status `json:"statusNotIn,omitempty"`
+	Status      *usersetting.Status  `json:"status,omitempty"`
+	StatusNEQ   *usersetting.Status  `json:"statusNEQ,omitempty"`
+	StatusIn    []usersetting.Status `json:"statusIn,omitempty"`
+	StatusNotIn []usersetting.Status `json:"statusNotIn,omitempty"`
 
 	// "role" field predicates.
-	Role      *usersettings.Role  `json:"role,omitempty"`
-	RoleNEQ   *usersettings.Role  `json:"roleNEQ,omitempty"`
-	RoleIn    []usersettings.Role `json:"roleIn,omitempty"`
-	RoleNotIn []usersettings.Role `json:"roleNotIn,omitempty"`
+	Role      *usersetting.Role  `json:"role,omitempty"`
+	RoleNEQ   *usersetting.Role  `json:"roleNEQ,omitempty"`
+	RoleIn    []usersetting.Role `json:"roleIn,omitempty"`
+	RoleNotIn []usersetting.Role `json:"roleNotIn,omitempty"`
 
 	// "email_confirmed" field predicates.
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNEQ *bool `json:"emailConfirmedNEQ,omitempty"`
+
+	// "user" edge predicates.
+	HasUser     *bool             `json:"hasUser,omitempty"`
+	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
-func (i *UserSettingsWhereInput) AddPredicates(predicates ...predicate.UserSettings) {
+func (i *UserSettingWhereInput) AddPredicates(predicates ...predicate.UserSetting) {
 	i.Predicates = append(i.Predicates, predicates...)
 }
 
-// Filter applies the UserSettingsWhereInput filter on the UserSettingsQuery builder.
-func (i *UserSettingsWhereInput) Filter(q *UserSettingsQuery) (*UserSettingsQuery, error) {
+// Filter applies the UserSettingWhereInput filter on the UserSettingQuery builder.
+func (i *UserSettingWhereInput) Filter(q *UserSettingQuery) (*UserSettingQuery, error) {
 	if i == nil {
 		return q, nil
 	}
 	p, err := i.P()
 	if err != nil {
-		if err == ErrEmptyUserSettingsWhereInput {
+		if err == ErrEmptyUserSettingWhereInput {
 			return q, nil
 		}
 		return nil, err
@@ -7311,19 +7359,19 @@ func (i *UserSettingsWhereInput) Filter(q *UserSettingsQuery) (*UserSettingsQuer
 	return q.Where(p), nil
 }
 
-// ErrEmptyUserSettingsWhereInput is returned in case the UserSettingsWhereInput is empty.
-var ErrEmptyUserSettingsWhereInput = errors.New("generated: empty predicate UserSettingsWhereInput")
+// ErrEmptyUserSettingWhereInput is returned in case the UserSettingWhereInput is empty.
+var ErrEmptyUserSettingWhereInput = errors.New("generated: empty predicate UserSettingWhereInput")
 
-// P returns a predicate for filtering usersettingsslice.
+// P returns a predicate for filtering usersettings.
 // An error is returned if the input is empty or invalid.
-func (i *UserSettingsWhereInput) P() (predicate.UserSettings, error) {
-	var predicates []predicate.UserSettings
+func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
+	var predicates []predicate.UserSetting
 	if i.Not != nil {
 		p, err := i.Not.P()
 		if err != nil {
 			return nil, fmt.Errorf("%w: field 'not'", err)
 		}
-		predicates = append(predicates, usersettings.Not(p))
+		predicates = append(predicates, usersetting.Not(p))
 	}
 	switch n := len(i.Or); {
 	case n == 1:
@@ -7333,7 +7381,7 @@ func (i *UserSettingsWhereInput) P() (predicate.UserSettings, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		or := make([]predicate.UserSettings, 0, n)
+		or := make([]predicate.UserSetting, 0, n)
 		for _, w := range i.Or {
 			p, err := w.P()
 			if err != nil {
@@ -7341,7 +7389,7 @@ func (i *UserSettingsWhereInput) P() (predicate.UserSettings, error) {
 			}
 			or = append(or, p)
 		}
-		predicates = append(predicates, usersettings.Or(or...))
+		predicates = append(predicates, usersetting.Or(or...))
 	}
 	switch n := len(i.And); {
 	case n == 1:
@@ -7351,7 +7399,7 @@ func (i *UserSettingsWhereInput) P() (predicate.UserSettings, error) {
 		}
 		predicates = append(predicates, p)
 	case n > 1:
-		and := make([]predicate.UserSettings, 0, n)
+		and := make([]predicate.UserSetting, 0, n)
 		for _, w := range i.And {
 			p, err := w.P()
 			if err != nil {
@@ -7359,325 +7407,343 @@ func (i *UserSettingsWhereInput) P() (predicate.UserSettings, error) {
 			}
 			and = append(and, p)
 		}
-		predicates = append(predicates, usersettings.And(and...))
+		predicates = append(predicates, usersetting.And(and...))
 	}
 	predicates = append(predicates, i.Predicates...)
 	if i.ID != nil {
-		predicates = append(predicates, usersettings.IDEQ(*i.ID))
+		predicates = append(predicates, usersetting.IDEQ(*i.ID))
 	}
 	if i.IDNEQ != nil {
-		predicates = append(predicates, usersettings.IDNEQ(*i.IDNEQ))
+		predicates = append(predicates, usersetting.IDNEQ(*i.IDNEQ))
 	}
 	if len(i.IDIn) > 0 {
-		predicates = append(predicates, usersettings.IDIn(i.IDIn...))
+		predicates = append(predicates, usersetting.IDIn(i.IDIn...))
 	}
 	if len(i.IDNotIn) > 0 {
-		predicates = append(predicates, usersettings.IDNotIn(i.IDNotIn...))
+		predicates = append(predicates, usersetting.IDNotIn(i.IDNotIn...))
 	}
 	if i.IDGT != nil {
-		predicates = append(predicates, usersettings.IDGT(*i.IDGT))
+		predicates = append(predicates, usersetting.IDGT(*i.IDGT))
 	}
 	if i.IDGTE != nil {
-		predicates = append(predicates, usersettings.IDGTE(*i.IDGTE))
+		predicates = append(predicates, usersetting.IDGTE(*i.IDGTE))
 	}
 	if i.IDLT != nil {
-		predicates = append(predicates, usersettings.IDLT(*i.IDLT))
+		predicates = append(predicates, usersetting.IDLT(*i.IDLT))
 	}
 	if i.IDLTE != nil {
-		predicates = append(predicates, usersettings.IDLTE(*i.IDLTE))
+		predicates = append(predicates, usersetting.IDLTE(*i.IDLTE))
 	}
 	if i.IDEqualFold != nil {
-		predicates = append(predicates, usersettings.IDEqualFold(*i.IDEqualFold))
+		predicates = append(predicates, usersetting.IDEqualFold(*i.IDEqualFold))
 	}
 	if i.IDContainsFold != nil {
-		predicates = append(predicates, usersettings.IDContainsFold(*i.IDContainsFold))
+		predicates = append(predicates, usersetting.IDContainsFold(*i.IDContainsFold))
 	}
 	if i.CreatedAt != nil {
-		predicates = append(predicates, usersettings.CreatedAtEQ(*i.CreatedAt))
+		predicates = append(predicates, usersetting.CreatedAtEQ(*i.CreatedAt))
 	}
 	if i.CreatedAtNEQ != nil {
-		predicates = append(predicates, usersettings.CreatedAtNEQ(*i.CreatedAtNEQ))
+		predicates = append(predicates, usersetting.CreatedAtNEQ(*i.CreatedAtNEQ))
 	}
 	if len(i.CreatedAtIn) > 0 {
-		predicates = append(predicates, usersettings.CreatedAtIn(i.CreatedAtIn...))
+		predicates = append(predicates, usersetting.CreatedAtIn(i.CreatedAtIn...))
 	}
 	if len(i.CreatedAtNotIn) > 0 {
-		predicates = append(predicates, usersettings.CreatedAtNotIn(i.CreatedAtNotIn...))
+		predicates = append(predicates, usersetting.CreatedAtNotIn(i.CreatedAtNotIn...))
 	}
 	if i.CreatedAtGT != nil {
-		predicates = append(predicates, usersettings.CreatedAtGT(*i.CreatedAtGT))
+		predicates = append(predicates, usersetting.CreatedAtGT(*i.CreatedAtGT))
 	}
 	if i.CreatedAtGTE != nil {
-		predicates = append(predicates, usersettings.CreatedAtGTE(*i.CreatedAtGTE))
+		predicates = append(predicates, usersetting.CreatedAtGTE(*i.CreatedAtGTE))
 	}
 	if i.CreatedAtLT != nil {
-		predicates = append(predicates, usersettings.CreatedAtLT(*i.CreatedAtLT))
+		predicates = append(predicates, usersetting.CreatedAtLT(*i.CreatedAtLT))
 	}
 	if i.CreatedAtLTE != nil {
-		predicates = append(predicates, usersettings.CreatedAtLTE(*i.CreatedAtLTE))
+		predicates = append(predicates, usersetting.CreatedAtLTE(*i.CreatedAtLTE))
 	}
 	if i.UpdatedAt != nil {
-		predicates = append(predicates, usersettings.UpdatedAtEQ(*i.UpdatedAt))
+		predicates = append(predicates, usersetting.UpdatedAtEQ(*i.UpdatedAt))
 	}
 	if i.UpdatedAtNEQ != nil {
-		predicates = append(predicates, usersettings.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+		predicates = append(predicates, usersetting.UpdatedAtNEQ(*i.UpdatedAtNEQ))
 	}
 	if len(i.UpdatedAtIn) > 0 {
-		predicates = append(predicates, usersettings.UpdatedAtIn(i.UpdatedAtIn...))
+		predicates = append(predicates, usersetting.UpdatedAtIn(i.UpdatedAtIn...))
 	}
 	if len(i.UpdatedAtNotIn) > 0 {
-		predicates = append(predicates, usersettings.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+		predicates = append(predicates, usersetting.UpdatedAtNotIn(i.UpdatedAtNotIn...))
 	}
 	if i.UpdatedAtGT != nil {
-		predicates = append(predicates, usersettings.UpdatedAtGT(*i.UpdatedAtGT))
+		predicates = append(predicates, usersetting.UpdatedAtGT(*i.UpdatedAtGT))
 	}
 	if i.UpdatedAtGTE != nil {
-		predicates = append(predicates, usersettings.UpdatedAtGTE(*i.UpdatedAtGTE))
+		predicates = append(predicates, usersetting.UpdatedAtGTE(*i.UpdatedAtGTE))
 	}
 	if i.UpdatedAtLT != nil {
-		predicates = append(predicates, usersettings.UpdatedAtLT(*i.UpdatedAtLT))
+		predicates = append(predicates, usersetting.UpdatedAtLT(*i.UpdatedAtLT))
 	}
 	if i.UpdatedAtLTE != nil {
-		predicates = append(predicates, usersettings.UpdatedAtLTE(*i.UpdatedAtLTE))
+		predicates = append(predicates, usersetting.UpdatedAtLTE(*i.UpdatedAtLTE))
 	}
 	if i.CreatedBy != nil {
-		predicates = append(predicates, usersettings.CreatedByEQ(*i.CreatedBy))
+		predicates = append(predicates, usersetting.CreatedByEQ(*i.CreatedBy))
 	}
 	if i.CreatedByNEQ != nil {
-		predicates = append(predicates, usersettings.CreatedByNEQ(*i.CreatedByNEQ))
+		predicates = append(predicates, usersetting.CreatedByNEQ(*i.CreatedByNEQ))
 	}
 	if len(i.CreatedByIn) > 0 {
-		predicates = append(predicates, usersettings.CreatedByIn(i.CreatedByIn...))
+		predicates = append(predicates, usersetting.CreatedByIn(i.CreatedByIn...))
 	}
 	if len(i.CreatedByNotIn) > 0 {
-		predicates = append(predicates, usersettings.CreatedByNotIn(i.CreatedByNotIn...))
+		predicates = append(predicates, usersetting.CreatedByNotIn(i.CreatedByNotIn...))
 	}
 	if i.CreatedByGT != nil {
-		predicates = append(predicates, usersettings.CreatedByGT(*i.CreatedByGT))
+		predicates = append(predicates, usersetting.CreatedByGT(*i.CreatedByGT))
 	}
 	if i.CreatedByGTE != nil {
-		predicates = append(predicates, usersettings.CreatedByGTE(*i.CreatedByGTE))
+		predicates = append(predicates, usersetting.CreatedByGTE(*i.CreatedByGTE))
 	}
 	if i.CreatedByLT != nil {
-		predicates = append(predicates, usersettings.CreatedByLT(*i.CreatedByLT))
+		predicates = append(predicates, usersetting.CreatedByLT(*i.CreatedByLT))
 	}
 	if i.CreatedByLTE != nil {
-		predicates = append(predicates, usersettings.CreatedByLTE(*i.CreatedByLTE))
+		predicates = append(predicates, usersetting.CreatedByLTE(*i.CreatedByLTE))
 	}
 	if i.CreatedByContains != nil {
-		predicates = append(predicates, usersettings.CreatedByContains(*i.CreatedByContains))
+		predicates = append(predicates, usersetting.CreatedByContains(*i.CreatedByContains))
 	}
 	if i.CreatedByHasPrefix != nil {
-		predicates = append(predicates, usersettings.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+		predicates = append(predicates, usersetting.CreatedByHasPrefix(*i.CreatedByHasPrefix))
 	}
 	if i.CreatedByHasSuffix != nil {
-		predicates = append(predicates, usersettings.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+		predicates = append(predicates, usersetting.CreatedByHasSuffix(*i.CreatedByHasSuffix))
 	}
 	if i.CreatedByIsNil {
-		predicates = append(predicates, usersettings.CreatedByIsNil())
+		predicates = append(predicates, usersetting.CreatedByIsNil())
 	}
 	if i.CreatedByNotNil {
-		predicates = append(predicates, usersettings.CreatedByNotNil())
+		predicates = append(predicates, usersetting.CreatedByNotNil())
 	}
 	if i.CreatedByEqualFold != nil {
-		predicates = append(predicates, usersettings.CreatedByEqualFold(*i.CreatedByEqualFold))
+		predicates = append(predicates, usersetting.CreatedByEqualFold(*i.CreatedByEqualFold))
 	}
 	if i.CreatedByContainsFold != nil {
-		predicates = append(predicates, usersettings.CreatedByContainsFold(*i.CreatedByContainsFold))
+		predicates = append(predicates, usersetting.CreatedByContainsFold(*i.CreatedByContainsFold))
 	}
 	if i.UpdatedBy != nil {
-		predicates = append(predicates, usersettings.UpdatedByEQ(*i.UpdatedBy))
+		predicates = append(predicates, usersetting.UpdatedByEQ(*i.UpdatedBy))
 	}
 	if i.UpdatedByNEQ != nil {
-		predicates = append(predicates, usersettings.UpdatedByNEQ(*i.UpdatedByNEQ))
+		predicates = append(predicates, usersetting.UpdatedByNEQ(*i.UpdatedByNEQ))
 	}
 	if len(i.UpdatedByIn) > 0 {
-		predicates = append(predicates, usersettings.UpdatedByIn(i.UpdatedByIn...))
+		predicates = append(predicates, usersetting.UpdatedByIn(i.UpdatedByIn...))
 	}
 	if len(i.UpdatedByNotIn) > 0 {
-		predicates = append(predicates, usersettings.UpdatedByNotIn(i.UpdatedByNotIn...))
+		predicates = append(predicates, usersetting.UpdatedByNotIn(i.UpdatedByNotIn...))
 	}
 	if i.UpdatedByGT != nil {
-		predicates = append(predicates, usersettings.UpdatedByGT(*i.UpdatedByGT))
+		predicates = append(predicates, usersetting.UpdatedByGT(*i.UpdatedByGT))
 	}
 	if i.UpdatedByGTE != nil {
-		predicates = append(predicates, usersettings.UpdatedByGTE(*i.UpdatedByGTE))
+		predicates = append(predicates, usersetting.UpdatedByGTE(*i.UpdatedByGTE))
 	}
 	if i.UpdatedByLT != nil {
-		predicates = append(predicates, usersettings.UpdatedByLT(*i.UpdatedByLT))
+		predicates = append(predicates, usersetting.UpdatedByLT(*i.UpdatedByLT))
 	}
 	if i.UpdatedByLTE != nil {
-		predicates = append(predicates, usersettings.UpdatedByLTE(*i.UpdatedByLTE))
+		predicates = append(predicates, usersetting.UpdatedByLTE(*i.UpdatedByLTE))
 	}
 	if i.UpdatedByContains != nil {
-		predicates = append(predicates, usersettings.UpdatedByContains(*i.UpdatedByContains))
+		predicates = append(predicates, usersetting.UpdatedByContains(*i.UpdatedByContains))
 	}
 	if i.UpdatedByHasPrefix != nil {
-		predicates = append(predicates, usersettings.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+		predicates = append(predicates, usersetting.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
 	}
 	if i.UpdatedByHasSuffix != nil {
-		predicates = append(predicates, usersettings.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+		predicates = append(predicates, usersetting.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
 	}
 	if i.UpdatedByIsNil {
-		predicates = append(predicates, usersettings.UpdatedByIsNil())
+		predicates = append(predicates, usersetting.UpdatedByIsNil())
 	}
 	if i.UpdatedByNotNil {
-		predicates = append(predicates, usersettings.UpdatedByNotNil())
+		predicates = append(predicates, usersetting.UpdatedByNotNil())
 	}
 	if i.UpdatedByEqualFold != nil {
-		predicates = append(predicates, usersettings.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+		predicates = append(predicates, usersetting.UpdatedByEqualFold(*i.UpdatedByEqualFold))
 	}
 	if i.UpdatedByContainsFold != nil {
-		predicates = append(predicates, usersettings.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+		predicates = append(predicates, usersetting.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
 	if i.Locked != nil {
-		predicates = append(predicates, usersettings.LockedEQ(*i.Locked))
+		predicates = append(predicates, usersetting.LockedEQ(*i.Locked))
 	}
 	if i.LockedNEQ != nil {
-		predicates = append(predicates, usersettings.LockedNEQ(*i.LockedNEQ))
+		predicates = append(predicates, usersetting.LockedNEQ(*i.LockedNEQ))
 	}
 	if i.SilencedAt != nil {
-		predicates = append(predicates, usersettings.SilencedAtEQ(*i.SilencedAt))
+		predicates = append(predicates, usersetting.SilencedAtEQ(*i.SilencedAt))
 	}
 	if i.SilencedAtNEQ != nil {
-		predicates = append(predicates, usersettings.SilencedAtNEQ(*i.SilencedAtNEQ))
+		predicates = append(predicates, usersetting.SilencedAtNEQ(*i.SilencedAtNEQ))
 	}
 	if len(i.SilencedAtIn) > 0 {
-		predicates = append(predicates, usersettings.SilencedAtIn(i.SilencedAtIn...))
+		predicates = append(predicates, usersetting.SilencedAtIn(i.SilencedAtIn...))
 	}
 	if len(i.SilencedAtNotIn) > 0 {
-		predicates = append(predicates, usersettings.SilencedAtNotIn(i.SilencedAtNotIn...))
+		predicates = append(predicates, usersetting.SilencedAtNotIn(i.SilencedAtNotIn...))
 	}
 	if i.SilencedAtGT != nil {
-		predicates = append(predicates, usersettings.SilencedAtGT(*i.SilencedAtGT))
+		predicates = append(predicates, usersetting.SilencedAtGT(*i.SilencedAtGT))
 	}
 	if i.SilencedAtGTE != nil {
-		predicates = append(predicates, usersettings.SilencedAtGTE(*i.SilencedAtGTE))
+		predicates = append(predicates, usersetting.SilencedAtGTE(*i.SilencedAtGTE))
 	}
 	if i.SilencedAtLT != nil {
-		predicates = append(predicates, usersettings.SilencedAtLT(*i.SilencedAtLT))
+		predicates = append(predicates, usersetting.SilencedAtLT(*i.SilencedAtLT))
 	}
 	if i.SilencedAtLTE != nil {
-		predicates = append(predicates, usersettings.SilencedAtLTE(*i.SilencedAtLTE))
+		predicates = append(predicates, usersetting.SilencedAtLTE(*i.SilencedAtLTE))
 	}
 	if i.SilencedAtIsNil {
-		predicates = append(predicates, usersettings.SilencedAtIsNil())
+		predicates = append(predicates, usersetting.SilencedAtIsNil())
 	}
 	if i.SilencedAtNotNil {
-		predicates = append(predicates, usersettings.SilencedAtNotNil())
+		predicates = append(predicates, usersetting.SilencedAtNotNil())
 	}
 	if i.SuspendedAt != nil {
-		predicates = append(predicates, usersettings.SuspendedAtEQ(*i.SuspendedAt))
+		predicates = append(predicates, usersetting.SuspendedAtEQ(*i.SuspendedAt))
 	}
 	if i.SuspendedAtNEQ != nil {
-		predicates = append(predicates, usersettings.SuspendedAtNEQ(*i.SuspendedAtNEQ))
+		predicates = append(predicates, usersetting.SuspendedAtNEQ(*i.SuspendedAtNEQ))
 	}
 	if len(i.SuspendedAtIn) > 0 {
-		predicates = append(predicates, usersettings.SuspendedAtIn(i.SuspendedAtIn...))
+		predicates = append(predicates, usersetting.SuspendedAtIn(i.SuspendedAtIn...))
 	}
 	if len(i.SuspendedAtNotIn) > 0 {
-		predicates = append(predicates, usersettings.SuspendedAtNotIn(i.SuspendedAtNotIn...))
+		predicates = append(predicates, usersetting.SuspendedAtNotIn(i.SuspendedAtNotIn...))
 	}
 	if i.SuspendedAtGT != nil {
-		predicates = append(predicates, usersettings.SuspendedAtGT(*i.SuspendedAtGT))
+		predicates = append(predicates, usersetting.SuspendedAtGT(*i.SuspendedAtGT))
 	}
 	if i.SuspendedAtGTE != nil {
-		predicates = append(predicates, usersettings.SuspendedAtGTE(*i.SuspendedAtGTE))
+		predicates = append(predicates, usersetting.SuspendedAtGTE(*i.SuspendedAtGTE))
 	}
 	if i.SuspendedAtLT != nil {
-		predicates = append(predicates, usersettings.SuspendedAtLT(*i.SuspendedAtLT))
+		predicates = append(predicates, usersetting.SuspendedAtLT(*i.SuspendedAtLT))
 	}
 	if i.SuspendedAtLTE != nil {
-		predicates = append(predicates, usersettings.SuspendedAtLTE(*i.SuspendedAtLTE))
+		predicates = append(predicates, usersetting.SuspendedAtLTE(*i.SuspendedAtLTE))
 	}
 	if i.SuspendedAtIsNil {
-		predicates = append(predicates, usersettings.SuspendedAtIsNil())
+		predicates = append(predicates, usersetting.SuspendedAtIsNil())
 	}
 	if i.SuspendedAtNotNil {
-		predicates = append(predicates, usersettings.SuspendedAtNotNil())
+		predicates = append(predicates, usersetting.SuspendedAtNotNil())
 	}
 	if i.RecoveryCode != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeEQ(*i.RecoveryCode))
+		predicates = append(predicates, usersetting.RecoveryCodeEQ(*i.RecoveryCode))
 	}
 	if i.RecoveryCodeNEQ != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeNEQ(*i.RecoveryCodeNEQ))
+		predicates = append(predicates, usersetting.RecoveryCodeNEQ(*i.RecoveryCodeNEQ))
 	}
 	if len(i.RecoveryCodeIn) > 0 {
-		predicates = append(predicates, usersettings.RecoveryCodeIn(i.RecoveryCodeIn...))
+		predicates = append(predicates, usersetting.RecoveryCodeIn(i.RecoveryCodeIn...))
 	}
 	if len(i.RecoveryCodeNotIn) > 0 {
-		predicates = append(predicates, usersettings.RecoveryCodeNotIn(i.RecoveryCodeNotIn...))
+		predicates = append(predicates, usersetting.RecoveryCodeNotIn(i.RecoveryCodeNotIn...))
 	}
 	if i.RecoveryCodeGT != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeGT(*i.RecoveryCodeGT))
+		predicates = append(predicates, usersetting.RecoveryCodeGT(*i.RecoveryCodeGT))
 	}
 	if i.RecoveryCodeGTE != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeGTE(*i.RecoveryCodeGTE))
+		predicates = append(predicates, usersetting.RecoveryCodeGTE(*i.RecoveryCodeGTE))
 	}
 	if i.RecoveryCodeLT != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeLT(*i.RecoveryCodeLT))
+		predicates = append(predicates, usersetting.RecoveryCodeLT(*i.RecoveryCodeLT))
 	}
 	if i.RecoveryCodeLTE != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeLTE(*i.RecoveryCodeLTE))
+		predicates = append(predicates, usersetting.RecoveryCodeLTE(*i.RecoveryCodeLTE))
 	}
 	if i.RecoveryCodeContains != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeContains(*i.RecoveryCodeContains))
+		predicates = append(predicates, usersetting.RecoveryCodeContains(*i.RecoveryCodeContains))
 	}
 	if i.RecoveryCodeHasPrefix != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeHasPrefix(*i.RecoveryCodeHasPrefix))
+		predicates = append(predicates, usersetting.RecoveryCodeHasPrefix(*i.RecoveryCodeHasPrefix))
 	}
 	if i.RecoveryCodeHasSuffix != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeHasSuffix(*i.RecoveryCodeHasSuffix))
+		predicates = append(predicates, usersetting.RecoveryCodeHasSuffix(*i.RecoveryCodeHasSuffix))
 	}
 	if i.RecoveryCodeIsNil {
-		predicates = append(predicates, usersettings.RecoveryCodeIsNil())
+		predicates = append(predicates, usersetting.RecoveryCodeIsNil())
 	}
 	if i.RecoveryCodeNotNil {
-		predicates = append(predicates, usersettings.RecoveryCodeNotNil())
+		predicates = append(predicates, usersetting.RecoveryCodeNotNil())
 	}
 	if i.RecoveryCodeEqualFold != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeEqualFold(*i.RecoveryCodeEqualFold))
+		predicates = append(predicates, usersetting.RecoveryCodeEqualFold(*i.RecoveryCodeEqualFold))
 	}
 	if i.RecoveryCodeContainsFold != nil {
-		predicates = append(predicates, usersettings.RecoveryCodeContainsFold(*i.RecoveryCodeContainsFold))
+		predicates = append(predicates, usersetting.RecoveryCodeContainsFold(*i.RecoveryCodeContainsFold))
 	}
 	if i.Status != nil {
-		predicates = append(predicates, usersettings.StatusEQ(*i.Status))
+		predicates = append(predicates, usersetting.StatusEQ(*i.Status))
 	}
 	if i.StatusNEQ != nil {
-		predicates = append(predicates, usersettings.StatusNEQ(*i.StatusNEQ))
+		predicates = append(predicates, usersetting.StatusNEQ(*i.StatusNEQ))
 	}
 	if len(i.StatusIn) > 0 {
-		predicates = append(predicates, usersettings.StatusIn(i.StatusIn...))
+		predicates = append(predicates, usersetting.StatusIn(i.StatusIn...))
 	}
 	if len(i.StatusNotIn) > 0 {
-		predicates = append(predicates, usersettings.StatusNotIn(i.StatusNotIn...))
+		predicates = append(predicates, usersetting.StatusNotIn(i.StatusNotIn...))
 	}
 	if i.Role != nil {
-		predicates = append(predicates, usersettings.RoleEQ(*i.Role))
+		predicates = append(predicates, usersetting.RoleEQ(*i.Role))
 	}
 	if i.RoleNEQ != nil {
-		predicates = append(predicates, usersettings.RoleNEQ(*i.RoleNEQ))
+		predicates = append(predicates, usersetting.RoleNEQ(*i.RoleNEQ))
 	}
 	if len(i.RoleIn) > 0 {
-		predicates = append(predicates, usersettings.RoleIn(i.RoleIn...))
+		predicates = append(predicates, usersetting.RoleIn(i.RoleIn...))
 	}
 	if len(i.RoleNotIn) > 0 {
-		predicates = append(predicates, usersettings.RoleNotIn(i.RoleNotIn...))
+		predicates = append(predicates, usersetting.RoleNotIn(i.RoleNotIn...))
 	}
 	if i.EmailConfirmed != nil {
-		predicates = append(predicates, usersettings.EmailConfirmedEQ(*i.EmailConfirmed))
+		predicates = append(predicates, usersetting.EmailConfirmedEQ(*i.EmailConfirmed))
 	}
 	if i.EmailConfirmedNEQ != nil {
-		predicates = append(predicates, usersettings.EmailConfirmedNEQ(*i.EmailConfirmedNEQ))
+		predicates = append(predicates, usersetting.EmailConfirmedNEQ(*i.EmailConfirmedNEQ))
 	}
 
+	if i.HasUser != nil {
+		p := usersetting.HasUser()
+		if !*i.HasUser {
+			p = usersetting.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasUserWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasUserWith))
+		for _, w := range i.HasUserWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasUserWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, usersetting.HasUserWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
-		return nil, ErrEmptyUserSettingsWhereInput
+		return nil, ErrEmptyUserSettingWhereInput
 	case 1:
 		return predicates[0], nil
 	default:
-		return usersettings.And(predicates...), nil
+		return usersetting.And(predicates...), nil
 	}
 }

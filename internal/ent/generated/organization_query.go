@@ -16,7 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -35,7 +35,7 @@ type OrganizationQuery struct {
 	withUsers              *UserQuery
 	withGroups             *GroupQuery
 	withIntegrations       *IntegrationQuery
-	withSetting            *OrganizationSettingsQuery
+	withSetting            *OrganizationSettingQuery
 	withEntitlements       *EntitlementQuery
 	withOauthprovider      *OauthProviderQuery
 	modifiers              []func(*sql.Selector)
@@ -208,8 +208,8 @@ func (oq *OrganizationQuery) QueryIntegrations() *IntegrationQuery {
 }
 
 // QuerySetting chains the current query on the "setting" edge.
-func (oq *OrganizationQuery) QuerySetting() *OrganizationSettingsQuery {
-	query := (&OrganizationSettingsClient{config: oq.config}).Query()
+func (oq *OrganizationQuery) QuerySetting() *OrganizationSettingQuery {
+	query := (&OrganizationSettingClient{config: oq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := oq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -220,12 +220,12 @@ func (oq *OrganizationQuery) QuerySetting() *OrganizationSettingsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organization.Table, organization.FieldID, selector),
-			sqlgraph.To(organizationsettings.Table, organizationsettings.FieldID),
+			sqlgraph.To(organizationsetting.Table, organizationsetting.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, organization.SettingTable, organization.SettingColumn),
 		)
 		schemaConfig := oq.schemaConfig
-		step.To.Schema = schemaConfig.OrganizationSettings
-		step.Edge.Schema = schemaConfig.OrganizationSettings
+		step.To.Schema = schemaConfig.OrganizationSetting
+		step.Edge.Schema = schemaConfig.OrganizationSetting
 		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -545,8 +545,8 @@ func (oq *OrganizationQuery) WithIntegrations(opts ...func(*IntegrationQuery)) *
 
 // WithSetting tells the query-builder to eager-load the nodes that are connected to
 // the "setting" edge. The optional arguments are used to configure the query builder of the edge.
-func (oq *OrganizationQuery) WithSetting(opts ...func(*OrganizationSettingsQuery)) *OrganizationQuery {
-	query := (&OrganizationSettingsClient{config: oq.config}).Query()
+func (oq *OrganizationQuery) WithSetting(opts ...func(*OrganizationSettingQuery)) *OrganizationQuery {
+	query := (&OrganizationSettingClient{config: oq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -724,7 +724,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	}
 	if query := oq.withSetting; query != nil {
 		if err := oq.loadSetting(ctx, query, nodes, nil,
-			func(n *Organization, e *OrganizationSettings) { n.Edges.Setting = e }); err != nil {
+			func(n *Organization, e *OrganizationSetting) { n.Edges.Setting = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -975,7 +975,7 @@ func (oq *OrganizationQuery) loadIntegrations(ctx context.Context, query *Integr
 	}
 	return nil
 }
-func (oq *OrganizationQuery) loadSetting(ctx context.Context, query *OrganizationSettingsQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrganizationSettings)) error {
+func (oq *OrganizationQuery) loadSetting(ctx context.Context, query *OrganizationSettingQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *OrganizationSetting)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Organization)
 	for i := range nodes {
@@ -983,7 +983,7 @@ func (oq *OrganizationQuery) loadSetting(ctx context.Context, query *Organizatio
 		nodeids[nodes[i].ID] = nodes[i]
 	}
 	query.withFKs = true
-	query.Where(predicate.OrganizationSettings(func(s *sql.Selector) {
+	query.Where(predicate.OrganizationSetting(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(organization.SettingColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

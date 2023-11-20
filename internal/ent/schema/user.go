@@ -126,7 +126,7 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
-		edge.To("setting", UserSettings.Type).Required().Unique(),
+		edge.To("setting", UserSetting.Type).Required().Unique(),
 		edge.To("refreshtoken", RefreshToken.Type),
 	}
 }

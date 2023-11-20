@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // CreateEntitlementInput represents a mutation input for creating entitlements.
@@ -325,21 +325,22 @@ func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
 	return c
 }
 
-// CreateGroupSettingsInput represents a mutation input for creating groupsettingsslice.
-type CreateGroupSettingsInput struct {
+// CreateGroupSettingInput represents a mutation input for creating groupsettings.
+type CreateGroupSettingInput struct {
 	CreatedAt    *time.Time
 	UpdatedAt    *time.Time
 	CreatedBy    *string
 	UpdatedBy    *string
-	Visibility   *groupsettings.Visibility
-	JoinPolicy   *groupsettings.JoinPolicy
+	Visibility   *groupsetting.Visibility
+	JoinPolicy   *groupsetting.JoinPolicy
 	Tags         []string
 	SyncToSlack  *bool
 	SyncToGithub *bool
+	GroupID      *string
 }
 
-// Mutate applies the CreateGroupSettingsInput on the GroupSettingsMutation builder.
-func (i *CreateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
+// Mutate applies the CreateGroupSettingInput on the GroupSettingMutation builder.
+func (i *CreateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -367,31 +368,36 @@ func (i *CreateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
 	if v := i.SyncToGithub; v != nil {
 		m.SetSyncToGithub(*v)
 	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
+	}
 }
 
-// SetInput applies the change-set in the CreateGroupSettingsInput on the GroupSettingsCreate builder.
-func (c *GroupSettingsCreate) SetInput(i CreateGroupSettingsInput) *GroupSettingsCreate {
+// SetInput applies the change-set in the CreateGroupSettingInput on the GroupSettingCreate builder.
+func (c *GroupSettingCreate) SetInput(i CreateGroupSettingInput) *GroupSettingCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateGroupSettingsInput represents a mutation input for updating groupsettingsslice.
-type UpdateGroupSettingsInput struct {
+// UpdateGroupSettingInput represents a mutation input for updating groupsettings.
+type UpdateGroupSettingInput struct {
 	UpdatedAt      *time.Time
 	ClearCreatedBy bool
 	CreatedBy      *string
 	ClearUpdatedBy bool
 	UpdatedBy      *string
-	Visibility     *groupsettings.Visibility
-	JoinPolicy     *groupsettings.JoinPolicy
+	Visibility     *groupsetting.Visibility
+	JoinPolicy     *groupsetting.JoinPolicy
 	Tags           []string
 	AppendTags     []string
 	SyncToSlack    *bool
 	SyncToGithub   *bool
+	ClearGroup     bool
+	GroupID        *string
 }
 
-// Mutate applies the UpdateGroupSettingsInput on the GroupSettingsMutation builder.
-func (i *UpdateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
+// Mutate applies the UpdateGroupSettingInput on the GroupSettingMutation builder.
+func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
@@ -425,16 +431,22 @@ func (i *UpdateGroupSettingsInput) Mutate(m *GroupSettingsMutation) {
 	if v := i.SyncToGithub; v != nil {
 		m.SetSyncToGithub(*v)
 	}
+	if i.ClearGroup {
+		m.ClearGroup()
+	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
+	}
 }
 
-// SetInput applies the change-set in the UpdateGroupSettingsInput on the GroupSettingsUpdate builder.
-func (c *GroupSettingsUpdate) SetInput(i UpdateGroupSettingsInput) *GroupSettingsUpdate {
+// SetInput applies the change-set in the UpdateGroupSettingInput on the GroupSettingUpdate builder.
+func (c *GroupSettingUpdate) SetInput(i UpdateGroupSettingInput) *GroupSettingUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateGroupSettingsInput on the GroupSettingsUpdateOne builder.
-func (c *GroupSettingsUpdateOne) SetInput(i UpdateGroupSettingsInput) *GroupSettingsUpdateOne {
+// SetInput applies the change-set in the UpdateGroupSettingInput on the GroupSettingUpdateOne builder.
+func (c *GroupSettingUpdateOne) SetInput(i UpdateGroupSettingInput) *GroupSettingUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -871,8 +883,8 @@ func (c *OrganizationUpdateOne) SetInput(i UpdateOrganizationInput) *Organizatio
 	return c
 }
 
-// CreateOrganizationSettingsInput represents a mutation input for creating organizationsettingsslice.
-type CreateOrganizationSettingsInput struct {
+// CreateOrganizationSettingInput represents a mutation input for creating organizationsettings.
+type CreateOrganizationSettingInput struct {
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
 	CreatedBy      *string
@@ -887,10 +899,11 @@ type CreateOrganizationSettingsInput struct {
 	BillingAddress string
 	TaxIdentifier  string
 	Tags           []string
+	OrgnaizationID *string
 }
 
-// Mutate applies the CreateOrganizationSettingsInput on the OrganizationSettingsMutation builder.
-func (i *CreateOrganizationSettingsInput) Mutate(m *OrganizationSettingsMutation) {
+// Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
+func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -923,38 +936,43 @@ func (i *CreateOrganizationSettingsInput) Mutate(m *OrganizationSettingsMutation
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
+	if v := i.OrgnaizationID; v != nil {
+		m.SetOrgnaizationID(*v)
+	}
 }
 
-// SetInput applies the change-set in the CreateOrganizationSettingsInput on the OrganizationSettingsCreate builder.
-func (c *OrganizationSettingsCreate) SetInput(i CreateOrganizationSettingsInput) *OrganizationSettingsCreate {
+// SetInput applies the change-set in the CreateOrganizationSettingInput on the OrganizationSettingCreate builder.
+func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *OrganizationSettingCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateOrganizationSettingsInput represents a mutation input for updating organizationsettingsslice.
-type UpdateOrganizationSettingsInput struct {
-	UpdatedAt      *time.Time
-	ClearCreatedBy bool
-	CreatedBy      *string
-	ClearUpdatedBy bool
-	UpdatedBy      *string
-	Domains        []string
-	AppendDomains  []string
-	SSOCert        *string
-	SSOEntrypoint  *string
-	SSOIssuer      *string
-	BillingContact *string
-	BillingEmail   *string
-	BillingPhone   *string
-	BillingAddress *string
-	TaxIdentifier  *string
-	ClearTags      bool
-	Tags           []string
-	AppendTags     []string
+// UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
+type UpdateOrganizationSettingInput struct {
+	UpdatedAt         *time.Time
+	ClearCreatedBy    bool
+	CreatedBy         *string
+	ClearUpdatedBy    bool
+	UpdatedBy         *string
+	Domains           []string
+	AppendDomains     []string
+	SSOCert           *string
+	SSOEntrypoint     *string
+	SSOIssuer         *string
+	BillingContact    *string
+	BillingEmail      *string
+	BillingPhone      *string
+	BillingAddress    *string
+	TaxIdentifier     *string
+	ClearTags         bool
+	Tags              []string
+	AppendTags        []string
+	ClearOrgnaization bool
+	OrgnaizationID    *string
 }
 
-// Mutate applies the UpdateOrganizationSettingsInput on the OrganizationSettingsMutation builder.
-func (i *UpdateOrganizationSettingsInput) Mutate(m *OrganizationSettingsMutation) {
+// Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
+func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
@@ -1009,16 +1027,22 @@ func (i *UpdateOrganizationSettingsInput) Mutate(m *OrganizationSettingsMutation
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
+	if i.ClearOrgnaization {
+		m.ClearOrgnaization()
+	}
+	if v := i.OrgnaizationID; v != nil {
+		m.SetOrgnaizationID(*v)
+	}
 }
 
-// SetInput applies the change-set in the UpdateOrganizationSettingsInput on the OrganizationSettingsUpdate builder.
-func (c *OrganizationSettingsUpdate) SetInput(i UpdateOrganizationSettingsInput) *OrganizationSettingsUpdate {
+// SetInput applies the change-set in the UpdateOrganizationSettingInput on the OrganizationSettingUpdate builder.
+func (c *OrganizationSettingUpdate) SetInput(i UpdateOrganizationSettingInput) *OrganizationSettingUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateOrganizationSettingsInput on the OrganizationSettingsUpdateOne builder.
-func (c *OrganizationSettingsUpdateOne) SetInput(i UpdateOrganizationSettingsInput) *OrganizationSettingsUpdateOne {
+// SetInput applies the change-set in the UpdateOrganizationSettingInput on the OrganizationSettingUpdateOne builder.
+func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput) *OrganizationSettingUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -1141,6 +1165,168 @@ func (c *PersonalAccessTokenUpdate) SetInput(i UpdatePersonalAccessTokenInput) *
 
 // SetInput applies the change-set in the UpdatePersonalAccessTokenInput on the PersonalAccessTokenUpdateOne builder.
 func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput) *PersonalAccessTokenUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateRefreshTokenInput represents a mutation input for creating refreshtokens.
+type CreateRefreshTokenInput struct {
+	ClientID                string
+	Scopes                  []string
+	Nonce                   string
+	ClaimsUserID            string
+	ClaimsUsername          string
+	ClaimsEmail             string
+	ClaimsEmailVerified     bool
+	ClaimsGroups            []string
+	ClaimsPreferredUsername string
+	ConnectorID             string
+	ConnectorData           []string
+	Token                   string
+	ObsoleteToken           string
+	LastUsed                *time.Time
+	UserID                  *string
+}
+
+// Mutate applies the CreateRefreshTokenInput on the RefreshTokenMutation builder.
+func (i *CreateRefreshTokenInput) Mutate(m *RefreshTokenMutation) {
+	m.SetClientID(i.ClientID)
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	m.SetNonce(i.Nonce)
+	m.SetClaimsUserID(i.ClaimsUserID)
+	m.SetClaimsUsername(i.ClaimsUsername)
+	m.SetClaimsEmail(i.ClaimsEmail)
+	m.SetClaimsEmailVerified(i.ClaimsEmailVerified)
+	if v := i.ClaimsGroups; v != nil {
+		m.SetClaimsGroups(v)
+	}
+	m.SetClaimsPreferredUsername(i.ClaimsPreferredUsername)
+	m.SetConnectorID(i.ConnectorID)
+	if v := i.ConnectorData; v != nil {
+		m.SetConnectorData(v)
+	}
+	m.SetToken(i.Token)
+	m.SetObsoleteToken(i.ObsoleteToken)
+	if v := i.LastUsed; v != nil {
+		m.SetLastUsed(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateRefreshTokenInput on the RefreshTokenCreate builder.
+func (c *RefreshTokenCreate) SetInput(i CreateRefreshTokenInput) *RefreshTokenCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateRefreshTokenInput represents a mutation input for updating refreshtokens.
+type UpdateRefreshTokenInput struct {
+	ClientID                *string
+	ClearScopes             bool
+	Scopes                  []string
+	AppendScopes            []string
+	Nonce                   *string
+	ClaimsUserID            *string
+	ClaimsUsername          *string
+	ClaimsEmail             *string
+	ClaimsEmailVerified     *bool
+	ClearClaimsGroups       bool
+	ClaimsGroups            []string
+	AppendClaimsGroups      []string
+	ClaimsPreferredUsername *string
+	ConnectorID             *string
+	ClearConnectorData      bool
+	ConnectorData           []string
+	AppendConnectorData     []string
+	Token                   *string
+	ObsoleteToken           *string
+	LastUsed                *time.Time
+	ClearUser               bool
+	UserID                  *string
+}
+
+// Mutate applies the UpdateRefreshTokenInput on the RefreshTokenMutation builder.
+func (i *UpdateRefreshTokenInput) Mutate(m *RefreshTokenMutation) {
+	if v := i.ClientID; v != nil {
+		m.SetClientID(*v)
+	}
+	if i.ClearScopes {
+		m.ClearScopes()
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(v)
+	}
+	if i.AppendScopes != nil {
+		m.AppendScopes(i.Scopes)
+	}
+	if v := i.Nonce; v != nil {
+		m.SetNonce(*v)
+	}
+	if v := i.ClaimsUserID; v != nil {
+		m.SetClaimsUserID(*v)
+	}
+	if v := i.ClaimsUsername; v != nil {
+		m.SetClaimsUsername(*v)
+	}
+	if v := i.ClaimsEmail; v != nil {
+		m.SetClaimsEmail(*v)
+	}
+	if v := i.ClaimsEmailVerified; v != nil {
+		m.SetClaimsEmailVerified(*v)
+	}
+	if i.ClearClaimsGroups {
+		m.ClearClaimsGroups()
+	}
+	if v := i.ClaimsGroups; v != nil {
+		m.SetClaimsGroups(v)
+	}
+	if i.AppendClaimsGroups != nil {
+		m.AppendClaimsGroups(i.ClaimsGroups)
+	}
+	if v := i.ClaimsPreferredUsername; v != nil {
+		m.SetClaimsPreferredUsername(*v)
+	}
+	if v := i.ConnectorID; v != nil {
+		m.SetConnectorID(*v)
+	}
+	if i.ClearConnectorData {
+		m.ClearConnectorData()
+	}
+	if v := i.ConnectorData; v != nil {
+		m.SetConnectorData(v)
+	}
+	if i.AppendConnectorData != nil {
+		m.AppendConnectorData(i.ConnectorData)
+	}
+	if v := i.Token; v != nil {
+		m.SetToken(*v)
+	}
+	if v := i.ObsoleteToken; v != nil {
+		m.SetObsoleteToken(*v)
+	}
+	if v := i.LastUsed; v != nil {
+		m.SetLastUsed(*v)
+	}
+	if i.ClearUser {
+		m.ClearUser()
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateRefreshTokenInput on the RefreshTokenUpdate builder.
+func (c *RefreshTokenUpdate) SetInput(i UpdateRefreshTokenInput) *RefreshTokenUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateRefreshTokenInput on the RefreshTokenUpdateOne builder.
+func (c *RefreshTokenUpdateOne) SetInput(i UpdateRefreshTokenInput) *RefreshTokenUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -1499,8 +1685,8 @@ func (c *UserUpdateOne) SetInput(i UpdateUserInput) *UserUpdateOne {
 	return c
 }
 
-// CreateUserSettingsInput represents a mutation input for creating usersettingsslice.
-type CreateUserSettingsInput struct {
+// CreateUserSettingInput represents a mutation input for creating usersettings.
+type CreateUserSettingInput struct {
 	CreatedAt      *time.Time
 	UpdatedAt      *time.Time
 	CreatedBy      *string
@@ -1509,15 +1695,16 @@ type CreateUserSettingsInput struct {
 	SilencedAt     *time.Time
 	SuspendedAt    *time.Time
 	RecoveryCode   *string
-	Status         *usersettings.Status
-	Role           *usersettings.Role
+	Status         *usersetting.Status
+	Role           *usersetting.Role
 	Permissions    []string
 	EmailConfirmed *bool
 	Tags           []string
+	UserID         *string
 }
 
-// Mutate applies the CreateUserSettingsInput on the UserSettingsMutation builder.
-func (i *CreateUserSettingsInput) Mutate(m *UserSettingsMutation) {
+// Mutate applies the CreateUserSettingInput on the UserSettingMutation builder.
+func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.CreatedAt; v != nil {
 		m.SetCreatedAt(*v)
 	}
@@ -1557,16 +1744,19 @@ func (i *CreateUserSettingsInput) Mutate(m *UserSettingsMutation) {
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
 }
 
-// SetInput applies the change-set in the CreateUserSettingsInput on the UserSettingsCreate builder.
-func (c *UserSettingsCreate) SetInput(i CreateUserSettingsInput) *UserSettingsCreate {
+// SetInput applies the change-set in the CreateUserSettingInput on the UserSettingCreate builder.
+func (c *UserSettingCreate) SetInput(i CreateUserSettingInput) *UserSettingCreate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// UpdateUserSettingsInput represents a mutation input for updating usersettingsslice.
-type UpdateUserSettingsInput struct {
+// UpdateUserSettingInput represents a mutation input for updating usersettings.
+type UpdateUserSettingInput struct {
 	UpdatedAt         *time.Time
 	ClearCreatedBy    bool
 	CreatedBy         *string
@@ -1579,17 +1769,19 @@ type UpdateUserSettingsInput struct {
 	SuspendedAt       *time.Time
 	ClearRecoveryCode bool
 	RecoveryCode      *string
-	Status            *usersettings.Status
-	Role              *usersettings.Role
+	Status            *usersetting.Status
+	Role              *usersetting.Role
 	Permissions       []string
 	AppendPermissions []string
 	EmailConfirmed    *bool
 	Tags              []string
 	AppendTags        []string
+	ClearUser         bool
+	UserID            *string
 }
 
-// Mutate applies the UpdateUserSettingsInput on the UserSettingsMutation builder.
-func (i *UpdateUserSettingsInput) Mutate(m *UserSettingsMutation) {
+// Mutate applies the UpdateUserSettingInput on the UserSettingMutation builder.
+func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
 	}
@@ -1647,16 +1839,22 @@ func (i *UpdateUserSettingsInput) Mutate(m *UserSettingsMutation) {
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
+	if i.ClearUser {
+		m.ClearUser()
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
 }
 
-// SetInput applies the change-set in the UpdateUserSettingsInput on the UserSettingsUpdate builder.
-func (c *UserSettingsUpdate) SetInput(i UpdateUserSettingsInput) *UserSettingsUpdate {
+// SetInput applies the change-set in the UpdateUserSettingInput on the UserSettingUpdate builder.
+func (c *UserSettingUpdate) SetInput(i UpdateUserSettingInput) *UserSettingUpdate {
 	i.Mutate(c.Mutation())
 	return c
 }
 
-// SetInput applies the change-set in the UpdateUserSettingsInput on the UserSettingsUpdateOne builder.
-func (c *UserSettingsUpdateOne) SetInput(i UpdateUserSettingsInput) *UserSettingsUpdateOne {
+// SetInput applies the change-set in the UpdateUserSettingInput on the UserSettingUpdateOne builder.
+func (c *UserSettingUpdateOne) SetInput(i UpdateUserSettingInput) *UserSettingUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

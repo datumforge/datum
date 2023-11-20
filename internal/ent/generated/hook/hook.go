@@ -33,16 +33,16 @@ func (f GroupFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupMutation", m)
 }
 
-// The GroupSettingsFunc type is an adapter to allow the use of ordinary
-// function as GroupSettings mutator.
-type GroupSettingsFunc func(context.Context, *generated.GroupSettingsMutation) (generated.Value, error)
+// The GroupSettingFunc type is an adapter to allow the use of ordinary
+// function as GroupSetting mutator.
+type GroupSettingFunc func(context.Context, *generated.GroupSettingMutation) (generated.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f GroupSettingsFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.GroupSettingsMutation); ok {
+func (f GroupSettingFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.GroupSettingMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupSettingsMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupSettingMutation", m)
 }
 
 // The IntegrationFunc type is an adapter to allow the use of ordinary
@@ -81,16 +81,16 @@ func (f OrganizationFunc) Mutate(ctx context.Context, m generated.Mutation) (gen
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationMutation", m)
 }
 
-// The OrganizationSettingsFunc type is an adapter to allow the use of ordinary
-// function as OrganizationSettings mutator.
-type OrganizationSettingsFunc func(context.Context, *generated.OrganizationSettingsMutation) (generated.Value, error)
+// The OrganizationSettingFunc type is an adapter to allow the use of ordinary
+// function as OrganizationSetting mutator.
+type OrganizationSettingFunc func(context.Context, *generated.OrganizationSettingMutation) (generated.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f OrganizationSettingsFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.OrganizationSettingsMutation); ok {
+func (f OrganizationSettingFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OrganizationSettingMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingsMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingMutation", m)
 }
 
 // The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary
@@ -141,16 +141,16 @@ func (f UserFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.V
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserMutation", m)
 }
 
-// The UserSettingsFunc type is an adapter to allow the use of ordinary
-// function as UserSettings mutator.
-type UserSettingsFunc func(context.Context, *generated.UserSettingsMutation) (generated.Value, error)
+// The UserSettingFunc type is an adapter to allow the use of ordinary
+// function as UserSetting mutator.
+type UserSettingFunc func(context.Context, *generated.UserSettingMutation) (generated.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f UserSettingsFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.UserSettingsMutation); ok {
+func (f UserSettingFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.UserSettingMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserSettingsMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserSettingMutation", m)
 }
 
 // Condition is a hook condition function.

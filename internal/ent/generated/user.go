@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // User is the model entity for the User schema.
@@ -61,7 +61,7 @@ type UserEdges struct {
 	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
-	Setting *UserSettings `json:"setting,omitempty"`
+	Setting *UserSetting `json:"setting,omitempty"`
 	// Refreshtoken holds the value of the refreshtoken edge.
 	Refreshtoken []*RefreshToken `json:"refreshtoken,omitempty"`
 	// loadedTypes holds the information for reporting if a
@@ -115,11 +115,11 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e UserEdges) SettingOrErr() (*UserSettings, error) {
+func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 	if e.loadedTypes[4] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: usersettings.Label}
+			return nil, &NotFoundError{label: usersetting.Label}
 		}
 		return e.Setting, nil
 	}
@@ -281,7 +281,7 @@ func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 }
 
 // QuerySetting queries the "setting" edge of the User entity.
-func (u *User) QuerySetting() *UserSettingsQuery {
+func (u *User) QuerySetting() *UserSettingQuery {
 	return NewUserClient(u.config).QuerySetting(u)
 }
 

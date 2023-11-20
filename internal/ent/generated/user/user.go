@@ -81,8 +81,8 @@ const (
 	PersonalAccessTokensColumn = "user_id"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "user_settings"
-	// SettingInverseTable is the table name for the UserSettings entity.
-	// It exists in this package in order to avoid circular dependency with the "usersettings" package.
+	// SettingInverseTable is the table name for the UserSetting entity.
+	// It exists in this package in order to avoid circular dependency with the "usersetting" package.
 	SettingInverseTable = "user_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "user_setting"

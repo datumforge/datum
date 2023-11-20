@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up refreshToken by ID
+    """
+     refreshToken(
+        """
+        ID of the refreshToken
+        """
+        id: ID!
+    ):  RefreshToken!
+}
+
+extend type Mutation{
+    """
+    Create a new refreshToken
+    """
+    createRefreshToken(
+        """
+        values of the refreshToken
+        """
+        input: CreateRefreshTokenInput!
+    ): RefreshTokenCreatePayload!
+    """
+    Update an existing refreshToken
+    """
+    updateRefreshToken(
+        """
+        ID of the refreshToken
+        """
+        id: ID!
+        """
+        New values for the refreshToken
+        """
+        input: UpdateRefreshTokenInput!
+    ): RefreshTokenUpdatePayload!
+    """
+    Delete an existing refreshToken
+    """
+    deleteRefreshToken(
+        """
+        ID of the refreshToken
+        """
+        id: ID!
+    ): RefreshTokenDeletePayload!
+}
+
+"""
+Return response for createRefreshToken mutation
+"""
+type RefreshTokenCreatePayload {
+    """
+    Created refreshToken
+    """
+    refreshToken: RefreshToken!
+}
+
+"""
+Return response for updateRefreshToken mutation
+"""
+type RefreshTokenUpdatePayload {
+    """
+    Updated refreshToken
+    """
+    refreshToken: RefreshToken!
+}
+
+"""
+Return response for deleteRefreshToken mutation
+"""
+type RefreshTokenDeletePayload {
+    """
+    Deleted refreshToken ID
+    """
+    deletedID: ID!
+}

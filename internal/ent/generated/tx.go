@@ -16,16 +16,16 @@ type Tx struct {
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
-	// GroupSettings is the client for interacting with the GroupSettings builders.
-	GroupSettings *GroupSettingsClient
+	// GroupSetting is the client for interacting with the GroupSetting builders.
+	GroupSetting *GroupSettingClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
-	// OrganizationSettings is the client for interacting with the OrganizationSettings builders.
-	OrganizationSettings *OrganizationSettingsClient
+	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
+	OrganizationSetting *OrganizationSettingClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
 	// RefreshToken is the client for interacting with the RefreshToken builders.
@@ -34,8 +34,8 @@ type Tx struct {
 	Session *SessionClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
-	// UserSettings is the client for interacting with the UserSettings builders.
-	UserSettings *UserSettingsClient
+	// UserSetting is the client for interacting with the UserSetting builders.
+	UserSetting *UserSettingClient
 
 	// lazily loaded.
 	client     *Client
@@ -169,16 +169,16 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
-	tx.GroupSettings = NewGroupSettingsClient(tx.config)
+	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
-	tx.OrganizationSettings = NewOrganizationSettingsClient(tx.config)
+	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.RefreshToken = NewRefreshTokenClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.User = NewUserClient(tx.config)
-	tx.UserSettings = NewUserSettingsClient(tx.config)
+	tx.UserSetting = NewUserSettingClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

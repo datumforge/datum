@@ -5,17 +5,17 @@ package generated
 import (
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -75,24 +75,24 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   groupsettings.Table,
-			Columns: groupsettings.Columns,
+			Table:   groupsetting.Table,
+			Columns: groupsetting.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeString,
-				Column: groupsettings.FieldID,
+				Column: groupsetting.FieldID,
 			},
 		},
-		Type: "GroupSettings",
+		Type: "GroupSetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			groupsettings.FieldCreatedAt:    {Type: field.TypeTime, Column: groupsettings.FieldCreatedAt},
-			groupsettings.FieldUpdatedAt:    {Type: field.TypeTime, Column: groupsettings.FieldUpdatedAt},
-			groupsettings.FieldCreatedBy:    {Type: field.TypeString, Column: groupsettings.FieldCreatedBy},
-			groupsettings.FieldUpdatedBy:    {Type: field.TypeString, Column: groupsettings.FieldUpdatedBy},
-			groupsettings.FieldVisibility:   {Type: field.TypeEnum, Column: groupsettings.FieldVisibility},
-			groupsettings.FieldJoinPolicy:   {Type: field.TypeEnum, Column: groupsettings.FieldJoinPolicy},
-			groupsettings.FieldTags:         {Type: field.TypeJSON, Column: groupsettings.FieldTags},
-			groupsettings.FieldSyncToSlack:  {Type: field.TypeBool, Column: groupsettings.FieldSyncToSlack},
-			groupsettings.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsettings.FieldSyncToGithub},
+			groupsetting.FieldCreatedAt:    {Type: field.TypeTime, Column: groupsetting.FieldCreatedAt},
+			groupsetting.FieldUpdatedAt:    {Type: field.TypeTime, Column: groupsetting.FieldUpdatedAt},
+			groupsetting.FieldCreatedBy:    {Type: field.TypeString, Column: groupsetting.FieldCreatedBy},
+			groupsetting.FieldUpdatedBy:    {Type: field.TypeString, Column: groupsetting.FieldUpdatedBy},
+			groupsetting.FieldVisibility:   {Type: field.TypeEnum, Column: groupsetting.FieldVisibility},
+			groupsetting.FieldJoinPolicy:   {Type: field.TypeEnum, Column: groupsetting.FieldJoinPolicy},
+			groupsetting.FieldTags:         {Type: field.TypeJSON, Column: groupsetting.FieldTags},
+			groupsetting.FieldSyncToSlack:  {Type: field.TypeBool, Column: groupsetting.FieldSyncToSlack},
+			groupsetting.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsetting.FieldSyncToGithub},
 		},
 	}
 	graph.Nodes[3] = &sqlgraph.Node{
@@ -165,29 +165,29 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   organizationsettings.Table,
-			Columns: organizationsettings.Columns,
+			Table:   organizationsetting.Table,
+			Columns: organizationsetting.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeString,
-				Column: organizationsettings.FieldID,
+				Column: organizationsetting.FieldID,
 			},
 		},
-		Type: "OrganizationSettings",
+		Type: "OrganizationSetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			organizationsettings.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsettings.FieldCreatedAt},
-			organizationsettings.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsettings.FieldUpdatedAt},
-			organizationsettings.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsettings.FieldCreatedBy},
-			organizationsettings.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsettings.FieldUpdatedBy},
-			organizationsettings.FieldDomains:        {Type: field.TypeJSON, Column: organizationsettings.FieldDomains},
-			organizationsettings.FieldSSOCert:        {Type: field.TypeString, Column: organizationsettings.FieldSSOCert},
-			organizationsettings.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsettings.FieldSSOEntrypoint},
-			organizationsettings.FieldSSOIssuer:      {Type: field.TypeString, Column: organizationsettings.FieldSSOIssuer},
-			organizationsettings.FieldBillingContact: {Type: field.TypeString, Column: organizationsettings.FieldBillingContact},
-			organizationsettings.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsettings.FieldBillingEmail},
-			organizationsettings.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsettings.FieldBillingPhone},
-			organizationsettings.FieldBillingAddress: {Type: field.TypeString, Column: organizationsettings.FieldBillingAddress},
-			organizationsettings.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsettings.FieldTaxIdentifier},
-			organizationsettings.FieldTags:           {Type: field.TypeJSON, Column: organizationsettings.FieldTags},
+			organizationsetting.FieldCreatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldCreatedAt},
+			organizationsetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldUpdatedAt},
+			organizationsetting.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldCreatedBy},
+			organizationsetting.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldUpdatedBy},
+			organizationsetting.FieldDomains:        {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
+			organizationsetting.FieldSSOCert:        {Type: field.TypeString, Column: organizationsetting.FieldSSOCert},
+			organizationsetting.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsetting.FieldSSOEntrypoint},
+			organizationsetting.FieldSSOIssuer:      {Type: field.TypeString, Column: organizationsetting.FieldSSOIssuer},
+			organizationsetting.FieldBillingContact: {Type: field.TypeString, Column: organizationsetting.FieldBillingContact},
+			organizationsetting.FieldBillingEmail:   {Type: field.TypeString, Column: organizationsetting.FieldBillingEmail},
+			organizationsetting.FieldBillingPhone:   {Type: field.TypeString, Column: organizationsetting.FieldBillingPhone},
+			organizationsetting.FieldBillingAddress: {Type: field.TypeString, Column: organizationsetting.FieldBillingAddress},
+			organizationsetting.FieldTaxIdentifier:  {Type: field.TypeString, Column: organizationsetting.FieldTaxIdentifier},
+			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
@@ -290,28 +290,28 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
-			Table:   usersettings.Table,
-			Columns: usersettings.Columns,
+			Table:   usersetting.Table,
+			Columns: usersetting.Columns,
 			ID: &sqlgraph.FieldSpec{
 				Type:   field.TypeString,
-				Column: usersettings.FieldID,
+				Column: usersetting.FieldID,
 			},
 		},
-		Type: "UserSettings",
+		Type: "UserSetting",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			usersettings.FieldCreatedAt:      {Type: field.TypeTime, Column: usersettings.FieldCreatedAt},
-			usersettings.FieldUpdatedAt:      {Type: field.TypeTime, Column: usersettings.FieldUpdatedAt},
-			usersettings.FieldCreatedBy:      {Type: field.TypeString, Column: usersettings.FieldCreatedBy},
-			usersettings.FieldUpdatedBy:      {Type: field.TypeString, Column: usersettings.FieldUpdatedBy},
-			usersettings.FieldLocked:         {Type: field.TypeBool, Column: usersettings.FieldLocked},
-			usersettings.FieldSilencedAt:     {Type: field.TypeTime, Column: usersettings.FieldSilencedAt},
-			usersettings.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersettings.FieldSuspendedAt},
-			usersettings.FieldRecoveryCode:   {Type: field.TypeString, Column: usersettings.FieldRecoveryCode},
-			usersettings.FieldStatus:         {Type: field.TypeEnum, Column: usersettings.FieldStatus},
-			usersettings.FieldRole:           {Type: field.TypeEnum, Column: usersettings.FieldRole},
-			usersettings.FieldPermissions:    {Type: field.TypeJSON, Column: usersettings.FieldPermissions},
-			usersettings.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersettings.FieldEmailConfirmed},
-			usersettings.FieldTags:           {Type: field.TypeJSON, Column: usersettings.FieldTags},
+			usersetting.FieldCreatedAt:      {Type: field.TypeTime, Column: usersetting.FieldCreatedAt},
+			usersetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: usersetting.FieldUpdatedAt},
+			usersetting.FieldCreatedBy:      {Type: field.TypeString, Column: usersetting.FieldCreatedBy},
+			usersetting.FieldUpdatedBy:      {Type: field.TypeString, Column: usersetting.FieldUpdatedBy},
+			usersetting.FieldLocked:         {Type: field.TypeBool, Column: usersetting.FieldLocked},
+			usersetting.FieldSilencedAt:     {Type: field.TypeTime, Column: usersetting.FieldSilencedAt},
+			usersetting.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersetting.FieldSuspendedAt},
+			usersetting.FieldRecoveryCode:   {Type: field.TypeString, Column: usersetting.FieldRecoveryCode},
+			usersetting.FieldStatus:         {Type: field.TypeEnum, Column: usersetting.FieldStatus},
+			usersetting.FieldRole:           {Type: field.TypeEnum, Column: usersetting.FieldRole},
+			usersetting.FieldPermissions:    {Type: field.TypeJSON, Column: usersetting.FieldPermissions},
+			usersetting.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
+			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
 		},
 	}
 	graph.MustAddE(
@@ -336,7 +336,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"Group",
-		"GroupSettings",
+		"GroupSetting",
 	)
 	graph.MustAddE(
 		"users",
@@ -367,11 +367,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   groupsettings.GroupTable,
-			Columns: []string{groupsettings.GroupColumn},
+			Table:   groupsetting.GroupTable,
+			Columns: []string{groupsetting.GroupColumn},
 			Bidi:    false,
 		},
-		"GroupSettings",
+		"GroupSetting",
 		"Group",
 	)
 	graph.MustAddE(
@@ -468,7 +468,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"Organization",
-		"OrganizationSettings",
+		"OrganizationSetting",
 	)
 	graph.MustAddE(
 		"entitlements",
@@ -499,11 +499,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsettings.OrgnaizationTable,
-			Columns: []string{organizationsettings.OrgnaizationColumn},
+			Table:   organizationsetting.OrgnaizationTable,
+			Columns: []string{organizationsetting.OrgnaizationColumn},
 			Bidi:    false,
 		},
-		"OrganizationSettings",
+		"OrganizationSetting",
 		"Organization",
 	)
 	graph.MustAddE(
@@ -600,7 +600,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Bidi:    false,
 		},
 		"User",
-		"UserSettings",
+		"UserSetting",
 	)
 	graph.MustAddE(
 		"refreshtoken",
@@ -619,11 +619,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   usersettings.UserTable,
-			Columns: []string{usersettings.UserColumn},
+			Table:   usersetting.UserTable,
+			Columns: []string{usersetting.UserColumn},
 			Bidi:    false,
 		},
-		"UserSettings",
+		"UserSetting",
 		"User",
 	)
 	return graph
@@ -840,7 +840,7 @@ func (f *GroupFilter) WhereHasSetting() {
 }
 
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
-func (f *GroupFilter) WhereHasSettingWith(preds ...predicate.GroupSettings) {
+func (f *GroupFilter) WhereHasSettingWith(preds ...predicate.GroupSetting) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -877,33 +877,33 @@ func (f *GroupFilter) WhereHasOwnerWith(preds ...predicate.Organization) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (gsq *GroupSettingsQuery) addPredicate(pred func(s *sql.Selector)) {
+func (gsq *GroupSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	gsq.predicates = append(gsq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the GroupSettingsQuery builder.
-func (gsq *GroupSettingsQuery) Filter() *GroupSettingsFilter {
-	return &GroupSettingsFilter{config: gsq.config, predicateAdder: gsq}
+// Filter returns a Filter implementation to apply filters on the GroupSettingQuery builder.
+func (gsq *GroupSettingQuery) Filter() *GroupSettingFilter {
+	return &GroupSettingFilter{config: gsq.config, predicateAdder: gsq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *GroupSettingsMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *GroupSettingMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the GroupSettingsMutation builder.
-func (m *GroupSettingsMutation) Filter() *GroupSettingsFilter {
-	return &GroupSettingsFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the GroupSettingMutation builder.
+func (m *GroupSettingMutation) Filter() *GroupSettingFilter {
+	return &GroupSettingFilter{config: m.config, predicateAdder: m}
 }
 
-// GroupSettingsFilter provides a generic filtering capability at runtime for GroupSettingsQuery.
-type GroupSettingsFilter struct {
+// GroupSettingFilter provides a generic filtering capability at runtime for GroupSettingQuery.
+type GroupSettingFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *GroupSettingsFilter) Where(p entql.P) {
+func (f *GroupSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
@@ -912,62 +912,62 @@ func (f *GroupSettingsFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql string predicate on the id field.
-func (f *GroupSettingsFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(groupsettings.FieldID))
+func (f *GroupSettingFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *GroupSettingsFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(groupsettings.FieldCreatedAt))
+func (f *GroupSettingFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(groupsetting.FieldCreatedAt))
 }
 
 // WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *GroupSettingsFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(groupsettings.FieldUpdatedAt))
+func (f *GroupSettingFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(groupsetting.FieldUpdatedAt))
 }
 
 // WhereCreatedBy applies the entql string predicate on the created_by field.
-func (f *GroupSettingsFilter) WhereCreatedBy(p entql.StringP) {
-	f.Where(p.Field(groupsettings.FieldCreatedBy))
+func (f *GroupSettingFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldCreatedBy))
 }
 
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
-func (f *GroupSettingsFilter) WhereUpdatedBy(p entql.StringP) {
-	f.Where(p.Field(groupsettings.FieldUpdatedBy))
+func (f *GroupSettingFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldUpdatedBy))
 }
 
 // WhereVisibility applies the entql string predicate on the visibility field.
-func (f *GroupSettingsFilter) WhereVisibility(p entql.StringP) {
-	f.Where(p.Field(groupsettings.FieldVisibility))
+func (f *GroupSettingFilter) WhereVisibility(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldVisibility))
 }
 
 // WhereJoinPolicy applies the entql string predicate on the join_policy field.
-func (f *GroupSettingsFilter) WhereJoinPolicy(p entql.StringP) {
-	f.Where(p.Field(groupsettings.FieldJoinPolicy))
+func (f *GroupSettingFilter) WhereJoinPolicy(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldJoinPolicy))
 }
 
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
-func (f *GroupSettingsFilter) WhereTags(p entql.BytesP) {
-	f.Where(p.Field(groupsettings.FieldTags))
+func (f *GroupSettingFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(groupsetting.FieldTags))
 }
 
 // WhereSyncToSlack applies the entql bool predicate on the sync_to_slack field.
-func (f *GroupSettingsFilter) WhereSyncToSlack(p entql.BoolP) {
-	f.Where(p.Field(groupsettings.FieldSyncToSlack))
+func (f *GroupSettingFilter) WhereSyncToSlack(p entql.BoolP) {
+	f.Where(p.Field(groupsetting.FieldSyncToSlack))
 }
 
 // WhereSyncToGithub applies the entql bool predicate on the sync_to_github field.
-func (f *GroupSettingsFilter) WhereSyncToGithub(p entql.BoolP) {
-	f.Where(p.Field(groupsettings.FieldSyncToGithub))
+func (f *GroupSettingFilter) WhereSyncToGithub(p entql.BoolP) {
+	f.Where(p.Field(groupsetting.FieldSyncToGithub))
 }
 
 // WhereHasGroup applies a predicate to check if query has an edge group.
-func (f *GroupSettingsFilter) WhereHasGroup() {
+func (f *GroupSettingFilter) WhereHasGroup() {
 	f.Where(entql.HasEdge("group"))
 }
 
 // WhereHasGroupWith applies a predicate to check if query has an edge group with a given conditions (other predicates).
-func (f *GroupSettingsFilter) WhereHasGroupWith(preds ...predicate.Group) {
+func (f *GroupSettingFilter) WhereHasGroupWith(preds ...predicate.Group) {
 	f.Where(entql.HasEdgeWith("group", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -1344,7 +1344,7 @@ func (f *OrganizationFilter) WhereHasSetting() {
 }
 
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
-func (f *OrganizationFilter) WhereHasSettingWith(preds ...predicate.OrganizationSettings) {
+func (f *OrganizationFilter) WhereHasSettingWith(preds ...predicate.OrganizationSetting) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -1381,33 +1381,33 @@ func (f *OrganizationFilter) WhereHasOauthproviderWith(preds ...predicate.OauthP
 }
 
 // addPredicate implements the predicateAdder interface.
-func (osq *OrganizationSettingsQuery) addPredicate(pred func(s *sql.Selector)) {
+func (osq *OrganizationSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	osq.predicates = append(osq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the OrganizationSettingsQuery builder.
-func (osq *OrganizationSettingsQuery) Filter() *OrganizationSettingsFilter {
-	return &OrganizationSettingsFilter{config: osq.config, predicateAdder: osq}
+// Filter returns a Filter implementation to apply filters on the OrganizationSettingQuery builder.
+func (osq *OrganizationSettingQuery) Filter() *OrganizationSettingFilter {
+	return &OrganizationSettingFilter{config: osq.config, predicateAdder: osq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *OrganizationSettingsMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *OrganizationSettingMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the OrganizationSettingsMutation builder.
-func (m *OrganizationSettingsMutation) Filter() *OrganizationSettingsFilter {
-	return &OrganizationSettingsFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the OrganizationSettingMutation builder.
+func (m *OrganizationSettingMutation) Filter() *OrganizationSettingFilter {
+	return &OrganizationSettingFilter{config: m.config, predicateAdder: m}
 }
 
-// OrganizationSettingsFilter provides a generic filtering capability at runtime for OrganizationSettingsQuery.
-type OrganizationSettingsFilter struct {
+// OrganizationSettingFilter provides a generic filtering capability at runtime for OrganizationSettingQuery.
+type OrganizationSettingFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *OrganizationSettingsFilter) Where(p entql.P) {
+func (f *OrganizationSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
@@ -1416,87 +1416,87 @@ func (f *OrganizationSettingsFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql string predicate on the id field.
-func (f *OrganizationSettingsFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldID))
+func (f *OrganizationSettingFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *OrganizationSettingsFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(organizationsettings.FieldCreatedAt))
+func (f *OrganizationSettingFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsetting.FieldCreatedAt))
 }
 
 // WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *OrganizationSettingsFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(organizationsettings.FieldUpdatedAt))
+func (f *OrganizationSettingFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsetting.FieldUpdatedAt))
 }
 
 // WhereCreatedBy applies the entql string predicate on the created_by field.
-func (f *OrganizationSettingsFilter) WhereCreatedBy(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldCreatedBy))
+func (f *OrganizationSettingFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldCreatedBy))
 }
 
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
-func (f *OrganizationSettingsFilter) WhereUpdatedBy(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldUpdatedBy))
+func (f *OrganizationSettingFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldUpdatedBy))
 }
 
 // WhereDomains applies the entql json.RawMessage predicate on the domains field.
-func (f *OrganizationSettingsFilter) WhereDomains(p entql.BytesP) {
-	f.Where(p.Field(organizationsettings.FieldDomains))
+func (f *OrganizationSettingFilter) WhereDomains(p entql.BytesP) {
+	f.Where(p.Field(organizationsetting.FieldDomains))
 }
 
 // WhereSSOCert applies the entql string predicate on the sso_cert field.
-func (f *OrganizationSettingsFilter) WhereSSOCert(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldSSOCert))
+func (f *OrganizationSettingFilter) WhereSSOCert(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldSSOCert))
 }
 
 // WhereSSOEntrypoint applies the entql string predicate on the sso_entrypoint field.
-func (f *OrganizationSettingsFilter) WhereSSOEntrypoint(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldSSOEntrypoint))
+func (f *OrganizationSettingFilter) WhereSSOEntrypoint(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldSSOEntrypoint))
 }
 
 // WhereSSOIssuer applies the entql string predicate on the sso_issuer field.
-func (f *OrganizationSettingsFilter) WhereSSOIssuer(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldSSOIssuer))
+func (f *OrganizationSettingFilter) WhereSSOIssuer(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldSSOIssuer))
 }
 
 // WhereBillingContact applies the entql string predicate on the billing_contact field.
-func (f *OrganizationSettingsFilter) WhereBillingContact(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldBillingContact))
+func (f *OrganizationSettingFilter) WhereBillingContact(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldBillingContact))
 }
 
 // WhereBillingEmail applies the entql string predicate on the billing_email field.
-func (f *OrganizationSettingsFilter) WhereBillingEmail(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldBillingEmail))
+func (f *OrganizationSettingFilter) WhereBillingEmail(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldBillingEmail))
 }
 
 // WhereBillingPhone applies the entql string predicate on the billing_phone field.
-func (f *OrganizationSettingsFilter) WhereBillingPhone(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldBillingPhone))
+func (f *OrganizationSettingFilter) WhereBillingPhone(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldBillingPhone))
 }
 
 // WhereBillingAddress applies the entql string predicate on the billing_address field.
-func (f *OrganizationSettingsFilter) WhereBillingAddress(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldBillingAddress))
+func (f *OrganizationSettingFilter) WhereBillingAddress(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldBillingAddress))
 }
 
 // WhereTaxIdentifier applies the entql string predicate on the tax_identifier field.
-func (f *OrganizationSettingsFilter) WhereTaxIdentifier(p entql.StringP) {
-	f.Where(p.Field(organizationsettings.FieldTaxIdentifier))
+func (f *OrganizationSettingFilter) WhereTaxIdentifier(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldTaxIdentifier))
 }
 
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
-func (f *OrganizationSettingsFilter) WhereTags(p entql.BytesP) {
-	f.Where(p.Field(organizationsettings.FieldTags))
+func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(organizationsetting.FieldTags))
 }
 
 // WhereHasOrgnaization applies a predicate to check if query has an edge orgnaization.
-func (f *OrganizationSettingsFilter) WhereHasOrgnaization() {
+func (f *OrganizationSettingFilter) WhereHasOrgnaization() {
 	f.Where(entql.HasEdge("orgnaization"))
 }
 
 // WhereHasOrgnaizationWith applies a predicate to check if query has an edge orgnaization with a given conditions (other predicates).
-func (f *OrganizationSettingsFilter) WhereHasOrgnaizationWith(preds ...predicate.Organization) {
+func (f *OrganizationSettingFilter) WhereHasOrgnaizationWith(preds ...predicate.Organization) {
 	f.Where(entql.HasEdgeWith("orgnaization", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -1998,7 +1998,7 @@ func (f *UserFilter) WhereHasSetting() {
 }
 
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
-func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSettings) {
+func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSetting) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
@@ -2021,33 +2021,33 @@ func (f *UserFilter) WhereHasRefreshtokenWith(preds ...predicate.RefreshToken) {
 }
 
 // addPredicate implements the predicateAdder interface.
-func (usq *UserSettingsQuery) addPredicate(pred func(s *sql.Selector)) {
+func (usq *UserSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	usq.predicates = append(usq.predicates, pred)
 }
 
-// Filter returns a Filter implementation to apply filters on the UserSettingsQuery builder.
-func (usq *UserSettingsQuery) Filter() *UserSettingsFilter {
-	return &UserSettingsFilter{config: usq.config, predicateAdder: usq}
+// Filter returns a Filter implementation to apply filters on the UserSettingQuery builder.
+func (usq *UserSettingQuery) Filter() *UserSettingFilter {
+	return &UserSettingFilter{config: usq.config, predicateAdder: usq}
 }
 
 // addPredicate implements the predicateAdder interface.
-func (m *UserSettingsMutation) addPredicate(pred func(s *sql.Selector)) {
+func (m *UserSettingMutation) addPredicate(pred func(s *sql.Selector)) {
 	m.predicates = append(m.predicates, pred)
 }
 
-// Filter returns an entql.Where implementation to apply filters on the UserSettingsMutation builder.
-func (m *UserSettingsMutation) Filter() *UserSettingsFilter {
-	return &UserSettingsFilter{config: m.config, predicateAdder: m}
+// Filter returns an entql.Where implementation to apply filters on the UserSettingMutation builder.
+func (m *UserSettingMutation) Filter() *UserSettingFilter {
+	return &UserSettingFilter{config: m.config, predicateAdder: m}
 }
 
-// UserSettingsFilter provides a generic filtering capability at runtime for UserSettingsQuery.
-type UserSettingsFilter struct {
+// UserSettingFilter provides a generic filtering capability at runtime for UserSettingQuery.
+type UserSettingFilter struct {
 	predicateAdder
 	config
 }
 
 // Where applies the entql predicate on the query filter.
-func (f *UserSettingsFilter) Where(p entql.P) {
+func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
 		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
@@ -2056,82 +2056,82 @@ func (f *UserSettingsFilter) Where(p entql.P) {
 }
 
 // WhereID applies the entql string predicate on the id field.
-func (f *UserSettingsFilter) WhereID(p entql.StringP) {
-	f.Where(p.Field(usersettings.FieldID))
+func (f *UserSettingFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldID))
 }
 
 // WhereCreatedAt applies the entql time.Time predicate on the created_at field.
-func (f *UserSettingsFilter) WhereCreatedAt(p entql.TimeP) {
-	f.Where(p.Field(usersettings.FieldCreatedAt))
+func (f *UserSettingFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(usersetting.FieldCreatedAt))
 }
 
 // WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
-func (f *UserSettingsFilter) WhereUpdatedAt(p entql.TimeP) {
-	f.Where(p.Field(usersettings.FieldUpdatedAt))
+func (f *UserSettingFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(usersetting.FieldUpdatedAt))
 }
 
 // WhereCreatedBy applies the entql string predicate on the created_by field.
-func (f *UserSettingsFilter) WhereCreatedBy(p entql.StringP) {
-	f.Where(p.Field(usersettings.FieldCreatedBy))
+func (f *UserSettingFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldCreatedBy))
 }
 
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
-func (f *UserSettingsFilter) WhereUpdatedBy(p entql.StringP) {
-	f.Where(p.Field(usersettings.FieldUpdatedBy))
+func (f *UserSettingFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldUpdatedBy))
 }
 
 // WhereLocked applies the entql bool predicate on the locked field.
-func (f *UserSettingsFilter) WhereLocked(p entql.BoolP) {
-	f.Where(p.Field(usersettings.FieldLocked))
+func (f *UserSettingFilter) WhereLocked(p entql.BoolP) {
+	f.Where(p.Field(usersetting.FieldLocked))
 }
 
 // WhereSilencedAt applies the entql time.Time predicate on the silenced_at field.
-func (f *UserSettingsFilter) WhereSilencedAt(p entql.TimeP) {
-	f.Where(p.Field(usersettings.FieldSilencedAt))
+func (f *UserSettingFilter) WhereSilencedAt(p entql.TimeP) {
+	f.Where(p.Field(usersetting.FieldSilencedAt))
 }
 
 // WhereSuspendedAt applies the entql time.Time predicate on the suspended_at field.
-func (f *UserSettingsFilter) WhereSuspendedAt(p entql.TimeP) {
-	f.Where(p.Field(usersettings.FieldSuspendedAt))
+func (f *UserSettingFilter) WhereSuspendedAt(p entql.TimeP) {
+	f.Where(p.Field(usersetting.FieldSuspendedAt))
 }
 
 // WhereRecoveryCode applies the entql string predicate on the recovery_code field.
-func (f *UserSettingsFilter) WhereRecoveryCode(p entql.StringP) {
-	f.Where(p.Field(usersettings.FieldRecoveryCode))
+func (f *UserSettingFilter) WhereRecoveryCode(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldRecoveryCode))
 }
 
 // WhereStatus applies the entql string predicate on the status field.
-func (f *UserSettingsFilter) WhereStatus(p entql.StringP) {
-	f.Where(p.Field(usersettings.FieldStatus))
+func (f *UserSettingFilter) WhereStatus(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldStatus))
 }
 
 // WhereRole applies the entql string predicate on the role field.
-func (f *UserSettingsFilter) WhereRole(p entql.StringP) {
-	f.Where(p.Field(usersettings.FieldRole))
+func (f *UserSettingFilter) WhereRole(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldRole))
 }
 
 // WherePermissions applies the entql json.RawMessage predicate on the permissions field.
-func (f *UserSettingsFilter) WherePermissions(p entql.BytesP) {
-	f.Where(p.Field(usersettings.FieldPermissions))
+func (f *UserSettingFilter) WherePermissions(p entql.BytesP) {
+	f.Where(p.Field(usersetting.FieldPermissions))
 }
 
 // WhereEmailConfirmed applies the entql bool predicate on the email_confirmed field.
-func (f *UserSettingsFilter) WhereEmailConfirmed(p entql.BoolP) {
-	f.Where(p.Field(usersettings.FieldEmailConfirmed))
+func (f *UserSettingFilter) WhereEmailConfirmed(p entql.BoolP) {
+	f.Where(p.Field(usersetting.FieldEmailConfirmed))
 }
 
 // WhereTags applies the entql json.RawMessage predicate on the tags field.
-func (f *UserSettingsFilter) WhereTags(p entql.BytesP) {
-	f.Where(p.Field(usersettings.FieldTags))
+func (f *UserSettingFilter) WhereTags(p entql.BytesP) {
+	f.Where(p.Field(usersetting.FieldTags))
 }
 
 // WhereHasUser applies a predicate to check if query has an edge user.
-func (f *UserSettingsFilter) WhereHasUser() {
+func (f *UserSettingFilter) WhereHasUser() {
 	f.Where(entql.HasEdge("user"))
 }
 
 // WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
-func (f *UserSettingsFilter) WhereHasUserWith(preds ...predicate.User) {
+func (f *UserSettingFilter) WhereHasUserWith(preds ...predicate.User) {
 	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)

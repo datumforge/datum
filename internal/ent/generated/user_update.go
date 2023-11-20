@@ -18,7 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -282,14 +282,14 @@ func (uu *UserUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserUp
 	return uu.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+// SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uu *UserUpdate) SetSettingID(id string) *UserUpdate {
 	uu.mutation.SetSettingID(id)
 	return uu
 }
 
-// SetSetting sets the "setting" edge to the UserSettings entity.
-func (uu *UserUpdate) SetSetting(u *UserSettings) *UserUpdate {
+// SetSetting sets the "setting" edge to the UserSetting entity.
+func (uu *UserUpdate) SetSetting(u *UserSetting) *UserUpdate {
 	return uu.SetSettingID(u.ID)
 }
 
@@ -397,7 +397,7 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 	return uu.RemovePersonalAccessTokenIDs(ids...)
 }
 
-// ClearSetting clears the "setting" edge to the UserSettings entity.
+// ClearSetting clears the "setting" edge to the UserSetting entity.
 func (uu *UserUpdate) ClearSetting() *UserUpdate {
 	uu.mutation.ClearSetting()
 	return uu
@@ -787,10 +787,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.UserSettings
+		edge.Schema = uu.schemaConfig.UserSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uu.mutation.SettingIDs(); len(nodes) > 0 {
@@ -801,10 +801,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.UserSettings
+		edge.Schema = uu.schemaConfig.UserSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1126,14 +1126,14 @@ func (uuo *UserUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *Us
 	return uuo.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+// SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uuo *UserUpdateOne) SetSettingID(id string) *UserUpdateOne {
 	uuo.mutation.SetSettingID(id)
 	return uuo
 }
 
-// SetSetting sets the "setting" edge to the UserSettings entity.
-func (uuo *UserUpdateOne) SetSetting(u *UserSettings) *UserUpdateOne {
+// SetSetting sets the "setting" edge to the UserSetting entity.
+func (uuo *UserUpdateOne) SetSetting(u *UserSetting) *UserUpdateOne {
 	return uuo.SetSettingID(u.ID)
 }
 
@@ -1241,7 +1241,7 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 	return uuo.RemovePersonalAccessTokenIDs(ids...)
 }
 
-// ClearSetting clears the "setting" edge to the UserSettings entity.
+// ClearSetting clears the "setting" edge to the UserSetting entity.
 func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
 	uuo.mutation.ClearSetting()
 	return uuo
@@ -1661,10 +1661,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.UserSettings
+		edge.Schema = uuo.schemaConfig.UserSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uuo.mutation.SettingIDs(); len(nodes) > 0 {
@@ -1675,10 +1675,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.UserSettings
+		edge.Schema = uuo.schemaConfig.UserSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

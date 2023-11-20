@@ -16,7 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -258,14 +258,14 @@ func (uc *UserCreate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserCr
 	return uc.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+// SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uc *UserCreate) SetSettingID(id string) *UserCreate {
 	uc.mutation.SetSettingID(id)
 	return uc
 }
 
-// SetSetting sets the "setting" edge to the UserSettings entity.
-func (uc *UserCreate) SetSetting(u *UserSettings) *UserCreate {
+// SetSetting sets the "setting" edge to the UserSetting entity.
+func (uc *UserCreate) SetSetting(u *UserSetting) *UserCreate {
 	return uc.SetSettingID(u.ID)
 }
 
@@ -566,10 +566,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uc.schemaConfig.UserSettings
+		edge.Schema = uc.schemaConfig.UserSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

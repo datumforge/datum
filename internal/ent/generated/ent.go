@@ -14,16 +14,16 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -84,18 +84,18 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			entitlement.Table:          entitlement.ValidColumn,
-			group.Table:                group.ValidColumn,
-			groupsettings.Table:        groupsettings.ValidColumn,
-			integration.Table:          integration.ValidColumn,
-			oauthprovider.Table:        oauthprovider.ValidColumn,
-			organization.Table:         organization.ValidColumn,
-			organizationsettings.Table: organizationsettings.ValidColumn,
-			personalaccesstoken.Table:  personalaccesstoken.ValidColumn,
-			refreshtoken.Table:         refreshtoken.ValidColumn,
-			session.Table:              session.ValidColumn,
-			user.Table:                 user.ValidColumn,
-			usersettings.Table:         usersettings.ValidColumn,
+			entitlement.Table:         entitlement.ValidColumn,
+			group.Table:               group.ValidColumn,
+			groupsetting.Table:        groupsetting.ValidColumn,
+			integration.Table:         integration.ValidColumn,
+			oauthprovider.Table:       oauthprovider.ValidColumn,
+			organization.Table:        organization.ValidColumn,
+			organizationsetting.Table: organizationsetting.ValidColumn,
+			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
+			refreshtoken.Table:        refreshtoken.ValidColumn,
+			session.Table:             session.ValidColumn,
+			user.Table:                user.ValidColumn,
+			usersetting.Table:         usersetting.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

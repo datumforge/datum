@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -28,7 +28,7 @@ type GroupQuery struct {
 	order          []group.OrderOption
 	inters         []Interceptor
 	predicates     []predicate.Group
-	withSetting    *GroupSettingsQuery
+	withSetting    *GroupSettingQuery
 	withUsers      *UserQuery
 	withOwner      *OrganizationQuery
 	withFKs        bool
@@ -72,8 +72,8 @@ func (gq *GroupQuery) Order(o ...group.OrderOption) *GroupQuery {
 }
 
 // QuerySetting chains the current query on the "setting" edge.
-func (gq *GroupQuery) QuerySetting() *GroupSettingsQuery {
-	query := (&GroupSettingsClient{config: gq.config}).Query()
+func (gq *GroupQuery) QuerySetting() *GroupSettingQuery {
+	query := (&GroupSettingClient{config: gq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := gq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -84,12 +84,12 @@ func (gq *GroupQuery) QuerySetting() *GroupSettingsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(groupsettings.Table, groupsettings.FieldID),
+			sqlgraph.To(groupsetting.Table, groupsetting.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, group.SettingTable, group.SettingColumn),
 		)
 		schemaConfig := gq.schemaConfig
-		step.To.Schema = schemaConfig.GroupSettings
-		step.Edge.Schema = schemaConfig.GroupSettings
+		step.To.Schema = schemaConfig.GroupSetting
+		step.Edge.Schema = schemaConfig.GroupSetting
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -349,8 +349,8 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 
 // WithSetting tells the query-builder to eager-load the nodes that are connected to
 // the "setting" edge. The optional arguments are used to configure the query builder of the edge.
-func (gq *GroupQuery) WithSetting(opts ...func(*GroupSettingsQuery)) *GroupQuery {
-	query := (&GroupSettingsClient{config: gq.config}).Query()
+func (gq *GroupQuery) WithSetting(opts ...func(*GroupSettingQuery)) *GroupQuery {
+	query := (&GroupSettingClient{config: gq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -502,7 +502,7 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	}
 	if query := gq.withSetting; query != nil {
 		if err := gq.loadSetting(ctx, query, nodes, nil,
-			func(n *Group, e *GroupSettings) { n.Edges.Setting = e }); err != nil {
+			func(n *Group, e *GroupSetting) { n.Edges.Setting = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -534,7 +534,7 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	return nodes, nil
 }
 
-func (gq *GroupQuery) loadSetting(ctx context.Context, query *GroupSettingsQuery, nodes []*Group, init func(*Group), assign func(*Group, *GroupSettings)) error {
+func (gq *GroupQuery) loadSetting(ctx context.Context, query *GroupSettingQuery, nodes []*Group, init func(*Group), assign func(*Group, *GroupSetting)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*Group)
 	for i := range nodes {
@@ -542,7 +542,7 @@ func (gq *GroupQuery) loadSetting(ctx context.Context, query *GroupSettingsQuery
 		nodeids[nodes[i].ID] = nodes[i]
 	}
 	query.withFKs = true
-	query.Where(predicate.GroupSettings(func(s *sql.Selector) {
+	query.Where(predicate.GroupSetting(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(group.SettingColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

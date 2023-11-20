@@ -36,6 +36,24 @@ type GroupDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+// Return response for createGroupSetting mutation
+type GroupSettingCreatePayload struct {
+	// Created groupSetting
+	GroupSetting *generated.GroupSetting `json:"groupSetting"`
+}
+
+// Return response for deleteGroupSetting mutation
+type GroupSettingDeletePayload struct {
+	// Deleted groupSetting ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateGroupSetting mutation
+type GroupSettingUpdatePayload struct {
+	// Updated groupSetting
+	GroupSetting *generated.GroupSetting `json:"groupSetting"`
+}
+
 // Return response for updateGroup mutation
 type GroupUpdatePayload struct {
 	// Updated group
@@ -90,6 +108,24 @@ type OrganizationDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+// Return response for createOrganizationSetting mutation
+type OrganizationSettingCreatePayload struct {
+	// Created organizationSetting
+	OrganizationSetting *generated.OrganizationSetting `json:"organizationSetting"`
+}
+
+// Return response for deleteOrganizationSetting mutation
+type OrganizationSettingDeletePayload struct {
+	// Deleted organizationSetting ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateOrganizationSetting mutation
+type OrganizationSettingUpdatePayload struct {
+	// Updated organizationSetting
+	OrganizationSetting *generated.OrganizationSetting `json:"organizationSetting"`
+}
+
 // Return response for updateOrganization mutation
 type OrganizationUpdatePayload struct {
 	// Updated organization
@@ -112,6 +148,24 @@ type PersonalAccessTokenDeletePayload struct {
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
 	PersonalAccessToken *generated.PersonalAccessToken `json:"PersonalAccessToken"`
+}
+
+// Return response for createRefreshToken mutation
+type RefreshTokenCreatePayload struct {
+	// Created refreshToken
+	RefreshToken *generated.RefreshToken `json:"refreshToken"`
+}
+
+// Return response for deleteRefreshToken mutation
+type RefreshTokenDeletePayload struct {
+	// Deleted refreshToken ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateRefreshToken mutation
+type RefreshTokenUpdatePayload struct {
+	// Updated refreshToken
+	RefreshToken *generated.RefreshToken `json:"refreshToken"`
 }
 
 // Return response for createSession mutation
@@ -144,22 +198,22 @@ type UserDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response for createUserSettings mutation
-type UserSettingsCreatePayload struct {
-	// Created userSettings
-	UserSettings *generated.UserSettings `json:"UserSettings"`
+// Return response for createUserSetting mutation
+type UserSettingCreatePayload struct {
+	// Created userSetting
+	UserSetting *generated.UserSetting `json:"UserSetting"`
 }
 
-// Return response for deleteUserSettings mutation
-type UserSettingsDeletePayload struct {
-	// Deleted userSettings ID
+// Return response for deleteUserSetting mutation
+type UserSettingDeletePayload struct {
+	// Deleted userSetting ID
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response for updateUserSettings mutation
-type UserSettingsUpdatePayload struct {
-	// Updated userSettings
-	UserSettings *generated.UserSettings `json:"UserSettings"`
+// Return response for updateUserSetting mutation
+type UserSettingUpdatePayload struct {
+	// Updated userSetting
+	UserSetting *generated.UserSetting `json:"UserSetting"`
 }
 
 // Return response for updateUser mutation

@@ -10,16 +10,16 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/hashicorp/go-multierror"
 )
 
@@ -35,7 +35,7 @@ func (n *Entitlement) IsNode() {}
 func (n *Group) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *GroupSettings) IsNode() {}
+func (n *GroupSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Integration) IsNode() {}
@@ -47,7 +47,7 @@ func (n *OauthProvider) IsNode() {}
 func (n *Organization) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *OrganizationSettings) IsNode() {}
+func (n *OrganizationSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *PersonalAccessToken) IsNode() {}
@@ -62,7 +62,7 @@ func (n *Session) IsNode() {}
 func (n *User) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
-func (n *UserSettings) IsNode() {}
+func (n *UserSetting) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -146,10 +146,10 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
-	case groupsettings.Table:
-		query := c.GroupSettings.Query().
-			Where(groupsettings.ID(id))
-		query, err := query.CollectFields(ctx, "GroupSettings")
+	case groupsetting.Table:
+		query := c.GroupSetting.Query().
+			Where(groupsetting.ID(id))
+		query, err := query.CollectFields(ctx, "GroupSetting")
 		if err != nil {
 			return nil, err
 		}
@@ -194,10 +194,10 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
-	case organizationsettings.Table:
-		query := c.OrganizationSettings.Query().
-			Where(organizationsettings.ID(id))
-		query, err := query.CollectFields(ctx, "OrganizationSettings")
+	case organizationsetting.Table:
+		query := c.OrganizationSetting.Query().
+			Where(organizationsetting.ID(id))
+		query, err := query.CollectFields(ctx, "OrganizationSetting")
 		if err != nil {
 			return nil, err
 		}
@@ -254,10 +254,10 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
-	case usersettings.Table:
-		query := c.UserSettings.Query().
-			Where(usersettings.ID(id))
-		query, err := query.CollectFields(ctx, "UserSettings")
+	case usersetting.Table:
+		query := c.UserSetting.Query().
+			Where(usersetting.ID(id))
+		query, err := query.CollectFields(ctx, "UserSetting")
 		if err != nil {
 			return nil, err
 		}
@@ -371,10 +371,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case groupsettings.Table:
-		query := c.GroupSettings.Query().
-			Where(groupsettings.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "GroupSettings")
+	case groupsetting.Table:
+		query := c.GroupSetting.Query().
+			Where(groupsetting.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "GroupSetting")
 		if err != nil {
 			return nil, err
 		}
@@ -435,10 +435,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case organizationsettings.Table:
-		query := c.OrganizationSettings.Query().
-			Where(organizationsettings.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "OrganizationSettings")
+	case organizationsetting.Table:
+		query := c.OrganizationSetting.Query().
+			Where(organizationsetting.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "OrganizationSetting")
 		if err != nil {
 			return nil, err
 		}
@@ -515,10 +515,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case usersettings.Table:
-		query := c.UserSettings.Query().
-			Where(usersettings.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "UserSettings")
+	case usersetting.Table:
+		query := c.UserSetting.Query().
+			Where(usersetting.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserSetting")
 		if err != nil {
 			return nil, err
 		}

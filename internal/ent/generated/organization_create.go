@@ -15,7 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -223,13 +223,13 @@ func (oc *OrganizationCreate) AddIntegrations(i ...*Integration) *OrganizationCr
 	return oc.AddIntegrationIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the OrganizationSettings entity by ID.
+// SetSettingID sets the "setting" edge to the OrganizationSetting entity by ID.
 func (oc *OrganizationCreate) SetSettingID(id string) *OrganizationCreate {
 	oc.mutation.SetSettingID(id)
 	return oc
 }
 
-// SetNillableSettingID sets the "setting" edge to the OrganizationSettings entity by ID if the given value is not nil.
+// SetNillableSettingID sets the "setting" edge to the OrganizationSetting entity by ID if the given value is not nil.
 func (oc *OrganizationCreate) SetNillableSettingID(id *string) *OrganizationCreate {
 	if id != nil {
 		oc = oc.SetSettingID(*id)
@@ -237,8 +237,8 @@ func (oc *OrganizationCreate) SetNillableSettingID(id *string) *OrganizationCrea
 	return oc
 }
 
-// SetSetting sets the "setting" edge to the OrganizationSettings entity.
-func (oc *OrganizationCreate) SetSetting(o *OrganizationSettings) *OrganizationCreate {
+// SetSetting sets the "setting" edge to the OrganizationSetting entity.
+func (oc *OrganizationCreate) SetSetting(o *OrganizationSetting) *OrganizationCreate {
 	return oc.SetSettingID(o.ID)
 }
 
@@ -519,10 +519,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			Columns: []string{organization.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = oc.schemaConfig.OrganizationSettings
+		edge.Schema = oc.schemaConfig.OrganizationSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

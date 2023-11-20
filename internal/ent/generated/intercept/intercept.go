@@ -10,17 +10,17 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 // The Query interface represents an operation that queries a graph.
@@ -133,31 +133,31 @@ func (f TraverseGroup) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.GroupQuery", q)
 }
 
-// The GroupSettingsFunc type is an adapter to allow the use of ordinary function as a Querier.
-type GroupSettingsFunc func(context.Context, *generated.GroupSettingsQuery) (generated.Value, error)
+// The GroupSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
+type GroupSettingFunc func(context.Context, *generated.GroupSettingQuery) (generated.Value, error)
 
 // Query calls f(ctx, q).
-func (f GroupSettingsFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.GroupSettingsQuery); ok {
+func (f GroupSettingFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.GroupSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.GroupSettingsQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.GroupSettingQuery", q)
 }
 
-// The TraverseGroupSettings type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseGroupSettings func(context.Context, *generated.GroupSettingsQuery) error
+// The TraverseGroupSetting type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseGroupSetting func(context.Context, *generated.GroupSettingQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseGroupSettings) Intercept(next generated.Querier) generated.Querier {
+func (f TraverseGroupSetting) Intercept(next generated.Querier) generated.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseGroupSettings) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.GroupSettingsQuery); ok {
+func (f TraverseGroupSetting) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.GroupSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.GroupSettingsQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *generated.GroupSettingQuery", q)
 }
 
 // The IntegrationFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -241,31 +241,31 @@ func (f TraverseOrganization) Traverse(ctx context.Context, q generated.Query) e
 	return fmt.Errorf("unexpected query type %T. expect *generated.OrganizationQuery", q)
 }
 
-// The OrganizationSettingsFunc type is an adapter to allow the use of ordinary function as a Querier.
-type OrganizationSettingsFunc func(context.Context, *generated.OrganizationSettingsQuery) (generated.Value, error)
+// The OrganizationSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
+type OrganizationSettingFunc func(context.Context, *generated.OrganizationSettingQuery) (generated.Value, error)
 
 // Query calls f(ctx, q).
-func (f OrganizationSettingsFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.OrganizationSettingsQuery); ok {
+func (f OrganizationSettingFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.OrganizationSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.OrganizationSettingsQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.OrganizationSettingQuery", q)
 }
 
-// The TraverseOrganizationSettings type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseOrganizationSettings func(context.Context, *generated.OrganizationSettingsQuery) error
+// The TraverseOrganizationSetting type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseOrganizationSetting func(context.Context, *generated.OrganizationSettingQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseOrganizationSettings) Intercept(next generated.Querier) generated.Querier {
+func (f TraverseOrganizationSetting) Intercept(next generated.Querier) generated.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseOrganizationSettings) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.OrganizationSettingsQuery); ok {
+func (f TraverseOrganizationSetting) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrganizationSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.OrganizationSettingsQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *generated.OrganizationSettingQuery", q)
 }
 
 // The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -376,31 +376,31 @@ func (f TraverseUser) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.UserQuery", q)
 }
 
-// The UserSettingsFunc type is an adapter to allow the use of ordinary function as a Querier.
-type UserSettingsFunc func(context.Context, *generated.UserSettingsQuery) (generated.Value, error)
+// The UserSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
+type UserSettingFunc func(context.Context, *generated.UserSettingQuery) (generated.Value, error)
 
 // Query calls f(ctx, q).
-func (f UserSettingsFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.UserSettingsQuery); ok {
+func (f UserSettingFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.UserSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.UserSettingsQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.UserSettingQuery", q)
 }
 
-// The TraverseUserSettings type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseUserSettings func(context.Context, *generated.UserSettingsQuery) error
+// The TraverseUserSetting type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseUserSetting func(context.Context, *generated.UserSettingQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseUserSettings) Intercept(next generated.Querier) generated.Querier {
+func (f TraverseUserSetting) Intercept(next generated.Querier) generated.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseUserSettings) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.UserSettingsQuery); ok {
+func (f TraverseUserSetting) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.UserSettingsQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *generated.UserSettingQuery", q)
 }
 
 // NewQuery returns the generic Query interface for the given typed query.
@@ -410,16 +410,16 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.GroupQuery:
 		return &query[*generated.GroupQuery, predicate.Group, group.OrderOption]{typ: generated.TypeGroup, tq: q}, nil
-	case *generated.GroupSettingsQuery:
-		return &query[*generated.GroupSettingsQuery, predicate.GroupSettings, groupsettings.OrderOption]{typ: generated.TypeGroupSettings, tq: q}, nil
+	case *generated.GroupSettingQuery:
+		return &query[*generated.GroupSettingQuery, predicate.GroupSetting, groupsetting.OrderOption]{typ: generated.TypeGroupSetting, tq: q}, nil
 	case *generated.IntegrationQuery:
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
 	case *generated.OauthProviderQuery:
 		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
 	case *generated.OrganizationQuery:
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
-	case *generated.OrganizationSettingsQuery:
-		return &query[*generated.OrganizationSettingsQuery, predicate.OrganizationSettings, organizationsettings.OrderOption]{typ: generated.TypeOrganizationSettings, tq: q}, nil
+	case *generated.OrganizationSettingQuery:
+		return &query[*generated.OrganizationSettingQuery, predicate.OrganizationSetting, organizationsetting.OrderOption]{typ: generated.TypeOrganizationSetting, tq: q}, nil
 	case *generated.PersonalAccessTokenQuery:
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
 	case *generated.RefreshTokenQuery:
@@ -428,8 +428,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.SessionQuery, predicate.Session, session.OrderOption]{typ: generated.TypeSession, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
-	case *generated.UserSettingsQuery:
-		return &query[*generated.UserSettingsQuery, predicate.UserSettings, usersettings.OrderOption]{typ: generated.TypeUserSettings, tq: q}, nil
+	case *generated.UserSettingQuery:
+		return &query[*generated.UserSettingQuery, predicate.UserSetting, usersetting.OrderOption]{typ: generated.TypeUserSetting, tq: q}, nil
 	default:
 		return nil, fmt.Errorf("unknown query type %T", q)
 	}

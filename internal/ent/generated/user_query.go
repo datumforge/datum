@@ -19,7 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -35,7 +35,7 @@ type UserQuery struct {
 	withSessions                  *SessionQuery
 	withGroups                    *GroupQuery
 	withPersonalAccessTokens      *PersonalAccessTokenQuery
-	withSetting                   *UserSettingsQuery
+	withSetting                   *UserSettingQuery
 	withRefreshtoken              *RefreshTokenQuery
 	modifiers                     []func(*sql.Selector)
 	loadTotal                     []func(context.Context, []*User) error
@@ -181,8 +181,8 @@ func (uq *UserQuery) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 }
 
 // QuerySetting chains the current query on the "setting" edge.
-func (uq *UserQuery) QuerySetting() *UserSettingsQuery {
-	query := (&UserSettingsClient{config: uq.config}).Query()
+func (uq *UserQuery) QuerySetting() *UserSettingQuery {
+	query := (&UserSettingClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -193,12 +193,12 @@ func (uq *UserQuery) QuerySetting() *UserSettingsQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(usersettings.Table, usersettings.FieldID),
+			sqlgraph.To(usersetting.Table, usersetting.FieldID),
 			sqlgraph.Edge(sqlgraph.O2O, false, user.SettingTable, user.SettingColumn),
 		)
 		schemaConfig := uq.schemaConfig
-		step.To.Schema = schemaConfig.UserSettings
-		step.Edge.Schema = schemaConfig.UserSettings
+		step.To.Schema = schemaConfig.UserSetting
+		step.Edge.Schema = schemaConfig.UserSetting
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -480,8 +480,8 @@ func (uq *UserQuery) WithPersonalAccessTokens(opts ...func(*PersonalAccessTokenQ
 
 // WithSetting tells the query-builder to eager-load the nodes that are connected to
 // the "setting" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithSetting(opts ...func(*UserSettingsQuery)) *UserQuery {
-	query := (&UserSettingsClient{config: uq.config}).Query()
+func (uq *UserQuery) WithSetting(opts ...func(*UserSettingQuery)) *UserQuery {
+	query := (&UserSettingClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -648,7 +648,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	}
 	if query := uq.withSetting; query != nil {
 		if err := uq.loadSetting(ctx, query, nodes, nil,
-			func(n *User, e *UserSettings) { n.Edges.Setting = e }); err != nil {
+			func(n *User, e *UserSetting) { n.Edges.Setting = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -887,7 +887,7 @@ func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *Person
 	}
 	return nil
 }
-func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingsQuery, nodes []*User, init func(*User), assign func(*User, *UserSettings)) error {
+func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingQuery, nodes []*User, init func(*User), assign func(*User, *UserSetting)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
 	for i := range nodes {
@@ -895,7 +895,7 @@ func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingsQuery, 
 		nodeids[nodes[i].ID] = nodes[i]
 	}
 	query.withFKs = true
-	query.Where(predicate.UserSettings(func(s *sql.Selector) {
+	query.Where(predicate.UserSetting(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.SettingColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)

@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
@@ -133,14 +133,14 @@ func (gc *GroupCreate) SetNillableID(s *string) *GroupCreate {
 	return gc
 }
 
-// SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
+// SetSettingID sets the "setting" edge to the GroupSetting entity by ID.
 func (gc *GroupCreate) SetSettingID(id string) *GroupCreate {
 	gc.mutation.SetSettingID(id)
 	return gc
 }
 
-// SetSetting sets the "setting" edge to the GroupSettings entity.
-func (gc *GroupCreate) SetSetting(g *GroupSettings) *GroupCreate {
+// SetSetting sets the "setting" edge to the GroupSetting entity.
+func (gc *GroupCreate) SetSetting(g *GroupSetting) *GroupCreate {
 	return gc.SetSettingID(g.ID)
 }
 
@@ -361,10 +361,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(groupsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = gc.schemaConfig.GroupSettings
+		edge.Schema = gc.schemaConfig.GroupSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

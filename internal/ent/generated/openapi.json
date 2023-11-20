@@ -399,11 +399,11 @@
     "/group-settings": {
       "get": {
         "tags": [
-          "GroupSettings"
+          "GroupSetting"
         ],
         "summary": "List GroupSettings",
         "description": "List GroupSettings.",
-        "operationId": "listGroupSettings",
+        "operationId": "listGroupSetting",
         "parameters": [
           {
             "name": "page",
@@ -427,13 +427,13 @@
         ],
         "responses": {
           "200": {
-            "description": "result GroupSettings list",
+            "description": "result GroupSetting list",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/GroupSettingsList"
+                    "$ref": "#/components/schemas/GroupSettingList"
                   }
                 }
               }
@@ -455,13 +455,13 @@
       },
       "post": {
         "tags": [
-          "GroupSettings"
+          "GroupSetting"
         ],
-        "summary": "Create a new GroupSettings",
-        "description": "Creates a new GroupSettings and persists it to storage.",
-        "operationId": "createGroupSettings",
+        "summary": "Create a new GroupSetting",
+        "description": "Creates a new GroupSetting and persists it to storage.",
+        "operationId": "createGroupSetting",
         "requestBody": {
-          "description": "GroupSettings to create",
+          "description": "GroupSetting to create",
           "content": {
             "application/json": {
               "schema": {
@@ -531,11 +531,11 @@
         },
         "responses": {
           "200": {
-            "description": "GroupSettings created",
+            "description": "GroupSetting created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GroupSettingsCreate"
+                  "$ref": "#/components/schemas/GroupSettingCreate"
                 }
               }
             }
@@ -555,16 +555,16 @@
     "/group-settings/{id}": {
       "get": {
         "tags": [
-          "GroupSettings"
+          "GroupSetting"
         ],
-        "summary": "Find a GroupSettings by ID",
-        "description": "Finds the GroupSettings with the requested ID and returns it.",
-        "operationId": "readGroupSettings",
+        "summary": "Find a GroupSetting by ID",
+        "description": "Finds the GroupSetting with the requested ID and returns it.",
+        "operationId": "readGroupSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the GroupSettings",
+            "description": "ID of the GroupSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -573,11 +573,11 @@
         ],
         "responses": {
           "200": {
-            "description": "GroupSettings with requested ID was found",
+            "description": "GroupSetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GroupSettingsRead"
+                  "$ref": "#/components/schemas/GroupSettingRead"
                 }
               }
             }
@@ -598,16 +598,16 @@
       },
       "delete": {
         "tags": [
-          "GroupSettings"
+          "GroupSetting"
         ],
-        "summary": "Deletes a GroupSettings by ID",
-        "description": "Deletes the GroupSettings with the requested ID.",
-        "operationId": "deleteGroupSettings",
+        "summary": "Deletes a GroupSetting by ID",
+        "description": "Deletes the GroupSetting with the requested ID.",
+        "operationId": "deleteGroupSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the GroupSettings",
+            "description": "ID of the GroupSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -616,7 +616,7 @@
         ],
         "responses": {
           "204": {
-            "description": "GroupSettings with requested ID was deleted"
+            "description": "GroupSetting with requested ID was deleted"
           },
           "400": {
             "$ref": "#/components/responses/400"
@@ -634,16 +634,16 @@
       },
       "patch": {
         "tags": [
-          "GroupSettings"
+          "GroupSetting"
         ],
-        "summary": "Updates a GroupSettings",
-        "description": "Updates a GroupSettings and persists changes to storage.",
-        "operationId": "updateGroupSettings",
+        "summary": "Updates a GroupSetting",
+        "description": "Updates a GroupSetting and persists changes to storage.",
+        "operationId": "updateGroupSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the GroupSettings",
+            "description": "ID of the GroupSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -651,7 +651,7 @@
           }
         ],
         "requestBody": {
-          "description": "GroupSettings properties to update",
+          "description": "GroupSetting properties to update",
           "content": {
             "application/json": {
               "schema": {
@@ -708,11 +708,11 @@
         },
         "responses": {
           "200": {
-            "description": "GroupSettings updated",
+            "description": "GroupSetting updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GroupSettingsUpdate"
+                  "$ref": "#/components/schemas/GroupSettingUpdate"
                 }
               }
             }
@@ -735,16 +735,16 @@
     "/group-settings/{id}/group": {
       "get": {
         "tags": [
-          "GroupSettings"
+          "GroupSetting"
         ],
         "summary": "Find the attached Group",
-        "description": "Find the attached Group of the GroupSettings with the given ID",
-        "operationId": "readGroupSettingsGroup",
+        "description": "Find the attached Group of the GroupSetting with the given ID",
+        "operationId": "readGroupSettingGroup",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the GroupSettings",
+            "description": "ID of the GroupSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -753,11 +753,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Group attached to GroupSettings with requested ID was found",
+            "description": "Group attached to GroupSetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/GroupSettings_GroupRead"
+                  "$ref": "#/components/schemas/GroupSetting_GroupRead"
                 }
               }
             }
@@ -1145,8 +1145,8 @@
         "tags": [
           "Group"
         ],
-        "summary": "Find the attached GroupSettings",
-        "description": "Find the attached GroupSettings of the Group with the given ID",
+        "summary": "Find the attached GroupSetting",
+        "description": "Find the attached GroupSetting of the Group with the given ID",
         "operationId": "readGroupSetting",
         "parameters": [
           {
@@ -1161,7 +1161,7 @@
         ],
         "responses": {
           "200": {
-            "description": "GroupSettings attached to Group with requested ID was found",
+            "description": "GroupSetting attached to Group with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1974,11 +1974,11 @@
     "/organization-settings": {
       "get": {
         "tags": [
-          "OrganizationSettings"
+          "OrganizationSetting"
         ],
         "summary": "List OrganizationSettings",
         "description": "List OrganizationSettings.",
-        "operationId": "listOrganizationSettings",
+        "operationId": "listOrganizationSetting",
         "parameters": [
           {
             "name": "page",
@@ -2002,13 +2002,13 @@
         ],
         "responses": {
           "200": {
-            "description": "result OrganizationSettings list",
+            "description": "result OrganizationSetting list",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/OrganizationSettingsList"
+                    "$ref": "#/components/schemas/OrganizationSettingList"
                   }
                 }
               }
@@ -2030,13 +2030,13 @@
       },
       "post": {
         "tags": [
-          "OrganizationSettings"
+          "OrganizationSetting"
         ],
-        "summary": "Create a new OrganizationSettings",
-        "description": "Creates a new OrganizationSettings and persists it to storage.",
-        "operationId": "createOrganizationSettings",
+        "summary": "Create a new OrganizationSetting",
+        "description": "Creates a new OrganizationSetting and persists it to storage.",
+        "operationId": "createOrganizationSetting",
         "requestBody": {
-          "description": "OrganizationSettings to create",
+          "description": "OrganizationSetting to create",
           "content": {
             "application/json": {
               "schema": {
@@ -2116,11 +2116,11 @@
         },
         "responses": {
           "200": {
-            "description": "OrganizationSettings created",
+            "description": "OrganizationSetting created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationSettingsCreate"
+                  "$ref": "#/components/schemas/OrganizationSettingCreate"
                 }
               }
             }
@@ -2140,16 +2140,16 @@
     "/organization-settings/{id}": {
       "get": {
         "tags": [
-          "OrganizationSettings"
+          "OrganizationSetting"
         ],
-        "summary": "Find a OrganizationSettings by ID",
-        "description": "Finds the OrganizationSettings with the requested ID and returns it.",
-        "operationId": "readOrganizationSettings",
+        "summary": "Find a OrganizationSetting by ID",
+        "description": "Finds the OrganizationSetting with the requested ID and returns it.",
+        "operationId": "readOrganizationSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the OrganizationSettings",
+            "description": "ID of the OrganizationSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -2158,11 +2158,11 @@
         ],
         "responses": {
           "200": {
-            "description": "OrganizationSettings with requested ID was found",
+            "description": "OrganizationSetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationSettingsRead"
+                  "$ref": "#/components/schemas/OrganizationSettingRead"
                 }
               }
             }
@@ -2183,16 +2183,16 @@
       },
       "delete": {
         "tags": [
-          "OrganizationSettings"
+          "OrganizationSetting"
         ],
-        "summary": "Deletes a OrganizationSettings by ID",
-        "description": "Deletes the OrganizationSettings with the requested ID.",
-        "operationId": "deleteOrganizationSettings",
+        "summary": "Deletes a OrganizationSetting by ID",
+        "description": "Deletes the OrganizationSetting with the requested ID.",
+        "operationId": "deleteOrganizationSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the OrganizationSettings",
+            "description": "ID of the OrganizationSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -2201,7 +2201,7 @@
         ],
         "responses": {
           "204": {
-            "description": "OrganizationSettings with requested ID was deleted"
+            "description": "OrganizationSetting with requested ID was deleted"
           },
           "400": {
             "$ref": "#/components/responses/400"
@@ -2219,16 +2219,16 @@
       },
       "patch": {
         "tags": [
-          "OrganizationSettings"
+          "OrganizationSetting"
         ],
-        "summary": "Updates a OrganizationSettings",
-        "description": "Updates a OrganizationSettings and persists changes to storage.",
-        "operationId": "updateOrganizationSettings",
+        "summary": "Updates a OrganizationSetting",
+        "description": "Updates a OrganizationSetting and persists changes to storage.",
+        "operationId": "updateOrganizationSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the OrganizationSettings",
+            "description": "ID of the OrganizationSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -2236,7 +2236,7 @@
           }
         ],
         "requestBody": {
-          "description": "OrganizationSettings properties to update",
+          "description": "OrganizationSetting properties to update",
           "content": {
             "application/json": {
               "schema": {
@@ -2299,11 +2299,11 @@
         },
         "responses": {
           "200": {
-            "description": "OrganizationSettings updated",
+            "description": "OrganizationSetting updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationSettingsUpdate"
+                  "$ref": "#/components/schemas/OrganizationSettingUpdate"
                 }
               }
             }
@@ -2326,16 +2326,16 @@
     "/organization-settings/{id}/orgnaization": {
       "get": {
         "tags": [
-          "OrganizationSettings"
+          "OrganizationSetting"
         ],
         "summary": "Find the attached Organization",
-        "description": "Find the attached Organization of the OrganizationSettings with the given ID",
-        "operationId": "readOrganizationSettingsOrgnaization",
+        "description": "Find the attached Organization of the OrganizationSetting with the given ID",
+        "operationId": "readOrganizationSettingOrgnaization",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the OrganizationSettings",
+            "description": "ID of the OrganizationSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -2344,11 +2344,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Organization attached to OrganizationSettings with requested ID was found",
+            "description": "Organization attached to OrganizationSetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationSettings_OrgnaizationRead"
+                  "$ref": "#/components/schemas/OrganizationSetting_OrgnaizationRead"
                 }
               }
             }
@@ -3110,8 +3110,8 @@
         "tags": [
           "Organization"
         ],
-        "summary": "Find the attached OrganizationSettings",
-        "description": "Find the attached OrganizationSettings of the Organization with the given ID",
+        "summary": "Find the attached OrganizationSetting",
+        "description": "Find the attached OrganizationSetting of the Organization with the given ID",
         "operationId": "readOrganizationSetting",
         "parameters": [
           {
@@ -3126,7 +3126,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OrganizationSettings attached to Organization with requested ID was found",
+            "description": "OrganizationSetting attached to Organization with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -4338,11 +4338,11 @@
     "/user-settings": {
       "get": {
         "tags": [
-          "UserSettings"
+          "UserSetting"
         ],
         "summary": "List UserSettings",
         "description": "List UserSettings.",
-        "operationId": "listUserSettings",
+        "operationId": "listUserSetting",
         "parameters": [
           {
             "name": "page",
@@ -4366,13 +4366,13 @@
         ],
         "responses": {
           "200": {
-            "description": "result UserSettings list",
+            "description": "result UserSetting list",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/UserSettingsList"
+                    "$ref": "#/components/schemas/UserSettingList"
                   }
                 }
               }
@@ -4394,13 +4394,13 @@
       },
       "post": {
         "tags": [
-          "UserSettings"
+          "UserSetting"
         ],
-        "summary": "Create a new UserSettings",
-        "description": "Creates a new UserSettings and persists it to storage.",
-        "operationId": "createUserSettings",
+        "summary": "Create a new UserSetting",
+        "description": "Creates a new UserSetting and persists it to storage.",
+        "operationId": "createUserSetting",
         "requestBody": {
-          "description": "UserSettings to create",
+          "description": "UserSetting to create",
           "content": {
             "application/json": {
               "schema": {
@@ -4489,11 +4489,11 @@
         },
         "responses": {
           "200": {
-            "description": "UserSettings created",
+            "description": "UserSetting created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserSettingsCreate"
+                  "$ref": "#/components/schemas/UserSettingCreate"
                 }
               }
             }
@@ -4513,16 +4513,16 @@
     "/user-settings/{id}": {
       "get": {
         "tags": [
-          "UserSettings"
+          "UserSetting"
         ],
-        "summary": "Find a UserSettings by ID",
-        "description": "Finds the UserSettings with the requested ID and returns it.",
-        "operationId": "readUserSettings",
+        "summary": "Find a UserSetting by ID",
+        "description": "Finds the UserSetting with the requested ID and returns it.",
+        "operationId": "readUserSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the UserSettings",
+            "description": "ID of the UserSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -4531,11 +4531,11 @@
         ],
         "responses": {
           "200": {
-            "description": "UserSettings with requested ID was found",
+            "description": "UserSetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserSettingsRead"
+                  "$ref": "#/components/schemas/UserSettingRead"
                 }
               }
             }
@@ -4556,16 +4556,16 @@
       },
       "delete": {
         "tags": [
-          "UserSettings"
+          "UserSetting"
         ],
-        "summary": "Deletes a UserSettings by ID",
-        "description": "Deletes the UserSettings with the requested ID.",
-        "operationId": "deleteUserSettings",
+        "summary": "Deletes a UserSetting by ID",
+        "description": "Deletes the UserSetting with the requested ID.",
+        "operationId": "deleteUserSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the UserSettings",
+            "description": "ID of the UserSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -4574,7 +4574,7 @@
         ],
         "responses": {
           "204": {
-            "description": "UserSettings with requested ID was deleted"
+            "description": "UserSetting with requested ID was deleted"
           },
           "400": {
             "$ref": "#/components/responses/400"
@@ -4592,16 +4592,16 @@
       },
       "patch": {
         "tags": [
-          "UserSettings"
+          "UserSetting"
         ],
-        "summary": "Updates a UserSettings",
-        "description": "Updates a UserSettings and persists changes to storage.",
-        "operationId": "updateUserSettings",
+        "summary": "Updates a UserSetting",
+        "description": "Updates a UserSetting and persists changes to storage.",
+        "operationId": "updateUserSetting",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the UserSettings",
+            "description": "ID of the UserSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -4609,7 +4609,7 @@
           }
         ],
         "requestBody": {
-          "description": "UserSettings properties to update",
+          "description": "UserSetting properties to update",
           "content": {
             "application/json": {
               "schema": {
@@ -4684,11 +4684,11 @@
         },
         "responses": {
           "200": {
-            "description": "UserSettings updated",
+            "description": "UserSetting updated",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserSettingsUpdate"
+                  "$ref": "#/components/schemas/UserSettingUpdate"
                 }
               }
             }
@@ -4711,16 +4711,16 @@
     "/user-settings/{id}/user": {
       "get": {
         "tags": [
-          "UserSettings"
+          "UserSetting"
         ],
         "summary": "Find the attached User",
-        "description": "Find the attached User of the UserSettings with the given ID",
-        "operationId": "readUserSettingsUser",
+        "description": "Find the attached User of the UserSetting with the given ID",
+        "operationId": "readUserSettingUser",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of the UserSettings",
+            "description": "ID of the UserSetting",
             "required": true,
             "schema": {
               "type": "string"
@@ -4729,11 +4729,11 @@
         ],
         "responses": {
           "200": {
-            "description": "User attached to UserSettings with requested ID was found",
+            "description": "User attached to UserSetting with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserSettings_UserRead"
+                  "$ref": "#/components/schemas/UserSetting_UserRead"
                 }
               }
             }
@@ -5472,8 +5472,8 @@
         "tags": [
           "User"
         ],
-        "summary": "Find the attached UserSettings",
-        "description": "Find the attached UserSettings of the User with the given ID",
+        "summary": "Find the attached UserSetting",
+        "description": "Find the attached UserSetting of the User with the given ID",
         "operationId": "readUserSetting",
         "parameters": [
           {
@@ -5488,7 +5488,7 @@
         ],
         "responses": {
           "200": {
-            "description": "UserSettings attached to User with requested ID was found",
+            "description": "UserSetting attached to User with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
@@ -5917,7 +5917,7 @@
             "type": "string"
           },
           "setting": {
-            "$ref": "#/components/schemas/GroupSettings"
+            "$ref": "#/components/schemas/GroupSetting"
           },
           "users": {
             "type": "array",
@@ -6069,7 +6069,7 @@
           "display_name"
         ]
       },
-      "GroupSettings": {
+      "GroupSetting": {
         "type": "object",
         "properties": {
           "id": {
@@ -6134,7 +6134,7 @@
           "sync_to_github"
         ]
       },
-      "GroupSettingsCreate": {
+      "GroupSettingCreate": {
         "type": "object",
         "properties": {
           "id": {
@@ -6196,7 +6196,7 @@
           "sync_to_github"
         ]
       },
-      "GroupSettingsList": {
+      "GroupSettingList": {
         "type": "object",
         "properties": {
           "id": {
@@ -6258,7 +6258,7 @@
           "sync_to_github"
         ]
       },
-      "GroupSettingsRead": {
+      "GroupSettingRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -6320,7 +6320,7 @@
           "sync_to_github"
         ]
       },
-      "GroupSettingsUpdate": {
+      "GroupSettingUpdate": {
         "type": "object",
         "properties": {
           "id": {
@@ -6382,7 +6382,7 @@
           "sync_to_github"
         ]
       },
-      "GroupSettings_GroupRead": {
+      "GroupSetting_GroupRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -7300,7 +7300,7 @@
             }
           },
           "setting": {
-            "$ref": "#/components/schemas/OrganizationSettings"
+            "$ref": "#/components/schemas/OrganizationSetting"
           },
           "entitlements": {
             "type": "array",
@@ -7446,7 +7446,7 @@
           "display_name"
         ]
       },
-      "OrganizationSettings": {
+      "OrganizationSetting": {
         "type": "object",
         "properties": {
           "id": {
@@ -7521,7 +7521,7 @@
           "tax_identifier"
         ]
       },
-      "OrganizationSettingsCreate": {
+      "OrganizationSettingCreate": {
         "type": "object",
         "properties": {
           "id": {
@@ -7593,7 +7593,7 @@
           "tax_identifier"
         ]
       },
-      "OrganizationSettingsList": {
+      "OrganizationSettingList": {
         "type": "object",
         "properties": {
           "id": {
@@ -7665,7 +7665,7 @@
           "tax_identifier"
         ]
       },
-      "OrganizationSettingsRead": {
+      "OrganizationSettingRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -7737,7 +7737,7 @@
           "tax_identifier"
         ]
       },
-      "OrganizationSettingsUpdate": {
+      "OrganizationSettingUpdate": {
         "type": "object",
         "properties": {
           "id": {
@@ -7809,7 +7809,7 @@
           "tax_identifier"
         ]
       },
-      "OrganizationSettings_OrgnaizationRead": {
+      "OrganizationSetting_OrgnaizationRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -9448,7 +9448,7 @@
             }
           },
           "setting": {
-            "$ref": "#/components/schemas/UserSettings"
+            "$ref": "#/components/schemas/UserSetting"
           },
           "refreshtoken": {
             "type": "array",
@@ -9639,7 +9639,7 @@
           "display_name"
         ]
       },
-      "UserSettings": {
+      "UserSetting": {
         "type": "object",
         "properties": {
           "id": {
@@ -9723,7 +9723,7 @@
           "tags"
         ]
       },
-      "UserSettingsCreate": {
+      "UserSettingCreate": {
         "type": "object",
         "properties": {
           "id": {
@@ -9801,7 +9801,7 @@
           "tags"
         ]
       },
-      "UserSettingsList": {
+      "UserSettingList": {
         "type": "object",
         "properties": {
           "id": {
@@ -9879,7 +9879,7 @@
           "tags"
         ]
       },
-      "UserSettingsRead": {
+      "UserSettingRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -9957,7 +9957,7 @@
           "tags"
         ]
       },
-      "UserSettingsUpdate": {
+      "UserSettingUpdate": {
         "type": "object",
         "properties": {
           "id": {
@@ -10035,7 +10035,7 @@
           "tags"
         ]
       },
-      "UserSettings_UserRead": {
+      "UserSetting_UserRead": {
         "type": "object",
         "properties": {
           "id": {

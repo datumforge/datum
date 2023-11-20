@@ -18,7 +18,7 @@ type PersonalAccessToken struct {
 	ent.Schema
 }
 
-// Fields of the PersonalAccessToken.
+// Fields of the PersonalAccessToken
 func (PersonalAccessToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
@@ -34,7 +34,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 	}
 }
 
-// Edges of the PersonalAccessToken.
+// Edges of the PersonalAccessToken
 func (PersonalAccessToken) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).
@@ -45,6 +45,7 @@ func (PersonalAccessToken) Edges() []ent.Edge {
 	}
 }
 
+// Indexes of the PersonalAccessToken
 func (PersonalAccessToken) Indexes() []ent.Index {
 	return []ent.Index{
 		// non-unique index.
@@ -52,7 +53,7 @@ func (PersonalAccessToken) Indexes() []ent.Index {
 	}
 }
 
-// Mixin of the RefreshToken
+// Mixin of the PersonalAccessToken
 func (PersonalAccessToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
@@ -60,7 +61,7 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 	}
 }
 
-// Annotations of the Organization
+// Annotations of the PersonalAccessToken
 func (PersonalAccessToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),

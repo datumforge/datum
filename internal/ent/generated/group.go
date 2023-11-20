@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 )
 
@@ -45,7 +45,7 @@ type Group struct {
 // GroupEdges holds the relations/edges for other nodes in the graph.
 type GroupEdges struct {
 	// Setting holds the value of the setting edge.
-	Setting *GroupSettings `json:"setting,omitempty"`
+	Setting *GroupSetting `json:"setting,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
 	// Owner holds the value of the owner edge.
@@ -61,11 +61,11 @@ type GroupEdges struct {
 
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e GroupEdges) SettingOrErr() (*GroupSettings, error) {
+func (e GroupEdges) SettingOrErr() (*GroupSetting, error) {
 	if e.loadedTypes[0] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: groupsettings.Label}
+			return nil, &NotFoundError{label: groupsetting.Label}
 		}
 		return e.Setting, nil
 	}
@@ -195,7 +195,7 @@ func (gr *Group) Value(name string) (ent.Value, error) {
 }
 
 // QuerySetting queries the "setting" edge of the Group entity.
-func (gr *Group) QuerySetting() *GroupSettingsQuery {
+func (gr *Group) QuerySetting() *GroupSettingQuery {
 	return NewGroupClient(gr.config).QuerySetting(gr)
 }
 

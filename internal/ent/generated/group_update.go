@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -135,14 +135,14 @@ func (gu *GroupUpdate) SetNillableDisplayName(s *string) *GroupUpdate {
 	return gu
 }
 
-// SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
+// SetSettingID sets the "setting" edge to the GroupSetting entity by ID.
 func (gu *GroupUpdate) SetSettingID(id string) *GroupUpdate {
 	gu.mutation.SetSettingID(id)
 	return gu
 }
 
-// SetSetting sets the "setting" edge to the GroupSettings entity.
-func (gu *GroupUpdate) SetSetting(g *GroupSettings) *GroupUpdate {
+// SetSetting sets the "setting" edge to the GroupSetting entity.
+func (gu *GroupUpdate) SetSetting(g *GroupSetting) *GroupUpdate {
 	return gu.SetSettingID(g.ID)
 }
 
@@ -185,7 +185,7 @@ func (gu *GroupUpdate) Mutation() *GroupMutation {
 	return gu.mutation
 }
 
-// ClearSetting clears the "setting" edge to the GroupSettings entity.
+// ClearSetting clears the "setting" edge to the GroupSetting entity.
 func (gu *GroupUpdate) ClearSetting() *GroupUpdate {
 	gu.mutation.ClearSetting()
 	return gu
@@ -330,10 +330,10 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(groupsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = gu.schemaConfig.GroupSettings
+		edge.Schema = gu.schemaConfig.GroupSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := gu.mutation.SettingIDs(); len(nodes) > 0 {
@@ -344,10 +344,10 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(groupsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = gu.schemaConfig.GroupSettings
+		edge.Schema = gu.schemaConfig.GroupSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -556,14 +556,14 @@ func (guo *GroupUpdateOne) SetNillableDisplayName(s *string) *GroupUpdateOne {
 	return guo
 }
 
-// SetSettingID sets the "setting" edge to the GroupSettings entity by ID.
+// SetSettingID sets the "setting" edge to the GroupSetting entity by ID.
 func (guo *GroupUpdateOne) SetSettingID(id string) *GroupUpdateOne {
 	guo.mutation.SetSettingID(id)
 	return guo
 }
 
-// SetSetting sets the "setting" edge to the GroupSettings entity.
-func (guo *GroupUpdateOne) SetSetting(g *GroupSettings) *GroupUpdateOne {
+// SetSetting sets the "setting" edge to the GroupSetting entity.
+func (guo *GroupUpdateOne) SetSetting(g *GroupSetting) *GroupUpdateOne {
 	return guo.SetSettingID(g.ID)
 }
 
@@ -606,7 +606,7 @@ func (guo *GroupUpdateOne) Mutation() *GroupMutation {
 	return guo.mutation
 }
 
-// ClearSetting clears the "setting" edge to the GroupSettings entity.
+// ClearSetting clears the "setting" edge to the GroupSetting entity.
 func (guo *GroupUpdateOne) ClearSetting() *GroupUpdateOne {
 	guo.mutation.ClearSetting()
 	return guo
@@ -781,10 +781,10 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(groupsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = guo.schemaConfig.GroupSettings
+		edge.Schema = guo.schemaConfig.GroupSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := guo.mutation.SettingIDs(); len(nodes) > 0 {
@@ -795,10 +795,10 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Columns: []string{group.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(groupsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(groupsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = guo.schemaConfig.GroupSettings
+		edge.Schema = guo.schemaConfig.GroupSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

@@ -18,9 +18,9 @@ import (
 	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/session"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -132,9 +132,10 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
-	GroupSettings struct {
+	GroupSetting struct {
 		CreatedAt    func(childComplexity int) int
 		CreatedBy    func(childComplexity int) int
+		Group        func(childComplexity int) int
 		ID           func(childComplexity int) int
 		JoinPolicy   func(childComplexity int) int
 		SyncToGithub func(childComplexity int) int
@@ -145,15 +146,27 @@ type ComplexityRoot struct {
 		Visibility   func(childComplexity int) int
 	}
 
-	GroupSettingsConnection struct {
+	GroupSettingConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	GroupSettingsEdge struct {
+	GroupSettingCreatePayload struct {
+		GroupSetting func(childComplexity int) int
+	}
+
+	GroupSettingDeletePayload struct {
+		DeletedID func(childComplexity int) int
+	}
+
+	GroupSettingEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	GroupSettingUpdatePayload struct {
+		GroupSetting func(childComplexity int) int
 	}
 
 	GroupUpdatePayload struct {
@@ -199,31 +212,40 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CreateEntitlement         func(childComplexity int, input generated.CreateEntitlementInput) int
 		CreateGroup               func(childComplexity int, input generated.CreateGroupInput) int
+		CreateGroupSetting        func(childComplexity int, input generated.CreateGroupSettingInput) int
 		CreateIntegration         func(childComplexity int, input generated.CreateIntegrationInput) int
 		CreateOauthProvider       func(childComplexity int, input generated.CreateOauthProviderInput) int
 		CreateOrganization        func(childComplexity int, input generated.CreateOrganizationInput) int
+		CreateOrganizationSetting func(childComplexity int, input generated.CreateOrganizationSettingInput) int
 		CreatePersonalAccessToken func(childComplexity int, input generated.CreatePersonalAccessTokenInput) int
+		CreateRefreshToken        func(childComplexity int, input generated.CreateRefreshTokenInput) int
 		CreateSession             func(childComplexity int, input generated.CreateSessionInput) int
 		CreateUser                func(childComplexity int, input generated.CreateUserInput) int
-		CreateUserSettings        func(childComplexity int, input generated.CreateUserSettingsInput) int
+		CreateUserSetting         func(childComplexity int, input generated.CreateUserSettingInput) int
 		DeleteEntitlement         func(childComplexity int, id string) int
 		DeleteGroup               func(childComplexity int, id string) int
+		DeleteGroupSetting        func(childComplexity int, id string) int
 		DeleteIntegration         func(childComplexity int, id string) int
 		DeleteOauthProvider       func(childComplexity int, id string) int
 		DeleteOrganization        func(childComplexity int, id string) int
+		DeleteOrganizationSetting func(childComplexity int, id string) int
 		DeletePersonalAccessToken func(childComplexity int, id string) int
+		DeleteRefreshToken        func(childComplexity int, id string) int
 		DeleteSession             func(childComplexity int, id string) int
 		DeleteUser                func(childComplexity int, id string) int
-		DeleteUserSettings        func(childComplexity int, id string) int
-		PdateUserSettings         func(childComplexity int, id string, input generated.UpdateUserSettingsInput) int
+		DeleteUserSetting         func(childComplexity int, id string) int
 		UpdateEntitlement         func(childComplexity int, id string, input generated.UpdateEntitlementInput) int
 		UpdateGroup               func(childComplexity int, id string, input generated.UpdateGroupInput) int
+		UpdateGroupSetting        func(childComplexity int, id string, input generated.UpdateGroupSettingInput) int
 		UpdateIntegration         func(childComplexity int, id string, input generated.UpdateIntegrationInput) int
 		UpdateOauthProvider       func(childComplexity int, id string, input generated.UpdateOauthProviderInput) int
 		UpdateOrganization        func(childComplexity int, id string, input generated.UpdateOrganizationInput) int
+		UpdateOrganizationSetting func(childComplexity int, id string, input generated.UpdateOrganizationSettingInput) int
 		UpdatePersonalAccessToken func(childComplexity int, id string, input generated.UpdatePersonalAccessTokenInput) int
+		UpdateRefreshToken        func(childComplexity int, id string, input generated.UpdateRefreshTokenInput) int
 		UpdateSession             func(childComplexity int, id string, input generated.UpdateSessionInput) int
 		UpdateUser                func(childComplexity int, id string, input generated.UpdateUserInput) int
+		UpdateUserSetting         func(childComplexity int, id string, input generated.UpdateUserSettingInput) int
 	}
 
 	OauthProvider struct {
@@ -304,7 +326,7 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
-	OrganizationSettings struct {
+	OrganizationSetting struct {
 		BillingAddress func(childComplexity int) int
 		BillingContact func(childComplexity int) int
 		BillingEmail   func(childComplexity int) int
@@ -313,6 +335,7 @@ type ComplexityRoot struct {
 		CreatedBy      func(childComplexity int) int
 		Domains        func(childComplexity int) int
 		ID             func(childComplexity int) int
+		Orgnaization   func(childComplexity int) int
 		SSOCert        func(childComplexity int) int
 		SSOEntrypoint  func(childComplexity int) int
 		SSOIssuer      func(childComplexity int) int
@@ -322,15 +345,27 @@ type ComplexityRoot struct {
 		UpdatedBy      func(childComplexity int) int
 	}
 
-	OrganizationSettingsConnection struct {
+	OrganizationSettingConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	OrganizationSettingsEdge struct {
+	OrganizationSettingCreatePayload struct {
+		OrganizationSetting func(childComplexity int) int
+	}
+
+	OrganizationSettingDeletePayload struct {
+		DeletedID func(childComplexity int) int
+	}
+
+	OrganizationSettingEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	OrganizationSettingUpdatePayload struct {
+		OrganizationSetting func(childComplexity int) int
 	}
 
 	OrganizationUpdatePayload struct {
@@ -382,29 +417,33 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Entitlement               func(childComplexity int, id string) int
-		Entitlements              func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) int
-		Group                     func(childComplexity int, id string) int
-		GroupSettingsSlice        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingsWhereInput) int
-		Groups                    func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) int
-		Integration               func(childComplexity int, id string) int
-		Integrations              func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) int
-		Node                      func(childComplexity int, id string) int
-		Nodes                     func(childComplexity int, ids []string) int
-		OauthProvider             func(childComplexity int, id string) int
-		OauthProviders            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) int
-		Organization              func(childComplexity int, id string) int
-		OrganizationSettingsSlice func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingsWhereInput) int
-		Organizations             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
-		PersonalAccessToken       func(childComplexity int, id string) int
-		PersonalAccessTokens      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
-		Session                   func(childComplexity int, id string) int
-		Sessions                  func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) int
-		User                      func(childComplexity int, id string) int
-		UserSettings              func(childComplexity int, id string) int
-		UserSettingsSlice         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingsWhereInput) int
-		Users                     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
-		__resolve__service        func(childComplexity int) int
+		Entitlement          func(childComplexity int, id string) int
+		Entitlements         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) int
+		Group                func(childComplexity int, id string) int
+		GroupSetting         func(childComplexity int, id string) int
+		GroupSettings        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) int
+		Groups               func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) int
+		Integration          func(childComplexity int, id string) int
+		Integrations         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) int
+		Node                 func(childComplexity int, id string) int
+		Nodes                func(childComplexity int, ids []string) int
+		OauthProvider        func(childComplexity int, id string) int
+		OauthProviders       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) int
+		Organization         func(childComplexity int, id string) int
+		OrganizationSetting  func(childComplexity int, id string) int
+		OrganizationSettings func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) int
+		Organizations        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
+		PersonalAccessToken  func(childComplexity int, id string) int
+		PersonalAccessTokens func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) int
+		RefreshToken         func(childComplexity int, id string) int
+		RefreshTokens        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.RefreshTokenWhereInput) int
+		Session              func(childComplexity int, id string) int
+		Sessions             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) int
+		User                 func(childComplexity int, id string) int
+		UserSetting          func(childComplexity int, id string) int
+		UserSettings         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) int
+		Users                func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) int
+		__resolve__service   func(childComplexity int) int
 	}
 
 	RefreshToken struct {
@@ -424,6 +463,29 @@ type ComplexityRoot struct {
 		Scopes                  func(childComplexity int) int
 		Token                   func(childComplexity int) int
 		User                    func(childComplexity int) int
+	}
+
+	RefreshTokenConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	RefreshTokenCreatePayload struct {
+		RefreshToken func(childComplexity int) int
+	}
+
+	RefreshTokenDeletePayload struct {
+		DeletedID func(childComplexity int) int
+	}
+
+	RefreshTokenEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	RefreshTokenUpdatePayload struct {
+		RefreshToken func(childComplexity int) int
 	}
 
 	Session struct {
@@ -504,7 +566,7 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
-	UserSettings struct {
+	UserSetting struct {
 		CreatedAt      func(childComplexity int) int
 		CreatedBy      func(childComplexity int) int
 		EmailConfirmed func(childComplexity int) int
@@ -518,29 +580,30 @@ type ComplexityRoot struct {
 		Tags           func(childComplexity int) int
 		UpdatedAt      func(childComplexity int) int
 		UpdatedBy      func(childComplexity int) int
+		User           func(childComplexity int) int
 	}
 
-	UserSettingsConnection struct {
+	UserSettingConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	UserSettingsCreatePayload struct {
-		UserSettings func(childComplexity int) int
+	UserSettingCreatePayload struct {
+		UserSetting func(childComplexity int) int
 	}
 
-	UserSettingsDeletePayload struct {
+	UserSettingDeletePayload struct {
 		DeletedID func(childComplexity int) int
 	}
 
-	UserSettingsEdge struct {
+	UserSettingEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
 
-	UserSettingsUpdatePayload struct {
-		UserSettings func(childComplexity int) int
+	UserSettingUpdatePayload struct {
+		UserSetting func(childComplexity int) int
 	}
 
 	UserUpdatePayload struct {
@@ -559,6 +622,9 @@ type MutationResolver interface {
 	CreateGroup(ctx context.Context, input generated.CreateGroupInput) (*GroupCreatePayload, error)
 	UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error)
 	DeleteGroup(ctx context.Context, id string) (*GroupDeletePayload, error)
+	CreateGroupSetting(ctx context.Context, input generated.CreateGroupSettingInput) (*GroupSettingCreatePayload, error)
+	UpdateGroupSetting(ctx context.Context, id string, input generated.UpdateGroupSettingInput) (*GroupSettingUpdatePayload, error)
+	DeleteGroupSetting(ctx context.Context, id string) (*GroupSettingDeletePayload, error)
 	CreateIntegration(ctx context.Context, input generated.CreateIntegrationInput) (*IntegrationCreatePayload, error)
 	UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error)
 	DeleteIntegration(ctx context.Context, id string) (*IntegrationDeletePayload, error)
@@ -568,18 +634,24 @@ type MutationResolver interface {
 	CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error)
 	UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error)
 	DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error)
+	CreateOrganizationSetting(ctx context.Context, input generated.CreateOrganizationSettingInput) (*OrganizationSettingCreatePayload, error)
+	UpdateOrganizationSetting(ctx context.Context, id string, input generated.UpdateOrganizationSettingInput) (*OrganizationSettingUpdatePayload, error)
+	DeleteOrganizationSetting(ctx context.Context, id string) (*OrganizationSettingDeletePayload, error)
 	CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error)
 	UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error)
 	DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error)
+	CreateRefreshToken(ctx context.Context, input generated.CreateRefreshTokenInput) (*RefreshTokenCreatePayload, error)
+	UpdateRefreshToken(ctx context.Context, id string, input generated.UpdateRefreshTokenInput) (*RefreshTokenUpdatePayload, error)
+	DeleteRefreshToken(ctx context.Context, id string) (*RefreshTokenDeletePayload, error)
 	CreateSession(ctx context.Context, input generated.CreateSessionInput) (*SessionCreatePayload, error)
 	UpdateSession(ctx context.Context, id string, input generated.UpdateSessionInput) (*SessionUpdatePayload, error)
 	DeleteSession(ctx context.Context, id string) (*SessionDeletePayload, error)
 	CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error)
 	UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error)
 	DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error)
-	CreateUserSettings(ctx context.Context, input generated.CreateUserSettingsInput) (*UserSettingsCreatePayload, error)
-	PdateUserSettings(ctx context.Context, id string, input generated.UpdateUserSettingsInput) (*UserSettingsUpdatePayload, error)
-	DeleteUserSettings(ctx context.Context, id string) (*UserSettingsDeletePayload, error)
+	CreateUserSetting(ctx context.Context, input generated.CreateUserSettingInput) (*UserSettingCreatePayload, error)
+	UpdateUserSetting(ctx context.Context, id string, input generated.UpdateUserSettingInput) (*UserSettingUpdatePayload, error)
+	DeleteUserSetting(ctx context.Context, id string) (*UserSettingDeletePayload, error)
 }
 type OauthProviderResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.OauthProvider) (int, error)
@@ -589,24 +661,28 @@ type QueryResolver interface {
 	Nodes(ctx context.Context, ids []string) ([]generated.Noder, error)
 	Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error)
 	Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error)
-	GroupSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingsWhereInput) (*generated.GroupSettingsConnection, error)
+	GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error)
 	Integrations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.IntegrationOrder, where *generated.IntegrationWhereInput) (*generated.IntegrationConnection, error)
 	OauthProviders(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) (*generated.OauthProviderConnection, error)
 	Organizations(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) (*generated.OrganizationConnection, error)
-	OrganizationSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingsWhereInput) (*generated.OrganizationSettingsConnection, error)
+	OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error)
 	PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error)
+	RefreshTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.RefreshTokenWhereInput) (*generated.RefreshTokenConnection, error)
 	Sessions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.SessionWhereInput) (*generated.SessionConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error)
-	UserSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingsWhereInput) (*generated.UserSettingsConnection, error)
+	UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error)
 	Entitlement(ctx context.Context, id string) (*generated.Entitlement, error)
 	Group(ctx context.Context, id string) (*generated.Group, error)
+	GroupSetting(ctx context.Context, id string) (*generated.GroupSetting, error)
 	Integration(ctx context.Context, id string) (*generated.Integration, error)
 	OauthProvider(ctx context.Context, id string) (*generated.OauthProvider, error)
 	Organization(ctx context.Context, id string) (*generated.Organization, error)
+	OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error)
 	PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error)
+	RefreshToken(ctx context.Context, id string) (*generated.RefreshToken, error)
 	Session(ctx context.Context, id string) (*generated.Session, error)
 	User(ctx context.Context, id string) (*generated.User, error)
-	UserSettings(ctx context.Context, id string) (*generated.UserSettings, error)
+	UserSetting(ctx context.Context, id string) (*generated.UserSetting, error)
 }
 
 type CreateOauthProviderInputResolver interface {
@@ -939,110 +1015,138 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.GroupEdge.Node(childComplexity), true
 
-	case "GroupSettings.createdAt":
-		if e.complexity.GroupSettings.CreatedAt == nil {
+	case "GroupSetting.createdAt":
+		if e.complexity.GroupSetting.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.CreatedAt(childComplexity), true
+		return e.complexity.GroupSetting.CreatedAt(childComplexity), true
 
-	case "GroupSettings.createdBy":
-		if e.complexity.GroupSettings.CreatedBy == nil {
+	case "GroupSetting.createdBy":
+		if e.complexity.GroupSetting.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.CreatedBy(childComplexity), true
+		return e.complexity.GroupSetting.CreatedBy(childComplexity), true
 
-	case "GroupSettings.id":
-		if e.complexity.GroupSettings.ID == nil {
+	case "GroupSetting.group":
+		if e.complexity.GroupSetting.Group == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.ID(childComplexity), true
+		return e.complexity.GroupSetting.Group(childComplexity), true
 
-	case "GroupSettings.joinPolicy":
-		if e.complexity.GroupSettings.JoinPolicy == nil {
+	case "GroupSetting.id":
+		if e.complexity.GroupSetting.ID == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.JoinPolicy(childComplexity), true
+		return e.complexity.GroupSetting.ID(childComplexity), true
 
-	case "GroupSettings.syncToGithub":
-		if e.complexity.GroupSettings.SyncToGithub == nil {
+	case "GroupSetting.joinPolicy":
+		if e.complexity.GroupSetting.JoinPolicy == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.SyncToGithub(childComplexity), true
+		return e.complexity.GroupSetting.JoinPolicy(childComplexity), true
 
-	case "GroupSettings.syncToSlack":
-		if e.complexity.GroupSettings.SyncToSlack == nil {
+	case "GroupSetting.syncToGithub":
+		if e.complexity.GroupSetting.SyncToGithub == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.SyncToSlack(childComplexity), true
+		return e.complexity.GroupSetting.SyncToGithub(childComplexity), true
 
-	case "GroupSettings.tags":
-		if e.complexity.GroupSettings.Tags == nil {
+	case "GroupSetting.syncToSlack":
+		if e.complexity.GroupSetting.SyncToSlack == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.Tags(childComplexity), true
+		return e.complexity.GroupSetting.SyncToSlack(childComplexity), true
 
-	case "GroupSettings.updatedAt":
-		if e.complexity.GroupSettings.UpdatedAt == nil {
+	case "GroupSetting.tags":
+		if e.complexity.GroupSetting.Tags == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.UpdatedAt(childComplexity), true
+		return e.complexity.GroupSetting.Tags(childComplexity), true
 
-	case "GroupSettings.updatedBy":
-		if e.complexity.GroupSettings.UpdatedBy == nil {
+	case "GroupSetting.updatedAt":
+		if e.complexity.GroupSetting.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.UpdatedBy(childComplexity), true
+		return e.complexity.GroupSetting.UpdatedAt(childComplexity), true
 
-	case "GroupSettings.visibility":
-		if e.complexity.GroupSettings.Visibility == nil {
+	case "GroupSetting.updatedBy":
+		if e.complexity.GroupSetting.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.GroupSettings.Visibility(childComplexity), true
+		return e.complexity.GroupSetting.UpdatedBy(childComplexity), true
 
-	case "GroupSettingsConnection.edges":
-		if e.complexity.GroupSettingsConnection.Edges == nil {
+	case "GroupSetting.visibility":
+		if e.complexity.GroupSetting.Visibility == nil {
 			break
 		}
 
-		return e.complexity.GroupSettingsConnection.Edges(childComplexity), true
+		return e.complexity.GroupSetting.Visibility(childComplexity), true
 
-	case "GroupSettingsConnection.pageInfo":
-		if e.complexity.GroupSettingsConnection.PageInfo == nil {
+	case "GroupSettingConnection.edges":
+		if e.complexity.GroupSettingConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.GroupSettingsConnection.PageInfo(childComplexity), true
+		return e.complexity.GroupSettingConnection.Edges(childComplexity), true
 
-	case "GroupSettingsConnection.totalCount":
-		if e.complexity.GroupSettingsConnection.TotalCount == nil {
+	case "GroupSettingConnection.pageInfo":
+		if e.complexity.GroupSettingConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.GroupSettingsConnection.TotalCount(childComplexity), true
+		return e.complexity.GroupSettingConnection.PageInfo(childComplexity), true
 
-	case "GroupSettingsEdge.cursor":
-		if e.complexity.GroupSettingsEdge.Cursor == nil {
+	case "GroupSettingConnection.totalCount":
+		if e.complexity.GroupSettingConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.GroupSettingsEdge.Cursor(childComplexity), true
+		return e.complexity.GroupSettingConnection.TotalCount(childComplexity), true
 
-	case "GroupSettingsEdge.node":
-		if e.complexity.GroupSettingsEdge.Node == nil {
+	case "GroupSettingCreatePayload.groupSetting":
+		if e.complexity.GroupSettingCreatePayload.GroupSetting == nil {
 			break
 		}
 
-		return e.complexity.GroupSettingsEdge.Node(childComplexity), true
+		return e.complexity.GroupSettingCreatePayload.GroupSetting(childComplexity), true
+
+	case "GroupSettingDeletePayload.deletedID":
+		if e.complexity.GroupSettingDeletePayload.DeletedID == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingDeletePayload.DeletedID(childComplexity), true
+
+	case "GroupSettingEdge.cursor":
+		if e.complexity.GroupSettingEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingEdge.Cursor(childComplexity), true
+
+	case "GroupSettingEdge.node":
+		if e.complexity.GroupSettingEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingEdge.Node(childComplexity), true
+
+	case "GroupSettingUpdatePayload.groupSetting":
+		if e.complexity.GroupSettingUpdatePayload.GroupSetting == nil {
+			break
+		}
+
+		return e.complexity.GroupSettingUpdatePayload.GroupSetting(childComplexity), true
 
 	case "GroupUpdatePayload.group":
 		if e.complexity.GroupUpdatePayload.Group == nil {
@@ -1201,6 +1305,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateGroup(childComplexity, args["input"].(generated.CreateGroupInput)), true
 
+	case "Mutation.createGroupSetting":
+		if e.complexity.Mutation.CreateGroupSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createGroupSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateGroupSetting(childComplexity, args["input"].(generated.CreateGroupSettingInput)), true
+
 	case "Mutation.createIntegration":
 		if e.complexity.Mutation.CreateIntegration == nil {
 			break
@@ -1237,6 +1353,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateOrganization(childComplexity, args["input"].(generated.CreateOrganizationInput)), true
 
+	case "Mutation.createOrganizationSetting":
+		if e.complexity.Mutation.CreateOrganizationSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createOrganizationSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateOrganizationSetting(childComplexity, args["input"].(generated.CreateOrganizationSettingInput)), true
+
 	case "Mutation.createPersonalAccessToken":
 		if e.complexity.Mutation.CreatePersonalAccessToken == nil {
 			break
@@ -1248,6 +1376,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreatePersonalAccessToken(childComplexity, args["input"].(generated.CreatePersonalAccessTokenInput)), true
+
+	case "Mutation.createRefreshToken":
+		if e.complexity.Mutation.CreateRefreshToken == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createRefreshToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateRefreshToken(childComplexity, args["input"].(generated.CreateRefreshTokenInput)), true
 
 	case "Mutation.createSession":
 		if e.complexity.Mutation.CreateSession == nil {
@@ -1273,17 +1413,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(generated.CreateUserInput)), true
 
-	case "Mutation.createUserSettings":
-		if e.complexity.Mutation.CreateUserSettings == nil {
+	case "Mutation.createUserSetting":
+		if e.complexity.Mutation.CreateUserSetting == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createUserSettings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createUserSetting_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUserSettings(childComplexity, args["input"].(generated.CreateUserSettingsInput)), true
+		return e.complexity.Mutation.CreateUserSetting(childComplexity, args["input"].(generated.CreateUserSettingInput)), true
 
 	case "Mutation.deleteEntitlement":
 		if e.complexity.Mutation.DeleteEntitlement == nil {
@@ -1308,6 +1448,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteGroup(childComplexity, args["id"].(string)), true
+
+	case "Mutation.deleteGroupSetting":
+		if e.complexity.Mutation.DeleteGroupSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteGroupSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteGroupSetting(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteIntegration":
 		if e.complexity.Mutation.DeleteIntegration == nil {
@@ -1345,6 +1497,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteOrganization(childComplexity, args["id"].(string)), true
 
+	case "Mutation.deleteOrganizationSetting":
+		if e.complexity.Mutation.DeleteOrganizationSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteOrganizationSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteOrganizationSetting(childComplexity, args["id"].(string)), true
+
 	case "Mutation.deletePersonalAccessToken":
 		if e.complexity.Mutation.DeletePersonalAccessToken == nil {
 			break
@@ -1356,6 +1520,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeletePersonalAccessToken(childComplexity, args["id"].(string)), true
+
+	case "Mutation.deleteRefreshToken":
+		if e.complexity.Mutation.DeleteRefreshToken == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteRefreshToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteRefreshToken(childComplexity, args["id"].(string)), true
 
 	case "Mutation.deleteSession":
 		if e.complexity.Mutation.DeleteSession == nil {
@@ -1381,29 +1557,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
 
-	case "Mutation.deleteUserSettings":
-		if e.complexity.Mutation.DeleteUserSettings == nil {
+	case "Mutation.deleteUserSetting":
+		if e.complexity.Mutation.DeleteUserSetting == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteUserSettings_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteUserSetting_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteUserSettings(childComplexity, args["id"].(string)), true
-
-	case "Mutation.pdateUserSettings":
-		if e.complexity.Mutation.PdateUserSettings == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_pdateUserSettings_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.PdateUserSettings(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserSettingsInput)), true
+		return e.complexity.Mutation.DeleteUserSetting(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateEntitlement":
 		if e.complexity.Mutation.UpdateEntitlement == nil {
@@ -1428,6 +1592,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateGroup(childComplexity, args["id"].(string), args["input"].(generated.UpdateGroupInput)), true
+
+	case "Mutation.updateGroupSetting":
+		if e.complexity.Mutation.UpdateGroupSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGroupSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGroupSetting(childComplexity, args["id"].(string), args["input"].(generated.UpdateGroupSettingInput)), true
 
 	case "Mutation.updateIntegration":
 		if e.complexity.Mutation.UpdateIntegration == nil {
@@ -1465,6 +1641,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateOrganization(childComplexity, args["id"].(string), args["input"].(generated.UpdateOrganizationInput)), true
 
+	case "Mutation.updateOrganizationSetting":
+		if e.complexity.Mutation.UpdateOrganizationSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateOrganizationSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateOrganizationSetting(childComplexity, args["id"].(string), args["input"].(generated.UpdateOrganizationSettingInput)), true
+
 	case "Mutation.updatePersonalAccessToken":
 		if e.complexity.Mutation.UpdatePersonalAccessToken == nil {
 			break
@@ -1476,6 +1664,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePersonalAccessToken(childComplexity, args["id"].(string), args["input"].(generated.UpdatePersonalAccessTokenInput)), true
+
+	case "Mutation.updateRefreshToken":
+		if e.complexity.Mutation.UpdateRefreshToken == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateRefreshToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateRefreshToken(childComplexity, args["id"].(string), args["input"].(generated.UpdateRefreshTokenInput)), true
 
 	case "Mutation.updateSession":
 		if e.complexity.Mutation.UpdateSession == nil {
@@ -1500,6 +1700,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserInput)), true
+
+	case "Mutation.updateUserSetting":
+		if e.complexity.Mutation.UpdateUserSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateUserSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateUserSetting(childComplexity, args["id"].(string), args["input"].(generated.UpdateUserSettingInput)), true
 
 	case "OauthProvider.authStyle":
 		if e.complexity.OauthProvider.AuthStyle == nil {
@@ -1821,145 +2033,173 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrganizationEdge.Node(childComplexity), true
 
-	case "OrganizationSettings.billingAddress":
-		if e.complexity.OrganizationSettings.BillingAddress == nil {
+	case "OrganizationSetting.billingAddress":
+		if e.complexity.OrganizationSetting.BillingAddress == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.BillingAddress(childComplexity), true
+		return e.complexity.OrganizationSetting.BillingAddress(childComplexity), true
 
-	case "OrganizationSettings.billingContact":
-		if e.complexity.OrganizationSettings.BillingContact == nil {
+	case "OrganizationSetting.billingContact":
+		if e.complexity.OrganizationSetting.BillingContact == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.BillingContact(childComplexity), true
+		return e.complexity.OrganizationSetting.BillingContact(childComplexity), true
 
-	case "OrganizationSettings.billingEmail":
-		if e.complexity.OrganizationSettings.BillingEmail == nil {
+	case "OrganizationSetting.billingEmail":
+		if e.complexity.OrganizationSetting.BillingEmail == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.BillingEmail(childComplexity), true
+		return e.complexity.OrganizationSetting.BillingEmail(childComplexity), true
 
-	case "OrganizationSettings.billingPhone":
-		if e.complexity.OrganizationSettings.BillingPhone == nil {
+	case "OrganizationSetting.billingPhone":
+		if e.complexity.OrganizationSetting.BillingPhone == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.BillingPhone(childComplexity), true
+		return e.complexity.OrganizationSetting.BillingPhone(childComplexity), true
 
-	case "OrganizationSettings.createdAt":
-		if e.complexity.OrganizationSettings.CreatedAt == nil {
+	case "OrganizationSetting.createdAt":
+		if e.complexity.OrganizationSetting.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.CreatedAt(childComplexity), true
+		return e.complexity.OrganizationSetting.CreatedAt(childComplexity), true
 
-	case "OrganizationSettings.createdBy":
-		if e.complexity.OrganizationSettings.CreatedBy == nil {
+	case "OrganizationSetting.createdBy":
+		if e.complexity.OrganizationSetting.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.CreatedBy(childComplexity), true
+		return e.complexity.OrganizationSetting.CreatedBy(childComplexity), true
 
-	case "OrganizationSettings.domains":
-		if e.complexity.OrganizationSettings.Domains == nil {
+	case "OrganizationSetting.domains":
+		if e.complexity.OrganizationSetting.Domains == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.Domains(childComplexity), true
+		return e.complexity.OrganizationSetting.Domains(childComplexity), true
 
-	case "OrganizationSettings.id":
-		if e.complexity.OrganizationSettings.ID == nil {
+	case "OrganizationSetting.id":
+		if e.complexity.OrganizationSetting.ID == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.ID(childComplexity), true
+		return e.complexity.OrganizationSetting.ID(childComplexity), true
 
-	case "OrganizationSettings.ssoCert":
-		if e.complexity.OrganizationSettings.SSOCert == nil {
+	case "OrganizationSetting.orgnaization":
+		if e.complexity.OrganizationSetting.Orgnaization == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.SSOCert(childComplexity), true
+		return e.complexity.OrganizationSetting.Orgnaization(childComplexity), true
 
-	case "OrganizationSettings.ssoEntrypoint":
-		if e.complexity.OrganizationSettings.SSOEntrypoint == nil {
+	case "OrganizationSetting.ssoCert":
+		if e.complexity.OrganizationSetting.SSOCert == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.SSOEntrypoint(childComplexity), true
+		return e.complexity.OrganizationSetting.SSOCert(childComplexity), true
 
-	case "OrganizationSettings.ssoIssuer":
-		if e.complexity.OrganizationSettings.SSOIssuer == nil {
+	case "OrganizationSetting.ssoEntrypoint":
+		if e.complexity.OrganizationSetting.SSOEntrypoint == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.SSOIssuer(childComplexity), true
+		return e.complexity.OrganizationSetting.SSOEntrypoint(childComplexity), true
 
-	case "OrganizationSettings.tags":
-		if e.complexity.OrganizationSettings.Tags == nil {
+	case "OrganizationSetting.ssoIssuer":
+		if e.complexity.OrganizationSetting.SSOIssuer == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.Tags(childComplexity), true
+		return e.complexity.OrganizationSetting.SSOIssuer(childComplexity), true
 
-	case "OrganizationSettings.taxIdentifier":
-		if e.complexity.OrganizationSettings.TaxIdentifier == nil {
+	case "OrganizationSetting.tags":
+		if e.complexity.OrganizationSetting.Tags == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.TaxIdentifier(childComplexity), true
+		return e.complexity.OrganizationSetting.Tags(childComplexity), true
 
-	case "OrganizationSettings.updatedAt":
-		if e.complexity.OrganizationSettings.UpdatedAt == nil {
+	case "OrganizationSetting.taxIdentifier":
+		if e.complexity.OrganizationSetting.TaxIdentifier == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.UpdatedAt(childComplexity), true
+		return e.complexity.OrganizationSetting.TaxIdentifier(childComplexity), true
 
-	case "OrganizationSettings.updatedBy":
-		if e.complexity.OrganizationSettings.UpdatedBy == nil {
+	case "OrganizationSetting.updatedAt":
+		if e.complexity.OrganizationSetting.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettings.UpdatedBy(childComplexity), true
+		return e.complexity.OrganizationSetting.UpdatedAt(childComplexity), true
 
-	case "OrganizationSettingsConnection.edges":
-		if e.complexity.OrganizationSettingsConnection.Edges == nil {
+	case "OrganizationSetting.updatedBy":
+		if e.complexity.OrganizationSetting.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettingsConnection.Edges(childComplexity), true
+		return e.complexity.OrganizationSetting.UpdatedBy(childComplexity), true
 
-	case "OrganizationSettingsConnection.pageInfo":
-		if e.complexity.OrganizationSettingsConnection.PageInfo == nil {
+	case "OrganizationSettingConnection.edges":
+		if e.complexity.OrganizationSettingConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettingsConnection.PageInfo(childComplexity), true
+		return e.complexity.OrganizationSettingConnection.Edges(childComplexity), true
 
-	case "OrganizationSettingsConnection.totalCount":
-		if e.complexity.OrganizationSettingsConnection.TotalCount == nil {
+	case "OrganizationSettingConnection.pageInfo":
+		if e.complexity.OrganizationSettingConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettingsConnection.TotalCount(childComplexity), true
+		return e.complexity.OrganizationSettingConnection.PageInfo(childComplexity), true
 
-	case "OrganizationSettingsEdge.cursor":
-		if e.complexity.OrganizationSettingsEdge.Cursor == nil {
+	case "OrganizationSettingConnection.totalCount":
+		if e.complexity.OrganizationSettingConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettingsEdge.Cursor(childComplexity), true
+		return e.complexity.OrganizationSettingConnection.TotalCount(childComplexity), true
 
-	case "OrganizationSettingsEdge.node":
-		if e.complexity.OrganizationSettingsEdge.Node == nil {
+	case "OrganizationSettingCreatePayload.organizationSetting":
+		if e.complexity.OrganizationSettingCreatePayload.OrganizationSetting == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSettingsEdge.Node(childComplexity), true
+		return e.complexity.OrganizationSettingCreatePayload.OrganizationSetting(childComplexity), true
+
+	case "OrganizationSettingDeletePayload.deletedID":
+		if e.complexity.OrganizationSettingDeletePayload.DeletedID == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingDeletePayload.DeletedID(childComplexity), true
+
+	case "OrganizationSettingEdge.cursor":
+		if e.complexity.OrganizationSettingEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingEdge.Cursor(childComplexity), true
+
+	case "OrganizationSettingEdge.node":
+		if e.complexity.OrganizationSettingEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingEdge.Node(childComplexity), true
+
+	case "OrganizationSettingUpdatePayload.organizationSetting":
+		if e.complexity.OrganizationSettingUpdatePayload.OrganizationSetting == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSettingUpdatePayload.OrganizationSetting(childComplexity), true
 
 	case "OrganizationUpdatePayload.organization":
 		if e.complexity.OrganizationUpdatePayload.Organization == nil {
@@ -2165,17 +2405,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Group(childComplexity, args["id"].(string)), true
 
-	case "Query.groupSettingsSlice":
-		if e.complexity.Query.GroupSettingsSlice == nil {
+	case "Query.groupSetting":
+		if e.complexity.Query.GroupSetting == nil {
 			break
 		}
 
-		args, err := ec.field_Query_groupSettingsSlice_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_groupSetting_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GroupSettingsSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.GroupSettingsWhereInput)), true
+		return e.complexity.Query.GroupSetting(childComplexity, args["id"].(string)), true
+
+	case "Query.groupSettings":
+		if e.complexity.Query.GroupSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Query_groupSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GroupSettings(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.GroupSettingWhereInput)), true
 
 	case "Query.groups":
 		if e.complexity.Query.Groups == nil {
@@ -2273,17 +2525,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Organization(childComplexity, args["id"].(string)), true
 
-	case "Query.organizationSettingsSlice":
-		if e.complexity.Query.OrganizationSettingsSlice == nil {
+	case "Query.organizationSetting":
+		if e.complexity.Query.OrganizationSetting == nil {
 			break
 		}
 
-		args, err := ec.field_Query_organizationSettingsSlice_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_organizationSetting_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.OrganizationSettingsSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.OrganizationSettingsWhereInput)), true
+		return e.complexity.Query.OrganizationSetting(childComplexity, args["id"].(string)), true
+
+	case "Query.organizationSettings":
+		if e.complexity.Query.OrganizationSettings == nil {
+			break
+		}
+
+		args, err := ec.field_Query_organizationSettings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OrganizationSettings(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.OrganizationSettingWhereInput)), true
 
 	case "Query.organizations":
 		if e.complexity.Query.Organizations == nil {
@@ -2321,6 +2585,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.PersonalAccessTokens(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.PersonalAccessTokenWhereInput)), true
 
+	case "Query.refreshToken":
+		if e.complexity.Query.RefreshToken == nil {
+			break
+		}
+
+		args, err := ec.field_Query_refreshToken_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RefreshToken(childComplexity, args["id"].(string)), true
+
+	case "Query.refreshTokens":
+		if e.complexity.Query.RefreshTokens == nil {
+			break
+		}
+
+		args, err := ec.field_Query_refreshTokens_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.RefreshTokens(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.RefreshTokenWhereInput)), true
+
 	case "Query.session":
 		if e.complexity.Query.Session == nil {
 			break
@@ -2357,6 +2645,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
 
+	case "Query.userSetting":
+		if e.complexity.Query.UserSetting == nil {
+			break
+		}
+
+		args, err := ec.field_Query_userSetting_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.UserSetting(childComplexity, args["id"].(string)), true
+
 	case "Query.userSettings":
 		if e.complexity.Query.UserSettings == nil {
 			break
@@ -2367,19 +2667,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.UserSettings(childComplexity, args["id"].(string)), true
-
-	case "Query.userSettingsSlice":
-		if e.complexity.Query.UserSettingsSlice == nil {
-			break
-		}
-
-		args, err := ec.field_Query_userSettingsSlice_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.UserSettingsSlice(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.UserSettingsWhereInput)), true
+		return e.complexity.Query.UserSettings(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*generated.UserSettingWhereInput)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -2511,6 +2799,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.RefreshToken.User(childComplexity), true
+
+	case "RefreshTokenConnection.edges":
+		if e.complexity.RefreshTokenConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenConnection.Edges(childComplexity), true
+
+	case "RefreshTokenConnection.pageInfo":
+		if e.complexity.RefreshTokenConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenConnection.PageInfo(childComplexity), true
+
+	case "RefreshTokenConnection.totalCount":
+		if e.complexity.RefreshTokenConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenConnection.TotalCount(childComplexity), true
+
+	case "RefreshTokenCreatePayload.refreshToken":
+		if e.complexity.RefreshTokenCreatePayload.RefreshToken == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenCreatePayload.RefreshToken(childComplexity), true
+
+	case "RefreshTokenDeletePayload.deletedID":
+		if e.complexity.RefreshTokenDeletePayload.DeletedID == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenDeletePayload.DeletedID(childComplexity), true
+
+	case "RefreshTokenEdge.cursor":
+		if e.complexity.RefreshTokenEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenEdge.Cursor(childComplexity), true
+
+	case "RefreshTokenEdge.node":
+		if e.complexity.RefreshTokenEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenEdge.Node(childComplexity), true
+
+	case "RefreshTokenUpdatePayload.refreshToken":
+		if e.complexity.RefreshTokenUpdatePayload.RefreshToken == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenUpdatePayload.RefreshToken(childComplexity), true
 
 	case "Session.createdAt":
 		if e.complexity.Session.CreatedAt == nil {
@@ -2827,152 +3171,159 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserEdge.Node(childComplexity), true
 
-	case "UserSettings.createdAt":
-		if e.complexity.UserSettings.CreatedAt == nil {
+	case "UserSetting.createdAt":
+		if e.complexity.UserSetting.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.CreatedAt(childComplexity), true
+		return e.complexity.UserSetting.CreatedAt(childComplexity), true
 
-	case "UserSettings.createdBy":
-		if e.complexity.UserSettings.CreatedBy == nil {
+	case "UserSetting.createdBy":
+		if e.complexity.UserSetting.CreatedBy == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.CreatedBy(childComplexity), true
+		return e.complexity.UserSetting.CreatedBy(childComplexity), true
 
-	case "UserSettings.emailConfirmed":
-		if e.complexity.UserSettings.EmailConfirmed == nil {
+	case "UserSetting.emailConfirmed":
+		if e.complexity.UserSetting.EmailConfirmed == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.EmailConfirmed(childComplexity), true
+		return e.complexity.UserSetting.EmailConfirmed(childComplexity), true
 
-	case "UserSettings.id":
-		if e.complexity.UserSettings.ID == nil {
+	case "UserSetting.id":
+		if e.complexity.UserSetting.ID == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.ID(childComplexity), true
+		return e.complexity.UserSetting.ID(childComplexity), true
 
-	case "UserSettings.locked":
-		if e.complexity.UserSettings.Locked == nil {
+	case "UserSetting.locked":
+		if e.complexity.UserSetting.Locked == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.Locked(childComplexity), true
+		return e.complexity.UserSetting.Locked(childComplexity), true
 
-	case "UserSettings.permissions":
-		if e.complexity.UserSettings.Permissions == nil {
+	case "UserSetting.permissions":
+		if e.complexity.UserSetting.Permissions == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.Permissions(childComplexity), true
+		return e.complexity.UserSetting.Permissions(childComplexity), true
 
-	case "UserSettings.role":
-		if e.complexity.UserSettings.Role == nil {
+	case "UserSetting.role":
+		if e.complexity.UserSetting.Role == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.Role(childComplexity), true
+		return e.complexity.UserSetting.Role(childComplexity), true
 
-	case "UserSettings.silencedAt":
-		if e.complexity.UserSettings.SilencedAt == nil {
+	case "UserSetting.silencedAt":
+		if e.complexity.UserSetting.SilencedAt == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.SilencedAt(childComplexity), true
+		return e.complexity.UserSetting.SilencedAt(childComplexity), true
 
-	case "UserSettings.status":
-		if e.complexity.UserSettings.Status == nil {
+	case "UserSetting.status":
+		if e.complexity.UserSetting.Status == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.Status(childComplexity), true
+		return e.complexity.UserSetting.Status(childComplexity), true
 
-	case "UserSettings.suspendedAt":
-		if e.complexity.UserSettings.SuspendedAt == nil {
+	case "UserSetting.suspendedAt":
+		if e.complexity.UserSetting.SuspendedAt == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.SuspendedAt(childComplexity), true
+		return e.complexity.UserSetting.SuspendedAt(childComplexity), true
 
-	case "UserSettings.tags":
-		if e.complexity.UserSettings.Tags == nil {
+	case "UserSetting.tags":
+		if e.complexity.UserSetting.Tags == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.Tags(childComplexity), true
+		return e.complexity.UserSetting.Tags(childComplexity), true
 
-	case "UserSettings.updatedAt":
-		if e.complexity.UserSettings.UpdatedAt == nil {
+	case "UserSetting.updatedAt":
+		if e.complexity.UserSetting.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.UpdatedAt(childComplexity), true
+		return e.complexity.UserSetting.UpdatedAt(childComplexity), true
 
-	case "UserSettings.updatedBy":
-		if e.complexity.UserSettings.UpdatedBy == nil {
+	case "UserSetting.updatedBy":
+		if e.complexity.UserSetting.UpdatedBy == nil {
 			break
 		}
 
-		return e.complexity.UserSettings.UpdatedBy(childComplexity), true
+		return e.complexity.UserSetting.UpdatedBy(childComplexity), true
 
-	case "UserSettingsConnection.edges":
-		if e.complexity.UserSettingsConnection.Edges == nil {
+	case "UserSetting.user":
+		if e.complexity.UserSetting.User == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsConnection.Edges(childComplexity), true
+		return e.complexity.UserSetting.User(childComplexity), true
 
-	case "UserSettingsConnection.pageInfo":
-		if e.complexity.UserSettingsConnection.PageInfo == nil {
+	case "UserSettingConnection.edges":
+		if e.complexity.UserSettingConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsConnection.PageInfo(childComplexity), true
+		return e.complexity.UserSettingConnection.Edges(childComplexity), true
 
-	case "UserSettingsConnection.totalCount":
-		if e.complexity.UserSettingsConnection.TotalCount == nil {
+	case "UserSettingConnection.pageInfo":
+		if e.complexity.UserSettingConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsConnection.TotalCount(childComplexity), true
+		return e.complexity.UserSettingConnection.PageInfo(childComplexity), true
 
-	case "UserSettingsCreatePayload.UserSettings":
-		if e.complexity.UserSettingsCreatePayload.UserSettings == nil {
+	case "UserSettingConnection.totalCount":
+		if e.complexity.UserSettingConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsCreatePayload.UserSettings(childComplexity), true
+		return e.complexity.UserSettingConnection.TotalCount(childComplexity), true
 
-	case "UserSettingsDeletePayload.deletedID":
-		if e.complexity.UserSettingsDeletePayload.DeletedID == nil {
+	case "UserSettingCreatePayload.UserSetting":
+		if e.complexity.UserSettingCreatePayload.UserSetting == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsDeletePayload.DeletedID(childComplexity), true
+		return e.complexity.UserSettingCreatePayload.UserSetting(childComplexity), true
 
-	case "UserSettingsEdge.cursor":
-		if e.complexity.UserSettingsEdge.Cursor == nil {
+	case "UserSettingDeletePayload.deletedID":
+		if e.complexity.UserSettingDeletePayload.DeletedID == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsEdge.Cursor(childComplexity), true
+		return e.complexity.UserSettingDeletePayload.DeletedID(childComplexity), true
 
-	case "UserSettingsEdge.node":
-		if e.complexity.UserSettingsEdge.Node == nil {
+	case "UserSettingEdge.cursor":
+		if e.complexity.UserSettingEdge.Cursor == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsEdge.Node(childComplexity), true
+		return e.complexity.UserSettingEdge.Cursor(childComplexity), true
 
-	case "UserSettingsUpdatePayload.UserSettings":
-		if e.complexity.UserSettingsUpdatePayload.UserSettings == nil {
+	case "UserSettingEdge.node":
+		if e.complexity.UserSettingEdge.Node == nil {
 			break
 		}
 
-		return e.complexity.UserSettingsUpdatePayload.UserSettings(childComplexity), true
+		return e.complexity.UserSettingEdge.Node(childComplexity), true
+
+	case "UserSettingUpdatePayload.UserSetting":
+		if e.complexity.UserSettingUpdatePayload.UserSetting == nil {
+			break
+		}
+
+		return e.complexity.UserSettingUpdatePayload.UserSetting(childComplexity), true
 
 	case "UserUpdatePayload.user":
 		if e.complexity.UserUpdatePayload.User == nil {
@@ -2998,41 +3349,43 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateEntitlementInput,
 		ec.unmarshalInputCreateGroupInput,
-		ec.unmarshalInputCreateGroupSettingsInput,
+		ec.unmarshalInputCreateGroupSettingInput,
 		ec.unmarshalInputCreateIntegrationInput,
 		ec.unmarshalInputCreateOauthProviderInput,
 		ec.unmarshalInputCreateOrganizationInput,
-		ec.unmarshalInputCreateOrganizationSettingsInput,
+		ec.unmarshalInputCreateOrganizationSettingInput,
 		ec.unmarshalInputCreatePersonalAccessTokenInput,
+		ec.unmarshalInputCreateRefreshTokenInput,
 		ec.unmarshalInputCreateSessionInput,
 		ec.unmarshalInputCreateUserInput,
-		ec.unmarshalInputCreateUserSettingsInput,
+		ec.unmarshalInputCreateUserSettingInput,
 		ec.unmarshalInputEntitlementWhereInput,
 		ec.unmarshalInputGroupOrder,
-		ec.unmarshalInputGroupSettingsWhereInput,
+		ec.unmarshalInputGroupSettingWhereInput,
 		ec.unmarshalInputGroupWhereInput,
 		ec.unmarshalInputIntegrationOrder,
 		ec.unmarshalInputIntegrationWhereInput,
 		ec.unmarshalInputOauthProviderWhereInput,
 		ec.unmarshalInputOrganizationOrder,
-		ec.unmarshalInputOrganizationSettingsWhereInput,
+		ec.unmarshalInputOrganizationSettingWhereInput,
 		ec.unmarshalInputOrganizationWhereInput,
 		ec.unmarshalInputPersonalAccessTokenWhereInput,
 		ec.unmarshalInputRefreshTokenWhereInput,
 		ec.unmarshalInputSessionWhereInput,
 		ec.unmarshalInputUpdateEntitlementInput,
 		ec.unmarshalInputUpdateGroupInput,
-		ec.unmarshalInputUpdateGroupSettingsInput,
+		ec.unmarshalInputUpdateGroupSettingInput,
 		ec.unmarshalInputUpdateIntegrationInput,
 		ec.unmarshalInputUpdateOauthProviderInput,
 		ec.unmarshalInputUpdateOrganizationInput,
-		ec.unmarshalInputUpdateOrganizationSettingsInput,
+		ec.unmarshalInputUpdateOrganizationSettingInput,
 		ec.unmarshalInputUpdatePersonalAccessTokenInput,
+		ec.unmarshalInputUpdateRefreshTokenInput,
 		ec.unmarshalInputUpdateSessionInput,
 		ec.unmarshalInputUpdateUserInput,
-		ec.unmarshalInputUpdateUserSettingsInput,
+		ec.unmarshalInputUpdateUserSettingInput,
 		ec.unmarshalInputUserOrder,
-		ec.unmarshalInputUserSettingsWhereInput,
+		ec.unmarshalInputUserSettingWhereInput,
 		ec.unmarshalInputUserWhereInput,
 	)
 	first := true
@@ -3176,20 +3529,21 @@ input CreateGroupInput {
   ownerID: ID
 }
 """
-CreateGroupSettingsInput is used for create GroupSettings object.
+CreateGroupSettingInput is used for create GroupSetting object.
 Input was generated by ent.
 """
-input CreateGroupSettingsInput {
+input CreateGroupSettingInput {
   createdAt: Time
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  visibility: GroupSettingsVisibility
-  joinPolicy: GroupSettingsJoinPolicy
+  visibility: GroupSettingVisibility
+  joinPolicy: GroupSettingJoinPolicy
   """tags associated with the object"""
   tags: [String!]
   syncToSlack: Boolean
   syncToGithub: Boolean
+  groupID: ID
 }
 """
 CreateIntegrationInput is used for create Integration object.
@@ -3258,10 +3612,10 @@ input CreateOrganizationInput {
   oauthproviderIDs: [ID!]
 }
 """
-CreateOrganizationSettingsInput is used for create OrganizationSettings object.
+CreateOrganizationSettingInput is used for create OrganizationSetting object.
 Input was generated by ent.
 """
-input CreateOrganizationSettingsInput {
+input CreateOrganizationSettingInput {
   createdAt: Time
   updatedAt: Time
   createdBy: String
@@ -3280,6 +3634,7 @@ input CreateOrganizationSettingsInput {
   taxIdentifier: String!
   """tags associated with the object"""
   tags: [String!]
+  orgnaizationID: ID
 }
 """
 CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -3296,6 +3651,27 @@ input CreatePersonalAccessTokenInput {
   expirationAt: Time!
   lastUsedAt: Time
   userID: ID!
+}
+"""
+CreateRefreshTokenInput is used for create RefreshToken object.
+Input was generated by ent.
+"""
+input CreateRefreshTokenInput {
+  clientID: String!
+  scopes: [String!]
+  nonce: String!
+  claimsUserID: String!
+  claimsUsername: String!
+  claimsEmail: String!
+  claimsEmailVerified: Boolean!
+  claimsGroups: [String!]
+  claimsPreferredUsername: String!
+  connectorID: String!
+  connectorData: [String!]
+  token: String!
+  obsoleteToken: String!
+  lastUsed: Time
+  userID: ID
 }
 """
 CreateSessionInput is used for create Session object.
@@ -3350,10 +3726,10 @@ input CreateUserInput {
   refreshtokenIDs: [ID!]
 }
 """
-CreateUserSettingsInput is used for create UserSettings object.
+CreateUserSettingInput is used for create UserSetting object.
 Input was generated by ent.
 """
-input CreateUserSettingsInput {
+input CreateUserSettingInput {
   createdAt: Time
   updatedAt: Time
   createdBy: String
@@ -3366,12 +3742,13 @@ input CreateUserSettingsInput {
   suspendedAt: Time
   """local user password recovery code generated during account creation - does not exist for oauth'd users"""
   recoveryCode: String
-  status: UserSettingsStatus
-  role: UserSettingsRole
+  status: UserSettingStatus
+  role: UserSettingRole
   permissions: [String!]
   emailConfirmed: Boolean
   """tags associated with the object"""
   tags: [String!]
+  userID: ID
 }
 """
 Define a Relay Cursor type:
@@ -3610,7 +3987,7 @@ type Group implements Node {
   logoURL: String!
   """The group's displayed 'friendly' name"""
   displayName: String!
-  setting: GroupSettings!
+  setting: GroupSetting!
   users: [User!]
   owner: Organization
 }
@@ -3642,55 +4019,56 @@ enum GroupOrderField {
   name
   display_name
 }
-type GroupSettings implements Node {
+type GroupSetting implements Node {
   id: ID!
   createdAt: Time!
   updatedAt: Time!
   createdBy: String
   updatedBy: String
-  visibility: GroupSettingsVisibility!
-  joinPolicy: GroupSettingsJoinPolicy!
+  visibility: GroupSettingVisibility!
+  joinPolicy: GroupSettingJoinPolicy!
   """tags associated with the object"""
   tags: [String!]!
   syncToSlack: Boolean!
   syncToGithub: Boolean!
+  group: Group
 }
 """A connection to a list of items."""
-type GroupSettingsConnection {
+type GroupSettingConnection {
   """A list of edges."""
-  edges: [GroupSettingsEdge]
+  edges: [GroupSettingEdge]
   """Information to aid in pagination."""
   pageInfo: PageInfo!
   """Identifies the total count of items in the connection."""
   totalCount: Int!
 }
 """An edge in a connection."""
-type GroupSettingsEdge {
+type GroupSettingEdge {
   """The item at the end of the edge."""
-  node: GroupSettings
+  node: GroupSetting
   """A cursor for use in pagination."""
   cursor: Cursor!
 }
-"""GroupSettingsJoinPolicy is enum for the field join_policy"""
-enum GroupSettingsJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsettings.JoinPolicy") {
+"""GroupSettingJoinPolicy is enum for the field join_policy"""
+enum GroupSettingJoinPolicy @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.JoinPolicy") {
   OPEN
   INVITE_ONLY
   APPLICATION_ONLY
   INVITE_OR_APPLICATION
 }
-"""GroupSettingsVisibility is enum for the field visibility"""
-enum GroupSettingsVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsettings.Visibility") {
+"""GroupSettingVisibility is enum for the field visibility"""
+enum GroupSettingVisibility @goModel(model: "github.com/datumforge/datum/internal/ent/generated/groupsetting.Visibility") {
   PUBLIC
   PRIVATE
 }
 """
-GroupSettingsWhereInput is used for filtering GroupSettings objects.
+GroupSettingWhereInput is used for filtering GroupSetting objects.
 Input was generated by ent.
 """
-input GroupSettingsWhereInput {
-  not: GroupSettingsWhereInput
-  and: [GroupSettingsWhereInput!]
-  or: [GroupSettingsWhereInput!]
+input GroupSettingWhereInput {
+  not: GroupSettingWhereInput
+  and: [GroupSettingWhereInput!]
+  or: [GroupSettingWhereInput!]
   """id field predicates"""
   id: ID
   idNEQ: ID
@@ -3753,21 +4131,24 @@ input GroupSettingsWhereInput {
   updatedByEqualFold: String
   updatedByContainsFold: String
   """visibility field predicates"""
-  visibility: GroupSettingsVisibility
-  visibilityNEQ: GroupSettingsVisibility
-  visibilityIn: [GroupSettingsVisibility!]
-  visibilityNotIn: [GroupSettingsVisibility!]
+  visibility: GroupSettingVisibility
+  visibilityNEQ: GroupSettingVisibility
+  visibilityIn: [GroupSettingVisibility!]
+  visibilityNotIn: [GroupSettingVisibility!]
   """join_policy field predicates"""
-  joinPolicy: GroupSettingsJoinPolicy
-  joinPolicyNEQ: GroupSettingsJoinPolicy
-  joinPolicyIn: [GroupSettingsJoinPolicy!]
-  joinPolicyNotIn: [GroupSettingsJoinPolicy!]
+  joinPolicy: GroupSettingJoinPolicy
+  joinPolicyNEQ: GroupSettingJoinPolicy
+  joinPolicyIn: [GroupSettingJoinPolicy!]
+  joinPolicyNotIn: [GroupSettingJoinPolicy!]
   """sync_to_slack field predicates"""
   syncToSlack: Boolean
   syncToSlackNEQ: Boolean
   """sync_to_github field predicates"""
   syncToGithub: Boolean
   syncToGithubNEQ: Boolean
+  """group edge predicates"""
+  hasGroup: Boolean
+  hasGroupWith: [GroupWhereInput!]
 }
 """
 GroupWhereInput is used for filtering Group objects.
@@ -3868,7 +4249,7 @@ input GroupWhereInput {
   displayNameContainsFold: String
   """setting edge predicates"""
   hasSetting: Boolean
-  hasSettingWith: [GroupSettingsWhereInput!]
+  hasSettingWith: [GroupSettingWhereInput!]
   """users edge predicates"""
   hasUsers: Boolean
   hasUsersWith: [UserWhereInput!]
@@ -4318,7 +4699,7 @@ type Organization implements Node {
   users: [User!]
   groups: [Group!]
   integrations: [Integration!]
-  setting: OrganizationSettings
+  setting: OrganizationSetting
   entitlements: [Entitlement!]
   oauthprovider: [OauthProvider!]
 }
@@ -4350,7 +4731,7 @@ enum OrganizationOrderField {
   name
   display_name
 }
-type OrganizationSettings implements Node {
+type OrganizationSetting implements Node {
   id: ID!
   createdAt: Time!
   updatedAt: Time!
@@ -4370,31 +4751,32 @@ type OrganizationSettings implements Node {
   taxIdentifier: String!
   """tags associated with the object"""
   tags: [String!]
+  orgnaization: Organization
 }
 """A connection to a list of items."""
-type OrganizationSettingsConnection {
+type OrganizationSettingConnection {
   """A list of edges."""
-  edges: [OrganizationSettingsEdge]
+  edges: [OrganizationSettingEdge]
   """Information to aid in pagination."""
   pageInfo: PageInfo!
   """Identifies the total count of items in the connection."""
   totalCount: Int!
 }
 """An edge in a connection."""
-type OrganizationSettingsEdge {
+type OrganizationSettingEdge {
   """The item at the end of the edge."""
-  node: OrganizationSettings
+  node: OrganizationSetting
   """A cursor for use in pagination."""
   cursor: Cursor!
 }
 """
-OrganizationSettingsWhereInput is used for filtering OrganizationSettings objects.
+OrganizationSettingWhereInput is used for filtering OrganizationSetting objects.
 Input was generated by ent.
 """
-input OrganizationSettingsWhereInput {
-  not: OrganizationSettingsWhereInput
-  and: [OrganizationSettingsWhereInput!]
-  or: [OrganizationSettingsWhereInput!]
+input OrganizationSettingWhereInput {
+  not: OrganizationSettingWhereInput
+  and: [OrganizationSettingWhereInput!]
+  or: [OrganizationSettingWhereInput!]
   """id field predicates"""
   id: ID
   idNEQ: ID
@@ -4568,6 +4950,9 @@ input OrganizationSettingsWhereInput {
   taxIdentifierHasSuffix: String
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
+  """orgnaization edge predicates"""
+  hasOrgnaization: Boolean
+  hasOrgnaizationWith: [OrganizationWhereInput!]
 }
 """
 OrganizationWhereInput is used for filtering Organization objects.
@@ -4685,7 +5070,7 @@ input OrganizationWhereInput {
   hasIntegrationsWith: [IntegrationWhereInput!]
   """setting edge predicates"""
   hasSetting: Boolean
-  hasSettingWith: [OrganizationSettingsWhereInput!]
+  hasSettingWith: [OrganizationSettingWhereInput!]
   """entitlements edge predicates"""
   hasEntitlements: Boolean
   hasEntitlementsWith: [EntitlementWhereInput!]
@@ -4903,7 +5288,7 @@ type Query {
     """Filtering options for Groups returned from the connection."""
     where: GroupWhereInput
   ): GroupConnection!
-  groupSettingsSlice(
+  groupSettings(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
 
@@ -4916,9 +5301,9 @@ type Query {
     """Returns the last _n_ elements from the list."""
     last: Int
 
-    """Filtering options for GroupSettingsSlice returned from the connection."""
-    where: GroupSettingsWhereInput
-  ): GroupSettingsConnection!
+    """Filtering options for GroupSettings returned from the connection."""
+    where: GroupSettingWhereInput
+  ): GroupSettingConnection!
   integrations(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
@@ -4973,7 +5358,7 @@ type Query {
     """Filtering options for Organizations returned from the connection."""
     where: OrganizationWhereInput
   ): OrganizationConnection!
-  organizationSettingsSlice(
+  organizationSettings(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
 
@@ -4986,9 +5371,9 @@ type Query {
     """Returns the last _n_ elements from the list."""
     last: Int
 
-    """Filtering options for OrganizationSettingsSlice returned from the connection."""
-    where: OrganizationSettingsWhereInput
-  ): OrganizationSettingsConnection!
+    """Filtering options for OrganizationSettings returned from the connection."""
+    where: OrganizationSettingWhereInput
+  ): OrganizationSettingConnection!
   personalAccessTokens(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
@@ -5005,6 +5390,22 @@ type Query {
     """Filtering options for PersonalAccessTokens returned from the connection."""
     where: PersonalAccessTokenWhereInput
   ): PersonalAccessTokenConnection!
+  refreshTokens(
+    """Returns the elements in the list that come after the specified cursor."""
+    after: Cursor
+
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come before the specified cursor."""
+    before: Cursor
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """Filtering options for RefreshTokens returned from the connection."""
+    where: RefreshTokenWhereInput
+  ): RefreshTokenConnection!
   sessions(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
@@ -5040,7 +5441,7 @@ type Query {
     """Filtering options for Users returned from the connection."""
     where: UserWhereInput
   ): UserConnection!
-  userSettingsSlice(
+  userSettings(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
 
@@ -5053,9 +5454,9 @@ type Query {
     """Returns the last _n_ elements from the list."""
     last: Int
 
-    """Filtering options for UserSettingsSlice returned from the connection."""
-    where: UserSettingsWhereInput
-  ): UserSettingsConnection!
+    """Filtering options for UserSettings returned from the connection."""
+    where: UserSettingWhereInput
+  ): UserSettingConnection!
 }
 type RefreshToken implements Node {
   id: ID!
@@ -5074,6 +5475,22 @@ type RefreshToken implements Node {
   obsoleteToken: String!
   lastUsed: Time!
   user: User
+}
+"""A connection to a list of items."""
+type RefreshTokenConnection {
+  """A list of edges."""
+  edges: [RefreshTokenEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+"""An edge in a connection."""
+type RefreshTokenEdge {
+  """The item at the end of the edge."""
+  node: RefreshToken
+  """A cursor for use in pagination."""
+  cursor: Cursor!
 }
 """
 RefreshTokenWhereInput is used for filtering RefreshToken objects.
@@ -5460,22 +5877,24 @@ input UpdateGroupInput {
   clearOwner: Boolean
 }
 """
-UpdateGroupSettingsInput is used for update GroupSettings object.
+UpdateGroupSettingInput is used for update GroupSetting object.
 Input was generated by ent.
 """
-input UpdateGroupSettingsInput {
+input UpdateGroupSettingInput {
   updatedAt: Time
   createdBy: String
   clearCreatedBy: Boolean
   updatedBy: String
   clearUpdatedBy: Boolean
-  visibility: GroupSettingsVisibility
-  joinPolicy: GroupSettingsJoinPolicy
+  visibility: GroupSettingVisibility
+  joinPolicy: GroupSettingJoinPolicy
   """tags associated with the object"""
   tags: [String!]
   appendTags: [String!]
   syncToSlack: Boolean
   syncToGithub: Boolean
+  groupID: ID
+  clearGroup: Boolean
 }
 """
 UpdateIntegrationInput is used for update Integration object.
@@ -5559,10 +5978,10 @@ input UpdateOrganizationInput {
   clearOauthprovider: Boolean
 }
 """
-UpdateOrganizationSettingsInput is used for update OrganizationSettings object.
+UpdateOrganizationSettingInput is used for update OrganizationSetting object.
 Input was generated by ent.
 """
-input UpdateOrganizationSettingsInput {
+input UpdateOrganizationSettingInput {
   updatedAt: Time
   createdBy: String
   clearCreatedBy: Boolean
@@ -5585,6 +6004,8 @@ input UpdateOrganizationSettingsInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
+  orgnaizationID: ID
+  clearOrgnaization: Boolean
 }
 """
 UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.
@@ -5605,6 +6026,34 @@ input UpdatePersonalAccessTokenInput {
   lastUsedAt: Time
   clearLastUsedAt: Boolean
   userID: ID
+}
+"""
+UpdateRefreshTokenInput is used for update RefreshToken object.
+Input was generated by ent.
+"""
+input UpdateRefreshTokenInput {
+  clientID: String
+  scopes: [String!]
+  appendScopes: [String!]
+  clearScopes: Boolean
+  nonce: String
+  claimsUserID: String
+  claimsUsername: String
+  claimsEmail: String
+  claimsEmailVerified: Boolean
+  claimsGroups: [String!]
+  appendClaimsGroups: [String!]
+  clearClaimsGroups: Boolean
+  claimsPreferredUsername: String
+  connectorID: String
+  connectorData: [String!]
+  appendConnectorData: [String!]
+  clearConnectorData: Boolean
+  token: String
+  obsoleteToken: String
+  lastUsed: Time
+  userID: ID
+  clearUser: Boolean
 }
 """
 UpdateSessionInput is used for update Session object.
@@ -5674,10 +6123,10 @@ input UpdateUserInput {
   clearRefreshtoken: Boolean
 }
 """
-UpdateUserSettingsInput is used for update UserSettings object.
+UpdateUserSettingInput is used for update UserSetting object.
 Input was generated by ent.
 """
-input UpdateUserSettingsInput {
+input UpdateUserSettingInput {
   updatedAt: Time
   createdBy: String
   clearCreatedBy: Boolean
@@ -5694,14 +6143,16 @@ input UpdateUserSettingsInput {
   """local user password recovery code generated during account creation - does not exist for oauth'd users"""
   recoveryCode: String
   clearRecoveryCode: Boolean
-  status: UserSettingsStatus
-  role: UserSettingsRole
+  status: UserSettingStatus
+  role: UserSettingRole
   permissions: [String!]
   appendPermissions: [String!]
   emailConfirmed: Boolean
   """tags associated with the object"""
   tags: [String!]
   appendTags: [String!]
+  userID: ID
+  clearUser: Boolean
 }
 type User implements Node {
   id: ID!
@@ -5726,7 +6177,7 @@ type User implements Node {
   sessions: [Session!]
   groups: [Group!]
   personalAccessTokens: [PersonalAccessToken!]
-  setting: UserSettings!
+  setting: UserSetting!
   refreshtoken: [RefreshToken!]
 }
 """A connection to a list of items."""
@@ -5758,7 +6209,7 @@ enum UserOrderField {
   last_name
   display_name
 }
-type UserSettings implements Node {
+type UserSetting implements Node {
   id: ID!
   createdAt: Time!
   updatedAt: Time!
@@ -5770,50 +6221,51 @@ type UserSettings implements Node {
   silencedAt: Time
   """The time the user was suspended"""
   suspendedAt: Time
-  status: UserSettingsStatus!
-  role: UserSettingsRole!
+  status: UserSettingStatus!
+  role: UserSettingRole!
   permissions: [String!]!
   emailConfirmed: Boolean!
   """tags associated with the object"""
   tags: [String!]!
+  user: User
 }
 """A connection to a list of items."""
-type UserSettingsConnection {
+type UserSettingConnection {
   """A list of edges."""
-  edges: [UserSettingsEdge]
+  edges: [UserSettingEdge]
   """Information to aid in pagination."""
   pageInfo: PageInfo!
   """Identifies the total count of items in the connection."""
   totalCount: Int!
 }
 """An edge in a connection."""
-type UserSettingsEdge {
+type UserSettingEdge {
   """The item at the end of the edge."""
-  node: UserSettings
+  node: UserSetting
   """A cursor for use in pagination."""
   cursor: Cursor!
 }
-"""UserSettingsRole is enum for the field role"""
-enum UserSettingsRole @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersettings.Role") {
+"""UserSettingRole is enum for the field role"""
+enum UserSettingRole @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Role") {
   USER
   ADMIN
   OWNER
 }
-"""UserSettingsStatus is enum for the field status"""
-enum UserSettingsStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersettings.Status") {
+"""UserSettingStatus is enum for the field status"""
+enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
   ACTIVE
   INACTIVE
   DEACTIVATED
   SUSPENDED
 }
 """
-UserSettingsWhereInput is used for filtering UserSettings objects.
+UserSettingWhereInput is used for filtering UserSetting objects.
 Input was generated by ent.
 """
-input UserSettingsWhereInput {
-  not: UserSettingsWhereInput
-  and: [UserSettingsWhereInput!]
-  or: [UserSettingsWhereInput!]
+input UserSettingWhereInput {
+  not: UserSettingWhereInput
+  and: [UserSettingWhereInput!]
+  or: [UserSettingWhereInput!]
   """id field predicates"""
   id: ID
   idNEQ: ID
@@ -5901,18 +6353,21 @@ input UserSettingsWhereInput {
   suspendedAtIsNil: Boolean
   suspendedAtNotNil: Boolean
   """status field predicates"""
-  status: UserSettingsStatus
-  statusNEQ: UserSettingsStatus
-  statusIn: [UserSettingsStatus!]
-  statusNotIn: [UserSettingsStatus!]
+  status: UserSettingStatus
+  statusNEQ: UserSettingStatus
+  statusIn: [UserSettingStatus!]
+  statusNotIn: [UserSettingStatus!]
   """role field predicates"""
-  role: UserSettingsRole
-  roleNEQ: UserSettingsRole
-  roleIn: [UserSettingsRole!]
-  roleNotIn: [UserSettingsRole!]
+  role: UserSettingRole
+  roleNEQ: UserSettingRole
+  roleIn: [UserSettingRole!]
+  roleNotIn: [UserSettingRole!]
   """email_confirmed field predicates"""
   emailConfirmed: Boolean
   emailConfirmedNEQ: Boolean
+  """user edge predicates"""
+  hasUser: Boolean
+  hasUserWith: [UserWhereInput!]
 }
 """
 UserWhereInput is used for filtering User objects.
@@ -6107,7 +6562,7 @@ input UserWhereInput {
   hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
   """setting edge predicates"""
   hasSetting: Boolean
-  hasSettingWith: [UserSettingsWhereInput!]
+  hasSettingWith: [UserSettingWhereInput!]
   """refreshtoken edge predicates"""
   hasRefreshtoken: Boolean
   hasRefreshtokenWith: [RefreshTokenWhereInput!]
@@ -6263,7 +6718,81 @@ type GroupDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/group_setting.graphql", Input: ``, BuiltIn: false},
+	{Name: "../../schema/groupsetting.graphql", Input: `extend type Query {
+    """
+    Look up groupSetting by ID
+    """
+     groupSetting(
+        """
+        ID of the groupSetting
+        """
+        id: ID!
+    ):  GroupSetting!
+}
+
+extend type Mutation{
+    """
+    Create a new groupSetting
+    """
+    createGroupSetting(
+        """
+        values of the groupSetting
+        """
+        input: CreateGroupSettingInput!
+    ): GroupSettingCreatePayload!
+    """
+    Update an existing groupSetting
+    """
+    updateGroupSetting(
+        """
+        ID of the groupSetting
+        """
+        id: ID!
+        """
+        New values for the groupSetting
+        """
+        input: UpdateGroupSettingInput!
+    ): GroupSettingUpdatePayload!
+    """
+    Delete an existing groupSetting
+    """
+    deleteGroupSetting(
+        """
+        ID of the groupSetting
+        """
+        id: ID!
+    ): GroupSettingDeletePayload!
+}
+
+"""
+Return response for createGroupSetting mutation
+"""
+type GroupSettingCreatePayload {
+    """
+    Created groupSetting
+    """
+    groupSetting: GroupSetting!
+}
+
+"""
+Return response for updateGroupSetting mutation
+"""
+type GroupSettingUpdatePayload {
+    """
+    Updated groupSetting
+    """
+    groupSetting: GroupSetting!
+}
+
+"""
+Return response for deleteGroupSetting mutation
+"""
+type GroupSettingDeletePayload {
+    """
+    Deleted groupSetting ID
+    """
+    deletedID: ID!
+}`, BuiltIn: false},
 	{Name: "../../schema/integration.graphql", Input: `extend type Query {
     """
     Look up integration by ID
@@ -6339,7 +6868,7 @@ type IntegrationDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/oauthprovider.graphql", Input: `extend type Query {
+	{Name: "../../schema/oauthProvider.graphql", Input: `extend type Query {
     """
     Look up oauthProvider by ID
     """
@@ -6489,7 +7018,81 @@ type OrganizationDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/organization_settings.graphql", Input: ``, BuiltIn: false},
+	{Name: "../../schema/organizationsetting.graphql", Input: `extend type Query {
+    """
+    Look up organizationSetting by ID
+    """
+     organizationSetting(
+        """
+        ID of the organizationSetting
+        """
+        id: ID!
+    ):  OrganizationSetting!
+}
+
+extend type Mutation{
+    """
+    Create a new organizationSetting
+    """
+    createOrganizationSetting(
+        """
+        values of the organizationSetting
+        """
+        input: CreateOrganizationSettingInput!
+    ): OrganizationSettingCreatePayload!
+    """
+    Update an existing organizationSetting
+    """
+    updateOrganizationSetting(
+        """
+        ID of the organizationSetting
+        """
+        id: ID!
+        """
+        New values for the organizationSetting
+        """
+        input: UpdateOrganizationSettingInput!
+    ): OrganizationSettingUpdatePayload!
+    """
+    Delete an existing organizationSetting
+    """
+    deleteOrganizationSetting(
+        """
+        ID of the organizationSetting
+        """
+        id: ID!
+    ): OrganizationSettingDeletePayload!
+}
+
+"""
+Return response for createOrganizationSetting mutation
+"""
+type OrganizationSettingCreatePayload {
+    """
+    Created organizationSetting
+    """
+    organizationSetting: OrganizationSetting!
+}
+
+"""
+Return response for updateOrganizationSetting mutation
+"""
+type OrganizationSettingUpdatePayload {
+    """
+    Updated organizationSetting
+    """
+    organizationSetting: OrganizationSetting!
+}
+
+"""
+Return response for deleteOrganizationSetting mutation
+"""
+type OrganizationSettingDeletePayload {
+    """
+    Deleted organizationSetting ID
+    """
+    deletedID: ID!
+}`, BuiltIn: false},
 	{Name: "../../schema/personalaccesstoken.graphql", Input: `extend type Query {
     """
     Look up personalAccessToken by ID
@@ -6565,7 +7168,81 @@ type PersonalAccessTokenDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/refreshtoken.graphql", Input: ``, BuiltIn: false},
+	{Name: "../../schema/refreshtoken.graphql", Input: `extend type Query {
+    """
+    Look up refreshToken by ID
+    """
+     refreshToken(
+        """
+        ID of the refreshToken
+        """
+        id: ID!
+    ):  RefreshToken!
+}
+
+extend type Mutation{
+    """
+    Create a new refreshToken
+    """
+    createRefreshToken(
+        """
+        values of the refreshToken
+        """
+        input: CreateRefreshTokenInput!
+    ): RefreshTokenCreatePayload!
+    """
+    Update an existing refreshToken
+    """
+    updateRefreshToken(
+        """
+        ID of the refreshToken
+        """
+        id: ID!
+        """
+        New values for the refreshToken
+        """
+        input: UpdateRefreshTokenInput!
+    ): RefreshTokenUpdatePayload!
+    """
+    Delete an existing refreshToken
+    """
+    deleteRefreshToken(
+        """
+        ID of the refreshToken
+        """
+        id: ID!
+    ): RefreshTokenDeletePayload!
+}
+
+"""
+Return response for createRefreshToken mutation
+"""
+type RefreshTokenCreatePayload {
+    """
+    Created refreshToken
+    """
+    refreshToken: RefreshToken!
+}
+
+"""
+Return response for updateRefreshToken mutation
+"""
+type RefreshTokenUpdatePayload {
+    """
+    Updated refreshToken
+    """
+    refreshToken: RefreshToken!
+}
+
+"""
+Return response for deleteRefreshToken mutation
+"""
+type RefreshTokenDeletePayload {
+    """
+    Deleted refreshToken ID
+    """
+    deletedID: ID!
+}`, BuiltIn: false},
 	{Name: "../../schema/session.graphql", Input: `extend type Query {
     """
     Look up session by ID
@@ -6716,78 +7393,78 @@ type UserDeletePayload {
     """
     deletedID: ID!
 }`, BuiltIn: false},
-	{Name: "../../schema/user_settings.graphql", Input: `extend type Query {
+	{Name: "../../schema/usersetting.graphql", Input: `extend type Query {
     """
-    Look up userSettings by ID
+    Look up userSetting by ID
     """
-     userSettings(
+     userSetting(
         """
-        ID of the UserSettings
+        ID of the UserSetting
         """
         id: ID!
-    ):  UserSettings!
+    ):  UserSetting!
 }
 
 extend type Mutation{
     """
-    Create a new userSettings
+    Create a new userSetting
     """
-    createUserSettings(
+    createUserSetting(
         """
-        values of the userSettings
+        values of the userSetting
         """
-        input: CreateUserSettingsInput!
-    ): UserSettingsCreatePayload!
+        input: CreateUserSettingInput!
+    ): UserSettingCreatePayload!
     """
-    Update an existing userSettings
+    Update an existing userSetting
     """
-    pdateUserSettings(
+    updateUserSetting(
         """
-        ID of the userSettings
-        """
-        id: ID!
-        """
-        New values for the userSettings
-        """
-        input: UpdateUserSettingsInput!
-    ): UserSettingsUpdatePayload!
-    """
-    Delete an existing userSettings
-    """
-    deleteUserSettings(
-        """
-        ID of the userSettings
+        ID of the userSetting
         """
         id: ID!
-    ): UserSettingsDeletePayload!
+        """
+        New values for the userSetting
+        """
+        input: UpdateUserSettingInput!
+    ): UserSettingUpdatePayload!
+    """
+    Delete an existing userSetting
+    """
+    deleteUserSetting(
+        """
+        ID of the userSetting
+        """
+        id: ID!
+    ): UserSettingDeletePayload!
 }
 
 """
-Return response for createUserSettings mutation
+Return response for createUserSetting mutation
 """
-type UserSettingsCreatePayload {
+type UserSettingCreatePayload {
     """
-    Created userSettings
+    Created userSetting
     """
-    UserSettings: UserSettings!
+    UserSetting: UserSetting!
 }
 
 """
-Return response for updateUserSettings mutation
+Return response for updateUserSetting mutation
 """
-type UserSettingsUpdatePayload {
+type UserSettingUpdatePayload {
     """
-    Updated userSettings
+    Updated userSetting
     """
-    UserSettings: UserSettings!
+    UserSetting: UserSetting!
 }
 
 """
-Return response for deleteUserSettings mutation
+Return response for deleteUserSetting mutation
 """
-type UserSettingsDeletePayload {
+type UserSettingDeletePayload {
     """
-    Deleted userSettings ID
+    Deleted userSetting ID
     """
     deletedID: ID!
 }`, BuiltIn: false},
@@ -6823,6 +7500,21 @@ func (ec *executionContext) field_Mutation_createEntitlement_args(ctx context.Co
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCreateEntitlementInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateEntitlementInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createGroupSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateGroupSettingInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6876,6 +7568,21 @@ func (ec *executionContext) field_Mutation_createOauthProvider_args(ctx context.
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createOrganizationSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateOrganizationSettingInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateOrganizationSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6906,6 +7613,21 @@ func (ec *executionContext) field_Mutation_createPersonalAccessToken_args(ctx co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createRefreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 generated.CreateRefreshTokenInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateRefreshTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateRefreshTokenInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createSession_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -6921,13 +7643,13 @@ func (ec *executionContext) field_Mutation_createSession_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_createUserSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 generated.CreateUserSettingsInput
+	var arg0 generated.CreateUserSettingInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingsInput(ctx, tmp)
+		arg0, err = ec.unmarshalNCreateUserSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6952,6 +7674,21 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 }
 
 func (ec *executionContext) field_Mutation_deleteEntitlement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteGroupSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -7011,6 +7748,21 @@ func (ec *executionContext) field_Mutation_deleteOauthProvider_args(ctx context.
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteOrganizationSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7041,6 +7793,21 @@ func (ec *executionContext) field_Mutation_deletePersonalAccessToken_args(ctx co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deleteRefreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteSession_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7056,7 +7823,7 @@ func (ec *executionContext) field_Mutation_deleteSession_args(ctx context.Contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_deleteUserSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -7086,30 +7853,6 @@ func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, 
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_pdateUserSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	var arg1 generated.UpdateUserSettingsInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingsInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg1
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_updateEntitlement_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7126,6 +7869,30 @@ func (ec *executionContext) field_Mutation_updateEntitlement_args(ctx context.Co
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNUpdateEntitlementInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateEntitlementInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGroupSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateGroupSettingInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateGroupSettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7206,6 +7973,30 @@ func (ec *executionContext) field_Mutation_updateOauthProvider_args(ctx context.
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateOrganizationSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateOrganizationSettingInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateOrganizationSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateOrganizationSettingInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7254,6 +8045,30 @@ func (ec *executionContext) field_Mutation_updatePersonalAccessToken_args(ctx co
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateRefreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateRefreshTokenInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateRefreshTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateRefreshTokenInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateSession_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7270,6 +8085,30 @@ func (ec *executionContext) field_Mutation_updateSession_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNUpdateSessionInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateSessionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateUserSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 generated.UpdateUserSettingInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateUserSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7443,7 +8282,22 @@ func (ec *executionContext) field_Query_entitlements_args(ctx context.Context, r
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_groupSettingsSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_groupSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_groupSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[string]
@@ -7482,10 +8336,10 @@ func (ec *executionContext) field_Query_groupSettingsSlice_args(ctx context.Cont
 		}
 	}
 	args["last"] = arg3
-	var arg4 *generated.GroupSettingsWhereInput
+	var arg4 *generated.GroupSettingWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOGroupSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInput(ctx, tmp)
+		arg4, err = ec.unmarshalOGroupSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7740,7 +8594,22 @@ func (ec *executionContext) field_Query_oauthProviders_args(ctx context.Context,
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_organizationSettingsSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_organizationSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_organizationSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[string]
@@ -7779,10 +8648,10 @@ func (ec *executionContext) field_Query_organizationSettingsSlice_args(ctx conte
 		}
 	}
 	args["last"] = arg3
-	var arg4 *generated.OrganizationSettingsWhereInput
+	var arg4 *generated.OrganizationSettingWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOOrganizationSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInput(ctx, tmp)
+		arg4, err = ec.unmarshalOOrganizationSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -7932,6 +8801,72 @@ func (ec *executionContext) field_Query_personalAccessTokens_args(ctx context.Co
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_refreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_refreshTokens_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 *generated.RefreshTokenWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg4, err = ec.unmarshalORefreshTokenWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg4
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_session_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7998,7 +8933,22 @@ func (ec *executionContext) field_Query_sessions_args(ctx context.Context, rawAr
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_userSettingsSlice_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_userSetting_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_userSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *entgql.Cursor[string]
@@ -8037,30 +8987,15 @@ func (ec *executionContext) field_Query_userSettingsSlice_args(ctx context.Conte
 		}
 	}
 	args["last"] = arg3
-	var arg4 *generated.UserSettingsWhereInput
+	var arg4 *generated.UserSettingWhereInput
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
-		arg4, err = ec.unmarshalOUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx, tmp)
+		arg4, err = ec.unmarshalOUserSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
 	args["where"] = arg4
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_userSettings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -9715,9 +10650,9 @@ func (ec *executionContext) _Group_setting(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.GroupSettings)
+	res := resTmp.(*generated.GroupSetting)
 	fc.Result = res
-	return ec.marshalNGroupSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettings(ctx, field.Selections, res)
+	return ec.marshalNGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9729,27 +10664,29 @@ func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, fiel
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_GroupSettings_id(ctx, field)
+				return ec.fieldContext_GroupSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_GroupSettings_createdAt(ctx, field)
+				return ec.fieldContext_GroupSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_GroupSettings_updatedAt(ctx, field)
+				return ec.fieldContext_GroupSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_GroupSettings_createdBy(ctx, field)
+				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_GroupSettings_updatedBy(ctx, field)
+				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
 			case "visibility":
-				return ec.fieldContext_GroupSettings_visibility(ctx, field)
+				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
-				return ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
+				return ec.fieldContext_GroupSetting_joinPolicy(ctx, field)
 			case "tags":
-				return ec.fieldContext_GroupSettings_tags(ctx, field)
+				return ec.fieldContext_GroupSetting_tags(ctx, field)
 			case "syncToSlack":
-				return ec.fieldContext_GroupSettings_syncToSlack(ctx, field)
+				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
-				return ec.fieldContext_GroupSettings_syncToGithub(ctx, field)
+				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "group":
+				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type GroupSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GroupSetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -10281,8 +11218,8 @@ func (ec *executionContext) fieldContext_GroupEdge_cursor(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_id(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_id(ctx, field)
+func (ec *executionContext) _GroupSetting_id(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10312,9 +11249,9 @@ func (ec *executionContext) _GroupSettings_id(ctx context.Context, field graphql
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10325,8 +11262,8 @@ func (ec *executionContext) fieldContext_GroupSettings_id(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_createdAt(ctx, field)
+func (ec *executionContext) _GroupSetting_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10356,9 +11293,9 @@ func (ec *executionContext) _GroupSettings_createdAt(ctx context.Context, field 
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10369,8 +11306,8 @@ func (ec *executionContext) fieldContext_GroupSettings_createdAt(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_updatedAt(ctx, field)
+func (ec *executionContext) _GroupSetting_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10400,9 +11337,9 @@ func (ec *executionContext) _GroupSettings_updatedAt(ctx context.Context, field 
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10413,8 +11350,8 @@ func (ec *executionContext) fieldContext_GroupSettings_updatedAt(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_createdBy(ctx, field)
+func (ec *executionContext) _GroupSetting_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_createdBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10441,9 +11378,9 @@ func (ec *executionContext) _GroupSettings_createdBy(ctx context.Context, field 
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10454,8 +11391,8 @@ func (ec *executionContext) fieldContext_GroupSettings_createdBy(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_updatedBy(ctx, field)
+func (ec *executionContext) _GroupSetting_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_updatedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10482,9 +11419,9 @@ func (ec *executionContext) _GroupSettings_updatedBy(ctx context.Context, field 
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10495,8 +11432,8 @@ func (ec *executionContext) fieldContext_GroupSettings_updatedBy(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_visibility(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_visibility(ctx, field)
+func (ec *executionContext) _GroupSetting_visibility(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_visibility(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10521,26 +11458,26 @@ func (ec *executionContext) _GroupSettings_visibility(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(groupsettings.Visibility)
+	res := resTmp.(groupsetting.Visibility)
 	fc.Result = res
-	return ec.marshalNGroupSettingsVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, field.Selections, res)
+	return ec.marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_visibility(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type GroupSettingsVisibility does not have child fields")
+			return nil, errors.New("field of type GroupSettingVisibility does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_joinPolicy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
+func (ec *executionContext) _GroupSetting_joinPolicy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_joinPolicy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10565,26 +11502,26 @@ func (ec *executionContext) _GroupSettings_joinPolicy(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(groupsettings.JoinPolicy)
+	res := resTmp.(groupsetting.JoinPolicy)
 	fc.Result = res
-	return ec.marshalNGroupSettingsJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, field.Selections, res)
+	return ec.marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_joinPolicy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_joinPolicy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type GroupSettingsJoinPolicy does not have child fields")
+			return nil, errors.New("field of type GroupSettingJoinPolicy does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_tags(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_tags(ctx, field)
+func (ec *executionContext) _GroupSetting_tags(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_tags(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10614,9 +11551,9 @@ func (ec *executionContext) _GroupSettings_tags(ctx context.Context, field graph
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10627,8 +11564,8 @@ func (ec *executionContext) fieldContext_GroupSettings_tags(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_syncToSlack(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_syncToSlack(ctx, field)
+func (ec *executionContext) _GroupSetting_syncToSlack(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10658,9 +11595,9 @@ func (ec *executionContext) _GroupSettings_syncToSlack(ctx context.Context, fiel
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_syncToSlack(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_syncToSlack(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10671,8 +11608,8 @@ func (ec *executionContext) fieldContext_GroupSettings_syncToSlack(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettings_syncToGithub(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettings_syncToGithub(ctx, field)
+func (ec *executionContext) _GroupSetting_syncToGithub(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10702,9 +11639,9 @@ func (ec *executionContext) _GroupSettings_syncToGithub(ctx context.Context, fie
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettings_syncToGithub(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSetting_syncToGithub(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettings",
+		Object:     "GroupSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10715,8 +11652,75 @@ func (ec *executionContext) fieldContext_GroupSettings_syncToGithub(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettingsConnection_edges(ctx, field)
+func (ec *executionContext) _GroupSetting_group(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_group(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Group(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Group)
+	fc.Result = res
+	return ec.marshalOGroup2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSetting_group(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSetting",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Group_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Group_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Group_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Group_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Group_updatedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_Group_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Group_description(ctx, field)
+			case "logoURL":
+				return ec.fieldContext_Group_logoURL(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Group_displayName(ctx, field)
+			case "setting":
+				return ec.fieldContext_Group_setting(ctx, field)
+			case "users":
+				return ec.fieldContext_Group_users(ctx, field)
+			case "owner":
+				return ec.fieldContext_Group_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10738,32 +11742,32 @@ func (ec *executionContext) _GroupSettingsConnection_edges(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.GroupSettingsEdge)
+	res := resTmp.([]*generated.GroupSettingEdge)
 	fc.Result = res
-	return ec.marshalOGroupSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsEdge(ctx, field.Selections, res)
+	return ec.marshalOGroupSettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingEdge(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettingsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSettingConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettingsConnection",
+		Object:     "GroupSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "node":
-				return ec.fieldContext_GroupSettingsEdge_node(ctx, field)
+				return ec.fieldContext_GroupSettingEdge_node(ctx, field)
 			case "cursor":
-				return ec.fieldContext_GroupSettingsEdge_cursor(ctx, field)
+				return ec.fieldContext_GroupSettingEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type GroupSettingsEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingEdge", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettingsConnection_pageInfo(ctx, field)
+func (ec *executionContext) _GroupSettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10793,9 +11797,9 @@ func (ec *executionContext) _GroupSettingsConnection_pageInfo(ctx context.Contex
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettingsConnection",
+		Object:     "GroupSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10816,8 +11820,8 @@ func (ec *executionContext) fieldContext_GroupSettingsConnection_pageInfo(ctx co
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettingsConnection_totalCount(ctx, field)
+func (ec *executionContext) _GroupSettingConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10847,9 +11851,9 @@ func (ec *executionContext) _GroupSettingsConnection_totalCount(ctx context.Cont
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSettingConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettingsConnection",
+		Object:     "GroupSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10860,8 +11864,120 @@ func (ec *executionContext) fieldContext_GroupSettingsConnection_totalCount(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettingsEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettingsEdge_node(ctx, field)
+func (ec *executionContext) _GroupSettingCreatePayload_groupSetting(ctx context.Context, field graphql.CollectedField, obj *GroupSettingCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingCreatePayload_groupSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GroupSetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupSetting)
+	fc.Result = res
+	return ec.marshalNGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingCreatePayload_groupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GroupSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GroupSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "visibility":
+				return ec.fieldContext_GroupSetting_visibility(ctx, field)
+			case "joinPolicy":
+				return ec.fieldContext_GroupSetting_joinPolicy(ctx, field)
+			case "tags":
+				return ec.fieldContext_GroupSetting_tags(ctx, field)
+			case "syncToSlack":
+				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
+			case "syncToGithub":
+				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "group":
+				return ec.fieldContext_GroupSetting_group(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSetting", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *GroupSettingDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingDeletePayload_deletedID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingDeletePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10883,48 +11999,50 @@ func (ec *executionContext) _GroupSettingsEdge_node(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.GroupSettings)
+	res := resTmp.(*generated.GroupSetting)
 	fc.Result = res
-	return ec.marshalOGroupSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettings(ctx, field.Selections, res)
+	return ec.marshalOGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettingsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSettingEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettingsEdge",
+		Object:     "GroupSettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_GroupSettings_id(ctx, field)
+				return ec.fieldContext_GroupSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_GroupSettings_createdAt(ctx, field)
+				return ec.fieldContext_GroupSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_GroupSettings_updatedAt(ctx, field)
+				return ec.fieldContext_GroupSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_GroupSettings_createdBy(ctx, field)
+				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_GroupSettings_updatedBy(ctx, field)
+				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
 			case "visibility":
-				return ec.fieldContext_GroupSettings_visibility(ctx, field)
+				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
-				return ec.fieldContext_GroupSettings_joinPolicy(ctx, field)
+				return ec.fieldContext_GroupSetting_joinPolicy(ctx, field)
 			case "tags":
-				return ec.fieldContext_GroupSettings_tags(ctx, field)
+				return ec.fieldContext_GroupSetting_tags(ctx, field)
 			case "syncToSlack":
-				return ec.fieldContext_GroupSettings_syncToSlack(ctx, field)
+				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
 			case "syncToGithub":
-				return ec.fieldContext_GroupSettings_syncToGithub(ctx, field)
+				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "group":
+				return ec.fieldContext_GroupSetting_group(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type GroupSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GroupSetting", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _GroupSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_GroupSettingsEdge_cursor(ctx, field)
+func (ec *executionContext) _GroupSettingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -10954,14 +12072,82 @@ func (ec *executionContext) _GroupSettingsEdge_cursor(ctx context.Context, field
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_GroupSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_GroupSettingEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "GroupSettingsEdge",
+		Object:     "GroupSettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSettingUpdatePayload_groupSetting(ctx context.Context, field graphql.CollectedField, obj *GroupSettingUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSettingUpdatePayload_groupSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GroupSetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupSetting)
+	fc.Result = res
+	return ec.marshalNGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSettingUpdatePayload_groupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSettingUpdatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GroupSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GroupSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "visibility":
+				return ec.fieldContext_GroupSetting_visibility(ctx, field)
+			case "joinPolicy":
+				return ec.fieldContext_GroupSetting_joinPolicy(ctx, field)
+			case "tags":
+				return ec.fieldContext_GroupSetting_tags(ctx, field)
+			case "syncToSlack":
+				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
+			case "syncToGithub":
+				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "group":
+				return ec.fieldContext_GroupSetting_group(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -12281,6 +13467,183 @@ func (ec *executionContext) fieldContext_Mutation_deleteGroup(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createGroupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createGroupSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateGroupSetting(rctx, fc.Args["input"].(generated.CreateGroupSettingInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*GroupSettingCreatePayload)
+	fc.Result = res
+	return ec.marshalNGroupSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createGroupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupSetting":
+				return ec.fieldContext_GroupSettingCreatePayload_groupSetting(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createGroupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateGroupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateGroupSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateGroupSetting(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateGroupSettingInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*GroupSettingUpdatePayload)
+	fc.Result = res
+	return ec.marshalNGroupSettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateGroupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "groupSetting":
+				return ec.fieldContext_GroupSettingUpdatePayload_groupSetting(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateGroupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteGroupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteGroupSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteGroupSetting(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*GroupSettingDeletePayload)
+	fc.Result = res
+	return ec.marshalNGroupSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteGroupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_GroupSettingDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteGroupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createIntegration(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createIntegration(ctx, field)
 	if err != nil {
@@ -12812,6 +14175,183 @@ func (ec *executionContext) fieldContext_Mutation_deleteOrganization(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createOrganizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createOrganizationSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateOrganizationSetting(rctx, fc.Args["input"].(generated.CreateOrganizationSettingInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OrganizationSettingCreatePayload)
+	fc.Result = res
+	return ec.marshalNOrganizationSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createOrganizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "organizationSetting":
+				return ec.fieldContext_OrganizationSettingCreatePayload_organizationSetting(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createOrganizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateOrganizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateOrganizationSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateOrganizationSetting(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateOrganizationSettingInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OrganizationSettingUpdatePayload)
+	fc.Result = res
+	return ec.marshalNOrganizationSettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateOrganizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "organizationSetting":
+				return ec.fieldContext_OrganizationSettingUpdatePayload_organizationSetting(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateOrganizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteOrganizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteOrganizationSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteOrganizationSetting(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*OrganizationSettingDeletePayload)
+	fc.Result = res
+	return ec.marshalNOrganizationSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteOrganizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_OrganizationSettingDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteOrganizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createPersonalAccessToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createPersonalAccessToken(ctx, field)
 	if err != nil {
@@ -12983,6 +14523,183 @@ func (ec *executionContext) fieldContext_Mutation_deletePersonalAccessToken(ctx 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deletePersonalAccessToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createRefreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createRefreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateRefreshToken(rctx, fc.Args["input"].(generated.CreateRefreshTokenInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*RefreshTokenCreatePayload)
+	fc.Result = res
+	return ec.marshalNRefreshTokenCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenCreatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createRefreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "refreshToken":
+				return ec.fieldContext_RefreshTokenCreatePayload_refreshToken(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshTokenCreatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createRefreshToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateRefreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateRefreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateRefreshToken(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateRefreshTokenInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*RefreshTokenUpdatePayload)
+	fc.Result = res
+	return ec.marshalNRefreshTokenUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenUpdatePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateRefreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "refreshToken":
+				return ec.fieldContext_RefreshTokenUpdatePayload_refreshToken(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshTokenUpdatePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateRefreshToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteRefreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteRefreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteRefreshToken(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*RefreshTokenDeletePayload)
+	fc.Result = res
+	return ec.marshalNRefreshTokenDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenDeletePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteRefreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "deletedID":
+				return ec.fieldContext_RefreshTokenDeletePayload_deletedID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshTokenDeletePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteRefreshToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -13343,8 +15060,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUserSettings(ctx, field)
+func (ec *executionContext) _Mutation_createUserSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUserSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13357,7 +15074,7 @@ func (ec *executionContext) _Mutation_createUserSettings(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUserSettings(rctx, fc.Args["input"].(generated.CreateUserSettingsInput))
+		return ec.resolvers.Mutation().CreateUserSetting(rctx, fc.Args["input"].(generated.CreateUserSettingInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13369,12 +15086,12 @@ func (ec *executionContext) _Mutation_createUserSettings(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*UserSettingsCreatePayload)
+	res := resTmp.(*UserSettingCreatePayload)
 	fc.Result = res
-	return ec.marshalNUserSettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx, field.Selections, res)
+	return ec.marshalNUserSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingCreatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createUserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -13382,10 +15099,10 @@ func (ec *executionContext) fieldContext_Mutation_createUserSettings(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "UserSettings":
-				return ec.fieldContext_UserSettingsCreatePayload_UserSettings(ctx, field)
+			case "UserSetting":
+				return ec.fieldContext_UserSettingCreatePayload_UserSetting(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingsCreatePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingCreatePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -13395,15 +15112,15 @@ func (ec *executionContext) fieldContext_Mutation_createUserSettings(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createUserSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_pdateUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_pdateUserSettings(ctx, field)
+func (ec *executionContext) _Mutation_updateUserSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateUserSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13416,7 +15133,7 @@ func (ec *executionContext) _Mutation_pdateUserSettings(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().PdateUserSettings(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserSettingsInput))
+		return ec.resolvers.Mutation().UpdateUserSetting(rctx, fc.Args["id"].(string), fc.Args["input"].(generated.UpdateUserSettingInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13428,12 +15145,12 @@ func (ec *executionContext) _Mutation_pdateUserSettings(ctx context.Context, fie
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*UserSettingsUpdatePayload)
+	res := resTmp.(*UserSettingUpdatePayload)
 	fc.Result = res
-	return ec.marshalNUserSettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx, field.Selections, res)
+	return ec.marshalNUserSettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingUpdatePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_pdateUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateUserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -13441,10 +15158,10 @@ func (ec *executionContext) fieldContext_Mutation_pdateUserSettings(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "UserSettings":
-				return ec.fieldContext_UserSettingsUpdatePayload_UserSettings(ctx, field)
+			case "UserSetting":
+				return ec.fieldContext_UserSettingUpdatePayload_UserSetting(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingsUpdatePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingUpdatePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -13454,15 +15171,15 @@ func (ec *executionContext) fieldContext_Mutation_pdateUserSettings(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_pdateUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateUserSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_deleteUserSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteUserSettings(ctx, field)
+func (ec *executionContext) _Mutation_deleteUserSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteUserSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13475,7 +15192,7 @@ func (ec *executionContext) _Mutation_deleteUserSettings(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUserSettings(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteUserSetting(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13487,12 +15204,12 @@ func (ec *executionContext) _Mutation_deleteUserSettings(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*UserSettingsDeletePayload)
+	res := resTmp.(*UserSettingDeletePayload)
 	fc.Result = res
-	return ec.marshalNUserSettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx, field.Selections, res)
+	return ec.marshalNUserSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingDeletePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_deleteUserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteUserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -13501,9 +15218,9 @@ func (ec *executionContext) fieldContext_Mutation_deleteUserSettings(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "deletedID":
-				return ec.fieldContext_UserSettingsDeletePayload_deletedID(ctx, field)
+				return ec.fieldContext_UserSettingDeletePayload_deletedID(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingsDeletePayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingDeletePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -13513,7 +15230,7 @@ func (ec *executionContext) fieldContext_Mutation_deleteUserSettings(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteUserSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteUserSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -15328,9 +17045,9 @@ func (ec *executionContext) _Organization_setting(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.OrganizationSettings)
+	res := resTmp.(*generated.OrganizationSetting)
 	fc.Result = res
-	return ec.marshalOOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx, field.Selections, res)
+	return ec.marshalOOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Organization_setting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15342,37 +17059,39 @@ func (ec *executionContext) fieldContext_Organization_setting(ctx context.Contex
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_OrganizationSettings_id(ctx, field)
+				return ec.fieldContext_OrganizationSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_OrganizationSettings_createdAt(ctx, field)
+				return ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_OrganizationSettings_updatedAt(ctx, field)
+				return ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_OrganizationSettings_createdBy(ctx, field)
+				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_OrganizationSettings_updatedBy(ctx, field)
+				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
 			case "domains":
-				return ec.fieldContext_OrganizationSettings_domains(ctx, field)
+				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
-				return ec.fieldContext_OrganizationSettings_ssoCert(ctx, field)
+				return ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
 			case "ssoEntrypoint":
-				return ec.fieldContext_OrganizationSettings_ssoEntrypoint(ctx, field)
+				return ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
 			case "ssoIssuer":
-				return ec.fieldContext_OrganizationSettings_ssoIssuer(ctx, field)
+				return ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
 			case "billingContact":
-				return ec.fieldContext_OrganizationSettings_billingContact(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
 			case "billingEmail":
-				return ec.fieldContext_OrganizationSettings_billingEmail(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
 			case "billingPhone":
-				return ec.fieldContext_OrganizationSettings_billingPhone(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
 			case "billingAddress":
-				return ec.fieldContext_OrganizationSettings_billingAddress(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
 			case "taxIdentifier":
-				return ec.fieldContext_OrganizationSettings_taxIdentifier(ctx, field)
+				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
-				return ec.fieldContext_OrganizationSettings_tags(ctx, field)
+				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "orgnaization":
+				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -15908,8 +17627,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_cursor(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_id(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_id(ctx, field)
+func (ec *executionContext) _OrganizationSetting_id(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15939,9 +17658,9 @@ func (ec *executionContext) _OrganizationSettings_id(ctx context.Context, field 
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -15952,8 +17671,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_id(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_createdAt(ctx, field)
+func (ec *executionContext) _OrganizationSetting_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15983,9 +17702,9 @@ func (ec *executionContext) _OrganizationSettings_createdAt(ctx context.Context,
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -15996,8 +17715,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_createdAt(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_updatedAt(ctx, field)
+func (ec *executionContext) _OrganizationSetting_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16027,9 +17746,9 @@ func (ec *executionContext) _OrganizationSettings_updatedAt(ctx context.Context,
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16040,8 +17759,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_updatedAt(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_createdBy(ctx, field)
+func (ec *executionContext) _OrganizationSetting_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16068,9 +17787,9 @@ func (ec *executionContext) _OrganizationSettings_createdBy(ctx context.Context,
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16081,8 +17800,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_createdBy(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_updatedBy(ctx, field)
+func (ec *executionContext) _OrganizationSetting_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16109,9 +17828,9 @@ func (ec *executionContext) _OrganizationSettings_updatedBy(ctx context.Context,
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16122,8 +17841,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_updatedBy(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_domains(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_domains(ctx, field)
+func (ec *executionContext) _OrganizationSetting_domains(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_domains(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16153,9 +17872,9 @@ func (ec *executionContext) _OrganizationSettings_domains(ctx context.Context, f
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_domains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_domains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16166,8 +17885,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_domains(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_ssoCert(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_ssoCert(ctx, field)
+func (ec *executionContext) _OrganizationSetting_ssoCert(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16197,9 +17916,9 @@ func (ec *executionContext) _OrganizationSettings_ssoCert(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_ssoCert(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_ssoCert(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16210,8 +17929,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_ssoCert(ctx contex
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_ssoEntrypoint(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_ssoEntrypoint(ctx, field)
+func (ec *executionContext) _OrganizationSetting_ssoEntrypoint(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16241,9 +17960,9 @@ func (ec *executionContext) _OrganizationSettings_ssoEntrypoint(ctx context.Cont
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_ssoEntrypoint(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_ssoEntrypoint(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16254,8 +17973,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_ssoEntrypoint(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_ssoIssuer(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_ssoIssuer(ctx, field)
+func (ec *executionContext) _OrganizationSetting_ssoIssuer(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16285,9 +18004,9 @@ func (ec *executionContext) _OrganizationSettings_ssoIssuer(ctx context.Context,
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_ssoIssuer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_ssoIssuer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16298,8 +18017,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_ssoIssuer(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_billingContact(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_billingContact(ctx, field)
+func (ec *executionContext) _OrganizationSetting_billingContact(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16329,9 +18048,9 @@ func (ec *executionContext) _OrganizationSettings_billingContact(ctx context.Con
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_billingContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_billingContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16342,8 +18061,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_billingContact(ctx
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_billingEmail(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_billingEmail(ctx, field)
+func (ec *executionContext) _OrganizationSetting_billingEmail(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16373,9 +18092,9 @@ func (ec *executionContext) _OrganizationSettings_billingEmail(ctx context.Conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_billingEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_billingEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16386,8 +18105,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_billingEmail(ctx c
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_billingPhone(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_billingPhone(ctx, field)
+func (ec *executionContext) _OrganizationSetting_billingPhone(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16417,9 +18136,9 @@ func (ec *executionContext) _OrganizationSettings_billingPhone(ctx context.Conte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_billingPhone(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_billingPhone(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16430,8 +18149,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_billingPhone(ctx c
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_billingAddress(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_billingAddress(ctx, field)
+func (ec *executionContext) _OrganizationSetting_billingAddress(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16461,9 +18180,9 @@ func (ec *executionContext) _OrganizationSettings_billingAddress(ctx context.Con
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_billingAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_billingAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16474,8 +18193,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_billingAddress(ctx
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_taxIdentifier(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_taxIdentifier(ctx, field)
+func (ec *executionContext) _OrganizationSetting_taxIdentifier(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16505,9 +18224,9 @@ func (ec *executionContext) _OrganizationSettings_taxIdentifier(ctx context.Cont
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_taxIdentifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_taxIdentifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16518,8 +18237,8 @@ func (ec *executionContext) fieldContext_OrganizationSettings_taxIdentifier(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettings_tags(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettings_tags(ctx, field)
+func (ec *executionContext) _OrganizationSetting_tags(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_tags(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16546,9 +18265,9 @@ func (ec *executionContext) _OrganizationSettings_tags(ctx context.Context, fiel
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettings_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettings",
+		Object:     "OrganizationSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16559,8 +18278,83 @@ func (ec *executionContext) fieldContext_OrganizationSettings_tags(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingsConnection_edges(ctx, field)
+func (ec *executionContext) _OrganizationSetting_orgnaization(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Orgnaization(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.Organization)
+	fc.Result = res
+	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetting_orgnaization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetting",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Organization_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Organization_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Organization_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Organization_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Organization_updatedBy(ctx, field)
+			case "name":
+				return ec.fieldContext_Organization_name(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Organization_displayName(ctx, field)
+			case "description":
+				return ec.fieldContext_Organization_description(ctx, field)
+			case "parent":
+				return ec.fieldContext_Organization_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_Organization_children(ctx, field)
+			case "users":
+				return ec.fieldContext_Organization_users(ctx, field)
+			case "groups":
+				return ec.fieldContext_Organization_groups(ctx, field)
+			case "integrations":
+				return ec.fieldContext_Organization_integrations(ctx, field)
+			case "setting":
+				return ec.fieldContext_Organization_setting(ctx, field)
+			case "entitlements":
+				return ec.fieldContext_Organization_entitlements(ctx, field)
+			case "oauthprovider":
+				return ec.fieldContext_Organization_oauthprovider(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16582,32 +18376,32 @@ func (ec *executionContext) _OrganizationSettingsConnection_edges(ctx context.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.OrganizationSettingsEdge)
+	res := resTmp.([]*generated.OrganizationSettingEdge)
 	fc.Result = res
-	return ec.marshalOOrganizationSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsEdge(ctx, field.Selections, res)
+	return ec.marshalOOrganizationSettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingEdge(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettingsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSettingConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingsConnection",
+		Object:     "OrganizationSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "node":
-				return ec.fieldContext_OrganizationSettingsEdge_node(ctx, field)
+				return ec.fieldContext_OrganizationSettingEdge_node(ctx, field)
 			case "cursor":
-				return ec.fieldContext_OrganizationSettingsEdge_cursor(ctx, field)
+				return ec.fieldContext_OrganizationSettingEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingsEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingEdge", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingsConnection_pageInfo(ctx, field)
+func (ec *executionContext) _OrganizationSettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16637,9 +18431,9 @@ func (ec *executionContext) _OrganizationSettingsConnection_pageInfo(ctx context
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingsConnection",
+		Object:     "OrganizationSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16660,8 +18454,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingsConnection_pageInfo
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingsConnection_totalCount(ctx, field)
+func (ec *executionContext) _OrganizationSettingConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16691,9 +18485,9 @@ func (ec *executionContext) _OrganizationSettingsConnection_totalCount(ctx conte
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSettingConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingsConnection",
+		Object:     "OrganizationSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -16704,8 +18498,130 @@ func (ec *executionContext) fieldContext_OrganizationSettingsConnection_totalCou
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettingsEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingsEdge_node(ctx, field)
+func (ec *executionContext) _OrganizationSettingCreatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField, obj *OrganizationSettingCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingCreatePayload_organizationSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationSetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationSetting)
+	fc.Result = res
+	return ec.marshalNOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrganizationSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "domains":
+				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
+			case "ssoCert":
+				return ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
+			case "ssoEntrypoint":
+				return ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
+			case "ssoIssuer":
+				return ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
+			case "billingContact":
+				return ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
+			case "billingEmail":
+				return ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
+			case "billingPhone":
+				return ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
+			case "billingAddress":
+				return ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
+			case "taxIdentifier":
+				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
+			case "tags":
+				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "orgnaization":
+				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *OrganizationSettingDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingDeletePayload_deletedID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingDeletePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16727,58 +18643,60 @@ func (ec *executionContext) _OrganizationSettingsEdge_node(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.OrganizationSettings)
+	res := resTmp.(*generated.OrganizationSetting)
 	fc.Result = res
-	return ec.marshalOOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx, field.Selections, res)
+	return ec.marshalOOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettingsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSettingEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingsEdge",
+		Object:     "OrganizationSettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_OrganizationSettings_id(ctx, field)
+				return ec.fieldContext_OrganizationSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_OrganizationSettings_createdAt(ctx, field)
+				return ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_OrganizationSettings_updatedAt(ctx, field)
+				return ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_OrganizationSettings_createdBy(ctx, field)
+				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_OrganizationSettings_updatedBy(ctx, field)
+				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
 			case "domains":
-				return ec.fieldContext_OrganizationSettings_domains(ctx, field)
+				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
-				return ec.fieldContext_OrganizationSettings_ssoCert(ctx, field)
+				return ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
 			case "ssoEntrypoint":
-				return ec.fieldContext_OrganizationSettings_ssoEntrypoint(ctx, field)
+				return ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
 			case "ssoIssuer":
-				return ec.fieldContext_OrganizationSettings_ssoIssuer(ctx, field)
+				return ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
 			case "billingContact":
-				return ec.fieldContext_OrganizationSettings_billingContact(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
 			case "billingEmail":
-				return ec.fieldContext_OrganizationSettings_billingEmail(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
 			case "billingPhone":
-				return ec.fieldContext_OrganizationSettings_billingPhone(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
 			case "billingAddress":
-				return ec.fieldContext_OrganizationSettings_billingAddress(ctx, field)
+				return ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
 			case "taxIdentifier":
-				return ec.fieldContext_OrganizationSettings_taxIdentifier(ctx, field)
+				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
-				return ec.fieldContext_OrganizationSettings_tags(ctx, field)
+				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "orgnaization":
+				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSettingsEdge_cursor(ctx, field)
+func (ec *executionContext) _OrganizationSettingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16808,14 +18726,92 @@ func (ec *executionContext) _OrganizationSettingsEdge_cursor(ctx context.Context
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSettingEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "OrganizationSettingsEdge",
+		Object:     "OrganizationSettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSettingUpdatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField, obj *OrganizationSettingUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSettingUpdatePayload_organizationSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationSetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationSetting)
+	fc.Result = res
+	return ec.marshalNOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSettingUpdatePayload_organizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSettingUpdatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrganizationSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "domains":
+				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
+			case "ssoCert":
+				return ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
+			case "ssoEntrypoint":
+				return ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
+			case "ssoIssuer":
+				return ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
+			case "billingContact":
+				return ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
+			case "billingEmail":
+				return ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
+			case "billingPhone":
+				return ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
+			case "billingAddress":
+				return ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
+			case "taxIdentifier":
+				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
+			case "tags":
+				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "orgnaization":
+				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -18248,8 +20244,8 @@ func (ec *executionContext) fieldContext_Query_groups(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_groupSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_groupSettingsSlice(ctx, field)
+func (ec *executionContext) _Query_groupSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_groupSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -18262,7 +20258,7 @@ func (ec *executionContext) _Query_groupSettingsSlice(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GroupSettingsSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.GroupSettingsWhereInput))
+		return ec.resolvers.Query().GroupSettings(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.GroupSettingWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18274,12 +20270,12 @@ func (ec *executionContext) _Query_groupSettingsSlice(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.GroupSettingsConnection)
+	res := resTmp.(*generated.GroupSettingConnection)
 	fc.Result = res
-	return ec.marshalNGroupSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsConnection(ctx, field.Selections, res)
+	return ec.marshalNGroupSettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_groupSettingsSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_groupSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -18288,13 +20284,13 @@ func (ec *executionContext) fieldContext_Query_groupSettingsSlice(ctx context.Co
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "edges":
-				return ec.fieldContext_GroupSettingsConnection_edges(ctx, field)
+				return ec.fieldContext_GroupSettingConnection_edges(ctx, field)
 			case "pageInfo":
-				return ec.fieldContext_GroupSettingsConnection_pageInfo(ctx, field)
+				return ec.fieldContext_GroupSettingConnection_pageInfo(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_GroupSettingsConnection_totalCount(ctx, field)
+				return ec.fieldContext_GroupSettingConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type GroupSettingsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GroupSettingConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -18304,7 +20300,7 @@ func (ec *executionContext) fieldContext_Query_groupSettingsSlice(ctx context.Co
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_groupSettingsSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_groupSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18500,8 +20496,8 @@ func (ec *executionContext) fieldContext_Query_organizations(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_organizationSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_organizationSettingsSlice(ctx, field)
+func (ec *executionContext) _Query_organizationSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_organizationSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -18514,7 +20510,7 @@ func (ec *executionContext) _Query_organizationSettingsSlice(ctx context.Context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().OrganizationSettingsSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.OrganizationSettingsWhereInput))
+		return ec.resolvers.Query().OrganizationSettings(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.OrganizationSettingWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18526,12 +20522,12 @@ func (ec *executionContext) _Query_organizationSettingsSlice(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.OrganizationSettingsConnection)
+	res := resTmp.(*generated.OrganizationSettingConnection)
 	fc.Result = res
-	return ec.marshalNOrganizationSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsConnection(ctx, field.Selections, res)
+	return ec.marshalNOrganizationSettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_organizationSettingsSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_organizationSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -18540,13 +20536,13 @@ func (ec *executionContext) fieldContext_Query_organizationSettingsSlice(ctx con
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "edges":
-				return ec.fieldContext_OrganizationSettingsConnection_edges(ctx, field)
+				return ec.fieldContext_OrganizationSettingConnection_edges(ctx, field)
 			case "pageInfo":
-				return ec.fieldContext_OrganizationSettingsConnection_pageInfo(ctx, field)
+				return ec.fieldContext_OrganizationSettingConnection_pageInfo(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_OrganizationSettingsConnection_totalCount(ctx, field)
+				return ec.fieldContext_OrganizationSettingConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSettingConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -18556,7 +20552,7 @@ func (ec *executionContext) fieldContext_Query_organizationSettingsSlice(ctx con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_organizationSettingsSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_organizationSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18620,6 +20616,69 @@ func (ec *executionContext) fieldContext_Query_personalAccessTokens(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_personalAccessTokens_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_refreshTokens(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_refreshTokens(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().RefreshTokens(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.RefreshTokenWhereInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.RefreshTokenConnection)
+	fc.Result = res
+	return ec.marshalNRefreshTokenConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_refreshTokens(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_RefreshTokenConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_RefreshTokenConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_RefreshTokenConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshTokenConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_refreshTokens_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18752,8 +20811,8 @@ func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_userSettingsSlice(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_userSettingsSlice(ctx, field)
+func (ec *executionContext) _Query_userSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSettings(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -18766,7 +20825,7 @@ func (ec *executionContext) _Query_userSettingsSlice(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserSettingsSlice(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.UserSettingsWhereInput))
+		return ec.resolvers.Query().UserSettings(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["where"].(*generated.UserSettingWhereInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18778,12 +20837,12 @@ func (ec *executionContext) _Query_userSettingsSlice(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.UserSettingsConnection)
+	res := resTmp.(*generated.UserSettingConnection)
 	fc.Result = res
-	return ec.marshalNUserSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsConnection(ctx, field.Selections, res)
+	return ec.marshalNUserSettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingConnection(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_userSettingsSlice(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -18792,13 +20851,13 @@ func (ec *executionContext) fieldContext_Query_userSettingsSlice(ctx context.Con
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "edges":
-				return ec.fieldContext_UserSettingsConnection_edges(ctx, field)
+				return ec.fieldContext_UserSettingConnection_edges(ctx, field)
 			case "pageInfo":
-				return ec.fieldContext_UserSettingsConnection_pageInfo(ctx, field)
+				return ec.fieldContext_UserSettingConnection_pageInfo(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_UserSettingsConnection_totalCount(ctx, field)
+				return ec.fieldContext_UserSettingConnection_totalCount(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -18808,7 +20867,7 @@ func (ec *executionContext) fieldContext_Query_userSettingsSlice(ctx context.Con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_userSettingsSlice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_userSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18977,6 +21036,85 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_group_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_groupSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_groupSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GroupSetting(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.GroupSetting)
+	fc.Result = res
+	return ec.marshalNGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_groupSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GroupSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GroupSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GroupSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "visibility":
+				return ec.fieldContext_GroupSetting_visibility(ctx, field)
+			case "joinPolicy":
+				return ec.fieldContext_GroupSetting_joinPolicy(ctx, field)
+			case "tags":
+				return ec.fieldContext_GroupSetting_tags(ctx, field)
+			case "syncToSlack":
+				return ec.fieldContext_GroupSetting_syncToSlack(ctx, field)
+			case "syncToGithub":
+				return ec.fieldContext_GroupSetting_syncToGithub(ctx, field)
+			case "group":
+				return ec.fieldContext_GroupSetting_group(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GroupSetting", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_groupSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -19234,6 +21372,95 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_organizationSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_organizationSetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().OrganizationSetting(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.OrganizationSetting)
+	fc.Result = res
+	return ec.marshalNOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_organizationSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OrganizationSetting_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OrganizationSetting_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OrganizationSetting_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "domains":
+				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
+			case "ssoCert":
+				return ec.fieldContext_OrganizationSetting_ssoCert(ctx, field)
+			case "ssoEntrypoint":
+				return ec.fieldContext_OrganizationSetting_ssoEntrypoint(ctx, field)
+			case "ssoIssuer":
+				return ec.fieldContext_OrganizationSetting_ssoIssuer(ctx, field)
+			case "billingContact":
+				return ec.fieldContext_OrganizationSetting_billingContact(ctx, field)
+			case "billingEmail":
+				return ec.fieldContext_OrganizationSetting_billingEmail(ctx, field)
+			case "billingPhone":
+				return ec.fieldContext_OrganizationSetting_billingPhone(ctx, field)
+			case "billingAddress":
+				return ec.fieldContext_OrganizationSetting_billingAddress(ctx, field)
+			case "taxIdentifier":
+				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
+			case "tags":
+				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
+			case "orgnaization":
+				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_organizationSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_personalAccessToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_personalAccessToken(ctx, field)
 	if err != nil {
@@ -19307,6 +21534,95 @@ func (ec *executionContext) fieldContext_Query_personalAccessToken(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_personalAccessToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_refreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_refreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().RefreshToken(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.RefreshToken)
+	fc.Result = res
+	return ec.marshalNRefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_refreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RefreshToken_id(ctx, field)
+			case "clientID":
+				return ec.fieldContext_RefreshToken_clientID(ctx, field)
+			case "scopes":
+				return ec.fieldContext_RefreshToken_scopes(ctx, field)
+			case "nonce":
+				return ec.fieldContext_RefreshToken_nonce(ctx, field)
+			case "claimsUserID":
+				return ec.fieldContext_RefreshToken_claimsUserID(ctx, field)
+			case "claimsUsername":
+				return ec.fieldContext_RefreshToken_claimsUsername(ctx, field)
+			case "claimsEmail":
+				return ec.fieldContext_RefreshToken_claimsEmail(ctx, field)
+			case "claimsEmailVerified":
+				return ec.fieldContext_RefreshToken_claimsEmailVerified(ctx, field)
+			case "claimsGroups":
+				return ec.fieldContext_RefreshToken_claimsGroups(ctx, field)
+			case "claimsPreferredUsername":
+				return ec.fieldContext_RefreshToken_claimsPreferredUsername(ctx, field)
+			case "connectorID":
+				return ec.fieldContext_RefreshToken_connectorID(ctx, field)
+			case "connectorData":
+				return ec.fieldContext_RefreshToken_connectorData(ctx, field)
+			case "token":
+				return ec.fieldContext_RefreshToken_token(ctx, field)
+			case "obsoleteToken":
+				return ec.fieldContext_RefreshToken_obsoleteToken(ctx, field)
+			case "lastUsed":
+				return ec.fieldContext_RefreshToken_lastUsed(ctx, field)
+			case "user":
+				return ec.fieldContext_RefreshToken_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshToken", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_refreshToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -19487,8 +21803,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_userSettings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_userSettings(ctx, field)
+func (ec *executionContext) _Query_userSetting(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_userSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19501,7 +21817,7 @@ func (ec *executionContext) _Query_userSettings(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().UserSettings(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().UserSetting(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19513,12 +21829,12 @@ func (ec *executionContext) _Query_userSettings(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.UserSettings)
+	res := resTmp.(*generated.UserSetting)
 	fc.Result = res
-	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -19527,33 +21843,35 @@ func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserSettings_id(ctx, field)
+				return ec.fieldContext_UserSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+				return ec.fieldContext_UserSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+				return ec.fieldContext_UserSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
 			case "locked":
-				return ec.fieldContext_UserSettings_locked(ctx, field)
+				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
-				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+				return ec.fieldContext_UserSetting_silencedAt(ctx, field)
 			case "suspendedAt":
-				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
-				return ec.fieldContext_UserSettings_status(ctx, field)
+				return ec.fieldContext_UserSetting_status(ctx, field)
 			case "role":
-				return ec.fieldContext_UserSettings_role(ctx, field)
+				return ec.fieldContext_UserSetting_role(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserSettings_permissions(ctx, field)
+				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
-				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
-				return ec.fieldContext_UserSettings_tags(ctx, field)
+				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "user":
+				return ec.fieldContext_UserSetting_user(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
 	}
 	defer func() {
@@ -19563,7 +21881,7 @@ func (ec *executionContext) fieldContext_Query_userSettings(ctx context.Context,
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_userSettings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_userSetting_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -20474,6 +22792,470 @@ func (ec *executionContext) fieldContext_RefreshToken_user(ctx context.Context, 
 				return ec.fieldContext_User_refreshtoken(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshTokenConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.RefreshTokenEdge)
+	fc.Result = res
+	return ec.marshalORefreshTokenEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_RefreshTokenEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_RefreshTokenEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshTokenEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshTokenConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshTokenConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenCreatePayload_refreshToken(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenCreatePayload_refreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.RefreshToken)
+	fc.Result = res
+	return ec.marshalNRefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenCreatePayload_refreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenCreatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RefreshToken_id(ctx, field)
+			case "clientID":
+				return ec.fieldContext_RefreshToken_clientID(ctx, field)
+			case "scopes":
+				return ec.fieldContext_RefreshToken_scopes(ctx, field)
+			case "nonce":
+				return ec.fieldContext_RefreshToken_nonce(ctx, field)
+			case "claimsUserID":
+				return ec.fieldContext_RefreshToken_claimsUserID(ctx, field)
+			case "claimsUsername":
+				return ec.fieldContext_RefreshToken_claimsUsername(ctx, field)
+			case "claimsEmail":
+				return ec.fieldContext_RefreshToken_claimsEmail(ctx, field)
+			case "claimsEmailVerified":
+				return ec.fieldContext_RefreshToken_claimsEmailVerified(ctx, field)
+			case "claimsGroups":
+				return ec.fieldContext_RefreshToken_claimsGroups(ctx, field)
+			case "claimsPreferredUsername":
+				return ec.fieldContext_RefreshToken_claimsPreferredUsername(ctx, field)
+			case "connectorID":
+				return ec.fieldContext_RefreshToken_connectorID(ctx, field)
+			case "connectorData":
+				return ec.fieldContext_RefreshToken_connectorData(ctx, field)
+			case "token":
+				return ec.fieldContext_RefreshToken_token(ctx, field)
+			case "obsoleteToken":
+				return ec.fieldContext_RefreshToken_obsoleteToken(ctx, field)
+			case "lastUsed":
+				return ec.fieldContext_RefreshToken_lastUsed(ctx, field)
+			case "user":
+				return ec.fieldContext_RefreshToken_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshToken", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenDeletePayload_deletedID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenDeletePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshTokenEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.RefreshToken)
+	fc.Result = res
+	return ec.marshalORefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RefreshToken_id(ctx, field)
+			case "clientID":
+				return ec.fieldContext_RefreshToken_clientID(ctx, field)
+			case "scopes":
+				return ec.fieldContext_RefreshToken_scopes(ctx, field)
+			case "nonce":
+				return ec.fieldContext_RefreshToken_nonce(ctx, field)
+			case "claimsUserID":
+				return ec.fieldContext_RefreshToken_claimsUserID(ctx, field)
+			case "claimsUsername":
+				return ec.fieldContext_RefreshToken_claimsUsername(ctx, field)
+			case "claimsEmail":
+				return ec.fieldContext_RefreshToken_claimsEmail(ctx, field)
+			case "claimsEmailVerified":
+				return ec.fieldContext_RefreshToken_claimsEmailVerified(ctx, field)
+			case "claimsGroups":
+				return ec.fieldContext_RefreshToken_claimsGroups(ctx, field)
+			case "claimsPreferredUsername":
+				return ec.fieldContext_RefreshToken_claimsPreferredUsername(ctx, field)
+			case "connectorID":
+				return ec.fieldContext_RefreshToken_connectorID(ctx, field)
+			case "connectorData":
+				return ec.fieldContext_RefreshToken_connectorData(ctx, field)
+			case "token":
+				return ec.fieldContext_RefreshToken_token(ctx, field)
+			case "obsoleteToken":
+				return ec.fieldContext_RefreshToken_obsoleteToken(ctx, field)
+			case "lastUsed":
+				return ec.fieldContext_RefreshToken_lastUsed(ctx, field)
+			case "user":
+				return ec.fieldContext_RefreshToken_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshToken", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.RefreshTokenEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RefreshTokenUpdatePayload_refreshToken(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RefreshTokenUpdatePayload_refreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*generated.RefreshToken)
+	fc.Result = res
+	return ec.marshalNRefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RefreshTokenUpdatePayload_refreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RefreshTokenUpdatePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_RefreshToken_id(ctx, field)
+			case "clientID":
+				return ec.fieldContext_RefreshToken_clientID(ctx, field)
+			case "scopes":
+				return ec.fieldContext_RefreshToken_scopes(ctx, field)
+			case "nonce":
+				return ec.fieldContext_RefreshToken_nonce(ctx, field)
+			case "claimsUserID":
+				return ec.fieldContext_RefreshToken_claimsUserID(ctx, field)
+			case "claimsUsername":
+				return ec.fieldContext_RefreshToken_claimsUsername(ctx, field)
+			case "claimsEmail":
+				return ec.fieldContext_RefreshToken_claimsEmail(ctx, field)
+			case "claimsEmailVerified":
+				return ec.fieldContext_RefreshToken_claimsEmailVerified(ctx, field)
+			case "claimsGroups":
+				return ec.fieldContext_RefreshToken_claimsGroups(ctx, field)
+			case "claimsPreferredUsername":
+				return ec.fieldContext_RefreshToken_claimsPreferredUsername(ctx, field)
+			case "connectorID":
+				return ec.fieldContext_RefreshToken_connectorID(ctx, field)
+			case "connectorData":
+				return ec.fieldContext_RefreshToken_connectorData(ctx, field)
+			case "token":
+				return ec.fieldContext_RefreshToken_token(ctx, field)
+			case "obsoleteToken":
+				return ec.fieldContext_RefreshToken_obsoleteToken(ctx, field)
+			case "lastUsed":
+				return ec.fieldContext_RefreshToken_lastUsed(ctx, field)
+			case "user":
+				return ec.fieldContext_RefreshToken_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RefreshToken", field.Name)
 		},
 	}
 	return fc, nil
@@ -22277,9 +25059,9 @@ func (ec *executionContext) _User_setting(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.UserSettings)
+	res := resTmp.(*generated.UserSetting)
 	fc.Result = res
-	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -22291,33 +25073,35 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserSettings_id(ctx, field)
+				return ec.fieldContext_UserSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+				return ec.fieldContext_UserSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+				return ec.fieldContext_UserSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
 			case "locked":
-				return ec.fieldContext_UserSettings_locked(ctx, field)
+				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
-				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+				return ec.fieldContext_UserSetting_silencedAt(ctx, field)
 			case "suspendedAt":
-				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
-				return ec.fieldContext_UserSettings_status(ctx, field)
+				return ec.fieldContext_UserSetting_status(ctx, field)
 			case "role":
-				return ec.fieldContext_UserSettings_role(ctx, field)
+				return ec.fieldContext_UserSetting_role(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserSettings_permissions(ctx, field)
+				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
-				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
-				return ec.fieldContext_UserSettings_tags(ctx, field)
+				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "user":
+				return ec.fieldContext_UserSetting_user(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -22796,8 +25580,8 @@ func (ec *executionContext) fieldContext_UserEdge_cursor(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_id(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_id(ctx, field)
+func (ec *executionContext) _UserSetting_id(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_id(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22827,9 +25611,9 @@ func (ec *executionContext) _UserSettings_id(ctx context.Context, field graphql.
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -22840,8 +25624,8 @@ func (ec *executionContext) fieldContext_UserSettings_id(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_createdAt(ctx, field)
+func (ec *executionContext) _UserSetting_createdAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22871,9 +25655,9 @@ func (ec *executionContext) _UserSettings_createdAt(ctx context.Context, field g
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -22884,8 +25668,8 @@ func (ec *executionContext) fieldContext_UserSettings_createdAt(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_updatedAt(ctx, field)
+func (ec *executionContext) _UserSetting_updatedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22915,9 +25699,9 @@ func (ec *executionContext) _UserSettings_updatedAt(ctx context.Context, field g
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -22928,8 +25712,8 @@ func (ec *executionContext) fieldContext_UserSettings_updatedAt(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_createdBy(ctx, field)
+func (ec *executionContext) _UserSetting_createdBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_createdBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22956,9 +25740,9 @@ func (ec *executionContext) _UserSettings_createdBy(ctx context.Context, field g
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -22969,8 +25753,8 @@ func (ec *executionContext) fieldContext_UserSettings_createdBy(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_updatedBy(ctx, field)
+func (ec *executionContext) _UserSetting_updatedBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_updatedBy(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22997,9 +25781,9 @@ func (ec *executionContext) _UserSettings_updatedBy(ctx context.Context, field g
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23010,8 +25794,8 @@ func (ec *executionContext) fieldContext_UserSettings_updatedBy(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_locked(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_locked(ctx, field)
+func (ec *executionContext) _UserSetting_locked(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_locked(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23041,9 +25825,9 @@ func (ec *executionContext) _UserSettings_locked(ctx context.Context, field grap
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_locked(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_locked(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23054,8 +25838,8 @@ func (ec *executionContext) fieldContext_UserSettings_locked(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_silencedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_silencedAt(ctx, field)
+func (ec *executionContext) _UserSetting_silencedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_silencedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23082,9 +25866,9 @@ func (ec *executionContext) _UserSettings_silencedAt(ctx context.Context, field 
 	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_silencedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_silencedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23095,8 +25879,8 @@ func (ec *executionContext) fieldContext_UserSettings_silencedAt(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_suspendedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+func (ec *executionContext) _UserSetting_suspendedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23123,9 +25907,9 @@ func (ec *executionContext) _UserSettings_suspendedAt(ctx context.Context, field
 	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_suspendedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_suspendedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23136,8 +25920,8 @@ func (ec *executionContext) fieldContext_UserSettings_suspendedAt(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_status(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_status(ctx, field)
+func (ec *executionContext) _UserSetting_status(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_status(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23162,26 +25946,26 @@ func (ec *executionContext) _UserSettings_status(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usersettings.Status)
+	res := resTmp.(usersetting.Status)
 	fc.Result = res
-	return ec.marshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UserSettingsStatus does not have child fields")
+			return nil, errors.New("field of type UserSettingStatus does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_role(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_role(ctx, field)
+func (ec *executionContext) _UserSetting_role(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_role(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23206,26 +25990,26 @@ func (ec *executionContext) _UserSettings_role(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(usersettings.Role)
+	res := resTmp.(usersetting.Role)
 	fc.Result = res
-	return ec.marshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, field.Selections, res)
+	return ec.marshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UserSettingsRole does not have child fields")
+			return nil, errors.New("field of type UserSettingRole does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_permissions(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_permissions(ctx, field)
+func (ec *executionContext) _UserSetting_permissions(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_permissions(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23255,9 +26039,9 @@ func (ec *executionContext) _UserSettings_permissions(ctx context.Context, field
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_permissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_permissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23268,8 +26052,8 @@ func (ec *executionContext) fieldContext_UserSettings_permissions(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_emailConfirmed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+func (ec *executionContext) _UserSetting_emailConfirmed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23299,9 +26083,9 @@ func (ec *executionContext) _UserSettings_emailConfirmed(ctx context.Context, fi
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_emailConfirmed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_emailConfirmed(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23312,8 +26096,8 @@ func (ec *executionContext) fieldContext_UserSettings_emailConfirmed(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettings_tags(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettings) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettings_tags(ctx, field)
+func (ec *executionContext) _UserSetting_tags(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_tags(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23343,9 +26127,9 @@ func (ec *executionContext) _UserSettings_tags(ctx context.Context, field graphq
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettings_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSetting_tags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettings",
+		Object:     "UserSetting",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23356,8 +26140,89 @@ func (ec *executionContext) fieldContext_UserSettings_tags(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsConnection_edges(ctx, field)
+func (ec *executionContext) _UserSetting_user(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*generated.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_User_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_User_updatedBy(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "firstName":
+				return ec.fieldContext_User_firstName(ctx, field)
+			case "lastName":
+				return ec.fieldContext_User_lastName(ctx, field)
+			case "displayName":
+				return ec.fieldContext_User_displayName(ctx, field)
+			case "avatarRemoteURL":
+				return ec.fieldContext_User_avatarRemoteURL(ctx, field)
+			case "avatarLocalFile":
+				return ec.fieldContext_User_avatarLocalFile(ctx, field)
+			case "avatarUpdatedAt":
+				return ec.fieldContext_User_avatarUpdatedAt(ctx, field)
+			case "lastSeen":
+				return ec.fieldContext_User_lastSeen(ctx, field)
+			case "organizations":
+				return ec.fieldContext_User_organizations(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
+			case "groups":
+				return ec.fieldContext_User_groups(ctx, field)
+			case "personalAccessTokens":
+				return ec.fieldContext_User_personalAccessTokens(ctx, field)
+			case "setting":
+				return ec.fieldContext_User_setting(ctx, field)
+			case "refreshtoken":
+				return ec.fieldContext_User_refreshtoken(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSettingConnection_edges(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23379,32 +26244,32 @@ func (ec *executionContext) _UserSettingsConnection_edges(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*generated.UserSettingsEdge)
+	res := resTmp.([]*generated.UserSettingEdge)
 	fc.Result = res
-	return ec.marshalOUserSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx, field.Selections, res)
+	return ec.marshalOUserSettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingEdge(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsConnection",
+		Object:     "UserSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "node":
-				return ec.fieldContext_UserSettingsEdge_node(ctx, field)
+				return ec.fieldContext_UserSettingEdge_node(ctx, field)
 			case "cursor":
-				return ec.fieldContext_UserSettingsEdge_cursor(ctx, field)
+				return ec.fieldContext_UserSettingEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettingsEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSettingEdge", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsConnection_pageInfo(ctx, field)
+func (ec *executionContext) _UserSettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23434,9 +26299,9 @@ func (ec *executionContext) _UserSettingsConnection_pageInfo(ctx context.Context
 	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsConnection",
+		Object:     "UserSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23457,8 +26322,8 @@ func (ec *executionContext) fieldContext_UserSettingsConnection_pageInfo(ctx con
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsConnection_totalCount(ctx, field)
+func (ec *executionContext) _UserSettingConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23488,9 +26353,9 @@ func (ec *executionContext) _UserSettingsConnection_totalCount(ctx context.Conte
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsConnection",
+		Object:     "UserSettingConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23501,8 +26366,8 @@ func (ec *executionContext) fieldContext_UserSettingsConnection_totalCount(ctx c
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsCreatePayload_UserSettings(ctx context.Context, field graphql.CollectedField, obj *UserSettingsCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsCreatePayload_UserSettings(ctx, field)
+func (ec *executionContext) _UserSettingCreatePayload_UserSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingCreatePayload_UserSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23515,7 +26380,7 @@ func (ec *executionContext) _UserSettingsCreatePayload_UserSettings(ctx context.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserSettings, nil
+		return obj.UserSetting, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23527,54 +26392,56 @@ func (ec *executionContext) _UserSettingsCreatePayload_UserSettings(ctx context.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.UserSettings)
+	res := resTmp.(*generated.UserSetting)
 	fc.Result = res
-	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsCreatePayload_UserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingCreatePayload_UserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsCreatePayload",
+		Object:     "UserSettingCreatePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserSettings_id(ctx, field)
+				return ec.fieldContext_UserSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+				return ec.fieldContext_UserSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+				return ec.fieldContext_UserSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
 			case "locked":
-				return ec.fieldContext_UserSettings_locked(ctx, field)
+				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
-				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+				return ec.fieldContext_UserSetting_silencedAt(ctx, field)
 			case "suspendedAt":
-				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
-				return ec.fieldContext_UserSettings_status(ctx, field)
+				return ec.fieldContext_UserSetting_status(ctx, field)
 			case "role":
-				return ec.fieldContext_UserSettings_role(ctx, field)
+				return ec.fieldContext_UserSetting_role(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserSettings_permissions(ctx, field)
+				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
-				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
-				return ec.fieldContext_UserSettings_tags(ctx, field)
+				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "user":
+				return ec.fieldContext_UserSetting_user(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *UserSettingsDeletePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsDeletePayload_deletedID(ctx, field)
+func (ec *executionContext) _UserSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField, obj *UserSettingDeletePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingDeletePayload_deletedID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23604,9 +26471,9 @@ func (ec *executionContext) _UserSettingsDeletePayload_deletedID(ctx context.Con
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingDeletePayload_deletedID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsDeletePayload",
+		Object:     "UserSettingDeletePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23617,8 +26484,8 @@ func (ec *executionContext) fieldContext_UserSettingsDeletePayload_deletedID(ctx
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsEdge_node(ctx, field)
+func (ec *executionContext) _UserSettingEdge_node(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23640,54 +26507,56 @@ func (ec *executionContext) _UserSettingsEdge_node(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*generated.UserSettings)
+	res := resTmp.(*generated.UserSetting)
 	fc.Result = res
-	return ec.marshalOUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+	return ec.marshalOUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsEdge",
+		Object:     "UserSettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserSettings_id(ctx, field)
+				return ec.fieldContext_UserSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+				return ec.fieldContext_UserSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+				return ec.fieldContext_UserSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
 			case "locked":
-				return ec.fieldContext_UserSettings_locked(ctx, field)
+				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
-				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+				return ec.fieldContext_UserSetting_silencedAt(ctx, field)
 			case "suspendedAt":
-				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
-				return ec.fieldContext_UserSettings_status(ctx, field)
+				return ec.fieldContext_UserSetting_status(ctx, field)
 			case "role":
-				return ec.fieldContext_UserSettings_role(ctx, field)
+				return ec.fieldContext_UserSetting_role(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserSettings_permissions(ctx, field)
+				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
-				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
-				return ec.fieldContext_UserSettings_tags(ctx, field)
+				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "user":
+				return ec.fieldContext_UserSetting_user(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsEdge_cursor(ctx, field)
+func (ec *executionContext) _UserSettingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *generated.UserSettingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23717,9 +26586,9 @@ func (ec *executionContext) _UserSettingsEdge_cursor(ctx context.Context, field 
 	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsEdge",
+		Object:     "UserSettingEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -23730,8 +26599,8 @@ func (ec *executionContext) fieldContext_UserSettingsEdge_cursor(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingsUpdatePayload_UserSettings(ctx context.Context, field graphql.CollectedField, obj *UserSettingsUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingsUpdatePayload_UserSettings(ctx, field)
+func (ec *executionContext) _UserSettingUpdatePayload_UserSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingUpdatePayload_UserSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23744,7 +26613,7 @@ func (ec *executionContext) _UserSettingsUpdatePayload_UserSettings(ctx context.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UserSettings, nil
+		return obj.UserSetting, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23756,47 +26625,49 @@ func (ec *executionContext) _UserSettingsUpdatePayload_UserSettings(ctx context.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*generated.UserSettings)
+	res := resTmp.(*generated.UserSetting)
 	fc.Result = res
-	return ec.marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx, field.Selections, res)
+	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingsUpdatePayload_UserSettings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingUpdatePayload_UserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserSettingsUpdatePayload",
+		Object:     "UserSettingUpdatePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_UserSettings_id(ctx, field)
+				return ec.fieldContext_UserSetting_id(ctx, field)
 			case "createdAt":
-				return ec.fieldContext_UserSettings_createdAt(ctx, field)
+				return ec.fieldContext_UserSetting_createdAt(ctx, field)
 			case "updatedAt":
-				return ec.fieldContext_UserSettings_updatedAt(ctx, field)
+				return ec.fieldContext_UserSetting_updatedAt(ctx, field)
 			case "createdBy":
-				return ec.fieldContext_UserSettings_createdBy(ctx, field)
+				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
-				return ec.fieldContext_UserSettings_updatedBy(ctx, field)
+				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
 			case "locked":
-				return ec.fieldContext_UserSettings_locked(ctx, field)
+				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
-				return ec.fieldContext_UserSettings_silencedAt(ctx, field)
+				return ec.fieldContext_UserSetting_silencedAt(ctx, field)
 			case "suspendedAt":
-				return ec.fieldContext_UserSettings_suspendedAt(ctx, field)
+				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
-				return ec.fieldContext_UserSettings_status(ctx, field)
+				return ec.fieldContext_UserSetting_status(ctx, field)
 			case "role":
-				return ec.fieldContext_UserSettings_role(ctx, field)
+				return ec.fieldContext_UserSetting_role(ctx, field)
 			case "permissions":
-				return ec.fieldContext_UserSettings_permissions(ctx, field)
+				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
-				return ec.fieldContext_UserSettings_emailConfirmed(ctx, field)
+				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
-				return ec.fieldContext_UserSettings_tags(ctx, field)
+				return ec.fieldContext_UserSetting_tags(ctx, field)
+			case "user":
+				return ec.fieldContext_UserSetting_user(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserSettings", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
 		},
 	}
 	return fc, nil
@@ -25965,14 +28836,14 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.Context, obj interface{}) (generated.CreateGroupSettingsInput, error) {
-	var it generated.CreateGroupSettingsInput
+func (ec *executionContext) unmarshalInputCreateGroupSettingInput(ctx context.Context, obj interface{}) (generated.CreateGroupSettingInput, error) {
+	var it generated.CreateGroupSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "visibility", "joinPolicy", "tags", "syncToSlack", "syncToGithub"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "visibility", "joinPolicy", "tags", "syncToSlack", "syncToGithub", "groupID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -26019,7 +28890,7 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
-			data, err := ec.unmarshalOGroupSettingsVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26028,7 +28899,7 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicy"))
-			data, err := ec.unmarshalOGroupSettingsJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -26060,6 +28931,15 @@ func (ec *executionContext) unmarshalInputCreateGroupSettingsInput(ctx context.C
 				return it, err
 			}
 			it.SyncToGithub = data
+		case "groupID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupID = data
 		}
 	}
 
@@ -26461,14 +29341,14 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateOrganizationSettingsInput(ctx context.Context, obj interface{}) (generated.CreateOrganizationSettingsInput, error) {
-	var it generated.CreateOrganizationSettingsInput
+func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx context.Context, obj interface{}) (generated.CreateOrganizationSettingInput, error) {
+	var it generated.CreateOrganizationSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "orgnaizationID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -26601,6 +29481,15 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingsInput(ctx co
 				return it, err
 			}
 			it.Tags = data
+		case "orgnaizationID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgnaizationID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrgnaizationID = data
 		}
 	}
 
@@ -26707,6 +29596,161 @@ func (ec *executionContext) unmarshalInputCreatePersonalAccessTokenInput(ctx con
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
 			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreateRefreshTokenInput(ctx context.Context, obj interface{}) (generated.CreateRefreshTokenInput, error) {
+	var it generated.CreateRefreshTokenInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"clientID", "scopes", "nonce", "claimsUserID", "claimsUsername", "claimsEmail", "claimsEmailVerified", "claimsGroups", "claimsPreferredUsername", "connectorID", "connectorData", "token", "obsoleteToken", "lastUsed", "userID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "clientID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientID = data
+		case "scopes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Scopes = data
+		case "nonce":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nonce"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Nonce = data
+		case "claimsUserID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsUserID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsUserID = data
+		case "claimsUsername":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsUsername"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsUsername = data
+		case "claimsEmail":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsEmail"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsEmail = data
+		case "claimsEmailVerified":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsEmailVerified"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsEmailVerified = data
+		case "claimsGroups":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroups"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroups = data
+		case "claimsPreferredUsername":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsPreferredUsername"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsPreferredUsername = data
+		case "connectorID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorID = data
+		case "connectorData":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorData"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorData = data
+		case "token":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		case "obsoleteToken":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("obsoleteToken"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ObsoleteToken = data
+		case "lastUsed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastUsed"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LastUsed = data
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27018,14 +30062,14 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateUserSettingsInput(ctx context.Context, obj interface{}) (generated.CreateUserSettingsInput, error) {
-	var it generated.CreateUserSettingsInput
+func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Context, obj interface{}) (generated.CreateUserSettingInput, error) {
+	var it generated.CreateUserSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "recoveryCode", "status", "role", "permissions", "emailConfirmed", "tags"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "recoveryCode", "status", "role", "permissions", "emailConfirmed", "tags", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -27108,7 +30152,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingsInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27117,7 +30161,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingsInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -27149,6 +30193,15 @@ func (ec *executionContext) unmarshalInputCreateUserSettingsInput(ctx context.Co
 				return it, err
 			}
 			it.Tags = data
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
 		}
 	}
 
@@ -28630,14 +31683,14 @@ func (ec *executionContext) unmarshalInputGroupOrder(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Context, obj interface{}) (generated.GroupSettingsWhereInput, error) {
-	var it generated.GroupSettingsWhereInput
+func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Context, obj interface{}) (generated.GroupSettingWhereInput, error) {
+	var it generated.GroupSettingWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ", "hasGroup", "hasGroupWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -28648,7 +31701,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOGroupSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInput(ctx, v)
+			data, err := ec.unmarshalOGroupSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -28657,7 +31710,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOGroupSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -28666,7 +31719,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOGroupSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29179,7 +32232,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
-			data, err := ec.unmarshalOGroupSettingsVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29188,7 +32241,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibilityNEQ"))
-			data, err := ec.unmarshalOGroupSettingsVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29197,7 +32250,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibilityIn"))
-			data, err := ec.unmarshalOGroupSettingsVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibilityᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29206,7 +32259,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibilityNotIn"))
-			data, err := ec.unmarshalOGroupSettingsVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibilityᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29215,7 +32268,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicy"))
-			data, err := ec.unmarshalOGroupSettingsJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29224,7 +32277,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicyNEQ"))
-			data, err := ec.unmarshalOGroupSettingsJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29233,7 +32286,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicyIn"))
-			data, err := ec.unmarshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicyᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29242,7 +32295,7 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicyNotIn"))
-			data, err := ec.unmarshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicyᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -29283,6 +32336,24 @@ func (ec *executionContext) unmarshalInputGroupSettingsWhereInput(ctx context.Co
 				return it, err
 			}
 			it.SyncToGithubNEQ = data
+		case "hasGroup":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGroup"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasGroup = data
+		case "hasGroupWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGroupWith"))
+			data, err := ec.unmarshalOGroupWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasGroupWith = data
 		}
 	}
 
@@ -30081,7 +33152,7 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSettingWith"))
-			data, err := ec.unmarshalOGroupSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOGroupSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32743,14 +35814,14 @@ func (ec *executionContext) unmarshalInputOrganizationOrder(ctx context.Context,
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputOrganizationSettingsWhereInput(ctx context.Context, obj interface{}) (generated.OrganizationSettingsWhereInput, error) {
-	var it generated.OrganizationSettingsWhereInput
+func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx context.Context, obj interface{}) (generated.OrganizationSettingWhereInput, error) {
+	var it generated.OrganizationSettingWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierEqualFold", "taxIdentifierContainsFold"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrgnaization", "hasOrgnaizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -32761,7 +35832,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingsWhereInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOOrganizationSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInput(ctx, v)
+			data, err := ec.unmarshalOOrganizationSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32770,7 +35841,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingsWhereInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOOrganizationSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32779,7 +35850,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingsWhereInput(ctx con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOOrganizationSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -34224,6 +37295,24 @@ func (ec *executionContext) unmarshalInputOrganizationSettingsWhereInput(ctx con
 				return it, err
 			}
 			it.TaxIdentifierContainsFold = data
+		case "hasOrgnaization":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrgnaization"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasOrgnaization = data
+		case "hasOrgnaizationWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrgnaizationWith"))
+			data, err := ec.unmarshalOOrganizationWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasOrgnaizationWith = data
 		}
 	}
 
@@ -35130,7 +38219,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSettingWith"))
-			data, err := ec.unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOOrganizationSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -38814,14 +41903,14 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.Context, obj interface{}) (generated.UpdateGroupSettingsInput, error) {
-	var it generated.UpdateGroupSettingsInput
+func (ec *executionContext) unmarshalInputUpdateGroupSettingInput(ctx context.Context, obj interface{}) (generated.UpdateGroupSettingInput, error) {
+	var it generated.UpdateGroupSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags", "syncToSlack", "syncToGithub"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "visibility", "joinPolicy", "tags", "appendTags", "syncToSlack", "syncToGithub", "groupID", "clearGroup"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38877,7 +41966,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
-			data, err := ec.unmarshalOGroupSettingsVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, v)
+			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -38886,7 +41975,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("joinPolicy"))
-			data, err := ec.unmarshalOGroupSettingsJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, v)
+			data, err := ec.unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -38927,6 +42016,24 @@ func (ec *executionContext) unmarshalInputUpdateGroupSettingsInput(ctx context.C
 				return it, err
 			}
 			it.SyncToGithub = data
+		case "groupID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GroupID = data
+		case "clearGroup":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearGroup"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearGroup = data
 		}
 	}
 
@@ -39463,14 +42570,14 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateOrganizationSettingsInput(ctx context.Context, obj interface{}) (generated.UpdateOrganizationSettingsInput, error) {
-	var it generated.UpdateOrganizationSettingsInput
+func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx context.Context, obj interface{}) (generated.UpdateOrganizationSettingInput, error) {
+	var it generated.UpdateOrganizationSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags", "orgnaizationID", "clearOrgnaization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39639,6 +42746,24 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingsInput(ctx co
 				return it, err
 			}
 			it.ClearTags = data
+		case "orgnaizationID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgnaizationID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrgnaizationID = data
+		case "clearOrgnaization":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOrgnaization"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearOrgnaization = data
 		}
 	}
 
@@ -39785,6 +42910,224 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 				return it, err
 			}
 			it.UserID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateRefreshTokenInput(ctx context.Context, obj interface{}) (generated.UpdateRefreshTokenInput, error) {
+	var it generated.UpdateRefreshTokenInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"clientID", "scopes", "appendScopes", "clearScopes", "nonce", "claimsUserID", "claimsUsername", "claimsEmail", "claimsEmailVerified", "claimsGroups", "appendClaimsGroups", "clearClaimsGroups", "claimsPreferredUsername", "connectorID", "connectorData", "appendConnectorData", "clearConnectorData", "token", "obsoleteToken", "lastUsed", "userID", "clearUser"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "clientID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientID = data
+		case "scopes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("scopes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Scopes = data
+		case "appendScopes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendScopes"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendScopes = data
+		case "clearScopes":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearScopes"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearScopes = data
+		case "nonce":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nonce"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Nonce = data
+		case "claimsUserID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsUserID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsUserID = data
+		case "claimsUsername":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsUsername"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsUsername = data
+		case "claimsEmail":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsEmail"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsEmail = data
+		case "claimsEmailVerified":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsEmailVerified"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsEmailVerified = data
+		case "claimsGroups":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsGroups"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsGroups = data
+		case "appendClaimsGroups":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendClaimsGroups"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendClaimsGroups = data
+		case "clearClaimsGroups":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearClaimsGroups"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearClaimsGroups = data
+		case "claimsPreferredUsername":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("claimsPreferredUsername"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClaimsPreferredUsername = data
+		case "connectorID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorID = data
+		case "connectorData":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectorData"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ConnectorData = data
+		case "appendConnectorData":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendConnectorData"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendConnectorData = data
+		case "clearConnectorData":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearConnectorData"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearConnectorData = data
+		case "token":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		case "obsoleteToken":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("obsoleteToken"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ObsoleteToken = data
+		case "lastUsed":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastUsed"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LastUsed = data
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "clearUser":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUser"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUser = data
 		}
 	}
 
@@ -40245,14 +43588,14 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateUserSettingsInput(ctx context.Context, obj interface{}) (generated.UpdateUserSettingsInput, error) {
-	var it generated.UpdateUserSettingsInput
+func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Context, obj interface{}) (generated.UpdateUserSettingInput, error) {
+	var it generated.UpdateUserSettingInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "role", "permissions", "appendPermissions", "emailConfirmed", "tags", "appendTags"}
+	fieldsInOrder := [...]string{"updatedAt", "createdBy", "clearCreatedBy", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "role", "permissions", "appendPermissions", "emailConfirmed", "tags", "appendTags", "userID", "clearUser"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40371,7 +43714,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingsInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -40380,7 +43723,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingsInput(ctx context.Co
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -40430,6 +43773,24 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingsInput(ctx context.Co
 				return it, err
 			}
 			it.AppendTags = data
+		case "userID":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "clearUser":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUser"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUser = data
 		}
 	}
 
@@ -40478,14 +43839,14 @@ func (ec *executionContext) unmarshalInputUserOrder(ctx context.Context, obj int
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Context, obj interface{}) (generated.UserSettingsWhereInput, error) {
-	var it generated.UserSettingsWhereInput
+func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Context, obj interface{}) (generated.UserSettingWhereInput, error) {
+	var it generated.UserSettingWhereInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "emailConfirmed", "emailConfirmedNEQ"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40496,7 +43857,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
-			data, err := ec.unmarshalOUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx, v)
+			data, err := ec.unmarshalOUserSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -40505,7 +43866,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
-			data, err := ec.unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -40514,7 +43875,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
-			data, err := ec.unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41225,7 +44586,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41234,7 +44595,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNEQ"))
-			data, err := ec.unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, v)
+			data, err := ec.unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41243,7 +44604,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusIn"))
-			data, err := ec.unmarshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41252,7 +44613,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNotIn"))
-			data, err := ec.unmarshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41261,7 +44622,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41270,7 +44631,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNEQ"))
-			data, err := ec.unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, v)
+			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41279,7 +44640,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleIn"))
-			data, err := ec.unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41288,7 +44649,7 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNotIn"))
-			data, err := ec.unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -41311,6 +44672,24 @@ func (ec *executionContext) unmarshalInputUserSettingsWhereInput(ctx context.Con
 				return it, err
 			}
 			it.EmailConfirmedNEQ = data
+		case "hasUser":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUser"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasUser = data
+		case "hasUserWith":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasUserWith"))
+			data, err := ec.unmarshalOUserWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasUserWith = data
 		}
 	}
 
@@ -42865,7 +46244,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSettingWith"))
-			data, err := ec.unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx, v)
+			data, err := ec.unmarshalOUserSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -42912,11 +46291,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Group(ctx, sel, obj)
-	case *generated.GroupSettings:
+	case *generated.GroupSetting:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._GroupSettings(ctx, sel, obj)
+		return ec._GroupSetting(ctx, sel, obj)
 	case *generated.Integration:
 		if obj == nil {
 			return graphql.Null
@@ -42932,11 +46311,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Organization(ctx, sel, obj)
-	case *generated.OrganizationSettings:
+	case *generated.OrganizationSetting:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._OrganizationSettings(ctx, sel, obj)
+		return ec._OrganizationSetting(ctx, sel, obj)
 	case *generated.PersonalAccessToken:
 		if obj == nil {
 			return graphql.Null
@@ -42957,11 +46336,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._User(ctx, sel, obj)
-	case *generated.UserSettings:
+	case *generated.UserSetting:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._UserSettings(ctx, sel, obj)
+		return ec._UserSetting(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -43625,61 +47004,94 @@ func (ec *executionContext) _GroupEdge(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
-var groupSettingsImplementors = []string{"GroupSettings", "Node"}
+var groupSettingImplementors = []string{"GroupSetting", "Node"}
 
-func (ec *executionContext) _GroupSettings(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettings) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingsImplementors)
+func (ec *executionContext) _GroupSetting(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSetting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("GroupSettings")
+			out.Values[i] = graphql.MarshalString("GroupSetting")
 		case "id":
-			out.Values[i] = ec._GroupSettings_id(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
-			out.Values[i] = ec._GroupSettings_createdAt(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
-			out.Values[i] = ec._GroupSettings_updatedAt(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdBy":
-			out.Values[i] = ec._GroupSettings_createdBy(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
-			out.Values[i] = ec._GroupSettings_updatedBy(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_updatedBy(ctx, field, obj)
 		case "visibility":
-			out.Values[i] = ec._GroupSettings_visibility(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_visibility(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "joinPolicy":
-			out.Values[i] = ec._GroupSettings_joinPolicy(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_joinPolicy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "tags":
-			out.Values[i] = ec._GroupSettings_tags(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "syncToSlack":
-			out.Values[i] = ec._GroupSettings_syncToSlack(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_syncToSlack(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "syncToGithub":
-			out.Values[i] = ec._GroupSettings_syncToGithub(ctx, field, obj)
+			out.Values[i] = ec._GroupSetting_syncToGithub(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "group":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._GroupSetting_group(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -43703,26 +47115,26 @@ func (ec *executionContext) _GroupSettings(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var groupSettingsConnectionImplementors = []string{"GroupSettingsConnection"}
+var groupSettingConnectionImplementors = []string{"GroupSettingConnection"}
 
-func (ec *executionContext) _GroupSettingsConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettingsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingsConnectionImplementors)
+func (ec *executionContext) _GroupSettingConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettingConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("GroupSettingsConnection")
+			out.Values[i] = graphql.MarshalString("GroupSettingConnection")
 		case "edges":
-			out.Values[i] = ec._GroupSettingsConnection_edges(ctx, field, obj)
+			out.Values[i] = ec._GroupSettingConnection_edges(ctx, field, obj)
 		case "pageInfo":
-			out.Values[i] = ec._GroupSettingsConnection_pageInfo(ctx, field, obj)
+			out.Values[i] = ec._GroupSettingConnection_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "totalCount":
-			out.Values[i] = ec._GroupSettingsConnection_totalCount(ctx, field, obj)
+			out.Values[i] = ec._GroupSettingConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -43749,21 +47161,138 @@ func (ec *executionContext) _GroupSettingsConnection(ctx context.Context, sel as
 	return out
 }
 
-var groupSettingsEdgeImplementors = []string{"GroupSettingsEdge"}
+var groupSettingCreatePayloadImplementors = []string{"GroupSettingCreatePayload"}
 
-func (ec *executionContext) _GroupSettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettingsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingsEdgeImplementors)
+func (ec *executionContext) _GroupSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *GroupSettingCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingCreatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("GroupSettingsEdge")
+			out.Values[i] = graphql.MarshalString("GroupSettingCreatePayload")
+		case "groupSetting":
+			out.Values[i] = ec._GroupSettingCreatePayload_groupSetting(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupSettingDeletePayloadImplementors = []string{"GroupSettingDeletePayload"}
+
+func (ec *executionContext) _GroupSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *GroupSettingDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingDeletePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupSettingDeletePayload")
+		case "deletedID":
+			out.Values[i] = ec._GroupSettingDeletePayload_deletedID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupSettingEdgeImplementors = []string{"GroupSettingEdge"}
+
+func (ec *executionContext) _GroupSettingEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.GroupSettingEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupSettingEdge")
 		case "node":
-			out.Values[i] = ec._GroupSettingsEdge_node(ctx, field, obj)
+			out.Values[i] = ec._GroupSettingEdge_node(ctx, field, obj)
 		case "cursor":
-			out.Values[i] = ec._GroupSettingsEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._GroupSettingEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var groupSettingUpdatePayloadImplementors = []string{"GroupSettingUpdatePayload"}
+
+func (ec *executionContext) _GroupSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *GroupSettingUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupSettingUpdatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupSettingUpdatePayload")
+		case "groupSetting":
+			out.Values[i] = ec._GroupSettingUpdatePayload_groupSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -44197,6 +47726,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createGroupSetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createGroupSetting(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateGroupSetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateGroupSetting(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteGroupSetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteGroupSetting(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createIntegration":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createIntegration(ctx, field)
@@ -44260,6 +47810,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createOrganizationSetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createOrganizationSetting(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateOrganizationSetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateOrganizationSetting(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteOrganizationSetting":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteOrganizationSetting(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createPersonalAccessToken":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPersonalAccessToken(ctx, field)
@@ -44277,6 +47848,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deletePersonalAccessToken":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deletePersonalAccessToken(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createRefreshToken":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createRefreshToken(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateRefreshToken":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateRefreshToken(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteRefreshToken":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteRefreshToken(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -44323,23 +47915,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createUserSettings":
+		case "createUserSetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createUserSettings(ctx, field)
+				return ec._Mutation_createUserSetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "pdateUserSettings":
+		case "updateUserSetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_pdateUserSettings(ctx, field)
+				return ec._Mutation_updateUserSetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "deleteUserSettings":
+		case "deleteUserSetting":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteUserSettings(ctx, field)
+				return ec._Mutation_deleteUserSetting(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -45225,83 +48817,116 @@ func (ec *executionContext) _OrganizationEdge(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var organizationSettingsImplementors = []string{"OrganizationSettings", "Node"}
+var organizationSettingImplementors = []string{"OrganizationSetting", "Node"}
 
-func (ec *executionContext) _OrganizationSettings(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettings) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingsImplementors)
+func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSetting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("OrganizationSettings")
+			out.Values[i] = graphql.MarshalString("OrganizationSetting")
 		case "id":
-			out.Values[i] = ec._OrganizationSettings_id(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
-			out.Values[i] = ec._OrganizationSettings_createdAt(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
-			out.Values[i] = ec._OrganizationSettings_updatedAt(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdBy":
-			out.Values[i] = ec._OrganizationSettings_createdBy(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
-			out.Values[i] = ec._OrganizationSettings_updatedBy(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_updatedBy(ctx, field, obj)
 		case "domains":
-			out.Values[i] = ec._OrganizationSettings_domains(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_domains(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "ssoCert":
-			out.Values[i] = ec._OrganizationSettings_ssoCert(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_ssoCert(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "ssoEntrypoint":
-			out.Values[i] = ec._OrganizationSettings_ssoEntrypoint(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_ssoEntrypoint(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "ssoIssuer":
-			out.Values[i] = ec._OrganizationSettings_ssoIssuer(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_ssoIssuer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "billingContact":
-			out.Values[i] = ec._OrganizationSettings_billingContact(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_billingContact(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "billingEmail":
-			out.Values[i] = ec._OrganizationSettings_billingEmail(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_billingEmail(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "billingPhone":
-			out.Values[i] = ec._OrganizationSettings_billingPhone(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_billingPhone(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "billingAddress":
-			out.Values[i] = ec._OrganizationSettings_billingAddress(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_billingAddress(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "taxIdentifier":
-			out.Values[i] = ec._OrganizationSettings_taxIdentifier(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_taxIdentifier(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "tags":
-			out.Values[i] = ec._OrganizationSettings_tags(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSetting_tags(ctx, field, obj)
+		case "orgnaization":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._OrganizationSetting_orgnaization(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -45325,26 +48950,26 @@ func (ec *executionContext) _OrganizationSettings(ctx context.Context, sel ast.S
 	return out
 }
 
-var organizationSettingsConnectionImplementors = []string{"OrganizationSettingsConnection"}
+var organizationSettingConnectionImplementors = []string{"OrganizationSettingConnection"}
 
-func (ec *executionContext) _OrganizationSettingsConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettingsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingsConnectionImplementors)
+func (ec *executionContext) _OrganizationSettingConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettingConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("OrganizationSettingsConnection")
+			out.Values[i] = graphql.MarshalString("OrganizationSettingConnection")
 		case "edges":
-			out.Values[i] = ec._OrganizationSettingsConnection_edges(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSettingConnection_edges(ctx, field, obj)
 		case "pageInfo":
-			out.Values[i] = ec._OrganizationSettingsConnection_pageInfo(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSettingConnection_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "totalCount":
-			out.Values[i] = ec._OrganizationSettingsConnection_totalCount(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSettingConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -45371,21 +48996,138 @@ func (ec *executionContext) _OrganizationSettingsConnection(ctx context.Context,
 	return out
 }
 
-var organizationSettingsEdgeImplementors = []string{"OrganizationSettingsEdge"}
+var organizationSettingCreatePayloadImplementors = []string{"OrganizationSettingCreatePayload"}
 
-func (ec *executionContext) _OrganizationSettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettingsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingsEdgeImplementors)
+func (ec *executionContext) _OrganizationSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *OrganizationSettingCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingCreatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("OrganizationSettingsEdge")
+			out.Values[i] = graphql.MarshalString("OrganizationSettingCreatePayload")
+		case "organizationSetting":
+			out.Values[i] = ec._OrganizationSettingCreatePayload_organizationSetting(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationSettingDeletePayloadImplementors = []string{"OrganizationSettingDeletePayload"}
+
+func (ec *executionContext) _OrganizationSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *OrganizationSettingDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingDeletePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationSettingDeletePayload")
+		case "deletedID":
+			out.Values[i] = ec._OrganizationSettingDeletePayload_deletedID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationSettingEdgeImplementors = []string{"OrganizationSettingEdge"}
+
+func (ec *executionContext) _OrganizationSettingEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.OrganizationSettingEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationSettingEdge")
 		case "node":
-			out.Values[i] = ec._OrganizationSettingsEdge_node(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSettingEdge_node(ctx, field, obj)
 		case "cursor":
-			out.Values[i] = ec._OrganizationSettingsEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._OrganizationSettingEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var organizationSettingUpdatePayloadImplementors = []string{"OrganizationSettingUpdatePayload"}
+
+func (ec *executionContext) _OrganizationSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *OrganizationSettingUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationSettingUpdatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OrganizationSettingUpdatePayload")
+		case "organizationSetting":
+			out.Values[i] = ec._OrganizationSettingUpdatePayload_organizationSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -45915,7 +49657,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "groupSettingsSlice":
+		case "groupSettings":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -45924,7 +49666,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_groupSettingsSlice(ctx, field)
+				res = ec._Query_groupSettings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46003,7 +49745,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "organizationSettingsSlice":
+		case "organizationSettings":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -46012,7 +49754,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_organizationSettingsSlice(ctx, field)
+				res = ec._Query_organizationSettings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46035,6 +49777,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_personalAccessTokens(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "refreshTokens":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_refreshTokens(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46091,7 +49855,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "userSettingsSlice":
+		case "userSettings":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -46100,7 +49864,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_userSettingsSlice(ctx, field)
+				res = ec._Query_userSettings(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46145,6 +49909,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_group(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "groupSetting":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_groupSetting(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46223,6 +50009,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "organizationSetting":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_organizationSetting(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "personalAccessToken":
 			field := field
 
@@ -46233,6 +50041,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_personalAccessToken(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "refreshToken":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_refreshToken(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46289,7 +50119,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "userSettings":
+		case "userSetting":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -46298,7 +50128,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_userSettings(ctx, field)
+				res = ec._Query_userSetting(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46474,6 +50304,210 @@ func (ec *executionContext) _RefreshToken(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var refreshTokenConnectionImplementors = []string{"RefreshTokenConnection"}
+
+func (ec *executionContext) _RefreshTokenConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.RefreshTokenConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RefreshTokenConnection")
+		case "edges":
+			out.Values[i] = ec._RefreshTokenConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._RefreshTokenConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._RefreshTokenConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var refreshTokenCreatePayloadImplementors = []string{"RefreshTokenCreatePayload"}
+
+func (ec *executionContext) _RefreshTokenCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *RefreshTokenCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenCreatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RefreshTokenCreatePayload")
+		case "refreshToken":
+			out.Values[i] = ec._RefreshTokenCreatePayload_refreshToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var refreshTokenDeletePayloadImplementors = []string{"RefreshTokenDeletePayload"}
+
+func (ec *executionContext) _RefreshTokenDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *RefreshTokenDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenDeletePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RefreshTokenDeletePayload")
+		case "deletedID":
+			out.Values[i] = ec._RefreshTokenDeletePayload_deletedID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var refreshTokenEdgeImplementors = []string{"RefreshTokenEdge"}
+
+func (ec *executionContext) _RefreshTokenEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.RefreshTokenEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RefreshTokenEdge")
+		case "node":
+			out.Values[i] = ec._RefreshTokenEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._RefreshTokenEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var refreshTokenUpdatePayloadImplementors = []string{"RefreshTokenUpdatePayload"}
+
+func (ec *executionContext) _RefreshTokenUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *RefreshTokenUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenUpdatePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RefreshTokenUpdatePayload")
+		case "refreshToken":
+			out.Values[i] = ec._RefreshTokenUpdatePayload_refreshToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -47256,70 +51290,103 @@ func (ec *executionContext) _UserEdge(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
-var userSettingsImplementors = []string{"UserSettings", "Node"}
+var userSettingImplementors = []string{"UserSetting", "Node"}
 
-func (ec *executionContext) _UserSettings(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettings) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsImplementors)
+func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSetting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettings")
+			out.Values[i] = graphql.MarshalString("UserSetting")
 		case "id":
-			out.Values[i] = ec._UserSettings_id(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
-			out.Values[i] = ec._UserSettings_createdAt(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
-			out.Values[i] = ec._UserSettings_updatedAt(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdBy":
-			out.Values[i] = ec._UserSettings_createdBy(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
-			out.Values[i] = ec._UserSettings_updatedBy(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_updatedBy(ctx, field, obj)
 		case "locked":
-			out.Values[i] = ec._UserSettings_locked(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_locked(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "silencedAt":
-			out.Values[i] = ec._UserSettings_silencedAt(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_silencedAt(ctx, field, obj)
 		case "suspendedAt":
-			out.Values[i] = ec._UserSettings_suspendedAt(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_suspendedAt(ctx, field, obj)
 		case "status":
-			out.Values[i] = ec._UserSettings_status(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "role":
-			out.Values[i] = ec._UserSettings_role(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_role(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "permissions":
-			out.Values[i] = ec._UserSettings_permissions(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_permissions(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "emailConfirmed":
-			out.Values[i] = ec._UserSettings_emailConfirmed(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_emailConfirmed(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "tags":
-			out.Values[i] = ec._UserSettings_tags(ctx, field, obj)
+			out.Values[i] = ec._UserSetting_tags(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "user":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._UserSetting_user(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -47343,26 +51410,26 @@ func (ec *executionContext) _UserSettings(ctx context.Context, sel ast.Selection
 	return out
 }
 
-var userSettingsConnectionImplementors = []string{"UserSettingsConnection"}
+var userSettingConnectionImplementors = []string{"UserSettingConnection"}
 
-func (ec *executionContext) _UserSettingsConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsConnectionImplementors)
+func (ec *executionContext) _UserSettingConnection(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingsConnection")
+			out.Values[i] = graphql.MarshalString("UserSettingConnection")
 		case "edges":
-			out.Values[i] = ec._UserSettingsConnection_edges(ctx, field, obj)
+			out.Values[i] = ec._UserSettingConnection_edges(ctx, field, obj)
 		case "pageInfo":
-			out.Values[i] = ec._UserSettingsConnection_pageInfo(ctx, field, obj)
+			out.Values[i] = ec._UserSettingConnection_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "totalCount":
-			out.Values[i] = ec._UserSettingsConnection_totalCount(ctx, field, obj)
+			out.Values[i] = ec._UserSettingConnection_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47389,19 +51456,19 @@ func (ec *executionContext) _UserSettingsConnection(ctx context.Context, sel ast
 	return out
 }
 
-var userSettingsCreatePayloadImplementors = []string{"UserSettingsCreatePayload"}
+var userSettingCreatePayloadImplementors = []string{"UserSettingCreatePayload"}
 
-func (ec *executionContext) _UserSettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingsCreatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsCreatePayloadImplementors)
+func (ec *executionContext) _UserSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingCreatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingCreatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingsCreatePayload")
-		case "UserSettings":
-			out.Values[i] = ec._UserSettingsCreatePayload_UserSettings(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("UserSettingCreatePayload")
+		case "UserSetting":
+			out.Values[i] = ec._UserSettingCreatePayload_UserSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47428,19 +51495,19 @@ func (ec *executionContext) _UserSettingsCreatePayload(ctx context.Context, sel 
 	return out
 }
 
-var userSettingsDeletePayloadImplementors = []string{"UserSettingsDeletePayload"}
+var userSettingDeletePayloadImplementors = []string{"UserSettingDeletePayload"}
 
-func (ec *executionContext) _UserSettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingsDeletePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsDeletePayloadImplementors)
+func (ec *executionContext) _UserSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingDeletePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingDeletePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingsDeletePayload")
+			out.Values[i] = graphql.MarshalString("UserSettingDeletePayload")
 		case "deletedID":
-			out.Values[i] = ec._UserSettingsDeletePayload_deletedID(ctx, field, obj)
+			out.Values[i] = ec._UserSettingDeletePayload_deletedID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47467,21 +51534,21 @@ func (ec *executionContext) _UserSettingsDeletePayload(ctx context.Context, sel 
 	return out
 }
 
-var userSettingsEdgeImplementors = []string{"UserSettingsEdge"}
+var userSettingEdgeImplementors = []string{"UserSettingEdge"}
 
-func (ec *executionContext) _UserSettingsEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsEdgeImplementors)
+func (ec *executionContext) _UserSettingEdge(ctx context.Context, sel ast.SelectionSet, obj *generated.UserSettingEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingEdgeImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingsEdge")
+			out.Values[i] = graphql.MarshalString("UserSettingEdge")
 		case "node":
-			out.Values[i] = ec._UserSettingsEdge_node(ctx, field, obj)
+			out.Values[i] = ec._UserSettingEdge_node(ctx, field, obj)
 		case "cursor":
-			out.Values[i] = ec._UserSettingsEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._UserSettingEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47508,19 +51575,19 @@ func (ec *executionContext) _UserSettingsEdge(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var userSettingsUpdatePayloadImplementors = []string{"UserSettingsUpdatePayload"}
+var userSettingUpdatePayloadImplementors = []string{"UserSettingUpdatePayload"}
 
-func (ec *executionContext) _UserSettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingsUpdatePayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingsUpdatePayloadImplementors)
+func (ec *executionContext) _UserSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, obj *UserSettingUpdatePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userSettingUpdatePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserSettingsUpdatePayload")
-		case "UserSettings":
-			out.Values[i] = ec._UserSettingsUpdatePayload_UserSettings(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("UserSettingUpdatePayload")
+		case "UserSetting":
+			out.Values[i] = ec._UserSettingUpdatePayload_UserSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47973,6 +52040,11 @@ func (ec *executionContext) unmarshalNCreateGroupInput2githubᚗcomᚋdatumforge
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateGroupSettingInput(ctx context.Context, v interface{}) (generated.CreateGroupSettingInput, error) {
+	res, err := ec.unmarshalInputCreateGroupSettingInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateIntegrationInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateIntegrationInput(ctx context.Context, v interface{}) (generated.CreateIntegrationInput, error) {
 	res, err := ec.unmarshalInputCreateIntegrationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -47988,8 +52060,18 @@ func (ec *executionContext) unmarshalNCreateOrganizationInput2githubᚗcomᚋdat
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateOrganizationSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx context.Context, v interface{}) (generated.CreateOrganizationSettingInput, error) {
+	res, err := ec.unmarshalInputCreateOrganizationSettingInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.CreatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputCreatePersonalAccessTokenInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreateRefreshTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateRefreshTokenInput(ctx context.Context, v interface{}) (generated.CreateRefreshTokenInput, error) {
+	res, err := ec.unmarshalInputCreateRefreshTokenInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -48003,8 +52085,8 @@ func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋdatumforge�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingsInput(ctx context.Context, v interface{}) (generated.CreateUserSettingsInput, error) {
-	res, err := ec.unmarshalInputCreateUserSettingsInput(ctx, v)
+func (ec *executionContext) unmarshalNCreateUserSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateUserSettingInput(ctx context.Context, v interface{}) (generated.CreateUserSettingInput, error) {
+	res, err := ec.unmarshalInputCreateUserSettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -48175,52 +52257,98 @@ func (ec *executionContext) marshalNGroupOrderField2ᚖgithubᚗcomᚋdatumforge
 	return v
 }
 
-func (ec *executionContext) marshalNGroupSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettings(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettings) graphql.Marshaler {
+func (ec *executionContext) marshalNGroupSetting2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx context.Context, sel ast.SelectionSet, v generated.GroupSetting) graphql.Marshaler {
+	return ec._GroupSetting(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSetting) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._GroupSettings(ctx, sel, v)
+	return ec._GroupSetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNGroupSettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.GroupSettingsConnection) graphql.Marshaler {
-	return ec._GroupSettingsConnection(ctx, sel, &v)
+func (ec *executionContext) marshalNGroupSettingConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingConnection(ctx context.Context, sel ast.SelectionSet, v generated.GroupSettingConnection) graphql.Marshaler {
+	return ec._GroupSettingConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNGroupSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsConnection(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingsConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNGroupSettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingConnection(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._GroupSettingsConnection(ctx, sel, v)
+	return ec._GroupSettingConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNGroupSettingsJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx context.Context, v interface{}) (groupsettings.JoinPolicy, error) {
-	var res groupsettings.JoinPolicy
+func (ec *executionContext) marshalNGroupSettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v GroupSettingCreatePayload) graphql.Marshaler {
+	return ec._GroupSettingCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *GroupSettingCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupSettingCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGroupSettingDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v GroupSettingDeletePayload) graphql.Marshaler {
+	return ec._GroupSettingDeletePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v *GroupSettingDeletePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupSettingDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, v interface{}) (groupsetting.JoinPolicy, error) {
+	var res groupsetting.JoinPolicy
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNGroupSettingsJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v groupsettings.JoinPolicy) graphql.Marshaler {
+func (ec *executionContext) marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v groupsetting.JoinPolicy) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNGroupSettingsVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx context.Context, v interface{}) (groupsettings.Visibility, error) {
-	var res groupsettings.Visibility
+func (ec *executionContext) marshalNGroupSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v GroupSettingUpdatePayload) graphql.Marshaler {
+	return ec._GroupSettingUpdatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGroupSettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐGroupSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *GroupSettingUpdatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GroupSettingUpdatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, v interface{}) (groupsetting.Visibility, error) {
+	var res groupsetting.Visibility
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNGroupSettingsVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx context.Context, sel ast.SelectionSet, v groupsettings.Visibility) graphql.Marshaler {
+func (ec *executionContext) marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, sel ast.SelectionSet, v groupsetting.Visibility) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNGroupSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInput(ctx context.Context, v interface{}) (*generated.GroupSettingsWhereInput, error) {
-	res, err := ec.unmarshalInputGroupSettingsWhereInput(ctx, v)
+func (ec *executionContext) unmarshalNGroupSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInput(ctx context.Context, v interface{}) (*generated.GroupSettingWhereInput, error) {
+	res, err := ec.unmarshalInputGroupSettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -48591,22 +52719,78 @@ func (ec *executionContext) marshalNOrganizationOrderField2ᚖgithubᚗcomᚋdat
 	return v
 }
 
-func (ec *executionContext) marshalNOrganizationSettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationSettingsConnection) graphql.Marshaler {
-	return ec._OrganizationSettingsConnection(ctx, sel, &v)
+func (ec *executionContext) marshalNOrganizationSetting2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationSetting) graphql.Marshaler {
+	return ec._OrganizationSetting(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrganizationSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsConnection(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingsConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSetting) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._OrganizationSettingsConnection(ctx, sel, v)
+	return ec._OrganizationSetting(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNOrganizationSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInput(ctx context.Context, v interface{}) (*generated.OrganizationSettingsWhereInput, error) {
-	res, err := ec.unmarshalInputOrganizationSettingsWhereInput(ctx, v)
+func (ec *executionContext) marshalNOrganizationSettingConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingConnection(ctx context.Context, sel ast.SelectionSet, v generated.OrganizationSettingConnection) graphql.Marshaler {
+	return ec._OrganizationSettingConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingConnection(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSettingConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingCreatePayload) graphql.Marshaler {
+	return ec._OrganizationSettingCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *OrganizationSettingCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSettingCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingDeletePayload) graphql.Marshaler {
+	return ec._OrganizationSettingDeletePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v *OrganizationSettingDeletePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSettingDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v OrganizationSettingUpdatePayload) graphql.Marshaler {
+	return ec._OrganizationSettingUpdatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOrganizationSettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐOrganizationSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *OrganizationSettingUpdatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OrganizationSettingUpdatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNOrganizationSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInput(ctx context.Context, v interface{}) (*generated.OrganizationSettingWhereInput, error) {
+	res, err := ec.unmarshalInputOrganizationSettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -48708,6 +52892,10 @@ func (ec *executionContext) unmarshalNPersonalAccessTokenWhereInput2ᚖgithubᚗ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNRefreshToken2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx context.Context, sel ast.SelectionSet, v generated.RefreshToken) graphql.Marshaler {
+	return ec._RefreshToken(ctx, sel, &v)
+}
+
 func (ec *executionContext) marshalNRefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx context.Context, sel ast.SelectionSet, v *generated.RefreshToken) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -48716,6 +52904,62 @@ func (ec *executionContext) marshalNRefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋ
 		return graphql.Null
 	}
 	return ec._RefreshToken(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenConnection(ctx context.Context, sel ast.SelectionSet, v generated.RefreshTokenConnection) graphql.Marshaler {
+	return ec._RefreshTokenConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenConnection(ctx context.Context, sel ast.SelectionSet, v *generated.RefreshTokenConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RefreshTokenConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenCreatePayload(ctx context.Context, sel ast.SelectionSet, v RefreshTokenCreatePayload) graphql.Marshaler {
+	return ec._RefreshTokenCreatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenCreatePayload(ctx context.Context, sel ast.SelectionSet, v *RefreshTokenCreatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RefreshTokenCreatePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenDeletePayload(ctx context.Context, sel ast.SelectionSet, v RefreshTokenDeletePayload) graphql.Marshaler {
+	return ec._RefreshTokenDeletePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenDeletePayload(ctx context.Context, sel ast.SelectionSet, v *RefreshTokenDeletePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RefreshTokenDeletePayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenUpdatePayload(ctx context.Context, sel ast.SelectionSet, v RefreshTokenUpdatePayload) graphql.Marshaler {
+	return ec._RefreshTokenUpdatePayload(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNRefreshTokenUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐRefreshTokenUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *RefreshTokenUpdatePayload) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._RefreshTokenUpdatePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNRefreshTokenWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenWhereInput(ctx context.Context, v interface{}) (*generated.RefreshTokenWhereInput, error) {
@@ -48880,6 +53124,11 @@ func (ec *executionContext) unmarshalNUpdateGroupInput2githubᚗcomᚋdatumforge
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateGroupSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateGroupSettingInput(ctx context.Context, v interface{}) (generated.UpdateGroupSettingInput, error) {
+	res, err := ec.unmarshalInputUpdateGroupSettingInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdateIntegrationInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateIntegrationInput(ctx context.Context, v interface{}) (generated.UpdateIntegrationInput, error) {
 	res, err := ec.unmarshalInputUpdateIntegrationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -48895,8 +53144,18 @@ func (ec *executionContext) unmarshalNUpdateOrganizationInput2githubᚗcomᚋdat
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateOrganizationSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateOrganizationSettingInput(ctx context.Context, v interface{}) (generated.UpdateOrganizationSettingInput, error) {
+	res, err := ec.unmarshalInputUpdateOrganizationSettingInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdatePersonalAccessTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdatePersonalAccessTokenInput(ctx context.Context, v interface{}) (generated.UpdatePersonalAccessTokenInput, error) {
 	res, err := ec.unmarshalInputUpdatePersonalAccessTokenInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateRefreshTokenInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateRefreshTokenInput(ctx context.Context, v interface{}) (generated.UpdateRefreshTokenInput, error) {
+	res, err := ec.unmarshalInputUpdateRefreshTokenInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -48910,8 +53169,8 @@ func (ec *executionContext) unmarshalNUpdateUserInput2githubᚗcomᚋdatumforge�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateUserSettingsInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingsInput(ctx context.Context, v interface{}) (generated.UpdateUserSettingsInput, error) {
-	res, err := ec.unmarshalInputUpdateUserSettingsInput(ctx, v)
+func (ec *executionContext) unmarshalNUpdateUserSettingInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateUserSettingInput(ctx context.Context, v interface{}) (generated.UpdateUserSettingInput, error) {
+	res, err := ec.unmarshalInputUpdateUserSettingInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -48987,98 +53246,98 @@ func (ec *executionContext) marshalNUserOrderField2ᚖgithubᚗcomᚋdatumforge�
 	return v
 }
 
-func (ec *executionContext) marshalNUserSettings2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx context.Context, sel ast.SelectionSet, v generated.UserSettings) graphql.Marshaler {
-	return ec._UserSettings(ctx, sel, &v)
+func (ec *executionContext) marshalNUserSetting2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v generated.UserSetting) graphql.Marshaler {
+	return ec._UserSetting(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettings) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v *generated.UserSetting) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserSettings(ctx, sel, v)
+	return ec._UserSetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserSettingsConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsConnection(ctx context.Context, sel ast.SelectionSet, v generated.UserSettingsConnection) graphql.Marshaler {
-	return ec._UserSettingsConnection(ctx, sel, &v)
+func (ec *executionContext) marshalNUserSettingConnection2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingConnection(ctx context.Context, sel ast.SelectionSet, v generated.UserSettingConnection) graphql.Marshaler {
+	return ec._UserSettingConnection(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserSettingsConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsConnection(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingsConnection) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSettingConnection2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingConnection(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingConnection) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserSettingsConnection(ctx, sel, v)
+	return ec._UserSettingConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserSettingsCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingsCreatePayload) graphql.Marshaler {
-	return ec._UserSettingsCreatePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNUserSettingCreatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingCreatePayload) graphql.Marshaler {
+	return ec._UserSettingCreatePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserSettingsCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsCreatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingsCreatePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSettingCreatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingCreatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingCreatePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserSettingsCreatePayload(ctx, sel, v)
+	return ec._UserSettingCreatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNUserSettingsDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingsDeletePayload) graphql.Marshaler {
-	return ec._UserSettingsDeletePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNUserSettingDeletePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingDeletePayload) graphql.Marshaler {
+	return ec._UserSettingDeletePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserSettingsDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsDeletePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingsDeletePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSettingDeletePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingDeletePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingDeletePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserSettingsDeletePayload(ctx, sel, v)
+	return ec._UserSettingDeletePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, v interface{}) (usersettings.Role, error) {
-	var res usersettings.Role
+func (ec *executionContext) unmarshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, v interface{}) (usersetting.Role, error) {
+	var res usersetting.Role
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, sel ast.SelectionSet, v usersettings.Role) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, sel ast.SelectionSet, v usersetting.Role) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, v interface{}) (usersettings.Status, error) {
-	var res usersettings.Status
+func (ec *executionContext) unmarshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, v interface{}) (usersetting.Status, error) {
+	var res usersetting.Status
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, sel ast.SelectionSet, v usersettings.Status) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, sel ast.SelectionSet, v usersetting.Status) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNUserSettingsUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingsUpdatePayload) graphql.Marshaler {
-	return ec._UserSettingsUpdatePayload(ctx, sel, &v)
+func (ec *executionContext) marshalNUserSettingUpdatePayload2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v UserSettingUpdatePayload) graphql.Marshaler {
+	return ec._UserSettingUpdatePayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUserSettingsUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingsUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingsUpdatePayload) graphql.Marshaler {
+func (ec *executionContext) marshalNUserSettingUpdatePayload2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋapiᚐUserSettingUpdatePayload(ctx context.Context, sel ast.SelectionSet, v *UserSettingUpdatePayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._UserSettingsUpdatePayload(ctx, sel, v)
+	return ec._UserSettingUpdatePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingsWhereInput, error) {
-	res, err := ec.unmarshalInputUserSettingsWhereInput(ctx, v)
+func (ec *executionContext) unmarshalNUserSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingWhereInput, error) {
+	res, err := ec.unmarshalInputUserSettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -49738,14 +53997,14 @@ func (ec *executionContext) unmarshalOGroupOrder2ᚖgithubᚗcomᚋdatumforgeᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGroupSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettings(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettings) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSetting(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSetting) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._GroupSettings(ctx, sel, v)
+	return ec._GroupSetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOGroupSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.GroupSettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.GroupSettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -49772,7 +54031,7 @@ func (ec *executionContext) marshalOGroupSettingsEdge2ᚕᚖgithubᚗcomᚋdatum
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGroupSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOGroupSettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -49786,14 +54045,14 @@ func (ec *executionContext) marshalOGroupSettingsEdge2ᚕᚖgithubᚗcomᚋdatum
 	return ret
 }
 
-func (ec *executionContext) marshalOGroupSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsEdge(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingEdge(ctx context.Context, sel ast.SelectionSet, v *generated.GroupSettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._GroupSettingsEdge(ctx, sel, v)
+	return ec._GroupSettingEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicyᚄ(ctx context.Context, v interface{}) ([]groupsettings.JoinPolicy, error) {
+func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx context.Context, v interface{}) ([]groupsetting.JoinPolicy, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -49802,10 +54061,10 @@ func (ec *executionContext) unmarshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋ
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]groupsettings.JoinPolicy, len(vSlice))
+	res := make([]groupsetting.JoinPolicy, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNGroupSettingsJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -49813,7 +54072,7 @@ func (ec *executionContext) unmarshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋ
 	return res, nil
 }
 
-func (ec *executionContext) marshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicyᚄ(ctx context.Context, sel ast.SelectionSet, v []groupsettings.JoinPolicy) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicyᚄ(ctx context.Context, sel ast.SelectionSet, v []groupsetting.JoinPolicy) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -49840,90 +54099,7 @@ func (ec *executionContext) marshalOGroupSettingsJoinPolicy2ᚕgithubᚗcomᚋda
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNGroupSettingsJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalOGroupSettingsJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx context.Context, v interface{}) (*groupsettings.JoinPolicy, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(groupsettings.JoinPolicy)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGroupSettingsJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v *groupsettings.JoinPolicy) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
-func (ec *executionContext) unmarshalOGroupSettingsVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibilityᚄ(ctx context.Context, v interface{}) ([]groupsettings.Visibility, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]groupsettings.Visibility, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNGroupSettingsVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOGroupSettingsVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibilityᚄ(ctx context.Context, sel ast.SelectionSet, v []groupsettings.Visibility) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNGroupSettingsVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx, sel, v[i])
+			ret[i] = ec.marshalNGroupSettingJoinPolicy2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -49943,23 +54119,23 @@ func (ec *executionContext) marshalOGroupSettingsVisibility2ᚕgithubᚗcomᚋda
 	return ret
 }
 
-func (ec *executionContext) unmarshalOGroupSettingsVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx context.Context, v interface{}) (*groupsettings.Visibility, error) {
+func (ec *executionContext) unmarshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, v interface{}) (*groupsetting.JoinPolicy, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(groupsettings.Visibility)
+	var res = new(groupsetting.JoinPolicy)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGroupSettingsVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingsᚐVisibility(ctx context.Context, sel ast.SelectionSet, v *groupsettings.Visibility) graphql.Marshaler {
+func (ec *executionContext) marshalOGroupSettingJoinPolicy2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐJoinPolicy(ctx context.Context, sel ast.SelectionSet, v *groupsetting.JoinPolicy) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOGroupSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.GroupSettingsWhereInput, error) {
+func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx context.Context, v interface{}) ([]groupsetting.Visibility, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -49968,10 +54144,10 @@ func (ec *executionContext) unmarshalOGroupSettingsWhereInput2ᚕᚖgithubᚗcom
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*generated.GroupSettingsWhereInput, len(vSlice))
+	res := make([]groupsetting.Visibility, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNGroupSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -49979,11 +54155,94 @@ func (ec *executionContext) unmarshalOGroupSettingsWhereInput2ᚕᚖgithubᚗcom
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOGroupSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingsWhereInput(ctx context.Context, v interface{}) (*generated.GroupSettingsWhereInput, error) {
+func (ec *executionContext) marshalOGroupSettingVisibility2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibilityᚄ(ctx context.Context, sel ast.SelectionSet, v []groupsetting.Visibility) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGroupSettingVisibility2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, v interface{}) (*groupsetting.Visibility, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputGroupSettingsWhereInput(ctx, v)
+	var res = new(groupsetting.Visibility)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx context.Context, sel ast.SelectionSet, v *groupsetting.Visibility) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOGroupSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.GroupSettingWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.GroupSettingWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNGroupSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOGroupSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupSettingWhereInput(ctx context.Context, v interface{}) (*generated.GroupSettingWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGroupSettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -50508,14 +54767,14 @@ func (ec *executionContext) unmarshalOOrganizationOrder2ᚖgithubᚗcomᚋdatumf
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOOrganizationSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettings(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettings) graphql.Marshaler {
+func (ec *executionContext) marshalOOrganizationSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSetting(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSetting) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._OrganizationSettings(ctx, sel, v)
+	return ec._OrganizationSetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOrganizationSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.OrganizationSettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOOrganizationSettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.OrganizationSettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -50542,7 +54801,7 @@ func (ec *executionContext) marshalOOrganizationSettingsEdge2ᚕᚖgithubᚗcom�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOOrganizationSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOOrganizationSettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -50556,14 +54815,14 @@ func (ec *executionContext) marshalOOrganizationSettingsEdge2ᚕᚖgithubᚗcom�
 	return ret
 }
 
-func (ec *executionContext) marshalOOrganizationSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsEdge(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOOrganizationSettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingEdge(ctx context.Context, sel ast.SelectionSet, v *generated.OrganizationSettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._OrganizationSettingsEdge(ctx, sel, v)
+	return ec._OrganizationSettingEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.OrganizationSettingsWhereInput, error) {
+func (ec *executionContext) unmarshalOOrganizationSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.OrganizationSettingWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -50572,10 +54831,10 @@ func (ec *executionContext) unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithu
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*generated.OrganizationSettingsWhereInput, len(vSlice))
+	res := make([]*generated.OrganizationSettingWhereInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNOrganizationSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNOrganizationSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -50583,11 +54842,11 @@ func (ec *executionContext) unmarshalOOrganizationSettingsWhereInput2ᚕᚖgithu
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOOrganizationSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingsWhereInput(ctx context.Context, v interface{}) (*generated.OrganizationSettingsWhereInput, error) {
+func (ec *executionContext) unmarshalOOrganizationSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationSettingWhereInput(ctx context.Context, v interface{}) (*generated.OrganizationSettingWhereInput, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputOrganizationSettingsWhereInput(ctx, v)
+	res, err := ec.unmarshalInputOrganizationSettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -50794,6 +55053,61 @@ func (ec *executionContext) marshalORefreshToken2ᚕᚖgithubᚗcomᚋdatumforge
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalORefreshToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshToken(ctx context.Context, sel ast.SelectionSet, v *generated.RefreshToken) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RefreshToken(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORefreshTokenEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.RefreshTokenEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalORefreshTokenEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalORefreshTokenEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenEdge(ctx context.Context, sel ast.SelectionSet, v *generated.RefreshTokenEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RefreshTokenEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalORefreshTokenWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐRefreshTokenWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.RefreshTokenWhereInput, error) {
@@ -51275,14 +55589,14 @@ func (ec *executionContext) unmarshalOUserOrder2ᚖgithubᚗcomᚋdatumforgeᚋd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOUserSettings2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettings(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettings) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx context.Context, sel ast.SelectionSet, v *generated.UserSetting) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._UserSettings(ctx, sel, v)
+	return ec._UserSetting(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOUserSettingsEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.UserSettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSettingEdge2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingEdge(ctx context.Context, sel ast.SelectionSet, v []*generated.UserSettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -51309,7 +55623,7 @@ func (ec *executionContext) marshalOUserSettingsEdge2ᚕᚖgithubᚗcomᚋdatumf
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOUserSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOUserSettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -51323,14 +55637,14 @@ func (ec *executionContext) marshalOUserSettingsEdge2ᚕᚖgithubᚗcomᚋdatumf
 	return ret
 }
 
-func (ec *executionContext) marshalOUserSettingsEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsEdge(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSettingEdge2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingEdge(ctx context.Context, sel ast.SelectionSet, v *generated.UserSettingEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._UserSettingsEdge(ctx, sel, v)
+	return ec._UserSettingEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx context.Context, v interface{}) ([]usersettings.Role, error) {
+func (ec *executionContext) unmarshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx context.Context, v interface{}) ([]usersetting.Role, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -51339,10 +55653,10 @@ func (ec *executionContext) unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumfo
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]usersettings.Role, len(vSlice))
+	res := make([]usersetting.Role, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -51350,7 +55664,7 @@ func (ec *executionContext) unmarshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumfo
 	return res, nil
 }
 
-func (ec *executionContext) marshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []usersettings.Role) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []usersetting.Role) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -51377,90 +55691,7 @@ func (ec *executionContext) marshalOUserSettingsRole2ᚕgithubᚗcomᚋdatumforg
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNUserSettingsRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, v interface{}) (*usersettings.Role, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(usersettings.Role)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOUserSettingsRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐRole(ctx context.Context, sel ast.SelectionSet, v *usersettings.Role) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
-}
-
-func (ec *executionContext) unmarshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx context.Context, v interface{}) ([]usersettings.Status, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]usersettings.Status, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []usersettings.Status) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUserSettingsStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx, sel, v[i])
+			ret[i] = ec.marshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -51480,23 +55711,23 @@ func (ec *executionContext) marshalOUserSettingsStatus2ᚕgithubᚗcomᚋdatumfo
 	return ret
 }
 
-func (ec *executionContext) unmarshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, v interface{}) (*usersettings.Status, error) {
+func (ec *executionContext) unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, v interface{}) (*usersetting.Role, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(usersettings.Status)
+	var res = new(usersetting.Role)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOUserSettingsStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingsᚐStatus(ctx context.Context, sel ast.SelectionSet, v *usersettings.Status) graphql.Marshaler {
+func (ec *executionContext) marshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, sel ast.SelectionSet, v *usersetting.Role) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return v
 }
 
-func (ec *executionContext) unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.UserSettingsWhereInput, error) {
+func (ec *executionContext) unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx context.Context, v interface{}) ([]usersetting.Status, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -51505,10 +55736,10 @@ func (ec *executionContext) unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcom�
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*generated.UserSettingsWhereInput, len(vSlice))
+	res := make([]usersetting.Status, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -51516,11 +55747,94 @@ func (ec *executionContext) unmarshalOUserSettingsWhereInput2ᚕᚖgithubᚗcom�
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOUserSettingsWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingsWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingsWhereInput, error) {
+func (ec *executionContext) marshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []usersetting.Status) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, v interface{}) (*usersetting.Status, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputUserSettingsWhereInput(ctx, v)
+	var res = new(usersetting.Status)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOUserSettingStatus2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, sel ast.SelectionSet, v *usersetting.Status) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOUserSettingWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInputᚄ(ctx context.Context, v interface{}) ([]*generated.UserSettingWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.UserSettingWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNUserSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOUserSettingWhereInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSettingWhereInput(ctx context.Context, v interface{}) (*generated.UserSettingWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUserSettingWhereInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

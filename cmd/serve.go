@@ -133,6 +133,8 @@ func serve(ctx context.Context) error {
 	opts := []ent.Option{ent.Logger(*logger)}
 
 	// add the fga client if oidc is enabled
+	var fgaClient *fga.Client
+
 	if oidcEnabled {
 		config := fga.Config{
 			Name:    "datum",
@@ -150,7 +152,7 @@ func serve(ctx context.Context) error {
 			config.Scheme,
 		)
 
-		fgaClient, err := fga.CreateFGAClientWithStore(ctx, config, logger)
+		fgaClient, err = fga.CreateFGAClientWithStore(ctx, config, logger)
 		if err != nil {
 			return err
 		}
@@ -221,7 +223,8 @@ func serve(ctx context.Context) error {
 	}
 
 	r := api.NewResolver(client).
-		WithLogger(logger.Named("resolvers"))
+		WithLogger(logger.Named("resolvers")).
+		WithAuthz(fgaClient) // TODO: only if oidc is enabled
 
 	handler := r.Handler(enablePlayground, mw...)
 

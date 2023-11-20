@@ -7,7 +7,6 @@ import (
 
 	ofgaclient "github.com/openfga/go-sdk/client"
 
-	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/fga"
 )
 
@@ -31,8 +30,8 @@ type Viewer interface {
 // UserViewer describes a user-viewer.
 type UserViewer struct {
 	UserID string
-	T      *generated.Organization
-	Role   Role // Attached roles.
+	Authz  *fga.Client
+	OrgID  string
 }
 
 // GetUser returns the user information.
@@ -47,9 +46,9 @@ func (u UserViewer) GetUserID() string {
 
 // Admin of the UserViewer
 func (u UserViewer) Admin(ctx context.Context) bool {
-	object := fmt.Sprintf("object:%s", u.T.ID)
+	object := fmt.Sprintf("organization:%s", u.OrgID)
 
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second) //nolint:gomnd
 	defer cancel()
 
 	key := &ofgaclient.ClientCheckRequest{
@@ -59,9 +58,9 @@ func (u UserViewer) Admin(ctx context.Context) bool {
 		ContextualTuples: nil,
 	}
 
-	admin, _ := u.T.Authz.CheckTuple(ctx, *key)
+	admin, _ := u.Authz.CheckTuple(ctx, *key)
 
-	u.T.Authz.Logger.Infow("authz check", "admin", admin)
+	u.Authz.Logger.Infow("authz check", "admin", admin)
 
 	return admin
 }

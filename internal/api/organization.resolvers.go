@@ -6,9 +6,13 @@ package api
 
 import (
 	"context"
+	"errors"
 
+	"github.com/datumforge/datum/internal/echox"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
@@ -85,14 +89,35 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
 	// TODO - add permissions checks
-
-	org, err := r.client.Organization.Get(ctx, id)
+	ec, err := echox.EchoContextFromContext(ctx)
 	if err != nil {
+		return nil, err
+	}
+
+	userID, err := echox.GetActorSubject(*ec)
+	if err != nil {
+		return nil, err
+	}
+	v := viewer.UserViewer{
+		UserID: userID,
+		Authz:  r.fgaClient,
+		OrgID:  id,
+	}
+
+	vc := viewer.NewContext(ctx, v)
+
+	org, err := r.client.Organization.Get(vc, id)
+	if err != nil {
+		r.logger.Errorw("failed to get organization", "error", err)
+
 		if generated.IsNotFound(err) {
 			return nil, err
 		}
 
-		r.logger.Errorw("failed to get organization", "error", err)
+		if errors.Is(err, privacy.Deny) {
+			return nil, err
+		}
+
 		return nil, ErrInternalServerError
 	}
 

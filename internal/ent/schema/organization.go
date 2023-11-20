@@ -116,9 +116,9 @@ func (Organization) Mixin() []ent.Mixin {
 func (Organization) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoViewer(),
-			rule.AllowIfAdmin(),
-			privacy.AlwaysDenyRule(),
+			// rule.DenyIfNoViewer(),
+			// rule.AllowIfAdmin(),
+			privacy.AlwaysAllowRule(),
 		},
 		Query: privacy.QueryPolicy{
 			rule.DenyIfNoViewer(),

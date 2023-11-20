@@ -2237,12 +2237,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]string)), true
 
-	case "Query.OauthProvider":
+	case "Query.oauthProvider":
 		if e.complexity.Query.OauthProvider == nil {
 			break
 		}
 
-		args, err := ec.field_Query_OauthProvider_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_oauthProvider_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2297,12 +2297,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Organizations(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*generated.OrganizationOrder), args["where"].(*generated.OrganizationWhereInput)), true
 
-	case "Query.PersonalAccessToken":
+	case "Query.personalAccessToken":
 		if e.complexity.Query.PersonalAccessToken == nil {
 			break
 		}
 
-		args, err := ec.field_Query_PersonalAccessToken_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_personalAccessToken_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -6341,11 +6341,11 @@ type IntegrationDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/oauthprovider.graphql", Input: `extend type Query {
     """
-    Look up OauthProvider by ID
+    Look up oauthProvider by ID
     """
-     OauthProvider(
+     oauthProvider(
         """
-        ID of the OauthProvider
+        ID of the oauthProvider
         """
         id: ID!
     ):  OauthProvider!
@@ -6353,7 +6353,7 @@ type IntegrationDeletePayload {
 
 extend type Mutation{
     """
-    Create a new oauthprovider
+    Create a new oauthProvider
     """
     createOauthProvider(
         """
@@ -6362,15 +6362,15 @@ extend type Mutation{
         input: CreateOauthProviderInput!
     ): OauthProviderCreatePayload!
     """
-    Update an existing oauthprovider
+    Update an existing oauthProvider
     """
     updateOauthProvider(
         """
-        ID of the oauthprovider
+        ID of the oauthProvider
         """
         id: ID!
         """
-        New values for the oauthprovider
+        New values for the oauthProvider
         """
         input: UpdateOauthProviderInput!
     ): OauthProviderUpdatePayload!
@@ -6379,7 +6379,7 @@ extend type Mutation{
     """
     deleteOauthProvider(
         """
-        ID of the oauthprovider
+        ID of the oauthProvider
         """
         id: ID!
     ): OauthProviderDeletePayload!
@@ -6390,7 +6390,7 @@ Return response for createOauthprovider mutation
 """
 type OauthProviderCreatePayload {
     """
-    Created oauthprovider
+    Created oauthProvider
     """
     OauthProvider: OauthProvider!
 }
@@ -6400,7 +6400,7 @@ Return response for updateOauthprovider mutation
 """
 type OauthProviderUpdatePayload {
     """
-    Updated oauthprovider
+    Updated oauthProvider
     """
     OauthProvider: OauthProvider!
 }
@@ -6410,7 +6410,7 @@ Return response for deleteOauthprovider mutation
 """
 type OauthProviderDeletePayload {
     """
-    Deleted oauthprovider ID
+    Deleted oauthProvider ID
     """
     deletedID: ID!
 }`, BuiltIn: false},
@@ -6492,11 +6492,11 @@ type OrganizationDeletePayload {
 	{Name: "../../schema/organization_settings.graphql", Input: ``, BuiltIn: false},
 	{Name: "../../schema/personalaccesstoken.graphql", Input: `extend type Query {
     """
-    Look up PersonalAccessToken by ID
+    Look up personalAccessToken by ID
     """
-     PersonalAccessToken(
+     personalAccessToken(
         """
-        ID of the PersonalAccessToken
+        ID of the personalAccessToken
         """
         id: ID!
     ):  PersonalAccessToken!
@@ -6504,11 +6504,11 @@ type OrganizationDeletePayload {
 
 extend type Mutation{
     """
-    Create a new PersonalAccessToken
+    Create a new personalAccessToken
     """
     createPersonalAccessToken(
         """
-        values of the PersonalAccessToken
+        values of the personalAccessToken
         """
         input: CreatePersonalAccessTokenInput!
     ): PersonalAccessTokenCreatePayload!
@@ -6517,11 +6517,11 @@ extend type Mutation{
     """
     updatePersonalAccessToken(
         """
-        ID of the PersonalAccessToken
+        ID of the personalAccessToken
         """
         id: ID!
         """
-        New values for the PersonalAccessToken
+        New values for the personalAccessToken
         """
         input: UpdatePersonalAccessTokenInput!
     ): PersonalAccessTokenUpdatePayload!
@@ -6530,7 +6530,7 @@ extend type Mutation{
     """
     deletePersonalAccessToken(
         """
-        ID of the PersonalAccessToken
+        ID of the personalAccessToken
         """
         id: ID!
     ): PersonalAccessTokenDeletePayload!
@@ -6541,7 +6541,7 @@ Return response for createPersonalAccessToken mutation
 """
 type PersonalAccessTokenCreatePayload {
     """
-    Created PersonalAccessToken
+    Created personalAccessToken
     """
     PersonalAccessToken: PersonalAccessToken!
 }
@@ -6551,7 +6551,7 @@ Return response for updatePersonalAccessToken mutation
 """
 type PersonalAccessTokenUpdatePayload {
     """
-    Updated PersonalAccessToken
+    Updated personalAccessToken
     """
     PersonalAccessToken: PersonalAccessToken!
 }
@@ -6561,7 +6561,7 @@ Return response for deletePersonalAccessToken mutation
 """
 type PersonalAccessTokenDeletePayload {
     """
-    Deleted PersonalAccessToken ID
+    Deleted personalAccessToken ID
     """
     deletedID: ID!
 }`, BuiltIn: false},
@@ -7362,36 +7362,6 @@ func (ec *executionContext) field_Organization_children_args(ctx context.Context
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_OauthProvider_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_PersonalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
-	return args, nil
-}
-
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7704,6 +7674,21 @@ func (ec *executionContext) field_Query_nodes_args(ctx context.Context, rawArgs 
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_oauthProvider_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_oauthProviders_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -7878,6 +7863,21 @@ func (ec *executionContext) field_Query_organizations_args(ctx context.Context, 
 		}
 	}
 	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_personalAccessToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -19060,8 +19060,8 @@ func (ec *executionContext) fieldContext_Query_integration(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_OauthProvider(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_OauthProvider(ctx, field)
+func (ec *executionContext) _Query_oauthProvider(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_oauthProvider(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19091,7 +19091,7 @@ func (ec *executionContext) _Query_OauthProvider(ctx context.Context, field grap
 	return ec.marshalNOauthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProvider(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_OauthProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_oauthProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -19138,7 +19138,7 @@ func (ec *executionContext) fieldContext_Query_OauthProvider(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_OauthProvider_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_oauthProvider_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -19234,8 +19234,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_PersonalAccessToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_PersonalAccessToken(ctx, field)
+func (ec *executionContext) _Query_personalAccessToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_personalAccessToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19265,7 +19265,7 @@ func (ec *executionContext) _Query_PersonalAccessToken(ctx context.Context, fiel
 	return ec.marshalNPersonalAccessToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐPersonalAccessToken(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_PersonalAccessToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_personalAccessToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -19306,7 +19306,7 @@ func (ec *executionContext) fieldContext_Query_PersonalAccessToken(ctx context.C
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_PersonalAccessToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_personalAccessToken_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -46179,7 +46179,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "OauthProvider":
+		case "oauthProvider":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -46188,7 +46188,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_OauthProvider(ctx, field)
+				res = ec._Query_oauthProvider(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -46223,7 +46223,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "PersonalAccessToken":
+		case "personalAccessToken":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -46232,7 +46232,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_PersonalAccessToken(ctx, field)
+				res = ec._Query_personalAccessToken(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

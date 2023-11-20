@@ -97,10 +97,8 @@ tasks:
       - golangci-lint run -v
   go:test:
     desc: runs and outputs results of created go tests
-    deps: [compose:fga]
     cmds:
       - go test -v ./... 
-      - defer: { task: compose:fga:down }
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]

@@ -995,13 +995,13 @@ type OauthProviderConnection struct {
 
 // Return response for createOauthprovider mutation
 type OauthProviderCreatePayload struct {
-	// Created oauthprovider
+	// Created oauthProvider
 	OauthProvider OauthProvider `json:"OauthProvider"`
 }
 
 // Return response for deleteOauthprovider mutation
 type OauthProviderDeletePayload struct {
-	// Deleted oauthprovider ID
+	// Deleted oauthProvider ID
 	DeletedID string `json:"deletedID"`
 }
 
@@ -1015,7 +1015,7 @@ type OauthProviderEdge struct {
 
 // Return response for updateOauthprovider mutation
 type OauthProviderUpdatePayload struct {
-	// Updated oauthprovider
+	// Updated oauthProvider
 	OauthProvider OauthProvider `json:"OauthProvider"`
 }
 
@@ -1652,13 +1652,13 @@ type PersonalAccessTokenConnection struct {
 
 // Return response for createPersonalAccessToken mutation
 type PersonalAccessTokenCreatePayload struct {
-	// Created PersonalAccessToken
+	// Created personalAccessToken
 	PersonalAccessToken PersonalAccessToken `json:"PersonalAccessToken"`
 }
 
 // Return response for deletePersonalAccessToken mutation
 type PersonalAccessTokenDeletePayload struct {
-	// Deleted PersonalAccessToken ID
+	// Deleted personalAccessToken ID
 	DeletedID string `json:"deletedID"`
 }
 
@@ -1672,7 +1672,7 @@ type PersonalAccessTokenEdge struct {
 
 // Return response for updatePersonalAccessToken mutation
 type PersonalAccessTokenUpdatePayload struct {
-	// Updated PersonalAccessToken
+	// Updated personalAccessToken
 	PersonalAccessToken PersonalAccessToken `json:"PersonalAccessToken"`
 }
 

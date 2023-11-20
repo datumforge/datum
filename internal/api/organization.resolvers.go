@@ -11,11 +11,6 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 )
 
-// const (
-// 	objectType        = "organization"
-// 	ownerRelationship = "owner"
-// )
-
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
 	// TODO - add permissions checks

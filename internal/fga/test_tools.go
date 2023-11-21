@@ -17,7 +17,7 @@ const (
 	storeName = "datum_test"
 )
 
-func newTestFGAClient(t testing.TB, mockCtrl *gomock.Controller, c *mock_client.MockSdkClient) (*Client, error) {
+func NewTestFGAClient(t testing.TB, mockCtrl *gomock.Controller, c *mock_client.MockSdkClient) (*Client, error) {
 	// setup required mocks
 	mockListStores(c, mockCtrl)
 	mockCreateStore(c, mockCtrl)

@@ -133,7 +133,7 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	c := mock_client.NewMockSdkClient(mockCtrl)
 
-	fc, err := newTestFGAClient(t, mockCtrl, c)
+	fc, err := NewTestFGAClient(t, mockCtrl, c)
 	if err != nil {
 		t.Fatal()
 	}
@@ -206,7 +206,7 @@ func Test_CreateRelationshipTupleWithUser(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	c := mock_client.NewMockSdkClient(mockCtrl)
 
-	fc, err := newTestFGAClient(t, mockCtrl, c)
+	fc, err := NewTestFGAClient(t, mockCtrl, c)
 	if err != nil {
 		t.Fatal()
 	}
@@ -283,7 +283,7 @@ func Test_DeleteRelationshipTupleWithUser(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	c := mock_client.NewMockSdkClient(mockCtrl)
 
-	fc, err := newTestFGAClient(t, mockCtrl, c)
+	fc, err := NewTestFGAClient(t, mockCtrl, c)
 	if err != nil {
 		t.Fatal()
 	}

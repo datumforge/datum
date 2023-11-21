@@ -223,8 +223,12 @@ func serve(ctx context.Context) error {
 	}
 
 	r := api.NewResolver(client).
-		WithLogger(logger.Named("resolvers")).
-		WithAuthz(fgaClient) // TODO: only if oidc is enabled
+		WithLogger(logger.Named("resolvers"))
+
+	// add authz client if oidc is enabled
+	if oidcEnabled {
+		r = r.WithAuthz(fgaClient)
+	}
 
 	handler := r.Handler(enablePlayground, mw...)
 

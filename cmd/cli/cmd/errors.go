@@ -8,4 +8,7 @@ var (
 
 	// ErrOrgIDRequired is returned when no organization id is provided when deleting or updating an organization
 	ErrOrgIDRequired = errors.New("organization id is required")
+
+	// ErrTokenRequired is returned when no authentication token is provided
+	ErrTokenRequired = errors.New("DATUM_ACCESS_TOKEN not set")
 )

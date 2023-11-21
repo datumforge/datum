@@ -2,7 +2,6 @@ package viewer
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	ofgaclient "github.com/openfga/go-sdk/client"
@@ -10,33 +9,19 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 )
 
-// Role for viewer actions.
-type Role int
-
-// List of roles.
-const (
-	_ Role = 1 << iota
-	Admin
-	View
-)
-
 // Viewer describes the query/mutation viewer-context.
 type Viewer interface {
-	GetUser() UserViewer
+	// GetUserID returns the user ID from the context
 	GetUserID() string
-	Admin(ctx context.Context) bool // If viewer is admin.
+	// HasAccess uses the FGA client to determine access to the objcet
+	HasAccess(ctx context.Context) bool
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
 	UserID string
 	Authz  *fga.Client
-	OrgID  string
-}
-
-// GetUser returns the user information.
-func (u UserViewer) GetUser() UserViewer {
-	return u
+	Key    fga.TupleKey
 }
 
 // GetUserID returns the ID of the user.
@@ -44,25 +29,28 @@ func (u UserViewer) GetUserID() string {
 	return u.UserID
 }
 
-// Admin of the UserViewer
-func (u UserViewer) Admin(ctx context.Context) bool {
-	object := fmt.Sprintf("organization:%s", u.OrgID)
-
+// HasAccess of the UserViewer
+func (u UserViewer) HasAccess(ctx context.Context) bool {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second) //nolint:gomnd
 	defer cancel()
 
-	key := &ofgaclient.ClientCheckRequest{
-		User:             fmt.Sprintf("user:%s", u.GetUserID()),
-		Relation:         fga.OwnerRelation,
-		Object:           object,
-		ContextualTuples: nil,
+	check := ofgaclient.ClientCheckRequest{
+		User:             u.Key.Subject.String(),
+		Relation:         u.Key.Relation.String(),
+		Object:           u.Key.Object.String(),
+		ContextualTuples: nil, // TODO: allow contextual tuples
 	}
 
-	admin, _ := u.Authz.CheckTuple(ctx, *key)
+	access, _ := u.Authz.CheckTuple(ctx, check)
 
-	u.Authz.Logger.Infow("authz check", "admin", admin)
+	u.Authz.Logger.Infow("authz check",
+		"user", u.Key.Subject.String(),
+		"relation", u.Key.Relation.String(),
+		"object", u.Key.Object.String(),
+		"has_access", access,
+	)
 
-	return admin
+	return access
 }
 
 type ctxKey struct{}

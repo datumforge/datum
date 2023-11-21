@@ -34,7 +34,7 @@ func DenyIfNoViewer() privacy.QueryMutationRule {
 func AllowIfAdmin() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
 		view := viewer.FromContext(ctx)
-		if view.Admin(ctx) {
+		if view.HasAccess(ctx) {
 			return privacy.Allow
 		}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
+	"github.com/datumforge/datum/internal/fga"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
@@ -88,20 +89,29 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
-	// TODO - add permissions checks
-	ec, err := echox.EchoContextFromContext(ctx)
+	userID, err := echox.GetUserIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := echox.GetActorSubject(*ec)
-	if err != nil {
-		return nil, err
+	sub := fga.Entity{
+		Kind:       "user",
+		Identifier: userID,
 	}
+
+	obj := fga.Entity{
+		Kind:       "organization",
+		Identifier: id,
+	}
+
 	v := viewer.UserViewer{
 		UserID: userID,
 		Authz:  r.fgaClient,
-		OrgID:  id,
+		Key: fga.TupleKey{
+			Subject:  sub,
+			Relation: fga.CanView,
+			Object:   obj,
+		},
 	}
 
 	vc := viewer.NewContext(ctx, v)

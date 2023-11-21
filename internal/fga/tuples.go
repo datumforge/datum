@@ -20,6 +20,9 @@ const (
 	MemberRelation = "member"
 	AdminRelation  = "admin"
 	OwnerRelation  = "owner"
+	CanView        = "can_view"
+	CanEdit        = "can_edit"
+	CanDelete      = "can_delete"
 )
 
 type TupleKey struct {

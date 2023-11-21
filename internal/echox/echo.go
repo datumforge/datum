@@ -73,3 +73,12 @@ func GetActorSubject(c echo.Context) (string, error) {
 
 	return sub, nil
 }
+
+func GetUserIDFromContext(ctx context.Context) (string, error) {
+	ec, err := EchoContextFromContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return GetActorSubject(*ec)
+}

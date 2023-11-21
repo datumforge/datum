@@ -132,6 +132,16 @@ func PasswordHash(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldPasswordHash, v))
 }
 
+// Sub applies equality check predicate on the "sub" field. It's identical to SubEQ.
+func Sub(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldSub, v))
+}
+
+// Oauth applies equality check predicate on the "oauth" field. It's identical to OauthEQ.
+func Oauth(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldOauth, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -945,6 +955,91 @@ func PasswordHashEqualFold(v string) predicate.User {
 // PasswordHashContainsFold applies the ContainsFold predicate on the "passwordHash" field.
 func PasswordHashContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldPasswordHash, v))
+}
+
+// SubEQ applies the EQ predicate on the "sub" field.
+func SubEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldSub, v))
+}
+
+// SubNEQ applies the NEQ predicate on the "sub" field.
+func SubNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldSub, v))
+}
+
+// SubIn applies the In predicate on the "sub" field.
+func SubIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldSub, vs...))
+}
+
+// SubNotIn applies the NotIn predicate on the "sub" field.
+func SubNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldSub, vs...))
+}
+
+// SubGT applies the GT predicate on the "sub" field.
+func SubGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldSub, v))
+}
+
+// SubGTE applies the GTE predicate on the "sub" field.
+func SubGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldSub, v))
+}
+
+// SubLT applies the LT predicate on the "sub" field.
+func SubLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldSub, v))
+}
+
+// SubLTE applies the LTE predicate on the "sub" field.
+func SubLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldSub, v))
+}
+
+// SubContains applies the Contains predicate on the "sub" field.
+func SubContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldSub, v))
+}
+
+// SubHasPrefix applies the HasPrefix predicate on the "sub" field.
+func SubHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldSub, v))
+}
+
+// SubHasSuffix applies the HasSuffix predicate on the "sub" field.
+func SubHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldSub, v))
+}
+
+// SubIsNil applies the IsNil predicate on the "sub" field.
+func SubIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldSub))
+}
+
+// SubNotNil applies the NotNil predicate on the "sub" field.
+func SubNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldSub))
+}
+
+// SubEqualFold applies the EqualFold predicate on the "sub" field.
+func SubEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldSub, v))
+}
+
+// SubContainsFold applies the ContainsFold predicate on the "sub" field.
+func SubContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldSub, v))
+}
+
+// OauthEQ applies the EQ predicate on the "oauth" field.
+func OauthEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldOauth, v))
+}
+
+// OauthNEQ applies the NEQ predicate on the "oauth" field.
+func OauthNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldOauth, v))
 }
 
 // HasOrganizations applies the HasEdge predicate on the "organizations" edge.

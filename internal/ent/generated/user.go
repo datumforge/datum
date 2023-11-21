@@ -44,6 +44,10 @@ type User struct {
 	LastSeen time.Time `json:"last_seen,omitempty"`
 	// user bcrypt password hash
 	PasswordHash *string `json:"-"`
+	// the Subject of the user JWT
+	Sub string `json:"sub,omitempty"`
+	// whether the user uses oauth for login or not
+	Oauth bool `json:"oauth,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -140,7 +144,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash:
+		case user.FieldOauth:
+			values[i] = new(sql.NullBool)
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash, user.FieldSub:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -246,6 +252,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.PasswordHash = new(string)
 				*u.PasswordHash = value.String
+			}
+		case user.FieldSub:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field sub", values[i])
+			} else if value.Valid {
+				u.Sub = value.String
+			}
+		case user.FieldOauth:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field oauth", values[i])
+			} else if value.Valid {
+				u.Oauth = value.Bool
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
@@ -356,6 +374,12 @@ func (u *User) String() string {
 	builder.WriteString(u.LastSeen.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("passwordHash=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("sub=")
+	builder.WriteString(u.Sub)
+	builder.WriteString(", ")
+	builder.WriteString("oauth=")
+	builder.WriteString(fmt.Sprintf("%v", u.Oauth))
 	builder.WriteByte(')')
 	return builder.String()
 }

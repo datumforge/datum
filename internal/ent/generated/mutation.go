@@ -10780,6 +10780,8 @@ type UserMutation struct {
 	avatar_updated_at             *time.Time
 	last_seen                     *time.Time
 	passwordHash                  *string
+	sub                           *string
+	oauth                         *bool
 	clearedFields                 map[string]struct{}
 	organizations                 map[string]struct{}
 	removedorganizations          map[string]struct{}
@@ -11466,6 +11468,91 @@ func (m *UserMutation) ResetPasswordHash() {
 	delete(m.clearedFields, user.FieldPasswordHash)
 }
 
+// SetSub sets the "sub" field.
+func (m *UserMutation) SetSub(s string) {
+	m.sub = &s
+}
+
+// Sub returns the value of the "sub" field in the mutation.
+func (m *UserMutation) Sub() (r string, exists bool) {
+	v := m.sub
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSub returns the old "sub" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldSub(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSub is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSub requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSub: %w", err)
+	}
+	return oldValue.Sub, nil
+}
+
+// ClearSub clears the value of the "sub" field.
+func (m *UserMutation) ClearSub() {
+	m.sub = nil
+	m.clearedFields[user.FieldSub] = struct{}{}
+}
+
+// SubCleared returns if the "sub" field was cleared in this mutation.
+func (m *UserMutation) SubCleared() bool {
+	_, ok := m.clearedFields[user.FieldSub]
+	return ok
+}
+
+// ResetSub resets all changes to the "sub" field.
+func (m *UserMutation) ResetSub() {
+	m.sub = nil
+	delete(m.clearedFields, user.FieldSub)
+}
+
+// SetOauth sets the "oauth" field.
+func (m *UserMutation) SetOauth(b bool) {
+	m.oauth = &b
+}
+
+// Oauth returns the value of the "oauth" field in the mutation.
+func (m *UserMutation) Oauth() (r bool, exists bool) {
+	v := m.oauth
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOauth returns the old "oauth" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldOauth(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOauth is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOauth requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOauth: %w", err)
+	}
+	return oldValue.Oauth, nil
+}
+
+// ResetOauth resets all changes to the "oauth" field.
+func (m *UserMutation) ResetOauth() {
+	m.oauth = nil
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
 func (m *UserMutation) AddOrganizationIDs(ids ...string) {
 	if m.organizations == nil {
@@ -11809,7 +11896,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -11849,6 +11936,12 @@ func (m *UserMutation) Fields() []string {
 	if m.passwordHash != nil {
 		fields = append(fields, user.FieldPasswordHash)
 	}
+	if m.sub != nil {
+		fields = append(fields, user.FieldSub)
+	}
+	if m.oauth != nil {
+		fields = append(fields, user.FieldOauth)
+	}
 	return fields
 }
 
@@ -11883,6 +11976,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.LastSeen()
 	case user.FieldPasswordHash:
 		return m.PasswordHash()
+	case user.FieldSub:
+		return m.Sub()
+	case user.FieldOauth:
+		return m.Oauth()
 	}
 	return nil, false
 }
@@ -11918,6 +12015,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldLastSeen(ctx)
 	case user.FieldPasswordHash:
 		return m.OldPasswordHash(ctx)
+	case user.FieldSub:
+		return m.OldSub(ctx)
+	case user.FieldOauth:
+		return m.OldOauth(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -12018,6 +12119,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPasswordHash(v)
 		return nil
+	case user.FieldSub:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSub(v)
+		return nil
+	case user.FieldOauth:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOauth(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -12069,6 +12184,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPasswordHash) {
 		fields = append(fields, user.FieldPasswordHash)
 	}
+	if m.FieldCleared(user.FieldSub) {
+		fields = append(fields, user.FieldSub)
+	}
 	return fields
 }
 
@@ -12103,6 +12221,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldPasswordHash:
 		m.ClearPasswordHash()
+		return nil
+	case user.FieldSub:
+		m.ClearSub()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -12150,6 +12271,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldPasswordHash:
 		m.ResetPasswordHash()
+		return nil
+	case user.FieldSub:
+		m.ResetSub()
+		return nil
+	case user.FieldOauth:
+		m.ResetOauth()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

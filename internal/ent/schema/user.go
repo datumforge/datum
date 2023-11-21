@@ -102,6 +102,13 @@ func (User) Fields() []ent.Field {
 			Sensitive().
 			Nillable().
 			Optional(),
+		field.String("sub").
+			Comment("the Subject of the user JWT").
+			Unique().
+			Optional(),
+		field.Bool("oauth").
+			Comment("whether the user uses oauth for login or not").
+			Default(false),
 	}
 }
 

@@ -41,6 +41,10 @@ const (
 	FieldLastSeen = "last_seen"
 	// FieldPasswordHash holds the string denoting the passwordhash field in the database.
 	FieldPasswordHash = "password_hash"
+	// FieldSub holds the string denoting the sub field in the database.
+	FieldSub = "sub"
+	// FieldOauth holds the string denoting the oauth field in the database.
+	FieldOauth = "oauth"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
@@ -111,6 +115,8 @@ var Columns = []string{
 	FieldAvatarUpdatedAt,
 	FieldLastSeen,
 	FieldPasswordHash,
+	FieldSub,
+	FieldOauth,
 }
 
 var (
@@ -164,6 +170,8 @@ var (
 	UpdateDefaultAvatarUpdatedAt func() time.Time
 	// UpdateDefaultLastSeen holds the default value on update for the "last_seen" field.
 	UpdateDefaultLastSeen func() time.Time
+	// DefaultOauth holds the default value on creation for the "oauth" field.
+	DefaultOauth bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -239,6 +247,16 @@ func ByLastSeen(opts ...sql.OrderTermOption) OrderOption {
 // ByPasswordHash orders the results by the passwordHash field.
 func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPasswordHash, opts...).ToFunc()
+}
+
+// BySub orders the results by the sub field.
+func BySub(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSub, opts...).ToFunc()
+}
+
+// ByOauth orders the results by the oauth field.
+func ByOauth(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOauth, opts...).ToFunc()
 }
 
 // ByOrganizationsCount orders the results by organizations count.

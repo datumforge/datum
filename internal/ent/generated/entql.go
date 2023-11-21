@@ -286,6 +286,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
 			user.FieldLastSeen:        {Type: field.TypeTime, Column: user.FieldLastSeen},
 			user.FieldPasswordHash:    {Type: field.TypeString, Column: user.FieldPasswordHash},
+			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
+			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 		},
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
@@ -1934,6 +1936,16 @@ func (f *UserFilter) WhereLastSeen(p entql.TimeP) {
 // WherePasswordHash applies the entql string predicate on the passwordHash field.
 func (f *UserFilter) WherePasswordHash(p entql.StringP) {
 	f.Where(p.Field(user.FieldPasswordHash))
+}
+
+// WhereSub applies the entql string predicate on the sub field.
+func (f *UserFilter) WhereSub(p entql.StringP) {
+	f.Where(p.Field(user.FieldSub))
+}
+
+// WhereOauth applies the entql bool predicate on the oauth field.
+func (f *UserFilter) WhereOauth(p entql.BoolP) {
+	f.Where(p.Field(user.FieldOauth))
 }
 
 // WhereHasOrganizations applies a predicate to check if query has an edge organizations.

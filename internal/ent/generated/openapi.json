@@ -4867,6 +4867,12 @@
                   "passwordHash": {
                     "type": "string"
                   },
+                  "sub": {
+                    "type": "string"
+                  },
+                  "oauth": {
+                    "type": "boolean"
+                  },
                   "organizations": {
                     "type": "array",
                     "items": {
@@ -4908,6 +4914,7 @@
                   "first_name",
                   "last_name",
                   "display_name",
+                  "oauth",
                   "setting"
                 ]
               }
@@ -5081,6 +5088,12 @@
                   },
                   "passwordHash": {
                     "type": "string"
+                  },
+                  "sub": {
+                    "type": "string"
+                  },
+                  "oauth": {
+                    "type": "boolean"
                   },
                   "organizations": {
                     "type": "array",
@@ -6616,6 +6629,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -6625,7 +6644,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "Integration": {
@@ -8302,6 +8322,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8311,7 +8337,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "PersonalAccessToken": {
@@ -8617,6 +8644,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8626,7 +8659,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "RefreshToken": {
@@ -9047,6 +9081,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9056,7 +9096,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "Session": {
@@ -9362,6 +9403,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9371,7 +9418,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "User": {
@@ -9423,6 +9471,12 @@
           "passwordHash": {
             "type": "string"
           },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          },
           "organizations": {
             "type": "array",
             "items": {
@@ -9465,6 +9519,7 @@
           "first_name",
           "last_name",
           "display_name",
+          "oauth",
           "setting"
         ]
       },
@@ -9513,6 +9568,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9522,7 +9583,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "UserList": {
@@ -9570,6 +9632,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9579,7 +9647,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "UserRead": {
@@ -9627,6 +9696,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9636,7 +9711,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "UserSetting": {
@@ -10080,6 +10156,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -10089,7 +10171,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "UserUpdate": {
@@ -10137,6 +10220,12 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -10146,7 +10235,8 @@
           "email",
           "first_name",
           "last_name",
-          "display_name"
+          "display_name",
+          "oauth"
         ]
       },
       "User_GroupsList": {

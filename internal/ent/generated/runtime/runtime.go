@@ -536,6 +536,10 @@ func init() {
 	userDescLastSeen := userFields[7].Descriptor()
 	// user.UpdateDefaultLastSeen holds the default value on update for the last_seen field.
 	user.UpdateDefaultLastSeen = userDescLastSeen.UpdateDefault.(func() time.Time)
+	// userDescOauth is the schema descriptor for oauth field.
+	userDescOauth := userFields[10].Descriptor()
+	// user.DefaultOauth holds the default value on creation for the oauth field.
+	user.DefaultOauth = userDescOauth.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

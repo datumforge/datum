@@ -222,6 +222,40 @@ func (uu *UserUpdate) ClearPasswordHash() *UserUpdate {
 	return uu
 }
 
+// SetSub sets the "sub" field.
+func (uu *UserUpdate) SetSub(s string) *UserUpdate {
+	uu.mutation.SetSub(s)
+	return uu
+}
+
+// SetNillableSub sets the "sub" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableSub(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetSub(*s)
+	}
+	return uu
+}
+
+// ClearSub clears the value of the "sub" field.
+func (uu *UserUpdate) ClearSub() *UserUpdate {
+	uu.mutation.ClearSub()
+	return uu
+}
+
+// SetOauth sets the "oauth" field.
+func (uu *UserUpdate) SetOauth(b bool) *UserUpdate {
+	uu.mutation.SetOauth(b)
+	return uu
+}
+
+// SetNillableOauth sets the "oauth" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetOauth(*b)
+	}
+	return uu
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uu *UserUpdate) AddOrganizationIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddOrganizationIDs(ids...)
@@ -586,6 +620,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.PasswordHashCleared() {
 		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
+	}
+	if value, ok := uu.mutation.Sub(); ok {
+		_spec.SetField(user.FieldSub, field.TypeString, value)
+	}
+	if uu.mutation.SubCleared() {
+		_spec.ClearField(user.FieldSub, field.TypeString)
+	}
+	if value, ok := uu.mutation.Oauth(); ok {
+		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 	}
 	if uu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1066,6 +1109,40 @@ func (uuo *UserUpdateOne) ClearPasswordHash() *UserUpdateOne {
 	return uuo
 }
 
+// SetSub sets the "sub" field.
+func (uuo *UserUpdateOne) SetSub(s string) *UserUpdateOne {
+	uuo.mutation.SetSub(s)
+	return uuo
+}
+
+// SetNillableSub sets the "sub" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableSub(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetSub(*s)
+	}
+	return uuo
+}
+
+// ClearSub clears the value of the "sub" field.
+func (uuo *UserUpdateOne) ClearSub() *UserUpdateOne {
+	uuo.mutation.ClearSub()
+	return uuo
+}
+
+// SetOauth sets the "oauth" field.
+func (uuo *UserUpdateOne) SetOauth(b bool) *UserUpdateOne {
+	uuo.mutation.SetOauth(b)
+	return uuo
+}
+
+// SetNillableOauth sets the "oauth" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetOauth(*b)
+	}
+	return uuo
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uuo *UserUpdateOne) AddOrganizationIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddOrganizationIDs(ids...)
@@ -1460,6 +1537,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.PasswordHashCleared() {
 		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Sub(); ok {
+		_spec.SetField(user.FieldSub, field.TypeString, value)
+	}
+	if uuo.mutation.SubCleared() {
+		_spec.ClearField(user.FieldSub, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Oauth(); ok {
+		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 	}
 	if uuo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{

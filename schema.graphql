@@ -232,6 +232,10 @@ input CreateUserInput {
 	lastSeen: Time
 	"""user bcrypt password hash"""
 	passwordhash: String
+	"""the Subject of the user JWT"""
+	sub: String
+	"""whether the user uses oauth for login or not"""
+	oauth: Boolean
 	organizationIDs: [ID!]
 	sessionIDs: [ID!]
 	groupIDs: [ID!]
@@ -3050,6 +3054,11 @@ input UpdateUserInput {
 	"""user bcrypt password hash"""
 	passwordhash: String
 	clearPasswordHash: Boolean
+	"""the Subject of the user JWT"""
+	sub: String
+	clearSub: Boolean
+	"""whether the user uses oauth for login or not"""
+	oauth: Boolean
 	addOrganizationIDs: [ID!]
 	removeOrganizationIDs: [ID!]
 	clearOrganizations: Boolean
@@ -3118,6 +3127,10 @@ type User implements Node {
 	avatarUpdatedAt: Time
 	"""the time the user was last seen"""
 	lastSeen: Time
+	"""the Subject of the user JWT"""
+	sub: String
+	"""whether the user uses oauth for login or not"""
+	oauth: Boolean!
 	organizations: [Organization!]
 	sessions: [Session!]
 	groups: [Group!]
@@ -3523,6 +3536,25 @@ input UserWhereInput {
 	lastSeenLTE: Time
 	lastSeenIsNil: Boolean
 	lastSeenNotNil: Boolean
+	"""sub field predicates"""
+	sub: String
+	subNEQ: String
+	subIn: [String!]
+	subNotIn: [String!]
+	subGT: String
+	subGTE: String
+	subLT: String
+	subLTE: String
+	subContains: String
+	subHasPrefix: String
+	subHasSuffix: String
+	subIsNil: Boolean
+	subNotNil: Boolean
+	subEqualFold: String
+	subContainsFold: String
+	"""oauth field predicates"""
+	oauth: Boolean
+	oauthNEQ: Boolean
 	"""organizations edge predicates"""
 	hasOrganizations: Boolean
 	hasOrganizationsWith: [OrganizationWhereInput!]

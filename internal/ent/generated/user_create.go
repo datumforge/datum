@@ -184,6 +184,34 @@ func (uc *UserCreate) SetNillablePasswordHash(s *string) *UserCreate {
 	return uc
 }
 
+// SetSub sets the "sub" field.
+func (uc *UserCreate) SetSub(s string) *UserCreate {
+	uc.mutation.SetSub(s)
+	return uc
+}
+
+// SetNillableSub sets the "sub" field if the given value is not nil.
+func (uc *UserCreate) SetNillableSub(s *string) *UserCreate {
+	if s != nil {
+		uc.SetSub(*s)
+	}
+	return uc
+}
+
+// SetOauth sets the "oauth" field.
+func (uc *UserCreate) SetOauth(b bool) *UserCreate {
+	uc.mutation.SetOauth(b)
+	return uc
+}
+
+// SetNillableOauth sets the "oauth" field if the given value is not nil.
+func (uc *UserCreate) SetNillableOauth(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetOauth(*b)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -339,6 +367,10 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultDisplayName
 		uc.mutation.SetDisplayName(v)
 	}
+	if _, ok := uc.mutation.Oauth(); !ok {
+		v := user.DefaultOauth
+		uc.mutation.SetOauth(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		if user.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
@@ -398,6 +430,9 @@ func (uc *UserCreate) check() error {
 		if err := user.AvatarLocalFileValidator(v); err != nil {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
+	}
+	if _, ok := uc.mutation.Oauth(); !ok {
+		return &ValidationError{Name: "oauth", err: errors.New(`generated: missing required field "User.oauth"`)}
 	}
 	if _, ok := uc.mutation.SettingID(); !ok {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "User.setting"`)}
@@ -489,6 +524,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.PasswordHash(); ok {
 		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
 		_node.PasswordHash = &value
+	}
+	if value, ok := uc.mutation.Sub(); ok {
+		_spec.SetField(user.FieldSub, field.TypeString, value)
+		_node.Sub = value
+	}
+	if value, ok := uc.mutation.Oauth(); ok {
+		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+		_node.Oauth = value
 	}
 	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

@@ -6466,6 +6466,27 @@ type UserWhereInput struct {
 	PasswordHashEqualFold    *string  `json:"passwordhashEqualFold,omitempty"`
 	PasswordHashContainsFold *string  `json:"passwordhashContainsFold,omitempty"`
 
+	// "sub" field predicates.
+	Sub             *string  `json:"sub,omitempty"`
+	SubNEQ          *string  `json:"subNEQ,omitempty"`
+	SubIn           []string `json:"subIn,omitempty"`
+	SubNotIn        []string `json:"subNotIn,omitempty"`
+	SubGT           *string  `json:"subGT,omitempty"`
+	SubGTE          *string  `json:"subGTE,omitempty"`
+	SubLT           *string  `json:"subLT,omitempty"`
+	SubLTE          *string  `json:"subLTE,omitempty"`
+	SubContains     *string  `json:"subContains,omitempty"`
+	SubHasPrefix    *string  `json:"subHasPrefix,omitempty"`
+	SubHasSuffix    *string  `json:"subHasSuffix,omitempty"`
+	SubIsNil        bool     `json:"subIsNil,omitempty"`
+	SubNotNil       bool     `json:"subNotNil,omitempty"`
+	SubEqualFold    *string  `json:"subEqualFold,omitempty"`
+	SubContainsFold *string  `json:"subContainsFold,omitempty"`
+
+	// "oauth" field predicates.
+	Oauth    *bool `json:"oauth,omitempty"`
+	OauthNEQ *bool `json:"oauthNEQ,omitempty"`
+
 	// "organizations" edge predicates.
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
@@ -7080,6 +7101,57 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.PasswordHashContainsFold != nil {
 		predicates = append(predicates, user.PasswordHashContainsFold(*i.PasswordHashContainsFold))
+	}
+	if i.Sub != nil {
+		predicates = append(predicates, user.SubEQ(*i.Sub))
+	}
+	if i.SubNEQ != nil {
+		predicates = append(predicates, user.SubNEQ(*i.SubNEQ))
+	}
+	if len(i.SubIn) > 0 {
+		predicates = append(predicates, user.SubIn(i.SubIn...))
+	}
+	if len(i.SubNotIn) > 0 {
+		predicates = append(predicates, user.SubNotIn(i.SubNotIn...))
+	}
+	if i.SubGT != nil {
+		predicates = append(predicates, user.SubGT(*i.SubGT))
+	}
+	if i.SubGTE != nil {
+		predicates = append(predicates, user.SubGTE(*i.SubGTE))
+	}
+	if i.SubLT != nil {
+		predicates = append(predicates, user.SubLT(*i.SubLT))
+	}
+	if i.SubLTE != nil {
+		predicates = append(predicates, user.SubLTE(*i.SubLTE))
+	}
+	if i.SubContains != nil {
+		predicates = append(predicates, user.SubContains(*i.SubContains))
+	}
+	if i.SubHasPrefix != nil {
+		predicates = append(predicates, user.SubHasPrefix(*i.SubHasPrefix))
+	}
+	if i.SubHasSuffix != nil {
+		predicates = append(predicates, user.SubHasSuffix(*i.SubHasSuffix))
+	}
+	if i.SubIsNil {
+		predicates = append(predicates, user.SubIsNil())
+	}
+	if i.SubNotNil {
+		predicates = append(predicates, user.SubNotNil())
+	}
+	if i.SubEqualFold != nil {
+		predicates = append(predicates, user.SubEqualFold(*i.SubEqualFold))
+	}
+	if i.SubContainsFold != nil {
+		predicates = append(predicates, user.SubContainsFold(*i.SubContainsFold))
+	}
+	if i.Oauth != nil {
+		predicates = append(predicates, user.OauthEQ(*i.Oauth))
+	}
+	if i.OauthNEQ != nil {
+		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
 	}
 
 	if i.HasOrganizations != nil {

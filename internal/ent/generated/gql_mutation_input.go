@@ -1458,6 +1458,8 @@ type CreateUserInput struct {
 	AvatarUpdatedAt        *time.Time
 	LastSeen               *time.Time
 	PasswordHash           *string
+	Sub                    *string
+	Oauth                  *bool
 	OrganizationIDs        []string
 	SessionIDs             []string
 	GroupIDs               []string
@@ -1500,6 +1502,12 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.PasswordHash; v != nil {
 		m.SetPasswordHash(*v)
+	}
+	if v := i.Sub; v != nil {
+		m.SetSub(*v)
+	}
+	if v := i.Oauth; v != nil {
+		m.SetOauth(*v)
 	}
 	if v := i.OrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
@@ -1546,6 +1554,9 @@ type UpdateUserInput struct {
 	LastSeen                     *time.Time
 	ClearPasswordHash            bool
 	PasswordHash                 *string
+	ClearSub                     bool
+	Sub                          *string
+	Oauth                        *bool
 	ClearOrganizations           bool
 	AddOrganizationIDs           []string
 	RemoveOrganizationIDs        []string
@@ -1622,6 +1633,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.PasswordHash; v != nil {
 		m.SetPasswordHash(*v)
+	}
+	if i.ClearSub {
+		m.ClearSub()
+	}
+	if v := i.Sub; v != nil {
+		m.SetSub(*v)
+	}
+	if v := i.Oauth; v != nil {
+		m.SetOauth(*v)
 	}
 	if i.ClearOrganizations {
 		m.ClearOrganizations()

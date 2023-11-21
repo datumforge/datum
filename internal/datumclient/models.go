@@ -233,7 +233,11 @@ type CreateUserInput struct {
 	// the time the user was last seen
 	LastSeen *time.Time `json:"lastSeen,omitempty"`
 	// user bcrypt password hash
-	Passwordhash           *string  `json:"passwordhash,omitempty"`
+	Passwordhash *string `json:"passwordhash,omitempty"`
+	// the Subject of the user JWT
+	Sub *string `json:"sub,omitempty"`
+	// whether the user uses oauth for login or not
+	Oauth                  *bool    `json:"oauth,omitempty"`
 	OrganizationIDs        []string `json:"organizationIDs,omitempty"`
 	SessionIDs             []string `json:"sessionIDs,omitempty"`
 	GroupIDs               []string `json:"groupIDs,omitempty"`
@@ -2532,8 +2536,13 @@ type UpdateUserInput struct {
 	LastSeen      *time.Time `json:"lastSeen,omitempty"`
 	ClearLastSeen *bool      `json:"clearLastSeen,omitempty"`
 	// user bcrypt password hash
-	Passwordhash                 *string  `json:"passwordhash,omitempty"`
-	ClearPasswordHash            *bool    `json:"clearPasswordHash,omitempty"`
+	Passwordhash      *string `json:"passwordhash,omitempty"`
+	ClearPasswordHash *bool   `json:"clearPasswordHash,omitempty"`
+	// the Subject of the user JWT
+	Sub      *string `json:"sub,omitempty"`
+	ClearSub *bool   `json:"clearSub,omitempty"`
+	// whether the user uses oauth for login or not
+	Oauth                        *bool    `json:"oauth,omitempty"`
 	AddOrganizationIDs           []string `json:"addOrganizationIDs,omitempty"`
 	RemoveOrganizationIDs        []string `json:"removeOrganizationIDs,omitempty"`
 	ClearOrganizations           *bool    `json:"clearOrganizations,omitempty"`
@@ -2601,7 +2610,11 @@ type User struct {
 	// The time the user's (local) avatar was last updated
 	AvatarUpdatedAt *time.Time `json:"avatarUpdatedAt,omitempty"`
 	// the time the user was last seen
-	LastSeen             *time.Time             `json:"lastSeen,omitempty"`
+	LastSeen *time.Time `json:"lastSeen,omitempty"`
+	// the Subject of the user JWT
+	Sub *string `json:"sub,omitempty"`
+	// whether the user uses oauth for login or not
+	Oauth                bool                   `json:"oauth"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`
 	Sessions             []*Session             `json:"sessions,omitempty"`
 	Groups               []*Group               `json:"groups,omitempty"`
@@ -3002,6 +3015,25 @@ type UserWhereInput struct {
 	LastSeenLte    *time.Time   `json:"lastSeenLTE,omitempty"`
 	LastSeenIsNil  *bool        `json:"lastSeenIsNil,omitempty"`
 	LastSeenNotNil *bool        `json:"lastSeenNotNil,omitempty"`
+	// sub field predicates
+	Sub             *string  `json:"sub,omitempty"`
+	SubNeq          *string  `json:"subNEQ,omitempty"`
+	SubIn           []string `json:"subIn,omitempty"`
+	SubNotIn        []string `json:"subNotIn,omitempty"`
+	SubGt           *string  `json:"subGT,omitempty"`
+	SubGte          *string  `json:"subGTE,omitempty"`
+	SubLt           *string  `json:"subLT,omitempty"`
+	SubLte          *string  `json:"subLTE,omitempty"`
+	SubContains     *string  `json:"subContains,omitempty"`
+	SubHasPrefix    *string  `json:"subHasPrefix,omitempty"`
+	SubHasSuffix    *string  `json:"subHasSuffix,omitempty"`
+	SubIsNil        *bool    `json:"subIsNil,omitempty"`
+	SubNotNil       *bool    `json:"subNotNil,omitempty"`
+	SubEqualFold    *string  `json:"subEqualFold,omitempty"`
+	SubContainsFold *string  `json:"subContainsFold,omitempty"`
+	// oauth field predicates
+	Oauth    *bool `json:"oauth,omitempty"`
+	OauthNeq *bool `json:"oauthNEQ,omitempty"`
 	// organizations edge predicates
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`

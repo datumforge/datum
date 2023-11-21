@@ -115,7 +115,7 @@ func (r *queryResolver) Organization(ctx context.Context, id string) (*generated
 		}
 
 		if errors.Is(err, privacy.Deny) {
-			return nil, err
+			return nil, ErrPermissionDenied
 		}
 
 		return nil, ErrInternalServerError

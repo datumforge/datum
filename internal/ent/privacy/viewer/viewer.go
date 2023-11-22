@@ -2,58 +2,22 @@ package viewer
 
 import (
 	"context"
-	"time"
-
-	ofgaclient "github.com/openfga/go-sdk/client"
-
-	"github.com/datumforge/datum/internal/fga"
 )
 
 // Viewer describes the query/mutation viewer-context.
 type Viewer interface {
-	// GetUserID returns the user ID from the context
-	GetUserID() string
-	// HasAccess uses the FGA client to determine access to the objcet
-	HasAccess(ctx context.Context) bool
+	// GetObjectID returns the object ID from the context
+	GetObjectID() string
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
-	UserID string
-	Authz  *fga.Client
-	Key    fga.TupleKey
+	ObjectID string
 }
 
-// GetUserID returns the ID of the user.
-func (u UserViewer) GetUserID() string {
-	return u.UserID
-}
-
-// HasAccess of the UserViewer
-func (u UserViewer) HasAccess(ctx context.Context) bool {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second) //nolint:gomnd
-	defer cancel()
-
-	check := ofgaclient.ClientCheckRequest{
-		User:             u.Key.Subject.String(),
-		Relation:         u.Key.Relation.String(),
-		Object:           u.Key.Object.String(),
-		ContextualTuples: nil, // TODO: allow contextual tuples
-	}
-
-	access, err := u.Authz.CheckTuple(ctx, check)
-	if err != nil {
-		u.Authz.Logger.Errorw("error checking tuple", "error", err.Error())
-	}
-
-	u.Authz.Logger.Infow("authz check",
-		"user", u.Key.Subject.String(),
-		"relation", u.Key.Relation.String(),
-		"object", u.Key.Object.String(),
-		"has_access", access,
-	)
-
-	return access
+// GetObjectID returns the ID of the object.
+func (u UserViewer) GetObjectID() string {
+	return u.ObjectID
 }
 
 type ctxKey struct{}

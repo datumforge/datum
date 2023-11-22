@@ -81,7 +81,7 @@ func setupDB() {
 	EntClient = c
 }
 
-func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *fga.Client {
+func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) {
 	fc, err := fga.NewTestFGAClient(t, mockCtrl, mc)
 	if err != nil {
 		t.Fatalf("enable to create test FGA client")
@@ -114,8 +114,6 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 	errPanic("failed creating db schema", c.Schema.Create(ctx))
 
 	EntClient = c
-
-	return fc
 }
 
 func teardownDB() {
@@ -135,12 +133,12 @@ type graphClient struct {
 	httpClient *http.Client
 }
 
-func graphTestClient(fc *fga.Client) datumclient.DatumClient {
+func graphTestClient() datumclient.DatumClient {
 	g := &graphClient{
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
 			api.NewExecutableSchema(
-				api.Config{Resolvers: api.NewResolver(EntClient).WithLogger(zap.NewNop().Sugar()).WithAuthz(fc)},
+				api.Config{Resolvers: api.NewResolver(EntClient).WithLogger(zap.NewNop().Sugar())},
 			))}},
 	}
 

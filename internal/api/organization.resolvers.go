@@ -8,17 +8,17 @@ import (
 	"context"
 	"errors"
 
-	"github.com/datumforge/datum/internal/echox"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
-	"github.com/datumforge/datum/internal/fga"
 )
 
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
 	// TODO - add permissions checks
+	// Creation should only require having a valid JWT
+
 	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -46,34 +46,14 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
-	userID, err := echox.GetUserIDFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	sub := fga.Entity{
-		Kind:       "user",
-		Identifier: userID,
-	}
-
-	obj := fga.Entity{
-		Kind:       "organization",
-		Identifier: id,
-	}
-
+	// check permissions if authz is enabled
 	v := viewer.UserViewer{
-		UserID: userID,
-		Authz:  r.fgaClient,
-		Key: fga.TupleKey{
-			Subject:  sub,
-			Relation: fga.CanEdit,
-			Object:   obj,
-		},
+		ObjectID: id,
 	}
 
-	vc := viewer.NewContext(ctx, v)
+	ctx = viewer.NewContext(ctx, v)
 
-	org, err := r.client.Organization.Get(vc, id)
+	org, err := r.client.Organization.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -98,34 +78,13 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
 func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
-	userID, err := echox.GetUserIDFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	sub := fga.Entity{
-		Kind:       "user",
-		Identifier: userID,
-	}
-
-	obj := fga.Entity{
-		Kind:       "organization",
-		Identifier: id,
-	}
-
 	v := viewer.UserViewer{
-		UserID: userID,
-		Authz:  r.fgaClient,
-		Key: fga.TupleKey{
-			Subject:  sub,
-			Relation: fga.CanDelete,
-			Object:   obj,
-		},
+		ObjectID: id,
 	}
 
-	vc := viewer.NewContext(ctx, v)
+	ctx = viewer.NewContext(ctx, v)
 
-	if err := r.client.Organization.DeleteOneID(id).Exec(vc); err != nil {
+	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}
@@ -139,34 +98,13 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
-	userID, err := echox.GetUserIDFromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	sub := fga.Entity{
-		Kind:       "user",
-		Identifier: userID,
-	}
-
-	obj := fga.Entity{
-		Kind:       "organization",
-		Identifier: id,
-	}
-
 	v := viewer.UserViewer{
-		UserID: userID,
-		Authz:  r.fgaClient,
-		Key: fga.TupleKey{
-			Subject:  sub,
-			Relation: fga.CanView,
-			Object:   obj,
-		},
+		ObjectID: id,
 	}
 
-	vc := viewer.NewContext(ctx, v)
+	ctx = viewer.NewContext(ctx, v)
 
-	org, err := r.client.Organization.Get(vc, id)
+	org, err := r.client.Organization.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get organization", "error", err)
 

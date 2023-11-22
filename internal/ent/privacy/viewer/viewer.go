@@ -41,7 +41,10 @@ func (u UserViewer) HasAccess(ctx context.Context) bool {
 		ContextualTuples: nil, // TODO: allow contextual tuples
 	}
 
-	access, _ := u.Authz.CheckTuple(ctx, check)
+	access, err := u.Authz.CheckTuple(ctx, check)
+	if err != nil {
+		u.Authz.Logger.Errorw("error checking tuple", "error", err.Error())
+	}
 
 	u.Authz.Logger.Infow("authz check",
 		"user", u.Key.Subject.String(),

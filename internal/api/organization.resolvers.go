@@ -46,9 +46,34 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
-	// TODO - add permissions checks
+	userID, err := echox.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	org, err := r.client.Organization.Get(ctx, id)
+	sub := fga.Entity{
+		Kind:       "user",
+		Identifier: userID,
+	}
+
+	obj := fga.Entity{
+		Kind:       "organization",
+		Identifier: id,
+	}
+
+	v := viewer.UserViewer{
+		UserID: userID,
+		Authz:  r.fgaClient,
+		Key: fga.TupleKey{
+			Subject:  sub,
+			Relation: fga.CanEdit,
+			Object:   obj,
+		},
+	}
+
+	vc := viewer.NewContext(ctx, v)
+
+	org, err := r.client.Organization.Get(vc, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -73,9 +98,34 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
 func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
-	// TODO - add permissions checks
+	userID, err := echox.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
+	sub := fga.Entity{
+		Kind:       "user",
+		Identifier: userID,
+	}
+
+	obj := fga.Entity{
+		Kind:       "organization",
+		Identifier: id,
+	}
+
+	v := viewer.UserViewer{
+		UserID: userID,
+		Authz:  r.fgaClient,
+		Key: fga.TupleKey{
+			Subject:  sub,
+			Relation: fga.CanDelete,
+			Object:   obj,
+		},
+	}
+
+	vc := viewer.NewContext(ctx, v)
+
+	if err := r.client.Organization.DeleteOneID(id).Exec(vc); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

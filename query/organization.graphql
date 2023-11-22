@@ -4,10 +4,6 @@ query GetOrganizationByID($organizationId: ID!) {
     name
     displayName
     description
-    parent {
-      id
-      name
-    }
     createdAt
     createdBy
     updatedAt
@@ -35,10 +31,6 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
       name
       displayName
       description
-      parent {
-        id
-        name
-      }
       createdAt
       createdBy
       updatedAt
@@ -54,10 +46,6 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
       name
       displayName
       description
-      parent {
-        id
-        name
-      }
     }
   }
 }

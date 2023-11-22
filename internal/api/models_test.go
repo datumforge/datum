@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"github.com/brianvoe/gofakeit/v6"
+	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 )
 
 type OrganizationBuilder struct {
@@ -14,7 +16,7 @@ type OrganizationBuilder struct {
 	Description *string
 }
 
-func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organization {
+func (o *OrganizationBuilder) MustNew(ctx context.Context, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *generated.Organization {
 	if o.Name == "" {
 		o.Name = gofakeit.AppName()
 	}
@@ -27,6 +29,8 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organizati
 		desc := gofakeit.HipsterSentence(10)
 		o.Description = &desc
 	}
+
+	mockWriteTuplesAny(mockCtrl, mc, ctx, nil)
 
 	return EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SaveX(ctx)
 }

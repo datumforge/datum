@@ -9,22 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 
-	"github.com/datumforge/datum/internal/echox"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 )
 
 func Test_CheckDirectUser(t *testing.T) {
-	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
-	if err != nil {
-		t.Fatal()
-	}
-
-	echoContext := *ec
-
-	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
-
 	testCases := []struct {
 		name        string
 		relation    string
@@ -66,10 +54,10 @@ func Test_CheckDirectUser(t *testing.T) {
 				Object:   tc.object,
 			}
 
-			mockCheck(mockCtrl, c, ctx, body, tc.expectedRes)
+			mockCheck(mockCtrl, c, context.Background(), body, tc.expectedRes)
 
 			// do request
-			valid, err := fc.CheckDirectUser(ctx, tc.relation, tc.object)
+			valid, err := fc.CheckTuple(context.Background(), body)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)

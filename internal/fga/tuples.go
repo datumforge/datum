@@ -5,11 +5,8 @@ package fga
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/datumforge/datum/internal/echox"
 
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
@@ -96,96 +93,8 @@ func ParseEntity(s string) (Entity, error) {
 	}, nil
 }
 
-// CreateCheckTupleWithUser gets the user id (currently the jwt sub, but that will change) and creates a Check Request for openFGA
-func (c *Client) CreateCheckTupleWithUser(ctx context.Context, relation, object string) (*ofgaclient.ClientCheckRequest, error) {
-	if relation == "" {
-		return nil, ErrMissingRelation
-	}
-
-	if object == "" {
-		return nil, ErrMissingObject
-	}
-
-	ec, err := echox.EchoContextFromContext(ctx)
-	if err != nil {
-		c.Logger.Errorw("unable to get echo context", "error", err)
-
-		return nil, err
-	}
-
-	actor, err := echox.GetActorSubject(*ec)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: convert jwt sub --> uuid
-
-	return &ofgaclient.ClientCheckRequest{
-		User:             fmt.Sprintf("user:%s", actor),
-		Relation:         relation,
-		Object:           object,
-		ContextualTuples: nil, // todo: allow contextual tuples
-	}, nil
-}
-
-// CreateRelationshipTupleWithUser gets the user id (currently the jwt sub, but that will change) and creates a relationship tuple
-// with the given relation and object reference
-func (c *Client) CreateRelationshipTupleWithUser(ctx context.Context, relation, object string) error {
-	ec, err := echox.EchoContextFromContext(ctx)
-	if err != nil {
-		c.Logger.Errorw("unable to get echo context", "error", err)
-
-		return err
-	}
-
-	actor, err := echox.GetActorSubject(*ec)
-	if err != nil {
-		return err
-	}
-
-	// TODO: convert jwt sub --> uuid
-
-	tuples := []ofgaclient.ClientTupleKey{{
-		User:     fmt.Sprintf("user:%s", actor),
-		Relation: relation,
-		Object:   object,
-	}}
-
-	_, err = c.createRelationshipTuple(ctx, tuples)
-
-	return err
-}
-
-// DeleteRelationshipTupleWithUser gets the user id (currently the jwt sub, but that will change) and deletes a relationship tuple
-// with the given relation and object reference
-func (c *Client) DeleteRelationshipTupleWithUser(ctx context.Context, relation, object string) error {
-	ec, err := echox.EchoContextFromContext(ctx)
-	if err != nil {
-		c.Logger.Errorw("unable to get echo context", "error", err)
-
-		return err
-	}
-
-	actor, err := echox.GetActorSubject(*ec)
-	if err != nil {
-		return err
-	}
-
-	// TODO: convert jwt sub --> uuid
-
-	tuples := []ofgaclient.ClientTupleKey{{
-		User:     fmt.Sprintf("user:%s", actor),
-		Relation: relation,
-		Object:   object,
-	}}
-
-	_, err = c.deleteRelationshipTuple(ctx, tuples)
-
-	return err
-}
-
 // CreateRelationshipTuple creates a relationship tuple in the openFGA store
-func (c *Client) createRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
+func (c *Client) CreateRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
 	if len(tuples) == 0 {
 		return nil, nil
 	}

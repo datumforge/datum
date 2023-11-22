@@ -17,23 +17,3 @@ func (c *Client) CheckTuple(ctx context.Context, check client.ClientCheckRequest
 
 	return *data.Allowed, nil
 }
-
-// CheckDirectUser checks the user:<uuid> tuple relation given the object
-func (c *Client) CheckDirectUser(ctx context.Context, relation, object string) (bool, error) {
-	tuple, err := c.CreateCheckTupleWithUser(ctx, relation, object)
-	if err != nil {
-		return false, err
-	}
-
-	c.Logger.Infow(
-		"Checking permissions",
-		"user",
-		tuple.User,
-		"object",
-		tuple.Object,
-		"relation",
-		tuple.Relation,
-	)
-
-	return c.CheckTuple(ctx, *tuple)
-}

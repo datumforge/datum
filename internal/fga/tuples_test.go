@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 
-	"github.com/datumforge/datum/internal/echox"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 )
 
@@ -117,18 +116,7 @@ func Test_ParseEntity(t *testing.T) {
 	}
 }
 
-func Test_CreateCheckTupleWithUser(t *testing.T) {
-	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
-	if err != nil {
-		t.Fatal()
-	}
-
-	echoContext := *ec
-
-	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
-
+func Test_CreateRelationshipTuple(t *testing.T) {
 	// setup mock controller
 	mockCtrl := gomock.NewController(t)
 	c := mock_client.NewMockSdkClient(mockCtrl)
@@ -142,39 +130,63 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 		name        string
 		relation    string
 		object      string
-		expectedRes *ofgaclient.ClientCheckRequest
+		expectedRes []ofgaclient.ClientWriteSingleResponse
 		errRes      error
 	}{
 		{
 			name:     "happy path with relation",
 			object:   "organization:datum",
 			relation: "member",
-			expectedRes: &ofgaclient.ClientCheckRequest{
-				User:     "user:nano-id-of-member",
-				Relation: "member",
-				Object:   "organization:datum",
+			expectedRes: []ofgaclient.ClientWriteSingleResponse{
+				{
+					TupleKey: ofgaclient.ClientTupleKey{
+						User:     "user:nano-id-of-member",
+						Relation: "member",
+						Object:   "organization:datum",
+					},
+					Status: ofgaclient.SUCCESS,
+				},
 			},
 			errRes: nil,
 		},
 		{
-			name:        "error, missing relation",
-			object:      "organization:datum",
-			relation:    "",
-			expectedRes: nil,
-			errRes:      ErrMissingRelation,
+			name:     "error, missing relation",
+			object:   "organization:datum",
+			relation: "",
+			expectedRes: []ofgaclient.ClientWriteSingleResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+			errRes: ErrMissingRelation,
 		},
 		{
-			name:        "error, missing object",
-			object:      "",
-			relation:    "can_view",
-			expectedRes: nil,
-			errRes:      ErrMissingObject,
+			name:     "error, missing object",
+			object:   "",
+			relation: "can_view",
+			expectedRes: []ofgaclient.ClientWriteSingleResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+			errRes: ErrMissingObject,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			cr, err := fc.CreateCheckTupleWithUser(ctx, tc.relation, tc.object)
+			// mock response for input
+			ctk := []ofgaclient.ClientTupleKey{
+				{
+					User:     "user:nano-id-of-member",
+					Relation: tc.relation,
+					Object:   tc.object,
+				},
+			}
+
+			mockWriteTuples(mockCtrl, c, context.Background(), ctk, tc.errRes)
+
+			cr, err := fc.CreateRelationshipTuple(context.Background(), ctk)
 
 			if tc.errRes != nil {
 				assert.Error(t, err)
@@ -185,23 +197,12 @@ func Test_CreateCheckTupleWithUser(t *testing.T) {
 
 			assert.NoError(t, err)
 			assert.NotEmpty(t, cr)
-			assert.Equal(t, tc.expectedRes, cr)
+			assert.Equal(t, tc.expectedRes, cr.Writes)
 		})
 	}
 }
 
-func Test_CreateRelationshipTupleWithUser(t *testing.T) {
-	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
-	if err != nil {
-		t.Fatal()
-	}
-
-	echoContext := *ec
-
-	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
-
+func Test_DeleteRelationshipTuple(t *testing.T) {
 	// setup mock controller
 	mockCtrl := gomock.NewController(t)
 	c := mock_client.NewMockSdkClient(mockCtrl)
@@ -251,86 +252,9 @@ func Test_CreateRelationshipTupleWithUser(t *testing.T) {
 				},
 			}
 
-			mockWriteTuples(mockCtrl, c, ctx, tuples, tc.errRes)
+			mockDeleteTuples(mockCtrl, c, context.Background(), tuples, tc.errRes)
 
-			err = fc.CreateRelationshipTupleWithUser(ctx, tc.relation, tc.object)
-
-			if tc.errRes != "" {
-				assert.Error(t, err)
-				assert.ErrorContains(t, err, tc.errRes)
-
-				return
-			}
-
-			assert.NoError(t, err)
-		})
-	}
-}
-
-func Test_DeleteRelationshipTupleWithUser(t *testing.T) {
-	ec, err := echox.NewTestContextWithValidUser("nano-id-of-member")
-	if err != nil {
-		t.Fatal()
-	}
-
-	echoContext := *ec
-
-	ctx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(ctx))
-
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-	c := mock_client.NewMockSdkClient(mockCtrl)
-
-	fc, err := NewTestFGAClient(t, mockCtrl, c)
-	if err != nil {
-		t.Fatal()
-	}
-
-	testCases := []struct {
-		name        string
-		relation    string
-		object      string
-		expectedRes string
-		errRes      string
-	}{
-		{
-			name:        "happy path with relation",
-			object:      "organization:datum",
-			relation:    "member",
-			expectedRes: "",
-			errRes:      "",
-		},
-		{
-			name:        "error, missing relation",
-			object:      "organization:datum",
-			relation:    "",
-			expectedRes: "",
-			errRes:      "Reason: the 'relation' field is malformed",
-		},
-		{
-			name:        "error, missing object",
-			object:      "",
-			relation:    "member",
-			expectedRes: "",
-			errRes:      "Reason: invalid 'object' field format",
-		},
-	}
-
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			tuples := []ofgaclient.ClientTupleKey{
-				{
-					User:     "user:nano-id-of-member",
-					Relation: tc.relation,
-					Object:   tc.object,
-				},
-			}
-
-			mockDeleteTuples(mockCtrl, c, ctx, tuples, tc.errRes)
-
-			err = fc.DeleteRelationshipTupleWithUser(ctx, tc.relation, tc.object)
+			_, err = fc.deleteRelationshipTuple(context.Background(), tuples)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)
@@ -345,10 +269,10 @@ func Test_DeleteRelationshipTupleWithUser(t *testing.T) {
 }
 
 // mockWriteTuples creates mock responses based on the mock FGA client
-func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, tuples []ofgaclient.ClientTupleKey, errMsg string) {
+func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, tuples []ofgaclient.ClientTupleKey, errMsg error) {
 	mockExecute := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
 
-	if errMsg == "" {
+	if errMsg == nil {
 		expectedResponse := ofgaclient.ClientWriteResponse{
 			Writes: []ofgaclient.ClientWriteSingleResponse{
 				{
@@ -360,8 +284,6 @@ func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, 
 
 		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
 	} else {
-		var err error
-
 		expectedResponse := ofgaclient.ClientWriteResponse{
 			Writes: []ofgaclient.ClientWriteSingleResponse{
 				{
@@ -371,11 +293,7 @@ func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, 
 			},
 		}
 
-		if errMsg != "" {
-			err = errors.New(errMsg) // nolint:goerr113
-		}
-
-		mockExecute.EXPECT().Execute().Return(&expectedResponse, err)
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
 	}
 
 	mockRequest := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)

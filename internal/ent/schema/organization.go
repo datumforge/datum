@@ -13,7 +13,9 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/ogen-go/ogen"
+	ofgaclient "github.com/openfga/go-sdk/client"
 
+	"github.com/datumforge/datum/internal/echox"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -169,7 +171,12 @@ func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutati
 		m.Logger.Infow("creating relationship tuples", "relation", fga.OwnerRelation, "object", object)
 
 		if exists {
-			if err := m.Authz.CreateRelationshipTupleWithUser(ctx, fga.OwnerRelation, object); err != nil {
+			tuples, err := createTuple(ctx, &m.Authz, fga.OwnerRelation, object)
+			if err != nil {
+				return err
+			}
+
+			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 				// TODO: rollback mutation if tuple creation fails
@@ -205,4 +212,28 @@ func organizationDeleteHook(ctx context.Context, m *generated.OrganizationMutati
 	}
 
 	return nil
+}
+
+func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
+	ec, err := echox.EchoContextFromContext(ctx)
+	if err != nil {
+		c.Logger.Errorw("unable to get echo context", "error", err)
+
+		return nil, err
+	}
+
+	actor, err := echox.GetActorSubject(*ec)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: convert jwt sub --> uuid
+
+	tuples := []ofgaclient.ClientTupleKey{{
+		User:     fmt.Sprintf("user:%s", actor),
+		Relation: relation,
+		Object:   object,
+	}}
+
+	return tuples, nil
 }

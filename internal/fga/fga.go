@@ -9,6 +9,10 @@ import (
 
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
+	language "github.com/openfga/language/pkg/go/transformer"
+	"github.com/pkg/errors"
+	"google.golang.org/protobuf/encoding/protojson"
+
 	"github.com/openfga/go-sdk/credentials"
 	"go.uber.org/zap"
 )
@@ -136,7 +140,7 @@ func CreateFGAClientWithStore(ctx context.Context, config Config, logger *zap.Su
 		}
 
 		// Create model if one does not already exist
-		if _, err := fgaClient.CreateModel(ctx, "fga/model/datum.json"); err != nil {
+		if _, err := fgaClient.CreateModel(ctx, "fga/model/datum.fga"); err != nil {
 			return nil, err
 		}
 	}
@@ -205,7 +209,13 @@ func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
 	}
 
 	// Create new model
-	dslJSON, err := os.ReadFile(fn)
+	dsl, err := os.ReadFile(fn)
+	if err != nil {
+		return "", err
+	}
+
+	// convert to json
+	dslJSON, err := dslToJSON(dsl)
 	if err != nil {
 		return "", err
 	}
@@ -226,4 +236,14 @@ func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
 	c.Logger.Infow("fga model created", "model_id", modelID)
 
 	return modelID, nil
+}
+
+// dslToJSON converts fga model to JSON
+func dslToJSON(dslString []byte) ([]byte, error) {
+	parsedAuthModel, err := language.TransformDSLToProto(string(dslString))
+	if err != nil {
+		return []byte{}, errors.Wrap(err, ErrFailedToTransformModel.Error())
+	}
+
+	return protojson.Marshal(parsedAuthModel)
 }

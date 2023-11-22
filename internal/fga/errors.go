@@ -17,6 +17,9 @@ var (
 
 	// ErrMissingObjectOnDeletion is returned when a object is empty in a tuple deletion
 	ErrMissingObjectOnDeletion = errors.New("unable to delete tuple, missing object")
+
+	// ErrFailedToTransformModel is returned when the FGA model cannot be transformed to JSON
+	ErrFailedToTransformModel = errors.New("failed to transform fga model")
 )
 
 // InvalidEntityError is returned when an invalid openFGA entity is configured

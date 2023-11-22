@@ -346,6 +346,8 @@ var (
 		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
 		{Name: "password_hash", Type: field.TypeString, Nullable: true},
+		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "oauth", Type: field.TypeBool, Default: false},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

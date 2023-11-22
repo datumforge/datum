@@ -1,10 +1,10 @@
 extend type Query {
     """
-    Look up OauthProvider by ID
+    Look up oauthProvider by ID
     """
-     OauthProvider(
+     oauthProvider(
         """
-        ID of the OauthProvider
+        ID of the oauthProvider
         """
         id: ID!
     ):  OauthProvider!
@@ -12,7 +12,7 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new oauthprovider
+    Create a new oauthProvider
     """
     createOauthProvider(
         """
@@ -21,15 +21,15 @@ extend type Mutation{
         input: CreateOauthProviderInput!
     ): OauthProviderCreatePayload!
     """
-    Update an existing oauthprovider
+    Update an existing oauthProvider
     """
     updateOauthProvider(
         """
-        ID of the oauthprovider
+        ID of the oauthProvider
         """
         id: ID!
         """
-        New values for the oauthprovider
+        New values for the oauthProvider
         """
         input: UpdateOauthProviderInput!
     ): OauthProviderUpdatePayload!
@@ -38,7 +38,7 @@ extend type Mutation{
     """
     deleteOauthProvider(
         """
-        ID of the oauthprovider
+        ID of the oauthProvider
         """
         id: ID!
     ): OauthProviderDeletePayload!
@@ -49,7 +49,7 @@ Return response for createOauthprovider mutation
 """
 type OauthProviderCreatePayload {
     """
-    Created oauthprovider
+    Created oauthProvider
     """
     OauthProvider: OauthProvider!
 }
@@ -59,7 +59,7 @@ Return response for updateOauthprovider mutation
 """
 type OauthProviderUpdatePayload {
     """
-    Updated oauthprovider
+    Updated oauthProvider
     """
     OauthProvider: OauthProvider!
 }
@@ -69,7 +69,7 @@ Return response for deleteOauthprovider mutation
 """
 type OauthProviderDeletePayload {
     """
-    Deleted oauthprovider ID
+    Deleted oauthProvider ID
     """
     deletedID: ID!
 }

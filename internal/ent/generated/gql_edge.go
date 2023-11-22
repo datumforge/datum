@@ -16,7 +16,7 @@ func (e *Entitlement) Owner(ctx context.Context) (*Organization, error) {
 	return result, MaskNotFound(err)
 }
 
-func (gr *Group) Setting(ctx context.Context) (*GroupSettings, error) {
+func (gr *Group) Setting(ctx context.Context) (*GroupSetting, error) {
 	result, err := gr.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = gr.QuerySetting().Only(ctx)
@@ -40,6 +40,14 @@ func (gr *Group) Owner(ctx context.Context) (*Organization, error) {
 	result, err := gr.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = gr.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (gs *GroupSetting) Group(ctx context.Context) (*Group, error) {
+	result, err := gs.Edges.GroupOrErr()
+	if IsNotLoaded(err) {
+		result, err = gs.QueryGroup().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }
@@ -125,7 +133,7 @@ func (o *Organization) Integrations(ctx context.Context) (result []*Integration,
 	return result, err
 }
 
-func (o *Organization) Setting(ctx context.Context) (*OrganizationSettings, error) {
+func (o *Organization) Setting(ctx context.Context) (*OrganizationSetting, error) {
 	result, err := o.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = o.QuerySetting().Only(ctx)
@@ -155,6 +163,14 @@ func (o *Organization) Oauthprovider(ctx context.Context) (result []*OauthProvid
 		result, err = o.QueryOauthprovider().All(ctx)
 	}
 	return result, err
+}
+
+func (os *OrganizationSetting) Orgnaization(ctx context.Context) (*Organization, error) {
+	result, err := os.Edges.OrgnaizationOrErr()
+	if IsNotLoaded(err) {
+		result, err = os.QueryOrgnaization().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (pat *PersonalAccessToken) User(ctx context.Context) (*User, error) {
@@ -229,7 +245,7 @@ func (u *User) PersonalAccessTokens(ctx context.Context) (result []*PersonalAcce
 	return result, err
 }
 
-func (u *User) Setting(ctx context.Context) (*UserSettings, error) {
+func (u *User) Setting(ctx context.Context) (*UserSetting, error) {
 	result, err := u.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QuerySetting().Only(ctx)
@@ -247,4 +263,12 @@ func (u *User) Refreshtoken(ctx context.Context) (result []*RefreshToken, err er
 		result, err = u.QueryRefreshtoken().All(ctx)
 	}
 	return result, err
+}
+
+func (us *UserSetting) User(ctx context.Context) (*User, error) {
+	result, err := us.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = us.QueryUser().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }

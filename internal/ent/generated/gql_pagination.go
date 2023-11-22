@@ -16,16 +16,16 @@ import (
 	"github.com/99designs/gqlgen/graphql/errcode"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
-	"github.com/datumforge/datum/internal/ent/generated/groupsettings"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -666,20 +666,20 @@ func (gr *Group) ToEdge(order *GroupOrder) *GroupEdge {
 	}
 }
 
-// GroupSettingsEdge is the edge representation of GroupSettings.
-type GroupSettingsEdge struct {
-	Node   *GroupSettings `json:"node"`
-	Cursor Cursor         `json:"cursor"`
+// GroupSettingEdge is the edge representation of GroupSetting.
+type GroupSettingEdge struct {
+	Node   *GroupSetting `json:"node"`
+	Cursor Cursor        `json:"cursor"`
 }
 
-// GroupSettingsConnection is the connection containing edges to GroupSettings.
-type GroupSettingsConnection struct {
-	Edges      []*GroupSettingsEdge `json:"edges"`
-	PageInfo   PageInfo             `json:"pageInfo"`
-	TotalCount int                  `json:"totalCount"`
+// GroupSettingConnection is the connection containing edges to GroupSetting.
+type GroupSettingConnection struct {
+	Edges      []*GroupSettingEdge `json:"edges"`
+	PageInfo   PageInfo            `json:"pageInfo"`
+	TotalCount int                 `json:"totalCount"`
 }
 
-func (c *GroupSettingsConnection) build(nodes []*GroupSettings, pager *groupsettingsPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *GroupSettingConnection) build(nodes []*GroupSetting, pager *groupsettingPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -689,21 +689,21 @@ func (c *GroupSettingsConnection) build(nodes []*GroupSettings, pager *groupsett
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *GroupSettings
+	var nodeAt func(int) *GroupSetting
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *GroupSettings {
+		nodeAt = func(i int) *GroupSetting {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *GroupSettings {
+		nodeAt = func(i int) *GroupSetting {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*GroupSettingsEdge, len(nodes))
+	c.Edges = make([]*GroupSettingEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &GroupSettingsEdge{
+		c.Edges[i] = &GroupSettingEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -717,87 +717,87 @@ func (c *GroupSettingsConnection) build(nodes []*GroupSettings, pager *groupsett
 	}
 }
 
-// GroupSettingsPaginateOption enables pagination customization.
-type GroupSettingsPaginateOption func(*groupsettingsPager) error
+// GroupSettingPaginateOption enables pagination customization.
+type GroupSettingPaginateOption func(*groupsettingPager) error
 
-// WithGroupSettingsOrder configures pagination ordering.
-func WithGroupSettingsOrder(order *GroupSettingsOrder) GroupSettingsPaginateOption {
+// WithGroupSettingOrder configures pagination ordering.
+func WithGroupSettingOrder(order *GroupSettingOrder) GroupSettingPaginateOption {
 	if order == nil {
-		order = DefaultGroupSettingsOrder
+		order = DefaultGroupSettingOrder
 	}
 	o := *order
-	return func(pager *groupsettingsPager) error {
+	return func(pager *groupsettingPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultGroupSettingsOrder.Field
+			o.Field = DefaultGroupSettingOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithGroupSettingsFilter configures pagination filter.
-func WithGroupSettingsFilter(filter func(*GroupSettingsQuery) (*GroupSettingsQuery, error)) GroupSettingsPaginateOption {
-	return func(pager *groupsettingsPager) error {
+// WithGroupSettingFilter configures pagination filter.
+func WithGroupSettingFilter(filter func(*GroupSettingQuery) (*GroupSettingQuery, error)) GroupSettingPaginateOption {
+	return func(pager *groupsettingPager) error {
 		if filter == nil {
-			return errors.New("GroupSettingsQuery filter cannot be nil")
+			return errors.New("GroupSettingQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type groupsettingsPager struct {
+type groupsettingPager struct {
 	reverse bool
-	order   *GroupSettingsOrder
-	filter  func(*GroupSettingsQuery) (*GroupSettingsQuery, error)
+	order   *GroupSettingOrder
+	filter  func(*GroupSettingQuery) (*GroupSettingQuery, error)
 }
 
-func newGroupSettingsPager(opts []GroupSettingsPaginateOption, reverse bool) (*groupsettingsPager, error) {
-	pager := &groupsettingsPager{reverse: reverse}
+func newGroupSettingPager(opts []GroupSettingPaginateOption, reverse bool) (*groupsettingPager, error) {
+	pager := &groupsettingPager{reverse: reverse}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultGroupSettingsOrder
+		pager.order = DefaultGroupSettingOrder
 	}
 	return pager, nil
 }
 
-func (p *groupsettingsPager) applyFilter(query *GroupSettingsQuery) (*GroupSettingsQuery, error) {
+func (p *groupsettingPager) applyFilter(query *GroupSettingQuery) (*GroupSettingQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *groupsettingsPager) toCursor(gs *GroupSettings) Cursor {
+func (p *groupsettingPager) toCursor(gs *GroupSetting) Cursor {
 	return p.order.Field.toCursor(gs)
 }
 
-func (p *groupsettingsPager) applyCursors(query *GroupSettingsQuery, after, before *Cursor) (*GroupSettingsQuery, error) {
+func (p *groupsettingPager) applyCursors(query *GroupSettingQuery, after, before *Cursor) (*GroupSettingQuery, error) {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultGroupSettingsOrder.Field.column, p.order.Field.column, direction) {
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultGroupSettingOrder.Field.column, p.order.Field.column, direction) {
 		query = query.Where(predicate)
 	}
 	return query, nil
 }
 
-func (p *groupsettingsPager) applyOrder(query *GroupSettingsQuery) *GroupSettingsQuery {
+func (p *groupsettingPager) applyOrder(query *GroupSettingQuery) *GroupSettingQuery {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
 	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultGroupSettingsOrder.Field {
-		query = query.Order(DefaultGroupSettingsOrder.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultGroupSettingOrder.Field {
+		query = query.Order(DefaultGroupSettingOrder.Field.toTerm(direction.OrderTermOption()))
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(p.order.Field.column)
@@ -805,7 +805,7 @@ func (p *groupsettingsPager) applyOrder(query *GroupSettingsQuery) *GroupSetting
 	return query
 }
 
-func (p *groupsettingsPager) orderExpr(query *GroupSettingsQuery) sql.Querier {
+func (p *groupsettingPager) orderExpr(query *GroupSettingQuery) sql.Querier {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
@@ -815,28 +815,28 @@ func (p *groupsettingsPager) orderExpr(query *GroupSettingsQuery) sql.Querier {
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultGroupSettingsOrder.Field {
-			b.Comma().Ident(DefaultGroupSettingsOrder.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultGroupSettingOrder.Field {
+			b.Comma().Ident(DefaultGroupSettingOrder.Field.column).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to GroupSettings.
-func (gs *GroupSettingsQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to GroupSetting.
+func (gs *GroupSettingQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...GroupSettingsPaginateOption,
-) (*GroupSettingsConnection, error) {
+	before *Cursor, last *int, opts ...GroupSettingPaginateOption,
+) (*GroupSettingConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newGroupSettingsPager(opts, last != nil)
+	pager, err := newGroupSettingPager(opts, last != nil)
 	if err != nil {
 		return nil, err
 	}
 	if gs, err = pager.applyFilter(gs); err != nil {
 		return nil, err
 	}
-	conn := &GroupSettingsConnection{Edges: []*GroupSettingsEdge{}}
+	conn := &GroupSettingConnection{Edges: []*GroupSettingEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -871,42 +871,42 @@ func (gs *GroupSettingsQuery) Paginate(
 	return conn, nil
 }
 
-// GroupSettingsOrderField defines the ordering field of GroupSettings.
-type GroupSettingsOrderField struct {
-	// Value extracts the ordering value from the given GroupSettings.
-	Value    func(*GroupSettings) (ent.Value, error)
+// GroupSettingOrderField defines the ordering field of GroupSetting.
+type GroupSettingOrderField struct {
+	// Value extracts the ordering value from the given GroupSetting.
+	Value    func(*GroupSetting) (ent.Value, error)
 	column   string // field or computed.
-	toTerm   func(...sql.OrderTermOption) groupsettings.OrderOption
-	toCursor func(*GroupSettings) Cursor
+	toTerm   func(...sql.OrderTermOption) groupsetting.OrderOption
+	toCursor func(*GroupSetting) Cursor
 }
 
-// GroupSettingsOrder defines the ordering of GroupSettings.
-type GroupSettingsOrder struct {
-	Direction OrderDirection           `json:"direction"`
-	Field     *GroupSettingsOrderField `json:"field"`
+// GroupSettingOrder defines the ordering of GroupSetting.
+type GroupSettingOrder struct {
+	Direction OrderDirection          `json:"direction"`
+	Field     *GroupSettingOrderField `json:"field"`
 }
 
-// DefaultGroupSettingsOrder is the default ordering of GroupSettings.
-var DefaultGroupSettingsOrder = &GroupSettingsOrder{
+// DefaultGroupSettingOrder is the default ordering of GroupSetting.
+var DefaultGroupSettingOrder = &GroupSettingOrder{
 	Direction: entgql.OrderDirectionAsc,
-	Field: &GroupSettingsOrderField{
-		Value: func(gs *GroupSettings) (ent.Value, error) {
+	Field: &GroupSettingOrderField{
+		Value: func(gs *GroupSetting) (ent.Value, error) {
 			return gs.ID, nil
 		},
-		column: groupsettings.FieldID,
-		toTerm: groupsettings.ByID,
-		toCursor: func(gs *GroupSettings) Cursor {
+		column: groupsetting.FieldID,
+		toTerm: groupsetting.ByID,
+		toCursor: func(gs *GroupSetting) Cursor {
 			return Cursor{ID: gs.ID}
 		},
 	},
 }
 
-// ToEdge converts GroupSettings into GroupSettingsEdge.
-func (gs *GroupSettings) ToEdge(order *GroupSettingsOrder) *GroupSettingsEdge {
+// ToEdge converts GroupSetting into GroupSettingEdge.
+func (gs *GroupSetting) ToEdge(order *GroupSettingOrder) *GroupSettingEdge {
 	if order == nil {
-		order = DefaultGroupSettingsOrder
+		order = DefaultGroupSettingOrder
 	}
-	return &GroupSettingsEdge{
+	return &GroupSettingEdge{
 		Node:   gs,
 		Cursor: order.Field.toCursor(gs),
 	}
@@ -1780,20 +1780,20 @@ func (o *Organization) ToEdge(order *OrganizationOrder) *OrganizationEdge {
 	}
 }
 
-// OrganizationSettingsEdge is the edge representation of OrganizationSettings.
-type OrganizationSettingsEdge struct {
-	Node   *OrganizationSettings `json:"node"`
-	Cursor Cursor                `json:"cursor"`
+// OrganizationSettingEdge is the edge representation of OrganizationSetting.
+type OrganizationSettingEdge struct {
+	Node   *OrganizationSetting `json:"node"`
+	Cursor Cursor               `json:"cursor"`
 }
 
-// OrganizationSettingsConnection is the connection containing edges to OrganizationSettings.
-type OrganizationSettingsConnection struct {
-	Edges      []*OrganizationSettingsEdge `json:"edges"`
-	PageInfo   PageInfo                    `json:"pageInfo"`
-	TotalCount int                         `json:"totalCount"`
+// OrganizationSettingConnection is the connection containing edges to OrganizationSetting.
+type OrganizationSettingConnection struct {
+	Edges      []*OrganizationSettingEdge `json:"edges"`
+	PageInfo   PageInfo                   `json:"pageInfo"`
+	TotalCount int                        `json:"totalCount"`
 }
 
-func (c *OrganizationSettingsConnection) build(nodes []*OrganizationSettings, pager *organizationsettingsPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *OrganizationSettingConnection) build(nodes []*OrganizationSetting, pager *organizationsettingPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -1803,21 +1803,21 @@ func (c *OrganizationSettingsConnection) build(nodes []*OrganizationSettings, pa
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *OrganizationSettings
+	var nodeAt func(int) *OrganizationSetting
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *OrganizationSettings {
+		nodeAt = func(i int) *OrganizationSetting {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *OrganizationSettings {
+		nodeAt = func(i int) *OrganizationSetting {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*OrganizationSettingsEdge, len(nodes))
+	c.Edges = make([]*OrganizationSettingEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &OrganizationSettingsEdge{
+		c.Edges[i] = &OrganizationSettingEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -1831,87 +1831,87 @@ func (c *OrganizationSettingsConnection) build(nodes []*OrganizationSettings, pa
 	}
 }
 
-// OrganizationSettingsPaginateOption enables pagination customization.
-type OrganizationSettingsPaginateOption func(*organizationsettingsPager) error
+// OrganizationSettingPaginateOption enables pagination customization.
+type OrganizationSettingPaginateOption func(*organizationsettingPager) error
 
-// WithOrganizationSettingsOrder configures pagination ordering.
-func WithOrganizationSettingsOrder(order *OrganizationSettingsOrder) OrganizationSettingsPaginateOption {
+// WithOrganizationSettingOrder configures pagination ordering.
+func WithOrganizationSettingOrder(order *OrganizationSettingOrder) OrganizationSettingPaginateOption {
 	if order == nil {
-		order = DefaultOrganizationSettingsOrder
+		order = DefaultOrganizationSettingOrder
 	}
 	o := *order
-	return func(pager *organizationsettingsPager) error {
+	return func(pager *organizationsettingPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultOrganizationSettingsOrder.Field
+			o.Field = DefaultOrganizationSettingOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithOrganizationSettingsFilter configures pagination filter.
-func WithOrganizationSettingsFilter(filter func(*OrganizationSettingsQuery) (*OrganizationSettingsQuery, error)) OrganizationSettingsPaginateOption {
-	return func(pager *organizationsettingsPager) error {
+// WithOrganizationSettingFilter configures pagination filter.
+func WithOrganizationSettingFilter(filter func(*OrganizationSettingQuery) (*OrganizationSettingQuery, error)) OrganizationSettingPaginateOption {
+	return func(pager *organizationsettingPager) error {
 		if filter == nil {
-			return errors.New("OrganizationSettingsQuery filter cannot be nil")
+			return errors.New("OrganizationSettingQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type organizationsettingsPager struct {
+type organizationsettingPager struct {
 	reverse bool
-	order   *OrganizationSettingsOrder
-	filter  func(*OrganizationSettingsQuery) (*OrganizationSettingsQuery, error)
+	order   *OrganizationSettingOrder
+	filter  func(*OrganizationSettingQuery) (*OrganizationSettingQuery, error)
 }
 
-func newOrganizationSettingsPager(opts []OrganizationSettingsPaginateOption, reverse bool) (*organizationsettingsPager, error) {
-	pager := &organizationsettingsPager{reverse: reverse}
+func newOrganizationSettingPager(opts []OrganizationSettingPaginateOption, reverse bool) (*organizationsettingPager, error) {
+	pager := &organizationsettingPager{reverse: reverse}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultOrganizationSettingsOrder
+		pager.order = DefaultOrganizationSettingOrder
 	}
 	return pager, nil
 }
 
-func (p *organizationsettingsPager) applyFilter(query *OrganizationSettingsQuery) (*OrganizationSettingsQuery, error) {
+func (p *organizationsettingPager) applyFilter(query *OrganizationSettingQuery) (*OrganizationSettingQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *organizationsettingsPager) toCursor(os *OrganizationSettings) Cursor {
+func (p *organizationsettingPager) toCursor(os *OrganizationSetting) Cursor {
 	return p.order.Field.toCursor(os)
 }
 
-func (p *organizationsettingsPager) applyCursors(query *OrganizationSettingsQuery, after, before *Cursor) (*OrganizationSettingsQuery, error) {
+func (p *organizationsettingPager) applyCursors(query *OrganizationSettingQuery, after, before *Cursor) (*OrganizationSettingQuery, error) {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultOrganizationSettingsOrder.Field.column, p.order.Field.column, direction) {
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultOrganizationSettingOrder.Field.column, p.order.Field.column, direction) {
 		query = query.Where(predicate)
 	}
 	return query, nil
 }
 
-func (p *organizationsettingsPager) applyOrder(query *OrganizationSettingsQuery) *OrganizationSettingsQuery {
+func (p *organizationsettingPager) applyOrder(query *OrganizationSettingQuery) *OrganizationSettingQuery {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
 	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultOrganizationSettingsOrder.Field {
-		query = query.Order(DefaultOrganizationSettingsOrder.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultOrganizationSettingOrder.Field {
+		query = query.Order(DefaultOrganizationSettingOrder.Field.toTerm(direction.OrderTermOption()))
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(p.order.Field.column)
@@ -1919,7 +1919,7 @@ func (p *organizationsettingsPager) applyOrder(query *OrganizationSettingsQuery)
 	return query
 }
 
-func (p *organizationsettingsPager) orderExpr(query *OrganizationSettingsQuery) sql.Querier {
+func (p *organizationsettingPager) orderExpr(query *OrganizationSettingQuery) sql.Querier {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
@@ -1929,28 +1929,28 @@ func (p *organizationsettingsPager) orderExpr(query *OrganizationSettingsQuery) 
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultOrganizationSettingsOrder.Field {
-			b.Comma().Ident(DefaultOrganizationSettingsOrder.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultOrganizationSettingOrder.Field {
+			b.Comma().Ident(DefaultOrganizationSettingOrder.Field.column).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to OrganizationSettings.
-func (os *OrganizationSettingsQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to OrganizationSetting.
+func (os *OrganizationSettingQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...OrganizationSettingsPaginateOption,
-) (*OrganizationSettingsConnection, error) {
+	before *Cursor, last *int, opts ...OrganizationSettingPaginateOption,
+) (*OrganizationSettingConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newOrganizationSettingsPager(opts, last != nil)
+	pager, err := newOrganizationSettingPager(opts, last != nil)
 	if err != nil {
 		return nil, err
 	}
 	if os, err = pager.applyFilter(os); err != nil {
 		return nil, err
 	}
-	conn := &OrganizationSettingsConnection{Edges: []*OrganizationSettingsEdge{}}
+	conn := &OrganizationSettingConnection{Edges: []*OrganizationSettingEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -1985,42 +1985,42 @@ func (os *OrganizationSettingsQuery) Paginate(
 	return conn, nil
 }
 
-// OrganizationSettingsOrderField defines the ordering field of OrganizationSettings.
-type OrganizationSettingsOrderField struct {
-	// Value extracts the ordering value from the given OrganizationSettings.
-	Value    func(*OrganizationSettings) (ent.Value, error)
+// OrganizationSettingOrderField defines the ordering field of OrganizationSetting.
+type OrganizationSettingOrderField struct {
+	// Value extracts the ordering value from the given OrganizationSetting.
+	Value    func(*OrganizationSetting) (ent.Value, error)
 	column   string // field or computed.
-	toTerm   func(...sql.OrderTermOption) organizationsettings.OrderOption
-	toCursor func(*OrganizationSettings) Cursor
+	toTerm   func(...sql.OrderTermOption) organizationsetting.OrderOption
+	toCursor func(*OrganizationSetting) Cursor
 }
 
-// OrganizationSettingsOrder defines the ordering of OrganizationSettings.
-type OrganizationSettingsOrder struct {
-	Direction OrderDirection                  `json:"direction"`
-	Field     *OrganizationSettingsOrderField `json:"field"`
+// OrganizationSettingOrder defines the ordering of OrganizationSetting.
+type OrganizationSettingOrder struct {
+	Direction OrderDirection                 `json:"direction"`
+	Field     *OrganizationSettingOrderField `json:"field"`
 }
 
-// DefaultOrganizationSettingsOrder is the default ordering of OrganizationSettings.
-var DefaultOrganizationSettingsOrder = &OrganizationSettingsOrder{
+// DefaultOrganizationSettingOrder is the default ordering of OrganizationSetting.
+var DefaultOrganizationSettingOrder = &OrganizationSettingOrder{
 	Direction: entgql.OrderDirectionAsc,
-	Field: &OrganizationSettingsOrderField{
-		Value: func(os *OrganizationSettings) (ent.Value, error) {
+	Field: &OrganizationSettingOrderField{
+		Value: func(os *OrganizationSetting) (ent.Value, error) {
 			return os.ID, nil
 		},
-		column: organizationsettings.FieldID,
-		toTerm: organizationsettings.ByID,
-		toCursor: func(os *OrganizationSettings) Cursor {
+		column: organizationsetting.FieldID,
+		toTerm: organizationsetting.ByID,
+		toCursor: func(os *OrganizationSetting) Cursor {
 			return Cursor{ID: os.ID}
 		},
 	},
 }
 
-// ToEdge converts OrganizationSettings into OrganizationSettingsEdge.
-func (os *OrganizationSettings) ToEdge(order *OrganizationSettingsOrder) *OrganizationSettingsEdge {
+// ToEdge converts OrganizationSetting into OrganizationSettingEdge.
+func (os *OrganizationSetting) ToEdge(order *OrganizationSettingOrder) *OrganizationSettingEdge {
 	if order == nil {
-		order = DefaultOrganizationSettingsOrder
+		order = DefaultOrganizationSettingOrder
 	}
-	return &OrganizationSettingsEdge{
+	return &OrganizationSettingEdge{
 		Node:   os,
 		Cursor: order.Field.toCursor(os),
 	}
@@ -3093,20 +3093,20 @@ func (u *User) ToEdge(order *UserOrder) *UserEdge {
 	}
 }
 
-// UserSettingsEdge is the edge representation of UserSettings.
-type UserSettingsEdge struct {
-	Node   *UserSettings `json:"node"`
-	Cursor Cursor        `json:"cursor"`
+// UserSettingEdge is the edge representation of UserSetting.
+type UserSettingEdge struct {
+	Node   *UserSetting `json:"node"`
+	Cursor Cursor       `json:"cursor"`
 }
 
-// UserSettingsConnection is the connection containing edges to UserSettings.
-type UserSettingsConnection struct {
-	Edges      []*UserSettingsEdge `json:"edges"`
-	PageInfo   PageInfo            `json:"pageInfo"`
-	TotalCount int                 `json:"totalCount"`
+// UserSettingConnection is the connection containing edges to UserSetting.
+type UserSettingConnection struct {
+	Edges      []*UserSettingEdge `json:"edges"`
+	PageInfo   PageInfo           `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
 }
 
-func (c *UserSettingsConnection) build(nodes []*UserSettings, pager *usersettingsPager, after *Cursor, first *int, before *Cursor, last *int) {
+func (c *UserSettingConnection) build(nodes []*UserSetting, pager *usersettingPager, after *Cursor, first *int, before *Cursor, last *int) {
 	c.PageInfo.HasNextPage = before != nil
 	c.PageInfo.HasPreviousPage = after != nil
 	if first != nil && *first+1 == len(nodes) {
@@ -3116,21 +3116,21 @@ func (c *UserSettingsConnection) build(nodes []*UserSettings, pager *usersetting
 		c.PageInfo.HasPreviousPage = true
 		nodes = nodes[:len(nodes)-1]
 	}
-	var nodeAt func(int) *UserSettings
+	var nodeAt func(int) *UserSetting
 	if last != nil {
 		n := len(nodes) - 1
-		nodeAt = func(i int) *UserSettings {
+		nodeAt = func(i int) *UserSetting {
 			return nodes[n-i]
 		}
 	} else {
-		nodeAt = func(i int) *UserSettings {
+		nodeAt = func(i int) *UserSetting {
 			return nodes[i]
 		}
 	}
-	c.Edges = make([]*UserSettingsEdge, len(nodes))
+	c.Edges = make([]*UserSettingEdge, len(nodes))
 	for i := range nodes {
 		node := nodeAt(i)
-		c.Edges[i] = &UserSettingsEdge{
+		c.Edges[i] = &UserSettingEdge{
 			Node:   node,
 			Cursor: pager.toCursor(node),
 		}
@@ -3144,87 +3144,87 @@ func (c *UserSettingsConnection) build(nodes []*UserSettings, pager *usersetting
 	}
 }
 
-// UserSettingsPaginateOption enables pagination customization.
-type UserSettingsPaginateOption func(*usersettingsPager) error
+// UserSettingPaginateOption enables pagination customization.
+type UserSettingPaginateOption func(*usersettingPager) error
 
-// WithUserSettingsOrder configures pagination ordering.
-func WithUserSettingsOrder(order *UserSettingsOrder) UserSettingsPaginateOption {
+// WithUserSettingOrder configures pagination ordering.
+func WithUserSettingOrder(order *UserSettingOrder) UserSettingPaginateOption {
 	if order == nil {
-		order = DefaultUserSettingsOrder
+		order = DefaultUserSettingOrder
 	}
 	o := *order
-	return func(pager *usersettingsPager) error {
+	return func(pager *usersettingPager) error {
 		if err := o.Direction.Validate(); err != nil {
 			return err
 		}
 		if o.Field == nil {
-			o.Field = DefaultUserSettingsOrder.Field
+			o.Field = DefaultUserSettingOrder.Field
 		}
 		pager.order = &o
 		return nil
 	}
 }
 
-// WithUserSettingsFilter configures pagination filter.
-func WithUserSettingsFilter(filter func(*UserSettingsQuery) (*UserSettingsQuery, error)) UserSettingsPaginateOption {
-	return func(pager *usersettingsPager) error {
+// WithUserSettingFilter configures pagination filter.
+func WithUserSettingFilter(filter func(*UserSettingQuery) (*UserSettingQuery, error)) UserSettingPaginateOption {
+	return func(pager *usersettingPager) error {
 		if filter == nil {
-			return errors.New("UserSettingsQuery filter cannot be nil")
+			return errors.New("UserSettingQuery filter cannot be nil")
 		}
 		pager.filter = filter
 		return nil
 	}
 }
 
-type usersettingsPager struct {
+type usersettingPager struct {
 	reverse bool
-	order   *UserSettingsOrder
-	filter  func(*UserSettingsQuery) (*UserSettingsQuery, error)
+	order   *UserSettingOrder
+	filter  func(*UserSettingQuery) (*UserSettingQuery, error)
 }
 
-func newUserSettingsPager(opts []UserSettingsPaginateOption, reverse bool) (*usersettingsPager, error) {
-	pager := &usersettingsPager{reverse: reverse}
+func newUserSettingPager(opts []UserSettingPaginateOption, reverse bool) (*usersettingPager, error) {
+	pager := &usersettingPager{reverse: reverse}
 	for _, opt := range opts {
 		if err := opt(pager); err != nil {
 			return nil, err
 		}
 	}
 	if pager.order == nil {
-		pager.order = DefaultUserSettingsOrder
+		pager.order = DefaultUserSettingOrder
 	}
 	return pager, nil
 }
 
-func (p *usersettingsPager) applyFilter(query *UserSettingsQuery) (*UserSettingsQuery, error) {
+func (p *usersettingPager) applyFilter(query *UserSettingQuery) (*UserSettingQuery, error) {
 	if p.filter != nil {
 		return p.filter(query)
 	}
 	return query, nil
 }
 
-func (p *usersettingsPager) toCursor(us *UserSettings) Cursor {
+func (p *usersettingPager) toCursor(us *UserSetting) Cursor {
 	return p.order.Field.toCursor(us)
 }
 
-func (p *usersettingsPager) applyCursors(query *UserSettingsQuery, after, before *Cursor) (*UserSettingsQuery, error) {
+func (p *usersettingPager) applyCursors(query *UserSettingQuery, after, before *Cursor) (*UserSettingQuery, error) {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultUserSettingsOrder.Field.column, p.order.Field.column, direction) {
+	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultUserSettingOrder.Field.column, p.order.Field.column, direction) {
 		query = query.Where(predicate)
 	}
 	return query, nil
 }
 
-func (p *usersettingsPager) applyOrder(query *UserSettingsQuery) *UserSettingsQuery {
+func (p *usersettingPager) applyOrder(query *UserSettingQuery) *UserSettingQuery {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
 	}
 	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultUserSettingsOrder.Field {
-		query = query.Order(DefaultUserSettingsOrder.Field.toTerm(direction.OrderTermOption()))
+	if p.order.Field != DefaultUserSettingOrder.Field {
+		query = query.Order(DefaultUserSettingOrder.Field.toTerm(direction.OrderTermOption()))
 	}
 	if len(query.ctx.Fields) > 0 {
 		query.ctx.AppendFieldOnce(p.order.Field.column)
@@ -3232,7 +3232,7 @@ func (p *usersettingsPager) applyOrder(query *UserSettingsQuery) *UserSettingsQu
 	return query
 }
 
-func (p *usersettingsPager) orderExpr(query *UserSettingsQuery) sql.Querier {
+func (p *usersettingPager) orderExpr(query *UserSettingQuery) sql.Querier {
 	direction := p.order.Direction
 	if p.reverse {
 		direction = direction.Reverse()
@@ -3242,28 +3242,28 @@ func (p *usersettingsPager) orderExpr(query *UserSettingsQuery) sql.Querier {
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
 		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultUserSettingsOrder.Field {
-			b.Comma().Ident(DefaultUserSettingsOrder.Field.column).Pad().WriteString(string(direction))
+		if p.order.Field != DefaultUserSettingOrder.Field {
+			b.Comma().Ident(DefaultUserSettingOrder.Field.column).Pad().WriteString(string(direction))
 		}
 	})
 }
 
-// Paginate executes the query and returns a relay based cursor connection to UserSettings.
-func (us *UserSettingsQuery) Paginate(
+// Paginate executes the query and returns a relay based cursor connection to UserSetting.
+func (us *UserSettingQuery) Paginate(
 	ctx context.Context, after *Cursor, first *int,
-	before *Cursor, last *int, opts ...UserSettingsPaginateOption,
-) (*UserSettingsConnection, error) {
+	before *Cursor, last *int, opts ...UserSettingPaginateOption,
+) (*UserSettingConnection, error) {
 	if err := validateFirstLast(first, last); err != nil {
 		return nil, err
 	}
-	pager, err := newUserSettingsPager(opts, last != nil)
+	pager, err := newUserSettingPager(opts, last != nil)
 	if err != nil {
 		return nil, err
 	}
 	if us, err = pager.applyFilter(us); err != nil {
 		return nil, err
 	}
-	conn := &UserSettingsConnection{Edges: []*UserSettingsEdge{}}
+	conn := &UserSettingConnection{Edges: []*UserSettingEdge{}}
 	ignoredEdges := !hasCollectedField(ctx, edgesField)
 	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
 		hasPagination := after != nil || first != nil || before != nil || last != nil
@@ -3298,42 +3298,42 @@ func (us *UserSettingsQuery) Paginate(
 	return conn, nil
 }
 
-// UserSettingsOrderField defines the ordering field of UserSettings.
-type UserSettingsOrderField struct {
-	// Value extracts the ordering value from the given UserSettings.
-	Value    func(*UserSettings) (ent.Value, error)
+// UserSettingOrderField defines the ordering field of UserSetting.
+type UserSettingOrderField struct {
+	// Value extracts the ordering value from the given UserSetting.
+	Value    func(*UserSetting) (ent.Value, error)
 	column   string // field or computed.
-	toTerm   func(...sql.OrderTermOption) usersettings.OrderOption
-	toCursor func(*UserSettings) Cursor
+	toTerm   func(...sql.OrderTermOption) usersetting.OrderOption
+	toCursor func(*UserSetting) Cursor
 }
 
-// UserSettingsOrder defines the ordering of UserSettings.
-type UserSettingsOrder struct {
-	Direction OrderDirection          `json:"direction"`
-	Field     *UserSettingsOrderField `json:"field"`
+// UserSettingOrder defines the ordering of UserSetting.
+type UserSettingOrder struct {
+	Direction OrderDirection         `json:"direction"`
+	Field     *UserSettingOrderField `json:"field"`
 }
 
-// DefaultUserSettingsOrder is the default ordering of UserSettings.
-var DefaultUserSettingsOrder = &UserSettingsOrder{
+// DefaultUserSettingOrder is the default ordering of UserSetting.
+var DefaultUserSettingOrder = &UserSettingOrder{
 	Direction: entgql.OrderDirectionAsc,
-	Field: &UserSettingsOrderField{
-		Value: func(us *UserSettings) (ent.Value, error) {
+	Field: &UserSettingOrderField{
+		Value: func(us *UserSetting) (ent.Value, error) {
 			return us.ID, nil
 		},
-		column: usersettings.FieldID,
-		toTerm: usersettings.ByID,
-		toCursor: func(us *UserSettings) Cursor {
+		column: usersetting.FieldID,
+		toTerm: usersetting.ByID,
+		toCursor: func(us *UserSetting) Cursor {
 			return Cursor{ID: us.ID}
 		},
 	},
 }
 
-// ToEdge converts UserSettings into UserSettingsEdge.
-func (us *UserSettings) ToEdge(order *UserSettingsOrder) *UserSettingsEdge {
+// ToEdge converts UserSetting into UserSettingEdge.
+func (us *UserSetting) ToEdge(order *UserSettingOrder) *UserSettingEdge {
 	if order == nil {
-		order = DefaultUserSettingsOrder
+		order = DefaultUserSettingOrder
 	}
-	return &UserSettingsEdge{
+	return &UserSettingEdge{
 		Node:   us,
 		Cursor: order.Field.toCursor(us),
 	}

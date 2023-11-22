@@ -770,19 +770,19 @@ func HasSetting() predicate.Organization {
 			sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.OrganizationSettings
-		step.Edge.Schema = schemaConfig.OrganizationSettings
+		step.To.Schema = schemaConfig.OrganizationSetting
+		step.Edge.Schema = schemaConfig.OrganizationSetting
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
 // HasSettingWith applies the HasEdge predicate on the "setting" edge with a given conditions (other predicates).
-func HasSettingWith(preds ...predicate.OrganizationSettings) predicate.Organization {
+func HasSettingWith(preds ...predicate.OrganizationSetting) predicate.Organization {
 	return predicate.Organization(func(s *sql.Selector) {
 		step := newSettingStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.OrganizationSettings
-		step.Edge.Schema = schemaConfig.OrganizationSettings
+		step.To.Schema = schemaConfig.OrganizationSetting
+		step.Edge.Schema = schemaConfig.OrganizationSetting
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -78,8 +78,8 @@ const (
 	IntegrationsColumn = "organization_integrations"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "organization_settings"
-	// SettingInverseTable is the table name for the OrganizationSettings entity.
-	// It exists in this package in order to avoid circular dependency with the "organizationsettings" package.
+	// SettingInverseTable is the table name for the OrganizationSetting entity.
+	// It exists in this package in order to avoid circular dependency with the "organizationsetting" package.
 	SettingInverseTable = "organization_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "organization_setting"

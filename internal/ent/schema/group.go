@@ -63,7 +63,7 @@ func (Group) Fields() []ent.Field {
 // Edges of the Group.
 func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("setting", GroupSettings.Type).Required().Unique(),
+		edge.To("setting", GroupSetting.Type).Required().Unique(),
 		edge.To("users", User.Type),
 		edge.From("owner", Organization.Type).Ref("groups").Unique(),
 	}

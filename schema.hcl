@@ -51,7 +51,7 @@ table "groups" {
     columns = [column.name, column.organization_groups]
   }
 }
-table "group_settings" {
+table "group_setting" {
   schema = schema.main
   column "id" {
     null = false
@@ -90,13 +90,13 @@ table "group_settings" {
   primary_key {
     columns = [column.id]
   }
-  foreign_key "group_settings_groups_setting" {
+  foreign_key "group_setting_groups_setting" {
     columns     = [column.group_setting]
     ref_columns = [table.groups.column.id]
     on_update   = NO_ACTION
     on_delete   = SET_NULL
   }
-  index "group_settings_group_setting_key" {
+  index "group_setting_group_setting_key" {
     unique  = true
     columns = [column.group_setting]
   }

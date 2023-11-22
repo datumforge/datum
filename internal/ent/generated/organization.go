@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 )
 
 // Organization is the model entity for the Organization schema.
@@ -53,7 +53,7 @@ type OrganizationEdges struct {
 	// Integrations holds the value of the integrations edge.
 	Integrations []*Integration `json:"integrations,omitempty"`
 	// Setting holds the value of the setting edge.
-	Setting *OrganizationSettings `json:"setting,omitempty"`
+	Setting *OrganizationSetting `json:"setting,omitempty"`
 	// Entitlements holds the value of the entitlements edge.
 	Entitlements []*Entitlement `json:"entitlements,omitempty"`
 	// Oauthprovider holds the value of the oauthprovider edge.
@@ -123,11 +123,11 @@ func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
 
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e OrganizationEdges) SettingOrErr() (*OrganizationSettings, error) {
+func (e OrganizationEdges) SettingOrErr() (*OrganizationSetting, error) {
 	if e.loadedTypes[5] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organizationsettings.Label}
+			return nil, &NotFoundError{label: organizationsetting.Label}
 		}
 		return e.Setting, nil
 	}
@@ -269,7 +269,7 @@ func (o *Organization) QueryIntegrations() *IntegrationQuery {
 }
 
 // QuerySetting queries the "setting" edge of the Organization entity.
-func (o *Organization) QuerySetting() *OrganizationSettingsQuery {
+func (o *Organization) QuerySetting() *OrganizationSettingQuery {
 	return NewOrganizationClient(o.config).QuerySetting(o)
 }
 

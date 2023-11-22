@@ -41,8 +41,8 @@ const (
 	Table = "groups"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "group_settings"
-	// SettingInverseTable is the table name for the GroupSettings entity.
-	// It exists in this package in order to avoid circular dependency with the "groupsettings" package.
+	// SettingInverseTable is the table name for the GroupSetting entity.
+	// It exists in this package in order to avoid circular dependency with the "groupsetting" package.
 	SettingInverseTable = "group_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "group_setting"

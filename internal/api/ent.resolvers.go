@@ -37,9 +37,9 @@ func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string]
 	panic(fmt.Errorf("not implemented: Groups - groups"))
 }
 
-// GroupSettingsSlice is the resolver for the groupSettingsSlice field.
-func (r *queryResolver) GroupSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingsWhereInput) (*generated.GroupSettingsConnection, error) {
-	panic(fmt.Errorf("not implemented: GroupSettingsSlice - groupSettingsSlice"))
+// GroupSettings is the resolver for the groupSettings field.
+func (r *queryResolver) GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
+	panic(fmt.Errorf("not implemented: GroupSettings - groupSettings"))
 }
 
 // Integrations is the resolver for the integrations field.
@@ -57,14 +57,19 @@ func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[
 	return r.client.Organization.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationOrder(orderBy), generated.WithOrganizationFilter(where.Filter))
 }
 
-// OrganizationSettingsSlice is the resolver for the organizationSettingsSlice field.
-func (r *queryResolver) OrganizationSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingsWhereInput) (*generated.OrganizationSettingsConnection, error) {
-	panic(fmt.Errorf("not implemented: OrganizationSettingsSlice - organizationSettingsSlice"))
+// OrganizationSettings is the resolver for the organizationSettings field.
+func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
+	panic(fmt.Errorf("not implemented: OrganizationSettings - organizationSettings"))
 }
 
 // PersonalAccessTokens is the resolver for the personalAccessTokens field.
 func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error) {
 	panic(fmt.Errorf("not implemented: PersonalAccessTokens - personalAccessTokens"))
+}
+
+// RefreshTokens is the resolver for the refreshTokens field.
+func (r *queryResolver) RefreshTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.RefreshTokenWhereInput) (*generated.RefreshTokenConnection, error) {
+	panic(fmt.Errorf("not implemented: RefreshTokens - refreshTokens"))
 }
 
 // Sessions is the resolver for the sessions field.
@@ -77,9 +82,9 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 
-// UserSettingsSlice is the resolver for the userSettingsSlice field.
-func (r *queryResolver) UserSettingsSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingsWhereInput) (*generated.UserSettingsConnection, error) {
-	panic(fmt.Errorf("not implemented: UserSettingsSlice - userSettingsSlice"))
+// UserSettings is the resolver for the userSettings field.
+func (r *queryResolver) UserSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error) {
+	panic(fmt.Errorf("not implemented: UserSettings - userSettings"))
 }
 
 // AuthStyle is the resolver for the authStyle field.
@@ -158,3 +163,19 @@ type queryResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *queryResolver) GroupSettingSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
+	panic(fmt.Errorf("not implemented: GroupSettingSlice - groupSettingSlice"))
+}
+func (r *queryResolver) OrganizationSettingSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
+	panic(fmt.Errorf("not implemented: OrganizationSettingSlice - organizationSettingSlice"))
+}
+func (r *queryResolver) UserSettingSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error) {
+	panic(fmt.Errorf("not implemented: UserSettingSlice - userSettingSlice"))
+}

@@ -16,7 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
-	"github.com/datumforge/datum/internal/ent/generated/organizationsettings"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 
@@ -190,13 +190,13 @@ func (ou *OrganizationUpdate) AddIntegrations(i ...*Integration) *OrganizationUp
 	return ou.AddIntegrationIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the OrganizationSettings entity by ID.
+// SetSettingID sets the "setting" edge to the OrganizationSetting entity by ID.
 func (ou *OrganizationUpdate) SetSettingID(id string) *OrganizationUpdate {
 	ou.mutation.SetSettingID(id)
 	return ou
 }
 
-// SetNillableSettingID sets the "setting" edge to the OrganizationSettings entity by ID if the given value is not nil.
+// SetNillableSettingID sets the "setting" edge to the OrganizationSetting entity by ID if the given value is not nil.
 func (ou *OrganizationUpdate) SetNillableSettingID(id *string) *OrganizationUpdate {
 	if id != nil {
 		ou = ou.SetSettingID(*id)
@@ -204,8 +204,8 @@ func (ou *OrganizationUpdate) SetNillableSettingID(id *string) *OrganizationUpda
 	return ou
 }
 
-// SetSetting sets the "setting" edge to the OrganizationSettings entity.
-func (ou *OrganizationUpdate) SetSetting(o *OrganizationSettings) *OrganizationUpdate {
+// SetSetting sets the "setting" edge to the OrganizationSetting entity.
+func (ou *OrganizationUpdate) SetSetting(o *OrganizationSetting) *OrganizationUpdate {
 	return ou.SetSettingID(o.ID)
 }
 
@@ -328,7 +328,7 @@ func (ou *OrganizationUpdate) RemoveIntegrations(i ...*Integration) *Organizatio
 	return ou.RemoveIntegrationIDs(ids...)
 }
 
-// ClearSetting clears the "setting" edge to the OrganizationSettings entity.
+// ClearSetting clears the "setting" edge to the OrganizationSetting entity.
 func (ou *OrganizationUpdate) ClearSetting() *OrganizationUpdate {
 	ou.mutation.ClearSetting()
 	return ou
@@ -672,10 +672,10 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = ou.schemaConfig.OrganizationSettings
+		edge.Schema = ou.schemaConfig.OrganizationSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ou.mutation.SettingIDs(); len(nodes) > 0 {
@@ -686,10 +686,10 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{organization.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = ou.schemaConfig.OrganizationSettings
+		edge.Schema = ou.schemaConfig.OrganizationSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -967,13 +967,13 @@ func (ouo *OrganizationUpdateOne) AddIntegrations(i ...*Integration) *Organizati
 	return ouo.AddIntegrationIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the OrganizationSettings entity by ID.
+// SetSettingID sets the "setting" edge to the OrganizationSetting entity by ID.
 func (ouo *OrganizationUpdateOne) SetSettingID(id string) *OrganizationUpdateOne {
 	ouo.mutation.SetSettingID(id)
 	return ouo
 }
 
-// SetNillableSettingID sets the "setting" edge to the OrganizationSettings entity by ID if the given value is not nil.
+// SetNillableSettingID sets the "setting" edge to the OrganizationSetting entity by ID if the given value is not nil.
 func (ouo *OrganizationUpdateOne) SetNillableSettingID(id *string) *OrganizationUpdateOne {
 	if id != nil {
 		ouo = ouo.SetSettingID(*id)
@@ -981,8 +981,8 @@ func (ouo *OrganizationUpdateOne) SetNillableSettingID(id *string) *Organization
 	return ouo
 }
 
-// SetSetting sets the "setting" edge to the OrganizationSettings entity.
-func (ouo *OrganizationUpdateOne) SetSetting(o *OrganizationSettings) *OrganizationUpdateOne {
+// SetSetting sets the "setting" edge to the OrganizationSetting entity.
+func (ouo *OrganizationUpdateOne) SetSetting(o *OrganizationSetting) *OrganizationUpdateOne {
 	return ouo.SetSettingID(o.ID)
 }
 
@@ -1105,7 +1105,7 @@ func (ouo *OrganizationUpdateOne) RemoveIntegrations(i ...*Integration) *Organiz
 	return ouo.RemoveIntegrationIDs(ids...)
 }
 
-// ClearSetting clears the "setting" edge to the OrganizationSettings entity.
+// ClearSetting clears the "setting" edge to the OrganizationSetting entity.
 func (ouo *OrganizationUpdateOne) ClearSetting() *OrganizationUpdateOne {
 	ouo.mutation.ClearSetting()
 	return ouo
@@ -1479,10 +1479,10 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = ouo.schemaConfig.OrganizationSettings
+		edge.Schema = ouo.schemaConfig.OrganizationSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := ouo.mutation.SettingIDs(); len(nodes) > 0 {
@@ -1493,10 +1493,10 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			Columns: []string{organization.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organizationsettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = ouo.schemaConfig.OrganizationSettings
+		edge.Schema = ouo.schemaConfig.OrganizationSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

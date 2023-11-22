@@ -1,10 +1,10 @@
 extend type Query {
     """
-    Look up PersonalAccessToken by ID
+    Look up personalAccessToken by ID
     """
-     PersonalAccessToken(
+     personalAccessToken(
         """
-        ID of the PersonalAccessToken
+        ID of the personalAccessToken
         """
         id: ID!
     ):  PersonalAccessToken!
@@ -12,11 +12,11 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new PersonalAccessToken
+    Create a new personalAccessToken
     """
     createPersonalAccessToken(
         """
-        values of the PersonalAccessToken
+        values of the personalAccessToken
         """
         input: CreatePersonalAccessTokenInput!
     ): PersonalAccessTokenCreatePayload!
@@ -25,11 +25,11 @@ extend type Mutation{
     """
     updatePersonalAccessToken(
         """
-        ID of the PersonalAccessToken
+        ID of the personalAccessToken
         """
         id: ID!
         """
-        New values for the PersonalAccessToken
+        New values for the personalAccessToken
         """
         input: UpdatePersonalAccessTokenInput!
     ): PersonalAccessTokenUpdatePayload!
@@ -38,7 +38,7 @@ extend type Mutation{
     """
     deletePersonalAccessToken(
         """
-        ID of the PersonalAccessToken
+        ID of the personalAccessToken
         """
         id: ID!
     ): PersonalAccessTokenDeletePayload!
@@ -49,7 +49,7 @@ Return response for createPersonalAccessToken mutation
 """
 type PersonalAccessTokenCreatePayload {
     """
-    Created PersonalAccessToken
+    Created personalAccessToken
     """
     PersonalAccessToken: PersonalAccessToken!
 }
@@ -59,7 +59,7 @@ Return response for updatePersonalAccessToken mutation
 """
 type PersonalAccessTokenUpdatePayload {
     """
-    Updated PersonalAccessToken
+    Updated personalAccessToken
     """
     PersonalAccessToken: PersonalAccessToken!
 }
@@ -69,7 +69,7 @@ Return response for deletePersonalAccessToken mutation
 """
 type PersonalAccessTokenDeletePayload {
     """
-    Deleted PersonalAccessToken ID
+    Deleted personalAccessToken ID
     """
     deletedID: ID!
 }

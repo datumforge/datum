@@ -159,28 +159,28 @@ func (f GroupMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mut
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.GroupMutation", m)
 }
 
-// The GroupSettingsQueryRuleFunc type is an adapter to allow the use of ordinary
+// The GroupSettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type GroupSettingsQueryRuleFunc func(context.Context, *generated.GroupSettingsQuery) error
+type GroupSettingQueryRuleFunc func(context.Context, *generated.GroupSettingQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f GroupSettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.GroupSettingsQuery); ok {
+func (f GroupSettingQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.GroupSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.GroupSettingsQuery", q)
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.GroupSettingQuery", q)
 }
 
-// The GroupSettingsMutationRuleFunc type is an adapter to allow the use of ordinary
+// The GroupSettingMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type GroupSettingsMutationRuleFunc func(context.Context, *generated.GroupSettingsMutation) error
+type GroupSettingMutationRuleFunc func(context.Context, *generated.GroupSettingMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f GroupSettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.GroupSettingsMutation); ok {
+func (f GroupSettingMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.GroupSettingMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.GroupSettingsMutation", m)
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.GroupSettingMutation", m)
 }
 
 // The IntegrationQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -255,28 +255,28 @@ func (f OrganizationMutationRuleFunc) EvalMutation(ctx context.Context, m genera
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationMutation", m)
 }
 
-// The OrganizationSettingsQueryRuleFunc type is an adapter to allow the use of ordinary
+// The OrganizationSettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type OrganizationSettingsQueryRuleFunc func(context.Context, *generated.OrganizationSettingsQuery) error
+type OrganizationSettingQueryRuleFunc func(context.Context, *generated.OrganizationSettingQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f OrganizationSettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.OrganizationSettingsQuery); ok {
+func (f OrganizationSettingQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrganizationSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OrganizationSettingsQuery", q)
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OrganizationSettingQuery", q)
 }
 
-// The OrganizationSettingsMutationRuleFunc type is an adapter to allow the use of ordinary
+// The OrganizationSettingMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type OrganizationSettingsMutationRuleFunc func(context.Context, *generated.OrganizationSettingsMutation) error
+type OrganizationSettingMutationRuleFunc func(context.Context, *generated.OrganizationSettingMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f OrganizationSettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.OrganizationSettingsMutation); ok {
+func (f OrganizationSettingMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OrganizationSettingMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingsMutation", m)
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingMutation", m)
 }
 
 // The PersonalAccessTokenQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -375,28 +375,28 @@ func (f UserMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Muta
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserMutation", m)
 }
 
-// The UserSettingsQueryRuleFunc type is an adapter to allow the use of ordinary
+// The UserSettingQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
-type UserSettingsQueryRuleFunc func(context.Context, *generated.UserSettingsQuery) error
+type UserSettingQueryRuleFunc func(context.Context, *generated.UserSettingQuery) error
 
 // EvalQuery return f(ctx, q).
-func (f UserSettingsQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.UserSettingsQuery); ok {
+func (f UserSettingQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserSettingQuery); ok {
 		return f(ctx, q)
 	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.UserSettingsQuery", q)
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.UserSettingQuery", q)
 }
 
-// The UserSettingsMutationRuleFunc type is an adapter to allow the use of ordinary
+// The UserSettingMutationRuleFunc type is an adapter to allow the use of ordinary
 // functions as a mutation rule.
-type UserSettingsMutationRuleFunc func(context.Context, *generated.UserSettingsMutation) error
+type UserSettingMutationRuleFunc func(context.Context, *generated.UserSettingMutation) error
 
 // EvalMutation calls f(ctx, m).
-func (f UserSettingsMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.UserSettingsMutation); ok {
+func (f UserSettingMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.UserSettingMutation); ok {
 		return f(ctx, m)
 	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserSettingsMutation", m)
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserSettingMutation", m)
 }
 
 type (
@@ -438,7 +438,7 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.GroupQuery:
 		return q.Filter(), nil
-	case *generated.GroupSettingsQuery:
+	case *generated.GroupSettingQuery:
 		return q.Filter(), nil
 	case *generated.IntegrationQuery:
 		return q.Filter(), nil
@@ -446,7 +446,7 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.OrganizationQuery:
 		return q.Filter(), nil
-	case *generated.OrganizationSettingsQuery:
+	case *generated.OrganizationSettingQuery:
 		return q.Filter(), nil
 	case *generated.PersonalAccessTokenQuery:
 		return q.Filter(), nil
@@ -456,7 +456,7 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.UserQuery:
 		return q.Filter(), nil
-	case *generated.UserSettingsQuery:
+	case *generated.UserSettingQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected query type %T for query filter", q)
@@ -469,7 +469,7 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.GroupMutation:
 		return m.Filter(), nil
-	case *generated.GroupSettingsMutation:
+	case *generated.GroupSettingMutation:
 		return m.Filter(), nil
 	case *generated.IntegrationMutation:
 		return m.Filter(), nil
@@ -477,7 +477,7 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil
-	case *generated.OrganizationSettingsMutation:
+	case *generated.OrganizationSettingMutation:
 		return m.Filter(), nil
 	case *generated.PersonalAccessTokenMutation:
 		return m.Filter(), nil
@@ -487,7 +487,7 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.UserMutation:
 		return m.Filter(), nil
-	case *generated.UserSettingsMutation:
+	case *generated.UserSettingMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("generated/privacy: unexpected mutation type %T for mutation filter", m)

@@ -102,6 +102,13 @@ func (User) Fields() []ent.Field {
 			Sensitive().
 			Nillable().
 			Optional(),
+		field.String("sub").
+			Comment("the Subject of the user JWT").
+			Unique().
+			Optional(),
+		field.Bool("oauth").
+			Comment("whether the user uses oauth for login or not").
+			Default(false),
 	}
 }
 
@@ -126,7 +133,7 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
-		edge.To("setting", UserSettings.Type).Required().Unique(),
+		edge.To("setting", UserSetting.Type).Required().Unique(),
 		edge.To("refreshtoken", RefreshToken.Type),
 	}
 }

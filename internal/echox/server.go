@@ -17,17 +17,21 @@ import (
 	"go.uber.org/zap"
 )
 
+// CheckFunc is a function that can be used to check the status of a service
+type CheckFunc func(ctx context.Context) error
+
 // Server implements the HTTPS Server
 type Server struct {
-	debug       bool
-	dev         bool
-	listen      string
-	https       bool
-	httpsConfig HTTPSConfig
-	logger      *zap.Logger
-	middleware  []echo.MiddlewareFunc
-	handlers    []handler
-	timeouts    serverTimeouts
+	debug           bool
+	dev             bool
+	listen          string
+	https           bool
+	httpsConfig     HTTPSConfig
+	logger          *zap.Logger
+	middleware      []echo.MiddlewareFunc
+	readinessChecks map[string]CheckFunc
+	handlers        []handler
+	timeouts        serverTimeouts
 }
 
 type serverTimeouts struct {
@@ -59,13 +63,14 @@ func NewServer(logger *zap.Logger, cfg Config) (*Server, error) {
 	}
 
 	s := &Server{
-		debug:      cfg.Debug,
-		dev:        cfg.Dev,
-		https:      cfg.HTTPS,
-		listen:     cfg.Listen,
-		logger:     logger.Named("echox"),
-		middleware: cfg.Middleware,
-		timeouts:   t,
+		debug:           cfg.Debug,
+		dev:             cfg.Dev,
+		https:           cfg.HTTPS,
+		listen:          cfg.Listen,
+		logger:          logger.Named("echox"),
+		middleware:      cfg.Middleware,
+		readinessChecks: map[string]CheckFunc{},
+		timeouts:        t,
 	}
 
 	if s.https {
@@ -96,6 +101,16 @@ func (s *Server) AddHandler(h handler) *Server {
 	return s
 }
 
+// AddReadinessCheck will accept a function to be ran during calls to /readyz
+// These functions should accept a context and only return an error. When adding
+// a readiness check a name is also provided, this name will be used when returning
+// the state of all the checks
+func (s *Server) AddReadinessCheck(name string, f CheckFunc) *Server {
+	s.readinessChecks[name] = f
+
+	return s
+}
+
 // Handler returns a new http.Handler for serving requests.
 func (s *Server) Handler() http.Handler {
 	srv := echo.New()
@@ -103,6 +118,10 @@ func (s *Server) Handler() http.Handler {
 	// add middleware
 	srv.Use(middleware.RequestID())
 	srv.Use(middleware.Recover())
+
+	// hides echo's startup banner
+	srv.HideBanner = true
+	srv.HidePort = true
 
 	// set CORS in dev mode
 	if s.dev {
@@ -118,6 +137,10 @@ func (s *Server) Handler() http.Handler {
 	srv.Debug = s.debug
 
 	srv.Use(s.middleware...)
+
+	// Health endpoints
+	srv.GET("/livez", s.livenessCheckHandler)
+	srv.GET("/readyz", s.readinessCheckHandler)
 
 	for _, handler := range s.handlers {
 		handler.Routes(srv.Group(""))

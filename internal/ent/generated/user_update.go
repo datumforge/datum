@@ -18,7 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
-	"github.com/datumforge/datum/internal/ent/generated/usersettings"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -222,6 +222,40 @@ func (uu *UserUpdate) ClearPasswordHash() *UserUpdate {
 	return uu
 }
 
+// SetSub sets the "sub" field.
+func (uu *UserUpdate) SetSub(s string) *UserUpdate {
+	uu.mutation.SetSub(s)
+	return uu
+}
+
+// SetNillableSub sets the "sub" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableSub(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetSub(*s)
+	}
+	return uu
+}
+
+// ClearSub clears the value of the "sub" field.
+func (uu *UserUpdate) ClearSub() *UserUpdate {
+	uu.mutation.ClearSub()
+	return uu
+}
+
+// SetOauth sets the "oauth" field.
+func (uu *UserUpdate) SetOauth(b bool) *UserUpdate {
+	uu.mutation.SetOauth(b)
+	return uu
+}
+
+// SetNillableOauth sets the "oauth" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetOauth(*b)
+	}
+	return uu
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uu *UserUpdate) AddOrganizationIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddOrganizationIDs(ids...)
@@ -282,14 +316,14 @@ func (uu *UserUpdate) AddPersonalAccessTokens(p ...*PersonalAccessToken) *UserUp
 	return uu.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+// SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uu *UserUpdate) SetSettingID(id string) *UserUpdate {
 	uu.mutation.SetSettingID(id)
 	return uu
 }
 
-// SetSetting sets the "setting" edge to the UserSettings entity.
-func (uu *UserUpdate) SetSetting(u *UserSettings) *UserUpdate {
+// SetSetting sets the "setting" edge to the UserSetting entity.
+func (uu *UserUpdate) SetSetting(u *UserSetting) *UserUpdate {
 	return uu.SetSettingID(u.ID)
 }
 
@@ -397,7 +431,7 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 	return uu.RemovePersonalAccessTokenIDs(ids...)
 }
 
-// ClearSetting clears the "setting" edge to the UserSettings entity.
+// ClearSetting clears the "setting" edge to the UserSetting entity.
 func (uu *UserUpdate) ClearSetting() *UserUpdate {
 	uu.mutation.ClearSetting()
 	return uu
@@ -586,6 +620,15 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.PasswordHashCleared() {
 		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
+	}
+	if value, ok := uu.mutation.Sub(); ok {
+		_spec.SetField(user.FieldSub, field.TypeString, value)
+	}
+	if uu.mutation.SubCleared() {
+		_spec.ClearField(user.FieldSub, field.TypeString)
+	}
+	if value, ok := uu.mutation.Oauth(); ok {
+		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 	}
 	if uu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -787,10 +830,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.UserSettings
+		edge.Schema = uu.schemaConfig.UserSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uu.mutation.SettingIDs(); len(nodes) > 0 {
@@ -801,10 +844,10 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.UserSettings
+		edge.Schema = uu.schemaConfig.UserSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1066,6 +1109,40 @@ func (uuo *UserUpdateOne) ClearPasswordHash() *UserUpdateOne {
 	return uuo
 }
 
+// SetSub sets the "sub" field.
+func (uuo *UserUpdateOne) SetSub(s string) *UserUpdateOne {
+	uuo.mutation.SetSub(s)
+	return uuo
+}
+
+// SetNillableSub sets the "sub" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableSub(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetSub(*s)
+	}
+	return uuo
+}
+
+// ClearSub clears the value of the "sub" field.
+func (uuo *UserUpdateOne) ClearSub() *UserUpdateOne {
+	uuo.mutation.ClearSub()
+	return uuo
+}
+
+// SetOauth sets the "oauth" field.
+func (uuo *UserUpdateOne) SetOauth(b bool) *UserUpdateOne {
+	uuo.mutation.SetOauth(b)
+	return uuo
+}
+
+// SetNillableOauth sets the "oauth" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetOauth(*b)
+	}
+	return uuo
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uuo *UserUpdateOne) AddOrganizationIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddOrganizationIDs(ids...)
@@ -1126,14 +1203,14 @@ func (uuo *UserUpdateOne) AddPersonalAccessTokens(p ...*PersonalAccessToken) *Us
 	return uuo.AddPersonalAccessTokenIDs(ids...)
 }
 
-// SetSettingID sets the "setting" edge to the UserSettings entity by ID.
+// SetSettingID sets the "setting" edge to the UserSetting entity by ID.
 func (uuo *UserUpdateOne) SetSettingID(id string) *UserUpdateOne {
 	uuo.mutation.SetSettingID(id)
 	return uuo
 }
 
-// SetSetting sets the "setting" edge to the UserSettings entity.
-func (uuo *UserUpdateOne) SetSetting(u *UserSettings) *UserUpdateOne {
+// SetSetting sets the "setting" edge to the UserSetting entity.
+func (uuo *UserUpdateOne) SetSetting(u *UserSetting) *UserUpdateOne {
 	return uuo.SetSettingID(u.ID)
 }
 
@@ -1241,7 +1318,7 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 	return uuo.RemovePersonalAccessTokenIDs(ids...)
 }
 
-// ClearSetting clears the "setting" edge to the UserSettings entity.
+// ClearSetting clears the "setting" edge to the UserSetting entity.
 func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
 	uuo.mutation.ClearSetting()
 	return uuo
@@ -1461,6 +1538,15 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.PasswordHashCleared() {
 		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
 	}
+	if value, ok := uuo.mutation.Sub(); ok {
+		_spec.SetField(user.FieldSub, field.TypeString, value)
+	}
+	if uuo.mutation.SubCleared() {
+		_spec.ClearField(user.FieldSub, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Oauth(); ok {
+		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
 	if uuo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -1661,10 +1747,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.UserSettings
+		edge.Schema = uuo.schemaConfig.UserSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uuo.mutation.SettingIDs(); len(nodes) > 0 {
@@ -1675,10 +1761,10 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Columns: []string{user.SettingColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(usersettings.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(usersetting.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.UserSettings
+		edge.Schema = uuo.schemaConfig.UserSetting
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

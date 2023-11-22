@@ -7,20 +7,20 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
-	Entitlement          string // Entitlement table.
-	Group                string // Group table.
-	GroupUsers           string // Group-users->User table.
-	GroupSettings        string // GroupSettings table.
-	Integration          string // Integration table.
-	OauthProvider        string // OauthProvider table.
-	Organization         string // Organization table.
-	OrganizationSettings string // OrganizationSettings table.
-	PersonalAccessToken  string // PersonalAccessToken table.
-	RefreshToken         string // RefreshToken table.
-	Session              string // Session table.
-	User                 string // User table.
-	UserOrganizations    string // User-organizations->Organization table.
-	UserSettings         string // UserSettings table.
+	Entitlement         string // Entitlement table.
+	Group               string // Group table.
+	GroupUsers          string // Group-users->User table.
+	GroupSetting        string // GroupSetting table.
+	Integration         string // Integration table.
+	OauthProvider       string // OauthProvider table.
+	Organization        string // Organization table.
+	OrganizationSetting string // OrganizationSetting table.
+	PersonalAccessToken string // PersonalAccessToken table.
+	RefreshToken        string // RefreshToken table.
+	Session             string // Session table.
+	User                string // User table.
+	UserOrganizations   string // User-organizations->Organization table.
+	UserSetting         string // UserSetting table.
 }
 
 type schemaCtxKey struct{}

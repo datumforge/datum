@@ -3,7 +3,9 @@ package schema
 import (
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
@@ -56,5 +58,14 @@ func (RefreshToken) Edges() []ent.Edge {
 func (RefreshToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.IDMixin{},
+	}
+}
+
+// Annotations of the RefreshToken
+func (RefreshToken) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.RelayConnection(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }

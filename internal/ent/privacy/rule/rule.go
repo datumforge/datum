@@ -82,114 +82,63 @@ func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 	})
 }
 
-// HasOrgDeleteAccess is a rule that returns allow decision if user has delete access
-func HasOrgDeleteAccess() privacy.OrganizationMutationRuleFunc {
+// HasOrgMutationAccess is a rule that returns allow decision if user has edit or delete access
+func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 	return privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
 		m.Logger.Debugw("checking mutation access")
 
+		// No permissions checks on creation of org
+		if m.Op().Is(ent.OpCreate) {
+			return privacy.Skip
+		}
+
+		relation := fga.CanEdit
 		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
-			userID, err := echox.GetUserIDFromContext(ctx)
-			if err != nil {
-				return err
-			}
-
-			sub := fga.Entity{
-				Kind:       "user",
-				Identifier: userID,
-			}
-
-			view := viewer.FromContext(ctx)
-			if view == nil {
-				return privacy.Denyf("viewer-context is missing")
-			}
-
-			objID := view.GetObjectID()
-
-			obj := fga.Entity{
-				Kind:       "organization",
-				Identifier: objID,
-			}
-
-			m.Logger.Infow("checking relationship tuples", "relation", fga.CanDelete, "object", obj.String())
-
-			checkReq := ofgaclient.ClientCheckRequest{
-				User:     sub.String(),
-				Relation: fga.CanView,
-				Object:   obj.String(),
-			}
-
-			access, err := m.Authz.CheckTuple(ctx, checkReq)
-			if err != nil {
-				return privacy.Skipf("unable to check access, %s", err.Error())
-			}
-
-			if access {
-				m.Logger.Debugw("access allowed", "relation", fga.CanDelete, "object", obj.String())
-
-				return privacy.Allow
-			}
-
-			// deny if it was a delete mutation and user is not allowed
-			return privacy.Deny
+			relation = fga.CanView
 		}
 
-		// Skip to the next privacy rule (equivalent to return nil).
-		return privacy.Skip
-	})
-}
-
-// HasOrgWriteAccess is a rule that returns allow decision if user has write access
-func HasOrgWriteAccess() privacy.OrganizationMutationRuleFunc {
-	return privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
-		m.Logger.Debugw("checking mutation access")
-
-		if m.Op().Is(ent.OpUpdate | ent.OpUpdateOne) {
-			userID, err := echox.GetUserIDFromContext(ctx)
-			if err != nil {
-				return err
-			}
-
-			sub := fga.Entity{
-				Kind:       "user",
-				Identifier: userID,
-			}
-
-			view := viewer.FromContext(ctx)
-			if view == nil {
-				return privacy.Denyf("viewer-context is missing")
-			}
-
-			objID := view.GetObjectID()
-
-			obj := fga.Entity{
-				Kind:       "organization",
-				Identifier: objID,
-			}
-
-			m.Logger.Infow("checking relationship tuples", "relation", fga.CanEdit, "object", obj.String())
-
-			checkReq := ofgaclient.ClientCheckRequest{
-				User:     sub.String(),
-				Relation: fga.CanView,
-				Object:   obj.String(),
-			}
-
-			access, err := m.Authz.CheckTuple(ctx, checkReq)
-			if err != nil {
-				return privacy.Skipf("unable to check access, %s", err.Error())
-			}
-
-			if access {
-				m.Logger.Debugw("access allowed", "relation", fga.CanEdit, "object", obj.String())
-
-				return privacy.Allow
-			}
-
-			// deny if it was a delete mutation and user is not allowed
-			return privacy.Deny
+		userID, err := echox.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
 		}
 
-		// Skip to the next privacy rule (equivalent to return nil).
-		return privacy.Skip
+		sub := fga.Entity{
+			Kind:       "user",
+			Identifier: userID,
+		}
+
+		view := viewer.FromContext(ctx)
+		if view == nil {
+			return privacy.Denyf("viewer-context is missing")
+		}
+
+		objID := view.GetObjectID()
+
+		obj := fga.Entity{
+			Kind:       "organization",
+			Identifier: objID,
+		}
+
+		m.Logger.Infow("checking relationship tuples", "relation", relation, "object", obj.String())
+
+		checkReq := ofgaclient.ClientCheckRequest{
+			User:     sub.String(),
+			Relation: relation,
+			Object:   obj.String(),
+		}
+
+		access, err := m.Authz.CheckTuple(ctx, checkReq)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			m.Logger.Debugw("access allowed", "relation", fga.CanDelete, "object", obj.String())
+
+			return privacy.Allow
+		}
+
+		// deny if it was a mutation is not allowed
+		return privacy.Deny
 	})
 }

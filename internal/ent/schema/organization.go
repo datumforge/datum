@@ -118,10 +118,9 @@ func (Organization) Mixin() []ent.Mixin {
 func (Organization) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
-			rule.DenyIfNoSubject(),    // Requires a user to be authentication with a valid JWT
-			rule.HasOrgDeleteAccess(), // Delete Specific Access
-			rule.HasOrgWriteAccess(),  // Write (Update) Specific Access
-			privacy.AlwaysAllowRule(), // Allow all other users (e.g. a user with a JWT should be able to create a new org)
+			rule.DenyIfNoSubject(),      // Requires a user to be authentication with a valid JWT
+			rule.HasOrgMutationAccess(), // Requires edit for Update, and delete for Delete mutations
+			privacy.AlwaysAllowRule(),   // Allow all other users (e.g. a user with a JWT should be able to create a new org)
 		},
 		Query: privacy.QueryPolicy{
 			rule.DenyIfNoSubject(),   // Requires a user to be authentication with a valid JWT

@@ -355,6 +355,9 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			// mock checks of tuple
+			// get organization
+			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			// update organization
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
 
 			// update org

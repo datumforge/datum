@@ -13,8 +13,8 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 )
 
-// DenyIfNoViewer is a rule that returns deny decision if the viewer is missing in the context.
-func DenyIfNoViewer() privacy.QueryMutationRule {
+// DenyIfNoSubject is a rule that returns deny decision if the subject is missing in the context.
+func DenyIfNoSubject() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
 		ec, err := echox.EchoContextFromContext(ctx)
 		if err != nil {
@@ -29,11 +29,6 @@ func DenyIfNoViewer() privacy.QueryMutationRule {
 		if sub == "" {
 			return privacy.Denyf("subject is missing")
 		}
-
-		// view := viewer.FromContext(ctx)
-		// if view == nil {
-		// 	return privacy.Denyf("viewer-context is missing")
-		// }
 
 		// Skip to the next privacy rule (equivalent to return nil).
 		return privacy.Skip
@@ -54,6 +49,10 @@ func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 		}
 
 		view := viewer.FromContext(ctx)
+		if view == nil {
+			return privacy.Denyf("viewer-context is missing")
+		}
+
 		objID := view.GetObjectID()
 
 		obj := fga.Entity{
@@ -100,6 +99,10 @@ func HasOrgDeleteAccess() privacy.OrganizationMutationRuleFunc {
 			}
 
 			view := viewer.FromContext(ctx)
+			if view == nil {
+				return privacy.Denyf("viewer-context is missing")
+			}
+
 			objID := view.GetObjectID()
 
 			obj := fga.Entity{
@@ -122,6 +125,62 @@ func HasOrgDeleteAccess() privacy.OrganizationMutationRuleFunc {
 
 			if access {
 				m.Logger.Debugw("access allowed", "relation", fga.CanDelete, "object", obj.String())
+
+				return privacy.Allow
+			}
+
+			// deny if it was a delete mutation and user is not allowed
+			return privacy.Deny
+		}
+
+		// Skip to the next privacy rule (equivalent to return nil).
+		return privacy.Skip
+	})
+}
+
+// HasOrgWriteAccess is a rule that returns allow decision if user has write access
+func HasOrgWriteAccess() privacy.OrganizationMutationRuleFunc {
+	return privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
+		m.Logger.Debugw("checking mutation access")
+
+		if m.Op().Is(ent.OpUpdate | ent.OpUpdateOne) {
+			userID, err := echox.GetUserIDFromContext(ctx)
+			if err != nil {
+				return err
+			}
+
+			sub := fga.Entity{
+				Kind:       "user",
+				Identifier: userID,
+			}
+
+			view := viewer.FromContext(ctx)
+			if view == nil {
+				return privacy.Denyf("viewer-context is missing")
+			}
+
+			objID := view.GetObjectID()
+
+			obj := fga.Entity{
+				Kind:       "organization",
+				Identifier: objID,
+			}
+
+			m.Logger.Infow("checking relationship tuples", "relation", fga.CanEdit, "object", obj.String())
+
+			checkReq := ofgaclient.ClientCheckRequest{
+				User:     sub.String(),
+				Relation: fga.CanView,
+				Object:   obj.String(),
+			}
+
+			access, err := m.Authz.CheckTuple(ctx, checkReq)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
+			}
+
+			if access {
+				m.Logger.Debugw("access allowed", "relation", fga.CanEdit, "object", obj.String())
 
 				return privacy.Allow
 			}

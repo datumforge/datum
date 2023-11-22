@@ -37,6 +37,10 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 			return nil, constraintError
 		}
 
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+		}
+
 		r.logger.Errorw("failed to create organization", "error", err)
 		return nil, ErrInternalServerError
 	}
@@ -59,6 +63,10 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 			return nil, err
 		}
 
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+		}
+
 		r.logger.Errorw("failed to get organization", "error", err)
 		return nil, ErrInternalServerError
 	}
@@ -67,6 +75,10 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 	if err != nil {
 		if generated.IsValidationError(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
 		}
 
 		r.logger.Errorw("failed to update organization", "error", err)
@@ -87,6 +99,10 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
 		}
 
 		r.logger.Errorw("failed to delete organization", "error", err)

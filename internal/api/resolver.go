@@ -11,7 +11,6 @@ import (
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/fga"
 )
 
 // This file will not be regenerated automatically.
@@ -27,9 +26,8 @@ var (
 
 // Resolver provides a graph response resolver
 type Resolver struct {
-	client    *ent.Client
-	fgaClient *fga.Client
-	logger    *zap.SugaredLogger
+	client *ent.Client
+	logger *zap.SugaredLogger
 }
 
 // NewResolver returns a resolver configured with the given ent client
@@ -41,12 +39,6 @@ func NewResolver(client *ent.Client) *Resolver {
 
 func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 	r.logger = l
-
-	return &r
-}
-
-func (r Resolver) WithAuthz(f *fga.Client) *Resolver {
-	r.fgaClient = f
 
 	return &r
 }

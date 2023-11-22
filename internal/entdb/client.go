@@ -12,12 +12,6 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 )
 
-var db *Database
-
-type Database struct {
-	Client *EntClientConfig
-}
-
 // EntClientConfig configures the entsql drivers
 type EntClientConfig struct {
 	// Debug to print debug database logs
@@ -107,10 +101,6 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context) (*ent.Clie
 	client := ent.NewClient(cOpts...)
 
 	return client, nil
-}
-
-func DB() *Database {
-	return db
 }
 
 func (c *EntClientConfig) createEntDBClient(db *entsql.Driver) *ent.Client {

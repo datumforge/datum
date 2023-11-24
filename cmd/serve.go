@@ -225,6 +225,10 @@ func serve(ctx context.Context) error {
 	r := api.NewResolver(client).
 		WithLogger(logger.Named("resolvers"))
 
+	if !oidcEnabled {
+		r = r.WithAuthDisabled(true)
+	}
+
 	handler := r.Handler(enablePlayground, mw...)
 
 	srv.AddHandler(handler)

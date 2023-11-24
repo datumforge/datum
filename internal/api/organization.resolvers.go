@@ -16,8 +16,9 @@ import (
 
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
-	// TODO - add permissions checks
-	// Creation should only require having a valid JWT
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+	}
 
 	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
@@ -51,11 +52,17 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 // UpdateOrganization is the resolver for the updateOrganization field.
 func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, input generated.UpdateOrganizationInput) (*OrganizationUpdatePayload, error) {
 	// check permissions if authz is enabled
-	v := viewer.UserViewer{
-		ObjectID: id,
-	}
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			ObjectID: id,
+		}
 
-	ctx = viewer.NewContext(ctx, v)
+		ctx = viewer.NewContext(ctx, v)
+	}
 
 	org, err := r.client.Organization.Get(ctx, id)
 	if err != nil {
@@ -90,11 +97,18 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 
 // DeleteOrganization is the resolver for the deleteOrganization field.
 func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*OrganizationDeletePayload, error) {
-	v := viewer.UserViewer{
-		ObjectID: id,
-	}
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			ObjectID: id,
+		}
 
-	ctx = viewer.NewContext(ctx, v)
+		ctx = viewer.NewContext(ctx, v)
+	}
 
 	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
@@ -114,11 +128,18 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 
 // Organization is the resolver for the organization field.
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
-	v := viewer.UserViewer{
-		ObjectID: id,
-	}
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			ObjectID: id,
+		}
 
-	ctx = viewer.NewContext(ctx, v)
+		ctx = viewer.NewContext(ctx, v)
+	}
 
 	org, err := r.client.Organization.Get(ctx, id)
 	if err != nil {

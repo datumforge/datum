@@ -49,9 +49,6 @@ func createOrg(ctx context.Context) error {
 
 	// setup interceptors
 	token := os.Getenv("DATUM_ACCESS_TOKEN")
-	if token == "" {
-		return ErrTokenRequired
-	}
 
 	i := datumclient.WithAccessToken(token)
 

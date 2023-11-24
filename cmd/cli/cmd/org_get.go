@@ -39,9 +39,6 @@ func orgs(ctx context.Context) error {
 	}
 
 	token := os.Getenv("DATUM_ACCESS_TOKEN")
-	if token == "" {
-		return ErrTokenRequired
-	}
 
 	i := datumclient.WithAccessToken(token)
 

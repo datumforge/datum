@@ -28,11 +28,12 @@ type Client struct {
 }
 
 type Config struct {
-	Name    string
-	Host    string
-	Scheme  string
-	StoreID string
-	ModelID string
+	Name           string
+	Host           string
+	Scheme         string
+	StoreID        string
+	ModelID        string
+	CreateNewModel bool
 }
 
 // Option is a functional configuration option for openFGA client
@@ -140,7 +141,7 @@ func CreateFGAClientWithStore(ctx context.Context, config Config, logger *zap.Su
 		}
 
 		// Create model if one does not already exist
-		if _, err := fgaClient.CreateModel(ctx, "fga/model/datum.fga"); err != nil {
+		if _, err := fgaClient.CreateModel(ctx, "fga/model/datum.fga", config.CreateNewModel); err != nil {
 			return nil, err
 		}
 	}
@@ -192,7 +193,7 @@ func (c *Client) CreateStore(ctx context.Context, storeName string) (string, err
 }
 
 // CreateModel creates a new fine grained authorization model and returns the model ID
-func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
+func (c *Client) CreateModel(ctx context.Context, fn string, forceCreate bool) (string, error) {
 	options := ofgaclient.ClientReadAuthorizationModelsOptions{}
 
 	models, err := c.Ofga.ReadAuthorizationModels(context.Background()).Options(options).Execute()
@@ -200,12 +201,14 @@ func (c *Client) CreateModel(ctx context.Context, fn string) (string, error) {
 		return "", err
 	}
 
-	// Only create a new test model if one does not exist
-	if len(*models.AuthorizationModels) > 0 {
-		modelID := *models.GetAuthorizationModels()[0].Id
-		c.Logger.Infow("fga model exists", "model_id", modelID)
+	// Only create a new test model if one does not exist and we aren't forcing a new model to be created
+	if !forceCreate {
+		if len(*models.AuthorizationModels) > 0 {
+			modelID := *models.GetAuthorizationModels()[0].Id
+			c.Logger.Infow("fga model exists", "model_id", modelID)
 
-		return modelID, nil
+			return modelID, nil
+		}
 	}
 
 	// Create new model

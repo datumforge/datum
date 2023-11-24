@@ -104,10 +104,13 @@ func init() {
 	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fga-scheme"))
 
 	serveCmd.Flags().String("fga-store-id", "", "fga store ID")
-	viperBindFlag("fga.store-id", serveCmd.Flags().Lookup("fga-store-id"))
+	viperBindFlag("fga.store.id", serveCmd.Flags().Lookup("fga-store-id"))
 
 	serveCmd.Flags().String("fga-model-id", "", "fga authorization model ID")
-	viperBindFlag("fga.model-id", serveCmd.Flags().Lookup("fga-model-id"))
+	viperBindFlag("fga.model.id", serveCmd.Flags().Lookup("fga-model-id"))
+
+	serveCmd.Flags().Bool("fga-model-create", false, "force create a fga authorization model, this should be used when a model exists, but transitioning to a new model")
+	viperBindFlag("fga.model.create", serveCmd.Flags().Lookup("fga-model-create"))
 
 	// only available as a CLI arg because these should only be used in dev environments
 	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
@@ -137,11 +140,12 @@ func serve(ctx context.Context) error {
 
 	if oidcEnabled {
 		config := fga.Config{
-			Name:    "datum",
-			Host:    viper.GetString("fga.host"),
-			Scheme:  viper.GetString("fga.scheme"),
-			StoreID: viper.GetString("fga.store-id"),
-			ModelID: viper.GetString("fga.model-id"),
+			Name:           "datum",
+			Host:           viper.GetString("fga.host"),
+			Scheme:         viper.GetString("fga.scheme"),
+			StoreID:        viper.GetString("fga.store.id"),
+			ModelID:        viper.GetString("fga.model.id"),
+			CreateNewModel: viper.GetBool("fga.model.create"),
 		}
 
 		logger.Infow(

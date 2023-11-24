@@ -38,6 +38,7 @@ func orgs(ctx context.Context) error {
 		ParseDataAlongWithErrors: false,
 	}
 
+	// setup interceptors
 	token := os.Getenv("DATUM_ACCESS_TOKEN")
 
 	i := datumclient.WithAccessToken(token)

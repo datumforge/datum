@@ -17,6 +17,11 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	// TODO: allow this to be configurable
+	storeModelFile = "fga/model/datum.fga"
+)
+
 // Client is an event bus client with some configuration
 type Client struct {
 	// Ofga is the openFGA client
@@ -141,7 +146,7 @@ func CreateFGAClientWithStore(ctx context.Context, config Config, logger *zap.Su
 		}
 
 		// Create model if one does not already exist
-		if _, err := fgaClient.CreateModel(ctx, "fga/model/datum.fga", config.CreateNewModel); err != nil {
+		if _, err := fgaClient.CreateModel(ctx, storeModelFile, config.CreateNewModel); err != nil {
 			return nil, err
 		}
 	}

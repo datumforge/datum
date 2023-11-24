@@ -79,58 +79,58 @@ func TestQuery_Organization(t *testing.T) {
 	}
 }
 
-// func TestQuery_Organizations(t *testing.T) {
-// 	// Add Authz Client Mock
-// 	// setup mock controller
-// 	mockCtrl := gomock.NewController(t)
+func TestQuery_OrganizationsNoAuth(t *testing.T) {
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
 
-// 	mc := mock_client.NewMockSdkClient(mockCtrl)
-// 	fc := setupAuthEntDB(t, mockCtrl, mc)
+	mc := mock_client.NewMockSdkClient(mockCtrl)
 
-// 	// Setup Test Graph Client
-// 	client := graphTestClient(fc)
+	// setup entdb with authz
+	setupAuthEntDB(t, mockCtrl, mc)
 
-// 	// Setup echo context
-// 	ec, err := echox.NewTestContextWithValidUser(subClaim)
-// 	if err != nil {
-// 		t.Fatal()
-// 	}
+	// Setup Test Graph Client Without Auth
+	client := graphTestClientNoAuth()
 
-// 	echoContext := *ec
+	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	if err != nil {
+		t.Fatal()
+	}
 
-// 	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	echoContext := *ec
 
-// 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
 
-// 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
-// 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
-// 	t.Run("Get Organizations", func(t *testing.T) {
-// 		resp, err := client.GetAllOrganizations(reqCtx)
+	org1 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	org2 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
 
-// 		require.NoError(t, err)
-// 		require.NotNil(t, resp)
-// 		require.NotNil(t, resp.Organizations.Edges)
+	t.Run("Get Organizations", func(t *testing.T) {
+		resp, err := client.GetAllOrganizations(reqCtx)
 
-// 		// make sure at least two organizations are returned
-// 		assert.GreaterOrEqual(t, len(resp.Organizations.Edges), 2)
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+		require.NotNil(t, resp.Organizations.Edges)
 
-// 		org1Found := false
-// 		org2Found := false
-// 		for _, o := range resp.Organizations.Edges {
-// 			if o.Node.ID == org1.ID {
-// 				org1Found = true
-// 			} else if o.Node.ID == org2.ID {
-// 				org2Found = true
-// 			}
-// 		}
+		// make sure at least two organizations are returned
+		assert.GreaterOrEqual(t, len(resp.Organizations.Edges), 2)
 
-// 		// if one of the orgs isn't found, fail the test
-// 		if !org1Found || !org2Found {
-// 			t.Fail()
-// 		}
-// 	})
-// }
+		org1Found := false
+		org2Found := false
+		for _, o := range resp.Organizations.Edges {
+			if o.Node.ID == org1.ID {
+				org1Found = true
+			} else if o.Node.ID == org2.ID {
+				org2Found = true
+			}
+		}
+
+		// if one of the orgs isn't found, fail the test
+		if !org1Found || !org2Found {
+			t.Fail()
+		}
+	})
+}
 
 func TestMutation_CreateOrganization(t *testing.T) {
 	// Add Authz Client Mock

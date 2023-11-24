@@ -153,6 +153,28 @@ func graphTestClient() datumclient.DatumClient {
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }
 
+func graphTestClientNoAuth() datumclient.DatumClient {
+	g := &graphClient{
+		srvURL: "query",
+		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
+			api.NewExecutableSchema(
+				api.Config{Resolvers: api.NewResolver(EntClient).WithLogger(zap.NewNop().Sugar()).WithAuthDisabled(true)},
+			))}},
+	}
+
+	// set options
+	opt := &clientv2.Options{
+		ParseDataAlongWithErrors: false,
+	}
+
+	// setup interceptors
+	i := func(ctx context.Context, req *http.Request, gqlInfo *clientv2.GQLRequestInfo, res interface{}, next clientv2.RequestInterceptorFunc) error {
+		return next(ctx, req, gqlInfo, res)
+	}
+
+	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
+}
+
 // localRoundTripper is an http.RoundTripper that executes HTTP transactions
 // by using handler directly, instead of going over an HTTP connection.
 type localRoundTripper struct {

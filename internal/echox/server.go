@@ -12,8 +12,10 @@ import (
 	"time"
 
 	"github.com/brpaz/echozap"
+	echoprometheus "github.com/globocom/echo-prometheus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 )
 
@@ -136,11 +138,14 @@ func (s *Server) Handler() http.Handler {
 
 	srv.Debug = s.debug
 
+	srv.Use(echoprometheus.MetricsMiddleware())
+
 	srv.Use(s.middleware...)
 
 	// Health endpoints
 	srv.GET("/livez", s.livenessCheckHandler)
 	srv.GET("/readyz", s.readinessCheckHandler)
+	srv.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 
 	for _, handler := range s.handlers {
 		handler.Routes(srv.Group(""))

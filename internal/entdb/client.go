@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 )
 
 // EntClientConfig configures the entsql drivers
@@ -61,6 +62,8 @@ func (c *EntClientConfig) NewEntDBDriver(ctx context.Context, opts []ent.Option)
 
 	client := ent.NewClient(cOpts...)
 
+	client.Intercept(interceptors.QueryLogger(&c.Logger))
+
 	// Run the automatic migration tool to create all schema resources.
 	if err := client.Schema.Create(ctx); err != nil {
 		c.Logger.Errorf("failed creating schema resources", zap.Error(err))
@@ -103,6 +106,8 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 	}
 
 	client := ent.NewClient(cOpts...)
+
+	client.Intercept(interceptors.QueryLogger(&c.Logger))
 
 	return client, nil
 }

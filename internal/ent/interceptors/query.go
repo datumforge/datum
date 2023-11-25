@@ -5,9 +5,10 @@ import (
 	"time"
 
 	"entgo.io/ent"
+	"go.uber.org/zap"
+
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
-	"go.uber.org/zap"
 )
 
 func QueryLogger(l *zap.SugaredLogger) ent.InterceptFunc {

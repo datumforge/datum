@@ -17,7 +17,7 @@ import (
 // CreateOrganization is the resolver for the createOrganization field.
 func (r *mutationResolver) CreateOrganization(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
 	if r.authDisabled {
-		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
 	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
@@ -54,7 +54,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
 	if r.authDisabled {
-		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
@@ -100,7 +100,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
 	if r.authDisabled {
-		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
@@ -131,7 +131,7 @@ func (r *queryResolver) Organization(ctx context.Context, id string) (*generated
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
 	if r.authDisabled {
-		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	} else {
 		// setup view context
 		v := viewer.UserViewer{

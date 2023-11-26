@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"context"
-	"fmt"
 	"strings"
 
 	"entgo.io/contrib/entgql"
@@ -13,15 +11,11 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/ogen-go/ogen"
-	ofgaclient "github.com/openfga/go-sdk/client"
 
-	"github.com/datumforge/datum/internal/echox"
-	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
-	"github.com/datumforge/datum/internal/fga"
 )
 
 const (
@@ -133,107 +127,6 @@ func (Organization) Policy() ent.Policy {
 // Hooks of the Organization
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
-		HookOrganization(),
+		hooks.HookOrganization(),
 	}
-}
-
-// HookOrganization runs on organization mutations to setup or remove relationship tuples
-func HookOrganization() ent.Hook {
-	return func(next ent.Mutator) ent.Mutator {
-		return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
-			// do the mutation, and then create/delete the relationship
-			retValue, err := next.Mutate(ctx, m)
-			if err != nil {
-				// if we error, do not attempt to create the relationships
-				return retValue, err
-			}
-
-			if m.Op().Is(ent.OpCreate) {
-				// create the relationship tuple for the owner
-				err = organizationCreateHook(ctx, m)
-			} else if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
-				// delete all relationship tuples
-				err = organizationDeleteHook(ctx, m)
-			}
-
-			return retValue, err
-		})
-	}
-}
-
-func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutation) error {
-	// Add relationship tuples if authz is enabled
-	if m.Authz.Ofga != nil {
-		objID, exists := m.ID()
-		objType := strings.ToLower(m.Type())
-		object := fmt.Sprintf("%s:%s", objType, objID)
-
-		m.Logger.Infow("creating relationship tuples", "relation", fga.OwnerRelation, "object", object)
-
-		if exists {
-			tuples, err := createTuple(ctx, &m.Authz, fga.OwnerRelation, object)
-			if err != nil {
-				return err
-			}
-
-			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
-				m.Logger.Errorw("failed to create relationship tuple", "error", err)
-
-				// TODO: rollback mutation if tuple creation fails
-				return ErrInternalServerError
-			}
-		}
-
-		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", object)
-	}
-
-	return nil
-}
-
-func organizationDeleteHook(ctx context.Context, m *generated.OrganizationMutation) error {
-	// Add relationship tuples if authz is enabled
-	if m.Authz.Ofga != nil {
-		objID, _ := m.ID()
-		objType := strings.ToLower(m.Type())
-		object := fmt.Sprintf("%s:%s", objType, objID)
-
-		m.Logger.Infow("deleting relationship tuples", "object", object)
-
-		// Add relationship tuples if authz is enabled
-		if m.Authz.Ofga != nil {
-			if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
-				m.Logger.Errorw("failed to delete relationship tuples", "error", err)
-
-				return ErrInternalServerError
-			}
-
-			m.Logger.Infow("deleted relationship tuples", "object", object)
-		}
-	}
-
-	return nil
-}
-
-func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
-	ec, err := echox.EchoContextFromContext(ctx)
-	if err != nil {
-		c.Logger.Errorw("unable to get echo context", "error", err)
-
-		return nil, err
-	}
-
-	actor, err := echox.GetActorSubject(*ec)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO: convert jwt sub --> uuid
-
-	tuples := []ofgaclient.ClientTupleKey{{
-		User:     fmt.Sprintf("user:%s", actor),
-		Relation: relation,
-		Object:   object,
-	}}
-
-	return tuples, nil
 }

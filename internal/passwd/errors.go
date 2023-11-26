@@ -23,15 +23,6 @@ var (
 
 	// ErrCannotParseEncodedEK is returned when the derived key parts do not match the desired part length
 	ErrCannotParseEncodedEK = errors.New("cannot parse encoded derived key, matched expression does not contain enough subgroups")
-
-	// ErrDKProtocol is returned when the derived key algorithm specified does not match the derived key algo part
-	ErrDKProtocol = fmt.Errorf("current code only works with the the dk protcol %q", dkAlg)
-
-	// ErrExpectedDKVersion is returned when the version part of the derived key does not match the specified version
-	ErrExpectedDKVersion = fmt.Errorf("expected %s version %d", dkAlg, argon2.Version)
-
-	// ErrDKParseSalt
-	ErrDKParseSalt = errors.New("could not parse salt: %s")
 )
 
 // ParseError is defining a custom error type called `ParseError`. It is a struct

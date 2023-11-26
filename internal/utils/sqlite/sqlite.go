@@ -37,13 +37,11 @@ type Driver struct {
 // Open implements the sql.Driver interface and returns a sqlite3 connection that can
 // be fetched by the user using GetLastConn. The connection ensures it's cleaned up
 // when it's closed. This method is not used by the user, but rather by sql.Open.
-func (d *Driver) Open(dsn string) (_ driver.Conn, err error) {
-	var inner driver.Conn
-
-	if inner, err = d.SQLiteDriver.Open(dsn); err != nil {
+func (d *Driver) Open(dsn string) (driver.Conn, error) {
+	inner, err := d.SQLiteDriver.Open(dsn); 
+	if err != nil {
 		return nil, err
 	}
-
 	var (
 		ok    bool
 		sconn *sqlite3.SQLiteConn

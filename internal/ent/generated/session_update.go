@@ -37,26 +37,6 @@ func (su *SessionUpdate) SetUpdatedAt(t time.Time) *SessionUpdate {
 	return su
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (su *SessionUpdate) SetCreatedBy(s string) *SessionUpdate {
-	su.mutation.SetCreatedBy(s)
-	return su
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableCreatedBy(s *string) *SessionUpdate {
-	if s != nil {
-		su.SetCreatedBy(*s)
-	}
-	return su
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (su *SessionUpdate) ClearCreatedBy() *SessionUpdate {
-	su.mutation.ClearCreatedBy()
-	return su
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (su *SessionUpdate) SetUpdatedBy(s string) *SessionUpdate {
 	su.mutation.SetUpdatedBy(s)
@@ -209,9 +189,6 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := su.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := su.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeString, value)
-	}
 	if su.mutation.CreatedByCleared() {
 		_spec.ClearField(session.FieldCreatedBy, field.TypeString)
 	}
@@ -289,26 +266,6 @@ type SessionUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (suo *SessionUpdateOne) SetUpdatedAt(t time.Time) *SessionUpdateOne {
 	suo.mutation.SetUpdatedAt(t)
-	return suo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (suo *SessionUpdateOne) SetCreatedBy(s string) *SessionUpdateOne {
-	suo.mutation.SetCreatedBy(s)
-	return suo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableCreatedBy(s *string) *SessionUpdateOne {
-	if s != nil {
-		suo.SetCreatedBy(*s)
-	}
-	return suo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (suo *SessionUpdateOne) ClearCreatedBy() *SessionUpdateOne {
-	suo.mutation.ClearCreatedBy()
 	return suo
 }
 
@@ -493,9 +450,6 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 	}
 	if value, ok := suo.mutation.UpdatedAt(); ok {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := suo.mutation.CreatedBy(); ok {
-		_spec.SetField(session.FieldCreatedBy, field.TypeString, value)
 	}
 	if suo.mutation.CreatedByCleared() {
 		_spec.ClearField(session.FieldCreatedBy, field.TypeString)

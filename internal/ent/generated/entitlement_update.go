@@ -37,26 +37,6 @@ func (eu *EntitlementUpdate) SetUpdatedAt(t time.Time) *EntitlementUpdate {
 	return eu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (eu *EntitlementUpdate) SetCreatedBy(s string) *EntitlementUpdate {
-	eu.mutation.SetCreatedBy(s)
-	return eu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableCreatedBy(s *string) *EntitlementUpdate {
-	if s != nil {
-		eu.SetCreatedBy(*s)
-	}
-	return eu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (eu *EntitlementUpdate) ClearCreatedBy() *EntitlementUpdate {
-	eu.mutation.ClearCreatedBy()
-	return eu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (eu *EntitlementUpdate) SetUpdatedBy(s string) *EntitlementUpdate {
 	eu.mutation.SetUpdatedBy(s)
@@ -342,9 +322,6 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.UpdatedAt(); ok {
 		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := eu.mutation.CreatedBy(); ok {
-		_spec.SetField(entitlement.FieldCreatedBy, field.TypeString, value)
-	}
 	if eu.mutation.CreatedByCleared() {
 		_spec.ClearField(entitlement.FieldCreatedBy, field.TypeString)
 	}
@@ -458,26 +435,6 @@ type EntitlementUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (euo *EntitlementUpdateOne) SetUpdatedAt(t time.Time) *EntitlementUpdateOne {
 	euo.mutation.SetUpdatedAt(t)
-	return euo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (euo *EntitlementUpdateOne) SetCreatedBy(s string) *EntitlementUpdateOne {
-	euo.mutation.SetCreatedBy(s)
-	return euo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableCreatedBy(s *string) *EntitlementUpdateOne {
-	if s != nil {
-		euo.SetCreatedBy(*s)
-	}
-	return euo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (euo *EntitlementUpdateOne) ClearCreatedBy() *EntitlementUpdateOne {
-	euo.mutation.ClearCreatedBy()
 	return euo
 }
 
@@ -795,9 +752,6 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 	}
 	if value, ok := euo.mutation.UpdatedAt(); ok {
 		_spec.SetField(entitlement.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := euo.mutation.CreatedBy(); ok {
-		_spec.SetField(entitlement.FieldCreatedBy, field.TypeString, value)
 	}
 	if euo.mutation.CreatedByCleared() {
 		_spec.ClearField(entitlement.FieldCreatedBy, field.TypeString)

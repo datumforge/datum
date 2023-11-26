@@ -37,26 +37,6 @@ func (iu *IntegrationUpdate) SetUpdatedAt(t time.Time) *IntegrationUpdate {
 	return iu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (iu *IntegrationUpdate) SetCreatedBy(s string) *IntegrationUpdate {
-	iu.mutation.SetCreatedBy(s)
-	return iu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (iu *IntegrationUpdate) SetNillableCreatedBy(s *string) *IntegrationUpdate {
-	if s != nil {
-		iu.SetCreatedBy(*s)
-	}
-	return iu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (iu *IntegrationUpdate) ClearCreatedBy() *IntegrationUpdate {
-	iu.mutation.ClearCreatedBy()
-	return iu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (iu *IntegrationUpdate) SetUpdatedBy(s string) *IntegrationUpdate {
 	iu.mutation.SetUpdatedBy(s)
@@ -208,9 +188,6 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.UpdatedAt(); ok {
 		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := iu.mutation.CreatedBy(); ok {
-		_spec.SetField(integration.FieldCreatedBy, field.TypeString, value)
-	}
 	if iu.mutation.CreatedByCleared() {
 		_spec.ClearField(integration.FieldCreatedBy, field.TypeString)
 	}
@@ -285,26 +262,6 @@ type IntegrationUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (iuo *IntegrationUpdateOne) SetUpdatedAt(t time.Time) *IntegrationUpdateOne {
 	iuo.mutation.SetUpdatedAt(t)
-	return iuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (iuo *IntegrationUpdateOne) SetCreatedBy(s string) *IntegrationUpdateOne {
-	iuo.mutation.SetCreatedBy(s)
-	return iuo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (iuo *IntegrationUpdateOne) SetNillableCreatedBy(s *string) *IntegrationUpdateOne {
-	if s != nil {
-		iuo.SetCreatedBy(*s)
-	}
-	return iuo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (iuo *IntegrationUpdateOne) ClearCreatedBy() *IntegrationUpdateOne {
-	iuo.mutation.ClearCreatedBy()
 	return iuo
 }
 
@@ -488,9 +445,6 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 	}
 	if value, ok := iuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(integration.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := iuo.mutation.CreatedBy(); ok {
-		_spec.SetField(integration.FieldCreatedBy, field.TypeString, value)
 	}
 	if iuo.mutation.CreatedByCleared() {
 		_spec.ClearField(integration.FieldCreatedBy, field.TypeString)

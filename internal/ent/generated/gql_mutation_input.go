@@ -84,8 +84,6 @@ func (c *EntitlementCreate) SetInput(i CreateEntitlementInput) *EntitlementCreat
 // UpdateEntitlementInput represents a mutation input for updating entitlements.
 type UpdateEntitlementInput struct {
 	UpdatedAt                   *time.Time
-	ClearCreatedBy              bool
-	CreatedBy                   *string
 	ClearUpdatedBy              bool
 	UpdatedBy                   *string
 	Tier                        *entitlement.Tier
@@ -112,12 +110,6 @@ type UpdateEntitlementInput struct {
 func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -248,8 +240,6 @@ func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
 // UpdateGroupInput represents a mutation input for updating groups.
 type UpdateGroupInput struct {
 	UpdatedAt      *time.Time
-	ClearCreatedBy bool
-	CreatedBy      *string
 	ClearUpdatedBy bool
 	UpdatedBy      *string
 	Name           *string
@@ -268,12 +258,6 @@ type UpdateGroupInput struct {
 func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -382,8 +366,6 @@ func (c *GroupSettingCreate) SetInput(i CreateGroupSettingInput) *GroupSettingCr
 // UpdateGroupSettingInput represents a mutation input for updating groupsettings.
 type UpdateGroupSettingInput struct {
 	UpdatedAt      *time.Time
-	ClearCreatedBy bool
-	CreatedBy      *string
 	ClearUpdatedBy bool
 	UpdatedBy      *string
 	Visibility     *groupsetting.Visibility
@@ -400,12 +382,6 @@ type UpdateGroupSettingInput struct {
 func (i *UpdateGroupSettingInput) Mutate(m *GroupSettingMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -498,8 +474,6 @@ func (c *IntegrationCreate) SetInput(i CreateIntegrationInput) *IntegrationCreat
 // UpdateIntegrationInput represents a mutation input for updating integrations.
 type UpdateIntegrationInput struct {
 	UpdatedAt        *time.Time
-	ClearCreatedBy   bool
-	CreatedBy        *string
 	ClearUpdatedBy   bool
 	UpdatedBy        *string
 	Name             *string
@@ -513,12 +487,6 @@ type UpdateIntegrationInput struct {
 func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -610,8 +578,6 @@ func (c *OauthProviderCreate) SetInput(i CreateOauthProviderInput) *OauthProvide
 // UpdateOauthProviderInput represents a mutation input for updating oauthproviders.
 type UpdateOauthProviderInput struct {
 	UpdatedAt      *time.Time
-	ClearCreatedBy bool
-	CreatedBy      *string
 	ClearUpdatedBy bool
 	UpdatedBy      *string
 	Name           *string
@@ -631,12 +597,6 @@ type UpdateOauthProviderInput struct {
 func (i *UpdateOauthProviderInput) Mutate(m *OauthProviderMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -762,8 +722,6 @@ func (c *OrganizationCreate) SetInput(i CreateOrganizationInput) *OrganizationCr
 // UpdateOrganizationInput represents a mutation input for updating organizations.
 type UpdateOrganizationInput struct {
 	UpdatedAt              *time.Time
-	ClearCreatedBy         bool
-	CreatedBy              *string
 	ClearUpdatedBy         bool
 	UpdatedBy              *string
 	Name                   *string
@@ -793,12 +751,6 @@ type UpdateOrganizationInput struct {
 func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -950,8 +902,6 @@ func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *
 // UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
 type UpdateOrganizationSettingInput struct {
 	UpdatedAt         *time.Time
-	ClearCreatedBy    bool
-	CreatedBy         *string
 	ClearUpdatedBy    bool
 	UpdatedBy         *string
 	Domains           []string
@@ -975,12 +925,6 @@ type UpdateOrganizationSettingInput struct {
 func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -1096,8 +1040,6 @@ func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *
 // UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
 type UpdatePersonalAccessTokenInput struct {
 	UpdatedAt       *time.Time
-	ClearCreatedBy  bool
-	CreatedBy       *string
 	ClearUpdatedBy  bool
 	UpdatedBy       *string
 	Name            *string
@@ -1115,12 +1057,6 @@ type UpdatePersonalAccessTokenInput struct {
 func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -1382,8 +1318,6 @@ func (c *SessionCreate) SetInput(i CreateSessionInput) *SessionCreate {
 // UpdateSessionInput represents a mutation input for updating sessions.
 type UpdateSessionInput struct {
 	UpdatedAt      *time.Time
-	ClearCreatedBy bool
-	CreatedBy      *string
 	ClearUpdatedBy bool
 	UpdatedBy      *string
 	Disabled       *bool
@@ -1398,12 +1332,6 @@ type UpdateSessionInput struct {
 func (i *UpdateSessionInput) Mutate(m *SessionMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -1536,8 +1464,6 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 // UpdateUserInput represents a mutation input for updating users.
 type UpdateUserInput struct {
 	UpdatedAt                    *time.Time
-	ClearCreatedBy               bool
-	CreatedBy                    *string
 	ClearUpdatedBy               bool
 	UpdatedBy                    *string
 	Email                        *string
@@ -1579,12 +1505,6 @@ type UpdateUserInput struct {
 func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()
@@ -1778,8 +1698,6 @@ func (c *UserSettingCreate) SetInput(i CreateUserSettingInput) *UserSettingCreat
 // UpdateUserSettingInput represents a mutation input for updating usersettings.
 type UpdateUserSettingInput struct {
 	UpdatedAt         *time.Time
-	ClearCreatedBy    bool
-	CreatedBy         *string
 	ClearUpdatedBy    bool
 	UpdatedBy         *string
 	Locked            *bool
@@ -1804,12 +1722,6 @@ type UpdateUserSettingInput struct {
 func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
-	}
-	if i.ClearCreatedBy {
-		m.ClearCreatedBy()
-	}
-	if v := i.CreatedBy; v != nil {
-		m.SetCreatedBy(*v)
 	}
 	if i.ClearUpdatedBy {
 		m.ClearUpdatedBy()

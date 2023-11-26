@@ -42,26 +42,6 @@ func (ou *OrganizationUpdate) SetUpdatedAt(t time.Time) *OrganizationUpdate {
 	return ou
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (ou *OrganizationUpdate) SetCreatedBy(s string) *OrganizationUpdate {
-	ou.mutation.SetCreatedBy(s)
-	return ou
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (ou *OrganizationUpdate) SetNillableCreatedBy(s *string) *OrganizationUpdate {
-	if s != nil {
-		ou.SetCreatedBy(*s)
-	}
-	return ou
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (ou *OrganizationUpdate) ClearCreatedBy() *OrganizationUpdate {
-	ou.mutation.ClearCreatedBy()
-	return ou
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (ou *OrganizationUpdate) SetUpdatedBy(s string) *OrganizationUpdate {
 	ou.mutation.SetUpdatedBy(s)
@@ -448,9 +428,6 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ou.mutation.UpdatedAt(); ok {
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := ou.mutation.CreatedBy(); ok {
-		_spec.SetField(organization.FieldCreatedBy, field.TypeString, value)
-	}
 	if ou.mutation.CreatedByCleared() {
 		_spec.ClearField(organization.FieldCreatedBy, field.TypeString)
 	}
@@ -816,26 +793,6 @@ type OrganizationUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (ouo *OrganizationUpdateOne) SetUpdatedAt(t time.Time) *OrganizationUpdateOne {
 	ouo.mutation.SetUpdatedAt(t)
-	return ouo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (ouo *OrganizationUpdateOne) SetCreatedBy(s string) *OrganizationUpdateOne {
-	ouo.mutation.SetCreatedBy(s)
-	return ouo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (ouo *OrganizationUpdateOne) SetNillableCreatedBy(s *string) *OrganizationUpdateOne {
-	if s != nil {
-		ouo.SetCreatedBy(*s)
-	}
-	return ouo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (ouo *OrganizationUpdateOne) ClearCreatedBy() *OrganizationUpdateOne {
-	ouo.mutation.ClearCreatedBy()
 	return ouo
 }
 
@@ -1254,9 +1211,6 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if value, ok := ouo.mutation.UpdatedAt(); ok {
 		_spec.SetField(organization.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := ouo.mutation.CreatedBy(); ok {
-		_spec.SetField(organization.FieldCreatedBy, field.TypeString, value)
 	}
 	if ouo.mutation.CreatedByCleared() {
 		_spec.ClearField(organization.FieldCreatedBy, field.TypeString)

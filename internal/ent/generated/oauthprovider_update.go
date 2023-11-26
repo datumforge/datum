@@ -37,26 +37,6 @@ func (opu *OauthProviderUpdate) SetUpdatedAt(t time.Time) *OauthProviderUpdate {
 	return opu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (opu *OauthProviderUpdate) SetCreatedBy(s string) *OauthProviderUpdate {
-	opu.mutation.SetCreatedBy(s)
-	return opu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (opu *OauthProviderUpdate) SetNillableCreatedBy(s *string) *OauthProviderUpdate {
-	if s != nil {
-		opu.SetCreatedBy(*s)
-	}
-	return opu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (opu *OauthProviderUpdate) ClearCreatedBy() *OauthProviderUpdate {
-	opu.mutation.ClearCreatedBy()
-	return opu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (opu *OauthProviderUpdate) SetUpdatedBy(s string) *OauthProviderUpdate {
 	opu.mutation.SetUpdatedBy(s)
@@ -294,9 +274,6 @@ func (opu *OauthProviderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if value, ok := opu.mutation.UpdatedAt(); ok {
 		_spec.SetField(oauthprovider.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := opu.mutation.CreatedBy(); ok {
-		_spec.SetField(oauthprovider.FieldCreatedBy, field.TypeString, value)
-	}
 	if opu.mutation.CreatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldCreatedBy, field.TypeString)
 	}
@@ -392,26 +369,6 @@ type OauthProviderUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (opuo *OauthProviderUpdateOne) SetUpdatedAt(t time.Time) *OauthProviderUpdateOne {
 	opuo.mutation.SetUpdatedAt(t)
-	return opuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (opuo *OauthProviderUpdateOne) SetCreatedBy(s string) *OauthProviderUpdateOne {
-	opuo.mutation.SetCreatedBy(s)
-	return opuo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (opuo *OauthProviderUpdateOne) SetNillableCreatedBy(s *string) *OauthProviderUpdateOne {
-	if s != nil {
-		opuo.SetCreatedBy(*s)
-	}
-	return opuo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (opuo *OauthProviderUpdateOne) ClearCreatedBy() *OauthProviderUpdateOne {
-	opuo.mutation.ClearCreatedBy()
 	return opuo
 }
 
@@ -681,9 +638,6 @@ func (opuo *OauthProviderUpdateOne) sqlSave(ctx context.Context) (_node *OauthPr
 	}
 	if value, ok := opuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(oauthprovider.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := opuo.mutation.CreatedBy(); ok {
-		_spec.SetField(oauthprovider.FieldCreatedBy, field.TypeString, value)
 	}
 	if opuo.mutation.CreatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldCreatedBy, field.TypeString)

@@ -39,26 +39,6 @@ func (gu *GroupUpdate) SetUpdatedAt(t time.Time) *GroupUpdate {
 	return gu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (gu *GroupUpdate) SetCreatedBy(s string) *GroupUpdate {
-	gu.mutation.SetCreatedBy(s)
-	return gu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableCreatedBy(s *string) *GroupUpdate {
-	if s != nil {
-		gu.SetCreatedBy(*s)
-	}
-	return gu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (gu *GroupUpdate) ClearCreatedBy() *GroupUpdate {
-	gu.mutation.ClearCreatedBy()
-	return gu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (gu *GroupUpdate) SetUpdatedBy(s string) *GroupUpdate {
 	gu.mutation.SetUpdatedBy(s)
@@ -298,9 +278,6 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gu.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := gu.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeString, value)
-	}
 	if gu.mutation.CreatedByCleared() {
 		_spec.ClearField(group.FieldCreatedBy, field.TypeString)
 	}
@@ -457,26 +434,6 @@ type GroupUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (guo *GroupUpdateOne) SetUpdatedAt(t time.Time) *GroupUpdateOne {
 	guo.mutation.SetUpdatedAt(t)
-	return guo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (guo *GroupUpdateOne) SetCreatedBy(s string) *GroupUpdateOne {
-	guo.mutation.SetCreatedBy(s)
-	return guo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableCreatedBy(s *string) *GroupUpdateOne {
-	if s != nil {
-		guo.SetCreatedBy(*s)
-	}
-	return guo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (guo *GroupUpdateOne) ClearCreatedBy() *GroupUpdateOne {
-	guo.mutation.ClearCreatedBy()
 	return guo
 }
 
@@ -748,9 +705,6 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.UpdatedAt(); ok {
 		_spec.SetField(group.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := guo.mutation.CreatedBy(); ok {
-		_spec.SetField(group.FieldCreatedBy, field.TypeString, value)
 	}
 	if guo.mutation.CreatedByCleared() {
 		_spec.ClearField(group.FieldCreatedBy, field.TypeString)

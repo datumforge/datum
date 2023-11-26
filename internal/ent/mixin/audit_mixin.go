@@ -7,6 +7,8 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
+
+	"github.com/datumforge/datum/internal/echox"
 )
 
 // AuditMixin provides auditing for all records where enabled. The created_at, created_by, updated_at, and updated_by records are automatically populated when this mixin is enabled.
@@ -24,6 +26,7 @@ func (AuditMixin) Fields() []ent.Field {
 			Default(time.Now).
 			UpdateDefault(time.Now),
 		field.String("created_by").
+			Immutable().
 			Optional(),
 		field.String("updated_by").
 			Optional(),
@@ -56,11 +59,25 @@ func AuditHook(next ent.Mutator) ent.Mutator {
 			return nil, newUnexpectedAuditError(m)
 		}
 
+		ec, err := echox.EchoContextFromContext(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		actor, err := echox.GetActorSubject(*ec)
+		if err != nil {
+			actor = ""
+		}
+
 		switch op := m.Op(); {
 		case op.Is(ent.OpCreate):
 			ml.SetCreatedAt(time.Now())
+			ml.SetCreatedBy(actor)
+			ml.SetUpdatedBy(actor)
+
 		case op.Is(ent.OpUpdateOne | ent.OpUpdate):
 			ml.SetUpdatedAt(time.Now())
+			ml.SetUpdatedBy(actor)
 		}
 
 		return next.Mutate(ctx, m)

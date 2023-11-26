@@ -38,26 +38,6 @@ func (gsu *GroupSettingUpdate) SetUpdatedAt(t time.Time) *GroupSettingUpdate {
 	return gsu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (gsu *GroupSettingUpdate) SetCreatedBy(s string) *GroupSettingUpdate {
-	gsu.mutation.SetCreatedBy(s)
-	return gsu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsu *GroupSettingUpdate) SetNillableCreatedBy(s *string) *GroupSettingUpdate {
-	if s != nil {
-		gsu.SetCreatedBy(*s)
-	}
-	return gsu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (gsu *GroupSettingUpdate) ClearCreatedBy() *GroupSettingUpdate {
-	gsu.mutation.ClearCreatedBy()
-	return gsu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (gsu *GroupSettingUpdate) SetUpdatedBy(s string) *GroupSettingUpdate {
 	gsu.mutation.SetUpdatedBy(s)
@@ -248,9 +228,6 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gsu.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := gsu.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsetting.FieldCreatedBy, field.TypeString, value)
-	}
 	if gsu.mutation.CreatedByCleared() {
 		_spec.ClearField(groupsetting.FieldCreatedBy, field.TypeString)
 	}
@@ -336,26 +313,6 @@ type GroupSettingUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (gsuo *GroupSettingUpdateOne) SetUpdatedAt(t time.Time) *GroupSettingUpdateOne {
 	gsuo.mutation.SetUpdatedAt(t)
-	return gsuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (gsuo *GroupSettingUpdateOne) SetCreatedBy(s string) *GroupSettingUpdateOne {
-	gsuo.mutation.SetCreatedBy(s)
-	return gsuo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (gsuo *GroupSettingUpdateOne) SetNillableCreatedBy(s *string) *GroupSettingUpdateOne {
-	if s != nil {
-		gsuo.SetCreatedBy(*s)
-	}
-	return gsuo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (gsuo *GroupSettingUpdateOne) ClearCreatedBy() *GroupSettingUpdateOne {
-	gsuo.mutation.ClearCreatedBy()
 	return gsuo
 }
 
@@ -578,9 +535,6 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 	}
 	if value, ok := gsuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := gsuo.mutation.CreatedBy(); ok {
-		_spec.SetField(groupsetting.FieldCreatedBy, field.TypeString, value)
 	}
 	if gsuo.mutation.CreatedByCleared() {
 		_spec.ClearField(groupsetting.FieldCreatedBy, field.TypeString)

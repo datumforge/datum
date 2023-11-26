@@ -38,26 +38,6 @@ func (usu *UserSettingUpdate) SetUpdatedAt(t time.Time) *UserSettingUpdate {
 	return usu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (usu *UserSettingUpdate) SetCreatedBy(s string) *UserSettingUpdate {
-	usu.mutation.SetCreatedBy(s)
-	return usu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (usu *UserSettingUpdate) SetNillableCreatedBy(s *string) *UserSettingUpdate {
-	if s != nil {
-		usu.SetCreatedBy(*s)
-	}
-	return usu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (usu *UserSettingUpdate) ClearCreatedBy() *UserSettingUpdate {
-	usu.mutation.ClearCreatedBy()
-	return usu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (usu *UserSettingUpdate) SetUpdatedBy(s string) *UserSettingUpdate {
 	usu.mutation.SetUpdatedBy(s)
@@ -320,9 +300,6 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := usu.mutation.UpdatedAt(); ok {
 		_spec.SetField(usersetting.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := usu.mutation.CreatedBy(); ok {
-		_spec.SetField(usersetting.FieldCreatedBy, field.TypeString, value)
-	}
 	if usu.mutation.CreatedByCleared() {
 		_spec.ClearField(usersetting.FieldCreatedBy, field.TypeString)
 	}
@@ -434,26 +411,6 @@ type UserSettingUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (usuo *UserSettingUpdateOne) SetUpdatedAt(t time.Time) *UserSettingUpdateOne {
 	usuo.mutation.SetUpdatedAt(t)
-	return usuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (usuo *UserSettingUpdateOne) SetCreatedBy(s string) *UserSettingUpdateOne {
-	usuo.mutation.SetCreatedBy(s)
-	return usuo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (usuo *UserSettingUpdateOne) SetNillableCreatedBy(s *string) *UserSettingUpdateOne {
-	if s != nil {
-		usuo.SetCreatedBy(*s)
-	}
-	return usuo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (usuo *UserSettingUpdateOne) ClearCreatedBy() *UserSettingUpdateOne {
-	usuo.mutation.ClearCreatedBy()
 	return usuo
 }
 
@@ -748,9 +705,6 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	}
 	if value, ok := usuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(usersetting.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := usuo.mutation.CreatedBy(); ok {
-		_spec.SetField(usersetting.FieldCreatedBy, field.TypeString, value)
 	}
 	if usuo.mutation.CreatedByCleared() {
 		_spec.ClearField(usersetting.FieldCreatedBy, field.TypeString)

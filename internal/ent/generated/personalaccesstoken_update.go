@@ -38,26 +38,6 @@ func (patu *PersonalAccessTokenUpdate) SetUpdatedAt(t time.Time) *PersonalAccess
 	return patu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (patu *PersonalAccessTokenUpdate) SetCreatedBy(s string) *PersonalAccessTokenUpdate {
-	patu.mutation.SetCreatedBy(s)
-	return patu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (patu *PersonalAccessTokenUpdate) SetNillableCreatedBy(s *string) *PersonalAccessTokenUpdate {
-	if s != nil {
-		patu.SetCreatedBy(*s)
-	}
-	return patu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (patu *PersonalAccessTokenUpdate) ClearCreatedBy() *PersonalAccessTokenUpdate {
-	patu.mutation.ClearCreatedBy()
-	return patu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (patu *PersonalAccessTokenUpdate) SetUpdatedBy(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetUpdatedBy(s)
@@ -252,9 +232,6 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 	if value, ok := patu.mutation.UpdatedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := patu.mutation.CreatedBy(); ok {
-		_spec.SetField(personalaccesstoken.FieldCreatedBy, field.TypeString, value)
-	}
 	if patu.mutation.CreatedByCleared() {
 		_spec.ClearField(personalaccesstoken.FieldCreatedBy, field.TypeString)
 	}
@@ -346,26 +323,6 @@ type PersonalAccessTokenUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetUpdatedAt(t time.Time) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetUpdatedAt(t)
-	return patuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (patuo *PersonalAccessTokenUpdateOne) SetCreatedBy(s string) *PersonalAccessTokenUpdateOne {
-	patuo.mutation.SetCreatedBy(s)
-	return patuo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (patuo *PersonalAccessTokenUpdateOne) SetNillableCreatedBy(s *string) *PersonalAccessTokenUpdateOne {
-	if s != nil {
-		patuo.SetCreatedBy(*s)
-	}
-	return patuo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (patuo *PersonalAccessTokenUpdateOne) ClearCreatedBy() *PersonalAccessTokenUpdateOne {
-	patuo.mutation.ClearCreatedBy()
 	return patuo
 }
 
@@ -592,9 +549,6 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := patuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := patuo.mutation.CreatedBy(); ok {
-		_spec.SetField(personalaccesstoken.FieldCreatedBy, field.TypeString, value)
 	}
 	if patuo.mutation.CreatedByCleared() {
 		_spec.ClearField(personalaccesstoken.FieldCreatedBy, field.TypeString)

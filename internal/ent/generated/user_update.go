@@ -42,26 +42,6 @@ func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 	return uu
 }
 
-// SetCreatedBy sets the "created_by" field.
-func (uu *UserUpdate) SetCreatedBy(s string) *UserUpdate {
-	uu.mutation.SetCreatedBy(s)
-	return uu
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCreatedBy(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetCreatedBy(*s)
-	}
-	return uu
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (uu *UserUpdate) ClearCreatedBy() *UserUpdate {
-	uu.mutation.ClearCreatedBy()
-	return uu
-}
-
 // SetUpdatedBy sets the "updated_by" field.
 func (uu *UserUpdate) SetUpdatedBy(s string) *UserUpdate {
 	uu.mutation.SetUpdatedBy(s)
@@ -567,9 +547,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := uu.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
-	}
 	if uu.mutation.CreatedByCleared() {
 		_spec.ClearField(user.FieldCreatedBy, field.TypeString)
 	}
@@ -926,26 +903,6 @@ type UserUpdateOne struct {
 // SetUpdatedAt sets the "updated_at" field.
 func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetUpdatedAt(t)
-	return uuo
-}
-
-// SetCreatedBy sets the "created_by" field.
-func (uuo *UserUpdateOne) SetCreatedBy(s string) *UserUpdateOne {
-	uuo.mutation.SetCreatedBy(s)
-	return uuo
-}
-
-// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCreatedBy(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetCreatedBy(*s)
-	}
-	return uuo
-}
-
-// ClearCreatedBy clears the value of the "created_by" field.
-func (uuo *UserUpdateOne) ClearCreatedBy() *UserUpdateOne {
-	uuo.mutation.ClearCreatedBy()
 	return uuo
 }
 
@@ -1483,9 +1440,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.UpdatedAt(); ok {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if value, ok := uuo.mutation.CreatedBy(); ok {
-		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
 	}
 	if uuo.mutation.CreatedByCleared() {
 		_spec.ClearField(user.FieldCreatedBy, field.TypeString)

@@ -3,8 +3,6 @@ package passwd
 import (
 	"errors"
 	"fmt"
-
-	"golang.org/x/crypto/argon2"
 )
 
 // Error constants

@@ -110,9 +110,9 @@ func Bytes(uid any) ([]byte, error) {
 }
 
 // MustBytes parses the ULID into bytes but panics on errors
-func MustBytes(uid any) (id []byte) {
-	var err error
-	if id, err = Bytes(uid); err != nil {
+func MustBytes(uid any) []byte {
+	id, err := Bytes(uid)
+	if err != nil {
 		panic(err)
 	}
 

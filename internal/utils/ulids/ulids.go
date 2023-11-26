@@ -49,7 +49,7 @@ func New() ulid.ULID {
 	return uid
 }
 
-// FromTime ceates a ULID with the specified timestamp
+// FromTime creates a ULID with the specified timestamp
 func FromTime(ts time.Time) ulid.ULID {
 	ms := ulid.Timestamp(ts)
 	uid, err := ulid.New(ms, entropy)

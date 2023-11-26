@@ -8,7 +8,7 @@ import (
 	"github.com/mattn/go-sqlite3"
 )
 
-// Init creates the connections map and registers the driver with the SQL package.
+// init creates the connections map and registers the driver with the SQL package.
 func init() {
 	conns = make(map[uint64]*Conn)
 

@@ -34,6 +34,7 @@ tasks:
       - "curl -sSL https://rover.apollo.dev/nix/latest | sh"
       - "go get -u github.com/openfga/go-sdk"
       - "brew install openfga/tap/fga"
+      - "go install go.uber.org/mock/mockgen@latest"
       - defer: { task: go:tidy }
   graph:
     desc: runs scripts/gen_graphql.sh to stub out files in the schema/ directory

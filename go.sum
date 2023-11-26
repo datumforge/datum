@@ -309,12 +309,15 @@ github.com/modern-go/reflect2 v1.0.2/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjY
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/ogen-go/ogen v0.78.0 h1:3OIlrvdmVQ4LfoayxbdyLa4cGbtrACW0XxpdRfYzQfs=
 github.com/ogen-go/ogen v0.78.0/go.mod h1:xc4jgbzGEEMvnVumt1uBMP9HQNV45UMs3SjAukxxo8I=
+github.com/oklog/ulid/v2 v2.1.0 h1:+9lhoxAP56we25tyYETBBY1YLA2SaoLvUFgrP2miPJU=
+github.com/oklog/ulid/v2 v2.1.0/go.mod h1:rcEKHmBBKfef9DhnvX7y1HZBYxjXb0cP5ExxNsTT1QQ=
 github.com/openfga/api/proto v0.0.0-20231109013103-c85ea6315317 h1:2vTNKSFTCPdDaXK6kgk0YKAM4hFXfrgqHf1hpmCzRqE=
 github.com/openfga/api/proto v0.0.0-20231109013103-c85ea6315317/go.mod h1:VnPzHfrF1fpWUBpssSUs4ZkAxtmZ12Reb8RHBRz7ZLs=
 github.com/openfga/go-sdk v0.2.3 h1:VPCouXbUP+vtGREbLu8BIuzFiA1kBDQ6tnunFTxtLzc=
 github.com/openfga/go-sdk v0.2.3/go.mod h1:2k8hL4VJ46GXUGbnQ1QOrcZWcP1kKATLPeqVnuLzgIE=
 github.com/openfga/language/pkg/go v0.0.0-20231120121235-a2ac17485f8c h1:a3mv9OJLB+RLCPxB5LkASxM7PrK/jwn6O1boNAElgXI=
 github.com/openfga/language/pkg/go v0.0.0-20231120121235-a2ac17485f8c/go.mod h1:ozjNR7FB2y0AqxUzpq7tLIV1PyrLp0ZQl4TyJrifvHo=
+github.com/pborman/getopt v0.0.0-20170112200414-7148bc3a4c30/go.mod h1:85jBQOZwpVEaDAr341tbn15RS4fCAsIst0qp7i8ex1o=
 github.com/pelletier/go-toml/v2 v2.1.0 h1:FnwAJ4oYMvbT/34k9zzHuZNrhlz48GB3/s6at6/MHO4=
 github.com/pelletier/go-toml/v2 v2.1.0/go.mod h1:tJU2Z3ZkXwnxa4DPO899bsyIoywizdUvyaeZurnPPDc=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

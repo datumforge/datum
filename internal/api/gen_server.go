@@ -335,7 +335,7 @@ type ComplexityRoot struct {
 		CreatedBy      func(childComplexity int) int
 		Domains        func(childComplexity int) int
 		ID             func(childComplexity int) int
-		Orgnaization   func(childComplexity int) int
+		Organization   func(childComplexity int) int
 		SSOCert        func(childComplexity int) int
 		SSOEntrypoint  func(childComplexity int) int
 		SSOIssuer      func(childComplexity int) int
@@ -2091,12 +2091,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrganizationSetting.ID(childComplexity), true
 
-	case "OrganizationSetting.orgnaization":
-		if e.complexity.OrganizationSetting.Orgnaization == nil {
+	case "OrganizationSetting.organization":
+		if e.complexity.OrganizationSetting.Organization == nil {
 			break
 		}
 
-		return e.complexity.OrganizationSetting.Orgnaization(childComplexity), true
+		return e.complexity.OrganizationSetting.Organization(childComplexity), true
 
 	case "OrganizationSetting.ssoCert":
 		if e.complexity.OrganizationSetting.SSOCert == nil {
@@ -3650,7 +3650,7 @@ input CreateOrganizationSettingInput {
   taxIdentifier: String!
   """tags associated with the object"""
   tags: [String!]
-  orgnaizationID: ID
+  organizationID: ID
 }
 """
 CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -4771,7 +4771,7 @@ type OrganizationSetting implements Node {
   taxIdentifier: String!
   """tags associated with the object"""
   tags: [String!]
-  orgnaization: Organization
+  organization: Organization
 }
 """A connection to a list of items."""
 type OrganizationSettingConnection {
@@ -4970,9 +4970,9 @@ input OrganizationSettingWhereInput {
   taxIdentifierHasSuffix: String
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
-  """orgnaization edge predicates"""
-  hasOrgnaization: Boolean
-  hasOrgnaizationWith: [OrganizationWhereInput!]
+  """organization edge predicates"""
+  hasOrganization: Boolean
+  hasOrganizationWith: [OrganizationWhereInput!]
 }
 """
 OrganizationWhereInput is used for filtering Organization objects.
@@ -6010,8 +6010,8 @@ input UpdateOrganizationSettingInput {
   tags: [String!]
   appendTags: [String!]
   clearTags: Boolean
-  orgnaizationID: ID
-  clearOrgnaization: Boolean
+  organizationID: ID
+  clearOrganization: Boolean
 }
 """
 UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.
@@ -17122,8 +17122,8 @@ func (ec *executionContext) fieldContext_Organization_setting(ctx context.Contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "orgnaization":
-				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			case "organization":
+				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
@@ -18312,8 +18312,8 @@ func (ec *executionContext) fieldContext_OrganizationSetting_tags(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _OrganizationSetting_orgnaization(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+func (ec *executionContext) _OrganizationSetting_organization(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_organization(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -18326,7 +18326,7 @@ func (ec *executionContext) _OrganizationSetting_orgnaization(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Orgnaization(ctx)
+		return obj.Organization(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18340,7 +18340,7 @@ func (ec *executionContext) _OrganizationSetting_orgnaization(ctx context.Contex
 	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OrganizationSetting_orgnaization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OrganizationSetting_organization(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrganizationSetting",
 		Field:      field,
@@ -18601,8 +18601,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "orgnaization":
-				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			case "organization":
+				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
@@ -18720,8 +18720,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingEdge_node(ctx contex
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "orgnaization":
-				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			case "organization":
+				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
@@ -18842,8 +18842,8 @@ func (ec *executionContext) fieldContext_OrganizationSettingUpdatePayload_organi
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "orgnaization":
-				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			case "organization":
+				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
@@ -21479,8 +21479,8 @@ func (ec *executionContext) fieldContext_Query_organizationSetting(ctx context.C
 				return ec.fieldContext_OrganizationSetting_taxIdentifier(ctx, field)
 			case "tags":
 				return ec.fieldContext_OrganizationSetting_tags(ctx, field)
-			case "orgnaization":
-				return ec.fieldContext_OrganizationSetting_orgnaization(ctx, field)
+			case "organization":
+				return ec.fieldContext_OrganizationSetting_organization(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OrganizationSetting", field.Name)
 		},
@@ -29499,7 +29499,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "orgnaizationID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "domains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "organizationID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -29632,15 +29632,15 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.Tags = data
-		case "orgnaizationID":
+		case "organizationID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgnaizationID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.OrgnaizationID = data
+			it.OrganizationID = data
 		}
 	}
 
@@ -35990,7 +35990,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrgnaization", "hasOrgnaizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37464,24 +37464,24 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.TaxIdentifierContainsFold = data
-		case "hasOrgnaization":
+		case "hasOrganization":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrgnaization"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrganization"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasOrgnaization = data
-		case "hasOrgnaizationWith":
+			it.HasOrganization = data
+		case "hasOrganizationWith":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrgnaizationWith"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrganizationWith"))
 			data, err := ec.unmarshalOOrganizationWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganizationWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasOrgnaizationWith = data
+			it.HasOrganizationWith = data
 		}
 	}
 
@@ -42638,7 +42638,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags", "orgnaizationID", "clearOrgnaization"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42789,24 +42789,24 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.ClearTags = data
-		case "orgnaizationID":
+		case "organizationID":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgnaizationID"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.OrgnaizationID = data
-		case "clearOrgnaization":
+			it.OrganizationID = data
+		case "clearOrganization":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOrgnaization"))
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOrganization"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearOrgnaization = data
+			it.ClearOrganization = data
 		}
 	}
 
@@ -49045,7 +49045,7 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			}
 		case "tags":
 			out.Values[i] = ec._OrganizationSetting_tags(ctx, field, obj)
-		case "orgnaization":
+		case "organization":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -49054,7 +49054,7 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._OrganizationSetting_orgnaization(ctx, field, obj)
+				res = ec._OrganizationSetting_organization(ctx, field, obj)
 				return res
 			}
 

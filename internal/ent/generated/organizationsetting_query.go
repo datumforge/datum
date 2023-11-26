@@ -24,7 +24,7 @@ type OrganizationSettingQuery struct {
 	order            []organizationsetting.OrderOption
 	inters           []Interceptor
 	predicates       []predicate.OrganizationSetting
-	withOrgnaization *OrganizationQuery
+	withOrganization *OrganizationQuery
 	withFKs          bool
 	modifiers        []func(*sql.Selector)
 	loadTotal        []func(context.Context, []*OrganizationSetting) error
@@ -64,8 +64,8 @@ func (osq *OrganizationSettingQuery) Order(o ...organizationsetting.OrderOption)
 	return osq
 }
 
-// QueryOrgnaization chains the current query on the "orgnaization" edge.
-func (osq *OrganizationSettingQuery) QueryOrgnaization() *OrganizationQuery {
+// QueryOrganization chains the current query on the "organization" edge.
+func (osq *OrganizationSettingQuery) QueryOrganization() *OrganizationQuery {
 	query := (&OrganizationClient{config: osq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := osq.prepareQuery(ctx); err != nil {
@@ -78,7 +78,7 @@ func (osq *OrganizationSettingQuery) QueryOrgnaization() *OrganizationQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organizationsetting.Table, organizationsetting.FieldID, selector),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, organizationsetting.OrgnaizationTable, organizationsetting.OrgnaizationColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, organizationsetting.OrganizationTable, organizationsetting.OrganizationColumn),
 		)
 		schemaConfig := osq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
@@ -281,21 +281,21 @@ func (osq *OrganizationSettingQuery) Clone() *OrganizationSettingQuery {
 		order:            append([]organizationsetting.OrderOption{}, osq.order...),
 		inters:           append([]Interceptor{}, osq.inters...),
 		predicates:       append([]predicate.OrganizationSetting{}, osq.predicates...),
-		withOrgnaization: osq.withOrgnaization.Clone(),
+		withOrganization: osq.withOrganization.Clone(),
 		// clone intermediate query.
 		sql:  osq.sql.Clone(),
 		path: osq.path,
 	}
 }
 
-// WithOrgnaization tells the query-builder to eager-load the nodes that are connected to
-// the "orgnaization" edge. The optional arguments are used to configure the query builder of the edge.
-func (osq *OrganizationSettingQuery) WithOrgnaization(opts ...func(*OrganizationQuery)) *OrganizationSettingQuery {
+// WithOrganization tells the query-builder to eager-load the nodes that are connected to
+// the "organization" edge. The optional arguments are used to configure the query builder of the edge.
+func (osq *OrganizationSettingQuery) WithOrganization(opts ...func(*OrganizationQuery)) *OrganizationSettingQuery {
 	query := (&OrganizationClient{config: osq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	osq.withOrgnaization = query
+	osq.withOrganization = query
 	return osq
 }
 
@@ -379,10 +379,10 @@ func (osq *OrganizationSettingQuery) sqlAll(ctx context.Context, hooks ...queryH
 		withFKs     = osq.withFKs
 		_spec       = osq.querySpec()
 		loadedTypes = [1]bool{
-			osq.withOrgnaization != nil,
+			osq.withOrganization != nil,
 		}
 	)
-	if osq.withOrgnaization != nil {
+	if osq.withOrganization != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -411,9 +411,9 @@ func (osq *OrganizationSettingQuery) sqlAll(ctx context.Context, hooks ...queryH
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := osq.withOrgnaization; query != nil {
-		if err := osq.loadOrgnaization(ctx, query, nodes, nil,
-			func(n *OrganizationSetting, e *Organization) { n.Edges.Orgnaization = e }); err != nil {
+	if query := osq.withOrganization; query != nil {
+		if err := osq.loadOrganization(ctx, query, nodes, nil,
+			func(n *OrganizationSetting, e *Organization) { n.Edges.Organization = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -425,7 +425,7 @@ func (osq *OrganizationSettingQuery) sqlAll(ctx context.Context, hooks ...queryH
 	return nodes, nil
 }
 
-func (osq *OrganizationSettingQuery) loadOrgnaization(ctx context.Context, query *OrganizationQuery, nodes []*OrganizationSetting, init func(*OrganizationSetting), assign func(*OrganizationSetting, *Organization)) error {
+func (osq *OrganizationSettingQuery) loadOrganization(ctx context.Context, query *OrganizationQuery, nodes []*OrganizationSetting, init func(*OrganizationSetting), assign func(*OrganizationSetting, *Organization)) error {
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*OrganizationSetting)
 	for i := range nodes {

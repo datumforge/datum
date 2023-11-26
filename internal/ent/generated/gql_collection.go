@@ -1008,7 +1008,7 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "orgnaization":
+		case "organization":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1017,7 +1017,7 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			os.withOrgnaization = query
+			os.withOrganization = query
 		case "createdAt":
 			if _, ok := fieldSeen[organizationsetting.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldCreatedAt)

@@ -43,17 +43,17 @@ const (
 	FieldTaxIdentifier = "tax_identifier"
 	// FieldTags holds the string denoting the tags field in the database.
 	FieldTags = "tags"
-	// EdgeOrgnaization holds the string denoting the orgnaization edge name in mutations.
-	EdgeOrgnaization = "orgnaization"
+	// EdgeOrganization holds the string denoting the organization edge name in mutations.
+	EdgeOrganization = "organization"
 	// Table holds the table name of the organizationsetting in the database.
 	Table = "organization_settings"
-	// OrgnaizationTable is the table that holds the orgnaization relation/edge.
-	OrgnaizationTable = "organization_settings"
-	// OrgnaizationInverseTable is the table name for the Organization entity.
+	// OrganizationTable is the table that holds the organization relation/edge.
+	OrganizationTable = "organization_settings"
+	// OrganizationInverseTable is the table name for the Organization entity.
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
-	OrgnaizationInverseTable = "organizations"
-	// OrgnaizationColumn is the table column denoting the orgnaization relation/edge.
-	OrgnaizationColumn = "organization_setting"
+	OrganizationInverseTable = "organizations"
+	// OrganizationColumn is the table column denoting the organization relation/edge.
+	OrganizationColumn = "organization_setting"
 )
 
 // Columns holds all SQL columns for organizationsetting fields.
@@ -197,16 +197,16 @@ func ByTaxIdentifier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTaxIdentifier, opts...).ToFunc()
 }
 
-// ByOrgnaizationField orders the results by orgnaization field.
-func ByOrgnaizationField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByOrganizationField orders the results by organization field.
+func ByOrganizationField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOrgnaizationStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newOrganizationStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newOrgnaizationStep() *sqlgraph.Step {
+func newOrganizationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(OrgnaizationInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, OrgnaizationTable, OrgnaizationColumn),
+		sqlgraph.To(OrganizationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, OrganizationTable, OrganizationColumn),
 	)
 }

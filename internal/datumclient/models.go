@@ -154,7 +154,7 @@ type CreateOrganizationSettingInput struct {
 	TaxIdentifier string `json:"taxIdentifier"`
 	// tags associated with the object
 	Tags           []string `json:"tags,omitempty"`
-	OrgnaizationID *string  `json:"orgnaizationID,omitempty"`
+	OrganizationID *string  `json:"organizationID,omitempty"`
 }
 
 // CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -1328,7 +1328,7 @@ type OrganizationSetting struct {
 	TaxIdentifier string `json:"taxIdentifier"`
 	// tags associated with the object
 	Tags         []string      `json:"tags,omitempty"`
-	Orgnaization *Organization `json:"orgnaization,omitempty"`
+	Organization *Organization `json:"organization,omitempty"`
 }
 
 func (OrganizationSetting) IsNode() {}
@@ -1548,9 +1548,9 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierHasSuffix    *string  `json:"taxIdentifierHasSuffix,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
-	// orgnaization edge predicates
-	HasOrgnaization     *bool                     `json:"hasOrgnaization,omitempty"`
-	HasOrgnaizationWith []*OrganizationWhereInput `json:"hasOrgnaizationWith,omitempty"`
+	// organization edge predicates
+	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
+	HasOrganizationWith []*OrganizationWhereInput `json:"hasOrganizationWith,omitempty"`
 }
 
 // Return response for updateOrganization mutation
@@ -2427,8 +2427,8 @@ type UpdateOrganizationSettingInput struct {
 	Tags              []string `json:"tags,omitempty"`
 	AppendTags        []string `json:"appendTags,omitempty"`
 	ClearTags         *bool    `json:"clearTags,omitempty"`
-	OrgnaizationID    *string  `json:"orgnaizationID,omitempty"`
-	ClearOrgnaization *bool    `json:"clearOrgnaization,omitempty"`
+	OrganizationID    *string  `json:"organizationID,omitempty"`
+	ClearOrganization *bool    `json:"clearOrganization,omitempty"`
 }
 
 // UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.

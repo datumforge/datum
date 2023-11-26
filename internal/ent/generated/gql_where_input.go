@@ -3861,9 +3861,9 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
 
-	// "orgnaization" edge predicates.
-	HasOrgnaization     *bool                     `json:"hasOrgnaization,omitempty"`
-	HasOrgnaizationWith []*OrganizationWhereInput `json:"hasOrgnaizationWith,omitempty"`
+	// "organization" edge predicates.
+	HasOrganization     *bool                     `json:"hasOrganization,omitempty"`
+	HasOrganizationWith []*OrganizationWhereInput `json:"hasOrganizationWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -4418,23 +4418,23 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 		predicates = append(predicates, organizationsetting.TaxIdentifierContainsFold(*i.TaxIdentifierContainsFold))
 	}
 
-	if i.HasOrgnaization != nil {
-		p := organizationsetting.HasOrgnaization()
-		if !*i.HasOrgnaization {
+	if i.HasOrganization != nil {
+		p := organizationsetting.HasOrganization()
+		if !*i.HasOrganization {
 			p = organizationsetting.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasOrgnaizationWith) > 0 {
-		with := make([]predicate.Organization, 0, len(i.HasOrgnaizationWith))
-		for _, w := range i.HasOrgnaizationWith {
+	if len(i.HasOrganizationWith) > 0 {
+		with := make([]predicate.Organization, 0, len(i.HasOrganizationWith))
+		for _, w := range i.HasOrganizationWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasOrgnaizationWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasOrganizationWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, organizationsetting.HasOrgnaizationWith(with...))
+		predicates = append(predicates, organizationsetting.HasOrganizationWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

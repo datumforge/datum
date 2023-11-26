@@ -200,23 +200,23 @@ func (osu *OrganizationSettingUpdate) ClearTags() *OrganizationSettingUpdate {
 	return osu
 }
 
-// SetOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID.
-func (osu *OrganizationSettingUpdate) SetOrgnaizationID(id string) *OrganizationSettingUpdate {
-	osu.mutation.SetOrgnaizationID(id)
+// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
+func (osu *OrganizationSettingUpdate) SetOrganizationID(id string) *OrganizationSettingUpdate {
+	osu.mutation.SetOrganizationID(id)
 	return osu
 }
 
-// SetNillableOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID if the given value is not nil.
-func (osu *OrganizationSettingUpdate) SetNillableOrgnaizationID(id *string) *OrganizationSettingUpdate {
+// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
+func (osu *OrganizationSettingUpdate) SetNillableOrganizationID(id *string) *OrganizationSettingUpdate {
 	if id != nil {
-		osu = osu.SetOrgnaizationID(*id)
+		osu = osu.SetOrganizationID(*id)
 	}
 	return osu
 }
 
-// SetOrgnaization sets the "orgnaization" edge to the Organization entity.
-func (osu *OrganizationSettingUpdate) SetOrgnaization(o *Organization) *OrganizationSettingUpdate {
-	return osu.SetOrgnaizationID(o.ID)
+// SetOrganization sets the "organization" edge to the Organization entity.
+func (osu *OrganizationSettingUpdate) SetOrganization(o *Organization) *OrganizationSettingUpdate {
+	return osu.SetOrganizationID(o.ID)
 }
 
 // Mutation returns the OrganizationSettingMutation object of the builder.
@@ -224,9 +224,9 @@ func (osu *OrganizationSettingUpdate) Mutation() *OrganizationSettingMutation {
 	return osu.mutation
 }
 
-// ClearOrgnaization clears the "orgnaization" edge to the Organization entity.
-func (osu *OrganizationSettingUpdate) ClearOrgnaization() *OrganizationSettingUpdate {
-	osu.mutation.ClearOrgnaization()
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (osu *OrganizationSettingUpdate) ClearOrganization() *OrganizationSettingUpdate {
+	osu.mutation.ClearOrganization()
 	return osu
 }
 
@@ -364,12 +364,12 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 	if osu.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
 	}
-	if osu.mutation.OrgnaizationCleared() {
+	if osu.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsetting.OrgnaizationTable,
-			Columns: []string{organizationsetting.OrgnaizationColumn},
+			Table:   organizationsetting.OrganizationTable,
+			Columns: []string{organizationsetting.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -378,12 +378,12 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 		edge.Schema = osu.schemaConfig.OrganizationSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := osu.mutation.OrgnaizationIDs(); len(nodes) > 0 {
+	if nodes := osu.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsetting.OrgnaizationTable,
-			Columns: []string{organizationsetting.OrgnaizationColumn},
+			Table:   organizationsetting.OrganizationTable,
+			Columns: []string{organizationsetting.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -585,23 +585,23 @@ func (osuo *OrganizationSettingUpdateOne) ClearTags() *OrganizationSettingUpdate
 	return osuo
 }
 
-// SetOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID.
-func (osuo *OrganizationSettingUpdateOne) SetOrgnaizationID(id string) *OrganizationSettingUpdateOne {
-	osuo.mutation.SetOrgnaizationID(id)
+// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
+func (osuo *OrganizationSettingUpdateOne) SetOrganizationID(id string) *OrganizationSettingUpdateOne {
+	osuo.mutation.SetOrganizationID(id)
 	return osuo
 }
 
-// SetNillableOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID if the given value is not nil.
-func (osuo *OrganizationSettingUpdateOne) SetNillableOrgnaizationID(id *string) *OrganizationSettingUpdateOne {
+// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
+func (osuo *OrganizationSettingUpdateOne) SetNillableOrganizationID(id *string) *OrganizationSettingUpdateOne {
 	if id != nil {
-		osuo = osuo.SetOrgnaizationID(*id)
+		osuo = osuo.SetOrganizationID(*id)
 	}
 	return osuo
 }
 
-// SetOrgnaization sets the "orgnaization" edge to the Organization entity.
-func (osuo *OrganizationSettingUpdateOne) SetOrgnaization(o *Organization) *OrganizationSettingUpdateOne {
-	return osuo.SetOrgnaizationID(o.ID)
+// SetOrganization sets the "organization" edge to the Organization entity.
+func (osuo *OrganizationSettingUpdateOne) SetOrganization(o *Organization) *OrganizationSettingUpdateOne {
+	return osuo.SetOrganizationID(o.ID)
 }
 
 // Mutation returns the OrganizationSettingMutation object of the builder.
@@ -609,9 +609,9 @@ func (osuo *OrganizationSettingUpdateOne) Mutation() *OrganizationSettingMutatio
 	return osuo.mutation
 }
 
-// ClearOrgnaization clears the "orgnaization" edge to the Organization entity.
-func (osuo *OrganizationSettingUpdateOne) ClearOrgnaization() *OrganizationSettingUpdateOne {
-	osuo.mutation.ClearOrgnaization()
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (osuo *OrganizationSettingUpdateOne) ClearOrganization() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearOrganization()
 	return osuo
 }
 
@@ -779,12 +779,12 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 	if osuo.mutation.TagsCleared() {
 		_spec.ClearField(organizationsetting.FieldTags, field.TypeJSON)
 	}
-	if osuo.mutation.OrgnaizationCleared() {
+	if osuo.mutation.OrganizationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsetting.OrgnaizationTable,
-			Columns: []string{organizationsetting.OrgnaizationColumn},
+			Table:   organizationsetting.OrganizationTable,
+			Columns: []string{organizationsetting.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
@@ -793,12 +793,12 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 		edge.Schema = osuo.schemaConfig.OrganizationSetting
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := osuo.mutation.OrgnaizationIDs(); len(nodes) > 0 {
+	if nodes := osuo.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsetting.OrgnaizationTable,
-			Columns: []string{organizationsetting.OrgnaizationColumn},
+			Table:   organizationsetting.OrganizationTable,
+			Columns: []string{organizationsetting.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),

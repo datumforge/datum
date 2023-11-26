@@ -497,12 +497,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"OauthProvider",
 	)
 	graph.MustAddE(
-		"orgnaization",
+		"organization",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsetting.OrgnaizationTable,
-			Columns: []string{organizationsetting.OrgnaizationColumn},
+			Table:   organizationsetting.OrganizationTable,
+			Columns: []string{organizationsetting.OrganizationColumn},
 			Bidi:    false,
 		},
 		"OrganizationSetting",
@@ -1492,14 +1492,14 @@ func (f *OrganizationSettingFilter) WhereTags(p entql.BytesP) {
 	f.Where(p.Field(organizationsetting.FieldTags))
 }
 
-// WhereHasOrgnaization applies a predicate to check if query has an edge orgnaization.
-func (f *OrganizationSettingFilter) WhereHasOrgnaization() {
-	f.Where(entql.HasEdge("orgnaization"))
+// WhereHasOrganization applies a predicate to check if query has an edge organization.
+func (f *OrganizationSettingFilter) WhereHasOrganization() {
+	f.Where(entql.HasEdge("organization"))
 }
 
-// WhereHasOrgnaizationWith applies a predicate to check if query has an edge orgnaization with a given conditions (other predicates).
-func (f *OrganizationSettingFilter) WhereHasOrgnaizationWith(preds ...predicate.Organization) {
-	f.Where(entql.HasEdgeWith("orgnaization", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasOrganizationWith applies a predicate to check if query has an edge organization with a given conditions (other predicates).
+func (f *OrganizationSettingFilter) WhereHasOrganizationWith(preds ...predicate.Organization) {
+	f.Where(entql.HasEdgeWith("organization", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

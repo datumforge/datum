@@ -851,7 +851,7 @@ type CreateOrganizationSettingInput struct {
 	BillingAddress string
 	TaxIdentifier  string
 	Tags           []string
-	OrgnaizationID *string
+	OrganizationID *string
 }
 
 // Mutate applies the CreateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -888,8 +888,8 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
-	if v := i.OrgnaizationID; v != nil {
-		m.SetOrgnaizationID(*v)
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
 	}
 }
 
@@ -917,8 +917,8 @@ type UpdateOrganizationSettingInput struct {
 	ClearTags         bool
 	Tags              []string
 	AppendTags        []string
-	ClearOrgnaization bool
-	OrgnaizationID    *string
+	ClearOrganization bool
+	OrganizationID    *string
 }
 
 // Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -971,11 +971,11 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if i.AppendTags != nil {
 		m.AppendTags(i.Tags)
 	}
-	if i.ClearOrgnaization {
-		m.ClearOrgnaization()
+	if i.ClearOrganization {
+		m.ClearOrganization()
 	}
-	if v := i.OrgnaizationID; v != nil {
-		m.SetOrgnaizationID(*v)
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
 	}
 }
 

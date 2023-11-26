@@ -1525,15 +1525,15 @@ func (c *OrganizationSettingClient) GetX(ctx context.Context, id string) *Organi
 	return obj
 }
 
-// QueryOrgnaization queries the orgnaization edge of a OrganizationSetting.
-func (c *OrganizationSettingClient) QueryOrgnaization(os *OrganizationSetting) *OrganizationQuery {
+// QueryOrganization queries the organization edge of a OrganizationSetting.
+func (c *OrganizationSettingClient) QueryOrganization(os *OrganizationSetting) *OrganizationQuery {
 	query := (&OrganizationClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := os.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(organizationsetting.Table, organizationsetting.FieldID, id),
 			sqlgraph.To(organization.Table, organization.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, organizationsetting.OrgnaizationTable, organizationsetting.OrgnaizationColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, organizationsetting.OrganizationTable, organizationsetting.OrganizationColumn),
 		)
 		schemaConfig := os.schemaConfig
 		step.To.Schema = schemaConfig.Organization

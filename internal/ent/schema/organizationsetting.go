@@ -47,7 +47,7 @@ func (OrganizationSetting) Fields() []ent.Field {
 // Edges of the OrganizationSetting
 func (OrganizationSetting) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("orgnaization", Organization.Type).Ref("setting").Unique(),
+		edge.From("organization", Organization.Type).Ref("setting").Unique(),
 	}
 }
 

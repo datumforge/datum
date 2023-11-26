@@ -6519,8 +6519,8 @@ type OrganizationSettingMutation struct {
 	tags                *[]string
 	appendtags          []string
 	clearedFields       map[string]struct{}
-	orgnaization        *string
-	clearedorgnaization bool
+	organization        *string
+	clearedorganization bool
 	done                bool
 	oldValue            func(context.Context) (*OrganizationSetting, error)
 	predicates          []predicate.OrganizationSetting
@@ -7204,43 +7204,43 @@ func (m *OrganizationSettingMutation) ResetTags() {
 	delete(m.clearedFields, organizationsetting.FieldTags)
 }
 
-// SetOrgnaizationID sets the "orgnaization" edge to the Organization entity by id.
-func (m *OrganizationSettingMutation) SetOrgnaizationID(id string) {
-	m.orgnaization = &id
+// SetOrganizationID sets the "organization" edge to the Organization entity by id.
+func (m *OrganizationSettingMutation) SetOrganizationID(id string) {
+	m.organization = &id
 }
 
-// ClearOrgnaization clears the "orgnaization" edge to the Organization entity.
-func (m *OrganizationSettingMutation) ClearOrgnaization() {
-	m.clearedorgnaization = true
+// ClearOrganization clears the "organization" edge to the Organization entity.
+func (m *OrganizationSettingMutation) ClearOrganization() {
+	m.clearedorganization = true
 }
 
-// OrgnaizationCleared reports if the "orgnaization" edge to the Organization entity was cleared.
-func (m *OrganizationSettingMutation) OrgnaizationCleared() bool {
-	return m.clearedorgnaization
+// OrganizationCleared reports if the "organization" edge to the Organization entity was cleared.
+func (m *OrganizationSettingMutation) OrganizationCleared() bool {
+	return m.clearedorganization
 }
 
-// OrgnaizationID returns the "orgnaization" edge ID in the mutation.
-func (m *OrganizationSettingMutation) OrgnaizationID() (id string, exists bool) {
-	if m.orgnaization != nil {
-		return *m.orgnaization, true
+// OrganizationID returns the "organization" edge ID in the mutation.
+func (m *OrganizationSettingMutation) OrganizationID() (id string, exists bool) {
+	if m.organization != nil {
+		return *m.organization, true
 	}
 	return
 }
 
-// OrgnaizationIDs returns the "orgnaization" edge IDs in the mutation.
+// OrganizationIDs returns the "organization" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// OrgnaizationID instead. It exists only for internal usage by the builders.
-func (m *OrganizationSettingMutation) OrgnaizationIDs() (ids []string) {
-	if id := m.orgnaization; id != nil {
+// OrganizationID instead. It exists only for internal usage by the builders.
+func (m *OrganizationSettingMutation) OrganizationIDs() (ids []string) {
+	if id := m.organization; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetOrgnaization resets all changes to the "orgnaization" edge.
-func (m *OrganizationSettingMutation) ResetOrgnaization() {
-	m.orgnaization = nil
-	m.clearedorgnaization = false
+// ResetOrganization resets all changes to the "organization" edge.
+func (m *OrganizationSettingMutation) ResetOrganization() {
+	m.organization = nil
+	m.clearedorganization = false
 }
 
 // Where appends a list predicates to the OrganizationSettingMutation builder.
@@ -7619,8 +7619,8 @@ func (m *OrganizationSettingMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationSettingMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.orgnaization != nil {
-		edges = append(edges, organizationsetting.EdgeOrgnaization)
+	if m.organization != nil {
+		edges = append(edges, organizationsetting.EdgeOrganization)
 	}
 	return edges
 }
@@ -7629,8 +7629,8 @@ func (m *OrganizationSettingMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *OrganizationSettingMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case organizationsetting.EdgeOrgnaization:
-		if id := m.orgnaization; id != nil {
+	case organizationsetting.EdgeOrganization:
+		if id := m.organization; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -7652,8 +7652,8 @@ func (m *OrganizationSettingMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationSettingMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.clearedorgnaization {
-		edges = append(edges, organizationsetting.EdgeOrgnaization)
+	if m.clearedorganization {
+		edges = append(edges, organizationsetting.EdgeOrganization)
 	}
 	return edges
 }
@@ -7662,8 +7662,8 @@ func (m *OrganizationSettingMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *OrganizationSettingMutation) EdgeCleared(name string) bool {
 	switch name {
-	case organizationsetting.EdgeOrgnaization:
-		return m.clearedorgnaization
+	case organizationsetting.EdgeOrganization:
+		return m.clearedorganization
 	}
 	return false
 }
@@ -7672,8 +7672,8 @@ func (m *OrganizationSettingMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *OrganizationSettingMutation) ClearEdge(name string) error {
 	switch name {
-	case organizationsetting.EdgeOrgnaization:
-		m.ClearOrgnaization()
+	case organizationsetting.EdgeOrganization:
+		m.ClearOrganization()
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting unique edge %s", name)
@@ -7683,8 +7683,8 @@ func (m *OrganizationSettingMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *OrganizationSettingMutation) ResetEdge(name string) error {
 	switch name {
-	case organizationsetting.EdgeOrgnaization:
-		m.ResetOrgnaization()
+	case organizationsetting.EdgeOrganization:
+		m.ResetOrganization()
 		return nil
 	}
 	return fmt.Errorf("unknown OrganizationSetting edge %s", name)

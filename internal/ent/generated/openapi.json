@@ -2077,7 +2077,7 @@
                       "type": "string"
                     }
                   },
-                  "orgnaization": {
+                  "organization": {
                     "type": "string"
                   }
                 },
@@ -2270,7 +2270,7 @@
                       "type": "string"
                     }
                   },
-                  "orgnaization": {
+                  "organization": {
                     "type": "string"
                   }
                 }
@@ -2305,14 +2305,14 @@
         }
       }
     },
-    "/organization-settings/{id}/orgnaization": {
+    "/organization-settings/{id}/organization": {
       "get": {
         "tags": [
           "OrganizationSetting"
         ],
         "summary": "Find the attached Organization",
         "description": "Find the attached Organization of the OrganizationSetting with the given ID",
-        "operationId": "readOrganizationSettingOrgnaization",
+        "operationId": "readOrganizationSettingOrganization",
         "parameters": [
           {
             "name": "id",
@@ -2330,7 +2330,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrganizationSetting_OrgnaizationRead"
+                  "$ref": "#/components/schemas/OrganizationSetting_OrganizationRead"
                 }
               }
             }
@@ -7489,7 +7489,7 @@
               "type": "string"
             }
           },
-          "orgnaization": {
+          "organization": {
             "$ref": "#/components/schemas/Organization"
           }
         },
@@ -7796,7 +7796,7 @@
           "tax_identifier"
         ]
       },
-      "OrganizationSetting_OrgnaizationRead": {
+      "OrganizationSetting_OrganizationRead": {
         "type": "object",
         "properties": {
           "id": {

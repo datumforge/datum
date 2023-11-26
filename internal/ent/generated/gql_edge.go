@@ -165,10 +165,10 @@ func (o *Organization) Oauthprovider(ctx context.Context) (result []*OauthProvid
 	return result, err
 }
 
-func (os *OrganizationSetting) Orgnaization(ctx context.Context) (*Organization, error) {
-	result, err := os.Edges.OrgnaizationOrErr()
+func (os *OrganizationSetting) Organization(ctx context.Context) (*Organization, error) {
+	result, err := os.Edges.OrganizationOrErr()
 	if IsNotLoaded(err) {
-		result, err = os.QueryOrgnaization().Only(ctx)
+		result, err = os.QueryOrganization().Only(ctx)
 	}
 	return result, MaskNotFound(err)
 }

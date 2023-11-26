@@ -148,7 +148,7 @@ input CreateOrganizationSettingInput {
 	taxIdentifier: String!
 	"""tags associated with the object"""
 	tags: [String!]
-	orgnaizationID: ID
+	organizationID: ID
 }
 """
 CreatePersonalAccessTokenInput is used for create PersonalAccessToken object.
@@ -1572,7 +1572,7 @@ type OrganizationSetting implements Node {
 	taxIdentifier: String!
 	"""tags associated with the object"""
 	tags: [String!]
-	orgnaization: Organization
+	organization: Organization
 }
 """A connection to a list of items."""
 type OrganizationSettingConnection {
@@ -1786,9 +1786,9 @@ input OrganizationSettingWhereInput {
 	taxIdentifierHasSuffix: String
 	taxIdentifierEqualFold: String
 	taxIdentifierContainsFold: String
-	"""orgnaization edge predicates"""
-	hasOrgnaization: Boolean
-	hasOrgnaizationWith: [OrganizationWhereInput!]
+	"""organization edge predicates"""
+	hasOrganization: Boolean
+	hasOrganizationWith: [OrganizationWhereInput!]
 }
 """Return response for updateOrganization mutation"""
 type OrganizationUpdatePayload {
@@ -2939,8 +2939,8 @@ input UpdateOrganizationSettingInput {
 	tags: [String!]
 	appendTags: [String!]
 	clearTags: Boolean
-	orgnaizationID: ID
-	clearOrgnaization: Boolean
+	organizationID: ID
+	clearOrganization: Boolean
 }
 """
 UpdatePersonalAccessTokenInput is used for update PersonalAccessToken object.

@@ -175,23 +175,23 @@ func (osc *OrganizationSettingCreate) SetNillableID(s *string) *OrganizationSett
 	return osc
 }
 
-// SetOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID.
-func (osc *OrganizationSettingCreate) SetOrgnaizationID(id string) *OrganizationSettingCreate {
-	osc.mutation.SetOrgnaizationID(id)
+// SetOrganizationID sets the "organization" edge to the Organization entity by ID.
+func (osc *OrganizationSettingCreate) SetOrganizationID(id string) *OrganizationSettingCreate {
+	osc.mutation.SetOrganizationID(id)
 	return osc
 }
 
-// SetNillableOrgnaizationID sets the "orgnaization" edge to the Organization entity by ID if the given value is not nil.
-func (osc *OrganizationSettingCreate) SetNillableOrgnaizationID(id *string) *OrganizationSettingCreate {
+// SetNillableOrganizationID sets the "organization" edge to the Organization entity by ID if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableOrganizationID(id *string) *OrganizationSettingCreate {
 	if id != nil {
-		osc = osc.SetOrgnaizationID(*id)
+		osc = osc.SetOrganizationID(*id)
 	}
 	return osc
 }
 
-// SetOrgnaization sets the "orgnaization" edge to the Organization entity.
-func (osc *OrganizationSettingCreate) SetOrgnaization(o *Organization) *OrganizationSettingCreate {
-	return osc.SetOrgnaizationID(o.ID)
+// SetOrganization sets the "organization" edge to the Organization entity.
+func (osc *OrganizationSettingCreate) SetOrganization(o *Organization) *OrganizationSettingCreate {
+	return osc.SetOrganizationID(o.ID)
 }
 
 // Mutation returns the OrganizationSettingMutation object of the builder.
@@ -418,12 +418,12 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 		_spec.SetField(organizationsetting.FieldTags, field.TypeJSON, value)
 		_node.Tags = value
 	}
-	if nodes := osc.mutation.OrgnaizationIDs(); len(nodes) > 0 {
+	if nodes := osc.mutation.OrganizationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   organizationsetting.OrgnaizationTable,
-			Columns: []string{organizationsetting.OrgnaizationColumn},
+			Table:   organizationsetting.OrganizationTable,
+			Columns: []string{organizationsetting.OrganizationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),

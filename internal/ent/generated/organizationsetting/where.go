@@ -887,12 +887,12 @@ func TagsNotNil() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(sql.FieldNotNull(FieldTags))
 }
 
-// HasOrgnaization applies the HasEdge predicate on the "orgnaization" edge.
-func HasOrgnaization() predicate.OrganizationSetting {
+// HasOrganization applies the HasEdge predicate on the "organization" edge.
+func HasOrganization() predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, OrgnaizationTable, OrgnaizationColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, OrganizationTable, OrganizationColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Organization
@@ -901,10 +901,10 @@ func HasOrgnaization() predicate.OrganizationSetting {
 	})
 }
 
-// HasOrgnaizationWith applies the HasEdge predicate on the "orgnaization" edge with a given conditions (other predicates).
-func HasOrgnaizationWith(preds ...predicate.Organization) predicate.OrganizationSetting {
+// HasOrganizationWith applies the HasEdge predicate on the "organization" edge with a given conditions (other predicates).
+func HasOrganizationWith(preds ...predicate.Organization) predicate.OrganizationSetting {
 	return predicate.OrganizationSetting(func(s *sql.Selector) {
-		step := newOrgnaizationStep()
+		step := newOrganizationStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.OrganizationSetting

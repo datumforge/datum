@@ -56,8 +56,8 @@ type OrganizationSetting struct {
 
 // OrganizationSettingEdges holds the relations/edges for other nodes in the graph.
 type OrganizationSettingEdges struct {
-	// Orgnaization holds the value of the orgnaization edge.
-	Orgnaization *Organization `json:"orgnaization,omitempty"`
+	// Organization holds the value of the organization edge.
+	Organization *Organization `json:"organization,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -65,17 +65,17 @@ type OrganizationSettingEdges struct {
 	totalCount [1]map[string]int
 }
 
-// OrgnaizationOrErr returns the Orgnaization value or an error if the edge
+// OrganizationOrErr returns the Organization value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e OrganizationSettingEdges) OrgnaizationOrErr() (*Organization, error) {
+func (e OrganizationSettingEdges) OrganizationOrErr() (*Organization, error) {
 	if e.loadedTypes[0] {
-		if e.Orgnaization == nil {
+		if e.Organization == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: organization.Label}
 		}
-		return e.Orgnaization, nil
+		return e.Organization, nil
 	}
-	return nil, &NotLoadedError{edge: "orgnaization"}
+	return nil, &NotLoadedError{edge: "organization"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -220,9 +220,9 @@ func (os *OrganizationSetting) Value(name string) (ent.Value, error) {
 	return os.selectValues.Get(name)
 }
 
-// QueryOrgnaization queries the "orgnaization" edge of the OrganizationSetting entity.
-func (os *OrganizationSetting) QueryOrgnaization() *OrganizationQuery {
-	return NewOrganizationSettingClient(os.config).QueryOrgnaization(os)
+// QueryOrganization queries the "organization" edge of the OrganizationSetting entity.
+func (os *OrganizationSetting) QueryOrganization() *OrganizationQuery {
+	return NewOrganizationSettingClient(os.config).QueryOrganization(os)
 }
 
 // Update returns a builder for updating this OrganizationSetting.

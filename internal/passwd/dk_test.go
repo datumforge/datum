@@ -14,10 +14,10 @@ func TestDerivedKey(t *testing.T) {
 	require.EqualError(t, err, "cannot create derived key for empty password")
 
 	// Create a derived key from a password
-	passwd, err := CreateDerivedKey("mattisthebest")
+	passwd, err := CreateDerivedKey("theeaglefliesatmidnight")
 	require.NoError(t, err)
 
-	verified, err := VerifyDerivedKey(passwd, "mattisthebest")
+	verified, err := VerifyDerivedKey(passwd, "theeaglefliesatmidnight")
 	require.NoError(t, err)
 	require.True(t, verified)
 
@@ -45,7 +45,7 @@ func TestDerivedKeyDetail(t *testing.T) {
 	require.EqualError(t, err, errmsg)
 
 	dk := "$pbkdf2$v=19$m=65536,t=1,p=2$FrAEw4rWRDpyIZXR/QSzpg==$chQikgApfQfSaPZ7idk6caqBk79xRalpPUs4Ro/hywM="
-	errmsg = "current code only works with the the dk protcol \"argon2id\" not \"pbkdf2\""
+	errmsg = "current code only works with the the dk protcol \"argon2id\""
 	_, err = VerifyDerivedKey(dk, "supersecretpassword")
 	require.EqualError(t, err, errmsg)
 

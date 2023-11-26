@@ -30,11 +30,15 @@ func TestIsZero(t *testing.T) {
 func TestNew(t *testing.T) {
 	// Should be able to concurrently create 100 ulids.
 	var wg sync.WaitGroup
+
 	wg.Add(100)
+
 	for i := 0; i < 100; i++ {
 		go func() {
 			defer wg.Done()
+
 			uid := ulidlib.New()
+
 			require.False(t, ulidlib.IsZero(uid))
 		}()
 	}
@@ -47,11 +51,15 @@ func TestFromTime(t *testing.T) {
 	vals := sync.Map{}
 
 	var wg sync.WaitGroup
+
 	wg.Add(100)
+
 	for i := 0; i < 100; i++ {
 		go func() {
 			defer wg.Done()
+
 			uid := ulidlib.FromTime(now)
+
 			require.False(t, ulidlib.IsZero(uid))
 			vals.Store(uid, struct{}{})
 		}()
@@ -59,6 +67,7 @@ func TestFromTime(t *testing.T) {
 	wg.Wait()
 
 	nunique := 0
+
 	vals.Range(func(key, value any) bool {
 		nunique++
 		return true

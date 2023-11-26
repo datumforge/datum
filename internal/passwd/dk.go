@@ -32,7 +32,7 @@ var (
 )
 
 // CreateDerivedKey creates an encoded derived key with a random hash for the password.
-func CreateDerivedKey(password string) (_ string, err error) {
+func CreateDerivedKey(password string) (string, error) {
 	if password == "" {
 		return "", ErrCannotCreateDK
 	}

@@ -100,10 +100,9 @@ func MustParse(uid any) (id ulid.ULID) {
 }
 
 // Bytes parses a ULID and returns the []byte representation of the ULID
-func Bytes(uid any) (_ []byte, err error) {
-	var sid ulid.ULID
-
-	if sid, err = Parse(uid); err != nil {
+func Bytes(uid any) ([]byte, error) {
+	sid, err := Parse(uid)
+	if err != nil {
 		return nil, err
 	}
 

@@ -38,7 +38,7 @@ func CreateDerivedKey(password string) (string, error) {
 	}
 
 	salt := make([]byte, dkSLen)
-	if _, err = rand.Read(salt); err != nil {
+	if _, err := rand.Read(salt); err != nil {
 		return "", ErrCouldNotGenerate
 	}
 
@@ -50,7 +50,7 @@ func CreateDerivedKey(password string) (string, error) {
 }
 
 // VerifyDerivedKey checks that the submitted password matches the derived key.
-func VerifyDerivedKey(dk, password string)  (bool, error) {
+func VerifyDerivedKey(dk, password string) (bool, error) {
 	if dk == "" || password == "" {
 		return false, ErrUnableToVerify
 	}
@@ -79,12 +79,12 @@ func ParseDerivedKey(encoded string) (dk, salt []byte, time, memory uint32, thre
 
 	// check the algorithm
 	if parts[1] != dkAlg {
-		return nil, nil, 0, 0, 0, ErrDKProtocol
+		return nil, nil, 0, 0, 0, newParseError("dkAlg", parts[1], err)
 	}
 
 	// check the version
 	if version, err := strconv.Atoi(parts[2]); err != nil || version != argon2.Version {
-		return nil, nil, 0, 0, 0, ErrExpectedDKVersion
+		return nil, nil, 0, 0, 0, newParseError("version", parts[2], err)
 	}
 
 	var (
@@ -94,29 +94,29 @@ func ParseDerivedKey(encoded string) (dk, salt []byte, time, memory uint32, thre
 	)
 
 	if memory64, err = strconv.ParseUint(parts[3], 10, 32); err != nil {
-		return nil, nil, 0, 0, 0, ErrDKCouldNotParseMemory
+		return nil, nil, 0, 0, 0, newParseError("memory", parts[3], err)
 	}
 
 	memory = uint32(memory64)
 
 	if time64, err = strconv.ParseUint(parts[4], 10, 32); err != nil {
-		return nil, nil, 0, 0, 0, ErrDKParseTime
+		return nil, nil, 0, 0, 0, newParseError("time", parts[4], err)
 	}
 
 	time = uint32(time64)
 
 	if threads64, err = strconv.ParseUint(parts[5], 10, 8); err != nil {
-		return nil, nil, 0, 0, 0, ErrDKParseThreads
+		return nil, nil, 0, 0, 0, newParseError("threads", parts[5], err)
 	}
 
 	threads = uint8(threads64)
 
 	if salt, err = base64.StdEncoding.DecodeString(parts[6]); err != nil {
-		return nil, nil, 0, 0, 0, ErrDKParseSalt
+		return nil, nil, 0, 0, 0, newParseError("salt", parts[6], err)
 	}
 
 	if dk, err = base64.StdEncoding.DecodeString(parts[7]); err != nil {
-		return nil, nil, 0, 0, 0, ErrDKParseDK
+		return nil, nil, 0, 0, 0, newParseError("dk", parts[7], err)
 	}
 
 	return dk, salt, time, memory, threads, nil

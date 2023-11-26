@@ -50,7 +50,7 @@ func TestDerivedKeyDetail(t *testing.T) {
 	require.EqualError(t, err, errmsg)
 
 	dk = "$argon2id$v=13212$m=65536,t=1,p=2$FrAEw4rWRDpyIZXR/QSzpg==$chQikgApfQfSaPZ7idk6caqBk79xRalpPUs4Ro/hywM="
-	errmsg = "expected argon2id version 19 got \"13212\""
+	errmsg = "expected argon2id version 19"
 	_, err = VerifyDerivedKey(dk, "supersecretpassword")
 	require.EqualError(t, err, errmsg)
 

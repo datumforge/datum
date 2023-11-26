@@ -50,7 +50,7 @@ func CreateDerivedKey(password string) (string, error) {
 }
 
 // VerifyDerivedKey checks that the submitted password matches the derived key.
-func VerifyDerivedKey(dk, password string) (_ bool, err error) {
+func VerifyDerivedKey(dk, password string)  (bool, error) {
 	if dk == "" || password == "" {
 		return false, ErrUnableToVerify
 	}

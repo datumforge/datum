@@ -6,6 +6,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"entgo.io/contrib/entgql"
@@ -53,8 +54,9 @@ func main() {
 	}
 
 	if err := entc.Generate("./internal/ent/schema", &gen.Config{
-		Target:  "./internal/ent/generated",
-		Package: "github.com/datumforge/datum/internal/ent/generated",
+		Target:    "./internal/ent/generated",
+		Templates: entgql.AllTemplates,
+		Package:   "github.com/datumforge/datum/internal/ent/generated",
 		Features: []gen.Feature{
 			gen.FeatureVersionedMigration,
 			gen.FeaturePrivacy,
@@ -75,6 +77,9 @@ func main() {
 		entc.Dependency(
 			entc.DependencyName("Logger"),
 			entc.DependencyType(zap.SugaredLogger{}),
+		),
+		entc.Dependency(
+			entc.DependencyType(&http.Client{}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

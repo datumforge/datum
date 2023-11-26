@@ -11,6 +11,8 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
 
+	"net/http"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -104,6 +106,7 @@ type (
 		SecretsKeeper *secrets.Keeper
 		Authz         fga.Client
 		Logger        zap.SugaredLogger
+		HTTPClient    *http.Client
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -167,6 +170,13 @@ func Authz(v fga.Client) Option {
 func Logger(v zap.SugaredLogger) Option {
 	return func(c *config) {
 		c.Logger = v
+	}
+}
+
+// HTTPClient configures the HTTPClient.
+func HTTPClient(v *http.Client) Option {
+	return func(c *config) {
+		c.HTTPClient = v
 	}
 }
 

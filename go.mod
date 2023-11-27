@@ -8,7 +8,7 @@ require (
 	github.com/99designs/gqlgen v0.17.40
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.16.0
-	github.com/brianvoe/gofakeit/v6 v6.24.0
+	github.com/brianvoe/gofakeit/v6 v6.25.0
 	github.com/brpaz/echozap v1.1.3
 	github.com/globocom/echo-prometheus v0.1.2
 	github.com/golang-jwt/jwt/v5 v5.1.0

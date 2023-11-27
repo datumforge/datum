@@ -11,19 +11,6 @@ var (
 	ErrInvalidKeyType  = errors.New("key is of invalid type")
 	ErrHashUnavailable = errors.New("the requested hash function is unavailable")
 
-	ErrTokenMalformed        = errors.New("token is malformed")
-	ErrTokenUnverifiable     = errors.New("token is unverifiable")
-	ErrTokenSignatureInvalid = errors.New("token signature is invalid")
-
-	ErrTokenInvalidAudience  = errors.New("token has invalid audience")
-	ErrTokenExpired          = errors.New("token is expired")
-	ErrTokenUsedBeforeIssued = errors.New("token used before issued")
-	ErrTokenInvalidIssuer    = errors.New("token has invalid issuer")
-	ErrTokenNotValidYet      = errors.New("token is not valid yet")
-	ErrTokenNotValid         = errors.New("token is invalid")
-	ErrTokenInvalidID        = errors.New("token has invalid id")
-	ErrTokenInvalidClaims    = errors.New("token has invalid claims")
-
 	ErrCacheMiss    = errors.New("requested key is not in the cache")
 	ErrCacheExpired = errors.New("requested key is expired")
 
@@ -41,6 +28,43 @@ var (
 
 	// ErrUnknownSigningKey returns when the signing key fetched does not match the loaded managed keys
 	ErrUnknownSigningKey = errors.New("unknown signing key")
+)
+
+var (
+	// The below block of error constants are only used in comparison(s) checks with ValidationError and are the inner standard errors which could occur when performing token validation; these won't be referenced in return error messages within the code directly and wrapped with our custom errors
+
+	// ErrTokenMalformed returns when a token is malformed
+	ErrTokenMalformed = errors.New("token is malformed")
+
+	// ErrTokenUnverifiable
+	ErrTokenUnverifiable = errors.New("token is unverifiable")
+
+	// ErrTokenSignatureInvalid
+	ErrTokenSignatureInvalid = errors.New("token signature is invalid")
+
+	// ErrTokenInvalidAudience
+	ErrTokenInvalidAudience = errors.New("token has invalid audience")
+
+	// ErrTokenExpired
+	ErrTokenExpired = errors.New("token is expired")
+
+	// ErrTokenUsedBeforeIssued
+	ErrTokenUsedBeforeIssued = errors.New("token used before issued")
+
+	// ErrTokenInvalidIssuer
+	ErrTokenInvalidIssuer = errors.New("token has invalid issuer")
+
+	// ErrTokenNotValidYet
+	ErrTokenNotValidYet = errors.New("token is not valid yet")
+
+	// ErrTokenNotValid
+	ErrTokenNotValid = errors.New("token is invalid")
+
+	// ErrTokenInvalidID
+	ErrTokenInvalidID = errors.New("token has invalid id")
+
+	// ErrTokenInvalidClaims
+	ErrTokenInvalidClaims = errors.New("token has invalid claims")
 )
 
 // The errors that might occur when parsing and validating a token
@@ -74,7 +98,7 @@ type ValidationError struct {
 	text   string
 }
 
-// Error is the implementation of the err interface.
+// Error is the implementation of the err interface for ValidationError
 func (e ValidationError) Error() string {
 	i := e.Inner
 
@@ -88,7 +112,7 @@ func (e ValidationError) Error() string {
 	}
 }
 
-// Unwrap gives errors.Is and errors.As access to the inner error.
+// Unwrap gives errors.Is and errors.As access to the inner errors defined above
 func (e *ValidationError) Unwrap() error {
 	return e.Inner
 }
@@ -100,7 +124,7 @@ func (e *ValidationError) valid() bool {
 
 // Is checks if this ValidationError is of the supplied error. We are first checking for the exact error message
 // by comparing the inner error message. If that fails, we compare using the error flags. This way we can use
-// custom error messages (mainly for backwards compatibility) and still leverage errors.Is using the global error variables and I just learned how to use errors.Is today
+// custom error messages and leverage errors.Is using the global error variables, plus I just learned how to use errors.Is today so this is pretty sweet
 func (e *ValidationError) Is(err error) bool {
 	// Check, if our inner error is a direct match
 	if errors.Is(errors.Unwrap(e), err) {
@@ -134,8 +158,7 @@ func (e *ValidationError) Is(err error) bool {
 	return false
 }
 
-// ParseError is defining a custom error type called `ParseError`. It is a struct
-// that holds intermediary values for comparison in errors
+// ParseError is defining a custom error type called `ParseError`
 type ParseError struct {
 	Object string
 	Value  string
@@ -147,6 +170,7 @@ func (e *ParseError) Error() string {
 	return fmt.Sprintf("could not parse %s %s: %v", e.Object, e.Value, e.Err)
 }
 
+// The function newParseError creates a new ParseError object with the given parameters
 func newParseError(o string, v string, err error) *ParseError {
 	return &ParseError{
 		Object: o,

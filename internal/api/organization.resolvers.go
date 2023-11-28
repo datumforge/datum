@@ -132,39 +132,3 @@ func (r *queryResolver) Organization(ctx context.Context, id string) (*generated
 
 	return org, nil
 }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) createOrg(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
-	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
-	if err != nil {
-		if generated.IsValidationError(err) {
-			validationError := err.(*generated.ValidationError)
-
-			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
-
-			return nil, validationError
-		}
-
-		if generated.IsConstraintError(err) {
-			constraintError := err.(*generated.ConstraintError)
-
-			r.logger.Debugw("constraint error", "error", constraintError.Error())
-
-			return nil, constraintError
-		}
-
-		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
-		}
-
-		r.logger.Errorw("failed to create organization", "error", err)
-		return nil, ErrInternalServerError
-	}
-
-	return &OrganizationCreatePayload{Organization: org}, nil
-}

@@ -3,8 +3,10 @@ package datum
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
@@ -73,6 +75,10 @@ func createUser(ctx context.Context) error {
 	}
 
 	displayName := viper.GetString("user.create.display-name")
+	if displayName == "" {
+		// set a default display name if not set
+		displayName = strings.ToLower(fmt.Sprintf("%s.%s", firstName, lastName))
+	}
 
 	input := datumclient.CreateUserInput{
 		Email:     email,

@@ -1,4 +1,3 @@
-// Package entdb extends the ent db library
 package entdb
 
 import (

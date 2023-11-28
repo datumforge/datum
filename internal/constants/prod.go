@@ -2,9 +2,9 @@ package constants
 
 const (
 	// IdentitySeverURL is the URL of the identity server
-	IdentitySeverURL = "https://auth.datum.com"
-	// MinderGRPCHost is the host of the minder gRPC server
-	MattsHost = "api.datum.com"
-	// TrustyHttpURL is the URL of the trusty server
-	MattsURL = "https://mattisthebest.dev/"
+	ProdIdentitySeverURL = "https://auth.datum.net"
+	// ProdServerHostAPI is the host of the datum server
+	ProdServerHostAPI = "api.datum.net"
+	// DatumHTTPURL is the URL of the trusty server
+	ProdDatumHTTPURL = "https://mattisthebest.dev/"
 )

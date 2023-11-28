@@ -395,6 +395,8 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
+
+			// TODO: make sure user settings was deleted on user delete once user-setting resolvers are completed
 		})
 	}
 }

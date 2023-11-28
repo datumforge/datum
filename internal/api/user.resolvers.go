@@ -8,15 +8,35 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input generated.CreateUserInput) (*UserCreatePayload, error) {
-	// TODO - add permissions checks
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	// user settings are required, if this is empty generate a default setting schema
+	if input.SettingID == "" {
+		// sets up default user settings using schema defaults
+		userSettingID, err := r.defaultUserSettings(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		// add the user setting ID to the input
+		input.SettingID = userSettingID
+	}
+
 	user, err := r.client.User.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if generated.IsConstraintError(err) {
 			return nil, err
 		}
 
@@ -24,7 +44,12 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 		return nil, ErrInternalServerError
 	}
 
-	return &UserCreatePayload{User: user}, nil
+	// when a user is created, we create a personal user org
+	if err := r.createPersonalOrg(ctx, user); err != nil {
+		return nil, ErrInternalServerError
+	}
+
+	return &UserCreatePayload{User: user}, err
 }
 
 // UpdateUser is the resolver for the updateUser field.

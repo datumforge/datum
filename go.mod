@@ -10,6 +10,7 @@ require (
 	github.com/Yamashou/gqlgenc v0.16.0
 	github.com/brianvoe/gofakeit/v6 v6.25.0
 	github.com/brpaz/echozap v1.1.3
+	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/globocom/echo-prometheus v0.1.2
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/hashicorp/go-multierror v1.1.1
@@ -118,7 +119,7 @@ require (
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/text v0.14.0
 	golang.org/x/time v0.4.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

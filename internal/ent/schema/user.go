@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -133,7 +134,12 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
-		edge.To("setting", UserSetting.Type).Required().Unique(),
+		edge.To("setting", UserSetting.Type).
+			Required().
+			Unique().
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
 		edge.To("refreshtoken", RefreshToken.Type),
 	}
 }
@@ -148,7 +154,10 @@ func (User) Annotations() []schema.Annotation {
 }
 
 // Policy defines the privacy policy of the User.
+// TODO: implement privacy policy on the user
 func (User) Policy() ent.Policy {
-	// Privacy policy defined in the BaseMixin and TenantMixin.
-	return nil
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{},
+		Query:    privacy.QueryPolicy{},
+	}
 }

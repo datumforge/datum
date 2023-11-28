@@ -5,6 +5,7 @@ package generated
 import (
 	"context"
 	"database/sql/driver"
+	"errors"
 	"fmt"
 	"math"
 
@@ -569,6 +570,12 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		uq.sql = prev
+	}
+	if user.Policy == nil {
+		return errors.New("generated: uninitialized user.Policy (forgotten import generated/runtime?)")
+	}
+	if err := user.Policy.EvalQuery(ctx, uq); err != nil {
+		return err
 	}
 	return nil
 }

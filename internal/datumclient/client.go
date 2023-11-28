@@ -9,6 +9,7 @@ import (
 
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 type DatumClient interface {
@@ -17,6 +18,11 @@ type DatumClient interface {
 	CreateOrganization(ctx context.Context, input CreateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*CreateOrganization, error)
 	UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error)
 	DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error)
+	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
+	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
+	CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error)
+	UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error)
+	DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error)
 }
 
 type Client struct {
@@ -333,6 +339,369 @@ func (t *DeleteOrganization_DeleteOrganization) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type GetUserByID_User_Setting struct {
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+}
+
+func (t *GetUserByID_User_Setting) GetStatus() *usersetting.Status {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return &t.Status
+}
+func (t *GetUserByID_User_Setting) GetLocked() bool {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.Locked
+}
+func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.EmailConfirmed
+}
+
+type GetUserByID_User struct {
+	ID          string                   "json:\"id\" graphql:\"id\""
+	FirstName   string                   "json:\"firstName\" graphql:\"firstName\""
+	LastName    string                   "json:\"lastName\" graphql:\"lastName\""
+	Email       string                   "json:\"email\" graphql:\"email\""
+	DisplayName string                   "json:\"displayName\" graphql:\"displayName\""
+	Setting     GetUserByID_User_Setting "json:\"setting\" graphql:\"setting\""
+}
+
+func (t *GetUserByID_User) GetID() string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.ID
+}
+func (t *GetUserByID_User) GetFirstName() string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.FirstName
+}
+func (t *GetUserByID_User) GetLastName() string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.LastName
+}
+func (t *GetUserByID_User) GetEmail() string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.Email
+}
+func (t *GetUserByID_User) GetDisplayName() string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.DisplayName
+}
+func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return &t.Setting
+}
+
+type GetAllUsers_Users_Edges_Node_Setting struct {
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+}
+
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *usersetting.Status {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return &t.Status
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.Locked
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.EmailConfirmed
+}
+
+type GetAllUsers_Users_Edges_Node struct {
+	ID          string                               "json:\"id\" graphql:\"id\""
+	FirstName   string                               "json:\"firstName\" graphql:\"firstName\""
+	LastName    string                               "json:\"lastName\" graphql:\"lastName\""
+	Email       string                               "json:\"email\" graphql:\"email\""
+	DisplayName string                               "json:\"displayName\" graphql:\"displayName\""
+	Setting     GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
+}
+
+func (t *GetAllUsers_Users_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllUsers_Users_Edges_Node) GetFirstName() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.FirstName
+}
+func (t *GetAllUsers_Users_Edges_Node) GetLastName() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.LastName
+}
+func (t *GetAllUsers_Users_Edges_Node) GetEmail() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetAllUsers_Users_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetAllUsers_Users_Edges_Node) GetSetting() *GetAllUsers_Users_Edges_Node_Setting {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return &t.Setting
+}
+
+type GetAllUsers_Users_Edges struct {
+	Node *GetAllUsers_Users_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllUsers_Users_Edges) GetNode() *GetAllUsers_Users_Edges_Node {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllUsers_Users struct {
+	Edges []*GetAllUsers_Users_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllUsers_Users) GetEdges() []*GetAllUsers_Users_Edges {
+	if t == nil {
+		t = &GetAllUsers_Users{}
+	}
+	return t.Edges
+}
+
+type CreateUser_CreateUser_User_Setting struct {
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+}
+
+func (t *CreateUser_CreateUser_User_Setting) GetStatus() *usersetting.Status {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return &t.Status
+}
+func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.Locked
+}
+func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.EmailConfirmed
+}
+
+type CreateUser_CreateUser_User struct {
+	ID          string                             "json:\"id\" graphql:\"id\""
+	FirstName   string                             "json:\"firstName\" graphql:\"firstName\""
+	LastName    string                             "json:\"lastName\" graphql:\"lastName\""
+	Email       string                             "json:\"email\" graphql:\"email\""
+	DisplayName string                             "json:\"displayName\" graphql:\"displayName\""
+	Setting     CreateUser_CreateUser_User_Setting "json:\"setting\" graphql:\"setting\""
+	CreatedAt   time.Time                          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *CreateUser_CreateUser_User) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.ID
+}
+func (t *CreateUser_CreateUser_User) GetFirstName() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.FirstName
+}
+func (t *CreateUser_CreateUser_User) GetLastName() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.LastName
+}
+func (t *CreateUser_CreateUser_User) GetEmail() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Email
+}
+func (t *CreateUser_CreateUser_User) GetDisplayName() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.DisplayName
+}
+func (t *CreateUser_CreateUser_User) GetSetting() *CreateUser_CreateUser_User_Setting {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return &t.Setting
+}
+func (t *CreateUser_CreateUser_User) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return &t.CreatedAt
+}
+func (t *CreateUser_CreateUser_User) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateUser_CreateUser_User) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return &t.UpdatedAt
+}
+func (t *CreateUser_CreateUser_User) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.UpdatedBy
+}
+
+type CreateUser_CreateUser struct {
+	User CreateUser_CreateUser_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateUser_CreateUser) GetUser() *CreateUser_CreateUser_User {
+	if t == nil {
+		t = &CreateUser_CreateUser{}
+	}
+	return &t.User
+}
+
+type UpdateUser_UpdateUser_User struct {
+	ID          string    "json:\"id\" graphql:\"id\""
+	FirstName   string    "json:\"firstName\" graphql:\"firstName\""
+	LastName    string    "json:\"lastName\" graphql:\"lastName\""
+	Email       string    "json:\"email\" graphql:\"email\""
+	DisplayName string    "json:\"displayName\" graphql:\"displayName\""
+	CreatedAt   time.Time "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *UpdateUser_UpdateUser_User) GetID() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.ID
+}
+func (t *UpdateUser_UpdateUser_User) GetFirstName() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.FirstName
+}
+func (t *UpdateUser_UpdateUser_User) GetLastName() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.LastName
+}
+func (t *UpdateUser_UpdateUser_User) GetEmail() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.Email
+}
+func (t *UpdateUser_UpdateUser_User) GetDisplayName() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.DisplayName
+}
+func (t *UpdateUser_UpdateUser_User) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return &t.CreatedAt
+}
+func (t *UpdateUser_UpdateUser_User) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateUser_UpdateUser_User) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return &t.UpdatedAt
+}
+func (t *UpdateUser_UpdateUser_User) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.UpdatedBy
+}
+
+type UpdateUser_UpdateUser struct {
+	User UpdateUser_UpdateUser_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *UpdateUser_UpdateUser) GetUser() *UpdateUser_UpdateUser_User {
+	if t == nil {
+		t = &UpdateUser_UpdateUser{}
+	}
+	return &t.User
+}
+
+type DeleteUser_DeleteUser struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeleteUser_DeleteUser) GetDeletedID() string {
+	if t == nil {
+		t = &DeleteUser_DeleteUser{}
+	}
+	return t.DeletedID
+}
+
 type GetOrganizationByID struct {
 	Organization GetOrganizationByID_Organization "json:\"organization\" graphql:\"organization\""
 }
@@ -386,6 +755,61 @@ func (t *DeleteOrganization) GetDeleteOrganization() *DeleteOrganization_DeleteO
 		t = &DeleteOrganization{}
 	}
 	return &t.DeleteOrganization
+}
+
+type GetUserByID struct {
+	User GetUserByID_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetUserByID) GetUser() *GetUserByID_User {
+	if t == nil {
+		t = &GetUserByID{}
+	}
+	return &t.User
+}
+
+type GetAllUsers struct {
+	Users GetAllUsers_Users "json:\"users\" graphql:\"users\""
+}
+
+func (t *GetAllUsers) GetUsers() *GetAllUsers_Users {
+	if t == nil {
+		t = &GetAllUsers{}
+	}
+	return &t.Users
+}
+
+type CreateUser struct {
+	CreateUser CreateUser_CreateUser "json:\"createUser\" graphql:\"createUser\""
+}
+
+func (t *CreateUser) GetCreateUser() *CreateUser_CreateUser {
+	if t == nil {
+		t = &CreateUser{}
+	}
+	return &t.CreateUser
+}
+
+type UpdateUser struct {
+	UpdateUser UpdateUser_UpdateUser "json:\"updateUser\" graphql:\"updateUser\""
+}
+
+func (t *UpdateUser) GetUpdateUser() *UpdateUser_UpdateUser {
+	if t == nil {
+		t = &UpdateUser{}
+	}
+	return &t.UpdateUser
+}
+
+type DeleteUser struct {
+	DeleteUser DeleteUser_DeleteUser "json:\"deleteUser\" graphql:\"deleteUser\""
+}
+
+func (t *DeleteUser) GetDeleteUser() *DeleteUser_DeleteUser {
+	if t == nil {
+		t = &DeleteUser{}
+	}
+	return &t.DeleteUser
 }
 
 const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId: ID!) {
@@ -535,10 +959,181 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 	return &res, nil
 }
 
+const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
+	user(id: $userId) {
+		id
+		firstName
+		lastName
+		email
+		displayName
+		setting {
+			status
+			locked
+			emailConfirmed
+		}
+	}
+}
+`
+
+func (c *Client) GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error) {
+	vars := map[string]interface{}{
+		"userId": userID,
+	}
+
+	var res GetUserByID
+	if err := c.Client.Post(ctx, "GetUserByID", GetUserByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetAllUsersDocument = `query GetAllUsers {
+	users {
+		edges {
+			node {
+				id
+				firstName
+				lastName
+				email
+				displayName
+				setting {
+					status
+					locked
+					emailConfirmed
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error) {
+	vars := map[string]interface{}{}
+
+	var res GetAllUsers
+	if err := c.Client.Post(ctx, "GetAllUsers", GetAllUsersDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
+	createUser(input: $input) {
+		user {
+			id
+			firstName
+			lastName
+			email
+			displayName
+			setting {
+				status
+				locked
+				emailConfirmed
+			}
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreateUser
+	if err := c.Client.Post(ctx, "CreateUser", CreateUserDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: UpdateUserInput!) {
+	updateUser(id: $updateUserId, input: $input) {
+		user {
+			id
+			firstName
+			lastName
+			email
+			displayName
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+		}
+	}
+}
+`
+
+func (c *Client) UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error) {
+	vars := map[string]interface{}{
+		"updateUserId": updateUserID,
+		"input":        input,
+	}
+
+	var res UpdateUser
+	if err := c.Client.Post(ctx, "UpdateUser", UpdateUserDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeleteUserDocument = `mutation DeleteUser ($deleteUserId: ID!) {
+	deleteUser(id: $deleteUserId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error) {
+	vars := map[string]interface{}{
+		"deleteUserId": deleteUserID,
+	}
+
+	var res DeleteUser
+	if err := c.Client.Post(ctx, "DeleteUser", DeleteUserDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 var DocumentOperationNames = map[string]string{
 	GetOrganizationByIDDocument: "GetOrganizationByID",
 	GetAllOrganizationsDocument: "GetAllOrganizations",
 	CreateOrganizationDocument:  "CreateOrganization",
 	UpdateOrganizationDocument:  "UpdateOrganization",
 	DeleteOrganizationDocument:  "DeleteOrganization",
+	GetUserByIDDocument:         "GetUserByID",
+	GetAllUsersDocument:         "GetAllUsers",
+	CreateUserDocument:          "CreateUser",
+	UpdateUserDocument:          "UpdateUser",
+	DeleteUserDocument:          "DeleteUser",
 }

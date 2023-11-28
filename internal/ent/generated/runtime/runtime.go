@@ -420,8 +420,18 @@ func init() {
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
+	user.Policy = privacy.NewPolicies(schema.User{})
+	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := user.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	userMixinHooks0 := userMixin[0].Hooks()
-	user.Hooks[0] = userMixinHooks0[0]
+
+	user.Hooks[1] = userMixinHooks0[0]
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
 	userMixinFields2 := userMixin[2].Fields()

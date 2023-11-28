@@ -390,7 +390,7 @@ var (
 				Symbol:     "user_settings_users_setting",
 				Columns:    []*schema.Column{UserSettingsColumns[14]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}

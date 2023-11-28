@@ -1,0 +1,76 @@
+query GetUserByID($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    email
+    displayName
+    setting {
+        status
+        locked
+        emailConfirmed
+    }
+  }
+}
+
+query GetAllUsers {
+  users {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        email
+        displayName
+        setting {
+            status
+            locked
+            emailConfirmed
+        }
+      }
+    }
+  }
+}
+
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    user {
+      id
+      firstName
+      lastName
+      email
+      displayName
+      setting {
+        status
+        locked
+        emailConfirmed
+      }
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+
+mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $updateUserId, input: $input) {
+    user {
+      id
+      firstName
+      lastName
+      email
+      displayName
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+
+mutation DeleteUser($deleteUserId: ID!) {
+  deleteUser(id: $deleteUserId) {
+    deletedID
+  }
+}

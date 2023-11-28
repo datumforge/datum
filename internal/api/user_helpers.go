@@ -16,6 +16,8 @@ const (
 	personalOrgPrefix = "Personal Organization"
 )
 
+// getPersonalOrgInput generates the input for a new personal organization
+// personal orgs are assigned to all new users when registering with Datum
 func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput {
 	// caser is used to capitalize the first letter of words
 	caser := cases.Title(language.AmericanEnglish)

@@ -19,6 +19,7 @@ type DatumClient interface {
 	UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error)
 	DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error)
 	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
+	GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error)
 	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
 	CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error)
 	UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error)
@@ -410,6 +411,109 @@ func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
 	return &t.Setting
 }
 
+type GetUserByIDWithOrgs_User_Setting struct {
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+}
+
+func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *usersetting.Status {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return &t.Status
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetLocked() bool {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.Locked
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.EmailConfirmed
+}
+
+type GetUserByIDWithOrgs_User_Organizations struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	Name        string "json:\"name\" graphql:\"name\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+}
+
+func (t *GetUserByIDWithOrgs_User_Organizations) GetID() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Organizations{}
+	}
+	return t.ID
+}
+func (t *GetUserByIDWithOrgs_User_Organizations) GetName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Organizations{}
+	}
+	return t.Name
+}
+func (t *GetUserByIDWithOrgs_User_Organizations) GetDisplayName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Organizations{}
+	}
+	return t.DisplayName
+}
+
+type GetUserByIDWithOrgs_User struct {
+	ID            string                                    "json:\"id\" graphql:\"id\""
+	FirstName     string                                    "json:\"firstName\" graphql:\"firstName\""
+	LastName      string                                    "json:\"lastName\" graphql:\"lastName\""
+	Email         string                                    "json:\"email\" graphql:\"email\""
+	DisplayName   string                                    "json:\"displayName\" graphql:\"displayName\""
+	Setting       GetUserByIDWithOrgs_User_Setting          "json:\"setting\" graphql:\"setting\""
+	Organizations []*GetUserByIDWithOrgs_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+}
+
+func (t *GetUserByIDWithOrgs_User) GetID() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.ID
+}
+func (t *GetUserByIDWithOrgs_User) GetFirstName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.FirstName
+}
+func (t *GetUserByIDWithOrgs_User) GetLastName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.LastName
+}
+func (t *GetUserByIDWithOrgs_User) GetEmail() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.Email
+}
+func (t *GetUserByIDWithOrgs_User) GetDisplayName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.DisplayName
+}
+func (t *GetUserByIDWithOrgs_User) GetSetting() *GetUserByIDWithOrgs_User_Setting {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return &t.Setting
+}
+func (t *GetUserByIDWithOrgs_User) GetOrganizations() []*GetUserByIDWithOrgs_User_Organizations {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.Organizations
+}
+
 type GetAllUsers_Users_Edges_Node_Setting struct {
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
@@ -768,6 +872,17 @@ func (t *GetUserByID) GetUser() *GetUserByID_User {
 	return &t.User
 }
 
+type GetUserByIDWithOrgs struct {
+	User GetUserByIDWithOrgs_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetUserByIDWithOrgs) GetUser() *GetUserByIDWithOrgs_User {
+	if t == nil {
+		t = &GetUserByIDWithOrgs{}
+	}
+	return &t.User
+}
+
 type GetAllUsers struct {
 	Users GetAllUsers_Users "json:\"users\" graphql:\"users\""
 }
@@ -992,6 +1107,44 @@ func (c *Client) GetUserByID(ctx context.Context, userID string, interceptors ..
 	return &res, nil
 }
 
+const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
+	user(id: $userId) {
+		id
+		firstName
+		lastName
+		email
+		displayName
+		setting {
+			status
+			locked
+			emailConfirmed
+		}
+		organizations {
+			id
+			name
+			displayName
+		}
+	}
+}
+`
+
+func (c *Client) GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error) {
+	vars := map[string]interface{}{
+		"userId": userID,
+	}
+
+	var res GetUserByIDWithOrgs
+	if err := c.Client.Post(ctx, "GetUserByIDWithOrgs", GetUserByIDWithOrgsDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetAllUsersDocument = `query GetAllUsers {
 	users {
 		edges {
@@ -1132,6 +1285,7 @@ var DocumentOperationNames = map[string]string{
 	UpdateOrganizationDocument:  "UpdateOrganization",
 	DeleteOrganizationDocument:  "DeleteOrganization",
 	GetUserByIDDocument:         "GetUserByID",
+	GetUserByIDWithOrgsDocument: "GetUserByIDWithOrgs",
 	GetAllUsersDocument:         "GetAllUsers",
 	CreateUserDocument:          "CreateUser",
 	UpdateUserDocument:          "UpdateUser",

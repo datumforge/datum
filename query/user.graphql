@@ -13,6 +13,26 @@ query GetUserByID($userId: ID!) {
   }
 }
 
+query GetUserByIDWithOrgs($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    email
+    displayName
+    setting {
+        status
+        locked
+        emailConfirmed
+    }
+    organizations{
+      id
+      name
+      displayName
+    }
+  }
+}
+
 query GetAllUsers {
   users {
     edges {

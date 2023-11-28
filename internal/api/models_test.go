@@ -16,6 +16,12 @@ type OrganizationBuilder struct {
 	Description *string
 }
 
+type UserBuilder struct {
+	FirstName string
+	LastName  string
+	Email     string
+}
+
 func (o *OrganizationBuilder) MustNew(ctx context.Context, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *generated.Organization {
 	if o.Name == "" {
 		o.Name = gofakeit.AppName()
@@ -30,7 +36,29 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, mockCtrl *gomock.Cont
 		o.Description = &desc
 	}
 
-	mockWriteTuplesAny(mockCtrl, mc, ctx, nil)
-
 	return EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SaveX(ctx)
+}
+
+func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
+	if u.FirstName == "" {
+		u.FirstName = gofakeit.FirstName()
+	}
+
+	if u.LastName == "" {
+		u.LastName = gofakeit.LastName()
+	}
+
+	if u.Email == "" {
+		u.Email = gofakeit.Email()
+	}
+
+	// create user setting
+	userSetting := EntClient.UserSetting.Create().SaveX(ctx)
+
+	return EntClient.User.Create().
+		SetFirstName(u.FirstName).
+		SetLastName(u.LastName).
+		SetEmail(u.Email).
+		SetSetting(userSetting).
+		SaveX(ctx)
 }

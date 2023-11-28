@@ -22,10 +22,11 @@ func TestQuery_Organization(t *testing.T) {
 	mc := mock_client.NewMockSdkClient(mockCtrl)
 
 	// setup entdb with authz
-	setupAuthEntDB(t, mockCtrl, mc)
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient()
+	client := graphTestClient(entClient)
 
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
 	if err != nil {
@@ -86,10 +87,11 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 	mc := mock_client.NewMockSdkClient(mockCtrl)
 
 	// setup entdb with authz
-	setupAuthEntDB(t, mockCtrl, mc)
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
 
 	// Setup Test Graph Client Without Auth
-	client := graphTestClientNoAuth()
+	client := graphTestClientNoAuth(entClient)
 
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
 	if err != nil {
@@ -140,10 +142,11 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	mc := mock_client.NewMockSdkClient(mockCtrl)
 
 	// setup entdb with authz
-	setupAuthEntDB(t, mockCtrl, mc)
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient()
+	client := graphTestClient(entClient)
 
 	// Setup echo context
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
@@ -220,7 +223,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Create "+tc.name, func(t *testing.T) {
 			tc := tc
 			input := datumclient.CreateOrganizationInput{
 				Name:        tc.orgName,
@@ -277,10 +280,11 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	mc := mock_client.NewMockSdkClient(mockCtrl)
 
 	// setup entdb with authz
-	setupAuthEntDB(t, mockCtrl, mc)
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient()
+	client := graphTestClient(entClient)
 
 	// Setup echo context
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
@@ -353,7 +357,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Update "+tc.name, func(t *testing.T) {
 			// mock checks of tuple
 			// get organization
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
@@ -390,10 +394,11 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	mc := mock_client.NewMockSdkClient(mockCtrl)
 
 	// setup entdb with authz
-	setupAuthEntDB(t, mockCtrl, mc)
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient()
+	client := graphTestClient(entClient)
 
 	// Setup echo context
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
@@ -426,7 +431,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		t.Run("Get "+tc.name, func(t *testing.T) {
+		t.Run("Delete "+tc.name, func(t *testing.T) {
 			// mock read of tuple
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
 			mockReadAny(mockCtrl, mc, reqCtx)

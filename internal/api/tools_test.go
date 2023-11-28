@@ -81,7 +81,7 @@ func setupDB() {
 	EntClient = c
 }
 
-func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) {
+func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *ent.Client {
 	fc, err := fga.NewTestFGAClient(t, mockCtrl, mc)
 	if err != nil {
 		t.Fatalf("enable to create test FGA client")
@@ -113,7 +113,7 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 
 	errPanic("failed creating db schema", c.Schema.Create(ctx))
 
-	EntClient = c
+	return c
 }
 
 func teardownDB() {
@@ -133,12 +133,12 @@ type graphClient struct {
 	httpClient *http.Client
 }
 
-func graphTestClient() datumclient.DatumClient {
+func graphTestClient(c *ent.Client) datumclient.DatumClient {
 	g := &graphClient{
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
 			api.NewExecutableSchema(
-				api.Config{Resolvers: api.NewResolver(EntClient).WithLogger(zap.NewNop().Sugar())},
+				api.Config{Resolvers: api.NewResolver(c).WithLogger(zap.NewNop().Sugar())},
 			))}},
 	}
 
@@ -153,12 +153,12 @@ func graphTestClient() datumclient.DatumClient {
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }
 
-func graphTestClientNoAuth() datumclient.DatumClient {
+func graphTestClientNoAuth(c *ent.Client) datumclient.DatumClient {
 	g := &graphClient{
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
 			api.NewExecutableSchema(
-				api.Config{Resolvers: api.NewResolver(EntClient).WithLogger(zap.NewNop().Sugar()).WithAuthDisabled(true)},
+				api.Config{Resolvers: api.NewResolver(c).WithLogger(zap.NewNop().Sugar()).WithAuthDisabled(true)},
 			))}},
 	}
 

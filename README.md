@@ -30,7 +30,7 @@ The best method of forming / testing queries against the server is to run `task 
 
 ## OpenFGA Playground
 
-You can load up a local openFGA environment with the compose setup in this repository; `task compose:fga` - this will launch an interactive playground where you can model permissions model(s) or changes to the models
+You can load up a local openFGA environment with the compose setup in this repository; `task fga:up` - this will launch an interactive playground where you can model permissions model(s) or changes to the models
 
 ## Migrations
 

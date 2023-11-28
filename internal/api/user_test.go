@@ -208,6 +208,7 @@ func TestMutation_CreateUser(t *testing.T) {
 			assert.Equal(t, tc.userInput.LastName, resp.CreateUser.User.LastName)
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 			assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
+			assert.NotNil(t, resp.CreateUser.User.Setting)
 
 			// TODO: make sure an org was created, requires auth checks first
 		})

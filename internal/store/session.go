@@ -36,7 +36,7 @@ func SetSession(r *http.Request, w http.ResponseWriter, value, cookieName, value
 	if err != nil {
 		return err
 	}
-	
+
 	session.Values[valueName] = value
 
 	return session.Save(r, w)
@@ -48,7 +48,7 @@ func RemoveSession(r *http.Request, w http.ResponseWriter, cookieName string, se
 	if err != nil {
 		return err
 	}
-	
+
 	session.Options.MaxAge = -1
 
 	return session.Save(r, w)

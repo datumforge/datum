@@ -44,12 +44,12 @@ func SetSession(r *http.Request, w http.ResponseWriter, value, cookieName, value
 
 // RemoveSession function removes a session from the session store based on the provided cookie name
 func RemoveSession(r *http.Request, w http.ResponseWriter, cookieName string, sessionStore SessionStore) error {
-	session, _ := sessionStore.Get(r, cookieName)
-	session.Options.MaxAge = -1
-
-	if err := session.Save(r, w); err != nil {
+	session, err := sessionStore.Get(r, cookieName)
+	if err != nil {
 		return err
 	}
+	
+	session.Options.MaxAge = -1
 
 	return session.Save(r, w)
 }

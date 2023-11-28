@@ -154,8 +154,7 @@ func ValidateProviderToken(_ context.Context, provider string, token string) err
 	return newReadError("provider", provider, err)
 }
 
-// RegisterOAuthFlags registers client ID and secret file flags for all known
-// providers.  We need to build a consistent registration pattern other than this... TODO FUTURE MATT HAHA EAT SHIT
+// RegisterOAuthFlags registers client ID and secret file flags for all known providers
 func RegisterOAuthFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 	for _, provider := range knownProviders {
 		idFileKey := fmt.Sprintf("%s.client_id_file", provider)

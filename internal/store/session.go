@@ -35,6 +35,10 @@ func SetSession(r *http.Request, w http.ResponseWriter, value, cookieName, value
 	session, _ := sessionStore.Get(r, cookieName)
 	session.Values[valueName] = value
 
+	if err := session.Save(r, w); err != nil {
+		return err
+	}
+
 	return session.Save(r, w)
 }
 
@@ -42,6 +46,10 @@ func SetSession(r *http.Request, w http.ResponseWriter, value, cookieName, value
 func RemoveSession(r *http.Request, w http.ResponseWriter, cookieName string, sessionStore SessionStore) error {
 	session, _ := sessionStore.Get(r, cookieName)
 	session.Options.MaxAge = -1
+
+	if err := session.Save(r, w); err != nil {
+		return err
+	}
 
 	return session.Save(r, w)
 }

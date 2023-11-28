@@ -32,12 +32,12 @@ func SetSessionB64(r *http.Request, w http.ResponseWriter, body []byte, cookieNa
 // SetSession function sets a session value in a session store and also sets a corresponding cookie in the response
 func SetSession(r *http.Request, w http.ResponseWriter, value, cookieName, valueName string, sessionStore SessionStore) error {
 	// set the cookie
-	session, _ := sessionStore.Get(r, cookieName)
-	session.Values[valueName] = value
-
-	if err := session.Save(r, w); err != nil {
+	session, err := sessionStore.Get(r, cookieName)
+	if err != nil {
 		return err
 	}
+	
+	session.Values[valueName] = value
 
 	return session.Save(r, w)
 }

@@ -54,11 +54,10 @@ tasks:
       - task: graph
       - task: gqlgen
   atlas:
-    desc: runs the atlas create, migrate, and lint commands
+    desc: runs the atlas create and lint commands
     aliases: [atlas]
     cmds:
       - task: atlas:create
-      - task: atlas:migrate
       - task: atlas:lint
   atlas:create:
     desc: creates an atlas migration if one is needed based on the ent schema definitions

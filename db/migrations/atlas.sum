@@ -1,5 +1,6 @@
-h1:yp3deyS5pKfSFEbdkEepu8JooG/hOy8p3GaQfBkL8Z4=
+h1:jsCDDms16v4nm7DUU+gkVuwBQM8m8rwubSXX5mLWeUE=
 20231120230353_init.sql h1:4/akzqpaVJdSt1Vc8ABHnSzP0LzipbcekQUZpwMShjI=
 20231121013750_addusersub.sql h1:Hl3YVTQVcCFVczbnm66eM5OAAFs467PvvGz4b0HRdBg=
 20231128021906_user.sql h1:0knfsh2z8bVMd36v04o4sDdfnWb4IAo4YD+NKJ+eOZ8=
 20231130080026_add-soft-delete.sql h1:9WurF/2mGinIi34yNrXfLzyj45BjesCaflh5RkKosRo=
+20231130210332_unique_name_deleted.sql h1:Z1a914ZEOT8PAJih3Nyt3d/NN/tupXW/aihP67yQFwQ=

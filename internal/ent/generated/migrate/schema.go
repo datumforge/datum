@@ -3,6 +3,7 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
@@ -170,7 +171,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "name", Type: field.TypeString, Unique: true, Size: 160},
+		{Name: "name", Type: field.TypeString, Size: 160},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
@@ -186,6 +187,16 @@ var (
 				Columns:    []*schema.Column{OrganizationsColumns[10]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "organization_name",
+				Unique:  true,
+				Columns: []*schema.Column{OrganizationsColumns[7]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}

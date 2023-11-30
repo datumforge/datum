@@ -163,6 +163,17 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
 
+	// setup deleted org
+	orgToDelete := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+
+	mockCheckAny(mockCtrl, mc, reqCtx, true)
+	mockCheckAny(mockCtrl, mc, reqCtx, true)
+
+	if _, err = client.DeleteOrganization(reqCtx, orgToDelete.ID); err != nil {
+		t.Errorf("error deleting test org")
+		t.Fail()
+	}
+
 	testCases := []struct {
 		name           string
 		orgName        string
@@ -207,6 +218,12 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			orgName:        parentOrg.Name,
 			orgDescription: gofakeit.HipsterSentence(10),
 			errorMsg:       "UNIQUE constraint failed",
+		},
+		{
+			name:           "duplicate organization name, but other was deleted, should pass",
+			orgName:        orgToDelete.Name,
+			orgDescription: gofakeit.HipsterSentence(10),
+			errorMsg:       "",
 		},
 		{
 			name:           "duplicate display name, should be allowed",

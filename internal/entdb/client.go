@@ -61,7 +61,7 @@ func (c *EntClientConfig) NewEntDBDriver(ctx context.Context, opts []ent.Option)
 		entcache.TTL(cacheTTL), // set the TTL on the cache
 	)
 
-	cOpts := []ent.Option{ent.Driver(db)}
+	cOpts := []ent.Option{ent.Driver(drv)}
 
 	cOpts = append(cOpts, opts...)
 
@@ -69,7 +69,6 @@ func (c *EntClientConfig) NewEntDBDriver(ctx context.Context, opts []ent.Option)
 		cOpts = append(cOpts,
 			ent.Log(c.Logger.Named("ent").Debugln),
 			ent.Debug(),
-			ent.Driver(drv),
 		)
 	}
 
@@ -94,6 +93,12 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 		return nil, err
 	}
 
+	// Decorates the sql.Driver with entcache.Driver on the primaryDB
+	drvPrimary := entcache.NewDriver(
+		primaryDB,
+		entcache.TTL(cacheTTL), // set the TTL on the cache
+	)
+
 	if err := c.createSchema(ctx, primaryDB); err != nil {
 		return nil, err
 	}
@@ -103,25 +108,25 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 		return nil, err
 	}
 
+	// Decorates the sql.Driver with entcache.Driver on the primaryDB
+	drvSecondary := entcache.NewDriver(
+		secondaryDB,
+		entcache.TTL(cacheTTL), // set the TTL on the cache
+	)
+
 	if err := c.createSchema(ctx, secondaryDB); err != nil {
 		return nil, err
 	}
 
-	// Decorates the sql.Driver with entcache.Driver on the primaryDB
-	drv := entcache.NewDriver(
-		primaryDB,
-		entcache.TTL(cacheTTL), // set the TTL on the cache
-	)
-
 	// Create Multiwrite driver
-	cOpts := []ent.Option{ent.Driver(&MultiWriteDriver{Wp: primaryDB, Ws: secondaryDB})}
+	cOpts := []ent.Option{ent.Driver(&MultiWriteDriver{Wp: drvPrimary, Ws: drvSecondary})}
 
 	cOpts = append(cOpts, opts...)
 	if c.Debug {
 		cOpts = append(cOpts,
 			ent.Log(c.Logger.Named("ent").Debugln),
 			ent.Debug(),
-			ent.Driver(drv),
+			ent.Driver(drvPrimary),
 		)
 	}
 

@@ -61,7 +61,7 @@ func AuditHook(next ent.Mutator) ent.Mutator {
 
 		actor, err := echox.GetUserIDFromContext(ctx)
 		if err != nil {
-			return nil, err
+			actor = "unknown"
 		}
 
 		switch op := m.Op(); {

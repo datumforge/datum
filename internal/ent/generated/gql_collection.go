@@ -1804,16 +1804,6 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, usersetting.FieldStatus)
 				fieldSeen[usersetting.FieldStatus] = struct{}{}
 			}
-		case "role":
-			if _, ok := fieldSeen[usersetting.FieldRole]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldRole)
-				fieldSeen[usersetting.FieldRole] = struct{}{}
-			}
-		case "permissions":
-			if _, ok := fieldSeen[usersetting.FieldPermissions]; !ok {
-				selectedFields = append(selectedFields, usersetting.FieldPermissions)
-				fieldSeen[usersetting.FieldPermissions] = struct{}{}
-			}
 		case "emailConfirmed":
 			if _, ok := fieldSeen[usersetting.FieldEmailConfirmed]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldEmailConfirmed)

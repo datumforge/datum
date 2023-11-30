@@ -12491,30 +12491,27 @@ func (m *UserMutation) ResetEdge(name string) error {
 // UserSettingMutation represents an operation that mutates the UserSetting nodes in the graph.
 type UserSettingMutation struct {
 	config
-	op                Op
-	typ               string
-	id                *string
-	created_at        *time.Time
-	updated_at        *time.Time
-	created_by        *string
-	updated_by        *string
-	locked            *bool
-	silenced_at       *time.Time
-	suspended_at      *time.Time
-	recovery_code     *string
-	status            *usersetting.Status
-	role              *usersetting.Role
-	permissions       *[]string
-	appendpermissions []string
-	email_confirmed   *bool
-	tags              *[]string
-	appendtags        []string
-	clearedFields     map[string]struct{}
-	user              *string
-	cleareduser       bool
-	done              bool
-	oldValue          func(context.Context) (*UserSetting, error)
-	predicates        []predicate.UserSetting
+	op              Op
+	typ             string
+	id              *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	created_by      *string
+	updated_by      *string
+	locked          *bool
+	silenced_at     *time.Time
+	suspended_at    *time.Time
+	recovery_code   *string
+	status          *usersetting.Status
+	email_confirmed *bool
+	tags            *[]string
+	appendtags      []string
+	clearedFields   map[string]struct{}
+	user            *string
+	cleareduser     bool
+	done            bool
+	oldValue        func(context.Context) (*UserSetting, error)
+	predicates      []predicate.UserSetting
 }
 
 var _ ent.Mutation = (*UserSettingMutation)(nil)
@@ -13010,93 +13007,6 @@ func (m *UserSettingMutation) ResetStatus() {
 	m.status = nil
 }
 
-// SetRole sets the "role" field.
-func (m *UserSettingMutation) SetRole(u usersetting.Role) {
-	m.role = &u
-}
-
-// Role returns the value of the "role" field in the mutation.
-func (m *UserSettingMutation) Role() (r usersetting.Role, exists bool) {
-	v := m.role
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldRole returns the old "role" field's value of the UserSetting entity.
-// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserSettingMutation) OldRole(ctx context.Context) (v usersetting.Role, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldRole is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldRole requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldRole: %w", err)
-	}
-	return oldValue.Role, nil
-}
-
-// ResetRole resets all changes to the "role" field.
-func (m *UserSettingMutation) ResetRole() {
-	m.role = nil
-}
-
-// SetPermissions sets the "permissions" field.
-func (m *UserSettingMutation) SetPermissions(s []string) {
-	m.permissions = &s
-	m.appendpermissions = nil
-}
-
-// Permissions returns the value of the "permissions" field in the mutation.
-func (m *UserSettingMutation) Permissions() (r []string, exists bool) {
-	v := m.permissions
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPermissions returns the old "permissions" field's value of the UserSetting entity.
-// If the UserSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserSettingMutation) OldPermissions(ctx context.Context) (v []string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPermissions is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPermissions requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPermissions: %w", err)
-	}
-	return oldValue.Permissions, nil
-}
-
-// AppendPermissions adds s to the "permissions" field.
-func (m *UserSettingMutation) AppendPermissions(s []string) {
-	m.appendpermissions = append(m.appendpermissions, s...)
-}
-
-// AppendedPermissions returns the list of values that were appended to the "permissions" field in this mutation.
-func (m *UserSettingMutation) AppendedPermissions() ([]string, bool) {
-	if len(m.appendpermissions) == 0 {
-		return nil, false
-	}
-	return m.appendpermissions, true
-}
-
-// ResetPermissions resets all changes to the "permissions" field.
-func (m *UserSettingMutation) ResetPermissions() {
-	m.permissions = nil
-	m.appendpermissions = nil
-}
-
 // SetEmailConfirmed sets the "email_confirmed" field.
 func (m *UserSettingMutation) SetEmailConfirmed(b bool) {
 	m.email_confirmed = &b
@@ -13257,7 +13167,7 @@ func (m *UserSettingMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserSettingMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, usersetting.FieldCreatedAt)
 	}
@@ -13284,12 +13194,6 @@ func (m *UserSettingMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, usersetting.FieldStatus)
-	}
-	if m.role != nil {
-		fields = append(fields, usersetting.FieldRole)
-	}
-	if m.permissions != nil {
-		fields = append(fields, usersetting.FieldPermissions)
 	}
 	if m.email_confirmed != nil {
 		fields = append(fields, usersetting.FieldEmailConfirmed)
@@ -13323,10 +13227,6 @@ func (m *UserSettingMutation) Field(name string) (ent.Value, bool) {
 		return m.RecoveryCode()
 	case usersetting.FieldStatus:
 		return m.Status()
-	case usersetting.FieldRole:
-		return m.Role()
-	case usersetting.FieldPermissions:
-		return m.Permissions()
 	case usersetting.FieldEmailConfirmed:
 		return m.EmailConfirmed()
 	case usersetting.FieldTags:
@@ -13358,10 +13258,6 @@ func (m *UserSettingMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldRecoveryCode(ctx)
 	case usersetting.FieldStatus:
 		return m.OldStatus(ctx)
-	case usersetting.FieldRole:
-		return m.OldRole(ctx)
-	case usersetting.FieldPermissions:
-		return m.OldPermissions(ctx)
 	case usersetting.FieldEmailConfirmed:
 		return m.OldEmailConfirmed(ctx)
 	case usersetting.FieldTags:
@@ -13437,20 +13333,6 @@ func (m *UserSettingMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
-		return nil
-	case usersetting.FieldRole:
-		v, ok := value.(usersetting.Role)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetRole(v)
-		return nil
-	case usersetting.FieldPermissions:
-		v, ok := value.([]string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPermissions(v)
 		return nil
 	case usersetting.FieldEmailConfirmed:
 		v, ok := value.(bool)
@@ -13574,12 +13456,6 @@ func (m *UserSettingMutation) ResetField(name string) error {
 		return nil
 	case usersetting.FieldStatus:
 		m.ResetStatus()
-		return nil
-	case usersetting.FieldRole:
-		m.ResetRole()
-		return nil
-	case usersetting.FieldPermissions:
-		m.ResetPermissions()
 		return nil
 	case usersetting.FieldEmailConfirmed:
 		m.ResetEmailConfirmed()

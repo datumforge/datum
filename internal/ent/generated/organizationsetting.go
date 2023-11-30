@@ -37,7 +37,7 @@ type OrganizationSetting struct {
 	SSOIssuer string `json:"sso_issuer,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact string `json:"billing_contact,omitempty"`
-	// BillingEmail holds the value of the "billing_email" field.
+	// Email address of the person to contact for billing
 	BillingEmail string `json:"billing_email,omitempty"`
 	// BillingPhone holds the value of the "billing_phone" field.
 	BillingPhone string `json:"billing_phone,omitempty"`

@@ -122,7 +122,7 @@ type CreateOrganizationInput struct {
 	Name      string     `json:"name"`
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description      *string  `json:"description,omitempty"`
 	ParentID         *string  `json:"parentID,omitempty"`
 	UserIDs          []string `json:"userIDs,omitempty"`
@@ -147,6 +147,7 @@ type CreateOrganizationSettingInput struct {
 	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact string `json:"billingContact"`
+	// Email address of the person to contact for billing
 	BillingEmail   string `json:"billingEmail"`
 	BillingPhone   string `json:"billingPhone"`
 	BillingAddress string `json:"billingAddress"`
@@ -262,8 +263,6 @@ type CreateUserSettingInput struct {
 	// local user password recovery code generated during account creation - does not exist for oauth'd users
 	RecoveryCode   *string             `json:"recoveryCode,omitempty"`
 	Status         *usersetting.Status `json:"status,omitempty"`
-	Role           *usersetting.Role   `json:"role,omitempty"`
-	Permissions    []string            `json:"permissions,omitempty"`
 	EmailConfirmed *bool               `json:"emailConfirmed,omitempty"`
 	// tags associated with the object
 	Tags   []string `json:"tags,omitempty"`
@@ -1256,7 +1255,7 @@ type Organization struct {
 	Name      string    `json:"name"`
 	// The organization's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description   *string                `json:"description,omitempty"`
 	Parent        *Organization          `json:"parent,omitempty"`
 	Children      OrganizationConnection `json:"children"`
@@ -1321,6 +1320,7 @@ type OrganizationSetting struct {
 	SsoIssuer     string   `json:"ssoIssuer"`
 	// Name of the person to contact for billing
 	BillingContact string `json:"billingContact"`
+	// Email address of the person to contact for billing
 	BillingEmail   string `json:"billingEmail"`
 	BillingPhone   string `json:"billingPhone"`
 	BillingAddress string `json:"billingAddress"`
@@ -2382,7 +2382,7 @@ type UpdateOrganizationInput struct {
 	Name           *string    `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description            *string  `json:"description,omitempty"`
 	ClearDescription       *bool    `json:"clearDescription,omitempty"`
 	AddUserIDs             []string `json:"addUserIDs,omitempty"`
@@ -2418,6 +2418,7 @@ type UpdateOrganizationSettingInput struct {
 	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`
 	// Name of the person to contact for billing
 	BillingContact *string `json:"billingContact,omitempty"`
+	// Email address of the person to contact for billing
 	BillingEmail   *string `json:"billingEmail,omitempty"`
 	BillingPhone   *string `json:"billingPhone,omitempty"`
 	BillingAddress *string `json:"billingAddress,omitempty"`
@@ -2559,9 +2560,6 @@ type UpdateUserSettingInput struct {
 	RecoveryCode      *string             `json:"recoveryCode,omitempty"`
 	ClearRecoveryCode *bool               `json:"clearRecoveryCode,omitempty"`
 	Status            *usersetting.Status `json:"status,omitempty"`
-	Role              *usersetting.Role   `json:"role,omitempty"`
-	Permissions       []string            `json:"permissions,omitempty"`
-	AppendPermissions []string            `json:"appendPermissions,omitempty"`
 	EmailConfirmed    *bool               `json:"emailConfirmed,omitempty"`
 	// tags associated with the object
 	Tags       []string `json:"tags,omitempty"`
@@ -2654,8 +2652,6 @@ type UserSetting struct {
 	// The time the user was suspended
 	SuspendedAt    *time.Time         `json:"suspendedAt,omitempty"`
 	Status         usersetting.Status `json:"status"`
-	Role           usersetting.Role   `json:"role"`
-	Permissions    []string           `json:"permissions"`
 	EmailConfirmed bool               `json:"emailConfirmed"`
 	// tags associated with the object
 	Tags []string `json:"tags"`
@@ -2797,11 +2793,6 @@ type UserSettingWhereInput struct {
 	StatusNeq   *usersetting.Status  `json:"statusNEQ,omitempty"`
 	StatusIn    []usersetting.Status `json:"statusIn,omitempty"`
 	StatusNotIn []usersetting.Status `json:"statusNotIn,omitempty"`
-	// role field predicates
-	Role      *usersetting.Role  `json:"role,omitempty"`
-	RoleNeq   *usersetting.Role  `json:"roleNEQ,omitempty"`
-	RoleIn    []usersetting.Role `json:"roleIn,omitempty"`
-	RoleNotIn []usersetting.Role `json:"roleNotIn,omitempty"`
 	// email_confirmed field predicates
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNeq *bool `json:"emailConfirmedNEQ,omitempty"`

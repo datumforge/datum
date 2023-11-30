@@ -54,7 +54,7 @@ func (Organization) Fields() []ent.Field {
 				},
 			),
 		field.String("description").
-			Comment("An optional description of the Organization").
+			Comment("An optional description of the organization").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),

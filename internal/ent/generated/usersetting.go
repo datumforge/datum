@@ -37,10 +37,6 @@ type UserSetting struct {
 	RecoveryCode *string `json:"-"`
 	// Status holds the value of the "status" field.
 	Status usersetting.Status `json:"status,omitempty"`
-	// Role holds the value of the "role" field.
-	Role usersetting.Role `json:"role,omitempty"`
-	// Permissions holds the value of the "permissions" field.
-	Permissions []string `json:"permissions,omitempty"`
 	// EmailConfirmed holds the value of the "email_confirmed" field.
 	EmailConfirmed bool `json:"email_confirmed,omitempty"`
 	// tags associated with the object
@@ -81,11 +77,11 @@ func (*UserSetting) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case usersetting.FieldPermissions, usersetting.FieldTags:
+		case usersetting.FieldTags:
 			values[i] = new([]byte)
 		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed:
 			values[i] = new(sql.NullBool)
-		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldRecoveryCode, usersetting.FieldStatus, usersetting.FieldRole:
+		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldRecoveryCode, usersetting.FieldStatus:
 			values[i] = new(sql.NullString)
 		case usersetting.FieldCreatedAt, usersetting.FieldUpdatedAt, usersetting.FieldSilencedAt, usersetting.FieldSuspendedAt:
 			values[i] = new(sql.NullTime)
@@ -168,20 +164,6 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				us.Status = usersetting.Status(value.String)
-			}
-		case usersetting.FieldRole:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field role", values[i])
-			} else if value.Valid {
-				us.Role = usersetting.Role(value.String)
-			}
-		case usersetting.FieldPermissions:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field permissions", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &us.Permissions); err != nil {
-					return fmt.Errorf("unmarshal field permissions: %w", err)
-				}
 			}
 		case usersetting.FieldEmailConfirmed:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -274,12 +256,6 @@ func (us *UserSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", us.Status))
-	builder.WriteString(", ")
-	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", us.Role))
-	builder.WriteString(", ")
-	builder.WriteString("permissions=")
-	builder.WriteString(fmt.Sprintf("%v", us.Permissions))
 	builder.WriteString(", ")
 	builder.WriteString("email_confirmed=")
 	builder.WriteString(fmt.Sprintf("%v", us.EmailConfirmed))

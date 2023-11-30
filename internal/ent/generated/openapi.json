@@ -4417,21 +4417,6 @@
                     ],
                     "default": "ACTIVE"
                   },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "USER",
-                      "ADMIN",
-                      "OWNER"
-                    ],
-                    "default": "USER"
-                  },
-                  "permissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "email_confirmed": {
                     "type": "boolean"
                   },
@@ -4450,8 +4435,6 @@
                   "updated_at",
                   "locked",
                   "status",
-                  "role",
-                  "permissions",
                   "email_confirmed",
                   "tags"
                 ]
@@ -4618,21 +4601,6 @@
                       "SUSPENDED"
                     ],
                     "default": "ACTIVE"
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "USER",
-                      "ADMIN",
-                      "OWNER"
-                    ],
-                    "default": "USER"
-                  },
-                  "permissions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   },
                   "email_confirmed": {
                     "type": "boolean"
@@ -9726,21 +9694,6 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "email_confirmed": {
             "type": "boolean"
           },
@@ -9760,8 +9713,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -9807,21 +9758,6 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "email_confirmed": {
             "type": "boolean"
           },
@@ -9838,8 +9774,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -9885,21 +9819,6 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "email_confirmed": {
             "type": "boolean"
           },
@@ -9916,8 +9835,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -9963,21 +9880,6 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "email_confirmed": {
             "type": "boolean"
           },
@@ -9994,8 +9896,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -10041,21 +9941,6 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "email_confirmed": {
             "type": "boolean"
           },
@@ -10072,8 +9957,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]
@@ -10506,21 +10389,6 @@
             ],
             "default": "ACTIVE"
           },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "email_confirmed": {
             "type": "boolean"
           },
@@ -10537,8 +10405,6 @@
           "updated_at",
           "locked",
           "status",
-          "role",
-          "permissions",
           "email_confirmed",
           "tags"
         ]

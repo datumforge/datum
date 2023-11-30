@@ -574,8 +574,6 @@ type ComplexityRoot struct {
 		EmailConfirmed func(childComplexity int) int
 		ID             func(childComplexity int) int
 		Locked         func(childComplexity int) int
-		Permissions    func(childComplexity int) int
-		Role           func(childComplexity int) int
 		SilencedAt     func(childComplexity int) int
 		Status         func(childComplexity int) int
 		SuspendedAt    func(childComplexity int) int
@@ -3222,20 +3220,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSetting.Locked(childComplexity), true
 
-	case "UserSetting.permissions":
-		if e.complexity.UserSetting.Permissions == nil {
-			break
-		}
-
-		return e.complexity.UserSetting.Permissions(childComplexity), true
-
-	case "UserSetting.role":
-		if e.complexity.UserSetting.Role == nil {
-			break
-		}
-
-		return e.complexity.UserSetting.Role(childComplexity), true
-
 	case "UserSetting.silencedAt":
 		if e.complexity.UserSetting.SilencedAt == nil {
 			break
@@ -3617,7 +3601,7 @@ input CreateOrganizationInput {
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String
-  """An optional description of the Organization"""
+  """An optional description of the organization"""
   description: String
   parentID: ID
   userIDs: [ID!]
@@ -3643,6 +3627,7 @@ input CreateOrganizationSettingInput {
   ssoIssuer: String
   """Name of the person to contact for billing"""
   billingContact: String!
+  """Email address of the person to contact for billing"""
   billingEmail: String!
   billingPhone: String!
   billingAddress: String!
@@ -3763,8 +3748,6 @@ input CreateUserSettingInput {
   """local user password recovery code generated during account creation - does not exist for oauth'd users"""
   recoveryCode: String
   status: UserSettingStatus
-  role: UserSettingRole
-  permissions: [String!]
   emailConfirmed: Boolean
   """tags associated with the object"""
   tags: [String!]
@@ -4694,7 +4677,7 @@ type Organization implements Node {
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String!
-  """An optional description of the Organization"""
+  """An optional description of the organization"""
   description: String
   parent: Organization
   children(
@@ -4764,6 +4747,7 @@ type OrganizationSetting implements Node {
   ssoIssuer: String!
   """Name of the person to contact for billing"""
   billingContact: String!
+  """Email address of the person to contact for billing"""
   billingEmail: String!
   billingPhone: String!
   billingAddress: String!
@@ -5964,7 +5948,7 @@ input UpdateOrganizationInput {
   name: String
   """The organization's displayed 'friendly' name"""
   displayName: String
-  """An optional description of the Organization"""
+  """An optional description of the organization"""
   description: String
   clearDescription: Boolean
   addUserIDs: [ID!]
@@ -6001,6 +5985,7 @@ input UpdateOrganizationSettingInput {
   ssoIssuer: String
   """Name of the person to contact for billing"""
   billingContact: String
+  """Email address of the person to contact for billing"""
   billingEmail: String
   billingPhone: String
   billingAddress: String
@@ -6147,9 +6132,6 @@ input UpdateUserSettingInput {
   recoveryCode: String
   clearRecoveryCode: Boolean
   status: UserSettingStatus
-  role: UserSettingRole
-  permissions: [String!]
-  appendPermissions: [String!]
   emailConfirmed: Boolean
   """tags associated with the object"""
   tags: [String!]
@@ -6229,8 +6211,6 @@ type UserSetting implements Node {
   """The time the user was suspended"""
   suspendedAt: Time
   status: UserSettingStatus!
-  role: UserSettingRole!
-  permissions: [String!]!
   emailConfirmed: Boolean!
   """tags associated with the object"""
   tags: [String!]!
@@ -6251,12 +6231,6 @@ type UserSettingEdge {
   node: UserSetting
   """A cursor for use in pagination."""
   cursor: Cursor!
-}
-"""UserSettingRole is enum for the field role"""
-enum UserSettingRole @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Role") {
-  USER
-  ADMIN
-  OWNER
 }
 """UserSettingStatus is enum for the field status"""
 enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
@@ -6364,11 +6338,6 @@ input UserSettingWhereInput {
   statusNEQ: UserSettingStatus
   statusIn: [UserSettingStatus!]
   statusNotIn: [UserSettingStatus!]
-  """role field predicates"""
-  role: UserSettingRole
-  roleNEQ: UserSettingRole
-  roleIn: [UserSettingRole!]
-  roleNotIn: [UserSettingRole!]
   """email_confirmed field predicates"""
   emailConfirmed: Boolean
   emailConfirmedNEQ: Boolean
@@ -21902,10 +21871,6 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "role":
-				return ec.fieldContext_UserSetting_role(ctx, field)
-			case "permissions":
-				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
@@ -25225,10 +25190,6 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "role":
-				return ec.fieldContext_UserSetting_role(ctx, field)
-			case "permissions":
-				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
@@ -26107,94 +26068,6 @@ func (ec *executionContext) fieldContext_UserSetting_status(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSetting_role(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_role(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Role, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(usersetting.Role)
-	fc.Result = res
-	return ec.marshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UserSettingRole does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _UserSetting_permissions(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSetting_permissions(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Permissions, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UserSetting_permissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UserSetting",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UserSetting_emailConfirmed(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 	if err != nil {
@@ -26570,10 +26443,6 @@ func (ec *executionContext) fieldContext_UserSettingCreatePayload_UserSetting(ct
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "role":
-				return ec.fieldContext_UserSetting_role(ctx, field)
-			case "permissions":
-				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
@@ -26685,10 +26554,6 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "role":
-				return ec.fieldContext_UserSetting_role(ctx, field)
-			case "permissions":
-				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
@@ -26803,10 +26668,6 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_UserSetting(ct
 				return ec.fieldContext_UserSetting_suspendedAt(ctx, field)
 			case "status":
 				return ec.fieldContext_UserSetting_status(ctx, field)
-			case "role":
-				return ec.fieldContext_UserSetting_role(ctx, field)
-			case "permissions":
-				return ec.fieldContext_UserSetting_permissions(ctx, field)
 			case "emailConfirmed":
 				return ec.fieldContext_UserSetting_emailConfirmed(ctx, field)
 			case "tags":
@@ -30238,7 +30099,7 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "recoveryCode", "status", "role", "permissions", "emailConfirmed", "tags", "userID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "locked", "silencedAt", "suspendedAt", "recoveryCode", "status", "emailConfirmed", "tags", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30326,24 +30187,6 @@ func (ec *executionContext) unmarshalInputCreateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.Status = data
-		case "role":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Role = data
-		case "permissions":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("permissions"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Permissions = data
 		case "emailConfirmed":
 			var err error
 
@@ -43611,7 +43454,7 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "role", "permissions", "appendPermissions", "emailConfirmed", "tags", "appendTags", "userID", "clearUser"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "locked", "silencedAt", "clearSilencedAt", "suspendedAt", "clearSuspendedAt", "recoveryCode", "clearRecoveryCode", "status", "emailConfirmed", "tags", "appendTags", "userID", "clearUser"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -43717,33 +43560,6 @@ func (ec *executionContext) unmarshalInputUpdateUserSettingInput(ctx context.Con
 				return it, err
 			}
 			it.Status = data
-		case "role":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Role = data
-		case "permissions":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("permissions"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Permissions = data
-		case "appendPermissions":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendPermissions"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AppendPermissions = data
 		case "emailConfirmed":
 			var err error
 
@@ -43844,7 +43660,7 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44616,42 +44432,6 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.StatusNotIn = data
-		case "role":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Role = data
-		case "roleNEQ":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNEQ"))
-			data, err := ec.unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RoleNEQ = data
-		case "roleIn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleIn"))
-			data, err := ec.unmarshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RoleIn = data
-		case "roleNotIn":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roleNotIn"))
-			data, err := ec.unmarshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RoleNotIn = data
 		case "emailConfirmed":
 			var err error
 
@@ -51492,16 +51272,6 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "role":
-			out.Values[i] = ec._UserSetting_role(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "permissions":
-			out.Values[i] = ec._UserSetting_permissions(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "emailConfirmed":
 			out.Values[i] = ec._UserSetting_emailConfirmed(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -53458,16 +53228,6 @@ func (ec *executionContext) marshalNUserSettingDeletePayload2ᚖgithubᚗcomᚋd
 		return graphql.Null
 	}
 	return ec._UserSettingDeletePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, v interface{}) (usersetting.Role, error) {
-	var res usersetting.Role
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, sel ast.SelectionSet, v usersetting.Role) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNUserSettingStatus2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatus(ctx context.Context, v interface{}) (usersetting.Status, error) {
@@ -55800,89 +55560,6 @@ func (ec *executionContext) marshalOUserSettingEdge2ᚖgithubᚗcomᚋdatumforge
 		return graphql.Null
 	}
 	return ec._UserSettingEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx context.Context, v interface{}) ([]usersetting.Role, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]usersetting.Role, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOUserSettingRole2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRoleᚄ(ctx context.Context, sel ast.SelectionSet, v []usersetting.Role) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNUserSettingRole2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, v interface{}) (*usersetting.Role, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(usersetting.Role)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOUserSettingRole2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐRole(ctx context.Context, sel ast.SelectionSet, v *usersetting.Role) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOUserSettingStatus2ᚕgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋusersettingᚐStatusᚄ(ctx context.Context, v interface{}) ([]usersetting.Status, error) {

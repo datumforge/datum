@@ -30,7 +30,8 @@ func (OrganizationSetting) Fields() []ent.Field {
 			NotEmpty().
 			Comment("Name of the person to contact for billing"),
 		field.String("billing_email").
-			NotEmpty(),
+			NotEmpty().
+			Comment("Email address of the person to contact for billing"),
 		field.String("billing_phone").
 			NotEmpty(),
 		field.String("billing_address").

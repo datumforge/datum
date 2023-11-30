@@ -15,6 +15,7 @@ graphqlschema:
 - schema/**
 
 migrations:
+- .github/workflows/ci-atlas*.yaml
 - db/**
 
 local-development:

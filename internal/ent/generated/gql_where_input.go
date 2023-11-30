@@ -7396,12 +7396,6 @@ type UserSettingWhereInput struct {
 	StatusIn    []usersetting.Status `json:"statusIn,omitempty"`
 	StatusNotIn []usersetting.Status `json:"statusNotIn,omitempty"`
 
-	// "role" field predicates.
-	Role      *usersetting.Role  `json:"role,omitempty"`
-	RoleNEQ   *usersetting.Role  `json:"roleNEQ,omitempty"`
-	RoleIn    []usersetting.Role `json:"roleIn,omitempty"`
-	RoleNotIn []usersetting.Role `json:"roleNotIn,omitempty"`
-
 	// "email_confirmed" field predicates.
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNEQ *bool `json:"emailConfirmedNEQ,omitempty"`
@@ -7772,18 +7766,6 @@ func (i *UserSettingWhereInput) P() (predicate.UserSetting, error) {
 	}
 	if len(i.StatusNotIn) > 0 {
 		predicates = append(predicates, usersetting.StatusNotIn(i.StatusNotIn...))
-	}
-	if i.Role != nil {
-		predicates = append(predicates, usersetting.RoleEQ(*i.Role))
-	}
-	if i.RoleNEQ != nil {
-		predicates = append(predicates, usersetting.RoleNEQ(*i.RoleNEQ))
-	}
-	if len(i.RoleIn) > 0 {
-		predicates = append(predicates, usersetting.RoleIn(i.RoleIn...))
-	}
-	if len(i.RoleNotIn) > 0 {
-		predicates = append(predicates, usersetting.RoleNotIn(i.RoleNotIn...))
 	}
 	if i.EmailConfirmed != nil {
 		predicates = append(predicates, usersetting.EmailConfirmedEQ(*i.EmailConfirmed))

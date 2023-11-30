@@ -547,26 +547,6 @@ func StatusNotIn(vs ...Status) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldNotIn(FieldStatus, vs...))
 }
 
-// RoleEQ applies the EQ predicate on the "role" field.
-func RoleEQ(v Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldRole, v))
-}
-
-// RoleNEQ applies the NEQ predicate on the "role" field.
-func RoleNEQ(v Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldRole, v))
-}
-
-// RoleIn applies the In predicate on the "role" field.
-func RoleIn(vs ...Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIn(FieldRole, vs...))
-}
-
-// RoleNotIn applies the NotIn predicate on the "role" field.
-func RoleNotIn(vs ...Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotIn(FieldRole, vs...))
-}
-
 // EmailConfirmedEQ applies the EQ predicate on the "email_confirmed" field.
 func EmailConfirmedEQ(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldEmailConfirmed, v))

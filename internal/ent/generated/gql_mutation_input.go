@@ -1636,8 +1636,6 @@ type CreateUserSettingInput struct {
 	SuspendedAt    *time.Time
 	RecoveryCode   *string
 	Status         *usersetting.Status
-	Role           *usersetting.Role
-	Permissions    []string
 	EmailConfirmed *bool
 	Tags           []string
 	UserID         *string
@@ -1672,12 +1670,6 @@ func (i *CreateUserSettingInput) Mutate(m *UserSettingMutation) {
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
 	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	if v := i.Permissions; v != nil {
-		m.SetPermissions(v)
-	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)
 	}
@@ -1708,9 +1700,6 @@ type UpdateUserSettingInput struct {
 	ClearRecoveryCode bool
 	RecoveryCode      *string
 	Status            *usersetting.Status
-	Role              *usersetting.Role
-	Permissions       []string
-	AppendPermissions []string
 	EmailConfirmed    *bool
 	Tags              []string
 	AppendTags        []string
@@ -1752,15 +1741,6 @@ func (i *UpdateUserSettingInput) Mutate(m *UserSettingMutation) {
 	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
-	}
-	if v := i.Role; v != nil {
-		m.SetRole(*v)
-	}
-	if v := i.Permissions; v != nil {
-		m.SetPermissions(v)
-	}
-	if i.AppendPermissions != nil {
-		m.AppendPermissions(i.Permissions)
 	}
 	if v := i.EmailConfirmed; v != nil {
 		m.SetEmailConfirmed(*v)

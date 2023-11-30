@@ -115,7 +115,7 @@ input CreateOrganizationInput {
 	name: String!
 	"""The organization's displayed 'friendly' name"""
 	displayName: String
-	"""An optional description of the Organization"""
+	"""An optional description of the organization"""
 	description: String
 	parentID: ID
 	userIDs: [ID!]
@@ -141,6 +141,7 @@ input CreateOrganizationSettingInput {
 	ssoIssuer: String
 	"""Name of the person to contact for billing"""
 	billingContact: String!
+	"""Email address of the person to contact for billing"""
 	billingEmail: String!
 	billingPhone: String!
 	billingAddress: String!
@@ -261,8 +262,6 @@ input CreateUserSettingInput {
 	"""local user password recovery code generated during account creation - does not exist for oauth'd users"""
 	recoveryCode: String
 	status: UserSettingStatus
-	role: UserSettingRole
-	permissions: [String!]
 	emailConfirmed: Boolean
 	"""tags associated with the object"""
 	tags: [String!]
@@ -1485,7 +1484,7 @@ type Organization implements Node {
 	name: String!
 	"""The organization's displayed 'friendly' name"""
 	displayName: String!
-	"""An optional description of the Organization"""
+	"""An optional description of the organization"""
 	description: String
 	parent: Organization
 	children(
@@ -1565,6 +1564,7 @@ type OrganizationSetting implements Node {
 	ssoIssuer: String!
 	"""Name of the person to contact for billing"""
 	billingContact: String!
+	"""Email address of the person to contact for billing"""
 	billingEmail: String!
 	billingPhone: String!
 	billingAddress: String!
@@ -2893,7 +2893,7 @@ input UpdateOrganizationInput {
 	name: String
 	"""The organization's displayed 'friendly' name"""
 	displayName: String
-	"""An optional description of the Organization"""
+	"""An optional description of the organization"""
 	description: String
 	clearDescription: Boolean
 	addUserIDs: [ID!]
@@ -2930,6 +2930,7 @@ input UpdateOrganizationSettingInput {
 	ssoIssuer: String
 	"""Name of the person to contact for billing"""
 	billingContact: String
+	"""Email address of the person to contact for billing"""
 	billingEmail: String
 	billingPhone: String
 	billingAddress: String
@@ -3076,9 +3077,6 @@ input UpdateUserSettingInput {
 	recoveryCode: String
 	clearRecoveryCode: Boolean
 	status: UserSettingStatus
-	role: UserSettingRole
-	permissions: [String!]
-	appendPermissions: [String!]
 	emailConfirmed: Boolean
 	"""tags associated with the object"""
 	tags: [String!]
@@ -3168,8 +3166,6 @@ type UserSetting implements Node {
 	"""The time the user was suspended"""
 	suspendedAt: Time
 	status: UserSettingStatus!
-	role: UserSettingRole!
-	permissions: [String!]!
 	emailConfirmed: Boolean!
 	"""tags associated with the object"""
 	tags: [String!]!
@@ -3200,12 +3196,6 @@ type UserSettingEdge {
 	node: UserSetting
 	"""A cursor for use in pagination."""
 	cursor: Cursor!
-}
-"""UserSettingRole is enum for the field role"""
-enum UserSettingRole @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Role") {
-	USER
-	ADMIN
-	OWNER
 }
 """UserSettingStatus is enum for the field status"""
 enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
@@ -3318,11 +3308,6 @@ input UserSettingWhereInput {
 	statusNEQ: UserSettingStatus
 	statusIn: [UserSettingStatus!]
 	statusNotIn: [UserSettingStatus!]
-	"""role field predicates"""
-	role: UserSettingRole
-	roleNEQ: UserSettingRole
-	roleIn: [UserSettingRole!]
-	roleNotIn: [UserSettingRole!]
 	"""email_confirmed field predicates"""
 	emailConfirmed: Boolean
 	emailConfirmedNEQ: Boolean

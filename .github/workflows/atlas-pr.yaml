@@ -1,11 +1,11 @@
-name: Atlas
+name: Atlas PR Test
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
     branches:
        - '*'
 jobs:
-  atlas:
+  atlas-pr:
   # Permissions to write comments on the pull request.
     permissions:
       contents: read

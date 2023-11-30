@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -40,7 +41,8 @@ func TestQuery_Organization(t *testing.T) {
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
-	org1 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
+	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID)}
 
 	testCases := []struct {
 		name     string
@@ -64,6 +66,17 @@ func TestQuery_Organization(t *testing.T) {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
 
+			// second check won't happen if org does not exist
+			if tc.errorMsg == "" {
+				mockCheckAny(mockCtrl, mc, reqCtx, true)
+				// we need to check list objects even on a get
+				// because a parent could be request and that access must always be
+				// checked before being returned
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+			}
+
 			resp, err := client.GetOrganizationByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
@@ -79,20 +92,14 @@ func TestQuery_Organization(t *testing.T) {
 			require.NotNil(t, resp.Organization)
 		})
 	}
+
+	// delete created org
+	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
 }
 
 func TestQuery_OrganizationsNoAuth(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
-	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
-
 	// Setup Test Graph Client Without Auth
-	client := graphTestClientNoAuth(entClient)
+	client := graphTestClientNoAuth(EntClient)
 
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
 	if err != nil {
@@ -105,8 +112,8 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
-	org1 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
-	org2 := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
+	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
 
 	t.Run("Get Organizations", func(t *testing.T) {
 		resp, err := client.GetAllOrganizations(reqCtx)
@@ -133,6 +140,82 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 			t.Fail()
 		}
 	})
+
+	// delete created orgs
+	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{OrgID: org2.ID}).MustDelete(reqCtx)
+}
+
+func TestQuery_OrganizationsAuth(t *testing.T) {
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
+
+	mc := mock_client.NewMockSdkClient(mockCtrl)
+
+	// setup entdb with authz
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
+
+	// Setup Test Graph Client
+	client := graphTestClient(entClient)
+
+	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	if err != nil {
+		t.Fatal()
+	}
+
+	echoContext := *ec
+
+	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+
+	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+
+	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
+	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
+
+	t.Run("Get Organizations", func(t *testing.T) {
+		// check tuple per org
+		listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", org2.ID)}
+
+		mockListAny(mockCtrl, mc, reqCtx, listObjects)
+		mockListAny(mockCtrl, mc, reqCtx, listObjects)
+		mockListAny(mockCtrl, mc, reqCtx, listObjects)
+
+		resp, err := client.GetAllOrganizations(reqCtx)
+
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+		require.NotNil(t, resp.Organizations.Edges)
+
+		// make sure two organizations are returned
+		assert.Equal(t, 2, len(resp.Organizations.Edges))
+
+		org1Found := false
+		org2Found := false
+		for _, o := range resp.Organizations.Edges {
+			if o.Node.ID == org1.ID {
+				org1Found = true
+			} else if o.Node.ID == org2.ID {
+				org2Found = true
+			}
+		}
+
+		// if one of the orgs isn't found, fail the test
+		if !org1Found || !org2Found {
+			t.Fail()
+		}
+
+		// Check user with no relations, gets no orgs back
+		mockListAny(mockCtrl, mc, reqCtx, []string{})
+
+		resp, err = client.GetAllOrganizations(reqCtx)
+
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+
+		// make sure no organizations are returned
+		assert.Equal(t, 0, len(resp.Organizations.Edges))
+	})
 }
 
 func TestMutation_CreateOrganization(t *testing.T) {
@@ -148,7 +231,6 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
-
 	// Setup echo context
 	ec, err := echox.NewTestContextWithValidUser(subClaim)
 	if err != nil {
@@ -161,7 +243,9 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
-	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
+
+	listObjects := []string{fmt.Sprintf("organization:%s", parentOrg.ID)}
 
 	// setup deleted org
 	orgToDelete := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
@@ -259,6 +343,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
 				mockWriteTuplesAny(mockCtrl, mc, reqCtx, nil)
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 			}
 
 			resp, err := client.CreateOrganization(reqCtx, input)
@@ -278,16 +363,20 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			// Make sure provided values match
 			assert.Equal(t, tc.orgName, resp.CreateOrganization.Organization.Name)
 			assert.Equal(t, tc.orgDescription, *resp.CreateOrganization.Organization.Description)
-			// TODO - come back to parent orgs
 
-			// if tc.parentOrgID == "" {
-			// 	// assert.Nil(t, resp.CreateOrganization.Organization.Parent)
-			// } else {
-			// 	// parent := resp.CreateOrganization.Organization.GetParent()
-			// 	assert.Equal(t, tc.parentOrgID, parent.ID)
-			// }
+			if tc.parentOrgID == "" {
+				assert.Nil(t, resp.CreateOrganization.Organization.Parent)
+			} else {
+				parent := resp.CreateOrganization.Organization.GetParent()
+				assert.Equal(t, tc.parentOrgID, parent.ID)
+			}
+
+			// cleanup org
+			(&OrganizationCleanup{OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx)
 		})
 	}
+
+	(&OrganizationCleanup{OrgID: parentOrg.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_UpdateOrganization(t *testing.T) {
@@ -321,7 +410,8 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 	nameUpdateLong := gofakeit.LetterN(200)
 
-	org := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	org := (&OrganizationBuilder{}).MustNew(reqCtx)
+	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	testCases := []struct {
 		name        string
@@ -381,6 +471,8 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
 			// update organization
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			// check access
+			mockListAny(mockCtrl, mc, reqCtx, listObjects)
 
 			// update org
 			resp, err := client.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
@@ -402,6 +494,8 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			assert.Equal(t, tc.expectedRes, updatedOrg)
 		})
 	}
+
+	(&OrganizationCleanup{OrgID: org.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_DeleteOrganization(t *testing.T) {
@@ -430,29 +524,48 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
-	org := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
+	org := (&OrganizationBuilder{}).MustNew(reqCtx)
+	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	testCases := []struct {
-		name     string
-		orgID    string
-		errorMsg string
+		name          string
+		orgID         string
+		accessAllowed bool
+		errorMsg      string
 	}{
 		{
-			name:  "delete org, happy path",
-			orgID: org.ID,
+			name:          "delete org, access denied",
+			orgID:         org.ID,
+			accessAllowed: false,
+			errorMsg:      "you are not authorized to perform this action",
 		},
 		{
-			name:     "delete org, not found",
-			orgID:    "tacos-tuesday",
-			errorMsg: "not found",
+			name:          "delete org, happy path",
+			orgID:         org.ID,
+			accessAllowed: true,
+		},
+		{
+			name:          "delete org, not found",
+			orgID:         "tacos-tuesday",
+			accessAllowed: true,
+			errorMsg:      "not found",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
 			// mock read of tuple
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+
+			// if access is allowed, another call to `read` happens
+			if tc.accessAllowed {
+				mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+
+				// additional check happens when the resource is found
+				if tc.errorMsg == "" {
+					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+				}
+			}
 
 			// delete org
 			resp, err := client.DeleteOrganization(reqCtx, tc.orgID)
@@ -474,6 +587,11 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 
 			// make sure the org isn't returned
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			if tc.errorMsg == "" {
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+			}
 
 			o, err := client.GetOrganizationByID(reqCtx, tc.orgID)
 

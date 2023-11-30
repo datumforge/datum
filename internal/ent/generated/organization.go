@@ -34,7 +34,7 @@ type Organization struct {
 	Name string `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
 	DisplayName string `json:"display_name,omitempty"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description string `json:"description,omitempty"`
 	// The ID of the parent organization for the organization.
 	ParentOrganizationID string `json:"parent_organization_id,omitempty"`

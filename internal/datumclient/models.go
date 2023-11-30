@@ -122,7 +122,7 @@ type CreateOrganizationInput struct {
 	Name      string     `json:"name"`
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description      *string  `json:"description,omitempty"`
 	ParentID         *string  `json:"parentID,omitempty"`
 	UserIDs          []string `json:"userIDs,omitempty"`
@@ -1258,7 +1258,7 @@ type Organization struct {
 	Name      string     `json:"name"`
 	// The organization's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description   *string                `json:"description,omitempty"`
 	Parent        *Organization          `json:"parent,omitempty"`
 	Children      OrganizationConnection `json:"children"`
@@ -2411,7 +2411,7 @@ type UpdateOrganizationInput struct {
 	Name           *string    `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
-	// An optional description of the Organization
+	// An optional description of the organization
 	Description            *string  `json:"description,omitempty"`
 	ClearDescription       *bool    `json:"clearDescription,omitempty"`
 	AddUserIDs             []string `json:"addUserIDs,omitempty"`

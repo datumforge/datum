@@ -4,16 +4,20 @@ import (
 	"context"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 type OrganizationBuilder struct {
 	Name        string
 	DisplayName string
 	Description *string
+	OrgID       string
+}
+
+type OrganizationCleanup struct {
+	OrgID string
 }
 
 type UserBuilder struct {
@@ -22,7 +26,8 @@ type UserBuilder struct {
 	Email     string
 }
 
-func (o *OrganizationBuilder) MustNew(ctx context.Context, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *generated.Organization {
+// MustNew organization builder is used to create, without authz checks, orgs in the database
+func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organization {
 	if o.Name == "" {
 		o.Name = gofakeit.AppName()
 	}
@@ -39,6 +44,14 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context, mockCtrl *gomock.Cont
 	return EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SaveX(ctx)
 }
 
+// MustDelete is used to cleanup, without authz checks, orgs in the database
+func (o *OrganizationCleanup) MustDelete(ctx context.Context) {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	EntClient.Organization.DeleteOneID(o.OrgID).ExecX(ctx)
+}
+
+// MustNew user builder is used to create, without authz checks, users in the database
 func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
 	if u.FirstName == "" {
 		u.FirstName = gofakeit.FirstName()

@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	cacheTTL = 60 * time.Second
+	cacheTTL = 1 * time.Second
 )
 
 // EntClientConfig configures the entsql drivers

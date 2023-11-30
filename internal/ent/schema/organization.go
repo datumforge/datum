@@ -15,6 +15,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
@@ -55,7 +56,7 @@ func (Organization) Fields() []ent.Field {
 				},
 			),
 		field.String("description").
-			Comment("An optional description of the Organization").
+			Comment("An optional description of the organization").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
@@ -138,5 +139,12 @@ func (Organization) Policy() ent.Policy {
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookOrganization(),
+	}
+}
+
+// Interceptors of the Organization
+func (Organization) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.InterceptorOrganization(),
 	}
 }

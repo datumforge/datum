@@ -78,6 +78,7 @@ func setupDB() {
 	}
 
 	errPanic("failed creating db schema", c.Schema.Create(ctx))
+
 	EntClient = c
 }
 
@@ -243,16 +244,17 @@ func mockCheckAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx
 	c.EXPECT().Check(gomock.Any()).Return(mockBody)
 }
 
-// func mockReadAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context) {
-// 	mockExecute := mock_client.NewMockSdkClientReadRequestInterface(mockCtrl)
+func mockListAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, allowedObjects []string) {
+	mockExecute := mock_client.NewMockSdkClientListObjectsRequestInterface(mockCtrl)
 
-// 	resp := ofgaclient.ClientReadResponse{}
+	resp := ofgaclient.ClientListObjectsResponse{}
+	resp.SetObjects(allowedObjects)
 
-// 	mockExecute.EXPECT().Execute().Return(&resp, nil)
+	mockExecute.EXPECT().Execute().Return(&resp, nil)
 
-// 	mockRequest := mock_client.NewMockSdkClientReadRequestInterface(mockCtrl)
+	mockBody := mock_client.NewMockSdkClientListObjectsRequestInterface(mockCtrl)
 
-// 	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
+	mockBody.EXPECT().Body(gomock.Any()).Return(mockExecute)
 
-// 	c.EXPECT().Read(gomock.Any()).Return(mockRequest)
-// }
+	c.EXPECT().ListObjects(gomock.Any()).Return(mockBody)
+}

@@ -101,15 +101,34 @@ type Mutation struct {
 	UpdateUserSetting         UserSettingUpdatePayload         "json:\"updateUserSetting\" graphql:\"updateUserSetting\""
 	DeleteUserSetting         UserSettingDeletePayload         "json:\"deleteUserSetting\" graphql:\"deleteUserSetting\""
 }
+type GetOrganizationByID_Organization_Parent struct {
+	ID   string "json:\"id\" graphql:\"id\""
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetOrganizationByID_Organization_Parent) GetID() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Parent{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationByID_Organization_Parent) GetName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Parent{}
+	}
+	return t.Name
+}
+
 type GetOrganizationByID_Organization struct {
-	ID          string    "json:\"id\" graphql:\"id\""
-	Name        string    "json:\"name\" graphql:\"name\""
-	DisplayName string    "json:\"displayName\" graphql:\"displayName\""
-	Description *string   "json:\"description,omitempty\" graphql:\"description\""
-	CreatedAt   time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                   "json:\"id\" graphql:\"id\""
+	Name        string                                   "json:\"name\" graphql:\"name\""
+	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	Parent      *GetOrganizationByID_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	CreatedAt   time.Time                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetOrganizationByID_Organization) GetID() string {
@@ -136,6 +155,12 @@ func (t *GetOrganizationByID_Organization) GetDescription() *string {
 	}
 	return t.Description
 }
+func (t *GetOrganizationByID_Organization) GetParent() *GetOrganizationByID_Organization_Parent {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.Parent
+}
 func (t *GetOrganizationByID_Organization) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &GetOrganizationByID_Organization{}
@@ -161,11 +186,32 @@ func (t *GetOrganizationByID_Organization) GetUpdatedBy() *string {
 	return t.UpdatedBy
 }
 
+type GetAllOrganizations_Organizations_Edges_Node_Parent struct {
+	ID   string "json:\"id\" graphql:\"id\""
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node_Parent) GetID() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Parent{}
+	}
+	return t.ID
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_Parent) GetName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Parent{}
+	}
+	return t.Name
+}
+
 type GetAllOrganizations_Organizations_Edges_Node struct {
-	ID          string  "json:\"id\" graphql:\"id\""
-	Name        string  "json:\"name\" graphql:\"name\""
-	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
-	Description *string "json:\"description,omitempty\" graphql:\"description\""
+	ID          string                                               "json:\"id\" graphql:\"id\""
+	Name        string                                               "json:\"name\" graphql:\"name\""
+	DisplayName string                                               "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                              "json:\"description,omitempty\" graphql:\"description\""
+	Parent      *GetAllOrganizations_Organizations_Edges_Node_Parent "json:\"parent,omitempty\" graphql:\"parent\""
+	CreatedAt   time.Time                                            "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt   time.Time                                            "json:\"updatedAt\" graphql:\"updatedAt\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetID() string {
@@ -192,6 +238,24 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetDescription() *string 
 	}
 	return t.Description
 }
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetParent() *GetAllOrganizations_Organizations_Edges_Node_Parent {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.Parent
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return &t.UpdatedAt
+}
 
 type GetAllOrganizations_Organizations_Edges struct {
 	Node *GetAllOrganizations_Organizations_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
@@ -215,15 +279,32 @@ func (t *GetAllOrganizations_Organizations) GetEdges() []*GetAllOrganizations_Or
 	return t.Edges
 }
 
+type CreateOrganization_CreateOrganization_Organization_Parent struct {
+	ID   string "json:\"id\" graphql:\"id\""
+	Name string "json:\"name\" graphql:\"name\""
+}
+
+func (t *CreateOrganization_CreateOrganization_Organization_Parent) GetID() string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Parent{}
+	}
+	return t.ID
+}
+func (t *CreateOrganization_CreateOrganization_Organization_Parent) GetName() string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Parent{}
+	}
+	return t.Name
+}
+
 type CreateOrganization_CreateOrganization_Organization struct {
-	ID          string    "json:\"id\" graphql:\"id\""
-	Name        string    "json:\"name\" graphql:\"name\""
-	DisplayName string    "json:\"displayName\" graphql:\"displayName\""
-	Description *string   "json:\"description,omitempty\" graphql:\"description\""
-	CreatedAt   time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                                     "json:\"id\" graphql:\"id\""
+	Name        string                                                     "json:\"name\" graphql:\"name\""
+	DisplayName string                                                     "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                                    "json:\"description,omitempty\" graphql:\"description\""
+	CreatedAt   time.Time                                                  "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt   time.Time                                                  "json:\"updatedAt\" graphql:\"updatedAt\""
+	Parent      *CreateOrganization_CreateOrganization_Organization_Parent "json:\"parent,omitempty\" graphql:\"parent\""
 }
 
 func (t *CreateOrganization_CreateOrganization_Organization) GetID() string {
@@ -256,23 +337,17 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetCreatedAt() *tim
 	}
 	return &t.CreatedAt
 }
-func (t *CreateOrganization_CreateOrganization_Organization) GetCreatedBy() *string {
-	if t == nil {
-		t = &CreateOrganization_CreateOrganization_Organization{}
-	}
-	return t.CreatedBy
-}
 func (t *CreateOrganization_CreateOrganization_Organization) GetUpdatedAt() *time.Time {
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
 	return &t.UpdatedAt
 }
-func (t *CreateOrganization_CreateOrganization_Organization) GetUpdatedBy() *string {
+func (t *CreateOrganization_CreateOrganization_Organization) GetParent() *CreateOrganization_CreateOrganization_Organization_Parent {
 	if t == nil {
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
-	return t.UpdatedBy
+	return t.Parent
 }
 
 type CreateOrganization_CreateOrganization struct {
@@ -933,6 +1008,10 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 		name
 		displayName
 		description
+		parent {
+			id
+			name
+		}
 		createdAt
 		createdBy
 		updatedAt
@@ -966,6 +1045,12 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 				name
 				displayName
 				description
+				parent {
+					id
+					name
+				}
+				createdAt
+				updatedAt
 			}
 		}
 	}
@@ -995,9 +1080,11 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 			displayName
 			description
 			createdAt
-			createdBy
 			updatedAt
-			updatedBy
+			parent {
+				id
+				name
+			}
 		}
 	}
 }

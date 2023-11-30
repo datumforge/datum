@@ -216,7 +216,9 @@ func init() {
 
 	organization.Hooks[3] = organizationHooks[0]
 	organizationMixinInters2 := organizationMixin[2].Interceptors()
+	organizationInters := schema.Organization{}.Interceptors()
 	organization.Interceptors[0] = organizationMixinInters2[0]
+	organization.Interceptors[1] = organizationInters[0]
 	organizationMixinFields0 := organizationMixin[0].Fields()
 	_ = organizationMixinFields0
 	organizationMixinFields1 := organizationMixin[1].Fields()

@@ -11,15 +11,10 @@ import (
 )
 
 func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
-	ec, err := echox.EchoContextFromContext(ctx)
+	actor, err := echox.GetUserIDFromContext(ctx)
 	if err != nil {
-		c.Logger.Errorw("unable to get echo context", "error", err)
+		c.Logger.Errorw("unable to get user ID from context", "error", err)
 
-		return nil, err
-	}
-
-	actor, err := echox.GetActorSubject(*ec)
-	if err != nil {
 		return nil, err
 	}
 

@@ -32,7 +32,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
-			ObjectID: id,
+			OrgID: id,
 		}
 
 		ctx = viewer.NewContext(ctx, v)
@@ -45,6 +45,8 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 		}
 
 		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to get organization on update", "error", err)
+
 			return nil, ErrPermissionDenied
 		}
 
@@ -59,6 +61,8 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 		}
 
 		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to update organization", "error", err)
+
 			return nil, ErrPermissionDenied
 		}
 
@@ -78,7 +82,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
-			ObjectID: id,
+			OrgID: id,
 		}
 
 		ctx = viewer.NewContext(ctx, v)
@@ -109,7 +113,7 @@ func (r *queryResolver) Organization(ctx context.Context, id string) (*generated
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
-			ObjectID: id,
+			OrgID: id,
 		}
 
 		ctx = viewer.NewContext(ctx, v)

@@ -12,7 +12,7 @@ import (
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 )
 
-func Test_CheckDirectUser(t *testing.T) {
+func Test_CheckTuple(t *testing.T) {
 	testCases := []struct {
 		name        string
 		relation    string

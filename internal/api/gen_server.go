@@ -3633,7 +3633,7 @@ input CreateOrganizationInput {
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String
-  """An optional description of the Organization"""
+  """An optional description of the organization"""
   description: String
   parentID: ID
   userIDs: [ID!]
@@ -4712,7 +4712,7 @@ type Organization implements Node {
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String!
-  """An optional description of the Organization"""
+  """An optional description of the organization"""
   description: String
   parent: Organization
   children(
@@ -6009,7 +6009,7 @@ input UpdateOrganizationInput {
   name: String
   """The organization's displayed 'friendly' name"""
   displayName: String
-  """An optional description of the Organization"""
+  """An optional description of the organization"""
   description: String
   clearDescription: Boolean
   addUserIDs: [ID!]

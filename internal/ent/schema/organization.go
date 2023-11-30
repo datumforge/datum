@@ -37,7 +37,6 @@ func (Organization) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("name"),
 				entgql.Skip(entgql.SkipWhereInput),
-				entsql.IndexWhere("deleted_at is NULL"),
 			),
 		field.String("display_name").
 			Comment("The organization's displayed 'friendly' name").

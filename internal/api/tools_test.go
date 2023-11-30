@@ -243,16 +243,16 @@ func mockCheckAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx
 	c.EXPECT().Check(gomock.Any()).Return(mockBody)
 }
 
-// func mockReadAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context) {
-// 	mockExecute := mock_client.NewMockSdkClientReadRequestInterface(mockCtrl)
+func mockReadAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context) {
+	mockExecute := mock_client.NewMockSdkClientReadRequestInterface(mockCtrl)
 
-// 	resp := ofgaclient.ClientReadResponse{}
+	resp := ofgaclient.ClientReadResponse{}
 
-// 	mockExecute.EXPECT().Execute().Return(&resp, nil)
+	mockExecute.EXPECT().Execute().Return(&resp, nil)
 
-// 	mockRequest := mock_client.NewMockSdkClientReadRequestInterface(mockCtrl)
+	mockRequest := mock_client.NewMockSdkClientReadRequestInterface(mockCtrl)
 
-// 	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
+	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
 
-// 	c.EXPECT().Read(gomock.Any()).Return(mockRequest)
-// }
+	c.EXPECT().Read(gomock.Any()).Return(mockRequest)
+}

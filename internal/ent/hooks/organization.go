@@ -9,6 +9,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/fga"
 )
 
@@ -26,8 +27,8 @@ func HookOrganization() ent.Hook {
 			if m.Op().Is(ent.OpCreate) {
 				// create the relationship tuple for the owner
 				err = organizationCreateHook(ctx, m)
-			} else if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
-				// delete all relationship tuples
+			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
+				// delete all relationship tuples on delete, or soft delete (Update Op)
 				err = organizationDeleteHook(ctx, m)
 			}
 

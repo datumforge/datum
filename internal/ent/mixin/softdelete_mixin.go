@@ -2,7 +2,6 @@ package mixin
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"entgo.io/contrib/entgql"
@@ -38,14 +37,25 @@ func (SoftDeleteMixin) Fields() []ent.Field {
 	}
 }
 
+type softDeleteSkipKey struct{}
+
+// SkipSoftDelete returns a new context that skips the soft-delete interceptor/hooks.
+func SkipSoftDelete(parent context.Context) context.Context {
+	return context.WithValue(parent, softDeleteSkipKey{}, true)
+}
+
+func CheckSkipSoftDelete(ctx context.Context) bool {
+	return ctx.Value(softDeleteSkipKey{}) != nil
+}
+
 type softDeleteKey struct{}
 
-// SkipSoftDelete returns a new context that skips the soft-delete interceptor/mutators.
-func SkipSoftDelete(parent context.Context) context.Context {
+// IsSoftDelete returns a new context that informs the delete is a soft-delete for interceptor/hooks.
+func IsSoftDelete(parent context.Context) context.Context {
 	return context.WithValue(parent, softDeleteKey{}, true)
 }
 
-func CheckSoftDelete(ctx context.Context) bool {
+func CheckIsSoftDelete(ctx context.Context) bool {
 	return ctx.Value(softDeleteKey{}) != nil
 }
 
@@ -54,7 +64,7 @@ func (d SoftDeleteMixin) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
 			// Skip soft-delete, means include soft-deleted entities.
-			if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+			if skip, _ := ctx.Value(softDeleteSkipKey{}).(bool); skip {
 				return nil
 			}
 			d.P(q)
@@ -73,7 +83,7 @@ func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 	}
 
 	return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-		if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+		if skip, _ := ctx.Value(softDeleteSkipKey{}).(bool); skip {
 			return next.Mutate(ctx, m)
 		}
 
@@ -84,11 +94,15 @@ func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 
 		sd, ok := m.(SoftDelete)
 		if !ok {
-			return nil, fmt.Errorf("unexpected mutation type %T", m) //nolint
+			return nil, newUnexpectedMutationTypeError(m)
 		}
 
 		d.P(sd)
 		sd.SetOp(ent.OpUpdate)
+
+		// set that the transaction is a soft-delete
+		ctx = IsSoftDelete(ctx)
+
 		sd.SetDeletedAt(time.Now())
 		sd.SetDeletedBy(actor)
 		return sd.Client().Mutate(ctx, m)

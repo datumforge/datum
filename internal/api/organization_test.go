@@ -168,6 +168,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 	mockCheckAny(mockCtrl, mc, reqCtx, true)
 	mockCheckAny(mockCtrl, mc, reqCtx, true)
+	mockReadAny(mockCtrl, mc, reqCtx)
 
 	if _, err = client.DeleteOrganization(reqCtx, orgToDelete.ID); err != nil {
 		t.Errorf("error deleting test org")
@@ -453,6 +454,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			// mock read of tuple
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockReadAny(mockCtrl, mc, reqCtx)
 
 			// delete org
 			resp, err := client.DeleteOrganization(reqCtx, tc.orgID)

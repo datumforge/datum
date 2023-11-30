@@ -248,15 +248,9 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	listObjects := []string{fmt.Sprintf("organization:%s", parentOrg.ID)}
 
 	// setup deleted org
-	orgToDelete := (&OrganizationBuilder{}).MustNew(reqCtx, mockCtrl, mc)
-
-	mockCheckAny(mockCtrl, mc, reqCtx, true)
-	mockCheckAny(mockCtrl, mc, reqCtx, true)
-
-	if _, err = client.DeleteOrganization(reqCtx, orgToDelete.ID); err != nil {
-		t.Errorf("error deleting test org")
-		t.Fail()
-	}
+	orgToDelete := (&OrganizationBuilder{}).MustNew(reqCtx)
+	// delete said org
+	(&OrganizationCleanup{OrgID: orgToDelete.ID}).MustDelete(reqCtx)
 
 	testCases := []struct {
 		name           string

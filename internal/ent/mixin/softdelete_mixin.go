@@ -2,7 +2,6 @@ package mixin
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"entgo.io/contrib/entgql"
@@ -38,14 +37,30 @@ func (SoftDeleteMixin) Fields() []ent.Field {
 	}
 }
 
+// softDeleteSkipKey is used to indicate to allow soft deleted records to be returned in records
+// and to skip soft delete on mutations and proceed with a regular delete
+type softDeleteSkipKey struct{}
+
+// SkipSoftDelete returns a new context that skips the soft-delete interceptor/hooks.
+func SkipSoftDelete(parent context.Context) context.Context {
+	return context.WithValue(parent, softDeleteSkipKey{}, true)
+}
+
+// CheckSkipSoftDelete checks if the softDeleteSkipKey is set in the context
+func CheckSkipSoftDelete(ctx context.Context) bool {
+	return ctx.Value(softDeleteSkipKey{}) != nil
+}
+
+// softDeleteKey is used to indicate a soft delete mutation is in progress
 type softDeleteKey struct{}
 
-// SkipSoftDelete returns a new context that skips the soft-delete interceptor/mutators.
-func SkipSoftDelete(parent context.Context) context.Context {
+// IsSoftDelete returns a new context that informs the delete is a soft-delete for interceptor/hooks.
+func IsSoftDelete(parent context.Context) context.Context {
 	return context.WithValue(parent, softDeleteKey{}, true)
 }
 
-func CheckSoftDelete(ctx context.Context) bool {
+// CheckIsSoftDelete checks if the softDeleteKey is set in the context
+func CheckIsSoftDelete(ctx context.Context) bool {
 	return ctx.Value(softDeleteKey{}) != nil
 }
 
@@ -54,7 +69,7 @@ func (d SoftDeleteMixin) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
 			// Skip soft-delete, means include soft-deleted entities.
-			if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+			if skip, _ := ctx.Value(softDeleteSkipKey{}).(bool); skip {
 				return nil
 			}
 			d.P(q)
@@ -63,6 +78,8 @@ func (d SoftDeleteMixin) Interceptors() []ent.Interceptor {
 	}
 }
 
+// SoftDeleteHook will soft delete records, by changing the delete mutation to an update and setting
+// the deleted_at and deleted_by fields, unless the softDeleteSkipKey is set
 func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 	type SoftDelete interface {
 		SetOp(ent.Op)
@@ -73,7 +90,7 @@ func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 	}
 
 	return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-		if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+		if skip, _ := ctx.Value(softDeleteSkipKey{}).(bool); skip {
 			return next.Mutate(ctx, m)
 		}
 
@@ -84,11 +101,15 @@ func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 
 		sd, ok := m.(SoftDelete)
 		if !ok {
-			return nil, fmt.Errorf("unexpected mutation type %T", m) //nolint
+			return nil, newUnexpectedMutationTypeError(m)
 		}
 
 		d.P(sd)
 		sd.SetOp(ent.OpUpdate)
+
+		// set that the transaction is a soft-delete
+		ctx = IsSoftDelete(ctx)
+
 		sd.SetDeletedAt(time.Now())
 		sd.SetDeletedBy(actor)
 		return sd.Client().Mutate(ctx, m)

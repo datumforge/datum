@@ -558,6 +558,8 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 				// additional check happens when the resource is found
 				if tc.errorMsg == "" {
 					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+					mockReadAny(mockCtrl, mc, reqCtx)
+					mockReadAny(mockCtrl, mc, reqCtx)
 				}
 			}
 

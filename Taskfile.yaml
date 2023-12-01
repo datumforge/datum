@@ -119,6 +119,21 @@ tasks:
     desc: Runs go build for the datum cli
     cmds:
       - go build -mod=mod -o datum-cli ./cmd/cli
+  go:build-clerk:
+    desc: Runs go build for the datum cli
+    cmds:
+      - CGO_ENABLED=0 go build -ldflags="-X {{.PKG}}.Stage={{.STAGE}} -X {{.PKG}}.ClerkRootURL={{.CLERK_URL}} -X {{.PKG}}.LoginURL={{.LOGIN_URL}} -X {{.PKG}}.ApiURL={{.API_URL}}" -o datum-cli ./cmd/cli
+    vars:
+      PKG: github.com/datumforge/datum/cmd/cli/vars
+  build-local:
+    desc: Build a CLI configured for the local stage
+    cmds:
+      - task: go:build-clerk
+        vars:
+          CLERK_URL: https://clerk.datum.net
+          LOGIN_URL: https://accounts.datum.net/sign-in
+          API_URL: http://localhost:17608
+          STAGE: local
   compose:fga:
     desc: brings up the compose environment for openfga development
     cmds:

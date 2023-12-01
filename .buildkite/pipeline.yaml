@@ -3,37 +3,79 @@ env:
   IMAGE_REPO: ghcr.io/datumforge/${APP_NAME}
   IMAGE_TAG: ${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT:0:8}
 
-steps:
-- label: ":golangci-lint: lint :lint-roller:"
-  key: "lint"
-  plugins:
-    - docker#v5.9.0:
-        image: "registry.hub.docker.com/golangci/golangci-lint:v1.55.2"
-        command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
-        environment: 
-          - "GOTOOLCHAIN=auto"
+steps:     
+- group: ":test_tube: Tests"
+  key: "tests"
+  steps:
+  - label: ":golangci-lint: lint :lint-roller:"
+    key: "lint"
+    plugins:
+      - docker#v5.9.0:
+          image: "registry.hub.docker.com/golangci/golangci-lint:v1.55.2"
+          command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
+          environment: 
+            - "GOTOOLCHAIN=auto"
+  - label: ":golang: go test"
+    key: "go_test"
+    plugins:
+      - docker#v5.9.0:
+          image: golang:1.21.5
+          command: ["go", "test", "./..."]
 
-- label: ":test_tube: go test"
-  key: "test"
-  plugins:
-    - docker#v5.9.0:
-        image: golang:1.21.5
-        command: ["go", "test", "./..."]
+  - label: ":auth0: fga model test"
+    key: "fga_test"
+    plugins:
+      - docker#v5.9.0:
+          image: openfga/cli
+          command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
 
-- label: ":auth0: fga model test"
-  key: "fga_test"
-  plugins:
-    - docker#v5.9.0:
-        image: openfga/cli
-        command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
+- group: ":closed_lock_with_key: Security Checks"
+  key: "security"
+  steps:
+  - label: ":closed_lock_with_key: gosec"
+    key: "gosec"
+    plugins:
+      - docker#v5.9.0:
+          image: "registry.hub.docker.com/securego/gosec:2.18.2"
+          command: ["-no-fail", "-exclude-generated", "-fmt sarif", "-out", "results.sarif", "./..."]
+    artifact_paths: ["results.sarif"]
 
-- label: ":golang: build"
-  key: "gobuild"
-  artifact_paths: "bin/${APP_NAME}"
-  plugins:
-    - docker#v5.9.0:
-        image: "golang:1.21.5"
-        environment:
-          - CGO_ENABLED=0
-          - GOOS=linux
-        command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/$APP_NAME"]
+  - label: ":github: upload sarif report"
+    key: "gosec-upload"
+    depends_on: ["gosec"]
+    plugins:
+      - artifacts#v1.9.2:
+          download: results.sarif
+      - docker#v5.9.0:
+            image: "j3ssie/codeql-docker"
+            entrypoint: codeql
+            environment:
+              - "GITHUB_TOKEN"
+              - "BUILDKITE_BRANCH"
+            command: ["github", "upload-results", "--sarif=results.sarif", "--ref=refs/heads/${BUILDKITE_BRANCH}"]
+
+- group: ":golang: Builds"
+  key: "go-builds"
+  steps:
+  - label: ":golang: build"
+    key: "gobuild-server"
+    artifact_paths: "bin/${APP_NAME}"
+    plugins:
+      - docker#v5.9.0:
+          image: "golang:1.21.5"
+          environment:
+            - CGO_ENABLED=0
+            - GOOS=linux
+          command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/$APP_NAME"]
+    
+
+  - label: ":terminal: build cli"
+    key: "gobuild-cli"
+    artifact_paths: "bin/${APP_NAME}-cli"
+    plugins:
+      - docker#v5.9.0:
+          image: "golang:1.21.5"
+          environment:
+            - GOOS=darwin
+            - GOARCH=arm64
+          command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]

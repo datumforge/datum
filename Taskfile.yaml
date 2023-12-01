@@ -117,6 +117,14 @@ tasks:
     aliases: [tidy]
     cmds:
       - go mod tidy
+  go:build:
+    desc: Runs go build for the datum server
+    cmds:
+      - go build -mod=mod -o datum
+  go:build-cli:
+    desc: Runs go build for the datum cli
+    cmds:
+      - go build -mod=mod -o datum-cli ./cmd/cli 
   go:all:
     aliases: [go]
     desc: Runs all go test and lint related tasks

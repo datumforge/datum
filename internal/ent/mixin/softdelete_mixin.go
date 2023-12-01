@@ -59,7 +59,7 @@ func IsSoftDelete(parent context.Context) context.Context {
 	return context.WithValue(parent, softDeleteKey{}, true)
 }
 
-// CheckSkipSoftDelete checks if the softDeleteKey is set in the context
+// CheckIsSoftDelete checks if the softDeleteKey is set in the context
 func CheckIsSoftDelete(ctx context.Context) bool {
 	return ctx.Value(softDeleteKey{}) != nil
 }

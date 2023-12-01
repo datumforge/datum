@@ -16,12 +16,7 @@ import (
 // DenyIfNoSubject is a rule that returns deny decision if the subject is missing in the context.
 func DenyIfNoSubject() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
-		ec, err := echox.EchoContextFromContext(ctx)
-		if err != nil {
-			return err
-		}
-
-		sub, err := echox.GetActorSubject(*ec)
+		sub, err := echox.GetUserIDFromContext(ctx)
 		if err != nil {
 			return privacy.Denyf("cannot get subject from context")
 		}

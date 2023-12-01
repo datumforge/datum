@@ -368,6 +368,90 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	(&OrganizationCleanup{OrgID: parentOrg.ID}).MustDelete(reqCtx)
 }
 
+func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
+	// Setup Test Graph Client Without Auth
+	client := graphTestClientNoAuth(EntClient)
+
+	ec := echox.NewTestEchoContext()
+
+	reqCtx := context.WithValue(ec.Request().Context(), echox.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
+
+	testCases := []struct {
+		name           string
+		orgName        string
+		displayName    string
+		orgDescription string
+		parentOrgID    string
+		errorMsg       string
+	}{
+		{
+			name:           "happy path organization",
+			orgName:        gofakeit.Name(),
+			displayName:    gofakeit.LetterN(50),
+			orgDescription: gofakeit.HipsterSentence(10),
+			parentOrgID:    "", // root org
+		},
+		{
+			name:           "happy path organization with parent org",
+			orgName:        gofakeit.Name(),
+			orgDescription: gofakeit.HipsterSentence(10),
+			parentOrgID:    parentOrg.ID,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Create "+tc.name, func(t *testing.T) {
+			tc := tc
+			input := datumclient.CreateOrganizationInput{
+				Name:        tc.orgName,
+				Description: &tc.orgDescription,
+			}
+
+			if tc.displayName != "" {
+				input.DisplayName = &tc.displayName
+			}
+
+			if tc.parentOrgID != "" {
+				input.ParentID = &tc.parentOrgID
+			}
+
+			resp, err := client.CreateOrganization(reqCtx, input)
+
+			if tc.errorMsg != "" {
+				require.Error(t, err)
+				assert.ErrorContains(t, err, tc.errorMsg)
+				assert.Nil(t, resp)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			require.NotNil(t, resp.CreateOrganization.Organization)
+
+			// Make sure provided values match
+			assert.Equal(t, tc.orgName, resp.CreateOrganization.Organization.Name)
+			assert.Equal(t, tc.orgDescription, *resp.CreateOrganization.Organization.Description)
+
+			if tc.parentOrgID == "" {
+				assert.Nil(t, resp.CreateOrganization.Organization.Parent)
+			} else {
+				parent := resp.CreateOrganization.Organization.GetParent()
+				assert.Equal(t, tc.parentOrgID, parent.ID)
+			}
+
+			// cleanup org
+			(&OrganizationCleanup{OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx)
+		})
+	}
+
+	(&OrganizationCleanup{OrgID: parentOrg.ID}).MustDelete(reqCtx)
+}
+
 func TestMutation_UpdateOrganization(t *testing.T) {
 	// Add Authz Client Mock
 	// setup mock controller

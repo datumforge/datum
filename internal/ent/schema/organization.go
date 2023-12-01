@@ -128,7 +128,6 @@ func (Organization) Policy() ent.Policy {
 			privacy.AlwaysAllowRule(),   // Allow all other users (e.g. a user with a JWT should be able to create a new org)
 		},
 		Query: privacy.QueryPolicy{
-			rule.DenyIfNoSubject(),   // Requires a user to be authenticated with a valid JWT
 			rule.HasOrgReadAccess(),  // Requires a user to have can_view access of the org
 			privacy.AlwaysDenyRule(), // Deny all other users
 		},

@@ -111,6 +111,14 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
+  go:build:
+    desc: Runs go build for the datum server
+    cmds:
+      - go build -mod=mod -o datum
+  go:build-cli:
+    desc: Runs go build for the datum cli
+    cmds:
+      - go build -mod=mod -o datum-cli ./cmd/cli
   compose:fga:
     desc: brings up the compose environment for openfga development
     cmds:

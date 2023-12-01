@@ -14,6 +14,7 @@ type OrganizationBuilder struct {
 	DisplayName string
 	Description *string
 	OrgID       string
+	ParentOrgID string
 }
 
 type OrganizationCleanup struct {
@@ -28,6 +29,8 @@ type UserBuilder struct {
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
 func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organization {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
 	if o.Name == "" {
 		o.Name = gofakeit.AppName()
 	}
@@ -39,6 +42,12 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organizati
 	if o.Description == nil {
 		desc := gofakeit.HipsterSentence(10)
 		o.Description = &desc
+	}
+
+	m := EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description)
+
+	if o.ParentOrgID != "" {
+		m.SetParentID(o.ParentOrgID).SaveX(ctx)
 	}
 
 	return EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SaveX(ctx)
@@ -53,6 +62,8 @@ func (o *OrganizationCleanup) MustDelete(ctx context.Context) {
 
 // MustNew user builder is used to create, without authz checks, users in the database
 func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
 	if u.FirstName == "" {
 		u.FirstName = gofakeit.FirstName()
 	}

@@ -101,19 +101,14 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(EntClient)
 
-	ec, err := echox.NewTestContextWithValidUser(subClaim)
-	if err != nil {
-		t.Fatal()
-	}
+	ec := echox.NewTestEchoContext()
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echox.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
-	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
+	org2 := (&OrganizationBuilder{ParentOrgID: org1.ParentOrganizationID}).MustNew(reqCtx)
 
 	t.Run("Get Organizations", func(t *testing.T) {
 		resp, err := client.GetAllOrganizations(reqCtx)

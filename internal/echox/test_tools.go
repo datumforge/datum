@@ -8,8 +8,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// newTestEchoContext used for testing purposes ONLY
-func newTestEchoContext() echo.Context {
+// NewTestEchoContext used for testing purposes ONLY
+func NewTestEchoContext() echo.Context {
 	// create echo context
 	e := echo.New()
 	req := &http.Request{
@@ -41,7 +41,7 @@ func newValidSignedJWT(subject string) (*jwt.Token, error) {
 
 // NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
 func NewTestContextWithValidUser(subject string) (*echo.Context, error) {
-	ec := newTestEchoContext()
+	ec := NewTestEchoContext()
 
 	j, err := newValidSignedJWT(subject)
 	if err != nil {

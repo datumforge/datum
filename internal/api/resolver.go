@@ -17,6 +17,13 @@ import (
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 
+const (
+	ActionGet    = "get"
+	ActionUpdate = "update"
+	ActionDelete = "delete"
+	ActionCreate = "create"
+)
+
 var (
 	graphPath      = "query"
 	playgroundPath = "playground"

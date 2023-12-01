@@ -28,7 +28,7 @@ func (r *mutationResolver) createOrg(ctx context.Context, input generated.Create
 		}
 
 		if errors.Is(err, privacy.Deny) {
-			return nil, ErrPermissionDenied
+			return nil, newPermissionDeniedError(ActionCreate, "organization")
 		}
 
 		r.logger.Errorw("failed to create organization", "error", err)

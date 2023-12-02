@@ -122,7 +122,7 @@ tasks:
   go:build-clerk:
     desc: Runs go build for the datum cli
     cmds:
-      - CGO_ENABLED=0 go build -ldflags="-X {{.PKG}}.Stage={{.STAGE}} -X {{.PKG}}.ClerkRootURL={{.CLERK_URL}} -X {{.PKG}}.LoginURL={{.LOGIN_URL}} -X {{.PKG}}.ApiURL={{.API_URL}}" -o datum-cli ./cmd/cli
+      - CGO_ENABLED=0 go build -ldflags="-X {{.PKG}}.CommitID={{.GIT_COMMIT}} -X {{.PKG}}.Branch={{.GIT_BRANCH}} -X {{.PKG}}.Stage={{.STAGE}} -X '{{.PKG}}.BuildDate={{.BUILD_DATE}}' -X {{.PKG}}.Version={{.VERSION}} -X {{.PKG}}.ClerkRootURL={{.CLERK_URL}} -X {{.PKG}}.LoginURL={{.LOGIN_URL}} -X {{.PKG}}.ApiURL={{.API_URL}}" -o datum-cli ./cmd/cli
     vars:
       PKG: github.com/datumforge/datum/cmd/cli/vars
   build-local:

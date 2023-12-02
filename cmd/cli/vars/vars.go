@@ -8,4 +8,8 @@ var (
 	LoginURL     = "unset" //nolint:gochecknoglobals
 	ApiURL       = "unset" //nolint:gochecknoglobals
 	Stage        = "unset" //nolint:gochecknoglobals
+	CommitID     = "unset" //nolint:gochecknoglobals
+	Version      = "unset" //nolint:gochecknoglobals
+	BuildDate    = "unset" //nolint:gochecknoglobals
+	Branch       = "unset" //nolint:gochecknoglobals
 )

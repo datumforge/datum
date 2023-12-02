@@ -13,7 +13,7 @@ require (
 	github.com/brpaz/echozap v1.1.3
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
 	github.com/globocom/echo-prometheus v0.1.2
-	github.com/golang-jwt/jwt/v5 v5.1.0
+	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/labstack/echo-jwt/v4 v4.2.0

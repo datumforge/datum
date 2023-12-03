@@ -2454,6 +2454,23 @@
                   "parent_organization_id": {
                     "type": "string"
                   },
+                  "path": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "root",
+                      "org"
+                    ],
+                    "default": "org"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
                   "parent": {
                     "type": "string"
                   },
@@ -2495,13 +2512,17 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "owner": {
+                    "type": "string"
                   }
                 },
                 "required": [
                   "created_at",
                   "updated_at",
                   "name",
-                  "display_name"
+                  "display_name",
+                  "kind"
                 ]
               }
             }
@@ -2659,6 +2680,23 @@
                   "description": {
                     "type": "string"
                   },
+                  "path": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "root",
+                      "org"
+                    ],
+                    "default": "org"
+                  },
+                  "owner_id": {
+                    "type": "string"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
                   "parent": {
                     "type": "string"
                   },
@@ -2700,6 +2738,9 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "owner": {
+                    "type": "string"
                   }
                 }
               }
@@ -3034,6 +3075,51 @@
                   "items": {
                     "$ref": "#/components/schemas/Organization_OauthproviderList"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/owner": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the Organization with the given ID",
+        "operationId": "readOrganizationOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to Organization with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Organization_OwnerRead"
                 }
               }
             }
@@ -4857,6 +4943,13 @@
                   "oauth": {
                     "type": "boolean"
                   },
+                  "user_type": {
+                    "type": "string",
+                    "enum": [
+                      "account",
+                      "member"
+                    ]
+                  },
                   "organizations": {
                     "type": "array",
                     "items": {
@@ -4899,6 +4992,7 @@
                   "last_name",
                   "display_name",
                   "oauth",
+                  "user_type",
                   "setting"
                 ]
               }
@@ -5075,6 +5169,13 @@
                   },
                   "oauth": {
                     "type": "boolean"
+                  },
+                  "user_type": {
+                    "type": "string",
+                    "enum": [
+                      "account",
+                      "member"
+                    ]
                   },
                   "organizations": {
                     "type": "array",
@@ -5875,6 +5976,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -5882,7 +6000,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "Group": {
@@ -6507,6 +6626,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -6514,7 +6650,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "Group_SettingRead": {
@@ -6630,6 +6767,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -6640,7 +6784,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "Integration": {
@@ -6894,6 +7039,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -6901,7 +7063,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "OauthProvider": {
@@ -7259,6 +7422,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -7266,7 +7446,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "Organization": {
@@ -7306,6 +7487,23 @@
             "type": "string"
           },
           "parent_organization_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
             "type": "string"
           },
           "parent": {
@@ -7349,6 +7547,9 @@
             "items": {
               "$ref": "#/components/schemas/OauthProvider"
             }
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
           }
         },
         "required": [
@@ -7356,7 +7557,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "OrganizationCreate": {
@@ -7397,6 +7599,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -7404,7 +7623,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "OrganizationList": {
@@ -7445,6 +7665,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -7452,7 +7689,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "OrganizationRead": {
@@ -7493,6 +7731,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -7500,7 +7755,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "OrganizationSetting": {
@@ -7904,6 +8160,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -7911,7 +8184,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "OrganizationUpdate": {
@@ -7952,6 +8226,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -7959,7 +8250,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "Organization_ChildrenList": {
@@ -8000,6 +8292,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -8007,7 +8316,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "Organization_EntitlementsList": {
@@ -8222,6 +8532,78 @@
           "info_url"
         ]
       },
+      "Organization_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name",
+          "oauth",
+          "user_type"
+        ]
+      },
       "Organization_ParentRead": {
         "type": "object",
         "properties": {
@@ -8260,6 +8642,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -8267,7 +8666,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "Organization_SettingRead": {
@@ -8393,6 +8793,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -8403,7 +8810,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "PersonalAccessToken": {
@@ -8715,6 +9123,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -8725,7 +9140,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "RefreshToken": {
@@ -9152,6 +9568,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -9162,7 +9585,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "Session": {
@@ -9474,6 +9898,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -9484,7 +9915,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "User": {
@@ -9542,6 +9974,13 @@
           "oauth": {
             "type": "boolean"
           },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
+          },
           "organizations": {
             "type": "array",
             "items": {
@@ -9585,6 +10024,7 @@
           "last_name",
           "display_name",
           "oauth",
+          "user_type",
           "setting"
         ]
       },
@@ -9639,6 +10079,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -9649,7 +10096,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "UserList": {
@@ -9703,6 +10151,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -9713,7 +10168,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "UserRead": {
@@ -9767,6 +10223,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -9777,7 +10240,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "UserSetting": {
@@ -10227,6 +10691,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -10237,7 +10708,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "UserUpdate": {
@@ -10291,6 +10763,13 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "user_type": {
+            "type": "string",
+            "enum": [
+              "account",
+              "member"
+            ]
           }
         },
         "required": [
@@ -10301,7 +10780,8 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "user_type"
         ]
       },
       "User_GroupsList": {
@@ -10385,6 +10865,23 @@
           },
           "parent_organization_id": {
             "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "root",
+              "org"
+            ],
+            "default": "org"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
           }
         },
         "required": [
@@ -10392,7 +10889,8 @@
           "created_at",
           "updated_at",
           "name",
-          "display_name"
+          "display_name",
+          "kind"
         ]
       },
       "User_PersonalAccessTokensList": {

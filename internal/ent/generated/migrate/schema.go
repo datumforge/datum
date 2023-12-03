@@ -174,7 +174,11 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 160},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "kind", Type: field.TypeEnum, Enums: []string{"root", "org"}, Default: "org"},
+		{Name: "code", Type: field.TypeString, Nullable: true, Size: 45},
+		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true, Default: "0"},
+		{Name: "owner_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
 	OrganizationsTable = &schema.Table{
@@ -184,8 +188,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organizations_organizations_children",
-				Columns:    []*schema.Column{OrganizationsColumns[10]},
+				Columns:    []*schema.Column{OrganizationsColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "organizations_users_owner",
+				Columns:    []*schema.Column{OrganizationsColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -361,19 +371,13 @@ var (
 		{Name: "password_hash", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Default: false},
+		{Name: "user_type", Type: field.TypeEnum, Enums: []string{"account", "member"}},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "user_id",
-				Unique:  true,
-				Columns: []*schema.Column{UsersColumns[0]},
-			},
-		},
 	}
 	// UserSettingsColumns holds the columns for the "user_settings" table.
 	UserSettingsColumns = []*schema.Column{
@@ -483,6 +487,7 @@ func init() {
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrganizationsTable.ForeignKeys[1].RefTable = UsersTable
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	RefreshTokensTable.ForeignKeys[0].RefTable = UsersTable

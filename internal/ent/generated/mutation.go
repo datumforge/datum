@@ -5096,6 +5096,9 @@ type OrganizationMutation struct {
 	name                 *string
 	display_name         *string
 	description          *string
+	_path                *string
+	kind                 *organization.Kind
+	code                 *string
 	clearedFields        map[string]struct{}
 	parent               *string
 	clearedparent        bool
@@ -5119,6 +5122,8 @@ type OrganizationMutation struct {
 	oauthprovider        map[string]struct{}
 	removedoauthprovider map[string]struct{}
 	clearedoauthprovider bool
+	owner                *string
+	clearedowner         bool
 	done                 bool
 	oldValue             func(context.Context) (*Organization, error)
 	predicates           []predicate.Organization
@@ -5666,6 +5671,189 @@ func (m *OrganizationMutation) ResetParentOrganizationID() {
 	delete(m.clearedFields, organization.FieldParentOrganizationID)
 }
 
+// SetPath sets the "path" field.
+func (m *OrganizationMutation) SetPath(s string) {
+	m._path = &s
+}
+
+// Path returns the value of the "path" field in the mutation.
+func (m *OrganizationMutation) Path() (r string, exists bool) {
+	v := m._path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPath returns the old "path" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPath: %w", err)
+	}
+	return oldValue.Path, nil
+}
+
+// ClearPath clears the value of the "path" field.
+func (m *OrganizationMutation) ClearPath() {
+	m._path = nil
+	m.clearedFields[organization.FieldPath] = struct{}{}
+}
+
+// PathCleared returns if the "path" field was cleared in this mutation.
+func (m *OrganizationMutation) PathCleared() bool {
+	_, ok := m.clearedFields[organization.FieldPath]
+	return ok
+}
+
+// ResetPath resets all changes to the "path" field.
+func (m *OrganizationMutation) ResetPath() {
+	m._path = nil
+	delete(m.clearedFields, organization.FieldPath)
+}
+
+// SetKind sets the "kind" field.
+func (m *OrganizationMutation) SetKind(o organization.Kind) {
+	m.kind = &o
+}
+
+// Kind returns the value of the "kind" field in the mutation.
+func (m *OrganizationMutation) Kind() (r organization.Kind, exists bool) {
+	v := m.kind
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldKind returns the old "kind" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldKind(ctx context.Context) (v organization.Kind, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldKind is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldKind requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldKind: %w", err)
+	}
+	return oldValue.Kind, nil
+}
+
+// ResetKind resets all changes to the "kind" field.
+func (m *OrganizationMutation) ResetKind() {
+	m.kind = nil
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (m *OrganizationMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *OrganizationMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldOwnerID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (m *OrganizationMutation) ClearOwnerID() {
+	m.owner = nil
+	m.clearedFields[organization.FieldOwnerID] = struct{}{}
+}
+
+// OwnerIDCleared returns if the "owner_id" field was cleared in this mutation.
+func (m *OrganizationMutation) OwnerIDCleared() bool {
+	_, ok := m.clearedFields[organization.FieldOwnerID]
+	return ok
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *OrganizationMutation) ResetOwnerID() {
+	m.owner = nil
+	delete(m.clearedFields, organization.FieldOwnerID)
+}
+
+// SetCode sets the "code" field.
+func (m *OrganizationMutation) SetCode(s string) {
+	m.code = &s
+}
+
+// Code returns the value of the "code" field in the mutation.
+func (m *OrganizationMutation) Code() (r string, exists bool) {
+	v := m.code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCode returns the old "code" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+	}
+	return oldValue.Code, nil
+}
+
+// ClearCode clears the value of the "code" field.
+func (m *OrganizationMutation) ClearCode() {
+	m.code = nil
+	m.clearedFields[organization.FieldCode] = struct{}{}
+}
+
+// CodeCleared returns if the "code" field was cleared in this mutation.
+func (m *OrganizationMutation) CodeCleared() bool {
+	_, ok := m.clearedFields[organization.FieldCode]
+	return ok
+}
+
+// ResetCode resets all changes to the "code" field.
+func (m *OrganizationMutation) ResetCode() {
+	m.code = nil
+	delete(m.clearedFields, organization.FieldCode)
+}
+
 // SetParentID sets the "parent" edge to the Organization entity by id.
 func (m *OrganizationMutation) SetParentID(id string) {
 	m.parent = &id
@@ -6069,6 +6257,33 @@ func (m *OrganizationMutation) ResetOauthprovider() {
 	m.removedoauthprovider = nil
 }
 
+// ClearOwner clears the "owner" edge to the User entity.
+func (m *OrganizationMutation) ClearOwner() {
+	m.clearedowner = true
+	m.clearedFields[organization.FieldOwnerID] = struct{}{}
+}
+
+// OwnerCleared reports if the "owner" edge to the User entity was cleared.
+func (m *OrganizationMutation) OwnerCleared() bool {
+	return m.OwnerIDCleared() || m.clearedowner
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *OrganizationMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetOwner resets all changes to the "owner" edge.
+func (m *OrganizationMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
+}
+
 // Where appends a list predicates to the OrganizationMutation builder.
 func (m *OrganizationMutation) Where(ps ...predicate.Organization) {
 	m.predicates = append(m.predicates, ps...)
@@ -6103,7 +6318,7 @@ func (m *OrganizationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, organization.FieldCreatedAt)
 	}
@@ -6134,6 +6349,18 @@ func (m *OrganizationMutation) Fields() []string {
 	if m.parent != nil {
 		fields = append(fields, organization.FieldParentOrganizationID)
 	}
+	if m._path != nil {
+		fields = append(fields, organization.FieldPath)
+	}
+	if m.kind != nil {
+		fields = append(fields, organization.FieldKind)
+	}
+	if m.owner != nil {
+		fields = append(fields, organization.FieldOwnerID)
+	}
+	if m.code != nil {
+		fields = append(fields, organization.FieldCode)
+	}
 	return fields
 }
 
@@ -6162,6 +6389,14 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case organization.FieldParentOrganizationID:
 		return m.ParentOrganizationID()
+	case organization.FieldPath:
+		return m.Path()
+	case organization.FieldKind:
+		return m.Kind()
+	case organization.FieldOwnerID:
+		return m.OwnerID()
+	case organization.FieldCode:
+		return m.Code()
 	}
 	return nil, false
 }
@@ -6191,6 +6426,14 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDescription(ctx)
 	case organization.FieldParentOrganizationID:
 		return m.OldParentOrganizationID(ctx)
+	case organization.FieldPath:
+		return m.OldPath(ctx)
+	case organization.FieldKind:
+		return m.OldKind(ctx)
+	case organization.FieldOwnerID:
+		return m.OldOwnerID(ctx)
+	case organization.FieldCode:
+		return m.OldCode(ctx)
 	}
 	return nil, fmt.Errorf("unknown Organization field %s", name)
 }
@@ -6270,6 +6513,34 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetParentOrganizationID(v)
 		return nil
+	case organization.FieldPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPath(v)
+		return nil
+	case organization.FieldKind:
+		v, ok := value.(organization.Kind)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetKind(v)
+		return nil
+	case organization.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
+	case organization.FieldCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCode(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
 }
@@ -6318,6 +6589,15 @@ func (m *OrganizationMutation) ClearedFields() []string {
 	if m.FieldCleared(organization.FieldParentOrganizationID) {
 		fields = append(fields, organization.FieldParentOrganizationID)
 	}
+	if m.FieldCleared(organization.FieldPath) {
+		fields = append(fields, organization.FieldPath)
+	}
+	if m.FieldCleared(organization.FieldOwnerID) {
+		fields = append(fields, organization.FieldOwnerID)
+	}
+	if m.FieldCleared(organization.FieldCode) {
+		fields = append(fields, organization.FieldCode)
+	}
 	return fields
 }
 
@@ -6349,6 +6629,15 @@ func (m *OrganizationMutation) ClearField(name string) error {
 		return nil
 	case organization.FieldParentOrganizationID:
 		m.ClearParentOrganizationID()
+		return nil
+	case organization.FieldPath:
+		m.ClearPath()
+		return nil
+	case organization.FieldOwnerID:
+		m.ClearOwnerID()
+		return nil
+	case organization.FieldCode:
+		m.ClearCode()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization nullable field %s", name)
@@ -6388,13 +6677,25 @@ func (m *OrganizationMutation) ResetField(name string) error {
 	case organization.FieldParentOrganizationID:
 		m.ResetParentOrganizationID()
 		return nil
+	case organization.FieldPath:
+		m.ResetPath()
+		return nil
+	case organization.FieldKind:
+		m.ResetKind()
+		return nil
+	case organization.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
+	case organization.FieldCode:
+		m.ResetCode()
+		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *OrganizationMutation) AddedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.parent != nil {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -6418,6 +6719,9 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	}
 	if m.oauthprovider != nil {
 		edges = append(edges, organization.EdgeOauthprovider)
+	}
+	if m.owner != nil {
+		edges = append(edges, organization.EdgeOwner)
 	}
 	return edges
 }
@@ -6470,13 +6774,17 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case organization.EdgeOwner:
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *OrganizationMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.removedchildren != nil {
 		edges = append(edges, organization.EdgeChildren)
 	}
@@ -6544,7 +6852,7 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *OrganizationMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 8)
+	edges := make([]string, 0, 9)
 	if m.clearedparent {
 		edges = append(edges, organization.EdgeParent)
 	}
@@ -6569,6 +6877,9 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	if m.clearedoauthprovider {
 		edges = append(edges, organization.EdgeOauthprovider)
 	}
+	if m.clearedowner {
+		edges = append(edges, organization.EdgeOwner)
+	}
 	return edges
 }
 
@@ -6592,6 +6903,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedentitlements
 	case organization.EdgeOauthprovider:
 		return m.clearedoauthprovider
+	case organization.EdgeOwner:
+		return m.clearedowner
 	}
 	return false
 }
@@ -6605,6 +6918,9 @@ func (m *OrganizationMutation) ClearEdge(name string) error {
 		return nil
 	case organization.EdgeSetting:
 		m.ClearSetting()
+		return nil
+	case organization.EdgeOwner:
+		m.ClearOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization unique edge %s", name)
@@ -6637,6 +6953,9 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 		return nil
 	case organization.EdgeOauthprovider:
 		m.ResetOauthprovider()
+		return nil
+	case organization.EdgeOwner:
+		m.ResetOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)
@@ -10928,6 +11247,7 @@ type UserMutation struct {
 	passwordHash                  *string
 	sub                           *string
 	oauth                         *bool
+	user_type                     *user.UserType
 	clearedFields                 map[string]struct{}
 	organizations                 map[string]struct{}
 	removedorganizations          map[string]struct{}
@@ -11699,6 +12019,42 @@ func (m *UserMutation) ResetOauth() {
 	m.oauth = nil
 }
 
+// SetUserType sets the "user_type" field.
+func (m *UserMutation) SetUserType(ut user.UserType) {
+	m.user_type = &ut
+}
+
+// UserType returns the value of the "user_type" field in the mutation.
+func (m *UserMutation) UserType() (r user.UserType, exists bool) {
+	v := m.user_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserType returns the old "user_type" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldUserType(ctx context.Context) (v user.UserType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserType: %w", err)
+	}
+	return oldValue.UserType, nil
+}
+
+// ResetUserType resets all changes to the "user_type" field.
+func (m *UserMutation) ResetUserType() {
+	m.user_type = nil
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
 func (m *UserMutation) AddOrganizationIDs(ids ...string) {
 	if m.organizations == nil {
@@ -12042,7 +12398,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -12088,6 +12444,9 @@ func (m *UserMutation) Fields() []string {
 	if m.oauth != nil {
 		fields = append(fields, user.FieldOauth)
 	}
+	if m.user_type != nil {
+		fields = append(fields, user.FieldUserType)
+	}
 	return fields
 }
 
@@ -12126,6 +12485,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Sub()
 	case user.FieldOauth:
 		return m.Oauth()
+	case user.FieldUserType:
+		return m.UserType()
 	}
 	return nil, false
 }
@@ -12165,6 +12526,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSub(ctx)
 	case user.FieldOauth:
 		return m.OldOauth(ctx)
+	case user.FieldUserType:
+		return m.OldUserType(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -12278,6 +12641,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOauth(v)
+		return nil
+	case user.FieldUserType:
+		v, ok := value.(user.UserType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -12423,6 +12793,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldOauth:
 		m.ResetOauth()
+		return nil
+	case user.FieldUserType:
+		m.ResetUserType()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

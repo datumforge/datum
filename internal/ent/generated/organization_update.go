@@ -150,6 +150,80 @@ func (ou *OrganizationUpdate) ClearDescription() *OrganizationUpdate {
 	return ou
 }
 
+// SetPath sets the "path" field.
+func (ou *OrganizationUpdate) SetPath(s string) *OrganizationUpdate {
+	ou.mutation.SetPath(s)
+	return ou
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillablePath(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetPath(*s)
+	}
+	return ou
+}
+
+// ClearPath clears the value of the "path" field.
+func (ou *OrganizationUpdate) ClearPath() *OrganizationUpdate {
+	ou.mutation.ClearPath()
+	return ou
+}
+
+// SetKind sets the "kind" field.
+func (ou *OrganizationUpdate) SetKind(o organization.Kind) *OrganizationUpdate {
+	ou.mutation.SetKind(o)
+	return ou
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableKind(o *organization.Kind) *OrganizationUpdate {
+	if o != nil {
+		ou.SetKind(*o)
+	}
+	return ou
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (ou *OrganizationUpdate) SetOwnerID(s string) *OrganizationUpdate {
+	ou.mutation.SetOwnerID(s)
+	return ou
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableOwnerID(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetOwnerID(*s)
+	}
+	return ou
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ou *OrganizationUpdate) ClearOwnerID() *OrganizationUpdate {
+	ou.mutation.ClearOwnerID()
+	return ou
+}
+
+// SetCode sets the "code" field.
+func (ou *OrganizationUpdate) SetCode(s string) *OrganizationUpdate {
+	ou.mutation.SetCode(s)
+	return ou
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (ou *OrganizationUpdate) SetNillableCode(s *string) *OrganizationUpdate {
+	if s != nil {
+		ou.SetCode(*s)
+	}
+	return ou
+}
+
+// ClearCode clears the value of the "code" field.
+func (ou *OrganizationUpdate) ClearCode() *OrganizationUpdate {
+	ou.mutation.ClearCode()
+	return ou
+}
+
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
 func (ou *OrganizationUpdate) AddChildIDs(ids ...string) *OrganizationUpdate {
 	ou.mutation.AddChildIDs(ids...)
@@ -257,6 +331,11 @@ func (ou *OrganizationUpdate) AddOauthprovider(o ...*OauthProvider) *Organizatio
 		ids[i] = o[i].ID
 	}
 	return ou.AddOauthproviderIDs(ids...)
+}
+
+// SetOwner sets the "owner" edge to the User entity.
+func (ou *OrganizationUpdate) SetOwner(u *User) *OrganizationUpdate {
+	return ou.SetOwnerID(u.ID)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -396,6 +475,12 @@ func (ou *OrganizationUpdate) RemoveOauthprovider(o ...*OauthProvider) *Organiza
 	return ou.RemoveOauthproviderIDs(ids...)
 }
 
+// ClearOwner clears the "owner" edge to the User entity.
+func (ou *OrganizationUpdate) ClearOwner() *OrganizationUpdate {
+	ou.mutation.ClearOwner()
+	return ou
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ou *OrganizationUpdate) Save(ctx context.Context) (int, error) {
 	if err := ou.defaults(); err != nil {
@@ -450,6 +535,16 @@ func (ou *OrganizationUpdate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
 	}
+	if v, ok := ou.mutation.Kind(); ok {
+		if err := organization.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`generated: validator failed for field "Organization.kind": %w`, err)}
+		}
+	}
+	if v, ok := ou.mutation.Code(); ok {
+		if err := organization.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`generated: validator failed for field "Organization.code": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -500,6 +595,21 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ou.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
+	}
+	if value, ok := ou.mutation.Path(); ok {
+		_spec.SetField(organization.FieldPath, field.TypeString, value)
+	}
+	if ou.mutation.PathCleared() {
+		_spec.ClearField(organization.FieldPath, field.TypeString)
+	}
+	if value, ok := ou.mutation.Kind(); ok {
+		_spec.SetField(organization.FieldKind, field.TypeEnum, value)
+	}
+	if value, ok := ou.mutation.Code(); ok {
+		_spec.SetField(organization.FieldCode, field.TypeString, value)
+	}
+	if ou.mutation.CodeCleared() {
+		_spec.ClearField(organization.FieldCode, field.TypeString)
 	}
 	if ou.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -820,6 +930,37 @@ func (ou *OrganizationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if ou.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   organization.OwnerTable,
+			Columns: []string{organization.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Organization
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ou.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   organization.OwnerTable,
+			Columns: []string{organization.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ou.schemaConfig.Organization
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = ou.schemaConfig.Organization
 	ctx = internal.NewSchemaConfigContext(ctx, ou.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, ou.driver, _spec); err != nil {
@@ -956,6 +1097,80 @@ func (ouo *OrganizationUpdateOne) ClearDescription() *OrganizationUpdateOne {
 	return ouo
 }
 
+// SetPath sets the "path" field.
+func (ouo *OrganizationUpdateOne) SetPath(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetPath(s)
+	return ouo
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillablePath(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetPath(*s)
+	}
+	return ouo
+}
+
+// ClearPath clears the value of the "path" field.
+func (ouo *OrganizationUpdateOne) ClearPath() *OrganizationUpdateOne {
+	ouo.mutation.ClearPath()
+	return ouo
+}
+
+// SetKind sets the "kind" field.
+func (ouo *OrganizationUpdateOne) SetKind(o organization.Kind) *OrganizationUpdateOne {
+	ouo.mutation.SetKind(o)
+	return ouo
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableKind(o *organization.Kind) *OrganizationUpdateOne {
+	if o != nil {
+		ouo.SetKind(*o)
+	}
+	return ouo
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (ouo *OrganizationUpdateOne) SetOwnerID(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetOwnerID(s)
+	return ouo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableOwnerID(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetOwnerID(*s)
+	}
+	return ouo
+}
+
+// ClearOwnerID clears the value of the "owner_id" field.
+func (ouo *OrganizationUpdateOne) ClearOwnerID() *OrganizationUpdateOne {
+	ouo.mutation.ClearOwnerID()
+	return ouo
+}
+
+// SetCode sets the "code" field.
+func (ouo *OrganizationUpdateOne) SetCode(s string) *OrganizationUpdateOne {
+	ouo.mutation.SetCode(s)
+	return ouo
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (ouo *OrganizationUpdateOne) SetNillableCode(s *string) *OrganizationUpdateOne {
+	if s != nil {
+		ouo.SetCode(*s)
+	}
+	return ouo
+}
+
+// ClearCode clears the value of the "code" field.
+func (ouo *OrganizationUpdateOne) ClearCode() *OrganizationUpdateOne {
+	ouo.mutation.ClearCode()
+	return ouo
+}
+
 // AddChildIDs adds the "children" edge to the Organization entity by IDs.
 func (ouo *OrganizationUpdateOne) AddChildIDs(ids ...string) *OrganizationUpdateOne {
 	ouo.mutation.AddChildIDs(ids...)
@@ -1063,6 +1278,11 @@ func (ouo *OrganizationUpdateOne) AddOauthprovider(o ...*OauthProvider) *Organiz
 		ids[i] = o[i].ID
 	}
 	return ouo.AddOauthproviderIDs(ids...)
+}
+
+// SetOwner sets the "owner" edge to the User entity.
+func (ouo *OrganizationUpdateOne) SetOwner(u *User) *OrganizationUpdateOne {
+	return ouo.SetOwnerID(u.ID)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -1202,6 +1422,12 @@ func (ouo *OrganizationUpdateOne) RemoveOauthprovider(o ...*OauthProvider) *Orga
 	return ouo.RemoveOauthproviderIDs(ids...)
 }
 
+// ClearOwner clears the "owner" edge to the User entity.
+func (ouo *OrganizationUpdateOne) ClearOwner() *OrganizationUpdateOne {
+	ouo.mutation.ClearOwner()
+	return ouo
+}
+
 // Where appends a list predicates to the OrganizationUpdate builder.
 func (ouo *OrganizationUpdateOne) Where(ps ...predicate.Organization) *OrganizationUpdateOne {
 	ouo.mutation.Where(ps...)
@@ -1267,6 +1493,16 @@ func (ouo *OrganizationUpdateOne) check() error {
 	if v, ok := ouo.mutation.DisplayName(); ok {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
+		}
+	}
+	if v, ok := ouo.mutation.Kind(); ok {
+		if err := organization.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`generated: validator failed for field "Organization.kind": %w`, err)}
+		}
+	}
+	if v, ok := ouo.mutation.Code(); ok {
+		if err := organization.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`generated: validator failed for field "Organization.code": %w`, err)}
 		}
 	}
 	return nil
@@ -1336,6 +1572,21 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 	}
 	if ouo.mutation.DescriptionCleared() {
 		_spec.ClearField(organization.FieldDescription, field.TypeString)
+	}
+	if value, ok := ouo.mutation.Path(); ok {
+		_spec.SetField(organization.FieldPath, field.TypeString, value)
+	}
+	if ouo.mutation.PathCleared() {
+		_spec.ClearField(organization.FieldPath, field.TypeString)
+	}
+	if value, ok := ouo.mutation.Kind(); ok {
+		_spec.SetField(organization.FieldKind, field.TypeEnum, value)
+	}
+	if value, ok := ouo.mutation.Code(); ok {
+		_spec.SetField(organization.FieldCode, field.TypeString, value)
+	}
+	if ouo.mutation.CodeCleared() {
+		_spec.ClearField(organization.FieldCode, field.TypeString)
 	}
 	if ouo.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1651,6 +1902,37 @@ func (ouo *OrganizationUpdateOne) sqlSave(ctx context.Context) (_node *Organizat
 			},
 		}
 		edge.Schema = ouo.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ouo.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   organization.OwnerTable,
+			Columns: []string{organization.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Organization
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ouo.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   organization.OwnerTable,
+			Columns: []string{organization.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = ouo.schemaConfig.Organization
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

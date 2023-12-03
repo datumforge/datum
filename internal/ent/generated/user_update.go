@@ -236,6 +236,20 @@ func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
 	return uu
 }
 
+// SetUserType sets the "user_type" field.
+func (uu *UserUpdate) SetUserType(ut user.UserType) *UserUpdate {
+	uu.mutation.SetUserType(ut)
+	return uu
+}
+
+// SetNillableUserType sets the "user_type" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableUserType(ut *user.UserType) *UserUpdate {
+	if ut != nil {
+		uu.SetUserType(*ut)
+	}
+	return uu
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uu *UserUpdate) AddOrganizationIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddOrganizationIDs(ids...)
@@ -526,6 +540,11 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
+	if v, ok := uu.mutation.UserType(); ok {
+		if err := user.UserTypeValidator(v); err != nil {
+			return &ValidationError{Name: "user_type", err: fmt.Errorf(`generated: validator failed for field "User.user_type": %w`, err)}
+		}
+	}
 	if _, ok := uu.mutation.SettingID(); uu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
@@ -606,6 +625,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.UserType(); ok {
+		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
 	}
 	if uu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1100,6 +1122,20 @@ func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// SetUserType sets the "user_type" field.
+func (uuo *UserUpdateOne) SetUserType(ut user.UserType) *UserUpdateOne {
+	uuo.mutation.SetUserType(ut)
+	return uuo
+}
+
+// SetNillableUserType sets the "user_type" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableUserType(ut *user.UserType) *UserUpdateOne {
+	if ut != nil {
+		uuo.SetUserType(*ut)
+	}
+	return uuo
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uuo *UserUpdateOne) AddOrganizationIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddOrganizationIDs(ids...)
@@ -1403,6 +1439,11 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "avatar_local_file", err: fmt.Errorf(`generated: validator failed for field "User.avatar_local_file": %w`, err)}
 		}
 	}
+	if v, ok := uuo.mutation.UserType(); ok {
+		if err := user.UserTypeValidator(v); err != nil {
+			return &ValidationError{Name: "user_type", err: fmt.Errorf(`generated: validator failed for field "User.user_type": %w`, err)}
+		}
+	}
 	if _, ok := uuo.mutation.SettingID(); uuo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "User.setting"`)
 	}
@@ -1500,6 +1541,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.UserType(); ok {
+		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
 	}
 	if uuo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{

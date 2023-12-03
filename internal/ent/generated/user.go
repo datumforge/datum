@@ -48,6 +48,8 @@ type User struct {
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth bool `json:"oauth,omitempty"`
+	// UserType holds the value of the "user_type" field.
+	UserType user.UserType `json:"user_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -146,7 +148,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldOauth:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash, user.FieldSub:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash, user.FieldSub, user.FieldUserType:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -265,6 +267,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Oauth = value.Bool
 			}
+		case user.FieldUserType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_type", values[i])
+			} else if value.Valid {
+				u.UserType = user.UserType(value.String)
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -380,6 +388,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("oauth=")
 	builder.WriteString(fmt.Sprintf("%v", u.Oauth))
+	builder.WriteString(", ")
+	builder.WriteString("user_type=")
+	builder.WriteString(fmt.Sprintf("%v", u.UserType))
 	builder.WriteByte(')')
 	return builder.String()
 }

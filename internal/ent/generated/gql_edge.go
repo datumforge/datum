@@ -165,6 +165,14 @@ func (o *Organization) Oauthprovider(ctx context.Context) (result []*OauthProvid
 	return result, err
 }
 
+func (o *Organization) Owner(ctx context.Context) (*User, error) {
+	result, err := o.Edges.OwnerOrErr()
+	if IsNotLoaded(err) {
+		result, err = o.QueryOwner().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (os *OrganizationSetting) Organization(ctx context.Context) (*Organization, error) {
 	result, err := os.Edges.OrganizationOrErr()
 	if IsNotLoaded(err) {

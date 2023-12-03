@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // Organization is the model entity for the Organization schema.
@@ -38,6 +39,14 @@ type Organization struct {
 	Description string `json:"description,omitempty"`
 	// The ID of the parent organization for the organization.
 	ParentOrganizationID string `json:"parent_organization_id,omitempty"`
+	// Path holds the value of the "path" field.
+	Path string `json:"path,omitempty"`
+	// Kind holds the value of the "kind" field.
+	Kind organization.Kind `json:"kind,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID *string `json:"owner_id,omitempty"`
+	// Code holds the value of the "code" field.
+	Code string `json:"code,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -62,11 +71,13 @@ type OrganizationEdges struct {
 	Entitlements []*Entitlement `json:"entitlements,omitempty"`
 	// Oauthprovider holds the value of the oauthprovider edge.
 	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *User `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
-	totalCount [8]map[string]int
+	totalCount [9]map[string]int
 
 	namedChildren      map[string][]*Organization
 	namedUsers         map[string][]*User
@@ -156,12 +167,25 @@ func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
 	return nil, &NotLoadedError{edge: "oauthprovider"}
 }
 
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e OrganizationEdges) OwnerOrErr() (*User, error) {
+	if e.loadedTypes[8] {
+		if e.Owner == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
+		return e.Owner, nil
+	}
+	return nil, &NotLoadedError{edge: "owner"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID:
+		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID, organization.FieldPath, organization.FieldKind, organization.FieldOwnerID, organization.FieldCode:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt, organization.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -246,6 +270,31 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.ParentOrganizationID = value.String
 			}
+		case organization.FieldPath:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field path", values[i])
+			} else if value.Valid {
+				o.Path = value.String
+			}
+		case organization.FieldKind:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field kind", values[i])
+			} else if value.Valid {
+				o.Kind = organization.Kind(value.String)
+			}
+		case organization.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				o.OwnerID = new(string)
+				*o.OwnerID = value.String
+			}
+		case organization.FieldCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field code", values[i])
+			} else if value.Valid {
+				o.Code = value.String
+			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
 		}
@@ -297,6 +346,11 @@ func (o *Organization) QueryEntitlements() *EntitlementQuery {
 // QueryOauthprovider queries the "oauthprovider" edge of the Organization entity.
 func (o *Organization) QueryOauthprovider() *OauthProviderQuery {
 	return NewOrganizationClient(o.config).QueryOauthprovider(o)
+}
+
+// QueryOwner queries the "owner" edge of the Organization entity.
+func (o *Organization) QueryOwner() *UserQuery {
+	return NewOrganizationClient(o.config).QueryOwner(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -351,6 +405,20 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("parent_organization_id=")
 	builder.WriteString(o.ParentOrganizationID)
+	builder.WriteString(", ")
+	builder.WriteString("path=")
+	builder.WriteString(o.Path)
+	builder.WriteString(", ")
+	builder.WriteString("kind=")
+	builder.WriteString(fmt.Sprintf("%v", o.Kind))
+	builder.WriteString(", ")
+	if v := o.OwnerID; v != nil {
+		builder.WriteString("owner_id=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	builder.WriteString("code=")
+	builder.WriteString(o.Code)
 	builder.WriteByte(')')
 	return builder.String()
 }

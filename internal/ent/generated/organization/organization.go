@@ -3,6 +3,9 @@
 package organization
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"entgo.io/ent"
@@ -35,6 +38,14 @@ const (
 	FieldDescription = "description"
 	// FieldParentOrganizationID holds the string denoting the parent_organization_id field in the database.
 	FieldParentOrganizationID = "parent_organization_id"
+	// FieldPath holds the string denoting the path field in the database.
+	FieldPath = "path"
+	// FieldKind holds the string denoting the kind field in the database.
+	FieldKind = "kind"
+	// FieldOwnerID holds the string denoting the owner_id field in the database.
+	FieldOwnerID = "owner_id"
+	// FieldCode holds the string denoting the code field in the database.
+	FieldCode = "code"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
@@ -51,6 +62,8 @@ const (
 	EdgeEntitlements = "entitlements"
 	// EdgeOauthprovider holds the string denoting the oauthprovider edge name in mutations.
 	EdgeOauthprovider = "oauthprovider"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -101,6 +114,13 @@ const (
 	OauthproviderInverseTable = "oauth_providers"
 	// OauthproviderColumn is the table column denoting the oauthprovider relation/edge.
 	OauthproviderColumn = "organization_oauthprovider"
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "organizations"
+	// OwnerInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	OwnerInverseTable = "users"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "owner_id"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -116,6 +136,10 @@ var Columns = []string{
 	FieldDisplayName,
 	FieldDescription,
 	FieldParentOrganizationID,
+	FieldPath,
+	FieldKind,
+	FieldOwnerID,
+	FieldCode,
 }
 
 var (
@@ -140,7 +164,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [4]ent.Hook
+	Hooks        [7]ent.Hook
 	Interceptors [2]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -155,9 +179,39 @@ var (
 	DefaultDisplayName string
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	DisplayNameValidator func(string) error
+	// DefaultParentOrganizationID holds the default value on creation for the "parent_organization_id" field.
+	DefaultParentOrganizationID string
+	// CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	CodeValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
+
+// Kind defines the type for the "kind" enum field.
+type Kind string
+
+// KindOrganization is the default value of the Kind enum.
+const DefaultKind = KindOrganization
+
+// Kind values.
+const (
+	KindRoot         Kind = "root"
+	KindOrganization Kind = "org"
+)
+
+func (k Kind) String() string {
+	return string(k)
+}
+
+// KindValidator is a validator for the "kind" field enum values. It is called by the builders before save.
+func KindValidator(k Kind) error {
+	switch k {
+	case KindRoot, KindOrganization:
+		return nil
+	default:
+		return fmt.Errorf("organization: invalid enum value for kind field: %q", k)
+	}
+}
 
 // OrderOption defines the ordering options for the Organization queries.
 type OrderOption func(*sql.Selector)
@@ -215,6 +269,26 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByParentOrganizationID orders the results by the parent_organization_id field.
 func ByParentOrganizationID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentOrganizationID, opts...).ToFunc()
+}
+
+// ByPath orders the results by the path field.
+func ByPath(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByKind orders the results by the kind field.
+func ByKind(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldKind, opts...).ToFunc()
+}
+
+// ByOwnerID orders the results by the owner_id field.
+func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
+}
+
+// ByCode orders the results by the code field.
+func ByCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCode, opts...).ToFunc()
 }
 
 // ByParentField orders the results by parent field.
@@ -314,6 +388,13 @@ func ByOauthprovider(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOauthproviderStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -369,4 +450,29 @@ func newOauthproviderStep() *sqlgraph.Step {
 		sqlgraph.To(OauthproviderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, OauthproviderTable, OauthproviderColumn),
 	)
+}
+func newOwnerStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, OwnerTable, OwnerColumn),
+	)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e Kind) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *Kind) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = Kind(str)
+	if err := KindValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid Kind", str)
+	}
+	return nil
 }

@@ -124,6 +124,7 @@ input CreateOrganizationInput {
   settingID: ID
   entitlementIDs: [ID!]
   oauthproviderIDs: [ID!]
+  ownerID: ID
 }
 """
 CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -1196,6 +1197,10 @@ type Organization implements Node {
   displayName: String!
   """An optional description of the organization"""
   description: String
+  path: String
+  kind: OrganizationKind!
+  ownerID: ID
+  code: String
   parent: Organization
   children(
     """Returns the elements in the list that come after the specified cursor."""
@@ -1222,6 +1227,7 @@ type Organization implements Node {
   setting: OrganizationSetting
   entitlements: [Entitlement!]
   oauthprovider: [OauthProvider!]
+  owner: User
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -1238,6 +1244,11 @@ type OrganizationEdge {
   node: Organization
   """A cursor for use in pagination."""
   cursor: Cursor!
+}
+"""OrganizationKind is enum for the field kind"""
+enum OrganizationKind @goModel(model: "github.com/datumforge/datum/internal/ent/generated/organization.Kind") {
+  root
+  org
 }
 """Ordering options for Organization connections"""
 input OrganizationOrder {
@@ -1600,6 +1611,59 @@ input OrganizationWhereInput {
   parentOrganizationIDNotNil: Boolean
   parentOrganizationIDEqualFold: ID
   parentOrganizationIDContainsFold: ID
+  """path field predicates"""
+  path: String
+  pathNEQ: String
+  pathIn: [String!]
+  pathNotIn: [String!]
+  pathGT: String
+  pathGTE: String
+  pathLT: String
+  pathLTE: String
+  pathContains: String
+  pathHasPrefix: String
+  pathHasSuffix: String
+  pathIsNil: Boolean
+  pathNotNil: Boolean
+  pathEqualFold: String
+  pathContainsFold: String
+  """kind field predicates"""
+  kind: OrganizationKind
+  kindNEQ: OrganizationKind
+  kindIn: [OrganizationKind!]
+  kindNotIn: [OrganizationKind!]
+  """owner_id field predicates"""
+  ownerID: ID
+  ownerIDNEQ: ID
+  ownerIDIn: [ID!]
+  ownerIDNotIn: [ID!]
+  ownerIDGT: ID
+  ownerIDGTE: ID
+  ownerIDLT: ID
+  ownerIDLTE: ID
+  ownerIDContains: ID
+  ownerIDHasPrefix: ID
+  ownerIDHasSuffix: ID
+  ownerIDIsNil: Boolean
+  ownerIDNotNil: Boolean
+  ownerIDEqualFold: ID
+  ownerIDContainsFold: ID
+  """code field predicates"""
+  code: String
+  codeNEQ: String
+  codeIn: [String!]
+  codeNotIn: [String!]
+  codeGT: String
+  codeGTE: String
+  codeLT: String
+  codeLTE: String
+  codeContains: String
+  codeHasPrefix: String
+  codeHasSuffix: String
+  codeIsNil: Boolean
+  codeNotNil: Boolean
+  codeEqualFold: String
+  codeContainsFold: String
   """parent edge predicates"""
   hasParent: Boolean
   hasParentWith: [OrganizationWhereInput!]
@@ -1624,6 +1688,9 @@ input OrganizationWhereInput {
   """oauthprovider edge predicates"""
   hasOauthprovider: Boolean
   hasOauthproviderWith: [OauthProviderWhereInput!]
+  """owner edge predicates"""
+  hasOwner: Boolean
+  hasOwnerWith: [UserWhereInput!]
 }
 """
 Information about pagination in a connection.
@@ -2511,6 +2578,8 @@ input UpdateOrganizationInput {
   addOauthproviderIDs: [ID!]
   removeOauthproviderIDs: [ID!]
   clearOauthprovider: Boolean
+  ownerID: ID
+  clearOwner: Boolean
 }
 """
 UpdateOrganizationSettingInput is used for update OrganizationSetting object.
@@ -2707,6 +2776,7 @@ type User implements Node {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean!
+  userType: UserUserType!
   organizations: [Organization!]
   sessions: [Session!]
   groups: [Group!]
@@ -2902,6 +2972,11 @@ input UserSettingWhereInput {
   """user edge predicates"""
   hasUser: Boolean
   hasUserWith: [UserWhereInput!]
+}
+"""UserUserType is enum for the field user_type"""
+enum UserUserType @goModel(model: "github.com/datumforge/datum/internal/ent/generated/user.UserType") {
+  account
+  member
 }
 """
 UserWhereInput is used for filtering User objects.
@@ -3101,6 +3176,11 @@ input UserWhereInput {
   """oauth field predicates"""
   oauth: Boolean
   oauthNEQ: Boolean
+  """user_type field predicates"""
+  userType: UserUserType
+  userTypeNEQ: UserUserType
+  userTypeIn: [UserUserType!]
+  userTypeNotIn: [UserUserType!]
   """organizations edge predicates"""
   hasOrganizations: Boolean
   hasOrganizationsWith: [OrganizationWhereInput!]

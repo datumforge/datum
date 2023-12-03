@@ -158,6 +158,62 @@ func (oc *OrganizationCreate) SetNillableParentOrganizationID(s *string) *Organi
 	return oc
 }
 
+// SetPath sets the "path" field.
+func (oc *OrganizationCreate) SetPath(s string) *OrganizationCreate {
+	oc.mutation.SetPath(s)
+	return oc
+}
+
+// SetNillablePath sets the "path" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillablePath(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetPath(*s)
+	}
+	return oc
+}
+
+// SetKind sets the "kind" field.
+func (oc *OrganizationCreate) SetKind(o organization.Kind) *OrganizationCreate {
+	oc.mutation.SetKind(o)
+	return oc
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableKind(o *organization.Kind) *OrganizationCreate {
+	if o != nil {
+		oc.SetKind(*o)
+	}
+	return oc
+}
+
+// SetOwnerID sets the "owner_id" field.
+func (oc *OrganizationCreate) SetOwnerID(s string) *OrganizationCreate {
+	oc.mutation.SetOwnerID(s)
+	return oc
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableOwnerID(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetOwnerID(*s)
+	}
+	return oc
+}
+
+// SetCode sets the "code" field.
+func (oc *OrganizationCreate) SetCode(s string) *OrganizationCreate {
+	oc.mutation.SetCode(s)
+	return oc
+}
+
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillableCode(s *string) *OrganizationCreate {
+	if s != nil {
+		oc.SetCode(*s)
+	}
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrganizationCreate) SetID(s string) *OrganizationCreate {
 	oc.mutation.SetID(s)
@@ -300,6 +356,11 @@ func (oc *OrganizationCreate) AddOauthprovider(o ...*OauthProvider) *Organizatio
 	return oc.AddOauthproviderIDs(ids...)
 }
 
+// SetOwner sets the "owner" edge to the User entity.
+func (oc *OrganizationCreate) SetOwner(u *User) *OrganizationCreate {
+	return oc.SetOwnerID(u.ID)
+}
+
 // Mutation returns the OrganizationMutation object of the builder.
 func (oc *OrganizationCreate) Mutation() *OrganizationMutation {
 	return oc.mutation
@@ -355,6 +416,14 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultDisplayName
 		oc.mutation.SetDisplayName(v)
 	}
+	if _, ok := oc.mutation.ParentOrganizationID(); !ok {
+		v := organization.DefaultParentOrganizationID
+		oc.mutation.SetParentOrganizationID(v)
+	}
+	if _, ok := oc.mutation.Kind(); !ok {
+		v := organization.DefaultKind
+		oc.mutation.SetKind(v)
+	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized organization.DefaultID (forgotten import generated/runtime?)")
@@ -387,6 +456,19 @@ func (oc *OrganizationCreate) check() error {
 	if v, ok := oc.mutation.DisplayName(); ok {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
+		}
+	}
+	if _, ok := oc.mutation.Kind(); !ok {
+		return &ValidationError{Name: "kind", err: errors.New(`generated: missing required field "Organization.kind"`)}
+	}
+	if v, ok := oc.mutation.Kind(); ok {
+		if err := organization.KindValidator(v); err != nil {
+			return &ValidationError{Name: "kind", err: fmt.Errorf(`generated: validator failed for field "Organization.kind": %w`, err)}
+		}
+	}
+	if v, ok := oc.mutation.Code(); ok {
+		if err := organization.CodeValidator(v); err != nil {
+			return &ValidationError{Name: "code", err: fmt.Errorf(`generated: validator failed for field "Organization.code": %w`, err)}
 		}
 	}
 	return nil
@@ -460,6 +542,18 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := oc.mutation.Path(); ok {
+		_spec.SetField(organization.FieldPath, field.TypeString, value)
+		_node.Path = value
+	}
+	if value, ok := oc.mutation.Kind(); ok {
+		_spec.SetField(organization.FieldKind, field.TypeEnum, value)
+		_node.Kind = value
+	}
+	if value, ok := oc.mutation.Code(); ok {
+		_spec.SetField(organization.FieldCode, field.TypeString, value)
+		_node.Code = value
 	}
 	if nodes := oc.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -596,6 +690,24 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   organization.OwnerTable,
+			Columns: []string{organization.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.Organization
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OwnerID = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

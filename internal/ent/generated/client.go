@@ -1401,6 +1401,25 @@ func (c *OrganizationClient) QueryOauthprovider(o *Organization) *OauthProviderQ
 	return query
 }
 
+// QueryOwner queries the owner edge of a Organization.
+func (c *OrganizationClient) QueryOwner(o *Organization) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, organization.OwnerTable, organization.OwnerColumn),
+		)
+		schemaConfig := o.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.Organization
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *OrganizationClient) Hooks() []Hook {
 	hooks := c.hooks.Organization

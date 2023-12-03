@@ -3186,6 +3186,63 @@ type OrganizationWhereInput struct {
 	ParentOrganizationIDEqualFold    *string  `json:"parentOrganizationIDEqualFold,omitempty"`
 	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
 
+	// "path" field predicates.
+	Path             *string  `json:"path,omitempty"`
+	PathNEQ          *string  `json:"pathNEQ,omitempty"`
+	PathIn           []string `json:"pathIn,omitempty"`
+	PathNotIn        []string `json:"pathNotIn,omitempty"`
+	PathGT           *string  `json:"pathGT,omitempty"`
+	PathGTE          *string  `json:"pathGTE,omitempty"`
+	PathLT           *string  `json:"pathLT,omitempty"`
+	PathLTE          *string  `json:"pathLTE,omitempty"`
+	PathContains     *string  `json:"pathContains,omitempty"`
+	PathHasPrefix    *string  `json:"pathHasPrefix,omitempty"`
+	PathHasSuffix    *string  `json:"pathHasSuffix,omitempty"`
+	PathIsNil        bool     `json:"pathIsNil,omitempty"`
+	PathNotNil       bool     `json:"pathNotNil,omitempty"`
+	PathEqualFold    *string  `json:"pathEqualFold,omitempty"`
+	PathContainsFold *string  `json:"pathContainsFold,omitempty"`
+
+	// "kind" field predicates.
+	Kind      *organization.Kind  `json:"kind,omitempty"`
+	KindNEQ   *organization.Kind  `json:"kindNEQ,omitempty"`
+	KindIn    []organization.Kind `json:"kindIn,omitempty"`
+	KindNotIn []organization.Kind `json:"kindNotIn,omitempty"`
+
+	// "owner_id" field predicates.
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNEQ          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGT           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGTE          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLT           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLTE          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        bool     `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       bool     `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
+
+	// "code" field predicates.
+	Code             *string  `json:"code,omitempty"`
+	CodeNEQ          *string  `json:"codeNEQ,omitempty"`
+	CodeIn           []string `json:"codeIn,omitempty"`
+	CodeNotIn        []string `json:"codeNotIn,omitempty"`
+	CodeGT           *string  `json:"codeGT,omitempty"`
+	CodeGTE          *string  `json:"codeGTE,omitempty"`
+	CodeLT           *string  `json:"codeLT,omitempty"`
+	CodeLTE          *string  `json:"codeLTE,omitempty"`
+	CodeContains     *string  `json:"codeContains,omitempty"`
+	CodeHasPrefix    *string  `json:"codeHasPrefix,omitempty"`
+	CodeHasSuffix    *string  `json:"codeHasSuffix,omitempty"`
+	CodeIsNil        bool     `json:"codeIsNil,omitempty"`
+	CodeNotNil       bool     `json:"codeNotNil,omitempty"`
+	CodeEqualFold    *string  `json:"codeEqualFold,omitempty"`
+	CodeContainsFold *string  `json:"codeContainsFold,omitempty"`
+
 	// "parent" edge predicates.
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -3217,6 +3274,10 @@ type OrganizationWhereInput struct {
 	// "oauthprovider" edge predicates.
 	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
 	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
+
+	// "owner" edge predicates.
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -3617,6 +3678,153 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	if i.ParentOrganizationIDContainsFold != nil {
 		predicates = append(predicates, organization.ParentOrganizationIDContainsFold(*i.ParentOrganizationIDContainsFold))
 	}
+	if i.Path != nil {
+		predicates = append(predicates, organization.PathEQ(*i.Path))
+	}
+	if i.PathNEQ != nil {
+		predicates = append(predicates, organization.PathNEQ(*i.PathNEQ))
+	}
+	if len(i.PathIn) > 0 {
+		predicates = append(predicates, organization.PathIn(i.PathIn...))
+	}
+	if len(i.PathNotIn) > 0 {
+		predicates = append(predicates, organization.PathNotIn(i.PathNotIn...))
+	}
+	if i.PathGT != nil {
+		predicates = append(predicates, organization.PathGT(*i.PathGT))
+	}
+	if i.PathGTE != nil {
+		predicates = append(predicates, organization.PathGTE(*i.PathGTE))
+	}
+	if i.PathLT != nil {
+		predicates = append(predicates, organization.PathLT(*i.PathLT))
+	}
+	if i.PathLTE != nil {
+		predicates = append(predicates, organization.PathLTE(*i.PathLTE))
+	}
+	if i.PathContains != nil {
+		predicates = append(predicates, organization.PathContains(*i.PathContains))
+	}
+	if i.PathHasPrefix != nil {
+		predicates = append(predicates, organization.PathHasPrefix(*i.PathHasPrefix))
+	}
+	if i.PathHasSuffix != nil {
+		predicates = append(predicates, organization.PathHasSuffix(*i.PathHasSuffix))
+	}
+	if i.PathIsNil {
+		predicates = append(predicates, organization.PathIsNil())
+	}
+	if i.PathNotNil {
+		predicates = append(predicates, organization.PathNotNil())
+	}
+	if i.PathEqualFold != nil {
+		predicates = append(predicates, organization.PathEqualFold(*i.PathEqualFold))
+	}
+	if i.PathContainsFold != nil {
+		predicates = append(predicates, organization.PathContainsFold(*i.PathContainsFold))
+	}
+	if i.Kind != nil {
+		predicates = append(predicates, organization.KindEQ(*i.Kind))
+	}
+	if i.KindNEQ != nil {
+		predicates = append(predicates, organization.KindNEQ(*i.KindNEQ))
+	}
+	if len(i.KindIn) > 0 {
+		predicates = append(predicates, organization.KindIn(i.KindIn...))
+	}
+	if len(i.KindNotIn) > 0 {
+		predicates = append(predicates, organization.KindNotIn(i.KindNotIn...))
+	}
+	if i.OwnerID != nil {
+		predicates = append(predicates, organization.OwnerIDEQ(*i.OwnerID))
+	}
+	if i.OwnerIDNEQ != nil {
+		predicates = append(predicates, organization.OwnerIDNEQ(*i.OwnerIDNEQ))
+	}
+	if len(i.OwnerIDIn) > 0 {
+		predicates = append(predicates, organization.OwnerIDIn(i.OwnerIDIn...))
+	}
+	if len(i.OwnerIDNotIn) > 0 {
+		predicates = append(predicates, organization.OwnerIDNotIn(i.OwnerIDNotIn...))
+	}
+	if i.OwnerIDGT != nil {
+		predicates = append(predicates, organization.OwnerIDGT(*i.OwnerIDGT))
+	}
+	if i.OwnerIDGTE != nil {
+		predicates = append(predicates, organization.OwnerIDGTE(*i.OwnerIDGTE))
+	}
+	if i.OwnerIDLT != nil {
+		predicates = append(predicates, organization.OwnerIDLT(*i.OwnerIDLT))
+	}
+	if i.OwnerIDLTE != nil {
+		predicates = append(predicates, organization.OwnerIDLTE(*i.OwnerIDLTE))
+	}
+	if i.OwnerIDContains != nil {
+		predicates = append(predicates, organization.OwnerIDContains(*i.OwnerIDContains))
+	}
+	if i.OwnerIDHasPrefix != nil {
+		predicates = append(predicates, organization.OwnerIDHasPrefix(*i.OwnerIDHasPrefix))
+	}
+	if i.OwnerIDHasSuffix != nil {
+		predicates = append(predicates, organization.OwnerIDHasSuffix(*i.OwnerIDHasSuffix))
+	}
+	if i.OwnerIDIsNil {
+		predicates = append(predicates, organization.OwnerIDIsNil())
+	}
+	if i.OwnerIDNotNil {
+		predicates = append(predicates, organization.OwnerIDNotNil())
+	}
+	if i.OwnerIDEqualFold != nil {
+		predicates = append(predicates, organization.OwnerIDEqualFold(*i.OwnerIDEqualFold))
+	}
+	if i.OwnerIDContainsFold != nil {
+		predicates = append(predicates, organization.OwnerIDContainsFold(*i.OwnerIDContainsFold))
+	}
+	if i.Code != nil {
+		predicates = append(predicates, organization.CodeEQ(*i.Code))
+	}
+	if i.CodeNEQ != nil {
+		predicates = append(predicates, organization.CodeNEQ(*i.CodeNEQ))
+	}
+	if len(i.CodeIn) > 0 {
+		predicates = append(predicates, organization.CodeIn(i.CodeIn...))
+	}
+	if len(i.CodeNotIn) > 0 {
+		predicates = append(predicates, organization.CodeNotIn(i.CodeNotIn...))
+	}
+	if i.CodeGT != nil {
+		predicates = append(predicates, organization.CodeGT(*i.CodeGT))
+	}
+	if i.CodeGTE != nil {
+		predicates = append(predicates, organization.CodeGTE(*i.CodeGTE))
+	}
+	if i.CodeLT != nil {
+		predicates = append(predicates, organization.CodeLT(*i.CodeLT))
+	}
+	if i.CodeLTE != nil {
+		predicates = append(predicates, organization.CodeLTE(*i.CodeLTE))
+	}
+	if i.CodeContains != nil {
+		predicates = append(predicates, organization.CodeContains(*i.CodeContains))
+	}
+	if i.CodeHasPrefix != nil {
+		predicates = append(predicates, organization.CodeHasPrefix(*i.CodeHasPrefix))
+	}
+	if i.CodeHasSuffix != nil {
+		predicates = append(predicates, organization.CodeHasSuffix(*i.CodeHasSuffix))
+	}
+	if i.CodeIsNil {
+		predicates = append(predicates, organization.CodeIsNil())
+	}
+	if i.CodeNotNil {
+		predicates = append(predicates, organization.CodeNotNil())
+	}
+	if i.CodeEqualFold != nil {
+		predicates = append(predicates, organization.CodeEqualFold(*i.CodeEqualFold))
+	}
+	if i.CodeContainsFold != nil {
+		predicates = append(predicates, organization.CodeContainsFold(*i.CodeContainsFold))
+	}
 
 	if i.HasParent != nil {
 		p := organization.HasParent()
@@ -3761,6 +3969,24 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, organization.HasOauthproviderWith(with...))
+	}
+	if i.HasOwner != nil {
+		p := organization.HasOwner()
+		if !*i.HasOwner {
+			p = organization.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOwnerWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasOwnerWith))
+		for _, w := range i.HasOwnerWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOwnerWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, organization.HasOwnerWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -6591,6 +6817,12 @@ type UserWhereInput struct {
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNEQ *bool `json:"oauthNEQ,omitempty"`
 
+	// "user_type" field predicates.
+	UserType      *user.UserType  `json:"userType,omitempty"`
+	UserTypeNEQ   *user.UserType  `json:"userTypeNEQ,omitempty"`
+	UserTypeIn    []user.UserType `json:"userTypeIn,omitempty"`
+	UserTypeNotIn []user.UserType `json:"userTypeNotIn,omitempty"`
+
 	// "organizations" edge predicates.
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
@@ -7256,6 +7488,18 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.OauthNEQ != nil {
 		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
+	}
+	if i.UserType != nil {
+		predicates = append(predicates, user.UserTypeEQ(*i.UserType))
+	}
+	if i.UserTypeNEQ != nil {
+		predicates = append(predicates, user.UserTypeNEQ(*i.UserTypeNEQ))
+	}
+	if len(i.UserTypeIn) > 0 {
+		predicates = append(predicates, user.UserTypeIn(i.UserTypeIn...))
+	}
+	if len(i.UserTypeNotIn) > 0 {
+		predicates = append(predicates, user.UserTypeNotIn(i.UserTypeNotIn...))
 	}
 
 	if i.HasOrganizations != nil {

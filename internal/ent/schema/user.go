@@ -7,12 +7,12 @@ import (
 	"time"
 
 	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entproto"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -110,14 +110,16 @@ func (User) Fields() []ent.Field {
 		field.Bool("oauth").
 			Comment("whether the user uses oauth for login or not").
 			Default(false),
-	}
-}
-
-// Indexes of the User
-func (User) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("id").
-			Unique(), // enforce globally unique ids
+		field.Enum("user_type").NamedValues(
+			"account", "account",
+			"member", "member",
+		).
+			Annotations(
+				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
+				entproto.Enum(map[string]int32{
+					"account": 1,
+					"member":  2,
+				})),
 	}
 }
 

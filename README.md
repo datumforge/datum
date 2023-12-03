@@ -35,3 +35,10 @@ You can load up a local openFGA environment with the compose setup in this repos
 ## Migrations
 
 `task atlas` or `task atlas:create` will generate the necessary migrations
+
+## SQLlite
+
+sqlite3 datum.db
+.headers ON
+.mode column
+.mode box

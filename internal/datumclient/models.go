@@ -10,7 +10,9 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -131,6 +133,7 @@ type CreateOrganizationInput struct {
 	SettingID        *string  `json:"settingID,omitempty"`
 	EntitlementIDs   []string `json:"entitlementIDs,omitempty"`
 	OauthproviderIDs []string `json:"oauthproviderIDs,omitempty"`
+	OwnerID          *string  `json:"ownerID,omitempty"`
 }
 
 // CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -1260,6 +1263,10 @@ type Organization struct {
 	DisplayName string `json:"displayName"`
 	// An optional description of the organization
 	Description   *string                `json:"description,omitempty"`
+	Path          *string                `json:"path,omitempty"`
+	Kind          organization.Kind      `json:"kind"`
+	OwnerID       *string                `json:"ownerID,omitempty"`
+	Code          *string                `json:"code,omitempty"`
 	Parent        *Organization          `json:"parent,omitempty"`
 	Children      OrganizationConnection `json:"children"`
 	Users         []*User                `json:"users,omitempty"`
@@ -1268,6 +1275,7 @@ type Organization struct {
 	Setting       *OrganizationSetting   `json:"setting,omitempty"`
 	Entitlements  []*Entitlement         `json:"entitlements,omitempty"`
 	Oauthprovider []*OauthProvider       `json:"oauthprovider,omitempty"`
+	Owner         *User                  `json:"owner,omitempty"`
 }
 
 func (Organization) IsNode() {}
@@ -1685,6 +1693,59 @@ type OrganizationWhereInput struct {
 	ParentOrganizationIDNotNil       *bool    `json:"parentOrganizationIDNotNil,omitempty"`
 	ParentOrganizationIDEqualFold    *string  `json:"parentOrganizationIDEqualFold,omitempty"`
 	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
+	// path field predicates
+	Path             *string  `json:"path,omitempty"`
+	PathNeq          *string  `json:"pathNEQ,omitempty"`
+	PathIn           []string `json:"pathIn,omitempty"`
+	PathNotIn        []string `json:"pathNotIn,omitempty"`
+	PathGt           *string  `json:"pathGT,omitempty"`
+	PathGte          *string  `json:"pathGTE,omitempty"`
+	PathLt           *string  `json:"pathLT,omitempty"`
+	PathLte          *string  `json:"pathLTE,omitempty"`
+	PathContains     *string  `json:"pathContains,omitempty"`
+	PathHasPrefix    *string  `json:"pathHasPrefix,omitempty"`
+	PathHasSuffix    *string  `json:"pathHasSuffix,omitempty"`
+	PathIsNil        *bool    `json:"pathIsNil,omitempty"`
+	PathNotNil       *bool    `json:"pathNotNil,omitempty"`
+	PathEqualFold    *string  `json:"pathEqualFold,omitempty"`
+	PathContainsFold *string  `json:"pathContainsFold,omitempty"`
+	// kind field predicates
+	Kind      *organization.Kind  `json:"kind,omitempty"`
+	KindNeq   *organization.Kind  `json:"kindNEQ,omitempty"`
+	KindIn    []organization.Kind `json:"kindIn,omitempty"`
+	KindNotIn []organization.Kind `json:"kindNotIn,omitempty"`
+	// owner_id field predicates
+	OwnerID             *string  `json:"ownerID,omitempty"`
+	OwnerIDNeq          *string  `json:"ownerIDNEQ,omitempty"`
+	OwnerIDIn           []string `json:"ownerIDIn,omitempty"`
+	OwnerIDNotIn        []string `json:"ownerIDNotIn,omitempty"`
+	OwnerIDGt           *string  `json:"ownerIDGT,omitempty"`
+	OwnerIDGte          *string  `json:"ownerIDGTE,omitempty"`
+	OwnerIDLt           *string  `json:"ownerIDLT,omitempty"`
+	OwnerIDLte          *string  `json:"ownerIDLTE,omitempty"`
+	OwnerIDContains     *string  `json:"ownerIDContains,omitempty"`
+	OwnerIDHasPrefix    *string  `json:"ownerIDHasPrefix,omitempty"`
+	OwnerIDHasSuffix    *string  `json:"ownerIDHasSuffix,omitempty"`
+	OwnerIDIsNil        *bool    `json:"ownerIDIsNil,omitempty"`
+	OwnerIDNotNil       *bool    `json:"ownerIDNotNil,omitempty"`
+	OwnerIDEqualFold    *string  `json:"ownerIDEqualFold,omitempty"`
+	OwnerIDContainsFold *string  `json:"ownerIDContainsFold,omitempty"`
+	// code field predicates
+	Code             *string  `json:"code,omitempty"`
+	CodeNeq          *string  `json:"codeNEQ,omitempty"`
+	CodeIn           []string `json:"codeIn,omitempty"`
+	CodeNotIn        []string `json:"codeNotIn,omitempty"`
+	CodeGt           *string  `json:"codeGT,omitempty"`
+	CodeGte          *string  `json:"codeGTE,omitempty"`
+	CodeLt           *string  `json:"codeLT,omitempty"`
+	CodeLte          *string  `json:"codeLTE,omitempty"`
+	CodeContains     *string  `json:"codeContains,omitempty"`
+	CodeHasPrefix    *string  `json:"codeHasPrefix,omitempty"`
+	CodeHasSuffix    *string  `json:"codeHasSuffix,omitempty"`
+	CodeIsNil        *bool    `json:"codeIsNil,omitempty"`
+	CodeNotNil       *bool    `json:"codeNotNil,omitempty"`
+	CodeEqualFold    *string  `json:"codeEqualFold,omitempty"`
+	CodeContainsFold *string  `json:"codeContainsFold,omitempty"`
 	// parent edge predicates
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -1709,6 +1770,9 @@ type OrganizationWhereInput struct {
 	// oauthprovider edge predicates
 	HasOauthprovider     *bool                      `json:"hasOauthprovider,omitempty"`
 	HasOauthproviderWith []*OauthProviderWhereInput `json:"hasOauthproviderWith,omitempty"`
+	// owner edge predicates
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 // Information about pagination in a connection.
@@ -2431,6 +2495,8 @@ type UpdateOrganizationInput struct {
 	AddOauthproviderIDs    []string `json:"addOauthproviderIDs,omitempty"`
 	RemoveOauthproviderIDs []string `json:"removeOauthproviderIDs,omitempty"`
 	ClearOauthprovider     *bool    `json:"clearOauthprovider,omitempty"`
+	OwnerID                *string  `json:"ownerID,omitempty"`
+	ClearOwner             *bool    `json:"clearOwner,omitempty"`
 }
 
 // UpdateOrganizationSettingInput is used for update OrganizationSetting object.
@@ -2622,6 +2688,7 @@ type User struct {
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth                bool                   `json:"oauth"`
+	UserType             user.UserType          `json:"userType"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`
 	Sessions             []*Session             `json:"sessions,omitempty"`
 	Groups               []*Group               `json:"groups,omitempty"`
@@ -3041,6 +3108,11 @@ type UserWhereInput struct {
 	// oauth field predicates
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNeq *bool `json:"oauthNEQ,omitempty"`
+	// user_type field predicates
+	UserType      *user.UserType  `json:"userType,omitempty"`
+	UserTypeNeq   *user.UserType  `json:"userTypeNEQ,omitempty"`
+	UserTypeIn    []user.UserType `json:"userTypeIn,omitempty"`
+	UserTypeNotIn []user.UserType `json:"userTypeNotIn,omitempty"`
 	// organizations edge predicates
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`

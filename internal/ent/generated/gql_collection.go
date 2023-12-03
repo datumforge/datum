@@ -889,6 +889,20 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedOauthprovider(alias, func(wq *OauthProviderQuery) {
 				*wq = *query
 			})
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.withOwner = query
+			if _, ok := fieldSeen[organization.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, organization.FieldOwnerID)
+				fieldSeen[organization.FieldOwnerID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[organization.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, organization.FieldCreatedAt)
@@ -933,6 +947,26 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if _, ok := fieldSeen[organization.FieldDescription]; !ok {
 				selectedFields = append(selectedFields, organization.FieldDescription)
 				fieldSeen[organization.FieldDescription] = struct{}{}
+			}
+		case "path":
+			if _, ok := fieldSeen[organization.FieldPath]; !ok {
+				selectedFields = append(selectedFields, organization.FieldPath)
+				fieldSeen[organization.FieldPath] = struct{}{}
+			}
+		case "kind":
+			if _, ok := fieldSeen[organization.FieldKind]; !ok {
+				selectedFields = append(selectedFields, organization.FieldKind)
+				fieldSeen[organization.FieldKind] = struct{}{}
+			}
+		case "ownerID":
+			if _, ok := fieldSeen[organization.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, organization.FieldOwnerID)
+				fieldSeen[organization.FieldOwnerID] = struct{}{}
+			}
+		case "code":
+			if _, ok := fieldSeen[organization.FieldCode]; !ok {
+				selectedFields = append(selectedFields, organization.FieldCode)
+				fieldSeen[organization.FieldCode] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1679,6 +1713,11 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if _, ok := fieldSeen[user.FieldOauth]; !ok {
 				selectedFields = append(selectedFields, user.FieldOauth)
 				fieldSeen[user.FieldOauth] = struct{}{}
+			}
+		case "userType":
+			if _, ok := fieldSeen[user.FieldUserType]; !ok {
+				selectedFields = append(selectedFields, user.FieldUserType)
+				fieldSeen[user.FieldUserType] = struct{}{}
 			}
 		case "id":
 		case "__typename":

@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
 	"entgo.io/contrib/entgql"
@@ -11,13 +13,18 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/ogen-go/ogen"
 
+	gen "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/ogen-go/ogen"
 )
 
 const (
@@ -63,11 +70,22 @@ func (Organization) Fields() []ent.Field {
 			),
 		field.String("parent_organization_id").Optional().Immutable().
 			Comment("The ID of the parent organization for the organization.").
+			Default("0").
 			Annotations(
 				entgql.Type("ID"),
 				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entoas.Schema(ogen.String()),
 			),
+		field.Text("path").Optional().
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
+		field.Enum("kind").NamedValues(
+			"root", "root",
+			"organization", "org",
+		).
+			Default("org").Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
+		field.String("owner_id").Optional().Nillable(),
+		field.String("code").MaxLen(45).Optional().
+			Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 	}
 }
 
@@ -78,6 +96,7 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(
 				entgql.RelayConnection(),
 				entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
+				entsql.Annotation{OnDelete: entsql.Cascade},
 			).
 			From("parent").
 			Field("parent_organization_id").
@@ -90,6 +109,7 @@ func (Organization) Edges() []ent.Edge {
 		edge.To("setting", OrganizationSetting.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
+		edge.To("owner", User.Type).Field("owner_id").Unique(),
 	}
 }
 
@@ -104,9 +124,9 @@ func (Organization) Indexes() []ent.Index {
 // Annotations of the Organization
 func (Organization) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		entgql.QueryField(),
 	}
 }
 
@@ -115,7 +135,7 @@ func (Organization) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
-		mixin.SoftDeleteMixin{},
+		mixin.NewSoftDeleteMixin[intercept.Query, *gen.Client](intercept.NewQuery),
 	}
 }
 
@@ -137,6 +157,9 @@ func (Organization) Policy() ent.Policy {
 // Hooks of the Organization
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
+		pathHook(),
+		hook.On(checkDeleteHook(), ent.OpDeleteOne),
+		hook.On(ownerCheckHook(), ent.OpCreate|ent.OpUpdateOne|ent.OpUpdate),
 		hooks.HookOrganization(),
 	}
 }
@@ -145,5 +168,79 @@ func (Organization) Hooks() []ent.Hook {
 func (Organization) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		interceptors.InterceptorOrganization(),
+	}
+}
+
+func pathHook() ent.Hook {
+	return hook.On(
+		func(next ent.Mutator) ent.Mutator {
+			return hook.OrganizationFunc(func(ctx context.Context, mutation *gen.OrganizationMutation) (gen.Value, error) {
+				if _, ok := mutation.Path(); ok {
+					return next.Mutate(ctx, mutation)
+				}
+				if pid, ok := mutation.ParentOrganizationID(); ok {
+					id, _ := mutation.ID()
+
+					if pid == "0" {
+						mutation.SetPath(id)
+					} else {
+						parentPath := ""
+						prow, err := mutation.Client().Organization.Query().Where(organization.ID(pid)).
+							Select(organization.FieldPath).Only(ctx)
+						if err != nil {
+							if !gen.IsNotFound(err) {
+								return nil, err
+							}
+							parentPath = ""
+						} else {
+							parentPath = prow.Path + "/"
+						}
+						mutation.SetPath(parentPath + id)
+					}
+					if c, _ := mutation.Code(); c == "" {
+						mutation.SetCode(id)
+					}
+				}
+				return next.Mutate(ctx, mutation)
+			})
+		}, ent.OpCreate|ent.OpUpdate|ent.OpUpdateOne)
+}
+
+func checkDeleteHook() ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return hook.OrganizationFunc(func(ctx context.Context, mutation *gen.OrganizationMutation) (gen.Value, error) {
+			if mutation.Op() == ent.OpDeleteOne {
+				if id, ok := mutation.ID(); ok {
+					count, err := mutation.Client().Organization.Query().Where(
+						organization.ParentOrganizationID(id),
+					).Count(ctx)
+					if err != nil {
+						return nil, err
+					}
+					if count > 0 {
+						return nil, fmt.Errorf("organization has children")
+					}
+				}
+			}
+			return next.Mutate(ctx, mutation)
+		})
+	}
+}
+
+func ownerCheckHook() ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return hook.OrganizationFunc(func(ctx context.Context, m *gen.OrganizationMutation) (gen.Value, error) {
+			if uid, ok := m.OwnerID(); ok {
+				usr, err := m.Client().User.Get(ctx, uid)
+				if err != nil {
+					return nil, err
+				}
+				if usr.UserType != user.UserTypeAccount {
+					return nil, fmt.Errorf("owner must be account: %s", usr.DisplayName)
+				}
+				m.SetKind(organization.KindRoot)
+			}
+			return next.Mutate(ctx, m)
+		})
 	}
 }

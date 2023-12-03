@@ -39,6 +39,7 @@ type OrganizationQuery struct {
 	withSetting            *OrganizationSettingQuery
 	withEntitlements       *EntitlementQuery
 	withOauthprovider      *OauthProviderQuery
+	withOwner              *UserQuery
 	modifiers              []func(*sql.Selector)
 	loadTotal              []func(context.Context, []*Organization) error
 	withNamedChildren      map[string]*OrganizationQuery
@@ -283,6 +284,31 @@ func (oq *OrganizationQuery) QueryOauthprovider() *OauthProviderQuery {
 	return query
 }
 
+// QueryOwner chains the current query on the "owner" edge.
+func (oq *OrganizationQuery) QueryOwner() *UserQuery {
+	query := (&UserClient{config: oq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := oq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := oq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(organization.Table, organization.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, organization.OwnerTable, organization.OwnerColumn),
+		)
+		schemaConfig := oq.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.Organization
+		fromU = sqlgraph.SetNeighbors(oq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
 // First returns the first Organization entity from the query.
 // Returns a *NotFoundError when no Organization was found.
 func (oq *OrganizationQuery) First(ctx context.Context) (*Organization, error) {
@@ -483,6 +509,7 @@ func (oq *OrganizationQuery) Clone() *OrganizationQuery {
 		withSetting:       oq.withSetting.Clone(),
 		withEntitlements:  oq.withEntitlements.Clone(),
 		withOauthprovider: oq.withOauthprovider.Clone(),
+		withOwner:         oq.withOwner.Clone(),
 		// clone intermediate query.
 		sql:  oq.sql.Clone(),
 		path: oq.path,
@@ -577,6 +604,17 @@ func (oq *OrganizationQuery) WithOauthprovider(opts ...func(*OauthProviderQuery)
 	return oq
 }
 
+// WithOwner tells the query-builder to eager-load the nodes that are connected to
+// the "owner" edge. The optional arguments are used to configure the query builder of the edge.
+func (oq *OrganizationQuery) WithOwner(opts ...func(*UserQuery)) *OrganizationQuery {
+	query := (&UserClient{config: oq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	oq.withOwner = query
+	return oq
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -661,7 +699,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	var (
 		nodes       = []*Organization{}
 		_spec       = oq.querySpec()
-		loadedTypes = [8]bool{
+		loadedTypes = [9]bool{
 			oq.withParent != nil,
 			oq.withChildren != nil,
 			oq.withUsers != nil,
@@ -670,6 +708,7 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 			oq.withSetting != nil,
 			oq.withEntitlements != nil,
 			oq.withOauthprovider != nil,
+			oq.withOwner != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -746,6 +785,12 @@ func (oq *OrganizationQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := oq.loadOauthprovider(ctx, query, nodes,
 			func(n *Organization) { n.Edges.Oauthprovider = []*OauthProvider{} },
 			func(n *Organization, e *OauthProvider) { n.Edges.Oauthprovider = append(n.Edges.Oauthprovider, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := oq.withOwner; query != nil {
+		if err := oq.loadOwner(ctx, query, nodes, nil,
+			func(n *Organization, e *User) { n.Edges.Owner = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -1072,6 +1117,38 @@ func (oq *OrganizationQuery) loadOauthprovider(ctx context.Context, query *Oauth
 	}
 	return nil
 }
+func (oq *OrganizationQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*Organization, init func(*Organization), assign func(*Organization, *User)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Organization)
+	for i := range nodes {
+		if nodes[i].OwnerID == nil {
+			continue
+		}
+		fk := *nodes[i].OwnerID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 
 func (oq *OrganizationQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := oq.querySpec()
@@ -1105,6 +1182,9 @@ func (oq *OrganizationQuery) querySpec() *sqlgraph.QuerySpec {
 		}
 		if oq.withParent != nil {
 			_spec.Node.AddColumnOnce(organization.FieldParentOrganizationID)
+		}
+		if oq.withOwner != nil {
+			_spec.Node.AddColumnOnce(organization.FieldOwnerID)
 		}
 	}
 	if ps := oq.predicates; len(ps) > 0 {

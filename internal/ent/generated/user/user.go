@@ -3,6 +3,9 @@
 package user
 
 import (
+	"fmt"
+	"io"
+	"strconv"
 	"time"
 
 	"entgo.io/ent"
@@ -45,6 +48,8 @@ const (
 	FieldSub = "sub"
 	// FieldOauth holds the string denoting the oauth field in the database.
 	FieldOauth = "oauth"
+	// FieldUserType holds the string denoting the user_type field in the database.
+	FieldUserType = "user_type"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
@@ -117,6 +122,7 @@ var Columns = []string{
 	FieldPasswordHash,
 	FieldSub,
 	FieldOauth,
+	FieldUserType,
 }
 
 var (
@@ -175,6 +181,29 @@ var (
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
+
+// UserType defines the type for the "user_type" enum field.
+type UserType string
+
+// UserType values.
+const (
+	UserTypeAccount UserType = "account"
+	UserTypeMember  UserType = "member"
+)
+
+func (ut UserType) String() string {
+	return string(ut)
+}
+
+// UserTypeValidator is a validator for the "user_type" field enum values. It is called by the builders before save.
+func UserTypeValidator(ut UserType) error {
+	switch ut {
+	case UserTypeAccount, UserTypeMember:
+		return nil
+	default:
+		return fmt.Errorf("user: invalid enum value for user_type field: %q", ut)
+	}
+}
 
 // OrderOption defines the ordering options for the User queries.
 type OrderOption func(*sql.Selector)
@@ -257,6 +286,11 @@ func BySub(opts ...sql.OrderTermOption) OrderOption {
 // ByOauth orders the results by the oauth field.
 func ByOauth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOauth, opts...).ToFunc()
+}
+
+// ByUserType orders the results by the user_type field.
+func ByUserType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserType, opts...).ToFunc()
 }
 
 // ByOrganizationsCount orders the results by organizations count.
@@ -376,4 +410,22 @@ func newRefreshtokenStep() *sqlgraph.Step {
 		sqlgraph.To(RefreshtokenInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, RefreshtokenTable, RefreshtokenColumn),
 	)
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (e UserType) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(e.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (e *UserType) UnmarshalGQL(val interface{}) error {
+	str, ok := val.(string)
+	if !ok {
+		return fmt.Errorf("enum %T must be a string", val)
+	}
+	*e = UserType(str)
+	if err := UserTypeValidator(*e); err != nil {
+		return fmt.Errorf("%s is not a valid UserType", str)
+	}
+	return nil
 }

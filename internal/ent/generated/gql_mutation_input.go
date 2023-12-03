@@ -667,6 +667,7 @@ type CreateOrganizationInput struct {
 	SettingID        *string
 	EntitlementIDs   []string
 	OauthproviderIDs []string
+	OwnerID          *string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -711,6 +712,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.OauthproviderIDs; len(v) > 0 {
 		m.AddOauthproviderIDs(v...)
 	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateOrganizationInput on the OrganizationCreate builder.
@@ -745,6 +749,8 @@ type UpdateOrganizationInput struct {
 	ClearOauthprovider     bool
 	AddOauthproviderIDs    []string
 	RemoveOauthproviderIDs []string
+	ClearOwner             bool
+	OwnerID                *string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -820,6 +826,12 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveOauthproviderIDs; len(v) > 0 {
 		m.RemoveOauthproviderIDs(v...)
+	}
+	if i.ClearOwner {
+		m.ClearOwner()
+	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 }
 

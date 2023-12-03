@@ -163,6 +163,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldDisplayName:          {Type: field.TypeString, Column: organization.FieldDisplayName},
 			organization.FieldDescription:          {Type: field.TypeString, Column: organization.FieldDescription},
 			organization.FieldParentOrganizationID: {Type: field.TypeString, Column: organization.FieldParentOrganizationID},
+			organization.FieldPath:                 {Type: field.TypeString, Column: organization.FieldPath},
+			organization.FieldKind:                 {Type: field.TypeEnum, Column: organization.FieldKind},
+			organization.FieldOwnerID:              {Type: field.TypeString, Column: organization.FieldOwnerID},
+			organization.FieldCode:                 {Type: field.TypeString, Column: organization.FieldCode},
 		},
 	}
 	graph.Nodes[6] = &sqlgraph.Node{
@@ -290,6 +294,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldPasswordHash:    {Type: field.TypeString, Column: user.FieldPasswordHash},
 			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
+			user.FieldUserType:        {Type: field.TypeEnum, Column: user.FieldUserType},
 		},
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
@@ -497,6 +502,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"Organization",
 		"OauthProvider",
+	)
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   organization.OwnerTable,
+			Columns: []string{organization.OwnerColumn},
+			Bidi:    false,
+		},
+		"Organization",
+		"User",
 	)
 	graph.MustAddE(
 		"organization",
@@ -1282,6 +1299,26 @@ func (f *OrganizationFilter) WhereParentOrganizationID(p entql.StringP) {
 	f.Where(p.Field(organization.FieldParentOrganizationID))
 }
 
+// WherePath applies the entql string predicate on the path field.
+func (f *OrganizationFilter) WherePath(p entql.StringP) {
+	f.Where(p.Field(organization.FieldPath))
+}
+
+// WhereKind applies the entql string predicate on the kind field.
+func (f *OrganizationFilter) WhereKind(p entql.StringP) {
+	f.Where(p.Field(organization.FieldKind))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *OrganizationFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(organization.FieldOwnerID))
+}
+
+// WhereCode applies the entql string predicate on the code field.
+func (f *OrganizationFilter) WhereCode(p entql.StringP) {
+	f.Where(p.Field(organization.FieldCode))
+}
+
 // WhereHasParent applies a predicate to check if query has an edge parent.
 func (f *OrganizationFilter) WhereHasParent() {
 	f.Where(entql.HasEdge("parent"))
@@ -1388,6 +1425,20 @@ func (f *OrganizationFilter) WhereHasOauthprovider() {
 // WhereHasOauthproviderWith applies a predicate to check if query has an edge oauthprovider with a given conditions (other predicates).
 func (f *OrganizationFilter) WhereHasOauthproviderWith(preds ...predicate.OauthProvider) {
 	f.Where(entql.HasEdgeWith("oauthprovider", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *OrganizationFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *OrganizationFilter) WhereHasOwnerWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1958,6 +2009,11 @@ func (f *UserFilter) WhereSub(p entql.StringP) {
 // WhereOauth applies the entql bool predicate on the oauth field.
 func (f *UserFilter) WhereOauth(p entql.BoolP) {
 	f.Where(p.Field(user.FieldOauth))
+}
+
+// WhereUserType applies the entql string predicate on the user_type field.
+func (f *UserFilter) WhereUserType(p entql.StringP) {
+	f.Where(p.Field(user.FieldUserType))
 }
 
 // WhereHasOrganizations applies a predicate to check if query has an edge organizations.

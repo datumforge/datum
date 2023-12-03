@@ -212,6 +212,12 @@ func (uc *UserCreate) SetNillableOauth(b *bool) *UserCreate {
 	return uc
 }
 
+// SetUserType sets the "user_type" field.
+func (uc *UserCreate) SetUserType(ut user.UserType) *UserCreate {
+	uc.mutation.SetUserType(ut)
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -434,6 +440,14 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Oauth(); !ok {
 		return &ValidationError{Name: "oauth", err: errors.New(`generated: missing required field "User.oauth"`)}
 	}
+	if _, ok := uc.mutation.UserType(); !ok {
+		return &ValidationError{Name: "user_type", err: errors.New(`generated: missing required field "User.user_type"`)}
+	}
+	if v, ok := uc.mutation.UserType(); ok {
+		if err := user.UserTypeValidator(v); err != nil {
+			return &ValidationError{Name: "user_type", err: fmt.Errorf(`generated: validator failed for field "User.user_type": %w`, err)}
+		}
+	}
 	if _, ok := uc.mutation.SettingID(); !ok {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "User.setting"`)}
 	}
@@ -532,6 +546,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 		_node.Oauth = value
+	}
+	if value, ok := uc.mutation.UserType(); ok {
+		_spec.SetField(user.FieldUserType, field.TypeEnum, value)
+		_node.UserType = value
 	}
 	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

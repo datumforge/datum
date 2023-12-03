@@ -215,6 +215,12 @@ func init() {
 	organization.Hooks[2] = organizationMixinHooks2[0]
 
 	organization.Hooks[3] = organizationHooks[0]
+
+	organization.Hooks[4] = organizationHooks[1]
+
+	organization.Hooks[5] = organizationHooks[2]
+
+	organization.Hooks[6] = organizationHooks[3]
 	organizationMixinInters2 := organizationMixin[2].Interceptors()
 	organizationInters := schema.Organization{}.Interceptors()
 	organization.Interceptors[0] = organizationMixinInters2[0]
@@ -274,6 +280,14 @@ func init() {
 			return nil
 		}
 	}()
+	// organizationDescParentOrganizationID is the schema descriptor for parent_organization_id field.
+	organizationDescParentOrganizationID := organizationFields[3].Descriptor()
+	// organization.DefaultParentOrganizationID holds the default value on creation for the parent_organization_id field.
+	organization.DefaultParentOrganizationID = organizationDescParentOrganizationID.Default.(string)
+	// organizationDescCode is the schema descriptor for code field.
+	organizationDescCode := organizationFields[7].Descriptor()
+	// organization.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	organization.CodeValidator = organizationDescCode.Validators[0].(func(string) error)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

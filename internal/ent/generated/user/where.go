@@ -1042,6 +1042,26 @@ func OauthNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldOauth, v))
 }
 
+// UserTypeEQ applies the EQ predicate on the "user_type" field.
+func UserTypeEQ(v UserType) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUserType, v))
+}
+
+// UserTypeNEQ applies the NEQ predicate on the "user_type" field.
+func UserTypeNEQ(v UserType) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldUserType, v))
+}
+
+// UserTypeIn applies the In predicate on the "user_type" field.
+func UserTypeIn(vs ...UserType) predicate.User {
+	return predicate.User(sql.FieldIn(FieldUserType, vs...))
+}
+
+// UserTypeNotIn applies the NotIn predicate on the "user_type" field.
+func UserTypeNotIn(vs ...UserType) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldUserType, vs...))
+}
+
 // HasOrganizations applies the HasEdge predicate on the "organizations" edge.
 func HasOrganizations() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

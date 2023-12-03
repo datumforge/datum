@@ -41,12 +41,56 @@ func login(ctx context.Context) error {
 		RedirectURL: vars.RedirectURL,
 	}
 
+	te := TokenExchange{
+		URL:       vars.TokenURL,
+		GrantType: "authorization_code",
+		TokenType: "jwt",
+	}
+
+	sc := ServiceConfig{
+		Name:     "clerk",
+		URL:      vars.ClerkRootURL,
+		Exchange: &te,
+	}
+
 	token, err := auth.AuthPKCE(oauthConfig, vars.Audience)
 	if err != nil {
 		return err
 	}
 
+	if sc.Exchange != nil {
+		e := auth.NewExchanger(sc.Exchange.URL, sc.Exchange.GrantType, sc.Exchange.TokenType)
+
+		token, err = e.Exchange(ctx, token)
+		if err != nil {
+			return err
+		}
+	}
+
 	fmt.Printf("auth token successfully retrieved, %v.\n", token)
 
 	return nil
+}
+
+// ServiceConfig stores the config options for a service
+type ServiceConfig struct {
+	Name     string         `json:"name" yaml:"name"`
+	URL      string         `json:"url" yaml:"url"`
+	OIDC     EndpointOIDC   `json:"oidc" yaml:"oidc"`
+	Exchange *TokenExchange `json:"exchange" yaml:"exchange"`
+}
+
+// EndpointOIDC stores the OIDC information for an endpoint
+type EndpointOIDC struct {
+	Audience string   `json:"audience" yaml:"audience"`
+	Issuer   string   `json:"issuer" yaml:"issuer"`
+	ClientID string   `json:"clientID" yaml:"clientID"`
+	Scopes   []string `json:"scopes" yaml:"scopes"`
+}
+
+// TokenExchange stores token exchange information for an endpoint
+type TokenExchange struct {
+	URL       string `json:"url" yaml:"url"`
+	GrantType string `json:"grantType" yaml:"grantType"`
+	TokenType string `json:"tokenType" yaml:"tokenType"`
 }

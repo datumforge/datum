@@ -111,6 +111,31 @@ tasks:
       - task: go:tidy
       - task: go:lint
       - task: go:test
+  go:build:
+    desc: Runs go build for the datum server
+    cmds:
+      - go build -mod=mod -o datum
+  go:build-cli:
+    desc: Runs go build for the datum cli
+    cmds:
+      - go build -mod=mod -o datum-cli ./cmd/cli
+  go:build-clerk:
+    desc: Runs go build for the datum cli
+    cmds:
+      - CGO_ENABLED=0 go build -ldflags="-X {{.PKG}}.ClerkRootURL={{.CLERK_URL}} -X {{.PKG}}.TokenURL={{.TOKEN_URL}} -X {{.PKG}}.Audience={{.AUDIENCE}} -X {{.PKG}}.RedirectURL={{.REDIRECT_URL}} -X {{.PKG}}.OauthClientID={{.CLIENT_ID}} -X {{.PKG}}.AuthURL={{.AUTH_URL}}" -o datum-cli ./cmd/cli
+    vars:
+      PKG: github.com/datumforge/datum/cmd/cli/vars
+  build-local:
+    desc: Build a CLI configured for the local stage
+    cmds:
+      - task: go:build-clerk
+        vars:
+          CLERK_URL: https://modern-tuna-87.clerk.accounts.dev
+          REDIRECT_URL: http://localhost:3535/oauth2/callback
+          CLIENT_ID: YPlvAB9uPiDIHxi1
+          AUTH_URL: https://modern-tuna-87.clerk.accounts.dev/oauth/authorize
+          TOKEN_URL: https://modern-tuna-87.clerk.accounts.dev/oauth/token
+          AUDIENCE: https://modern-tuna-87.accounts.dev
   compose:fga:
     desc: brings up the compose environment for openfga development
     cmds:

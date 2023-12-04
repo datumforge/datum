@@ -43,5 +43,5 @@ var (
 	ErrTokenNameRequired = errors.New("token name is required")
 
 	// ErrTokenIDRequired is returned when no token ID is provided when deleting an existing token
-	ErrTokenIDRequired = errors.New("otken ID is required")
+	ErrTokenIDRequired = errors.New("token ID is required")
 )

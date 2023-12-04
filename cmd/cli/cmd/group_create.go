@@ -69,7 +69,6 @@ func createGroup(ctx context.Context) error {
 
 	displayName := viper.GetString("group.create.short-name")
 	description := viper.GetString("group.create.description")
-	//	ownerID := viper.GetString("group.create.owner-id")
 
 	input := datumclient.CreateGroupInput{
 		Name:    name,

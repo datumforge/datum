@@ -6,7 +6,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
-// defaultUserSettings creates the default user settings for a new user
+// defaultGroupSettings creates the default group settings for a new group
 func (r *mutationResolver) defaultGroupSettings(ctx context.Context) (string, error) {
 	input := generated.CreateGroupSettingInput{}
 

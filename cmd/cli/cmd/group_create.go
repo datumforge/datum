@@ -83,10 +83,6 @@ func createGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	//	if ownerID != "" {
-	//		input.OwnerID = &ownerID
-	//	}
-
 	o, err := c.CreateGroup(ctx, input, i)
 	if err != nil {
 		return err

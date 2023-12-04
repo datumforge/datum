@@ -6,7 +6,8 @@ import (
 	"time"
 )
 
-// ConfigProviderWithRefresh shows a config provider with automatic refresh; it contains fields and methods to manage the configuration, and refresh it periodically based on a specified interval
+// ConfigProviderWithRefresh shows a config provider with automatic refresh; it contains fields and methods to manage the configuration,
+// and refresh it periodically based on a specified interval
 type ConfigProviderWithRefresh struct {
 	sync.RWMutex
 
@@ -45,7 +46,7 @@ func (s *ConfigProviderWithRefresh) GetConfig() (*Config, error) {
 	return s.config, nil
 }
 
-// init the config provider with refresh
+// initialize the config provider with refresh
 func (s *ConfigProviderWithRefresh) initialize() {
 	if s.refreshInterval != 0 {
 		s.stop = make(chan bool)
@@ -76,7 +77,9 @@ func (s *ConfigProviderWithRefresh) refreshConfig() {
 	}
 }
 
-// Close function is used to stop the automatic refresh of the configuration. It stops the ticker that triggers the refresh and closes the stop channel, which signals the goroutine to stop refreshing the configuration
+// Close function is used to stop the automatic refresh of the configuration.
+// It stops the ticker that triggers the refresh and closes the stop channel,
+// which signals the goroutine to stop refreshing the configuration
 func (s *ConfigProviderWithRefresh) Close() {
 	if s.ticker != nil {
 		s.ticker.Stop()

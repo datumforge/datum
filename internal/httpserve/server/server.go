@@ -1,27 +1,32 @@
 package server
 
 import (
+	"errors"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/echox"
 )
 
 type Server struct {
-	config config.Server
+	config config.Server //nolint: unused
 }
 
-func serve() {
+func serve() { //nolint: unused
 	e := echox.New()
 	// add middleware and routes
 	// ...
 	s := http.Server{
 		Addr:    ":8080",
 		Handler: e,
-		//ReadTimeout: 30 * time.Second, // customize http.Server timeouts
+		// TODO: customize http.Server timeouts
+		ReadTimeout: 30 * time.Second, //nolint:gomnd
 	}
-	if err := s.ListenAndServe(); err != http.ErrServerClosed {
+
+	if err := s.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
 }

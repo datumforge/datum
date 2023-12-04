@@ -1,2 +1,2 @@
-// Package handlers are handlers with echo server
+// Package handlers are handlers for the echo server
 package handlers

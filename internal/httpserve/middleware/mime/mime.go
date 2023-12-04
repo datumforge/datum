@@ -26,10 +26,12 @@ var DefaultConfig = Config{
 	DefaultContentType: "application/data",
 }
 
+// New creates a new middleware function with the default config
 func New() echo.MiddlewareFunc {
 	return NewWithConfig(DefaultConfig)
 }
 
+// NewWithConfig creates a new middleware function with the provided config
 func NewWithConfig(config Config) echo.MiddlewareFunc {
 	if config.Skipper == nil {
 		config.Skipper = DefaultConfig.Skipper
@@ -74,6 +76,7 @@ func loadMimeFile(filename string) map[string]string {
 		if len(fields) <= 1 || fields[0][0] == '#' {
 			continue
 		}
+
 		mimeType := fields[0]
 
 		for _, ext := range fields[1:] {

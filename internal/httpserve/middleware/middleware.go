@@ -1,4 +1,4 @@
-// Package webmiddleware provides middleware for http Handlers.
+// Package middleware provides middleware for http Handlers.
 package middleware
 
 import "net/http"
@@ -11,6 +11,7 @@ func Chain(middlewares []MiddlewareFunc, handler http.Handler) http.Handler {
 	for i := len(middlewares) - 1; i >= 0; i-- {
 		handler = middlewares[i](handler)
 	}
+
 	return handler
 }
 

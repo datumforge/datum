@@ -22,7 +22,7 @@ func New() echo.MiddlewareFunc {
 	return NewWithConfig(DefaultConfig)
 }
 
-// New returns a new router middleware handler
+// NewWithConfig returns a new router middleware handler
 func NewWithConfig(config Config) echo.MiddlewareFunc {
 	if config.Skipper == nil {
 		config.Skipper = DefaultConfig.Skipper

@@ -22,7 +22,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.79.1
 	github.com/openfga/go-sdk v0.2.3
-	github.com/openfga/language/pkg/go v0.0.0-20231127150605-50a8baa6c11b
+	github.com/openfga/language/pkg/go v0.0.0-20231204134601-50a2774c197c
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/spf13/cobra v1.8.0

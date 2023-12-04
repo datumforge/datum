@@ -9,7 +9,7 @@ env:
   TEST_FGA_URL: "localhost:8080"
 
 tasks:
-  clean:
+  clean:generated:
     desc: cleans ent / gqlgen generated files to be re-generated
     cmds:
       - |
@@ -19,6 +19,11 @@ tasks:
       - "rm -f schema/ent.graphql"
       - "rm -f schema.graphql"
       - "rm -rf internal/datumclient/"
+  clean:local:
+    desc: cleans up datum.db and datum-cli local
+    cmds:
+      - "rm -f datum.db"
+      - "rm -f datum-cli"
   ent:
     desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
     cmds:
@@ -91,6 +96,14 @@ tasks:
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
       - go run main.go serve  --debug --pretty --dev --oidc=false
+  go:build:
+    desc: Runs go build for the datum server
+    cmds:
+      - go build -mod=mod -o datum
+  go:build-cli:
+    desc: Runs go build for the datum cli
+    cmds:
+      - go build -mod=mod -o datum-cli ./cmd/cli  
   go:lint:
     desc: runs golangci-lint, the most annoying opininated linter ever
     cmds:

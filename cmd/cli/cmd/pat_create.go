@@ -16,7 +16,7 @@ import (
 
 var patCreateCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new datum pat",
+	Short: "Create a new datum personal access token",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return createPat(cmd.Context())
 	},

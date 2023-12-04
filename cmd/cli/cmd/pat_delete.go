@@ -16,7 +16,7 @@ import (
 
 var patDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete an existing datum pat",
+	Short: "Delete an existing datum personal access token",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return deletePat(cmd.Context())
 	},

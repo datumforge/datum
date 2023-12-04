@@ -4742,21 +4742,6 @@ type PersonalAccessTokenWhereInput struct {
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
 
-	// "user_id" field predicates.
-	UserID             *string  `json:"userID,omitempty"`
-	UserIDNEQ          *string  `json:"userIDNEQ,omitempty"`
-	UserIDIn           []string `json:"userIDIn,omitempty"`
-	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
-	UserIDGT           *string  `json:"userIDGT,omitempty"`
-	UserIDGTE          *string  `json:"userIDGTE,omitempty"`
-	UserIDLT           *string  `json:"userIDLT,omitempty"`
-	UserIDLTE          *string  `json:"userIDLTE,omitempty"`
-	UserIDContains     *string  `json:"userIDContains,omitempty"`
-	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
-	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
-	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
-	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
-
 	// "token" field predicates.
 	Token             *string  `json:"token,omitempty"`
 	TokenNEQ          *string  `json:"tokenNEQ,omitempty"`
@@ -4794,9 +4779,9 @@ type PersonalAccessTokenWhereInput struct {
 	LastUsedAtIsNil  bool        `json:"lastUsedAtIsNil,omitempty"`
 	LastUsedAtNotNil bool        `json:"lastUsedAtNotNil,omitempty"`
 
-	// "user" edge predicates.
-	HasUser     *bool             `json:"hasUser,omitempty"`
-	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// "owner" edge predicates.
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -5077,45 +5062,6 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 	if i.NameContainsFold != nil {
 		predicates = append(predicates, personalaccesstoken.NameContainsFold(*i.NameContainsFold))
 	}
-	if i.UserID != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDEQ(*i.UserID))
-	}
-	if i.UserIDNEQ != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDNEQ(*i.UserIDNEQ))
-	}
-	if len(i.UserIDIn) > 0 {
-		predicates = append(predicates, personalaccesstoken.UserIDIn(i.UserIDIn...))
-	}
-	if len(i.UserIDNotIn) > 0 {
-		predicates = append(predicates, personalaccesstoken.UserIDNotIn(i.UserIDNotIn...))
-	}
-	if i.UserIDGT != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDGT(*i.UserIDGT))
-	}
-	if i.UserIDGTE != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDGTE(*i.UserIDGTE))
-	}
-	if i.UserIDLT != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDLT(*i.UserIDLT))
-	}
-	if i.UserIDLTE != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDLTE(*i.UserIDLTE))
-	}
-	if i.UserIDContains != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDContains(*i.UserIDContains))
-	}
-	if i.UserIDHasPrefix != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDHasPrefix(*i.UserIDHasPrefix))
-	}
-	if i.UserIDHasSuffix != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDHasSuffix(*i.UserIDHasSuffix))
-	}
-	if i.UserIDEqualFold != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDEqualFold(*i.UserIDEqualFold))
-	}
-	if i.UserIDContainsFold != nil {
-		predicates = append(predicates, personalaccesstoken.UserIDContainsFold(*i.UserIDContainsFold))
-	}
 	if i.Token != nil {
 		predicates = append(predicates, personalaccesstoken.TokenEQ(*i.Token))
 	}
@@ -5210,23 +5156,23 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 		predicates = append(predicates, personalaccesstoken.LastUsedAtNotNil())
 	}
 
-	if i.HasUser != nil {
-		p := personalaccesstoken.HasUser()
-		if !*i.HasUser {
+	if i.HasOwner != nil {
+		p := personalaccesstoken.HasOwner()
+		if !*i.HasOwner {
 			p = personalaccesstoken.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasUserWith) > 0 {
-		with := make([]predicate.User, 0, len(i.HasUserWith))
-		for _, w := range i.HasUserWith {
+	if len(i.HasOwnerWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasOwnerWith))
+		for _, w := range i.HasOwnerWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasUserWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasOwnerWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, personalaccesstoken.HasUserWith(with...))
+		predicates = append(predicates, personalaccesstoken.HasOwnerWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

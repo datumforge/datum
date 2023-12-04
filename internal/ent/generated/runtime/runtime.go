@@ -363,6 +363,14 @@ func init() {
 	personalaccesstoken.DefaultUpdatedAt = personalaccesstokenDescUpdatedAt.Default.(func() time.Time)
 	// personalaccesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	personalaccesstoken.UpdateDefaultUpdatedAt = personalaccesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// personalaccesstokenDescToken is the schema descriptor for token field.
+	personalaccesstokenDescToken := personalaccesstokenFields[1].Descriptor()
+	// personalaccesstoken.DefaultToken holds the default value on creation for the token field.
+	personalaccesstoken.DefaultToken = personalaccesstokenDescToken.Default.(func() string)
+	// personalaccesstokenDescDescription is the schema descriptor for description field.
+	personalaccesstokenDescDescription := personalaccesstokenFields[4].Descriptor()
+	// personalaccesstoken.DefaultDescription holds the default value on creation for the description field.
+	personalaccesstoken.DefaultDescription = personalaccesstokenDescDescription.Default.(string)
 	// personalaccesstokenDescLastUsedAt is the schema descriptor for last_used_at field.
 	personalaccesstokenDescLastUsedAt := personalaccesstokenFields[5].Descriptor()
 	// personalaccesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.

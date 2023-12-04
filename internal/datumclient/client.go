@@ -24,6 +24,9 @@ type DatumClient interface {
 	CreateOrganization(ctx context.Context, input CreateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*CreateOrganization, error)
 	UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error)
 	DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error)
+	CreatePersonalAccessToken(ctx context.Context, input CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreatePersonalAccessToken, error)
+	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
+	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
 	GetUserByID(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByID, error)
 	GetUserByIDWithOrgs(ctx context.Context, userID string, interceptors ...clientv2.RequestInterceptor) (*GetUserByIDWithOrgs, error)
 	GetAllUsers(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllUsers, error)
@@ -1450,6 +1453,149 @@ func (t *DeleteOrganization_DeleteOrganization) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner) GetID() string {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner{}
+	}
+	return t.ID
+}
+
+type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken struct {
+	Owner     CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner "json:\"owner\" graphql:\"owner\""
+	Abilities []string                                                                      "json:\"abilities,omitempty\" graphql:\"abilities\""
+	Name      string                                                                        "json:\"name\" graphql:\"name\""
+}
+
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetOwner() *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return &t.Owner
+}
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetAbilities() []string {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Abilities
+}
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetName() string {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
+	}
+	return t.Name
+}
+
+type CreatePersonalAccessToken_CreatePersonalAccessToken struct {
+	PersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken "json:\"PersonalAccessToken\" graphql:\"PersonalAccessToken\""
+}
+
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken) GetPersonalAccessToken() *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken {
+	if t == nil {
+		t = &CreatePersonalAccessToken_CreatePersonalAccessToken{}
+	}
+	return &t.PersonalAccessToken
+}
+
+type GetPersonalAccessTokenByID_PersonalAccessToken_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken_Owner) GetID() string {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken_Owner{}
+	}
+	return t.ID
+}
+
+type GetPersonalAccessTokenByID_PersonalAccessToken struct {
+	ID           string                                               "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time                                            "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time                                            "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string                                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Name         string                                               "json:\"name\" graphql:\"name\""
+	Owner        GetPersonalAccessTokenByID_PersonalAccessToken_Owner "json:\"owner\" graphql:\"owner\""
+	Abilities    []string                                             "json:\"abilities,omitempty\" graphql:\"abilities\""
+	ExpirationAt time.Time                                            "json:\"expirationAt\" graphql:\"expirationAt\""
+	LastUsedAt   *time.Time                                           "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
+}
+
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetID() string {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return t.ID
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return t.CreatedBy
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetName() string {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return t.Name
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetOwner() *GetPersonalAccessTokenByID_PersonalAccessToken_Owner {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return &t.Owner
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetAbilities() []string {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return t.Abilities
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetExpirationAt() *time.Time {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return &t.ExpirationAt
+}
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetLastUsedAt() *time.Time {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
+	}
+	return t.LastUsedAt
+}
+
+type DeletePersonalAccessToken_DeletePersonalAccessToken struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() string {
+	if t == nil {
+		t = &DeletePersonalAccessToken_DeletePersonalAccessToken{}
+	}
+	return t.DeletedID
+}
+
 type GetUserByID_User_Setting struct {
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
@@ -2026,6 +2172,39 @@ func (t *DeleteOrganization) GetDeleteOrganization() *DeleteOrganization_DeleteO
 	return &t.DeleteOrganization
 }
 
+type CreatePersonalAccessToken struct {
+	CreatePersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken "json:\"createPersonalAccessToken\" graphql:\"createPersonalAccessToken\""
+}
+
+func (t *CreatePersonalAccessToken) GetCreatePersonalAccessToken() *CreatePersonalAccessToken_CreatePersonalAccessToken {
+	if t == nil {
+		t = &CreatePersonalAccessToken{}
+	}
+	return &t.CreatePersonalAccessToken
+}
+
+type GetPersonalAccessTokenByID struct {
+	PersonalAccessToken GetPersonalAccessTokenByID_PersonalAccessToken "json:\"personalAccessToken\" graphql:\"personalAccessToken\""
+}
+
+func (t *GetPersonalAccessTokenByID) GetPersonalAccessToken() *GetPersonalAccessTokenByID_PersonalAccessToken {
+	if t == nil {
+		t = &GetPersonalAccessTokenByID{}
+	}
+	return &t.PersonalAccessToken
+}
+
+type DeletePersonalAccessToken struct {
+	DeletePersonalAccessToken DeletePersonalAccessToken_DeletePersonalAccessToken "json:\"deletePersonalAccessToken\" graphql:\"deletePersonalAccessToken\""
+}
+
+func (t *DeletePersonalAccessToken) GetDeletePersonalAccessToken() *DeletePersonalAccessToken_DeletePersonalAccessToken {
+	if t == nil {
+		t = &DeletePersonalAccessToken{}
+	}
+	return &t.DeletePersonalAccessToken
+}
+
 type GetUserByID struct {
 	User GetUserByID_User "json:\"user\" graphql:\"user\""
 }
@@ -2516,6 +2695,95 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 	return &res, nil
 }
 
+const CreatePersonalAccessTokenDocument = `mutation CreatePersonalAccessToken ($input: CreatePersonalAccessTokenInput!) {
+	createPersonalAccessToken(input: $input) {
+		PersonalAccessToken {
+			owner {
+				id
+			}
+			abilities
+			name
+		}
+	}
+}
+`
+
+func (c *Client) CreatePersonalAccessToken(ctx context.Context, input CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreatePersonalAccessToken, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res CreatePersonalAccessToken
+	if err := c.Client.Post(ctx, "CreatePersonalAccessToken", CreatePersonalAccessTokenDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetPersonalAccessTokenByIDDocument = `query GetPersonalAccessTokenByID ($personalAccessTokenId: ID!) {
+	personalAccessToken(id: $personalAccessTokenId) {
+		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		name
+		owner {
+			id
+		}
+		abilities
+		expirationAt
+		lastUsedAt
+	}
+}
+`
+
+func (c *Client) GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error) {
+	vars := map[string]interface{}{
+		"personalAccessTokenId": personalAccessTokenID,
+	}
+
+	var res GetPersonalAccessTokenByID
+	if err := c.Client.Post(ctx, "GetPersonalAccessTokenByID", GetPersonalAccessTokenByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const DeletePersonalAccessTokenDocument = `mutation DeletePersonalAccessToken ($deletePersonalAccessTokenId: ID!) {
+	deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error) {
+	vars := map[string]interface{}{
+		"deletePersonalAccessTokenId": deletePersonalAccessTokenID,
+	}
+
+	var res DeletePersonalAccessToken
+	if err := c.Client.Post(ctx, "DeletePersonalAccessToken", DeletePersonalAccessTokenDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 	user(id: $userId) {
 		id
@@ -2721,20 +2989,23 @@ func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, intercepto
 }
 
 var DocumentOperationNames = map[string]string{
-	GetGroupByIDDocument:        "GetGroupByID",
-	GetAllGroupsDocument:        "GetAllGroups",
-	CreateGroupDocument:         "CreateGroup",
-	UpdateGroupDocument:         "UpdateGroup",
-	DeleteGroupDocument:         "DeleteGroup",
-	GetOrganizationByIDDocument: "GetOrganizationByID",
-	GetAllOrganizationsDocument: "GetAllOrganizations",
-	CreateOrganizationDocument:  "CreateOrganization",
-	UpdateOrganizationDocument:  "UpdateOrganization",
-	DeleteOrganizationDocument:  "DeleteOrganization",
-	GetUserByIDDocument:         "GetUserByID",
-	GetUserByIDWithOrgsDocument: "GetUserByIDWithOrgs",
-	GetAllUsersDocument:         "GetAllUsers",
-	CreateUserDocument:          "CreateUser",
-	UpdateUserDocument:          "UpdateUser",
-	DeleteUserDocument:          "DeleteUser",
+	GetGroupByIDDocument:               "GetGroupByID",
+	GetAllGroupsDocument:               "GetAllGroups",
+	CreateGroupDocument:                "CreateGroup",
+	UpdateGroupDocument:                "UpdateGroup",
+	DeleteGroupDocument:                "DeleteGroup",
+	GetOrganizationByIDDocument:        "GetOrganizationByID",
+	GetAllOrganizationsDocument:        "GetAllOrganizations",
+	CreateOrganizationDocument:         "CreateOrganization",
+	UpdateOrganizationDocument:         "UpdateOrganization",
+	DeleteOrganizationDocument:         "DeleteOrganization",
+	CreatePersonalAccessTokenDocument:  "CreatePersonalAccessToken",
+	GetPersonalAccessTokenByIDDocument: "GetPersonalAccessTokenByID",
+	DeletePersonalAccessTokenDocument:  "DeletePersonalAccessToken",
+	GetUserByIDDocument:                "GetUserByID",
+	GetUserByIDWithOrgsDocument:        "GetUserByIDWithOrgs",
+	GetAllUsersDocument:                "GetAllUsers",
+	CreateUserDocument:                 "CreateUser",
+	UpdateUserDocument:                 "UpdateUser",
+	DeleteUserDocument:                 "DeleteUser",
 }

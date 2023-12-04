@@ -7997,10 +7997,11 @@ type PersonalAccessTokenMutation struct {
 	abilities       *[]string
 	appendabilities []string
 	expiration_at   *time.Time
+	description     *string
 	last_used_at    *time.Time
 	clearedFields   map[string]struct{}
-	user            *string
-	cleareduser     bool
+	owner           *string
+	clearedowner    bool
 	done            bool
 	oldValue        func(context.Context) (*PersonalAccessToken, error)
 	predicates      []predicate.PersonalAccessToken
@@ -8316,42 +8317,6 @@ func (m *PersonalAccessTokenMutation) ResetName() {
 	m.name = nil
 }
 
-// SetUserID sets the "user_id" field.
-func (m *PersonalAccessTokenMutation) SetUserID(s string) {
-	m.user = &s
-}
-
-// UserID returns the value of the "user_id" field in the mutation.
-func (m *PersonalAccessTokenMutation) UserID() (r string, exists bool) {
-	v := m.user
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUserID returns the old "user_id" field's value of the PersonalAccessToken entity.
-// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PersonalAccessTokenMutation) OldUserID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUserID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
-	}
-	return oldValue.UserID, nil
-}
-
-// ResetUserID resets all changes to the "user_id" field.
-func (m *PersonalAccessTokenMutation) ResetUserID() {
-	m.user = nil
-}
-
 // SetToken sets the "token" field.
 func (m *PersonalAccessTokenMutation) SetToken(s string) {
 	m.token = &s
@@ -8489,6 +8454,42 @@ func (m *PersonalAccessTokenMutation) ResetExpirationAt() {
 	m.expiration_at = nil
 }
 
+// SetDescription sets the "description" field.
+func (m *PersonalAccessTokenMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *PersonalAccessTokenMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *PersonalAccessTokenMutation) ResetDescription() {
+	m.description = nil
+}
+
 // SetLastUsedAt sets the "last_used_at" field.
 func (m *PersonalAccessTokenMutation) SetLastUsedAt(t time.Time) {
 	m.last_used_at = &t
@@ -8538,31 +8539,43 @@ func (m *PersonalAccessTokenMutation) ResetLastUsedAt() {
 	delete(m.clearedFields, personalaccesstoken.FieldLastUsedAt)
 }
 
-// ClearUser clears the "user" edge to the User entity.
-func (m *PersonalAccessTokenMutation) ClearUser() {
-	m.cleareduser = true
-	m.clearedFields[personalaccesstoken.FieldUserID] = struct{}{}
+// SetOwnerID sets the "owner" edge to the User entity by id.
+func (m *PersonalAccessTokenMutation) SetOwnerID(id string) {
+	m.owner = &id
 }
 
-// UserCleared reports if the "user" edge to the User entity was cleared.
-func (m *PersonalAccessTokenMutation) UserCleared() bool {
-	return m.cleareduser
+// ClearOwner clears the "owner" edge to the User entity.
+func (m *PersonalAccessTokenMutation) ClearOwner() {
+	m.clearedowner = true
 }
 
-// UserIDs returns the "user" edge IDs in the mutation.
+// OwnerCleared reports if the "owner" edge to the User entity was cleared.
+func (m *PersonalAccessTokenMutation) OwnerCleared() bool {
+	return m.clearedowner
+}
+
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *PersonalAccessTokenMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
+	}
+	return
+}
+
+// OwnerIDs returns the "owner" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// UserID instead. It exists only for internal usage by the builders.
-func (m *PersonalAccessTokenMutation) UserIDs() (ids []string) {
-	if id := m.user; id != nil {
+// OwnerID instead. It exists only for internal usage by the builders.
+func (m *PersonalAccessTokenMutation) OwnerIDs() (ids []string) {
+	if id := m.owner; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetUser resets all changes to the "user" edge.
-func (m *PersonalAccessTokenMutation) ResetUser() {
-	m.user = nil
-	m.cleareduser = false
+// ResetOwner resets all changes to the "owner" edge.
+func (m *PersonalAccessTokenMutation) ResetOwner() {
+	m.owner = nil
+	m.clearedowner = false
 }
 
 // Where appends a list predicates to the PersonalAccessTokenMutation builder.
@@ -8615,9 +8628,6 @@ func (m *PersonalAccessTokenMutation) Fields() []string {
 	if m.name != nil {
 		fields = append(fields, personalaccesstoken.FieldName)
 	}
-	if m.user != nil {
-		fields = append(fields, personalaccesstoken.FieldUserID)
-	}
 	if m.token != nil {
 		fields = append(fields, personalaccesstoken.FieldToken)
 	}
@@ -8626,6 +8636,9 @@ func (m *PersonalAccessTokenMutation) Fields() []string {
 	}
 	if m.expiration_at != nil {
 		fields = append(fields, personalaccesstoken.FieldExpirationAt)
+	}
+	if m.description != nil {
+		fields = append(fields, personalaccesstoken.FieldDescription)
 	}
 	if m.last_used_at != nil {
 		fields = append(fields, personalaccesstoken.FieldLastUsedAt)
@@ -8648,14 +8661,14 @@ func (m *PersonalAccessTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case personalaccesstoken.FieldName:
 		return m.Name()
-	case personalaccesstoken.FieldUserID:
-		return m.UserID()
 	case personalaccesstoken.FieldToken:
 		return m.Token()
 	case personalaccesstoken.FieldAbilities:
 		return m.Abilities()
 	case personalaccesstoken.FieldExpirationAt:
 		return m.ExpirationAt()
+	case personalaccesstoken.FieldDescription:
+		return m.Description()
 	case personalaccesstoken.FieldLastUsedAt:
 		return m.LastUsedAt()
 	}
@@ -8677,14 +8690,14 @@ func (m *PersonalAccessTokenMutation) OldField(ctx context.Context, name string)
 		return m.OldUpdatedBy(ctx)
 	case personalaccesstoken.FieldName:
 		return m.OldName(ctx)
-	case personalaccesstoken.FieldUserID:
-		return m.OldUserID(ctx)
 	case personalaccesstoken.FieldToken:
 		return m.OldToken(ctx)
 	case personalaccesstoken.FieldAbilities:
 		return m.OldAbilities(ctx)
 	case personalaccesstoken.FieldExpirationAt:
 		return m.OldExpirationAt(ctx)
+	case personalaccesstoken.FieldDescription:
+		return m.OldDescription(ctx)
 	case personalaccesstoken.FieldLastUsedAt:
 		return m.OldLastUsedAt(ctx)
 	}
@@ -8731,13 +8744,6 @@ func (m *PersonalAccessTokenMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetName(v)
 		return nil
-	case personalaccesstoken.FieldUserID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUserID(v)
-		return nil
 	case personalaccesstoken.FieldToken:
 		v, ok := value.(string)
 		if !ok {
@@ -8758,6 +8764,13 @@ func (m *PersonalAccessTokenMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExpirationAt(v)
+		return nil
+	case personalaccesstoken.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
 		return nil
 	case personalaccesstoken.FieldLastUsedAt:
 		v, ok := value.(time.Time)
@@ -8857,9 +8870,6 @@ func (m *PersonalAccessTokenMutation) ResetField(name string) error {
 	case personalaccesstoken.FieldName:
 		m.ResetName()
 		return nil
-	case personalaccesstoken.FieldUserID:
-		m.ResetUserID()
-		return nil
 	case personalaccesstoken.FieldToken:
 		m.ResetToken()
 		return nil
@@ -8868,6 +8878,9 @@ func (m *PersonalAccessTokenMutation) ResetField(name string) error {
 		return nil
 	case personalaccesstoken.FieldExpirationAt:
 		m.ResetExpirationAt()
+		return nil
+	case personalaccesstoken.FieldDescription:
+		m.ResetDescription()
 		return nil
 	case personalaccesstoken.FieldLastUsedAt:
 		m.ResetLastUsedAt()
@@ -8879,8 +8892,8 @@ func (m *PersonalAccessTokenMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PersonalAccessTokenMutation) AddedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.user != nil {
-		edges = append(edges, personalaccesstoken.EdgeUser)
+	if m.owner != nil {
+		edges = append(edges, personalaccesstoken.EdgeOwner)
 	}
 	return edges
 }
@@ -8889,8 +8902,8 @@ func (m *PersonalAccessTokenMutation) AddedEdges() []string {
 // name in this mutation.
 func (m *PersonalAccessTokenMutation) AddedIDs(name string) []ent.Value {
 	switch name {
-	case personalaccesstoken.EdgeUser:
-		if id := m.user; id != nil {
+	case personalaccesstoken.EdgeOwner:
+		if id := m.owner; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -8912,8 +8925,8 @@ func (m *PersonalAccessTokenMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PersonalAccessTokenMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.cleareduser {
-		edges = append(edges, personalaccesstoken.EdgeUser)
+	if m.clearedowner {
+		edges = append(edges, personalaccesstoken.EdgeOwner)
 	}
 	return edges
 }
@@ -8922,8 +8935,8 @@ func (m *PersonalAccessTokenMutation) ClearedEdges() []string {
 // was cleared in this mutation.
 func (m *PersonalAccessTokenMutation) EdgeCleared(name string) bool {
 	switch name {
-	case personalaccesstoken.EdgeUser:
-		return m.cleareduser
+	case personalaccesstoken.EdgeOwner:
+		return m.clearedowner
 	}
 	return false
 }
@@ -8932,8 +8945,8 @@ func (m *PersonalAccessTokenMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *PersonalAccessTokenMutation) ClearEdge(name string) error {
 	switch name {
-	case personalaccesstoken.EdgeUser:
-		m.ClearUser()
+	case personalaccesstoken.EdgeOwner:
+		m.ClearOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown PersonalAccessToken unique edge %s", name)
@@ -8943,8 +8956,8 @@ func (m *PersonalAccessTokenMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PersonalAccessTokenMutation) ResetEdge(name string) error {
 	switch name {
-	case personalaccesstoken.EdgeUser:
-		m.ResetUser()
+	case personalaccesstoken.EdgeOwner:
+		m.ResetOwner()
 		return nil
 	}
 	return fmt.Errorf("unknown PersonalAccessToken edge %s", name)

@@ -13,20 +13,53 @@ import (
 
 // CreatePersonalAccessToken is the resolver for the createPersonalAccessToken field.
 func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreatePersonalAccessToken - createPersonalAccessToken"))
+	pat, err := r.client.PersonalAccessToken.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if generated.IsConstraintError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to create personal access token", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &PersonalAccessTokenCreatePayload{PersonalAccessToken: pat}, err
 }
 
 // UpdatePersonalAccessToken is the resolver for the updatePersonalAccessToken field.
 func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id string, input generated.UpdatePersonalAccessTokenInput) (*PersonalAccessTokenUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdatePersonalAccessToken - updatePersonalAccessToken"))
+	panic(fmt.Errorf("not implemented: CreateOrganizationSetting - createOrganizationSetting"))
 }
 
 // DeletePersonalAccessToken is the resolver for the deletePersonalAccessToken field.
 func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeletePersonalAccessToken - deletePersonalAccessToken"))
+	if err := r.client.PersonalAccessToken.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to delete personal access token", "error", err)
+		return nil, err
+	}
+
+	return &PersonalAccessTokenDeletePayload{DeletedID: id}, nil
 }
 
 // PersonalAccessToken is the resolver for the PersonalAccessToken field.
 func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error) {
-	panic(fmt.Errorf("not implemented: PersonalAccessToken - PersonalAccessToken"))
+	pat, err := r.client.PersonalAccessToken.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get token", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return pat, nil
 }

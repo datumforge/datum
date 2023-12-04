@@ -3310,9 +3310,6 @@
                   "name": {
                     "type": "string"
                   },
-                  "user_id": {
-                    "type": "string"
-                  },
                   "token": {
                     "type": "string"
                   },
@@ -3326,11 +3323,14 @@
                     "type": "string",
                     "format": "date-time"
                   },
+                  "description": {
+                    "type": "string"
+                  },
                   "last_used_at": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "user": {
+                  "owner": {
                     "type": "string"
                   }
                 },
@@ -3338,10 +3338,10 @@
                   "created_at",
                   "updated_at",
                   "name",
-                  "user_id",
                   "token",
                   "expiration_at",
-                  "user"
+                  "description",
+                  "owner"
                 ]
               }
             }
@@ -3486,12 +3486,6 @@
                   "name": {
                     "type": "string"
                   },
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "token": {
-                    "type": "string"
-                  },
                   "abilities": {
                     "type": "array",
                     "items": {
@@ -3502,11 +3496,14 @@
                     "type": "string",
                     "format": "date-time"
                   },
+                  "description": {
+                    "type": "string"
+                  },
                   "last_used_at": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "user": {
+                  "owner": {
                     "type": "string"
                   }
                 }
@@ -3541,14 +3538,14 @@
         }
       }
     },
-    "/personal-access-tokens/{id}/user": {
+    "/personal-access-tokens/{id}/owner": {
       "get": {
         "tags": [
           "PersonalAccessToken"
         ],
         "summary": "Find the attached User",
         "description": "Find the attached User of the PersonalAccessToken with the given ID",
-        "operationId": "readPersonalAccessTokenUser",
+        "operationId": "readPersonalAccessTokenOwner",
         "parameters": [
           {
             "name": "id",
@@ -3566,7 +3563,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PersonalAccessToken_UserRead"
+                  "$ref": "#/components/schemas/PersonalAccessToken_OwnerRead"
                 }
               }
             }
@@ -8522,9 +8519,6 @@
           "name": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "token": {
             "type": "string"
           },
@@ -8538,11 +8532,14 @@
             "type": "string",
             "format": "date-time"
           },
+          "description": {
+            "type": "string"
+          },
           "last_used_at": {
             "type": "string",
             "format": "date-time"
           },
-          "user": {
+          "owner": {
             "$ref": "#/components/schemas/User"
           }
         },
@@ -8551,10 +8548,10 @@
           "created_at",
           "updated_at",
           "name",
-          "user_id",
           "token",
           "expiration_at",
-          "user"
+          "description",
+          "owner"
         ]
       },
       "PersonalAccessTokenCreate": {
@@ -8580,9 +8577,6 @@
           "name": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "abilities": {
             "type": "array",
             "items": {
@@ -8592,6 +8586,9 @@
           "expiration_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "description": {
+            "type": "string"
           },
           "last_used_at": {
             "type": "string",
@@ -8603,8 +8600,8 @@
           "created_at",
           "updated_at",
           "name",
-          "user_id",
-          "expiration_at"
+          "expiration_at",
+          "description"
         ]
       },
       "PersonalAccessTokenList": {
@@ -8630,9 +8627,6 @@
           "name": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "abilities": {
             "type": "array",
             "items": {
@@ -8642,6 +8636,9 @@
           "expiration_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "description": {
+            "type": "string"
           },
           "last_used_at": {
             "type": "string",
@@ -8653,8 +8650,8 @@
           "created_at",
           "updated_at",
           "name",
-          "user_id",
-          "expiration_at"
+          "expiration_at",
+          "description"
         ]
       },
       "PersonalAccessTokenRead": {
@@ -8680,9 +8677,6 @@
           "name": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "abilities": {
             "type": "array",
             "items": {
@@ -8692,6 +8686,9 @@
           "expiration_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "description": {
+            "type": "string"
           },
           "last_used_at": {
             "type": "string",
@@ -8703,8 +8700,8 @@
           "created_at",
           "updated_at",
           "name",
-          "user_id",
-          "expiration_at"
+          "expiration_at",
+          "description"
         ]
       },
       "PersonalAccessTokenUpdate": {
@@ -8730,9 +8727,6 @@
           "name": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "abilities": {
             "type": "array",
             "items": {
@@ -8742,6 +8736,9 @@
           "expiration_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "description": {
+            "type": "string"
           },
           "last_used_at": {
             "type": "string",
@@ -8753,11 +8750,11 @@
           "created_at",
           "updated_at",
           "name",
-          "user_id",
-          "expiration_at"
+          "expiration_at",
+          "description"
         ]
       },
-      "PersonalAccessToken_UserRead": {
+      "PersonalAccessToken_OwnerRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -10581,9 +10578,6 @@
           "name": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "abilities": {
             "type": "array",
             "items": {
@@ -10593,6 +10587,9 @@
           "expiration_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "description": {
+            "type": "string"
           },
           "last_used_at": {
             "type": "string",
@@ -10604,8 +10601,8 @@
           "created_at",
           "updated_at",
           "name",
-          "user_id",
-          "expiration_at"
+          "expiration_at",
+          "description"
         ]
       },
       "User_RefreshtokenList": {

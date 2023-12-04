@@ -1,0 +1,35 @@
+mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
+  createPersonalAccessToken(input: $input) {
+    PersonalAccessToken {
+      owner {
+        id
+      }
+      abilities
+      name
+    }
+  }
+}
+
+query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
+  personalAccessToken(id: $personalAccessTokenId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    name
+    owner {
+      id
+    }
+    abilities
+    expirationAt
+    lastUsedAt
+  }
+}
+
+mutation DeletePersonalAccessToken($deletePersonalAccessTokenId: ID!) {
+  deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+    deletedID
+  }
+}
+

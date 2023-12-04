@@ -1690,15 +1690,15 @@ func (c *PersonalAccessTokenClient) GetX(ctx context.Context, id string) *Person
 	return obj
 }
 
-// QueryUser queries the user edge of a PersonalAccessToken.
-func (c *PersonalAccessTokenClient) QueryUser(pat *PersonalAccessToken) *UserQuery {
+// QueryOwner queries the owner edge of a PersonalAccessToken.
+func (c *PersonalAccessTokenClient) QueryOwner(pat *PersonalAccessToken) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := pat.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(personalaccesstoken.Table, personalaccesstoken.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, personalaccesstoken.UserTable, personalaccesstoken.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, personalaccesstoken.OwnerTable, personalaccesstoken.OwnerColumn),
 		)
 		schemaConfig := pat.schemaConfig
 		step.To.Schema = schemaConfig.User

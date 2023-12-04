@@ -992,11 +992,12 @@ type CreatePersonalAccessTokenInput struct {
 	CreatedBy    *string
 	UpdatedBy    *string
 	Name         string
-	Token        string
+	Token        *string
 	Abilities    []string
 	ExpirationAt time.Time
+	Description  *string
 	LastUsedAt   *time.Time
-	UserID       string
+	OwnerID      string
 }
 
 // Mutate applies the CreatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
@@ -1014,15 +1015,20 @@ func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
-	m.SetToken(i.Token)
+	if v := i.Token; v != nil {
+		m.SetToken(*v)
+	}
 	if v := i.Abilities; v != nil {
 		m.SetAbilities(v)
 	}
 	m.SetExpirationAt(i.ExpirationAt)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
 	if v := i.LastUsedAt; v != nil {
 		m.SetLastUsedAt(*v)
 	}
-	m.SetUserID(i.UserID)
+	m.SetOwnerID(i.OwnerID)
 }
 
 // SetInput applies the change-set in the CreatePersonalAccessTokenInput on the PersonalAccessTokenCreate builder.
@@ -1037,14 +1043,14 @@ type UpdatePersonalAccessTokenInput struct {
 	ClearUpdatedBy  bool
 	UpdatedBy       *string
 	Name            *string
-	Token           *string
 	ClearAbilities  bool
 	Abilities       []string
 	AppendAbilities []string
 	ExpirationAt    *time.Time
+	Description     *string
 	ClearLastUsedAt bool
 	LastUsedAt      *time.Time
-	UserID          *string
+	OwnerID         *string
 }
 
 // Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
@@ -1061,9 +1067,6 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
-	if v := i.Token; v != nil {
-		m.SetToken(*v)
-	}
 	if i.ClearAbilities {
 		m.ClearAbilities()
 	}
@@ -1076,14 +1079,17 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if v := i.ExpirationAt; v != nil {
 		m.SetExpirationAt(*v)
 	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
 	if i.ClearLastUsedAt {
 		m.ClearLastUsedAt()
 	}
 	if v := i.LastUsedAt; v != nil {
 		m.SetLastUsedAt(*v)
 	}
-	if v := i.UserID; v != nil {
-		m.SetUserID(*v)
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
 	}
 }
 

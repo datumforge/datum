@@ -86,7 +86,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "personalaccesstoken" package.
 	PersonalAccessTokensInverseTable = "personal_access_tokens"
 	// PersonalAccessTokensColumn is the table column denoting the personal_access_tokens relation/edge.
-	PersonalAccessTokensColumn = "user_id"
+	PersonalAccessTokensColumn = "user_personal_access_tokens"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "user_settings"
 	// SettingInverseTable is the table name for the UserSetting entity.

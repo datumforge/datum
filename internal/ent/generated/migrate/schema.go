@@ -246,11 +246,12 @@ var (
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "token", Type: field.TypeString},
+		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
 		{Name: "expiration_at", Type: field.TypeTime},
+		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "user_id", Type: field.TypeString},
+		{Name: "user_personal_access_tokens", Type: field.TypeString},
 	}
 	// PersonalAccessTokensTable holds the schema information for the "personal_access_tokens" table.
 	PersonalAccessTokensTable = &schema.Table{
@@ -260,9 +261,9 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "personal_access_tokens_users_personal_access_tokens",
-				Columns:    []*schema.Column{PersonalAccessTokensColumns[10]},
+				Columns:    []*schema.Column{PersonalAccessTokensColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{

@@ -37,3 +37,11 @@ var (
 	// ErrGroupIDRequired is returned when no group id is provided when deleting or updating an group
 	ErrGroupIDRequired = errors.New("group id is required")
 )
+
+var (
+	// ErrTokenNameRequired is returned when no token name is provided when creating a new token
+	ErrTokenNameRequired = errors.New("token name is required")
+
+	// ErrTokenIDRequired is returned when no token ID is provided when deleting an existing token
+	ErrTokenIDRequired = errors.New("otken ID is required")
+)

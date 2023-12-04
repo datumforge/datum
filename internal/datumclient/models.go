@@ -165,11 +165,12 @@ type CreatePersonalAccessTokenInput struct {
 	CreatedBy    *string    `json:"createdBy,omitempty"`
 	UpdatedBy    *string    `json:"updatedBy,omitempty"`
 	Name         string     `json:"name"`
-	Token        string     `json:"token"`
+	Token        *string    `json:"token,omitempty"`
 	Abilities    []string   `json:"abilities,omitempty"`
 	ExpirationAt time.Time  `json:"expirationAt"`
+	Description  *string    `json:"description,omitempty"`
 	LastUsedAt   *time.Time `json:"lastUsedAt,omitempty"`
-	UserID       string     `json:"userID"`
+	OwnerID      string     `json:"ownerID"`
 }
 
 // CreateRefreshTokenInput is used for create RefreshToken object.
@@ -1760,11 +1761,11 @@ type PersonalAccessToken struct {
 	CreatedBy    *string    `json:"createdBy,omitempty"`
 	UpdatedBy    *string    `json:"updatedBy,omitempty"`
 	Name         string     `json:"name"`
-	UserID       string     `json:"userID"`
 	Abilities    []string   `json:"abilities,omitempty"`
 	ExpirationAt time.Time  `json:"expirationAt"`
+	Description  string     `json:"description"`
 	LastUsedAt   *time.Time `json:"lastUsedAt,omitempty"`
-	User         User       `json:"user"`
+	Owner        User       `json:"owner"`
 }
 
 func (PersonalAccessToken) IsNode() {}
@@ -1886,20 +1887,6 @@ type PersonalAccessTokenWhereInput struct {
 	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
-	// user_id field predicates
-	UserID             *string  `json:"userID,omitempty"`
-	UserIDNeq          *string  `json:"userIDNEQ,omitempty"`
-	UserIDIn           []string `json:"userIDIn,omitempty"`
-	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
-	UserIDGt           *string  `json:"userIDGT,omitempty"`
-	UserIDGte          *string  `json:"userIDGTE,omitempty"`
-	UserIDLt           *string  `json:"userIDLT,omitempty"`
-	UserIDLte          *string  `json:"userIDLTE,omitempty"`
-	UserIDContains     *string  `json:"userIDContains,omitempty"`
-	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
-	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
-	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
-	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 	// expiration_at field predicates
 	ExpirationAt      *time.Time   `json:"expirationAt,omitempty"`
 	ExpirationAtNeq   *time.Time   `json:"expirationAtNEQ,omitempty"`
@@ -1920,9 +1907,9 @@ type PersonalAccessTokenWhereInput struct {
 	LastUsedAtLte    *time.Time   `json:"lastUsedAtLTE,omitempty"`
 	LastUsedAtIsNil  *bool        `json:"lastUsedAtIsNil,omitempty"`
 	LastUsedAtNotNil *bool        `json:"lastUsedAtNotNil,omitempty"`
-	// user edge predicates
-	HasUser     *bool             `json:"hasUser,omitempty"`
-	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// owner edge predicates
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 type RefreshToken struct {
@@ -2495,14 +2482,14 @@ type UpdatePersonalAccessTokenInput struct {
 	UpdatedBy       *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy  *bool      `json:"clearUpdatedBy,omitempty"`
 	Name            *string    `json:"name,omitempty"`
-	Token           *string    `json:"token,omitempty"`
 	Abilities       []string   `json:"abilities,omitempty"`
 	AppendAbilities []string   `json:"appendAbilities,omitempty"`
 	ClearAbilities  *bool      `json:"clearAbilities,omitempty"`
 	ExpirationAt    *time.Time `json:"expirationAt,omitempty"`
+	Description     *string    `json:"description,omitempty"`
 	LastUsedAt      *time.Time `json:"lastUsedAt,omitempty"`
 	ClearLastUsedAt *bool      `json:"clearLastUsedAt,omitempty"`
-	UserID          *string    `json:"userID,omitempty"`
+	OwnerID         *string    `json:"ownerID,omitempty"`
 }
 
 // UpdateRefreshTokenInput is used for update RefreshToken object.

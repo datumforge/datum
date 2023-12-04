@@ -160,11 +160,12 @@ input CreatePersonalAccessTokenInput {
 	createdBy: String
 	updatedBy: String
 	name: String!
-	token: String!
+	token: String
 	abilities: [String!]
 	expirationAt: Time!
+	description: String
 	lastUsedAt: Time
-	userID: ID!
+	ownerID: ID!
 }
 """
 CreateRefreshTokenInput is used for create RefreshToken object.
@@ -1998,11 +1999,11 @@ type PersonalAccessToken implements Node {
 	createdBy: String
 	updatedBy: String
 	name: String!
-	userID: ID!
 	abilities: [String!]
 	expirationAt: Time!
+	description: String!
 	lastUsedAt: Time
-	user: User!
+	owner: User!
 }
 """A connection to a list of items."""
 type PersonalAccessTokenConnection {
@@ -2118,20 +2119,6 @@ input PersonalAccessTokenWhereInput {
 	nameHasSuffix: String
 	nameEqualFold: String
 	nameContainsFold: String
-	"""user_id field predicates"""
-	userID: ID
-	userIDNEQ: ID
-	userIDIn: [ID!]
-	userIDNotIn: [ID!]
-	userIDGT: ID
-	userIDGTE: ID
-	userIDLT: ID
-	userIDLTE: ID
-	userIDContains: ID
-	userIDHasPrefix: ID
-	userIDHasSuffix: ID
-	userIDEqualFold: ID
-	userIDContainsFold: ID
 	"""expiration_at field predicates"""
 	expirationAt: Time
 	expirationAtNEQ: Time
@@ -2152,9 +2139,9 @@ input PersonalAccessTokenWhereInput {
 	lastUsedAtLTE: Time
 	lastUsedAtIsNil: Boolean
 	lastUsedAtNotNil: Boolean
-	"""user edge predicates"""
-	hasUser: Boolean
-	hasUserWith: [UserWhereInput!]
+	"""owner edge predicates"""
+	hasOwner: Boolean
+	hasOwnerWith: [UserWhereInput!]
 }
 type Query {
 	"""Fetches an object given its ID."""
@@ -3008,14 +2995,14 @@ input UpdatePersonalAccessTokenInput {
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	name: String
-	token: String
 	abilities: [String!]
 	appendAbilities: [String!]
 	clearAbilities: Boolean
 	expirationAt: Time
+	description: String
 	lastUsedAt: Time
 	clearLastUsedAt: Boolean
-	userID: ID
+	ownerID: ID
 }
 """
 UpdateRefreshTokenInput is used for update RefreshToken object.

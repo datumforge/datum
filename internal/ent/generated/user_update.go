@@ -62,6 +62,46 @@ func (uu *UserUpdate) ClearUpdatedBy() *UserUpdate {
 	return uu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (uu *UserUpdate) SetDeletedAt(t time.Time) *UserUpdate {
+	uu.mutation.SetDeletedAt(t)
+	return uu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedAt(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetDeletedAt(*t)
+	}
+	return uu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uu *UserUpdate) ClearDeletedAt() *UserUpdate {
+	uu.mutation.ClearDeletedAt()
+	return uu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (uu *UserUpdate) SetDeletedBy(s string) *UserUpdate {
+	uu.mutation.SetDeletedBy(s)
+	return uu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableDeletedBy(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetDeletedBy(*s)
+	}
+	return uu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uu *UserUpdate) ClearDeletedBy() *UserUpdate {
+	uu.mutation.ClearDeletedBy()
+	return uu
+}
+
 // SetEmail sets the "email" field.
 func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
 	uu.mutation.SetEmail(s)
@@ -556,6 +596,18 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.UpdatedByCleared() {
 		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := uu.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uu.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := uu.mutation.DeletedBy(); ok {
+		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
+	}
+	if uu.mutation.DeletedByCleared() {
+		_spec.ClearField(user.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
@@ -923,6 +975,46 @@ func (uuo *UserUpdateOne) SetNillableUpdatedBy(s *string) *UserUpdateOne {
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (uuo *UserUpdateOne) ClearUpdatedBy() *UserUpdateOne {
 	uuo.mutation.ClearUpdatedBy()
+	return uuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (uuo *UserUpdateOne) SetDeletedAt(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetDeletedAt(t)
+	return uuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedAt(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetDeletedAt(*t)
+	}
+	return uuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (uuo *UserUpdateOne) ClearDeletedAt() *UserUpdateOne {
+	uuo.mutation.ClearDeletedAt()
+	return uuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (uuo *UserUpdateOne) SetDeletedBy(s string) *UserUpdateOne {
+	uuo.mutation.SetDeletedBy(s)
+	return uuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableDeletedBy(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetDeletedBy(*s)
+	}
+	return uuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (uuo *UserUpdateOne) ClearDeletedBy() *UserUpdateOne {
+	uuo.mutation.ClearDeletedBy()
 	return uuo
 }
 
@@ -1449,6 +1541,18 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := uuo.mutation.DeletedAt(); ok {
+		_spec.SetField(user.FieldDeletedAt, field.TypeTime, value)
+	}
+	if uuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(user.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.DeletedBy(); ok {
+		_spec.SetField(user.FieldDeletedBy, field.TypeString, value)
+	}
+	if uuo.mutation.DeletedByCleared() {
+		_spec.ClearField(user.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

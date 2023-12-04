@@ -856,6 +856,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -1028,6 +1035,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "name": {
@@ -4822,6 +4836,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "email": {
                     "type": "string"
                   },
@@ -5039,6 +5060,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "email": {
@@ -5905,6 +5933,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -5961,6 +5996,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -6004,6 +6046,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -6045,6 +6094,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "name": {
@@ -6403,6 +6459,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -6444,6 +6507,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "name": {
@@ -6597,6 +6667,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "email": {
@@ -8095,6 +8172,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -8360,6 +8444,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "email": {
@@ -8682,6 +8773,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "email": {
@@ -9121,6 +9219,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -9443,6 +9548,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -9505,6 +9617,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "email": {
@@ -9608,6 +9727,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -9672,6 +9798,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -9734,6 +9867,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "email": {
@@ -10196,6 +10336,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -10260,6 +10407,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "email": {
             "type": "string"
           },
@@ -10322,6 +10476,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "name": {

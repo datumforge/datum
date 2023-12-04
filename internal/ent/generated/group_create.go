@@ -79,6 +79,34 @@ func (gc *GroupCreate) SetNillableUpdatedBy(s *string) *GroupCreate {
 	return gc
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (gc *GroupCreate) SetDeletedAt(t time.Time) *GroupCreate {
+	gc.mutation.SetDeletedAt(t)
+	return gc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableDeletedAt(t *time.Time) *GroupCreate {
+	if t != nil {
+		gc.SetDeletedAt(*t)
+	}
+	return gc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gc *GroupCreate) SetDeletedBy(s string) *GroupCreate {
+	gc.mutation.SetDeletedBy(s)
+	return gc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableDeletedBy(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetDeletedBy(*s)
+	}
+	return gc
+}
+
 // SetName sets the "name" field.
 func (gc *GroupCreate) SetName(s string) *GroupCreate {
 	gc.mutation.SetName(s)
@@ -336,6 +364,14 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.UpdatedBy(); ok {
 		_spec.SetField(group.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := gc.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := gc.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := gc.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

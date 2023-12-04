@@ -32,6 +32,7 @@ type User struct {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
+		mixin.SoftDeleteMixin{},
 		mixin.BaseMixin{},
 		mixin.IDMixin{},
 	}

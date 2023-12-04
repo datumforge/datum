@@ -59,6 +59,46 @@ func (gu *GroupUpdate) ClearUpdatedBy() *GroupUpdate {
 	return gu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (gu *GroupUpdate) SetDeletedAt(t time.Time) *GroupUpdate {
+	gu.mutation.SetDeletedAt(t)
+	return gu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDeletedAt(t *time.Time) *GroupUpdate {
+	if t != nil {
+		gu.SetDeletedAt(*t)
+	}
+	return gu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (gu *GroupUpdate) ClearDeletedAt() *GroupUpdate {
+	gu.mutation.ClearDeletedAt()
+	return gu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gu *GroupUpdate) SetDeletedBy(s string) *GroupUpdate {
+	gu.mutation.SetDeletedBy(s)
+	return gu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDeletedBy(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetDeletedBy(*s)
+	}
+	return gu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (gu *GroupUpdate) ClearDeletedBy() *GroupUpdate {
+	gu.mutation.ClearDeletedBy()
+	return gu
+}
+
 // SetName sets the "name" field.
 func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	gu.mutation.SetName(s)
@@ -287,6 +327,18 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if gu.mutation.UpdatedByCleared() {
 		_spec.ClearField(group.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := gu.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+	}
+	if gu.mutation.DeletedAtCleared() {
+		_spec.ClearField(group.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := gu.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeString, value)
+	}
+	if gu.mutation.DeletedByCleared() {
+		_spec.ClearField(group.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
 	}
@@ -454,6 +506,46 @@ func (guo *GroupUpdateOne) SetNillableUpdatedBy(s *string) *GroupUpdateOne {
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (guo *GroupUpdateOne) ClearUpdatedBy() *GroupUpdateOne {
 	guo.mutation.ClearUpdatedBy()
+	return guo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (guo *GroupUpdateOne) SetDeletedAt(t time.Time) *GroupUpdateOne {
+	guo.mutation.SetDeletedAt(t)
+	return guo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDeletedAt(t *time.Time) *GroupUpdateOne {
+	if t != nil {
+		guo.SetDeletedAt(*t)
+	}
+	return guo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (guo *GroupUpdateOne) ClearDeletedAt() *GroupUpdateOne {
+	guo.mutation.ClearDeletedAt()
+	return guo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (guo *GroupUpdateOne) SetDeletedBy(s string) *GroupUpdateOne {
+	guo.mutation.SetDeletedBy(s)
+	return guo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDeletedBy(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetDeletedBy(*s)
+	}
+	return guo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (guo *GroupUpdateOne) ClearDeletedBy() *GroupUpdateOne {
+	guo.mutation.ClearDeletedBy()
 	return guo
 }
 
@@ -714,6 +806,18 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if guo.mutation.UpdatedByCleared() {
 		_spec.ClearField(group.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := guo.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+	}
+	if guo.mutation.DeletedAtCleared() {
+		_spec.ClearField(group.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := guo.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeString, value)
+	}
+	if guo.mutation.DeletedByCleared() {
+		_spec.ClearField(group.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

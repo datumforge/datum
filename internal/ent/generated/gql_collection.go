@@ -234,6 +234,16 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, group.FieldUpdatedBy)
 				fieldSeen[group.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[group.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, group.FieldDeletedAt)
+				fieldSeen[group.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[group.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, group.FieldDeletedBy)
+				fieldSeen[group.FieldDeletedBy] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[group.FieldName]; !ok {
 				selectedFields = append(selectedFields, group.FieldName)
@@ -1629,6 +1639,16 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if _, ok := fieldSeen[user.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, user.FieldUpdatedBy)
 				fieldSeen[user.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[user.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, user.FieldDeletedAt)
+				fieldSeen[user.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[user.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, user.FieldDeletedBy)
+				fieldSeen[user.FieldDeletedBy] = struct{}{}
 			}
 		case "email":
 			if _, ok := fieldSeen[user.FieldEmail]; !ok {

@@ -5,11 +5,13 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -22,6 +24,7 @@ type Group struct {
 func (Group) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
+		mixin.SoftDeleteMixin{},
 		mixin.BaseMixin{},
 		mixin.IDMixin{},
 	}
@@ -63,7 +66,12 @@ func (Group) Fields() []ent.Field {
 // Edges of the Group.
 func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("setting", GroupSetting.Type).Required().Unique(),
+		edge.To("setting", GroupSetting.Type).
+			Required().
+			Unique().
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
 		edge.To("users", User.Type),
 		edge.From("owner", Organization.Type).Ref("groups").Unique(),
 	}
@@ -75,7 +83,8 @@ func (Group) Indexes() []ent.Index {
 		// We have an organization with many groups, and we want to set the group name to be unique under each organization
 		index.Fields("name").
 			Edges("owner").
-			Unique(),
+			Unique().
+			Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }
 
@@ -85,5 +94,12 @@ func (Group) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+func (Group) Policy() ent.Policy {
+	return privacy.Policy{
+		Mutation: privacy.MutationPolicy{},
+		Query:    privacy.QueryPolicy{},
 	}
 }

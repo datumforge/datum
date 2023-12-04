@@ -67,6 +67,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldUpdatedAt:   {Type: field.TypeTime, Column: group.FieldUpdatedAt},
 			group.FieldCreatedBy:   {Type: field.TypeString, Column: group.FieldCreatedBy},
 			group.FieldUpdatedBy:   {Type: field.TypeString, Column: group.FieldUpdatedBy},
+			group.FieldDeletedAt:   {Type: field.TypeTime, Column: group.FieldDeletedAt},
+			group.FieldDeletedBy:   {Type: field.TypeString, Column: group.FieldDeletedBy},
 			group.FieldName:        {Type: field.TypeString, Column: group.FieldName},
 			group.FieldDescription: {Type: field.TypeString, Column: group.FieldDescription},
 			group.FieldLogoURL:     {Type: field.TypeString, Column: group.FieldLogoURL},
@@ -279,6 +281,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
 			user.FieldCreatedBy:       {Type: field.TypeString, Column: user.FieldCreatedBy},
 			user.FieldUpdatedBy:       {Type: field.TypeString, Column: user.FieldUpdatedBy},
+			user.FieldDeletedAt:       {Type: field.TypeTime, Column: user.FieldDeletedAt},
+			user.FieldDeletedBy:       {Type: field.TypeString, Column: user.FieldDeletedBy},
 			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
 			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
 			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
@@ -816,6 +820,16 @@ func (f *GroupFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *GroupFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(group.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(group.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(group.FieldDeletedBy))
 }
 
 // WhereName applies the entql string predicate on the name field.
@@ -1903,6 +1917,16 @@ func (f *UserFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *UserFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(user.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *UserFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(user.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *UserFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(user.FieldDeletedBy))
 }
 
 // WhereEmail applies the entql string predicate on the email field.

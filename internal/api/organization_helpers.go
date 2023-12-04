@@ -38,3 +38,15 @@ func (r *mutationResolver) createOrg(ctx context.Context, input generated.Create
 
 	return &OrganizationCreatePayload{Organization: org}, nil
 }
+
+// defaultOrganizationSettings creates the default user settings for a new user
+func (r *mutationResolver) defaultOrganizationSettings(ctx context.Context) (string, error) {
+	input := generated.CreateOrganizationSettingInput{}
+
+	organizationSetting, err := r.client.OrganizationSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return organizationSetting.ID, nil
+}

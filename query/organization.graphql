@@ -8,6 +8,23 @@ query GetOrganizationByID($organizationId: ID!) {
       id
       name
     }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      domains
+      ssoCert
+      ssoEntrypoint
+      ssoIssuer
+      billingContact
+      billingEmail
+      billingPhone
+      billingAddress
+      taxIdentifier
+      tags
+    }
     createdAt
     createdBy
     updatedAt
@@ -27,6 +44,23 @@ query GetAllOrganizations {
           id
           name
         }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
         createdAt
         updatedAt
       }
@@ -43,6 +77,23 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
       description
       createdAt
       updatedAt
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        domains
+        ssoCert
+        ssoEntrypoint
+        ssoIssuer
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+      }
       parent {
         id
         name

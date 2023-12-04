@@ -1,0 +1,124 @@
+query GetGroupByID($groupId: ID!) {
+  group(id: $groupId) {
+    createdAt
+    createdBy
+    description
+    displayName
+    id
+    logoURL
+    name
+    owner {
+      id
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      visibility
+      joinPolicy
+      syncToSlack
+      syncToGithub
+      tags
+    }
+    updatedAt
+    updatedBy
+    users {
+      id
+      displayName
+      email
+    }
+  }
+}
+
+query GetAllGroups {
+  groups {
+    edges {
+      node {
+        createdAt
+        createdBy
+        description
+        displayName
+        id
+        logoURL
+        name
+        owner {
+          id
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        updatedAt
+        updatedBy
+        users {
+          id
+        displayName
+        email
+        }
+      }
+    }
+  }
+}
+
+mutation CreateGroup($input: CreateGroupInput!) {
+  createGroup(input: $input) {
+    group {
+      createdAt
+      createdBy
+      description
+      displayName
+      id
+      logoURL
+      name
+      owner {
+        id
+      }
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        syncToSlack
+        syncToGithub
+        tags
+      }
+      updatedAt
+      updatedBy
+      users {
+        id
+        displayName
+        email
+      }
+    }
+  }
+}
+
+mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
+  updateGroup(id: $updateGroupId, input: $input) {
+    group {
+      id
+      name
+      displayName
+      description
+    }
+  }
+}
+
+mutation DeleteGroup($deleteGroupId: ID!) {
+  deleteGroup(id: $deleteGroupId) {
+    deletedID
+  }
+}

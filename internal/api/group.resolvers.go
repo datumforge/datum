@@ -6,27 +6,100 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
 // CreateGroup is the resolver for the createGroup field.
 func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.CreateGroupInput) (*GroupCreatePayload, error) {
-	panic(fmt.Errorf("not implemented: CreateGroup - createGroup"))
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	// group settings are required, if this is empty generate a default setting schema
+	if input.SettingID == "" {
+		// sets up default group settings using schema defaults
+		groupSettingID, err := r.defaultGroupSettings(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		// add the group setting ID to the input
+		input.SettingID = groupSettingID
+	}
+
+	group, err := r.client.Group.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		if generated.IsConstraintError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to create group", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &GroupCreatePayload{Group: group}, err
 }
 
 // UpdateGroup is the resolver for the updateGroup field.
 func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
-	panic(fmt.Errorf("not implemented: UpdateGroup - updateGroup"))
+	// TODO - add permissions checks
+
+	group, err := r.client.Group.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get group", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	group, err = group.Update().SetInput(input).Save(ctx)
+	if err != nil {
+		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to update group", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return &GroupUpdatePayload{Group: group}, nil
 }
 
 // DeleteGroup is the resolver for the deleteGroup field.
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDeletePayload, error) {
-	panic(fmt.Errorf("not implemented: DeleteGroup - deleteGroup"))
+	// TODO - add permissions checks
+
+	if err := r.client.Group.DeleteOneID(id).Exec(ctx); err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to delete group", "error", err)
+		return nil, err
+	}
+
+	return &GroupDeletePayload{DeletedID: id}, nil
 }
 
 // Group is the resolver for the group field.
 func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
-	panic(fmt.Errorf("not implemented: Group - group"))
+	group, err := r.client.Group.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get group", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return group, nil
 }

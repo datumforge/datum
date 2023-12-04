@@ -34,6 +34,6 @@ var (
 	// ErrGroupNameRequired is returned when no group name is provided when creating a new group
 	ErrGroupNameRequired = errors.New("group name is required")
 
-	// ErrGroupIDRequired is returned when no organization id is provided when deleting or updating an group
+	// ErrGroupIDRequired is returned when no group id is provided when deleting or updating an group
 	ErrGroupIDRequired = errors.New("group id is required")
 )

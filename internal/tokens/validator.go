@@ -32,18 +32,7 @@ func (v *validator) Verify(tks string) (claims *Claims, err error) {
 		return nil, err
 	}
 
-	var ok bool
-	if claims, ok = token.Claims.(*Claims); ok && token.Valid {
-		if !claims.VerifyAudience(v.audience, true) {
-			return nil, fmt.Errorf("invalid audience %q", claims.Audience)
-		}
-
-		if !claims.VerifyIssuer(v.issuer, true) {
-			return nil, fmt.Errorf("invalid issuer %q", claims.Issuer)
-		}
-
-		return claims, nil
-	}
+	//TODO figure out how to use the v5 validators
 
 	return nil, fmt.Errorf("could not parse or verify claims from %T", token.Claims) //nolint:goerr113
 }

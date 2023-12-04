@@ -51,7 +51,7 @@ type CreateGroupInput struct {
 	DisplayName *string  `json:"displayName,omitempty"`
 	SettingID   string   `json:"settingID"`
 	UserIDs     []string `json:"userIDs,omitempty"`
-	OwnerID     *string  `json:"ownerID,omitempty"`
+	OwnerID     string   `json:"ownerID"`
 }
 
 // CreateGroupSettingInput is used for create GroupSetting object.
@@ -519,10 +519,10 @@ type Group struct {
 	Description string     `json:"description"`
 	LogoURL     string     `json:"logoURL"`
 	// The group's displayed 'friendly' name
-	DisplayName string        `json:"displayName"`
-	Setting     GroupSetting  `json:"setting"`
-	Users       []*User       `json:"users,omitempty"`
-	Owner       *Organization `json:"owner,omitempty"`
+	DisplayName string       `json:"displayName"`
+	Setting     GroupSetting `json:"setting"`
+	Users       []*User      `json:"users,omitempty"`
+	Owner       Organization `json:"owner"`
 }
 
 func (Group) IsNode() {}
@@ -2370,7 +2370,6 @@ type UpdateGroupInput struct {
 	RemoveUserIDs []string `json:"removeUserIDs,omitempty"`
 	ClearUsers    *bool    `json:"clearUsers,omitempty"`
 	OwnerID       *string  `json:"ownerID,omitempty"`
-	ClearOwner    *bool    `json:"clearOwner,omitempty"`
 }
 
 // UpdateGroupSettingInput is used for update GroupSetting object.

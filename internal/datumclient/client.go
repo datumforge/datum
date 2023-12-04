@@ -225,7 +225,7 @@ type GetGroupByID_Group struct {
 	ID          string                      "json:\"id\" graphql:\"id\""
 	LogoURL     string                      "json:\"logoURL\" graphql:\"logoURL\""
 	Name        string                      "json:\"name\" graphql:\"name\""
-	Owner       *GetGroupByID_Group_Owner   "json:\"owner,omitempty\" graphql:\"owner\""
+	Owner       GetGroupByID_Group_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     GetGroupByID_Group_Setting  "json:\"setting\" graphql:\"setting\""
 	UpdatedAt   time.Time                   "json:\"updatedAt\" graphql:\"updatedAt\""
 	UpdatedBy   *string                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -278,7 +278,7 @@ func (t *GetGroupByID_Group) GetOwner() *GetGroupByID_Group_Owner {
 	if t == nil {
 		t = &GetGroupByID_Group{}
 	}
-	return t.Owner
+	return &t.Owner
 }
 func (t *GetGroupByID_Group) GetSetting() *GetGroupByID_Group_Setting {
 	if t == nil {
@@ -423,7 +423,7 @@ type GetAllGroups_Groups_Edges_Node struct {
 	ID          string                                  "json:\"id\" graphql:\"id\""
 	LogoURL     string                                  "json:\"logoURL\" graphql:\"logoURL\""
 	Name        string                                  "json:\"name\" graphql:\"name\""
-	Owner       *GetAllGroups_Groups_Edges_Node_Owner   "json:\"owner,omitempty\" graphql:\"owner\""
+	Owner       GetAllGroups_Groups_Edges_Node_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     GetAllGroups_Groups_Edges_Node_Setting  "json:\"setting\" graphql:\"setting\""
 	UpdatedAt   time.Time                               "json:\"updatedAt\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -476,7 +476,7 @@ func (t *GetAllGroups_Groups_Edges_Node) GetOwner() *GetAllGroups_Groups_Edges_N
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
-	return t.Owner
+	return &t.Owner
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetSetting() *GetAllGroups_Groups_Edges_Node_Setting {
 	if t == nil {
@@ -643,7 +643,7 @@ type CreateGroup_CreateGroup_Group struct {
 	ID          string                                 "json:\"id\" graphql:\"id\""
 	LogoURL     string                                 "json:\"logoURL\" graphql:\"logoURL\""
 	Name        string                                 "json:\"name\" graphql:\"name\""
-	Owner       *CreateGroup_CreateGroup_Group_Owner   "json:\"owner,omitempty\" graphql:\"owner\""
+	Owner       CreateGroup_CreateGroup_Group_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     CreateGroup_CreateGroup_Group_Setting  "json:\"setting\" graphql:\"setting\""
 	UpdatedAt   time.Time                              "json:\"updatedAt\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -696,7 +696,7 @@ func (t *CreateGroup_CreateGroup_Group) GetOwner() *CreateGroup_CreateGroup_Grou
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
-	return t.Owner
+	return &t.Owner
 }
 func (t *CreateGroup_CreateGroup_Group) GetSetting() *CreateGroup_CreateGroup_Group_Setting {
 	if t == nil {

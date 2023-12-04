@@ -54,7 +54,7 @@ var (
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "logo_url", Type: field.TypeString},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
-		{Name: "organization_groups", Type: field.TypeString, Nullable: true},
+		{Name: "organization_groups", Type: field.TypeString},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{

@@ -97,10 +97,6 @@ func init() {
 	groupDescDescription := groupFields[1].Descriptor()
 	// group.DefaultDescription holds the default value on creation for the description field.
 	group.DefaultDescription = groupDescDescription.Default.(string)
-	// groupDescLogoURL is the schema descriptor for logo_url field.
-	groupDescLogoURL := groupFields[2].Descriptor()
-	// group.LogoURLValidator is a validator for the "logo_url" field. It is called by the builders before save.
-	group.LogoURLValidator = groupDescLogoURL.Validators[0].(func(string) error)
 	// groupDescDisplayName is the schema descriptor for display_name field.
 	groupDescDisplayName := groupFields[3].Descriptor()
 	// group.DefaultDisplayName holds the default value on creation for the display_name field.

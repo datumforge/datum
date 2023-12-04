@@ -34,7 +34,7 @@ func init() {
 	groupCreateCmd.Flags().StringP("description", "d", "", "description of the group")
 	viperBindFlag("group.create.description", groupCreateCmd.Flags().Lookup("description"))
 
-	groupCreateCmd.Flags().StringP("owner-id", "p", "", "owner org id")
+	groupCreateCmd.Flags().StringP("owner-id", "o", "", "owner org id")
 	viperBindFlag("group.create.owner-id", groupCreateCmd.Flags().Lookup("owner-id"))
 }
 
@@ -62,12 +62,18 @@ func createGroup(ctx context.Context) error {
 		return ErrGroupNameRequired
 	}
 
+	owner := viper.GetString("group.create.owner-id")
+	if owner == "" {
+		return ErrOrgIDRequired
+	}
+
 	displayName := viper.GetString("group.create.short-name")
 	description := viper.GetString("group.create.description")
-	ownerID := viper.GetString("group.create.owner-id")
+	//	ownerID := viper.GetString("group.create.owner-id")
 
 	input := datumclient.CreateGroupInput{
-		Name: name,
+		Name:    name,
+		OwnerID: owner,
 	}
 
 	if displayName != "" {
@@ -78,9 +84,9 @@ func createGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	if ownerID != "" {
-		input.OwnerID = &ownerID
-	}
+	//	if ownerID != "" {
+	//		input.OwnerID = &ownerID
+	//	}
 
 	o, err := c.CreateGroup(ctx, input, i)
 	if err != nil {

@@ -41,7 +41,7 @@ func (Group) Fields() []ent.Field {
 		field.String("description").Default("").Annotations(
 			entgql.Skip(entgql.SkipWhereInput),
 		),
-		field.String("logo_url").NotEmpty().Annotations(
+		field.String("logo_url").Annotations(
 			entgql.Skip(entgql.SkipWhereInput),
 		),
 		field.String("display_name").
@@ -73,7 +73,10 @@ func (Group) Edges() []ent.Edge {
 				OnDelete: entsql.Cascade,
 			}),
 		edge.To("users", User.Type),
-		edge.From("owner", Organization.Type).Ref("groups").Unique(),
+		edge.From("owner", Organization.Type).
+			Ref("groups").
+			Unique().
+			Required(),
 	}
 }
 

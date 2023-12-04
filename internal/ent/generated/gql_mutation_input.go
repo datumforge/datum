@@ -197,7 +197,7 @@ type CreateGroupInput struct {
 	DisplayName *string
 	SettingID   string
 	UserIDs     []string
-	OwnerID     *string
+	OwnerID     string
 }
 
 // Mutate applies the CreateGroupInput on the GroupMutation builder.
@@ -226,9 +226,7 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.UserIDs; len(v) > 0 {
 		m.AddUserIDs(v...)
 	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
+	m.SetOwnerID(i.OwnerID)
 }
 
 // SetInput applies the change-set in the CreateGroupInput on the GroupCreate builder.
@@ -250,7 +248,6 @@ type UpdateGroupInput struct {
 	ClearUsers     bool
 	AddUserIDs     []string
 	RemoveUserIDs  []string
-	ClearOwner     bool
 	OwnerID        *string
 }
 
@@ -288,9 +285,6 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.RemoveUserIDs; len(v) > 0 {
 		m.RemoveUserIDs(v...)
-	}
-	if i.ClearOwner {
-		m.ClearOwner()
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)

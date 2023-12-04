@@ -3590,7 +3590,7 @@ input CreateGroupInput {
   displayName: String
   settingID: ID!
   userIDs: [ID!]
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateGroupSettingInput is used for create GroupSetting object.
@@ -4059,7 +4059,7 @@ type Group implements Node {
   displayName: String!
   setting: GroupSetting!
   users: [User!]
-  owner: Organization
+  owner: Organization!
 }
 """A connection to a list of items."""
 type GroupConnection {
@@ -5996,7 +5996,6 @@ input UpdateGroupInput {
   removeUserIDs: [ID!]
   clearUsers: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateGroupSettingInput is used for update GroupSetting object.
@@ -11049,11 +11048,14 @@ func (ec *executionContext) _Group_owner(ctx context.Context, field graphql.Coll
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*generated.Organization)
 	fc.Result = res
-	return ec.marshalOOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalNOrganization2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -29419,7 +29421,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 			it.UserIDs = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32672,8 +32674,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.UpdatedByContainsFold = data
 		case "deletedAt":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -32681,8 +32681,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAt = data
 		case "deletedAtNEQ":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -32690,8 +32688,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtNEQ = data
 		case "deletedAtIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
 			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
@@ -32699,8 +32695,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtIn = data
 		case "deletedAtNotIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
 			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
@@ -32708,8 +32702,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtNotIn = data
 		case "deletedAtGT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -32717,8 +32709,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtGT = data
 		case "deletedAtGTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -32726,8 +32716,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtGTE = data
 		case "deletedAtLT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -32735,8 +32723,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtLT = data
 		case "deletedAtLTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -32744,8 +32730,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtLTE = data
 		case "deletedAtIsNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -32753,8 +32737,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtIsNil = data
 		case "deletedAtNotNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -32762,8 +32744,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedAtNotNil = data
 		case "deletedBy":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32771,8 +32751,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedBy = data
 		case "deletedByNEQ":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32780,8 +32758,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByNEQ = data
 		case "deletedByIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -32789,8 +32765,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByIn = data
 		case "deletedByNotIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -32798,8 +32772,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByNotIn = data
 		case "deletedByGT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32807,8 +32779,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByGT = data
 		case "deletedByGTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32816,8 +32786,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByGTE = data
 		case "deletedByLT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32825,8 +32793,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByLT = data
 		case "deletedByLTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32834,8 +32800,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByLTE = data
 		case "deletedByContains":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32843,8 +32807,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByContains = data
 		case "deletedByHasPrefix":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32852,8 +32814,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByHasPrefix = data
 		case "deletedByHasSuffix":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32861,8 +32821,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByHasSuffix = data
 		case "deletedByIsNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -32870,8 +32828,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByIsNil = data
 		case "deletedByNotNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -32879,8 +32835,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByNotNil = data
 		case "deletedByEqualFold":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -32888,8 +32842,6 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 			}
 			it.DeletedByEqualFold = data
 		case "deletedByContainsFold":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -39993,7 +39945,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40084,13 +40036,6 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.OwnerID = data
-		case "clearOwner":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOwner"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearOwner = data
 		}
 	}
 
@@ -42647,8 +42592,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.UpdatedByContainsFold = data
 		case "deletedAt":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -42656,8 +42599,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAt = data
 		case "deletedAtNEQ":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -42665,8 +42606,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtNEQ = data
 		case "deletedAtIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
 			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
@@ -42674,8 +42613,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtIn = data
 		case "deletedAtNotIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
 			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
 			if err != nil {
@@ -42683,8 +42620,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtNotIn = data
 		case "deletedAtGT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -42692,8 +42627,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtGT = data
 		case "deletedAtGTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -42701,8 +42634,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtGTE = data
 		case "deletedAtLT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -42710,8 +42641,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtLT = data
 		case "deletedAtLTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
@@ -42719,8 +42648,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtLTE = data
 		case "deletedAtIsNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -42728,8 +42655,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtIsNil = data
 		case "deletedAtNotNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -42737,8 +42662,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedAtNotNil = data
 		case "deletedBy":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42746,8 +42669,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedBy = data
 		case "deletedByNEQ":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42755,8 +42676,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByNEQ = data
 		case "deletedByIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -42764,8 +42683,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByIn = data
 		case "deletedByNotIn":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
@@ -42773,8 +42690,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByNotIn = data
 		case "deletedByGT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42782,8 +42697,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByGT = data
 		case "deletedByGTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42791,8 +42704,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByGTE = data
 		case "deletedByLT":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42800,8 +42711,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByLT = data
 		case "deletedByLTE":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42809,8 +42718,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByLTE = data
 		case "deletedByContains":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42818,8 +42725,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByContains = data
 		case "deletedByHasPrefix":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42827,8 +42732,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByHasPrefix = data
 		case "deletedByHasSuffix":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42836,8 +42739,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByHasSuffix = data
 		case "deletedByIsNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -42845,8 +42746,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByIsNil = data
 		case "deletedByNotNil":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
@@ -42854,8 +42753,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByNotNil = data
 		case "deletedByEqualFold":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -42863,8 +42760,6 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 			}
 			it.DeletedByEqualFold = data
 		case "deletedByContainsFold":
-			var err error
-
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
@@ -44318,6 +44213,9 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 					}
 				}()
 				res = ec._Group_owner(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 

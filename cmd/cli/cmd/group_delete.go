@@ -16,7 +16,7 @@ import (
 
 var groupDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete an existing datum org",
+	Short: "Delete an existing datum group",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return deleteGroup(cmd.Context())
 	},
@@ -26,7 +26,7 @@ func init() {
 	groupCmd.AddCommand(groupDeleteCmd)
 
 	groupDeleteCmd.Flags().StringP("id", "i", "", "group id to delete")
-	viperBindFlag("org.delete.id", groupDeleteCmd.Flags().Lookup("id"))
+	viperBindFlag("group.delete.id", groupDeleteCmd.Flags().Lookup("id"))
 }
 
 func deleteGroup(ctx context.Context) error {

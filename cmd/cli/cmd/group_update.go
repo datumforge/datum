@@ -23,7 +23,7 @@ var groupUpdateCmd = &cobra.Command{
 }
 
 func init() {
-	orgCmd.AddCommand(groupUpdateCmd)
+	groupCmd.AddCommand(groupUpdateCmd)
 
 	groupUpdateCmd.Flags().StringP("id", "i", "", "group id to update")
 	viperBindFlag("group.update.id", groupUpdateCmd.Flags().Lookup("id"))
@@ -59,14 +59,14 @@ func updateGroup(ctx context.Context) error {
 
 	oID := viper.GetString("group.update.id")
 	if oID == "" {
-		return ErrOrgIDRequired
+		return ErrGroupIDRequired
 	}
 
 	name := viper.GetString("group.update.name")
 	displayName := viper.GetString("group.update.short-name")
 	description := viper.GetString("group.update.description")
 
-	input := datumclient.UpdateOrganizationInput{}
+	input := datumclient.UpdateGroupInput{}
 
 	if name != "" {
 		input.Name = &name
@@ -80,7 +80,7 @@ func updateGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := c.UpdateOrganization(ctx, oID, input, i)
+	o, err := c.UpdateGroup(ctx, oID, input, i)
 	if err != nil {
 		return err
 	}

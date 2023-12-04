@@ -125,8 +125,6 @@ var (
 	NameValidator func(string) error
 	// DefaultDescription holds the default value on creation for the "description" field.
 	DefaultDescription string
-	// LogoURLValidator is a validator for the "logo_url" field. It is called by the builders before save.
-	LogoURLValidator func(string) error
 	// DefaultDisplayName holds the default value on creation for the "display_name" field.
 	DefaultDisplayName string
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.

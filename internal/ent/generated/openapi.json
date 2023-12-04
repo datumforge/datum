@@ -895,7 +895,8 @@
                   "description",
                   "logo_url",
                   "display_name",
-                  "setting"
+                  "setting",
+                  "owner"
                 ]
               }
             }
@@ -5973,7 +5974,8 @@
           "description",
           "logo_url",
           "display_name",
-          "setting"
+          "setting",
+          "owner"
         ]
       },
       "GroupCreate": {

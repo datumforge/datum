@@ -41,7 +41,7 @@ func (gr *Group) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = gr.QueryOwner().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (gs *GroupSetting) Group(ctx context.Context) (*Group, error) {

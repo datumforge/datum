@@ -40,7 +40,7 @@ input CreateGroupInput {
   displayName: String
   settingID: ID!
   userIDs: [ID!]
-  ownerID: ID
+  ownerID: ID!
 }
 """
 CreateGroupSettingInput is used for create GroupSetting object.
@@ -509,7 +509,7 @@ type Group implements Node {
   displayName: String!
   setting: GroupSetting!
   users: [User!]
-  owner: Organization
+  owner: Organization!
 }
 """A connection to a list of items."""
 type GroupConnection {
@@ -2446,7 +2446,6 @@ input UpdateGroupInput {
   removeUserIDs: [ID!]
   clearUsers: Boolean
   ownerID: ID
-  clearOwner: Boolean
 }
 """
 UpdateGroupSettingInput is used for update GroupSetting object.

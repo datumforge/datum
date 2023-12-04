@@ -1,23 +1,30 @@
 ci:
-- .github/**
-- .buildkite/**
+- changed-files:
+  - any-glob-to-any-file: .github/**
+  - any-glob-to-any-file: .buildkite/**
 
 mixin:
-- internal/ent/mixin/*
+- changed-files:
+  - any-glob-to-any-file: internal/ent/mixin/*
 
 privacy:
-- internal/ent/privacy/*
+- changed-files:
+  - any-glob-to-any-file: internal/ent/privacy/*
 
 dbschema:
-- internal/ent/schema/*
+- changed-files:
+  - any-glob-to-any-file: internal/ent/schema/*
 
 graphqlschema:
-- schema/**
+- changed-files:
+  - any-glob-to-any-file: schema/**
 
 migrations:
-- db/**
+- changed-files:
+  - any-glob-to-any-file: db/**
 
 local-development:
-- scripts/**
-- Taskfile.yaml
-- docker/**
+- changed-files:
+  - any-glob-to-any-file: scripts/**
+  - any-glob-to-any-file: Taskfile.yaml
+  - any-glob-to-any-file: docker/**

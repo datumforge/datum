@@ -180,3 +180,7 @@ tasks:
       - task: atlas
       - task: go
       - task: fga:test
+  db:console:
+    desc: launches an interactive terminal to the local datum db with some tasty options
+    cmds:
+      -  sqlite3 -column  -header -box  datum.db

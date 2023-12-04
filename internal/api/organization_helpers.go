@@ -40,7 +40,7 @@ func (r *mutationResolver) createOrg(ctx context.Context, input generated.Create
 }
 
 // defaultOrganizationSettings creates the default user settings for a new user
-func (r *mutationResolver) defaultOrganizationSettings(ctx context.Context) (string, error) {
+func (r *mutationResolver) defaultOrganizationSettings(ctx context.Context) (string, error) { //nolint:unused
 	input := generated.CreateOrganizationSettingInput{}
 
 	organizationSetting, err := r.client.OrganizationSetting.Create().SetInput(input).Save(ctx)

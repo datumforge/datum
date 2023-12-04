@@ -65,11 +65,11 @@ func (s *ConfigProviderWithRefresh) refreshConfig() {
 
 		newConfig, err := s.configProvider.GetConfig()
 		if err != nil {
-			log.Printf("unable to load new UI server configuration: %s", err)
+			log.Printf("unable to load new server configuration: %s", err)
 			continue
 		}
 
-		log.Printf("loaded new UI server configuration")
+		log.Printf("loaded new server configuration")
 		s.Lock()
 		s.config = newConfig
 		s.Unlock()

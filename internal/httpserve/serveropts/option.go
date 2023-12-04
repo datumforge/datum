@@ -1,8 +1,8 @@
 package serveropts
 
 import (
-	"github.com/datumforge/datum/internal/server/config"
-	"github.com/datumforge/datum/internal/server/middleware"
+	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/middleware"
 )
 
 type (

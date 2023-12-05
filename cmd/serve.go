@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
 )
 
@@ -179,16 +178,15 @@ func serve(ctx context.Context) error {
 		r = r.WithAuthDisabled(true)
 	}
 
-	h := handlers.NewHandlers()
-
 	handler := r.Handler(enablePlayground, mw...)
-
-	h.AddHandler(handler)
 
 	// Start server
 	srv := server.NewServer(serverConfig.Server, serverConfig.Logger)
 
-	if err := srv.RunWithContext(ctx); err != nil {
+	// Add Graph Handler
+	srv.AddHandler(handler)
+
+	if err := srv.StartEchoServer(); err != nil {
 		logger.Error("failed to run server", zap.Error(err))
 	}
 

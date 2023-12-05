@@ -90,13 +90,6 @@ type (
 		CertKey string
 		// AutoCert generates the cert with letsencrypt, this does not work on localhost
 		AutoCert bool
-
-		CaFile                 string `yaml:"caFile"`
-		CaData                 string `yaml:"caData"`
-		CertData               string `yaml:"certData"`
-		KeyData                string `yaml:"keyData"`
-		EnableHostVerification bool   `yaml:"enableHostVerification"`
-		ServerName             string `yaml:"serverName"`
 	}
 
 	AuthProvider struct {

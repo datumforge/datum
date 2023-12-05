@@ -3,13 +3,25 @@ package middleware
 
 import "net/http"
 
+// A Chain is a middleware chain use for http request processing.
+type Chain struct {
+	mw []MiddlewareFunc
+}
+
 // MiddlewareFunc is a function that acts as middleware for http Handlers.
 type MiddlewareFunc func(next http.Handler) http.Handler
 
+// NewChain creates a new Middleware chain
+func NewChain(middlewares ...MiddlewareFunc) Chain {
+	return Chain{
+		mw: append([]MiddlewareFunc{}, middlewares...),
+	}
+}
+
 // Chain returns a http.Handler that chains the middleware onion-style around the handler.
-func Chain(middlewares []MiddlewareFunc, handler http.Handler) http.Handler {
-	for i := len(middlewares) - 1; i >= 0; i-- {
-		handler = middlewares[i](handler)
+func (c Chain) Chain(handler http.Handler) http.Handler {
+	for i := len(c.mw) - 1; i >= 0; i-- {
+		handler = c.mw[i](handler)
 	}
 
 	return handler

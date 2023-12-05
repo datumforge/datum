@@ -6,7 +6,7 @@ import (
 
 	"entgo.io/ent"
 
-	"github.com/datumforge/datum/internal/echox"
+	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/fga"
@@ -51,7 +51,7 @@ func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v e
 	}
 
 	// get userID for tuple checks
-	userID, err := echox.GetUserIDFromContext(ctx)
+	userID, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		q.Logger.Errorw("unable to get user id from echo context")
 		return nil, err

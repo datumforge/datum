@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent"
 	"github.com/99designs/gqlgen/graphql"
 
-	"github.com/datumforge/datum/internal/echox"
+	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
@@ -16,7 +16,7 @@ import (
 // DenyIfNoSubject is a rule that returns deny decision if the subject is missing in the context.
 func DenyIfNoSubject() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
-		sub, err := echox.GetUserIDFromContext(ctx)
+		sub, err := auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return privacy.Denyf("cannot get subject from context")
 		}
@@ -53,7 +53,7 @@ func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 			return privacy.Allowf("nil request, bypassing auth check")
 		}
 
-		userID, err := echox.GetUserIDFromContext(ctx)
+		userID, err := auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}
@@ -101,7 +101,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			return privacy.Denyf("missing organization ID information in viewer")
 		}
 
-		userID, err := echox.GetUserIDFromContext(ctx)
+		userID, err := auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			return err
 		}

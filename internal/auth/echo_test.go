@@ -1,4 +1,4 @@
-package echox
+package auth
 
 import (
 	"testing"
@@ -6,17 +6,19 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/datumforge/datum/internal/echox"
 )
 
 func Test_GetActorSubject(t *testing.T) {
 	// context with no user set
-	basicContext := NewTestEchoContext()
+	basicContext := echox.NewTestEchoContext()
 
-	missingSubCtx := NewTestEchoContext()
+	missingSubCtx := echox.NewTestEchoContext()
 	jBasic := jwt.New(jwt.SigningMethodHS256)
 	missingSubCtx.Set("user", jBasic)
 
-	validCtx, err := NewTestContextWithValidUser("foobar")
+	validCtx, err := echox.NewTestContextWithValidUser("foobar")
 	if err != nil {
 		t.Fatal()
 	}

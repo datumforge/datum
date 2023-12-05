@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 
-	"github.com/datumforge/datum/internal/echox"
+	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
@@ -94,7 +94,7 @@ func (d SoftDeleteMixin) SoftDeleteHook(next ent.Mutator) ent.Mutator {
 			return next.Mutate(ctx, m)
 		}
 
-		actor, err := echox.GetUserIDFromContext(ctx)
+		actor, err := auth.GetUserIDFromContext(ctx)
 		if err != nil {
 			actor = "unknown"
 		}

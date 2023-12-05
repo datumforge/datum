@@ -6,12 +6,12 @@ import (
 
 	ofgaclient "github.com/openfga/go-sdk/client"
 
-	"github.com/datumforge/datum/internal/echox"
+	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/fga"
 )
 
 func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
-	actor, err := echox.GetUserIDFromContext(ctx)
+	actor, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		c.Logger.Errorw("unable to get user ID from context", "error", err)
 

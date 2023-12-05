@@ -17,7 +17,7 @@ steps:
   key: "test"
   plugins:
     - docker#v5.9.0:
-        image: golang:1.21.4
+        image: golang:1.21.5
         command: ["go", "test", "./..."]
 
 - label: ":auth0: fga model test"
@@ -32,7 +32,7 @@ steps:
   artifact_paths: "bin/${APP_NAME}"
   plugins:
     - docker#v5.9.0:
-        image: "golang:1.21.4"
+        image: "golang:1.21.5"
         environment:
           - CGO_ENABLED=0
           - GOOS=linux

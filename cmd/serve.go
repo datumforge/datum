@@ -5,11 +5,12 @@ import (
 	"log"
 
 	"entgo.io/ent/dialect"
-	"github.com/labstack/echo/v4"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+
+	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/api"
 	"github.com/datumforge/datum/internal/auth"
@@ -107,10 +108,10 @@ func serve(ctx context.Context) error {
 		opts = append(opts, ent.Authz(*fgaClient))
 
 		// add jwt middleware
-		secretKey := viper.GetString("jwt.secretkey")
-		jwtConfig := auth.CreateJwtMiddleware([]byte(secretKey))
+		secretKey := []byte(viper.GetString("jwt.secretkey"))
+		jwtMiddleware := auth.CreateJwtMiddleware([]byte(secretKey))
 
-		mw = append(mw, jwtConfig)
+		mw = append(mw, jwtMiddleware)
 	}
 
 	// create new ent db client
@@ -185,7 +186,7 @@ func serve(ctx context.Context) error {
 	h.AddHandler(handler)
 
 	// Start server
-	srv := server.NewServer(serverConfig.Server, serverConfig.TLS, serverConfig.Logger, *h)
+	srv := server.NewServer(serverConfig.Server, serverConfig.Logger)
 
 	if err := srv.RunWithContext(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

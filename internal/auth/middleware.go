@@ -1,8 +1,8 @@
 package auth
 
 import (
-	echojwt "github.com/labstack/echo-jwt/v4"
-	"github.com/labstack/echo/v4"
+	echojwt "github.com/datumforge/echo-jwt/v5"
+	echo "github.com/datumforge/echox"
 )
 
 // CreateJwtMiddleware creates a middleware function for JWTs

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
@@ -21,15 +22,6 @@ type (
 
 		// Auth contains the authentication provider(s)
 		Auth Auth `yaml:"auth"`
-
-		// TLS contains the tls configuration settings
-		TLS TLS `yaml:"tls"`
-
-		// CORS contains settings to allow cross origin settings and insecure cookies
-		CORS CORS `yaml:"cors"`
-
-		// // Routes contains the handler functions
-		Routes []http.Handler `yaml:"routes"`
 
 		// Logger contains the logger used by echo functions
 		Logger *zap.Logger `yaml:"logger"`
@@ -55,12 +47,22 @@ type (
 		IdleTimeout time.Duration `yaml:"idleTimeout"`
 		// ReadHeaderTimeout sets the amount of time allowed to read request headers.
 		ReadHeaderTimeout time.Duration `yaml:"readHeaderTimeout"`
+		// TLS contains the tls configuration settings
+		TLS TLS `yaml:"tls"`
+		// CORS contains settings to allow cross origin settings and insecure cookies
+		CORS CORS `yaml:"cors"`
+		// Routes contains the handler functions
+		Routes []http.Handler `yaml:"routes"`
+		// Middleware to enable on the echo server
+		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together
 	Auth struct {
 		// Enabled - checks this first before reading your provider config
 		Enabled bool `yaml:"enabled"`
+		// JWTSigningKey contains a 32 byte array to sign with the HmacSha256 algorithms
+		JWTSigningKey []byte `yaml:"jwtSigningKey"`
 		// A list of auth providers. Currently enables only the first provider in the list.
 		Providers []AuthProvider `yaml:"providers"`
 	}
@@ -138,12 +140,12 @@ func (c *Config) SetDefaults() *Config {
 	if c.Server.HTTPS {
 		// use 443 for secure servers as the default port
 		c.Server.Listen = ":443"
-		c.TLS.Config = DefaultTLSConfig
-		c.TLS.Enabled = true
+		c.Server.TLS.Config = DefaultTLSConfig
+		c.Server.TLS.Enabled = true
 	} else if c.Server.Listen == "" {
 		// set default port if none is provided
 		c.Server.Listen = ":8080"
-		c.TLS.Enabled = false
+		c.Server.TLS.Enabled = false
 	}
 
 	if c.Server.ShutdownGracePeriod <= 0 {
@@ -200,8 +202,8 @@ func (c *Config) WithHTTPS(https bool) *Config {
 // WithTLSDefaults sets tls default settings assuming a default cert and key file location.
 func (c Config) WithTLSDefaults() Config {
 	c.WithDefaultTLSConfig()
-	c.TLS.CertFile = DefaultCertFile
-	c.TLS.CertKey = DefaultKeyFile
+	c.Server.TLS.CertFile = DefaultCertFile
+	c.Server.TLS.CertKey = DefaultKeyFile
 
 	return c
 }
@@ -241,25 +243,25 @@ func (c *Config) WithReadHeaderTimeout(period time.Duration) *Config {
 	return c
 }
 
-// // WithMiddleware includes the provided middleware when echo is initialized.
-// func (c Config) WithMiddleware(mdw ...echo.MiddlewareFunc) Config {
-// 	c.Middleware = append(c.Middleware, mdw...)
+// WithMiddleware includes the provided middleware when echo is initialized.
+func (c Config) WithMiddleware(mdw ...echo.MiddlewareFunc) Config {
+	c.Server.Middleware = append(c.Server.Middleware, mdw...)
 
-// 	return c
-// }
+	return c
+}
 
 // WithDefaultTLSConfig sets the default TLS Configuration
 func (c Config) WithDefaultTLSConfig() Config {
-	c.TLS.Enabled = true
-	c.TLS.Config = DefaultTLSConfig
+	c.Server.TLS.Enabled = true
+	c.Server.TLS.Config = DefaultTLSConfig
 
 	return c
 }
 
 // WithTLSCerts sets the TLS Cert and Key locations
 func (c *Config) WithTLSCerts(certFile, certKey string) *Config {
-	c.TLS.CertFile = certFile
-	c.TLS.CertKey = certKey
+	c.Server.TLS.CertFile = certFile
+	c.Server.TLS.CertKey = certKey
 
 	return c
 }
@@ -273,11 +275,11 @@ func (c *Config) WithAutoCert(host string) *Config {
 		HostPolicy: autocert.HostWhitelist(host),
 	}
 
-	c.TLS.Enabled = true
-	c.TLS.Config = DefaultTLSConfig
+	c.Server.TLS.Enabled = true
+	c.Server.TLS.Config = DefaultTLSConfig
 
-	c.TLS.Config.GetCertificate = autoTLSManager.GetCertificate
-	c.TLS.Config.NextProtos = []string{acme.ALPNProto}
+	c.Server.TLS.Config.GetCertificate = autoTLSManager.GetCertificate
+	c.Server.TLS.Config.NextProtos = []string{acme.ALPNProto}
 
 	return c
 }

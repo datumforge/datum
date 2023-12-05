@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/labstack/echo/v4"
+	echo "github.com/datumforge/echox"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
 	"go.uber.org/zap"
 

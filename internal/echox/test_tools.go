@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 )
 
 // NewTestEchoContext used for testing purposes ONLY

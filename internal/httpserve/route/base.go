@@ -3,20 +3,34 @@ package route
 import (
 	"net/http"
 
-	"github.com/datumforge/echox"
+	echo "github.com/datumforge/echox"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
 )
 
-func registerHandlers(router *echox.Echo) error { //nolint:unused
-	// register handlers, example
-	_, err := router.AddRoute(echox.Route{
+// RegisterHandlers with the echo routers
+func RegisterHandlers(router *echo.Echo) error { //nolint:unused
+	// register handlers
+	_, err := router.AddRoute(echo.Route{
 		Method: http.MethodGet,
-		Path:   "/api/hello",
-		Handler: func(c echox.Context) error {
-			obj := map[string]interface{}{"message": "Hello world! - New"}
-			return c.JSON(http.StatusOK, obj)
+		Path:   "/livez",
+		Handler: func(c echo.Context) error {
+			return c.JSON(http.StatusOK, echo.Map{
+				"status": "UP",
+			})
 		},
+	})
+	if err != nil {
+		return err
+	}
+
+	// TODO: add readiness handlers
+
+	_, err = router.AddRoute(echo.Route{
+		Method:  http.MethodGet,
+		Path:    "/metrics",
+		Handler: echo.WrapHandler(promhttp.Handler()),
 	})
 	if err != nil {
 		return err
@@ -25,7 +39,7 @@ func registerHandlers(router *echox.Echo) error { //nolint:unused
 	return nil
 }
 
-func validateAuth(c echox.Context, cfgProvider *config.ConfigProviderWithRefresh) error { //nolint:unused
+func validateAuth(c echo.Context, cfgProvider *config.ConfigProviderWithRefresh) error { //nolint:unused
 	cfg, err := cfgProvider.GetConfig()
 	if err != nil {
 		return err

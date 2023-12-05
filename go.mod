@@ -10,14 +10,13 @@ require (
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.16.0
 	github.com/brianvoe/gofakeit/v6 v6.25.0
-	github.com/brpaz/echozap v1.1.3
+	github.com/datumforge/echo-jwt/v5 v5.0.0-20231205185812-79862a027d10
+	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
+	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
-	github.com/globocom/echo-prometheus v0.1.2
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/jaevor/go-nanoid v1.3.0
-	github.com/labstack/echo-jwt/v4 v4.2.0
-	github.com/labstack/echo/v4 v4.11.3
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.79.1
@@ -80,14 +79,13 @@ require (
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
-	github.com/datumforge/echox v0.0.0-20231203212504-8ef997930333
+	github.com/datumforge/echox v0.0.0-20231205180954-6e7ee4c4d965
 	github.com/dlclark/regexp2 v1.10.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-faster/yaml v0.4.6 // indirect
 	github.com/go-openapi/inflect v0.19.0 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/gorilla/sessions v1.2.2
 	github.com/gorilla/websocket v1.5.1 // indirect
@@ -96,7 +94,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.19.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/labstack/gommon v0.4.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -127,7 +124,7 @@ require (
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0
-	golang.org/x/time v0.4.0 // indirect
+	golang.org/x/time v0.5.0 // indirect
 	golang.org/x/tools v0.16.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

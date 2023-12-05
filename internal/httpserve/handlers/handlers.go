@@ -2,10 +2,8 @@ package handlers
 
 import (
 	"context"
-	"net/http"
 
-	"github.com/labstack/echo/v4"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
+	echo "github.com/datumforge/echox"
 )
 
 type Handler struct {
@@ -34,18 +32,18 @@ func (h *Handler) AddHandler(r handler) *Handler {
 	return h
 }
 
-// AddRoutes returns a new http.Handler for serving requests with routes added
-func (h *Handler) AddRoutes(srv *echo.Echo) http.Handler {
-	// Health endpoints
-	srv.GET("/livez", h.livenessCheckHandler)
-	// srv.GET("/readyz", h.readinessCheckHandler)
+// // AddRoutes returns a new http.Handler for serving requests with routes added
+// func (h *Handler) AddRoutes(srv *echo.Echo) http.Handler {
+// 	// Health endpoints
+// 	srv.GET("/livez", h.livenessCheckHandler)
+// 	// srv.GET("/readyz", h.readinessCheckHandler)
 
-	// Metrics endpoints
-	srv.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
+// 	// Metrics endpoints
+// 	srv.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 
-	for _, handler := range h.handlers {
-		handler.Routes(srv.Group(""))
-	}
+// 	for _, handler := range h.handlers {
+// 		handler.Routes(srv.Group(""))
+// 	}
 
-	return srv
-}
+// 	return srv
+// }

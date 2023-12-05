@@ -10,26 +10,21 @@ import (
 	"os/signal"
 	"syscall"
 
+	echoprometheus "github.com/datumforge/echo-prometheus/v5"
+	"github.com/datumforge/echox"
+	"github.com/datumforge/echox/middleware"
+	"github.com/datumforge/echozap"
 	"go.uber.org/zap"
 
-	"github.com/brpaz/echozap"
-	echoprometheus "github.com/globocom/echo-prometheus"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
 type Server struct {
 	// config contains the base server settings
 	config config.Server
-	// tls contains the tls settings
-	tls config.TLS //nolint:unused
 	// logger contains the zap logger
 	logger *zap.Logger
-	// handlers contain echo http handlers
-	handlers handlers.Handler
 }
 
 // HTTPSConfig contains HTTPS server settings
@@ -40,12 +35,10 @@ type HTTPSConfig struct {
 }
 
 // NewServer returns a new Server configuration
-func NewServer(c config.Server, t config.TLS, l *zap.Logger, h handlers.Handler) *Server {
+func NewServer(c config.Server, l *zap.Logger) *Server {
 	return &Server{
-		config:   c,
-		tls:      t,
-		logger:   l,
-		handlers: h,
+		config: c,
+		logger: l,
 	}
 }
 
@@ -60,22 +53,30 @@ func (s *Server) DefaultHTTPServer() *http.Server {
 }
 
 // DefaultEchoServer creates the default echo server with standard middleware
-func (s *Server) DefaultEchoServer() *echo.Echo {
-	srv := echo.New()
+func (s *Server) DefaultEchoServer() (*echox.Echo, echox.StartConfig) {
+	srv := echox.New()
+
+	sc := echox.StartConfig{
+		HideBanner: true,
+		HidePort:   true,
+		Address:    s.config.Listen,
+	}
 
 	// hides echo's startup banner
-	srv.HideBanner = true
-	srv.HidePort = true
 	srv.Debug = s.config.Debug
 
 	// add middleware
-	// TODO (sfunk): go back and use the middleware packages
 	srv.Use(middleware.RequestID())
 	srv.Use(middleware.Recover())
 	srv.Use(echoprometheus.MetricsMiddleware())
 	srv.Use(echozap.ZapLogger(s.logger))
 
-	return srv
+	// add all configured middleware
+	for _, m := range s.config.Middleware {
+		srv.Use(m)
+	}
+
+	return srv, sc
 }
 
 // RunWithContext listens and serves the echo server on the configured address.
@@ -88,7 +89,7 @@ func (s *Server) RunWithContext(ctx context.Context) error {
 
 	defer listener.Close() //nolint:errcheck // No need to check error.
 
-	if s.tls.Enabled {
+	if s.config.TLS.Enabled {
 		return s.ServeHTTPSWithContext(ctx, listener)
 	}
 
@@ -105,12 +106,14 @@ func (s *Server) ServeHTTPWithContext(ctx context.Context, listener net.Listener
 	logger.Info("starting server")
 
 	srv := s.DefaultHTTPServer()
-	echoServer := s.DefaultEchoServer()
+	echoServer, _ := s.DefaultEchoServer()
 	srv.Handler = echoServer
 
 	// Add routes to the server
 	// TODO (sfunk): this seems weird, the server should be in the config maybe?
-	s.handlers.AddRoutes(echoServer)
+	if err := route.RegisterHandlers(echoServer); err != nil {
+		return err
+	}
 
 	var (
 		exit = make(chan error, 1)
@@ -172,9 +175,9 @@ func (s *Server) ServeHTTPSWithContext(ctx context.Context, listener net.Listene
 
 	// TODO: Add ability to do HTTPS Redirect with middleware.HTTPSRedirect()
 	srv := s.DefaultHTTPServer()
-	srv.Handler = s.DefaultEchoServer()
+	srv.Handler, _ = s.DefaultEchoServer()
 
-	srv.TLSConfig = s.tls.Config
+	srv.TLSConfig = s.config.TLS.Config
 	srv.TLSNextProto = make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0)
 
 	var (
@@ -185,7 +188,7 @@ func (s *Server) ServeHTTPSWithContext(ctx context.Context, listener net.Listene
 	// Serve in a go routine.
 	// If serve returns an error, capture the error to return later.
 	go func() {
-		if err := srv.ServeTLS(listener, s.tls.CertFile, s.tls.CertKey); err != nil {
+		if err := srv.ServeTLS(listener, s.config.TLS.CertFile, s.config.TLS.CertKey); err != nil {
 			exit <- err
 
 			return

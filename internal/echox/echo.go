@@ -3,8 +3,8 @@ package echox
 import (
 	"context"
 
+	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 )
 
 // EchoContextKey is the context key for the echo.Context

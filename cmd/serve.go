@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"time"
 
 	"entgo.io/ent/dialect"
 	echojwt "github.com/labstack/echo-jwt/v4"
@@ -13,25 +12,18 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
+	"github.com/datumforge/datum/internal/api"
+	"github.com/datumforge/datum/internal/auth"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-)
-
-const (
-	defaultListenAddr            = ":17608"
-	defaultDBPrimaryURI          = "datum.db?mode=memory&_fk=1"
-	defaultDBSecondaryURI        = "backup.db?mode=memory&_fk=1"
-	defaultOIDCJWKSRemoteTimeout = 5 * time.Second
-	defaultFGAScheme             = "https"
-	defaultFGAHost               = ""
+	"github.com/datumforge/datum/internal/httpserve/server"
 )
 
 var (
-	enablePlayground bool
-	serveDevMode     bool
+	serveDevMode bool
 )
 
 var serveCmd = &cobra.Command{
@@ -51,75 +43,51 @@ func init() {
 	}
 
 	// Database flags
-	serveCmd.Flags().Bool("db-mutli-write", false, "write to a primary and secondary database")
-	viperBindFlag("server.db.multi-write", serveCmd.Flags().Lookup("db-mutli-write"))
+	if err := entdb.RegisterDatabaseFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
+		log.Fatal(err)
+	}
 
-	serveCmd.Flags().String("db-primary", defaultDBPrimaryURI, "db primary uri")
-	viperBindFlag("server.db-primary", serveCmd.Flags().Lookup("db-primary"))
-
-	serveCmd.Flags().String("db-secondary", defaultDBSecondaryURI, "db secondary uri")
-	viperBindFlag("server.db-secondary", serveCmd.Flags().Lookup("db-secondary"))
-
-	// echo-jwt flags
-	serveCmd.Flags().String("jwt-secretkey", "", "secret key for echojwt config")
-	viperBindFlag("jwt.secretkey", serveCmd.Flags().Lookup("jwt-secretkey"))
-
-	// OIDC Flags
-	serveCmd.Flags().Bool("oidc", true, "use oidc auth")
-	viperBindFlag("oidc.enabled", serveCmd.Flags().Lookup("oidc"))
-
-	serveCmd.Flags().String("oidc-aud", "", "expected audience on OIDC JWT")
-	viperBindFlag("oidc.audience", serveCmd.Flags().Lookup("oidc-aud"))
-
-	serveCmd.Flags().String("oidc-issuer", "", "expected issuer of OIDC JWT")
-	viperBindFlag("oidc.issuer", serveCmd.Flags().Lookup("oidc-issuer"))
-
-	serveCmd.Flags().Duration("oidc-jwks-remote-timeout", defaultOIDCJWKSRemoteTimeout, "timeout for remote JWKS fetching")
-	viperBindFlag("oidc.jwks.remote-timeout", serveCmd.Flags().Lookup("oidc-jwks-remote-timeout"))
+	// Auth configuration settings
+	if err := auth.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
+		log.Fatal(err)
+	}
 
 	// OpenFGA configuration settings
-	serveCmd.Flags().String("fga-host", defaultFGAHost, "fga host without the scheme (e.g. api.fga.example instead of https://api.fga.example)")
-	viperBindFlag("fga.host", serveCmd.Flags().Lookup("fga-host"))
-
-	serveCmd.Flags().String("fga-scheme", defaultFGAScheme, "fga scheme (http vs. https)")
-	viperBindFlag("fga.scheme", serveCmd.Flags().Lookup("fga-scheme"))
-
-	serveCmd.Flags().String("fga-store-id", "", "fga store ID")
-	viperBindFlag("fga.store.id", serveCmd.Flags().Lookup("fga-store-id"))
-
-	serveCmd.Flags().String("fga-model-id", "", "fga authorization model ID")
-	viperBindFlag("fga.model.id", serveCmd.Flags().Lookup("fga-model-id"))
-
-	serveCmd.Flags().Bool("fga-model-create", false, "force create a fga authorization model, this should be used when a model exists, but transitioning to a new model")
-	viperBindFlag("fga.model.create", serveCmd.Flags().Lookup("fga-model-create"))
+	if err := fga.RegisterFGAFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
+		log.Fatal(err)
+	}
 
 	// only available as a CLI arg because these should only be used in dev environments
-	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables playground")
-	serveCmd.Flags().BoolVar(&enablePlayground, "playground", false, "enable the graph playground")
+	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables graph playground")
 }
 
 func serve(ctx context.Context) error {
 	// setup db connection for server
 	var (
-		client      *ent.Client
-		err         error
-		oidcEnabled = viper.GetBool("oidc.enabled")
+		entdbClient      *ent.Client
+		fgaClient        *fga.Client
+		err              error
+		mw               []echo.MiddlewareFunc
+		enablePlayground bool
 	)
 
-	entConfig := entdb.EntClientConfig{
-		Debug:           viper.GetBool("debug"),
-		DriverName:      dialect.SQLite,
-		Logger:          *logger,
-		PrimaryDBSource: viper.GetString("server.db-primary"),
+	// debug setting
+	debug := viper.GetBool("debug")
+
+	// auth setting
+	authEnabled := viper.GetBool("oidc.enabled")
+
+	// dev mode settings
+	if serveDevMode {
+		enablePlayground = true
 	}
 
 	// create ent dependency injection
 	opts := []ent.Option{ent.Logger(*logger)}
 
 	// add the fga client if oidc is enabled
-	var fgaClient *fga.Client
-
-	if oidcEnabled {
+	if authEnabled {
+		// TODO (sfunk): create fga.NewConfig() func
 		config := fga.Config{
 			Name:           "datum",
 			Host:           viper.GetString("fga.host"),
@@ -129,67 +97,63 @@ func serve(ctx context.Context) error {
 			CreateNewModel: viper.GetBool("fga.model.create"),
 		}
 
-		logger.Infow(
-			"setting up fga client",
-			"host",
-			config.Host,
-			"scheme",
-			config.Scheme,
-		)
+		logger.Infow("setting up fga client", "host", config.Host, "scheme", config.Scheme)
 
 		fgaClient, err = fga.CreateFGAClientWithStore(ctx, config, logger)
 		if err != nil {
 			return err
 		}
 
+		// add client as ent dependency
 		opts = append(opts, ent.Authz(*fgaClient))
-	}
 
-	// create new ent db client
-	if viper.GetBool("server.db.multi-write") {
-		entConfig.SecondaryDBSource = viper.GetString("server.db-secondary")
-
-		client, err = entConfig.NewMultiDriverDBClient(ctx, opts)
-		if err != nil {
-			return err
-		}
-	} else {
-		client, err = entConfig.NewEntDBDriver(ctx, opts)
-		if err != nil {
-			return err
-		}
-	}
-	defer client.Close()
-
-	var mw []echo.MiddlewareFunc
-
-	// dev mode settings
-	if serveDevMode {
-		enablePlayground = true
-	}
-
-	// add jwt middleware
-	if oidcEnabled {
+		// add jwt middleware
 		secretKey := viper.GetString("jwt.secretkey")
 		jwtConfig := createJwtMiddleware([]byte(secretKey))
 
 		mw = append(mw, jwtConfig)
 	}
 
-	// TODO (sfunk): move flags over to package
+	// create new ent db client
+	entConfig := entdb.EntClientConfig{
+		Debug:           debug,
+		DriverName:      dialect.SQLite,
+		Logger:          *logger,
+		PrimaryDBSource: viper.GetString("db.primary"),
+	}
+
+	if viper.GetBool("db.multi-write") {
+		entConfig.SecondaryDBSource = viper.GetString("db.secondary")
+
+		entdbClient, err = entConfig.NewMultiDriverDBClient(ctx, opts)
+		if err != nil {
+			return err
+		}
+	} else {
+		entdbClient, err = entConfig.NewEntDBDriver(ctx, opts)
+		if err != nil {
+			return err
+		}
+	}
+
+	defer entdbClient.Close()
+
+	// Setup server config
 	httpsEnabled := viper.GetBool("server.https")
 	listenAddr := viper.GetString("server.listen")
 	shutdownGracePeriod := viper.GetDuration("server.shutdown-grace-period")
-	debug := viper.GetBool("server.debug")
+	serverDebug := viper.GetBool("server.debug")
 	autoCert := viper.GetBool("server.auto-cert")
 
 	serverConfig := config.NewConfig().
 		SetDefaults().                                // set defaults
 		WithListen(listenAddr).                       // set custom port
 		WithShutdownGracePeriod(shutdownGracePeriod). // override default grace period shutdown
-		WithDebug(debug).                             // enable debug mode
+		WithDebug(serverDebug).                       // enable debug mode
 		WithDev(serveDevMode).                        // enable dev mode
 		WithHTTPS(httpsEnabled)                       // enable https
+
+	serverConfig.Logger = logger.Desugar()
 
 	if httpsEnabled {
 		serverConfig.WithTLSDefaults()
@@ -206,16 +170,11 @@ func serve(ctx context.Context) error {
 		}
 	}
 
-	// srv, err := echox.NewServer(logger.Desugar(), serverConfig)
-	// if err != nil {
-	// 	logger.Error("failed to create server", zap.Error(err))
-	// }
-
 	// Setup Graph API Handlers
-	r := graphapi.NewResolver(client).
+	r := api.NewResolver(entdbClient).
 		WithLogger(logger.Named("resolvers"))
 
-	if !oidcEnabled {
+	if !authEnabled {
 		serverConfig.Auth.Enabled = false
 		r = r.WithAuthDisabled(true)
 	}
@@ -225,6 +184,9 @@ func serve(ctx context.Context) error {
 	handler := r.Handler(enablePlayground, mw...)
 
 	h.AddHandler(handler)
+
+	// Start server
+	srv := server.NewServer(serverConfig.Server, serverConfig.TLS, serverConfig.Logger, *h)
 
 	if err := srv.RunWithContext(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

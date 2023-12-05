@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/labstack/echo"
 	"github.com/labstack/echo/v4"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -29,22 +28,24 @@ func NewHandlers() *Handler {
 // AddHandler provides the ability to add additional HTTP handlers that process
 // requests. The handler that is provided should have a Routes(*echo.Group)
 // function, which allows the routes to be added to the server.
-func (s *Handler) AddHandler(h handler) *Handler {
-	s.handlers = append(s.handlers, h)
+func (h *Handler) AddHandler(r handler) *Handler {
+	h.handlers = append(h.handlers, r)
 
-	return s
+	return h
 }
 
-// Handler returns a new http.Handler for serving requests.
-func HealthHandler() http.Handler {
+// AddRoutes returns a new http.Handler for serving requests with routes added
+func (h *Handler) AddRoutes(srv *echo.Echo) http.Handler {
 	// Health endpoints
-	s.GET("/livez", s.livenessCheckHandler)
-	s.GET("/readyz", s.readinessCheckHandler)
-	s.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
+	srv.GET("/livez", h.livenessCheckHandler)
+	// srv.GET("/readyz", h.readinessCheckHandler)
 
-	for _, handler := range s.handlers {
+	// Metrics endpoints
+	srv.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
+
+	for _, handler := range h.handlers {
 		handler.Routes(srv.Group(""))
 	}
 
-	return s
+	return srv
 }

@@ -13,18 +13,19 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/brpaz/echozap"
+	echoprometheus "github.com/globocom/echo-prometheus"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	echoprometheus "github.com/globocom/echo-prometheus"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 type Server struct {
 	// config contains the base server settings
 	config config.Server
 	// tls contains the tls settings
-	tls config.TLS
+	tls config.TLS //nolint:unused
 	// logger contains the zap logger
 	logger *zap.Logger
 	// handlers contain echo http handlers
@@ -33,9 +34,19 @@ type Server struct {
 
 // HTTPSConfig contains HTTPS server settings
 type HTTPSConfig struct {
-	tlsConfig *tls.Config
-	certFile  string
-	certKey   string
+	tlsConfig *tls.Config //nolint:unused
+	certFile  string      //nolint:unused
+	certKey   string      //nolint:unused
+}
+
+// NewServer returns a new Server configuration
+func NewServer(c config.Server, t config.TLS, l *zap.Logger, h handlers.Handler) *Server {
+	return &Server{
+		config:   c,
+		tls:      t,
+		logger:   l,
+		handlers: h,
+	}
 }
 
 // DefaultHTTPServer creates a default http Server with default timeouts
@@ -65,7 +76,6 @@ func (s *Server) DefaultEchoServer() *echo.Echo {
 	srv.Use(echozap.ZapLogger(s.logger))
 
 	return srv
-
 }
 
 // RunWithContext listens and serves the echo server on the configured address.
@@ -95,7 +105,12 @@ func (s *Server) ServeHTTPWithContext(ctx context.Context, listener net.Listener
 	logger.Info("starting server")
 
 	srv := s.DefaultHTTPServer()
-	srv.Handler = s.DefaultEchoServer()
+	echoServer := s.DefaultEchoServer()
+	srv.Handler = echoServer
+
+	// Add routes to the server
+	// TODO (sfunk): this seems weird, the server should be in the config maybe?
+	s.handlers.AddRoutes(echoServer)
 
 	var (
 		exit = make(chan error, 1)

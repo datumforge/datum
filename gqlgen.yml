@@ -10,18 +10,18 @@ exec:
 # Uncomment to enable federation
 federation:
   filename: internal/api/federation.go
-  package: graphapi
+  package: api
 
 # Where should any generated models go?
 model:
   filename: internal/api/gen_models.go
-  package: graphapi
+  package: api
 
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
   dir: internal/api
-  package: graphapi
+  package: api
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false

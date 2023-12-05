@@ -2,6 +2,7 @@ package config
 
 import (
 	"crypto/tls"
+	"net/http"
 	"time"
 
 	"go.uber.org/zap"
@@ -27,8 +28,8 @@ type (
 		// CORS contains settings to allow cross origin settings and insecure cookies
 		CORS CORS `yaml:"cors"`
 
-		// // Handlers contains the handler functions
-		// Handlers Handlers `yaml:"handlers"`
+		// // Routes contains the handler functions
+		Routes []http.Handler `yaml:"routes"`
 
 		// Logger contains the logger used by echo functions
 		Logger *zap.Logger `yaml:"logger"`
@@ -116,9 +117,6 @@ type (
 		// Options added as URL query params when redirecting to auth provider. Can be used to configure custom auth flows such as Auth0 invitation flow.
 		Options map[string]interface{} `yaml:"options"`
 	}
-
-	// Handlers struct {
-	// }
 )
 
 // Ensure that *Config implements ConfigProvider interface.

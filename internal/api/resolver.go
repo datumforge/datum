@@ -1,5 +1,5 @@
 // Package api is the graphapi package
-package graphapi
+package api
 
 import (
 	"fmt"

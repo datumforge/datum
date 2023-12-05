@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"entgo.io/ent/dialect"
-	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
@@ -109,7 +108,7 @@ func serve(ctx context.Context) error {
 
 		// add jwt middleware
 		secretKey := viper.GetString("jwt.secretkey")
-		jwtConfig := createJwtMiddleware([]byte(secretKey))
+		jwtConfig := auth.CreateJwtMiddleware([]byte(secretKey))
 
 		mw = append(mw, jwtConfig)
 	}
@@ -161,7 +160,7 @@ func serve(ctx context.Context) error {
 		if autoCert {
 			serverConfig.WithAutoCert(viper.GetString("server.cert-host"))
 		} else {
-			certFile, certKey, err := getCertFiles()
+			certFile, certKey, err := server.GetCertFiles(viper.GetString("server.ssl-cert"), viper.GetString("server.ssl-key"))
 			if err != nil {
 				return err
 			}
@@ -193,30 +192,4 @@ func serve(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-// createJwtMiddleware, TODO expand the config settings
-func createJwtMiddleware(secret []byte) echo.MiddlewareFunc {
-	config := echojwt.Config{
-		SigningKey: secret,
-	}
-
-	return echojwt.WithConfig(config)
-}
-
-// getCertFiles for https enabled echo server
-// TODO (sfunk): move to httpserve
-func getCertFiles() (string, string, error) {
-	certFile := viper.GetString("server.ssl-cert")
-	keyFile := viper.GetString("server.ssl-key")
-
-	if certFile == "" {
-		return "", "", ErrCertFileMissing
-	}
-
-	if keyFile == "" {
-		return "", "", ErrKeyFileMissing
-	}
-
-	return certFile, keyFile, nil
 }

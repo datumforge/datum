@@ -7,6 +7,7 @@ import (
 	"github.com/datumforge/echozap"
 	"go.uber.org/zap"
 
+	"github.com/datumforge/datum/internal/echox"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
@@ -57,6 +58,9 @@ func (s *Server) StartEchoServer() error {
 	srv.Use(middleware.Recover())
 	srv.Use(echoprometheus.MetricsMiddleware())
 	srv.Use(echozap.ZapLogger(s.logger))
+
+	// add echo context to parent context
+	srv.Use(echox.EchoContextToContextMiddleware())
 
 	// add all configured middleware
 	for _, m := range s.config.Middleware {

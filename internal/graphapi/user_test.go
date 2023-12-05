@@ -1,4 +1,4 @@
-package api_test
+package graphapi_test
 
 import (
 	"context"

@@ -9,12 +9,12 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/formatter"
 
-	"github.com/datumforge/datum/internal/api"
+	"github.com/datumforge/datum/internal/graphapi"
 )
 
 // read in schema from internal package and save it to the schema file
 func main() {
-	execSchema := api.NewExecutableSchema(api.Config{})
+	execSchema := graphapi.NewExecutableSchema(graphapi.Config{})
 	schema := execSchema.Schema()
 
 	// Some of our federation fields get marked as "BuiltIn" by gengql and the formatter doesn't print builtin types, this adds them for us.

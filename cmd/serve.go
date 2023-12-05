@@ -12,11 +12,11 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"github.com/datumforge/datum/internal/api"
 	"github.com/datumforge/datum/internal/echox"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/graphapi"
 )
 
 const (
@@ -226,7 +226,7 @@ func serve(ctx context.Context) error {
 		logger.Error("failed to create server", zap.Error(err))
 	}
 
-	r := api.NewResolver(client).
+	r := graphapi.NewResolver(client).
 		WithLogger(logger.Named("resolvers"))
 
 	if !oidcEnabled {

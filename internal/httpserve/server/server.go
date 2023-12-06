@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/echox"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
+	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
@@ -54,17 +55,21 @@ func (s *Server) StartEchoServer() error {
 	// hides echo's startup banner
 	srv.Debug = s.config.Debug
 
-	// add middleware
-	srv.Use(middleware.RequestID())
-	srv.Use(middleware.Recover())
-	srv.Use(echoprometheus.MetricsMiddleware())
-	srv.Use(echozap.ZapLogger(s.logger))
+	// default middleware
+	defaultMW := []echo.MiddlewareFunc{}
+	defaultMW = append(defaultMW,
+		middleware.RequestID(),                 // add request id
+		middleware.Recover(),                   // recover server from any panic/fatal error gracefully
+		echoprometheus.MetricsMiddleware(),     // add prometheus metrics
+		echozap.ZapLogger(s.logger),            // add zap logger
+		echox.EchoContextToContextMiddleware(), // adds echo context to parent
+		cors.New(),                             // add cors middleware
+		mime.New(),                             // add mime middleware
+	)
 
-	// add echo context to parent context
-	srv.Use(echox.EchoContextToContextMiddleware())
-
-	// Add cors middleware
-	srv.Use(cors.New())
+	for _, m := range defaultMW {
+		srv.Use(m)
+	}
 
 	// add all configured middleware
 	for _, m := range s.config.Middleware {

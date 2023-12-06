@@ -139,7 +139,7 @@ func graphTestClient(c *ent.Client) datumclient.DatumClient {
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
 			graphapi.NewExecutableSchema(
-				graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(zap.NewNop().Sugar())},
+				graphapi.Config{Resolvers: graphapi.NewResolver(c, true).WithLogger(zap.NewNop().Sugar())},
 			))}},
 	}
 
@@ -159,7 +159,7 @@ func graphTestClientNoAuth(c *ent.Client) datumclient.DatumClient {
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
 			graphapi.NewExecutableSchema(
-				graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(zap.NewNop().Sugar()).WithAuthDisabled(true)},
+				graphapi.Config{Resolvers: graphapi.NewResolver(c, false).WithLogger(zap.NewNop().Sugar())},
 			))}},
 	}
 

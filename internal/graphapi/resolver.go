@@ -52,12 +52,6 @@ func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 	return &r
 }
 
-// func (r Resolver) WithAuthDisabled(authDisabled bool) *Resolver {
-// 	r.authDisabled = authDisabled
-
-// 	return &r
-// }
-
 // Handler is an http handler wrapping a Resolver
 type Handler struct {
 	r              *Resolver

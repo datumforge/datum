@@ -1,4 +1,4 @@
-package echox
+package echomw
 
 import (
 	"context"

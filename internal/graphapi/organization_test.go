@@ -11,10 +11,10 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/datumclient"
-	"github.com/datumforge/datum/internal/echox"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echomw"
 )
 
 func TestQuery_Organization(t *testing.T) {
@@ -30,14 +30,14 @@ func TestQuery_Organization(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
 
-	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	ec, err := echomw.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -101,9 +101,9 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(EntClient)
 
-	ec := echox.NewTestEchoContext()
+	ec := echomw.NewTestEchoContext()
 
-	reqCtx := context.WithValue(ec.Request().Context(), echox.EchoContextKey, ec)
+	reqCtx := context.WithValue(ec.Request().Context(), echomw.EchoContextKey, ec)
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
@@ -154,14 +154,14 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
 
-	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	ec, err := echomw.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -227,14 +227,14 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
 	// Setup echo context
-	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	ec, err := echomw.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -372,9 +372,9 @@ func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(EntClient)
 
-	ec := echox.NewTestEchoContext()
+	ec := echomw.NewTestEchoContext()
 
-	reqCtx := context.WithValue(ec.Request().Context(), echox.EchoContextKey, ec)
+	reqCtx := context.WithValue(ec.Request().Context(), echomw.EchoContextKey, ec)
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
@@ -467,14 +467,14 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	client := graphTestClient(entClient)
 
 	// Setup echo context
-	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	ec, err := echomw.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -586,14 +586,14 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	client := graphTestClient(entClient)
 
 	// Setup echo context
-	ec, err := echox.NewTestContextWithValidUser(subClaim)
+	ec, err := echomw.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echox.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 

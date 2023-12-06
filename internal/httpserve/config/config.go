@@ -25,8 +25,14 @@ type (
 		// Auth contains the authentication provider(s)
 		Auth Auth `yaml:"auth"`
 
+		// Authz contains the authorization settings
+		Authz Authz `yaml:"authz"`
+
+		// DB contains the database configuration
+		DB DB `yaml:"auth"`
+
 		// Logger contains the logger used by echo functions
-		Logger *zap.Logger `yaml:"logger"`
+		Logger *zap.SugaredLogger `yaml:"logger"`
 	}
 
 	// Server settings
@@ -59,6 +65,18 @@ type (
 		Checks handlers.Checks `yaml:"checks"`
 	}
 
+	// DB Settings
+	DB struct {
+		// Debug to print debug database logs
+		Debug bool
+		// SQL Driver name from dialect.Driver
+		DriverName string
+		// Primary write database source (required)
+		PrimaryDBSource string
+		// Secondary write databsae source (optional)
+		SecondaryDBSource string
+	}
+
 	// Auth settings including providers and the ability to enable/disable auth all together
 	Auth struct {
 		// Enabled - checks this first before reading your provider config
@@ -67,6 +85,24 @@ type (
 		JWTSigningKey []byte `yaml:"jwtSigningKey"`
 		// A list of auth providers. Currently enables only the first provider in the list.
 		Providers []AuthProvider `yaml:"providers"`
+	}
+
+	// Authz settings for openFGA configuration and the ability to enable/disable authz all together
+	Authz struct {
+		// Enabled - checks this first before reading the config
+		Enabled bool `yaml:"enabled"`
+		// StoreName of the FGA Store
+		StoreName string `yaml:"storeName"`
+		// Host of the fga API
+		Host string `yaml:"host"`
+		// Scheme to connect to the fga API (http or https)
+		Scheme string `yaml:"enabled"`
+		// StoreID of the authorization store in FGA
+		StoreID string `yaml:"enabled"`
+		// ModelID that already exists in authorization store to be used
+		ModelID string `yaml:"enabled"`
+		// CreateNewModel force creates a new model, even if one already exists
+		CreateNewModel bool `yaml:"enabled"`
 	}
 
 	// CORS settings

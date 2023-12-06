@@ -9,12 +9,13 @@ import (
 
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
+	"github.com/openfga/go-sdk/credentials"
 	language "github.com/openfga/language/pkg/go/transformer"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 
-	"github.com/openfga/go-sdk/credentials"
-	"go.uber.org/zap"
+	"github.com/datumforge/datum/internal/httpserve/config"
 )
 
 const (
@@ -32,13 +33,20 @@ type Client struct {
 	Logger *zap.SugaredLogger
 }
 
+// Config configures the openFGA setup
 type Config struct {
-	Name           string
-	Host           string
-	Scheme         string
-	StoreID        string
-	ModelID        string
-	CreateNewModel bool
+	// config contains the base authz settings
+	config config.Authz
+	// logger contains the zap logger
+	logger *zap.SugaredLogger
+}
+
+// NewAuthzConfig returns a new authorization configuration
+func NewAuthzConfig(c config.Authz, l *zap.SugaredLogger) *Config {
+	return &Config{
+		config: c,
+		logger: l,
+	}
 }
 
 // Option is a functional configuration option for openFGA client
@@ -117,55 +125,57 @@ func WithLogger(l *zap.SugaredLogger) Option {
 }
 
 // CreateFGAClientWithStore returns a Client with a store and model configured
-func CreateFGAClientWithStore(ctx context.Context, config Config, logger *zap.SugaredLogger) (*Client, error) {
+func CreateFGAClientWithStore(ctx context.Context, c Config) (*Client, error) {
+	c.logger.Infow("setting up fga client", "host", c.config.Host, "scheme", c.config.Scheme)
+
 	// create store if an ID was not configured
-	if config.StoreID == "" {
+	if c.config.StoreID == "" {
 		// Create new store
 		fgaClient, err := NewClient(
-			config.Host,
-			WithScheme(config.Scheme),
-			WithLogger(logger),
+			c.config.Host,
+			WithScheme(c.config.Scheme),
+			WithLogger(c.logger),
 		)
 		if err != nil {
 			return nil, err
 		}
 
-		config.StoreID, err = fgaClient.CreateStore(ctx, config.Name)
+		c.config.StoreID, err = fgaClient.CreateStore(ctx, c.config.StoreName)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	// create model if ID was not configured
-	if config.ModelID == "" {
+	if c.config.ModelID == "" {
 		// create fga client with store ID
 		fgaClient, err := NewClient(
-			config.Host,
-			WithScheme(config.Scheme),
-			WithStoreID(config.StoreID),
-			WithLogger(logger),
+			c.config.Host,
+			WithScheme(c.config.Scheme),
+			WithStoreID(c.config.StoreID),
+			WithLogger(c.logger),
 		)
 		if err != nil {
 			return nil, err
 		}
 
 		// Create model if one does not already exist
-		modelID, err := fgaClient.CreateModel(ctx, storeModelFile, config.CreateNewModel)
+		modelID, err := fgaClient.CreateModel(ctx, storeModelFile, c.config.CreateNewModel)
 		if err != nil {
 			return nil, err
 		}
 
 		// Set ModelID in the config
-		config.ModelID = modelID
+		c.config.ModelID = modelID
 	}
 
 	// create fga client with store ID
 	return NewClient(
-		config.Host,
-		WithScheme(config.Scheme),
-		WithStoreID(config.StoreID),
-		WithAuthorizationModelID(config.ModelID),
-		WithLogger(logger),
+		c.config.Host,
+		WithScheme(c.config.Scheme),
+		WithStoreID(c.config.StoreID),
+		WithAuthorizationModelID(c.config.ModelID),
+		WithLogger(c.logger),
 	)
 }
 

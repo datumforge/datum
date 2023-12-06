@@ -71,9 +71,6 @@ func serve(ctx context.Context) error {
 		enablePlayground bool
 	)
 
-	// debug setting
-	debug := viper.GetBool("debug")
-
 	// create ready checks
 	readyChecks := handlers.Checks{}
 
@@ -88,20 +85,30 @@ func serve(ctx context.Context) error {
 	// create ent dependency injection
 	opts := []ent.Option{ent.Logger(*logger)}
 
-	// add the fga client if oidc is enabled
+	// Setup server config
+	serverConfig, err := setupConfig(readyChecks, authEnabled)
+	if err != nil {
+		return err
+	}
+
+	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
+	if err != nil {
+		return err
+	}
+
+	// Get server refresh config
+	s, err := cp.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	// setup Authz connection
+	// this must come before the database setup because the FGA Client
+	// is used as an ent dependency
 	if authEnabled {
-		config := fga.Config{
-			Name:           "datum",
-			Host:           viper.GetString("fga.host"),
-			Scheme:         viper.GetString("fga.scheme"),
-			StoreID:        viper.GetString("fga.store.id"),
-			ModelID:        viper.GetString("fga.model.id"),
-			CreateNewModel: viper.GetBool("fga.model.create"),
-		}
+		config := fga.NewAuthzConfig(s.Authz, logger)
 
-		logger.Infow("setting up fga client", "host", config.Host, "scheme", config.Scheme)
-
-		fgaClient, err = fga.CreateFGAClientWithStore(ctx, config, logger)
+		fgaClient, err = fga.CreateFGAClientWithStore(ctx, *config)
 		if err != nil {
 			return err
 		}
@@ -119,23 +126,16 @@ func serve(ctx context.Context) error {
 		mw = append(mw, jwtMiddleware)
 	}
 
-	// create new ent db client
-	entConfig := entdb.EntClientConfig{
-		Debug:           debug,
-		DriverName:      dialect.SQLite,
-		Logger:          *logger,
-		PrimaryDBSource: viper.GetString("db.primary"),
-	}
+	// Setup DB connection
+	dbConfig := entdb.NewDBConfig(s.DB, logger)
 
 	if viper.GetBool("db.multi-write") {
-		entConfig.SecondaryDBSource = viper.GetString("db.secondary")
-
-		entdbClient, err = entConfig.NewMultiDriverDBClient(ctx, opts)
+		entdbClient, err = dbConfig.NewMultiDriverDBClient(ctx, opts)
 		if err != nil {
 			return err
 		}
 	} else {
-		entdbClient, err = entConfig.NewEntDBDriver(ctx, opts)
+		entdbClient, err = dbConfig.NewEntDBDriver(ctx, opts)
 		if err != nil {
 			return err
 		}
@@ -143,24 +143,7 @@ func serve(ctx context.Context) error {
 
 	defer entdbClient.Close()
 
-	// Setup server config
-	serverConfig, err := setupServerConfig(readyChecks, authEnabled)
-	if err != nil {
-		return err
-	}
-
-	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
-	if err != nil {
-		return err
-	}
-
-	// Get server refresh config
-	s, err := cp.GetConfig()
-	if err != nil {
-		return err
-	}
-
-	srv := server.NewServer(s.Server, s.Logger)
+	srv := server.NewServer(s.Server, s.Logger.Desugar())
 
 	// Setup Graph API Handlers
 	r := graphapi.NewResolver(entdbClient, serverConfig.Auth.Enabled).
@@ -178,7 +161,8 @@ func serve(ctx context.Context) error {
 	return nil
 }
 
-func setupServerConfig(readyChecks handlers.Checks, authEnabled bool) (*config.Config, error) {
+// TODO: move this to serveropts
+func setupConfig(readyChecks handlers.Checks, authEnabled bool) (*config.Config, error) {
 	// Setup server config
 	httpsEnabled := viper.GetBool("server.https")
 	listenAddr := viper.GetString("server.listen")
@@ -194,9 +178,6 @@ func setupServerConfig(readyChecks handlers.Checks, authEnabled bool) (*config.C
 		WithDev(serveDevMode).                        // enable dev mode
 		SetDefaults()                                 // set defaults if not already set
 
-	serverConfig.Logger = logger.Desugar()
-	serverConfig.RefreshInterval = viper.GetDuration("server.config-refresh")
-	serverConfig.Auth.Enabled = authEnabled
 	serverConfig.Server.Checks = readyChecks
 
 	if httpsEnabled {
@@ -213,6 +194,41 @@ func setupServerConfig(readyChecks handlers.Checks, authEnabled bool) (*config.C
 			serverConfig.WithTLSCerts(certFile, certKey)
 		}
 	}
+
+	// Logger setup
+	serverConfig.Logger = logger
+
+	// Refresh Interval Setup
+	serverConfig.RefreshInterval = viper.GetDuration("server.config-refresh")
+
+	// Auth Setup
+	serverConfig.Auth.Enabled = authEnabled
+
+	// Database Settings
+	dbConfig := config.DB{
+		Debug:           serverDebug,
+		DriverName:      dialect.SQLite,
+		PrimaryDBSource: viper.GetString("db.primary"),
+	}
+
+	if viper.GetBool("db.multi-write") {
+		dbConfig.SecondaryDBSource = viper.GetString("db.secondary")
+	}
+
+	serverConfig.DB = dbConfig
+
+	// Authz Setup
+	authzConfig := config.Authz{
+		Enabled:        authEnabled,
+		StoreName:      "datum",
+		Host:           viper.GetString("fga.host"),
+		Scheme:         viper.GetString("fga.scheme"),
+		StoreID:        viper.GetString("fga.store.id"),
+		ModelID:        viper.GetString("fga.model.id"),
+		CreateNewModel: viper.GetBool("fga.model.create"),
+	}
+
+	serverConfig.Authz = authzConfig
 
 	return serverConfig, nil
 }

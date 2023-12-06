@@ -24,6 +24,7 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/graphapi"
+	"github.com/datumforge/datum/internal/httpserve/config"
 )
 
 var (
@@ -61,12 +62,13 @@ func setupDB() {
 		testDBURI = defaultDBURI
 	}
 
-	entConfig := entdb.EntClientConfig{
+	dbconf := config.DB{
 		Debug:           true,
 		DriverName:      dialect.SQLite,
-		Logger:          *logger,
 		PrimaryDBSource: testDBURI,
 	}
+
+	entConfig := entdb.NewDBConfig(dbconf, logger)
 
 	ctx := context.Background()
 
@@ -96,12 +98,13 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 		testDBURI = defaultDBURI
 	}
 
-	entConfig := entdb.EntClientConfig{
+	dbconf := config.DB{
 		Debug:           true,
 		DriverName:      dialect.SQLite,
-		Logger:          *logger,
 		PrimaryDBSource: testDBURI,
 	}
+
+	entConfig := entdb.NewDBConfig(dbconf, logger)
 
 	ctx := context.Background()
 

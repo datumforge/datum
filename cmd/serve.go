@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
 )
 
@@ -73,6 +74,9 @@ func serve(ctx context.Context) error {
 	// debug setting
 	debug := viper.GetBool("debug")
 
+	// create ready checks
+	readyChecks := handlers.Checks{}
+
 	// auth setting
 	authEnabled := viper.GetBool("oidc.enabled")
 
@@ -104,6 +108,9 @@ func serve(ctx context.Context) error {
 
 		// add client as ent dependency
 		opts = append(opts, ent.Authz(*fgaClient))
+
+		// add ready checkz
+		readyChecks.AddReadinessCheck("fga", fga.Healthcheck(*fgaClient))
 
 		// add jwt middleware
 		secretKey := []byte(viper.GetString("jwt.secretkey"))
@@ -137,6 +144,42 @@ func serve(ctx context.Context) error {
 	defer entdbClient.Close()
 
 	// Setup server config
+	serverConfig, err := setupServerConfig(readyChecks, authEnabled)
+	if err != nil {
+		return err
+	}
+
+	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
+	if err != nil {
+		return err
+	}
+
+	// Get server refresh config
+	s, err := cp.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	srv := server.NewServer(s.Server, s.Logger)
+
+	// Setup Graph API Handlers
+	r := graphapi.NewResolver(entdbClient, serverConfig.Auth.Enabled).
+		WithLogger(logger.Named("resolvers"))
+
+	handler := r.Handler(enablePlayground, mw...)
+
+	// Add Graph Handler
+	srv.AddHandler(handler)
+
+	if err := srv.StartEchoServer(); err != nil {
+		logger.Error("failed to run server", zap.Error(err))
+	}
+
+	return nil
+}
+
+func setupServerConfig(readyChecks handlers.Checks, authEnabled bool) (*config.Config, error) {
+	// Setup server config
 	httpsEnabled := viper.GetBool("server.https")
 	listenAddr := viper.GetString("server.listen")
 	shutdownGracePeriod := viper.GetDuration("server.shutdown-grace-period")
@@ -153,11 +196,8 @@ func serve(ctx context.Context) error {
 
 	serverConfig.Logger = logger.Desugar()
 	serverConfig.RefreshInterval = viper.GetDuration("server.config-refresh")
-
-	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
-	if err != nil {
-		return err
-	}
+	serverConfig.Auth.Enabled = authEnabled
+	serverConfig.Server.Checks = readyChecks
 
 	if httpsEnabled {
 		serverConfig.WithTLSDefaults()
@@ -167,38 +207,12 @@ func serve(ctx context.Context) error {
 		} else {
 			certFile, certKey, err := server.GetCertFiles(viper.GetString("server.ssl-cert"), viper.GetString("server.ssl-key"))
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			serverConfig.WithTLSCerts(certFile, certKey)
 		}
 	}
 
-	// Get server config
-	s, err := cp.GetConfig()
-	if err != nil {
-		return err
-	}
-
-	srv := server.NewServer(s.Server, s.Logger)
-
-	// Setup Graph API Handlers
-	r := graphapi.NewResolver(entdbClient).
-		WithLogger(logger.Named("resolvers"))
-
-	if !authEnabled {
-		serverConfig.Auth.Enabled = false
-		r = r.WithAuthDisabled(true)
-	}
-
-	handler := r.Handler(enablePlayground, mw...)
-
-	// Add Graph Handler
-	srv.AddHandler(handler)
-
-	if err := srv.StartEchoServer(); err != nil {
-		logger.Error("failed to run server", zap.Error(err))
-	}
-
-	return nil
+	return serverConfig, nil
 }

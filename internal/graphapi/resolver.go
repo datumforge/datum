@@ -38,11 +38,11 @@ type Resolver struct {
 }
 
 // NewResolver returns a resolver configured with the given ent client
-func NewResolver(client *ent.Client) *Resolver {
+func NewResolver(client *ent.Client, authEnabled bool) *Resolver {
 	return &Resolver{
 		client: client,
-		// do not disabled auth by default
-		authDisabled: false,
+		// do not disable auth by default
+		authDisabled: !authEnabled,
 	}
 }
 
@@ -52,11 +52,11 @@ func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 	return &r
 }
 
-func (r Resolver) WithAuthDisabled(authDisabled bool) *Resolver {
-	r.authDisabled = authDisabled
+// func (r Resolver) WithAuthDisabled(authDisabled bool) *Resolver {
+// 	r.authDisabled = authDisabled
 
-	return &r
-}
+// 	return &r
+// }
 
 // Handler is an http handler wrapping a Resolver
 type Handler struct {

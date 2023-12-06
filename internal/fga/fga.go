@@ -72,6 +72,10 @@ func NewClient(host string, opts ...Option) (*Client, error) {
 	return &client, err
 }
 
+func (c *Client) GetModelID() string {
+	return *c.Config.AuthorizationModelId
+}
+
 // WithScheme sets the open fga scheme, defaults to "https"
 func WithScheme(scheme string) Option {
 	return func(c *Client) {
@@ -146,9 +150,13 @@ func CreateFGAClientWithStore(ctx context.Context, config Config, logger *zap.Su
 		}
 
 		// Create model if one does not already exist
-		if _, err := fgaClient.CreateModel(ctx, storeModelFile, config.CreateNewModel); err != nil {
+		modelID, err := fgaClient.CreateModel(ctx, storeModelFile, config.CreateNewModel)
+		if err != nil {
 			return nil, err
 		}
+
+		// Set ModelID in the config
+		config.ModelID = modelID
 	}
 
 	// create fga client with store ID
@@ -254,4 +262,20 @@ func dslToJSON(dslString []byte) ([]byte, error) {
 	}
 
 	return protojson.Marshal(parsedAuthModel)
+}
+
+// Healthcheck reads the schema to check if the connection is working
+func Healthcheck(client Client) func(ctx context.Context) error {
+	return func(ctx context.Context) error {
+		opts := ofgaclient.ClientReadAuthorizationModelOptions{
+			AuthorizationModelId: client.Config.AuthorizationModelId,
+		}
+
+		_, err := client.Ofga.ReadAuthorizationModel(ctx).Options(opts).Execute()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}
 }

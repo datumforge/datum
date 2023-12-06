@@ -2,6 +2,8 @@ package route
 
 import (
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 type Route struct {
@@ -11,13 +13,13 @@ type Route struct {
 }
 
 // RegisterBaseRoutes with the echo routers
-func RegisterBaseRoutes(router *echo.Echo) error {
+func RegisterBaseRoutes(router *echo.Echo, checks *handlers.Checks) error {
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
 		return err
 	}
 
-	if err := registerReadinessHandler(router); err != nil {
+	if err := registerReadinessHandler(router, checks); err != nil {
 		return err
 	}
 

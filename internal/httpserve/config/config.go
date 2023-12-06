@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 type (
@@ -53,6 +55,8 @@ type (
 		Routes []http.Handler `yaml:"routes"`
 		// Middleware to enable on the echo server
 		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
+		// Checks contains readiness checks
+		Checks handlers.Checks `yaml:"checks"`
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

@@ -78,7 +78,7 @@ func (s *Server) StartEchoServer() error {
 	}
 
 	// Add base routes to the server
-	if err := route.RegisterBaseRoutes(srv); err != nil {
+	if err := route.RegisterBaseRoutes(srv, &s.config.Checks); err != nil {
 		return err
 	}
 

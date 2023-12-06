@@ -108,6 +108,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
+	r.logger.Infow("auth policy", "disabled", r.authDisabled)
 	if r.authDisabled {
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	} else {

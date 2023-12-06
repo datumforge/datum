@@ -23,7 +23,6 @@ func registerLivenessHandler(router *echo.Echo) (err error) {
 	return
 }
 
-// TODO: update readiness handlers
 func registerReadinessHandler(router *echo.Echo, readinessChecks *handlers.Checks) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,

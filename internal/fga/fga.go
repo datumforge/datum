@@ -264,7 +264,7 @@ func dslToJSON(dslString []byte) ([]byte, error) {
 	return protojson.Marshal(parsedAuthModel)
 }
 
-// Healthcheck reads the schema to check if the connection is working
+// Healthcheck reads the model to check if the connection is working
 func Healthcheck(client Client) func(ctx context.Context) error {
 	return func(ctx context.Context) error {
 		opts := ofgaclient.ClientReadAuthorizationModelOptions{

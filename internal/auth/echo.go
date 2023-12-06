@@ -29,6 +29,7 @@ func GetActorSubject(c echo.Context) (string, error) {
 	return sub, nil
 }
 
+// GetUserIDFromContext returns the actor subject from the echo context
 func GetUserIDFromContext(ctx context.Context) (string, error) {
 	ec, err := echox.EchoContextFromContext(ctx)
 	if err != nil {

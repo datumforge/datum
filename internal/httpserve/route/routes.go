@@ -12,8 +12,8 @@ type Route struct {
 	Handler echo.HandlerFunc
 }
 
-// RegisterBaseRoutes with the echo routers
-func RegisterBaseRoutes(router *echo.Echo, checks *handlers.Checks) error {
+// RegisterRoutes with the echo routers
+func RegisterRoutes(router *echo.Echo, checks *handlers.Checks) error {
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
 		return err
@@ -24,6 +24,10 @@ func RegisterBaseRoutes(router *echo.Echo, checks *handlers.Checks) error {
 	}
 
 	if err := registerMetricsHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerLoginHandler(router); err != nil {
 		return err
 	}
 

@@ -8,12 +8,12 @@ type ValidationError struct {
 	Allowed    string
 }
 
-// Error returns the PermissionDeniedError in string format
+// Error returns the ValidationError in string format
 func (e *ValidationError) Error() string {
 	return fmt.Sprintf("%s: %s", e.Validation, e.Allowed)
 }
 
-// newValidationError returns a PermissionDeniedError
+// newValidationError returns a ValidationError
 func newValidationError(v string, a string) *ValidationError {
 	return &ValidationError{
 		Validation: v,

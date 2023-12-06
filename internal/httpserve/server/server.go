@@ -19,7 +19,7 @@ type Server struct {
 	config config.Server
 	// logger contains the zap logger
 	logger *zap.Logger
-
+	// handlers contains additional handlers to register with the echo server
 	handlers []handler
 }
 
@@ -53,7 +53,6 @@ func (s *Server) StartEchoServer() error {
 		GracefulTimeout: s.config.ShutdownGracePeriod,
 	}
 
-	// hides echo's startup banner
 	srv.Debug = s.config.Debug
 
 	// default middleware
@@ -78,7 +77,7 @@ func (s *Server) StartEchoServer() error {
 	}
 
 	// Add base routes to the server
-	if err := route.RegisterBaseRoutes(srv, &s.config.Checks); err != nil {
+	if err := route.RegisterRoutes(srv, &s.config.Checks); err != nil {
 		return err
 	}
 

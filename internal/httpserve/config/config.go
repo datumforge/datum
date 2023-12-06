@@ -124,6 +124,7 @@ func (c *Config) GetConfig() (*Config, error) {
 	return c, nil
 }
 
+// NewConfig creates a new empty config
 func NewConfig() *Config {
 	c := Config{}
 

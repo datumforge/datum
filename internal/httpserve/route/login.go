@@ -6,7 +6,7 @@ import (
 	echo "github.com/datumforge/echox"
 )
 
-// TODO: add login handlers
+// TODO: implement login handler
 func registerLoginHandler(router *echo.Echo) (err error) { //nolint:unused
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,

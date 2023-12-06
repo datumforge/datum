@@ -35,8 +35,6 @@ type (
 		Dev bool `yaml:"dev"`
 		// Listen sets the listen address to serve the echo server on.
 		Listen string
-		// HTTPS configures an https server
-		HTTPS bool `yaml:"https"`
 		// ShutdownGracePeriod sets the grace period for in flight requests before shutting down.
 		ShutdownGracePeriod time.Duration `yaml:"shutdownGracePeriod"`
 		// ReadTimeout sets the maximum duration for reading the entire request including the body.
@@ -130,15 +128,13 @@ func NewConfig() *Config {
 
 // SetDefaults sets default values if not already defined.
 func (c *Config) SetDefaults() *Config {
-	if c.Server.HTTPS {
+	if c.Server.TLS.Enabled {
 		// use 443 for secure servers as the default port
 		c.Server.Listen = ":443"
 		c.Server.TLS.Config = DefaultTLSConfig
-		c.Server.TLS.Enabled = true
 	} else if c.Server.Listen == "" {
 		// set default port if none is provided
 		c.Server.Listen = ":8080"
-		c.Server.TLS.Enabled = false
 	}
 
 	if c.Server.ShutdownGracePeriod <= 0 {
@@ -187,7 +183,7 @@ func (c *Config) WithListen(listen string) *Config {
 
 // WithHTTPS enables https server options
 func (c *Config) WithHTTPS(https bool) *Config {
-	c.Server.HTTPS = https
+	c.Server.TLS.Enabled = https
 
 	return c
 }

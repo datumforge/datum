@@ -146,12 +146,12 @@ func serve(ctx context.Context) error {
 	autoCert := viper.GetBool("server.auto-cert")
 
 	serverConfig := config.NewConfig().
-		SetDefaults().                                // set defaults
 		WithListen(listenAddr).                       // set custom port
+		WithHTTPS(httpsEnabled).                      // enable https
 		WithShutdownGracePeriod(shutdownGracePeriod). // override default grace period shutdown
 		WithDebug(serverDebug).                       // enable debug mode
 		WithDev(serveDevMode).                        // enable dev mode
-		WithHTTPS(httpsEnabled)                       // enable https
+		SetDefaults()                                 // set defaults if not already set
 
 	serverConfig.Logger = logger.Desugar()
 

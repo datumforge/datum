@@ -47,9 +47,10 @@ func (s *Server) StartEchoServer() error {
 	srv := echo.New()
 
 	sc := echo.StartConfig{
-		HideBanner: true,
-		HidePort:   true,
-		Address:    s.config.Listen,
+		HideBanner:      true,
+		HidePort:        true,
+		Address:         s.config.Listen,
+		GracefulTimeout: s.config.ShutdownGracePeriod,
 	}
 
 	// hides echo's startup banner
@@ -94,6 +95,8 @@ func (s *Server) StartEchoServer() error {
 
 	// if TLS is enabled, start new echo server with TLS
 	if s.config.TLS.Enabled {
+		s.logger.Sugar().Infow("starting in https mode")
+
 		return sc.StartTLS(srv, s.config.TLS.CertFile, s.config.TLS.CertKey)
 	}
 

@@ -28,6 +28,7 @@ func RegisterBaseRoutes(router *echo.Echo) error {
 	return nil
 }
 
+// RegisterRoute with the echo server given a method, path, and handler definition
 func (r *Route) RegisterRoute(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method:  r.Method,

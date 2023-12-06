@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"time"
 
 	"entgo.io/ent/dialect"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
@@ -87,7 +86,6 @@ func serve(ctx context.Context) error {
 
 	// add the fga client if oidc is enabled
 	if authEnabled {
-		// TODO (sfunk): create fga.NewConfig() func
 		config := fga.Config{
 			Name:           "datum",
 			Host:           viper.GetString("fga.host"),
@@ -154,9 +152,7 @@ func serve(ctx context.Context) error {
 		SetDefaults()                                 // set defaults if not already set
 
 	serverConfig.Logger = logger.Desugar()
-
-	// TODO: set as default
-	serverConfig.RefreshInterval = 10 * time.Minute //nolint
+	serverConfig.RefreshInterval = viper.GetDuration("server.config-refresh")
 
 	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
 	if err != nil {
@@ -178,6 +174,14 @@ func serve(ctx context.Context) error {
 		}
 	}
 
+	// Get server config
+	s, err := cp.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	srv := server.NewServer(s.Server, s.Logger)
+
 	// Setup Graph API Handlers
 	r := graphapi.NewResolver(entdbClient).
 		WithLogger(logger.Named("resolvers"))
@@ -188,14 +192,6 @@ func serve(ctx context.Context) error {
 	}
 
 	handler := r.Handler(enablePlayground, mw...)
-
-	// Start server
-	s, err := cp.GetConfig()
-	if err != nil {
-		return err
-	}
-
-	srv := server.NewServer(s.Server, s.Logger)
 
 	// Add Graph Handler
 	srv.AddHandler(handler)

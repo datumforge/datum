@@ -19,6 +19,8 @@ var (
 	DefaultIdleTimeout = 30 * time.Second
 	// DefaultReadHeaderTimeout sets the default amount of time allowed to read request headers.
 	DefaultReadHeaderTimeout = 2 * time.Second
+	// DefaultConfigRefresh sets the default interval to refresh the config.
+	DefaultConfigRefresh = 10 * time.Minute
 	// DefaultCertFile is the default cert file location
 	DefaultCertFile = "server.crt"
 	// DefaultKeyFile is the default key file location

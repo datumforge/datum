@@ -44,7 +44,7 @@ func RegisterServerFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 		return err
 	}
 
-	err = viperconfig.BindConfigFlag(v, flags, "server.shutdown-grace-period", "shutdown-grace-period", DefaultShutdownGracePeriod, "server shutdown grace periodt", flags.Duration)
+	err = viperconfig.BindConfigFlag(v, flags, "server.shutdown-grace-period", "shutdown-grace-period", 0, "server shutdown grace periodt", flags.Duration)
 	if err != nil {
 		return err
 	}

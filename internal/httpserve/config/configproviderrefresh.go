@@ -1,7 +1,6 @@
 package config
 
 import (
-	"log"
 	"sync"
 	"time"
 )
@@ -66,11 +65,12 @@ func (s *ConfigProviderWithRefresh) refreshConfig() {
 
 		newConfig, err := s.configProvider.GetConfig()
 		if err != nil {
-			log.Printf("unable to load new server configuration: %s", err)
+			s.config.Logger.Error("failed to load new server configuration")
 			continue
 		}
 
-		log.Printf("loaded new server configuration")
+		s.config.Logger.Info("loaded new server configuration")
+
 		s.Lock()
 		s.config = newConfig
 		s.Unlock()

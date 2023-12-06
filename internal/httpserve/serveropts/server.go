@@ -2,15 +2,11 @@ package serveropts
 
 import (
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/middleware"
 )
 
-type (
-	ServerOptions struct {
-		ConfigProvider config.ConfigProvider
-		APIMiddleware  []middleware.MiddlewareFunc
-	}
-)
+type ServerOptions struct {
+	ConfigProvider config.ConfigProvider
+}
 
 func NewServerOptions(opts []ServerOption) *ServerOptions {
 	so := &ServerOptions{

@@ -9,6 +9,7 @@ import (
 
 	"github.com/datumforge/datum/internal/echox"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
@@ -61,6 +62,9 @@ func (s *Server) StartEchoServer() error {
 
 	// add echo context to parent context
 	srv.Use(echox.EchoContextToContextMiddleware())
+
+	// Add cors middleware
+	srv.Use(cors.New())
 
 	// add all configured middleware
 	for _, m := range s.config.Middleware {

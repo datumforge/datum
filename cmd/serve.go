@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"log"
+	"time"
 
 	"entgo.io/ent/dialect"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
@@ -154,6 +155,14 @@ func serve(ctx context.Context) error {
 
 	serverConfig.Logger = logger.Desugar()
 
+	// TODO: set as default
+	serverConfig.RefreshInterval = 10 * time.Minute //nolint
+
+	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
+	if err != nil {
+		return err
+	}
+
 	if httpsEnabled {
 		serverConfig.WithTLSDefaults()
 
@@ -181,7 +190,12 @@ func serve(ctx context.Context) error {
 	handler := r.Handler(enablePlayground, mw...)
 
 	// Start server
-	srv := server.NewServer(serverConfig.Server, serverConfig.Logger)
+	s, err := cp.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	srv := server.NewServer(s.Server, s.Logger)
 
 	// Add Graph Handler
 	srv.AddHandler(handler)

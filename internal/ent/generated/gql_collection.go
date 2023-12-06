@@ -234,6 +234,16 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, group.FieldUpdatedBy)
 				fieldSeen[group.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[group.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, group.FieldDeletedAt)
+				fieldSeen[group.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[group.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, group.FieldDeletedBy)
+				fieldSeen[group.FieldDeletedBy] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[group.FieldName]; !ok {
 				selectedFields = append(selectedFields, group.FieldName)
@@ -1160,7 +1170,7 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "user":
+		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1169,11 +1179,7 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			pat.withUser = query
-			if _, ok := fieldSeen[personalaccesstoken.FieldUserID]; !ok {
-				selectedFields = append(selectedFields, personalaccesstoken.FieldUserID)
-				fieldSeen[personalaccesstoken.FieldUserID] = struct{}{}
-			}
+			pat.withOwner = query
 		case "createdAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldCreatedAt)
@@ -1199,11 +1205,6 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				selectedFields = append(selectedFields, personalaccesstoken.FieldName)
 				fieldSeen[personalaccesstoken.FieldName] = struct{}{}
 			}
-		case "userID":
-			if _, ok := fieldSeen[personalaccesstoken.FieldUserID]; !ok {
-				selectedFields = append(selectedFields, personalaccesstoken.FieldUserID)
-				fieldSeen[personalaccesstoken.FieldUserID] = struct{}{}
-			}
 		case "abilities":
 			if _, ok := fieldSeen[personalaccesstoken.FieldAbilities]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldAbilities)
@@ -1213,6 +1214,11 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 			if _, ok := fieldSeen[personalaccesstoken.FieldExpirationAt]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldExpirationAt)
 				fieldSeen[personalaccesstoken.FieldExpirationAt] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[personalaccesstoken.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldDescription)
+				fieldSeen[personalaccesstoken.FieldDescription] = struct{}{}
 			}
 		case "lastUsedAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldLastUsedAt]; !ok {
@@ -1629,6 +1635,16 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if _, ok := fieldSeen[user.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, user.FieldUpdatedBy)
 				fieldSeen[user.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[user.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, user.FieldDeletedAt)
+				fieldSeen[user.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[user.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, user.FieldDeletedBy)
+				fieldSeen[user.FieldDeletedBy] = struct{}{}
 			}
 		case "email":
 			if _, ok := fieldSeen[user.FieldEmail]; !ok {

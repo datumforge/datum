@@ -1,4 +1,4 @@
-package api_test
+package graphapi_test
 
 import (
 	"context"
@@ -18,12 +18,12 @@ import (
 	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
 
-	"github.com/datumforge/datum/internal/api"
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	"github.com/datumforge/datum/internal/graphapi"
 )
 
 var (
@@ -138,8 +138,8 @@ func graphTestClient(c *ent.Client) datumclient.DatumClient {
 	g := &graphClient{
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
-			api.NewExecutableSchema(
-				api.Config{Resolvers: api.NewResolver(c).WithLogger(zap.NewNop().Sugar())},
+			graphapi.NewExecutableSchema(
+				graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(zap.NewNop().Sugar())},
 			))}},
 	}
 
@@ -158,8 +158,8 @@ func graphTestClientNoAuth(c *ent.Client) datumclient.DatumClient {
 	g := &graphClient{
 		srvURL: "query",
 		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
-			api.NewExecutableSchema(
-				api.Config{Resolvers: api.NewResolver(c).WithLogger(zap.NewNop().Sugar()).WithAuthDisabled(true)},
+			graphapi.NewExecutableSchema(
+				graphapi.Config{Resolvers: graphapi.NewResolver(c).WithLogger(zap.NewNop().Sugar()).WithAuthDisabled(true)},
 			))}},
 	}
 

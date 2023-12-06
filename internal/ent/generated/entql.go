@@ -67,6 +67,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldUpdatedAt:   {Type: field.TypeTime, Column: group.FieldUpdatedAt},
 			group.FieldCreatedBy:   {Type: field.TypeString, Column: group.FieldCreatedBy},
 			group.FieldUpdatedBy:   {Type: field.TypeString, Column: group.FieldUpdatedBy},
+			group.FieldDeletedAt:   {Type: field.TypeTime, Column: group.FieldDeletedAt},
+			group.FieldDeletedBy:   {Type: field.TypeString, Column: group.FieldDeletedBy},
 			group.FieldName:        {Type: field.TypeString, Column: group.FieldName},
 			group.FieldDescription: {Type: field.TypeString, Column: group.FieldDescription},
 			group.FieldLogoURL:     {Type: field.TypeString, Column: group.FieldLogoURL},
@@ -208,10 +210,10 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldCreatedBy:    {Type: field.TypeString, Column: personalaccesstoken.FieldCreatedBy},
 			personalaccesstoken.FieldUpdatedBy:    {Type: field.TypeString, Column: personalaccesstoken.FieldUpdatedBy},
 			personalaccesstoken.FieldName:         {Type: field.TypeString, Column: personalaccesstoken.FieldName},
-			personalaccesstoken.FieldUserID:       {Type: field.TypeString, Column: personalaccesstoken.FieldUserID},
 			personalaccesstoken.FieldToken:        {Type: field.TypeString, Column: personalaccesstoken.FieldToken},
 			personalaccesstoken.FieldAbilities:    {Type: field.TypeJSON, Column: personalaccesstoken.FieldAbilities},
 			personalaccesstoken.FieldExpirationAt: {Type: field.TypeTime, Column: personalaccesstoken.FieldExpirationAt},
+			personalaccesstoken.FieldDescription:  {Type: field.TypeString, Column: personalaccesstoken.FieldDescription},
 			personalaccesstoken.FieldLastUsedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
 	}
@@ -279,6 +281,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldUpdatedAt:       {Type: field.TypeTime, Column: user.FieldUpdatedAt},
 			user.FieldCreatedBy:       {Type: field.TypeString, Column: user.FieldCreatedBy},
 			user.FieldUpdatedBy:       {Type: field.TypeString, Column: user.FieldUpdatedBy},
+			user.FieldDeletedAt:       {Type: field.TypeTime, Column: user.FieldDeletedAt},
+			user.FieldDeletedBy:       {Type: field.TypeString, Column: user.FieldDeletedBy},
 			user.FieldEmail:           {Type: field.TypeString, Column: user.FieldEmail},
 			user.FieldFirstName:       {Type: field.TypeString, Column: user.FieldFirstName},
 			user.FieldLastName:        {Type: field.TypeString, Column: user.FieldLastName},
@@ -511,12 +515,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Organization",
 	)
 	graph.MustAddE(
-		"user",
+		"owner",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   personalaccesstoken.UserTable,
-			Columns: []string{personalaccesstoken.UserColumn},
+			Table:   personalaccesstoken.OwnerTable,
+			Columns: []string{personalaccesstoken.OwnerColumn},
 			Bidi:    false,
 		},
 		"PersonalAccessToken",
@@ -816,6 +820,16 @@ func (f *GroupFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *GroupFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(group.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(group.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(group.FieldDeletedBy))
 }
 
 // WhereName applies the entql string predicate on the name field.
@@ -1583,11 +1597,6 @@ func (f *PersonalAccessTokenFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(personalaccesstoken.FieldName))
 }
 
-// WhereUserID applies the entql string predicate on the user_id field.
-func (f *PersonalAccessTokenFilter) WhereUserID(p entql.StringP) {
-	f.Where(p.Field(personalaccesstoken.FieldUserID))
-}
-
 // WhereToken applies the entql string predicate on the token field.
 func (f *PersonalAccessTokenFilter) WhereToken(p entql.StringP) {
 	f.Where(p.Field(personalaccesstoken.FieldToken))
@@ -1603,19 +1612,24 @@ func (f *PersonalAccessTokenFilter) WhereExpirationAt(p entql.TimeP) {
 	f.Where(p.Field(personalaccesstoken.FieldExpirationAt))
 }
 
+// WhereDescription applies the entql string predicate on the description field.
+func (f *PersonalAccessTokenFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldDescription))
+}
+
 // WhereLastUsedAt applies the entql time.Time predicate on the last_used_at field.
 func (f *PersonalAccessTokenFilter) WhereLastUsedAt(p entql.TimeP) {
 	f.Where(p.Field(personalaccesstoken.FieldLastUsedAt))
 }
 
-// WhereHasUser applies a predicate to check if query has an edge user.
-func (f *PersonalAccessTokenFilter) WhereHasUser() {
-	f.Where(entql.HasEdge("user"))
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *PersonalAccessTokenFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
 }
 
-// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
-func (f *PersonalAccessTokenFilter) WhereHasUserWith(preds ...predicate.User) {
-	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *PersonalAccessTokenFilter) WhereHasOwnerWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}
@@ -1903,6 +1917,16 @@ func (f *UserFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *UserFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(user.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *UserFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(user.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *UserFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(user.FieldDeletedBy))
 }
 
 // WhereEmail applies the entql string predicate on the email field.

@@ -48,11 +48,13 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "logo_url", Type: field.TypeString},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
-		{Name: "organization_groups", Type: field.TypeString, Nullable: true},
+		{Name: "organization_groups", Type: field.TypeString},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -62,7 +64,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "groups_organizations_groups",
-				Columns:    []*schema.Column{GroupsColumns[9]},
+				Columns:    []*schema.Column{GroupsColumns[11]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -71,7 +73,10 @@ var (
 			{
 				Name:    "group_name_organization_groups",
 				Unique:  true,
-				Columns: []*schema.Column{GroupsColumns[5], GroupsColumns[9]},
+				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[11]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}
@@ -99,7 +104,7 @@ var (
 				Symbol:     "group_settings_groups_setting",
 				Columns:    []*schema.Column{GroupSettingsColumns[10]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -241,11 +246,12 @@ var (
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "token", Type: field.TypeString},
+		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
 		{Name: "expiration_at", Type: field.TypeTime},
+		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "user_id", Type: field.TypeString},
+		{Name: "user_personal_access_tokens", Type: field.TypeString},
 	}
 	// PersonalAccessTokensTable holds the schema information for the "personal_access_tokens" table.
 	PersonalAccessTokensTable = &schema.Table{
@@ -255,9 +261,9 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "personal_access_tokens_users_personal_access_tokens",
-				Columns:    []*schema.Column{PersonalAccessTokensColumns[10]},
+				Columns:    []*schema.Column{PersonalAccessTokensColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -350,6 +356,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},

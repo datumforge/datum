@@ -1,4 +1,4 @@
-package api
+package graphapi
 
 import (
 	"context"
@@ -37,4 +37,16 @@ func (r *mutationResolver) createOrg(ctx context.Context, input generated.Create
 	}
 
 	return &OrganizationCreatePayload{Organization: org}, nil
+}
+
+// defaultOrganizationSettings creates the default organizations settings for a new org
+func (r *mutationResolver) defaultOrganizationSettings(ctx context.Context) (string, error) { //nolint:unused
+	input := generated.CreateOrganizationSettingInput{}
+
+	organizationSetting, err := r.client.OrganizationSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return organizationSetting.ID, nil
 }

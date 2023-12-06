@@ -29,26 +29,27 @@ type PersonalAccessToken struct {
 	UpdatedBy string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
-	// UserID holds the value of the "user_id" field.
-	UserID string `json:"user_id,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"-"`
 	// Abilities holds the value of the "abilities" field.
 	Abilities []string `json:"abilities,omitempty"`
 	// ExpirationAt holds the value of the "expiration_at" field.
 	ExpirationAt time.Time `json:"expiration_at,omitempty"`
+	// Description holds the value of the "description" field.
+	Description string `json:"description,omitempty"`
 	// LastUsedAt holds the value of the "last_used_at" field.
 	LastUsedAt *time.Time `json:"last_used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PersonalAccessTokenQuery when eager-loading is set.
-	Edges        PersonalAccessTokenEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                       PersonalAccessTokenEdges `json:"edges"`
+	user_personal_access_tokens *string
+	selectValues                sql.SelectValues
 }
 
 // PersonalAccessTokenEdges holds the relations/edges for other nodes in the graph.
 type PersonalAccessTokenEdges struct {
-	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
+	// Owner holds the value of the owner edge.
+	Owner *User `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -56,17 +57,17 @@ type PersonalAccessTokenEdges struct {
 	totalCount [1]map[string]int
 }
 
-// UserOrErr returns the User value or an error if the edge
+// OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e PersonalAccessTokenEdges) UserOrErr() (*User, error) {
+func (e PersonalAccessTokenEdges) OwnerOrErr() (*User, error) {
 	if e.loadedTypes[0] {
-		if e.User == nil {
+		if e.Owner == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: user.Label}
 		}
-		return e.User, nil
+		return e.Owner, nil
 	}
-	return nil, &NotLoadedError{edge: "user"}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -76,10 +77,12 @@ func (*PersonalAccessToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case personalaccesstoken.FieldAbilities:
 			values[i] = new([]byte)
-		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldName, personalaccesstoken.FieldUserID, personalaccesstoken.FieldToken:
+		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
 			values[i] = new(sql.NullString)
 		case personalaccesstoken.FieldCreatedAt, personalaccesstoken.FieldUpdatedAt, personalaccesstoken.FieldExpirationAt, personalaccesstoken.FieldLastUsedAt:
 			values[i] = new(sql.NullTime)
+		case personalaccesstoken.ForeignKeys[0]: // user_personal_access_tokens
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -131,12 +134,6 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				pat.Name = value.String
 			}
-		case personalaccesstoken.FieldUserID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_id", values[i])
-			} else if value.Valid {
-				pat.UserID = value.String
-			}
 		case personalaccesstoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
@@ -157,12 +154,25 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				pat.ExpirationAt = value.Time
 			}
+		case personalaccesstoken.FieldDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field description", values[i])
+			} else if value.Valid {
+				pat.Description = value.String
+			}
 		case personalaccesstoken.FieldLastUsedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field last_used_at", values[i])
 			} else if value.Valid {
 				pat.LastUsedAt = new(time.Time)
 				*pat.LastUsedAt = value.Time
+			}
+		case personalaccesstoken.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_personal_access_tokens", values[i])
+			} else if value.Valid {
+				pat.user_personal_access_tokens = new(string)
+				*pat.user_personal_access_tokens = value.String
 			}
 		default:
 			pat.selectValues.Set(columns[i], values[i])
@@ -177,9 +187,9 @@ func (pat *PersonalAccessToken) Value(name string) (ent.Value, error) {
 	return pat.selectValues.Get(name)
 }
 
-// QueryUser queries the "user" edge of the PersonalAccessToken entity.
-func (pat *PersonalAccessToken) QueryUser() *UserQuery {
-	return NewPersonalAccessTokenClient(pat.config).QueryUser(pat)
+// QueryOwner queries the "owner" edge of the PersonalAccessToken entity.
+func (pat *PersonalAccessToken) QueryOwner() *UserQuery {
+	return NewPersonalAccessTokenClient(pat.config).QueryOwner(pat)
 }
 
 // Update returns a builder for updating this PersonalAccessToken.
@@ -220,9 +230,6 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString("name=")
 	builder.WriteString(pat.Name)
 	builder.WriteString(", ")
-	builder.WriteString("user_id=")
-	builder.WriteString(pat.UserID)
-	builder.WriteString(", ")
 	builder.WriteString("token=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("abilities=")
@@ -230,6 +237,9 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("expiration_at=")
 	builder.WriteString(pat.ExpirationAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("description=")
+	builder.WriteString(pat.Description)
 	builder.WriteString(", ")
 	if v := pat.LastUsedAt; v != nil {
 		builder.WriteString("last_used_at=")

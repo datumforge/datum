@@ -13,11 +13,11 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/api"
 	"github.com/datumforge/datum/internal/auth"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
 )
@@ -179,7 +179,7 @@ func serve(ctx context.Context) error {
 	}
 
 	// Setup Graph API Handlers
-	r := api.NewResolver(entdbClient).
+	r := graphapi.NewResolver(entdbClient).
 		WithLogger(logger.Named("resolvers"))
 
 	if !authEnabled {

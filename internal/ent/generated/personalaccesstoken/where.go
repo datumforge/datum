@@ -92,11 +92,6 @@ func Name(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldName, v))
 }
 
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldEQ(FieldUserID, v))
-}
-
 // Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
 func Token(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldToken, v))
@@ -105,6 +100,11 @@ func Token(v string) predicate.PersonalAccessToken {
 // ExpirationAt applies equality check predicate on the "expiration_at" field. It's identical to ExpirationAtEQ.
 func ExpirationAt(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldExpirationAt, v))
+}
+
+// Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
+func Description(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldEQ(FieldDescription, v))
 }
 
 // LastUsedAt applies equality check predicate on the "last_used_at" field. It's identical to LastUsedAtEQ.
@@ -407,71 +407,6 @@ func NameContainsFold(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldContainsFold(FieldName, v))
 }
 
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldEQ(FieldUserID, v))
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.PersonalAccessToken {
-	return predicate.PersonalAccessToken(sql.FieldContainsFold(FieldUserID, v))
-}
-
 // TokenEQ applies the EQ predicate on the "token" field.
 func TokenEQ(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldToken, v))
@@ -587,6 +522,71 @@ func ExpirationAtLTE(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldLTE(FieldExpirationAt, v))
 }
 
+// DescriptionEQ applies the EQ predicate on the "description" field.
+func DescriptionEQ(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldEQ(FieldDescription, v))
+}
+
+// DescriptionNEQ applies the NEQ predicate on the "description" field.
+func DescriptionNEQ(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldNEQ(FieldDescription, v))
+}
+
+// DescriptionIn applies the In predicate on the "description" field.
+func DescriptionIn(vs ...string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldIn(FieldDescription, vs...))
+}
+
+// DescriptionNotIn applies the NotIn predicate on the "description" field.
+func DescriptionNotIn(vs ...string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldNotIn(FieldDescription, vs...))
+}
+
+// DescriptionGT applies the GT predicate on the "description" field.
+func DescriptionGT(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldGT(FieldDescription, v))
+}
+
+// DescriptionGTE applies the GTE predicate on the "description" field.
+func DescriptionGTE(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldGTE(FieldDescription, v))
+}
+
+// DescriptionLT applies the LT predicate on the "description" field.
+func DescriptionLT(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldLT(FieldDescription, v))
+}
+
+// DescriptionLTE applies the LTE predicate on the "description" field.
+func DescriptionLTE(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldLTE(FieldDescription, v))
+}
+
+// DescriptionContains applies the Contains predicate on the "description" field.
+func DescriptionContains(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldContains(FieldDescription, v))
+}
+
+// DescriptionHasPrefix applies the HasPrefix predicate on the "description" field.
+func DescriptionHasPrefix(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldHasPrefix(FieldDescription, v))
+}
+
+// DescriptionHasSuffix applies the HasSuffix predicate on the "description" field.
+func DescriptionHasSuffix(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldHasSuffix(FieldDescription, v))
+}
+
+// DescriptionEqualFold applies the EqualFold predicate on the "description" field.
+func DescriptionEqualFold(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldEqualFold(FieldDescription, v))
+}
+
+// DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
+func DescriptionContainsFold(v string) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldContainsFold(FieldDescription, v))
+}
+
 // LastUsedAtEQ applies the EQ predicate on the "last_used_at" field.
 func LastUsedAtEQ(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldLastUsedAt, v))
@@ -637,12 +637,12 @@ func LastUsedAtNotNil() predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldNotNull(FieldLastUsedAt))
 }
 
-// HasUser applies the HasEdge predicate on the "user" edge.
-func HasUser() predicate.PersonalAccessToken {
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, UserTable, UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
@@ -651,10 +651,10 @@ func HasUser() predicate.PersonalAccessToken {
 	})
 }
 
-// HasUserWith applies the HasEdge predicate on the "user" edge with a given conditions (other predicates).
-func HasUserWith(preds ...predicate.User) predicate.PersonalAccessToken {
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.User) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(func(s *sql.Selector) {
-		step := newUserStep()
+		step := newOwnerStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
 		step.Edge.Schema = schemaConfig.PersonalAccessToken

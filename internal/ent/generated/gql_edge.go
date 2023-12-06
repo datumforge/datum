@@ -41,7 +41,7 @@ func (gr *Group) Owner(ctx context.Context) (*Organization, error) {
 	if IsNotLoaded(err) {
 		result, err = gr.QueryOwner().Only(ctx)
 	}
-	return result, MaskNotFound(err)
+	return result, err
 }
 
 func (gs *GroupSetting) Group(ctx context.Context) (*Group, error) {
@@ -173,10 +173,10 @@ func (os *OrganizationSetting) Organization(ctx context.Context) (*Organization,
 	return result, MaskNotFound(err)
 }
 
-func (pat *PersonalAccessToken) User(ctx context.Context) (*User, error) {
-	result, err := pat.Edges.UserOrErr()
+func (pat *PersonalAccessToken) Owner(ctx context.Context) (*User, error) {
+	result, err := pat.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
-		result, err = pat.QueryUser().Only(ctx)
+		result, err = pat.QueryOwner().Only(ctx)
 	}
 	return result, err
 }

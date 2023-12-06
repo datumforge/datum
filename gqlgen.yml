@@ -4,24 +4,24 @@ schema:
 
 # Where should the generated server code go?
 exec:
-  filename: internal/api/gen_server.go
-  package: api
+  filename: internal/graphapi/gen_server.go
+  package: graphapi
 
 # Uncomment to enable federation
 federation:
-  filename: internal/api/federation.go
-  package: api
+  filename: internal/graphapi/federation.go
+  package: graphapi
 
 # Where should any generated models go?
 model:
-  filename: internal/api/gen_models.go
-  package: api
+  filename: internal/graphapi/gen_models.go
+  package: graphapi
 
 # Where should the resolver implementations go?
 resolver:
   layout: follow-schema
-  dir: internal/api
-  package: api
+  dir: internal/graphapi
+  package: graphapi
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
@@ -66,7 +66,7 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
- - "github.com/datumforge/datum/internal/api"
+ - "github.com/datumforge/datum/internal/graphapi"
  - "github.com/datumforge/datum/internal/ent/generated"
 
 

@@ -40,7 +40,7 @@ input CreateGroupInput {
 	displayName: String
 	settingID: ID!
 	userIDs: [ID!]
-	ownerID: ID
+	ownerID: ID!
 }
 """
 CreateGroupSettingInput is used for create GroupSetting object.
@@ -160,11 +160,12 @@ input CreatePersonalAccessTokenInput {
 	createdBy: String
 	updatedBy: String
 	name: String!
-	token: String!
+	token: String
 	abilities: [String!]
 	expirationAt: Time!
+	description: String
 	lastUsedAt: Time
-	userID: ID!
+	ownerID: ID!
 }
 """
 CreateRefreshTokenInput is used for create RefreshToken object.
@@ -515,6 +516,8 @@ type Group implements Node {
 	updatedAt: Time!
 	createdBy: String
 	updatedBy: String
+	deletedAt: Time
+	deletedBy: String
 	name: String!
 	description: String!
 	logoURL: String!
@@ -522,7 +525,7 @@ type Group implements Node {
 	displayName: String!
 	setting: GroupSetting!
 	users: [User!]
-	owner: Organization
+	owner: Organization!
 }
 """A connection to a list of items."""
 type GroupConnection {
@@ -782,6 +785,33 @@ input GroupWhereInput {
 	updatedByNotNil: Boolean
 	updatedByEqualFold: String
 	updatedByContainsFold: String
+	"""deleted_at field predicates"""
+	deletedAt: Time
+	deletedAtNEQ: Time
+	deletedAtIn: [Time!]
+	deletedAtNotIn: [Time!]
+	deletedAtGT: Time
+	deletedAtGTE: Time
+	deletedAtLT: Time
+	deletedAtLTE: Time
+	deletedAtIsNil: Boolean
+	deletedAtNotNil: Boolean
+	"""deleted_by field predicates"""
+	deletedBy: String
+	deletedByNEQ: String
+	deletedByIn: [String!]
+	deletedByNotIn: [String!]
+	deletedByGT: String
+	deletedByGTE: String
+	deletedByLT: String
+	deletedByLTE: String
+	deletedByContains: String
+	deletedByHasPrefix: String
+	deletedByHasSuffix: String
+	deletedByIsNil: Boolean
+	deletedByNotNil: Boolean
+	deletedByEqualFold: String
+	deletedByContainsFold: String
 	"""name field predicates"""
 	name: String
 	nameNEQ: String
@@ -1969,11 +1999,11 @@ type PersonalAccessToken implements Node {
 	createdBy: String
 	updatedBy: String
 	name: String!
-	userID: ID!
 	abilities: [String!]
 	expirationAt: Time!
+	description: String!
 	lastUsedAt: Time
-	user: User!
+	owner: User!
 }
 """A connection to a list of items."""
 type PersonalAccessTokenConnection {
@@ -2089,20 +2119,6 @@ input PersonalAccessTokenWhereInput {
 	nameHasSuffix: String
 	nameEqualFold: String
 	nameContainsFold: String
-	"""user_id field predicates"""
-	userID: ID
-	userIDNEQ: ID
-	userIDIn: [ID!]
-	userIDNotIn: [ID!]
-	userIDGT: ID
-	userIDGTE: ID
-	userIDLT: ID
-	userIDLTE: ID
-	userIDContains: ID
-	userIDHasPrefix: ID
-	userIDHasSuffix: ID
-	userIDEqualFold: ID
-	userIDContainsFold: ID
 	"""expiration_at field predicates"""
 	expirationAt: Time
 	expirationAtNEQ: Time
@@ -2123,9 +2139,9 @@ input PersonalAccessTokenWhereInput {
 	lastUsedAtLTE: Time
 	lastUsedAtIsNil: Boolean
 	lastUsedAtNotNil: Boolean
-	"""user edge predicates"""
-	hasUser: Boolean
-	hasUserWith: [UserWhereInput!]
+	"""owner edge predicates"""
+	hasOwner: Boolean
+	hasOwnerWith: [UserWhereInput!]
 }
 type Query {
 	"""Fetches an object given its ID."""
@@ -2848,7 +2864,6 @@ input UpdateGroupInput {
 	removeUserIDs: [ID!]
 	clearUsers: Boolean
 	ownerID: ID
-	clearOwner: Boolean
 }
 """
 UpdateGroupSettingInput is used for update GroupSetting object.
@@ -2980,14 +2995,14 @@ input UpdatePersonalAccessTokenInput {
 	updatedBy: String
 	clearUpdatedBy: Boolean
 	name: String
-	token: String
 	abilities: [String!]
 	appendAbilities: [String!]
 	clearAbilities: Boolean
 	expirationAt: Time
+	description: String
 	lastUsedAt: Time
 	clearLastUsedAt: Boolean
-	userID: ID
+	ownerID: ID
 }
 """
 UpdateRefreshTokenInput is used for update RefreshToken object.
@@ -3121,6 +3136,8 @@ type User implements Node {
 	updatedAt: Time!
 	createdBy: String
 	updatedBy: String
+	deletedAt: Time
+	deletedBy: String
 	email: String!
 	firstName: String!
 	lastName: String!
@@ -3433,6 +3450,33 @@ input UserWhereInput {
 	updatedByNotNil: Boolean
 	updatedByEqualFold: String
 	updatedByContainsFold: String
+	"""deleted_at field predicates"""
+	deletedAt: Time
+	deletedAtNEQ: Time
+	deletedAtIn: [Time!]
+	deletedAtNotIn: [Time!]
+	deletedAtGT: Time
+	deletedAtGTE: Time
+	deletedAtLT: Time
+	deletedAtLTE: Time
+	deletedAtIsNil: Boolean
+	deletedAtNotNil: Boolean
+	"""deleted_by field predicates"""
+	deletedBy: String
+	deletedByNEQ: String
+	deletedByIn: [String!]
+	deletedByNotIn: [String!]
+	deletedByGT: String
+	deletedByGTE: String
+	deletedByLT: String
+	deletedByLTE: String
+	deletedByContains: String
+	deletedByHasPrefix: String
+	deletedByHasSuffix: String
+	deletedByIsNil: Boolean
+	deletedByNotNil: Boolean
+	deletedByEqualFold: String
+	deletedByContainsFold: String
 	"""email field predicates"""
 	email: String
 	emailNEQ: String

@@ -59,6 +59,46 @@ func (gu *GroupUpdate) ClearUpdatedBy() *GroupUpdate {
 	return gu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (gu *GroupUpdate) SetDeletedAt(t time.Time) *GroupUpdate {
+	gu.mutation.SetDeletedAt(t)
+	return gu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDeletedAt(t *time.Time) *GroupUpdate {
+	if t != nil {
+		gu.SetDeletedAt(*t)
+	}
+	return gu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (gu *GroupUpdate) ClearDeletedAt() *GroupUpdate {
+	gu.mutation.ClearDeletedAt()
+	return gu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gu *GroupUpdate) SetDeletedBy(s string) *GroupUpdate {
+	gu.mutation.SetDeletedBy(s)
+	return gu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableDeletedBy(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetDeletedBy(*s)
+	}
+	return gu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (gu *GroupUpdate) ClearDeletedBy() *GroupUpdate {
+	gu.mutation.ClearDeletedBy()
+	return gu
+}
+
 // SetName sets the "name" field.
 func (gu *GroupUpdate) SetName(s string) *GroupUpdate {
 	gu.mutation.SetName(s)
@@ -144,14 +184,6 @@ func (gu *GroupUpdate) AddUsers(u ...*User) *GroupUpdate {
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
 func (gu *GroupUpdate) SetOwnerID(id string) *GroupUpdate {
 	gu.mutation.SetOwnerID(id)
-	return gu
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (gu *GroupUpdate) SetNillableOwnerID(id *string) *GroupUpdate {
-	if id != nil {
-		gu = gu.SetOwnerID(*id)
-	}
 	return gu
 }
 
@@ -247,11 +279,6 @@ func (gu *GroupUpdate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Group.name": %w`, err)}
 		}
 	}
-	if v, ok := gu.mutation.LogoURL(); ok {
-		if err := group.LogoURLValidator(v); err != nil {
-			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
-		}
-	}
 	if v, ok := gu.mutation.DisplayName(); ok {
 		if err := group.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
@@ -259,6 +286,9 @@ func (gu *GroupUpdate) check() error {
 	}
 	if _, ok := gu.mutation.SettingID(); gu.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
+	}
+	if _, ok := gu.mutation.OwnerID(); gu.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Group.owner"`)
 	}
 	return nil
 }
@@ -286,6 +316,18 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if gu.mutation.UpdatedByCleared() {
 		_spec.ClearField(group.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := gu.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+	}
+	if gu.mutation.DeletedAtCleared() {
+		_spec.ClearField(group.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := gu.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeString, value)
+	}
+	if gu.mutation.DeletedByCleared() {
+		_spec.ClearField(group.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := gu.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)
@@ -457,6 +499,46 @@ func (guo *GroupUpdateOne) ClearUpdatedBy() *GroupUpdateOne {
 	return guo
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (guo *GroupUpdateOne) SetDeletedAt(t time.Time) *GroupUpdateOne {
+	guo.mutation.SetDeletedAt(t)
+	return guo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDeletedAt(t *time.Time) *GroupUpdateOne {
+	if t != nil {
+		guo.SetDeletedAt(*t)
+	}
+	return guo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (guo *GroupUpdateOne) ClearDeletedAt() *GroupUpdateOne {
+	guo.mutation.ClearDeletedAt()
+	return guo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (guo *GroupUpdateOne) SetDeletedBy(s string) *GroupUpdateOne {
+	guo.mutation.SetDeletedBy(s)
+	return guo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableDeletedBy(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetDeletedBy(*s)
+	}
+	return guo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (guo *GroupUpdateOne) ClearDeletedBy() *GroupUpdateOne {
+	guo.mutation.ClearDeletedBy()
+	return guo
+}
+
 // SetName sets the "name" field.
 func (guo *GroupUpdateOne) SetName(s string) *GroupUpdateOne {
 	guo.mutation.SetName(s)
@@ -542,14 +624,6 @@ func (guo *GroupUpdateOne) AddUsers(u ...*User) *GroupUpdateOne {
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
 func (guo *GroupUpdateOne) SetOwnerID(id string) *GroupUpdateOne {
 	guo.mutation.SetOwnerID(id)
-	return guo
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableOwnerID(id *string) *GroupUpdateOne {
-	if id != nil {
-		guo = guo.SetOwnerID(*id)
-	}
 	return guo
 }
 
@@ -658,11 +732,6 @@ func (guo *GroupUpdateOne) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Group.name": %w`, err)}
 		}
 	}
-	if v, ok := guo.mutation.LogoURL(); ok {
-		if err := group.LogoURLValidator(v); err != nil {
-			return &ValidationError{Name: "logo_url", err: fmt.Errorf(`generated: validator failed for field "Group.logo_url": %w`, err)}
-		}
-	}
 	if v, ok := guo.mutation.DisplayName(); ok {
 		if err := group.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
@@ -670,6 +739,9 @@ func (guo *GroupUpdateOne) check() error {
 	}
 	if _, ok := guo.mutation.SettingID(); guo.mutation.SettingCleared() && !ok {
 		return errors.New(`generated: clearing a required unique edge "Group.setting"`)
+	}
+	if _, ok := guo.mutation.OwnerID(); guo.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Group.owner"`)
 	}
 	return nil
 }
@@ -714,6 +786,18 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if guo.mutation.UpdatedByCleared() {
 		_spec.ClearField(group.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := guo.mutation.DeletedAt(); ok {
+		_spec.SetField(group.FieldDeletedAt, field.TypeTime, value)
+	}
+	if guo.mutation.DeletedAtCleared() {
+		_spec.ClearField(group.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := guo.mutation.DeletedBy(); ok {
+		_spec.SetField(group.FieldDeletedBy, field.TypeString, value)
+	}
+	if guo.mutation.DeletedByCleared() {
+		_spec.ClearField(group.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := guo.mutation.Name(); ok {
 		_spec.SetField(group.FieldName, field.TypeString, value)

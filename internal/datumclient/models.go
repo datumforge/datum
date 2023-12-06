@@ -51,7 +51,7 @@ type CreateGroupInput struct {
 	DisplayName *string  `json:"displayName,omitempty"`
 	SettingID   string   `json:"settingID"`
 	UserIDs     []string `json:"userIDs,omitempty"`
-	OwnerID     *string  `json:"ownerID,omitempty"`
+	OwnerID     string   `json:"ownerID"`
 }
 
 // CreateGroupSettingInput is used for create GroupSetting object.
@@ -165,11 +165,12 @@ type CreatePersonalAccessTokenInput struct {
 	CreatedBy    *string    `json:"createdBy,omitempty"`
 	UpdatedBy    *string    `json:"updatedBy,omitempty"`
 	Name         string     `json:"name"`
-	Token        string     `json:"token"`
+	Token        *string    `json:"token,omitempty"`
 	Abilities    []string   `json:"abilities,omitempty"`
 	ExpirationAt time.Time  `json:"expirationAt"`
+	Description  *string    `json:"description,omitempty"`
 	LastUsedAt   *time.Time `json:"lastUsedAt,omitempty"`
-	UserID       string     `json:"userID"`
+	OwnerID      string     `json:"ownerID"`
 }
 
 // CreateRefreshTokenInput is used for create RefreshToken object.
@@ -508,19 +509,21 @@ type EntitlementWhereInput struct {
 }
 
 type Group struct {
-	ID          string    `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
-	CreatedBy   *string   `json:"createdBy,omitempty"`
-	UpdatedBy   *string   `json:"updatedBy,omitempty"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	LogoURL     string    `json:"logoURL"`
+	ID          string     `json:"id"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	UpdatedAt   time.Time  `json:"updatedAt"`
+	CreatedBy   *string    `json:"createdBy,omitempty"`
+	UpdatedBy   *string    `json:"updatedBy,omitempty"`
+	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
+	DeletedBy   *string    `json:"deletedBy,omitempty"`
+	Name        string     `json:"name"`
+	Description string     `json:"description"`
+	LogoURL     string     `json:"logoURL"`
 	// The group's displayed 'friendly' name
-	DisplayName string        `json:"displayName"`
-	Setting     GroupSetting  `json:"setting"`
-	Users       []*User       `json:"users,omitempty"`
-	Owner       *Organization `json:"owner,omitempty"`
+	DisplayName string       `json:"displayName"`
+	Setting     GroupSetting `json:"setting"`
+	Users       []*User      `json:"users,omitempty"`
+	Owner       Organization `json:"owner"`
 }
 
 func (Group) IsNode() {}
@@ -777,6 +780,33 @@ type GroupWhereInput struct {
 	UpdatedByNotNil       *bool    `json:"updatedByNotNil,omitempty"`
 	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
 	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
+	// deleted_at field predicates
+	DeletedAt       *time.Time   `json:"deletedAt,omitempty"`
+	DeletedAtNeq    *time.Time   `json:"deletedAtNEQ,omitempty"`
+	DeletedAtIn     []*time.Time `json:"deletedAtIn,omitempty"`
+	DeletedAtNotIn  []*time.Time `json:"deletedAtNotIn,omitempty"`
+	DeletedAtGt     *time.Time   `json:"deletedAtGT,omitempty"`
+	DeletedAtGte    *time.Time   `json:"deletedAtGTE,omitempty"`
+	DeletedAtLt     *time.Time   `json:"deletedAtLT,omitempty"`
+	DeletedAtLte    *time.Time   `json:"deletedAtLTE,omitempty"`
+	DeletedAtIsNil  *bool        `json:"deletedAtIsNil,omitempty"`
+	DeletedAtNotNil *bool        `json:"deletedAtNotNil,omitempty"`
+	// deleted_by field predicates
+	DeletedBy             *string  `json:"deletedBy,omitempty"`
+	DeletedByNeq          *string  `json:"deletedByNEQ,omitempty"`
+	DeletedByIn           []string `json:"deletedByIn,omitempty"`
+	DeletedByNotIn        []string `json:"deletedByNotIn,omitempty"`
+	DeletedByGt           *string  `json:"deletedByGT,omitempty"`
+	DeletedByGte          *string  `json:"deletedByGTE,omitempty"`
+	DeletedByLt           *string  `json:"deletedByLT,omitempty"`
+	DeletedByLte          *string  `json:"deletedByLTE,omitempty"`
+	DeletedByContains     *string  `json:"deletedByContains,omitempty"`
+	DeletedByHasPrefix    *string  `json:"deletedByHasPrefix,omitempty"`
+	DeletedByHasSuffix    *string  `json:"deletedByHasSuffix,omitempty"`
+	DeletedByIsNil        *bool    `json:"deletedByIsNil,omitempty"`
+	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
+	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
+	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 	// name field predicates
 	Name             *string  `json:"name,omitempty"`
 	NameNeq          *string  `json:"nameNEQ,omitempty"`
@@ -1731,11 +1761,11 @@ type PersonalAccessToken struct {
 	CreatedBy    *string    `json:"createdBy,omitempty"`
 	UpdatedBy    *string    `json:"updatedBy,omitempty"`
 	Name         string     `json:"name"`
-	UserID       string     `json:"userID"`
 	Abilities    []string   `json:"abilities,omitempty"`
 	ExpirationAt time.Time  `json:"expirationAt"`
+	Description  string     `json:"description"`
 	LastUsedAt   *time.Time `json:"lastUsedAt,omitempty"`
-	User         User       `json:"user"`
+	Owner        User       `json:"owner"`
 }
 
 func (PersonalAccessToken) IsNode() {}
@@ -1857,20 +1887,6 @@ type PersonalAccessTokenWhereInput struct {
 	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
 	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
 	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
-	// user_id field predicates
-	UserID             *string  `json:"userID,omitempty"`
-	UserIDNeq          *string  `json:"userIDNEQ,omitempty"`
-	UserIDIn           []string `json:"userIDIn,omitempty"`
-	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
-	UserIDGt           *string  `json:"userIDGT,omitempty"`
-	UserIDGte          *string  `json:"userIDGTE,omitempty"`
-	UserIDLt           *string  `json:"userIDLT,omitempty"`
-	UserIDLte          *string  `json:"userIDLTE,omitempty"`
-	UserIDContains     *string  `json:"userIDContains,omitempty"`
-	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
-	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
-	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
-	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 	// expiration_at field predicates
 	ExpirationAt      *time.Time   `json:"expirationAt,omitempty"`
 	ExpirationAtNeq   *time.Time   `json:"expirationAtNEQ,omitempty"`
@@ -1891,9 +1907,9 @@ type PersonalAccessTokenWhereInput struct {
 	LastUsedAtLte    *time.Time   `json:"lastUsedAtLTE,omitempty"`
 	LastUsedAtIsNil  *bool        `json:"lastUsedAtIsNil,omitempty"`
 	LastUsedAtNotNil *bool        `json:"lastUsedAtNotNil,omitempty"`
-	// user edge predicates
-	HasUser     *bool             `json:"hasUser,omitempty"`
-	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// owner edge predicates
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 type RefreshToken struct {
@@ -2341,7 +2357,6 @@ type UpdateGroupInput struct {
 	RemoveUserIDs []string `json:"removeUserIDs,omitempty"`
 	ClearUsers    *bool    `json:"clearUsers,omitempty"`
 	OwnerID       *string  `json:"ownerID,omitempty"`
-	ClearOwner    *bool    `json:"clearOwner,omitempty"`
 }
 
 // UpdateGroupSettingInput is used for update GroupSetting object.
@@ -2467,14 +2482,14 @@ type UpdatePersonalAccessTokenInput struct {
 	UpdatedBy       *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy  *bool      `json:"clearUpdatedBy,omitempty"`
 	Name            *string    `json:"name,omitempty"`
-	Token           *string    `json:"token,omitempty"`
 	Abilities       []string   `json:"abilities,omitempty"`
 	AppendAbilities []string   `json:"appendAbilities,omitempty"`
 	ClearAbilities  *bool      `json:"clearAbilities,omitempty"`
 	ExpirationAt    *time.Time `json:"expirationAt,omitempty"`
+	Description     *string    `json:"description,omitempty"`
 	LastUsedAt      *time.Time `json:"lastUsedAt,omitempty"`
 	ClearLastUsedAt *bool      `json:"clearLastUsedAt,omitempty"`
-	UserID          *string    `json:"userID,omitempty"`
+	OwnerID         *string    `json:"ownerID,omitempty"`
 }
 
 // UpdateRefreshTokenInput is used for update RefreshToken object.
@@ -2600,14 +2615,16 @@ type UpdateUserSettingInput struct {
 }
 
 type User struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	CreatedBy *string   `json:"createdBy,omitempty"`
-	UpdatedBy *string   `json:"updatedBy,omitempty"`
-	Email     string    `json:"email"`
-	FirstName string    `json:"firstName"`
-	LastName  string    `json:"lastName"`
+	ID        string     `json:"id"`
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	CreatedBy *string    `json:"createdBy,omitempty"`
+	UpdatedBy *string    `json:"updatedBy,omitempty"`
+	DeletedAt *time.Time `json:"deletedAt,omitempty"`
+	DeletedBy *string    `json:"deletedBy,omitempty"`
+	Email     string     `json:"email"`
+	FirstName string     `json:"firstName"`
+	LastName  string     `json:"lastName"`
 	// The user's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// URL of the user's remote avatar
@@ -2912,6 +2929,33 @@ type UserWhereInput struct {
 	UpdatedByNotNil       *bool    `json:"updatedByNotNil,omitempty"`
 	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
 	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
+	// deleted_at field predicates
+	DeletedAt       *time.Time   `json:"deletedAt,omitempty"`
+	DeletedAtNeq    *time.Time   `json:"deletedAtNEQ,omitempty"`
+	DeletedAtIn     []*time.Time `json:"deletedAtIn,omitempty"`
+	DeletedAtNotIn  []*time.Time `json:"deletedAtNotIn,omitempty"`
+	DeletedAtGt     *time.Time   `json:"deletedAtGT,omitempty"`
+	DeletedAtGte    *time.Time   `json:"deletedAtGTE,omitempty"`
+	DeletedAtLt     *time.Time   `json:"deletedAtLT,omitempty"`
+	DeletedAtLte    *time.Time   `json:"deletedAtLTE,omitempty"`
+	DeletedAtIsNil  *bool        `json:"deletedAtIsNil,omitempty"`
+	DeletedAtNotNil *bool        `json:"deletedAtNotNil,omitempty"`
+	// deleted_by field predicates
+	DeletedBy             *string  `json:"deletedBy,omitempty"`
+	DeletedByNeq          *string  `json:"deletedByNEQ,omitempty"`
+	DeletedByIn           []string `json:"deletedByIn,omitempty"`
+	DeletedByNotIn        []string `json:"deletedByNotIn,omitempty"`
+	DeletedByGt           *string  `json:"deletedByGT,omitempty"`
+	DeletedByGte          *string  `json:"deletedByGTE,omitempty"`
+	DeletedByLt           *string  `json:"deletedByLT,omitempty"`
+	DeletedByLte          *string  `json:"deletedByLTE,omitempty"`
+	DeletedByContains     *string  `json:"deletedByContains,omitempty"`
+	DeletedByHasPrefix    *string  `json:"deletedByHasPrefix,omitempty"`
+	DeletedByHasSuffix    *string  `json:"deletedByHasSuffix,omitempty"`
+	DeletedByIsNil        *bool    `json:"deletedByIsNil,omitempty"`
+	DeletedByNotNil       *bool    `json:"deletedByNotNil,omitempty"`
+	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
+	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
 	// email field predicates
 	Email             *string  `json:"email,omitempty"`
 	EmailNeq          *string  `json:"emailNEQ,omitempty"`

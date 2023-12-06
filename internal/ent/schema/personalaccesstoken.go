@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/keygen"
 )
 
 // PersonalAccessToken holds the schema definition for the PersonalAccessToken entity.
@@ -22,11 +23,19 @@ type PersonalAccessToken struct {
 func (PersonalAccessToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
-		field.String("user_id"),
-		field.String("token").Sensitive(),
+		field.String("token").Sensitive().
+			Unique().
+			Immutable().
+			DefaultFunc(func() string {
+				token := keygen.Secret()
+				return token
+			}),
 		field.JSON("abilities", []string{}).
 			Optional(),
 		field.Time("expiration_at"),
+		field.String("description").Default("").Annotations(
+			entgql.Skip(entgql.SkipWhereInput),
+		),
 		field.Time("last_used_at").
 			UpdateDefault(time.Now).
 			Optional().
@@ -37,11 +46,10 @@ func (PersonalAccessToken) Fields() []ent.Field {
 // Edges of the PersonalAccessToken
 func (PersonalAccessToken) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).
+		edge.From("owner", User.Type).
 			Ref("personal_access_tokens").
-			Unique().
 			Required().
-			Field("user_id"),
+			Unique(),
 	}
 }
 

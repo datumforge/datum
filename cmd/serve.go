@@ -143,6 +143,9 @@ func serve(ctx context.Context) error {
 
 	defer entdbClient.Close()
 
+	// Add ready checks right before creating the server
+	serverConfig.Server.Checks = readyChecks
+
 	srv := server.NewServer(s.Server, s.Logger.Desugar())
 
 	// Setup Graph API Handlers
@@ -177,8 +180,6 @@ func setupConfig(readyChecks handlers.Checks, authEnabled bool) (*config.Config,
 		WithDebug(serverDebug).                       // enable debug mode
 		WithDev(serveDevMode).                        // enable dev mode
 		SetDefaults()                                 // set defaults if not already set
-
-	serverConfig.Server.Checks = readyChecks
 
 	if httpsEnabled {
 		serverConfig.WithTLSDefaults()

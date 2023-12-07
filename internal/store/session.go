@@ -2,90 +2,86 @@ package store
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
-	"net/http"
 	"time"
 
-	"github.com/gorilla/sessions"
-	"github.com/oklog/ulid/v2"
-
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/session"
 )
 
+// AuthSession has a single field `client` of type
+// `*ent.Client`, which is a client for interacting with the database.
 type AuthSession struct {
 	client *ent.Client
 }
 
+// NewAuthSession function creates a new instance of the AuthSessions struct
 func NewAuthSession(c *ent.Client) AuthSessions {
 	return &AuthSession{
 		client: c,
 	}
 }
 
+// AuthSessions is defining an interface named AuthSessions
 type AuthSessions interface {
-	StoreSession(ctx context.Context, sessionId string, userId ulid.ULID) error
-	GetUserIdFromSession(ctx context.Context, sessionId string) (ulid.ULID, error)
+	StoreSession(ctx context.Context, sessionID string, userID *ent.User) error
+	GetUserIDFromSession(ctx context.Context, sessionID string) (string, error)
 	DeleteSession(ctx context.Context, sessionID string) error
-	GetExpiryFromSession(ctx context.Context, sessionId string) (time.Time, error)
+	GetExpiryFromSession(ctx context.Context, sessionID string) (time.Time, error)
 }
 
-func (sess *AuthSession) StoreSession(ctx context.Context, sessionID string, user *ent.User) error {
+// StoreSession is used to store a session in the database
+func (sess *AuthSession) StoreSession(ctx context.Context, sessionID string, userID *ent.User) error {
 	_, err := sess.client.Session.
 		Create().
-		Set(user.ID).
+		SetUserID(userID.ID).
 		SetID(sessionID).
-		SetExpiry(time.Now().Add(time.Hour * 24 * 1)).
+		SetExpiresAt(time.Now().Add(time.Hour * 24 * 1)).
 		Save(ctx)
+
 	if err != nil {
 		return fmt.Errorf("loginSessions.Create: %w", err)
+	}
+
+	return nil
+}
+
+// DeleteSession is used to delete a session from the database
+func (sess *AuthSession) DeleteSession(ctx context.Context, sessionID string) error {
+	_, err := sess.client.Session.
+		Delete().
+		Where(session.ID(sessionID)).
+		Exec(ctx)
+	if err != nil {
+		return fmt.Errorf("loginsession.Delete: %w", err)
 	}
 	return nil
 }
 
-// SessionStore interface specifies a single method `Get` that takes an
-// `http.Request` and a string as parameters and returns a `*sessions.Session` and an error. Any type that implements this `Get` method can be considered as implementing the `SessionStore` interface
-type SessionStore interface {
-	Get(r *http.Request, name string) (*sessions.Session, error)
-}
+// GetUserIDFromSession is used to retrieve the user ID associated with a session from the database
+func (sess *AuthSession) GetUserIDFromSession(ctx context.Context, sessionID string) (string, error) {
+	session, err := sess.client.Session.
+		Query().
+		Where(session.ID(sessionID)).
+		Only(ctx)
 
-// GetSession function retrieves a session from a session store based on a cookie name and a request
-func GetSession(r *http.Request, cookieName string, sessionStore SessionStore) (*sessions.Session, error) {
-	return sessionStore.Get(r, cookieName)
-}
-
-// SetSessionB64 function sets a base64-encoded session value in a cookie and returns the session ID
-func SetSessionB64(r *http.Request, w http.ResponseWriter, body []byte, cookieName, valueName string, sessionStore SessionStore) (string, error) {
-	cookieValue := base64.StdEncoding.EncodeToString(body)
-
-	if err := SetSession(r, w, cookieValue, cookieName, valueName, sessionStore); err != nil {
-		return "", err
-	}
-
-	return cookieValue, nil
-}
-
-// SetSession function sets a session value in a session store and also sets a corresponding cookie in the response
-func SetSession(r *http.Request, w http.ResponseWriter, value, cookieName, valueName string, sessionStore SessionStore) error {
-	// set the cookie
-	session, err := sessionStore.Get(r, cookieName)
 	if err != nil {
-		return err
+		return session.UserID, fmt.Errorf("loginSessions.Query: %w", err)
 	}
 
-	session.Values[valueName] = value
-
-	return session.Save(r, w)
+	return session.UserID, nil
 }
 
-// RemoveSession function removes a session from the session store based on the provided cookie name
-func RemoveSession(r *http.Request, w http.ResponseWriter, cookieName string, sessionStore SessionStore) error {
-	session, err := sessionStore.Get(r, cookieName)
+// GetExpiryFromSession is used to retrieve the expiration time of a session from the database
+func (sess *AuthSession) GetExpiryFromSession(ctx context.Context, sessionID string) (time.Time, error) {
+	session, err := sess.client.Session.
+		Query().
+		Where(session.ID(sessionID)).
+		Only(ctx)
+
 	if err != nil {
-		return err
+		return time.Time{}, fmt.Errorf("loginSessions.Query: %w", err)
 	}
 
-	session.Options.MaxAge = -1
-
-	return session.Save(r, w)
+	return session.ExpiresAt, nil
 }

@@ -113,7 +113,7 @@ func serve(ctx context.Context) error {
 	defer entdbClient.Close()
 
 	// add ready checks
-	so.AddServerOptions(serveropts.WithReadyChecks(*dbConfig, fgaClient))
+	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient))
 
 	srv := server.NewServer(so.Config.Server, so.Config.Logger.Desugar())
 

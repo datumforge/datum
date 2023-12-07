@@ -160,7 +160,7 @@ func WithAuth(settings map[string]any) ServerOption {
 }
 
 // WithReadyChecks adds readiness checks to the server
-func WithReadyChecks(c entdb.EntClientConfig, f *fga.Client) ServerOption {
+func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Initialize checks
 		s.Config.Server.Checks = handlers.Checks{}

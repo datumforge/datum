@@ -76,11 +76,11 @@ func serve(ctx context.Context) error {
 	serverOpts = append(serverOpts,
 		serveropts.WithConfigProvider(&config.ConfigProviderWithRefresh{}),
 		serveropts.WithServer(settings),
+		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(settings),
 		serveropts.WithSQLiteDB(settings),
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
-		serveropts.WithLogger(logger),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)

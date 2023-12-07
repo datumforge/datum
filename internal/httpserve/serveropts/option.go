@@ -65,9 +65,13 @@ func WithHTTPS(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		serverSettings := settings["server"].(map[string]any)
 
-		if s.Config.Server.TLS.Enabled {
-			s.Config.WithTLSDefaults()
+		if !s.Config.Server.TLS.Enabled {
+			// this is set to enabled by WithServer
+			// if TLS is not enabled, move on
+			return
 		}
+
+		s.Config.WithTLSDefaults()
 
 		autoCert := serverSettings["auto-cert"].(bool)
 
@@ -77,8 +81,11 @@ func WithHTTPS(settings map[string]any) ServerOption {
 			cf := serverSettings["ssl-cert"].(string)
 			k := serverSettings["ssl-key"].(string)
 
-			// TODO: go back and error check
-			certFile, certKey, _ := server.GetCertFiles(cf, k)
+			certFile, certKey, err := server.GetCertFiles(cf, k)
+			if err != nil {
+				// if this errors, we should panic because a required file is not found
+				s.Config.Logger.Panicw("unable to start https server", "error", err.Error())
+			}
 
 			s.Config.WithTLSCerts(certFile, certKey)
 		}

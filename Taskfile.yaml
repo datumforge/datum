@@ -95,15 +95,7 @@ tasks:
   run-dev:
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
-      - go run main.go serve  --debug --pretty --dev --oidc=false
-  go:build:
-    desc: Runs go build for the datum server
-    cmds:
-      - go build -mod=mod -o datum
-  go:build-cli:
-    desc: Runs go build for the datum cli
-    cmds:
-      - go build -mod=mod -o datum-cli ./cmd/cli  
+      - go run main.go serve  --debug --pretty --dev --oidc=false 
   go:lint:
     desc: runs golangci-lint, the most annoying opininated linter ever
     cmds:

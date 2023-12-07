@@ -17,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
 )
@@ -63,9 +62,6 @@ func serve(ctx context.Context) error {
 		mw          []echo.MiddlewareFunc
 	)
 
-	// create ready checks
-	readyChecks := handlers.Checks{}
-
 	// create ent dependency injection
 	entOpts := []ent.Option{ent.Logger(*logger)}
 
@@ -99,9 +95,6 @@ func serve(ctx context.Context) error {
 		// add client as ent dependency
 		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
-		// add ready checkz
-		readyChecks.AddReadinessCheck("fga", fga.Healthcheck(*fgaClient))
-
 		// add jwt middleware
 		secretKey := []byte(viper.GetString("jwt.secretkey"))
 		jwtMiddleware := auth.CreateJwtMiddleware([]byte(secretKey))
@@ -119,8 +112,8 @@ func serve(ctx context.Context) error {
 
 	defer entdbClient.Close()
 
-	// Add ready checks right before creating the server
-	so.Config.Server.Checks = readyChecks
+	// add ready checks
+	so.AddServerOptions(serveropts.WithReadyChecks(*dbConfig, fgaClient))
 
 	srv := server.NewServer(so.Config.Server, so.Config.Logger.Desugar())
 

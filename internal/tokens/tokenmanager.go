@@ -208,13 +208,14 @@ func (tm *TokenManager) CreateAccessToken(claims *Claims) (_ *jwt.Token, err err
 		return nil, err
 	}
 
+        issueTime := jwt.NewNumericDate(now)
 	claims.RegisteredClaims = jwt.RegisteredClaims{
 		ID:        strings.ToLower(kid.String()), // ID is randomly generated and shared between access and refresh
 		Subject:   sub,
 		Audience:  jwt.ClaimStrings{tm.audience},
 		Issuer:    tm.issuer,
-		IssuedAt:  jwt.NewNumericDate(now),
-		NotBefore: jwt.NewNumericDate(now),
+		IssuedAt:  issueTime,
+		NotBefore: issueTime,
 		ExpiresAt: jwt.NewNumericDate(now.Add(tm.conf.AccessDuration)),
 	}
 

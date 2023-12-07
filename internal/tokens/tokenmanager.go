@@ -179,7 +179,7 @@ func (tm *TokenManager) CreateTokenPair(claims *Claims) (accessToken, refreshTok
 		return "", "", fmt.Errorf("could not sign refresh token: %w", err)
 	}
 
-	return accessToken, refreshToken, nil
+	return 
 }
 
 // CreateToken from the claims payload without modifying the claims unless the claims

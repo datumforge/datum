@@ -147,7 +147,7 @@ func NewWithKey(key *rsa.PrivateKey, conf config.TokenConfig) (tm *TokenManager,
 }
 
 // Sign an access or refresh token and return the token
-func (tm *TokenManager) Sign(token *jwt.Token) (tks string, err error) {
+func (tm *TokenManager) Sign(token *jwt.Token) (string, error) {
 	if tm.currentKey == nil || tm.currentKeyID.Compare(nilID) == 0 {
 		return "", ErrTokenManagerFailedInit
 	}

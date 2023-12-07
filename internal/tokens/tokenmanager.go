@@ -353,16 +353,17 @@ func ParseUnverified(tks string) (claims *jwt.RegisteredClaims, err error) {
 	}
 
 	return claims, nil
-
 }
 
-// Parse token claims from an access token.
+// ParseUnverifiedTokenClaims parses token claims from an access token
 func ParseUnverifiedTokenClaims(tks string) (claims *Claims, err error) {
 	claims = &Claims{}
 	parser := jwt.NewParser(jwt.WithoutClaimsValidation())
+
 	if _, _, err = parser.ParseUnverified(tks, claims); err != nil {
 		return nil, err
 	}
+
 	return claims, nil
 }
 

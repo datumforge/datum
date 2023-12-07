@@ -3,7 +3,6 @@
 package generated
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -11,7 +10,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // RefreshToken is the model entity for the RefreshToken schema.
@@ -19,63 +17,18 @@ type RefreshToken struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
-	// ClientID holds the value of the "client_id" field.
-	ClientID string `json:"client_id,omitempty"`
-	// Scopes holds the value of the "scopes" field.
-	Scopes []string `json:"scopes,omitempty"`
-	// Nonce holds the value of the "nonce" field.
-	Nonce string `json:"nonce,omitempty"`
-	// ClaimsUserID holds the value of the "claims_user_id" field.
-	ClaimsUserID string `json:"claims_user_id,omitempty"`
-	// ClaimsUsername holds the value of the "claims_username" field.
-	ClaimsUsername string `json:"claims_username,omitempty"`
-	// ClaimsEmail holds the value of the "claims_email" field.
-	ClaimsEmail string `json:"claims_email,omitempty"`
-	// ClaimsEmailVerified holds the value of the "claims_email_verified" field.
-	ClaimsEmailVerified bool `json:"claims_email_verified,omitempty"`
-	// ClaimsGroups holds the value of the "claims_groups" field.
-	ClaimsGroups []string `json:"claims_groups,omitempty"`
-	// ClaimsPreferredUsername holds the value of the "claims_preferred_username" field.
-	ClaimsPreferredUsername string `json:"claims_preferred_username,omitempty"`
-	// ConnectorID holds the value of the "connector_id" field.
-	ConnectorID string `json:"connector_id,omitempty"`
-	// ConnectorData holds the value of the "connector_data" field.
-	ConnectorData []string `json:"connector_data,omitempty"`
-	// Token holds the value of the "token" field.
-	Token string `json:"token,omitempty"`
-	// ObsoleteToken holds the value of the "obsolete_token" field.
-	ObsoleteToken string `json:"obsolete_token,omitempty"`
-	// LastUsed holds the value of the "last_used" field.
-	LastUsed time.Time `json:"last_used,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
-	Edges             RefreshTokenEdges `json:"edges"`
-	user_refreshtoken *string
-	selectValues      sql.SelectValues
-}
-
-// RefreshTokenEdges holds the relations/edges for other nodes in the graph.
-type RefreshTokenEdges struct {
-	// User holds the value of the user edge.
-	User *User `json:"user,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
-}
-
-// UserOrErr returns the User value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e RefreshTokenEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[0] {
-		if e.User == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: user.Label}
-		}
-		return e.User, nil
-	}
-	return nil, &NotLoadedError{edge: "user"}
+	// RefreshToken holds the value of the "refresh_token" field.
+	RefreshToken string `json:"-"`
+	// ExpiresAt holds the value of the "expires_at" field.
+	ExpiresAt time.Time `json:"expires_at,omitempty"`
+	// IssuedAt holds the value of the "issued_at" field.
+	IssuedAt time.Time `json:"issued_at,omitempty"`
+	// organization ID of the organization the user is accessing
+	OrganizationID string `json:"organization_id,omitempty"`
+	// the user the session is associated with
+	UserID             string `json:"user_id,omitempty"`
+	user_refresh_token *string
+	selectValues       sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -83,15 +36,11 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case refreshtoken.FieldScopes, refreshtoken.FieldClaimsGroups, refreshtoken.FieldConnectorData:
-			values[i] = new([]byte)
-		case refreshtoken.FieldClaimsEmailVerified:
-			values[i] = new(sql.NullBool)
-		case refreshtoken.FieldID, refreshtoken.FieldClientID, refreshtoken.FieldNonce, refreshtoken.FieldClaimsUserID, refreshtoken.FieldClaimsUsername, refreshtoken.FieldClaimsEmail, refreshtoken.FieldClaimsPreferredUsername, refreshtoken.FieldConnectorID, refreshtoken.FieldToken, refreshtoken.FieldObsoleteToken:
+		case refreshtoken.FieldID, refreshtoken.FieldRefreshToken, refreshtoken.FieldOrganizationID, refreshtoken.FieldUserID:
 			values[i] = new(sql.NullString)
-		case refreshtoken.FieldLastUsed:
+		case refreshtoken.FieldExpiresAt, refreshtoken.FieldIssuedAt:
 			values[i] = new(sql.NullTime)
-		case refreshtoken.ForeignKeys[0]: // user_refreshtoken
+		case refreshtoken.ForeignKeys[0]: // user_refresh_token
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -114,102 +63,42 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				rt.ID = value.String
 			}
-		case refreshtoken.FieldClientID:
+		case refreshtoken.FieldRefreshToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field client_id", values[i])
+				return fmt.Errorf("unexpected type %T for field refresh_token", values[i])
 			} else if value.Valid {
-				rt.ClientID = value.String
+				rt.RefreshToken = value.String
 			}
-		case refreshtoken.FieldScopes:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field scopes", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &rt.Scopes); err != nil {
-					return fmt.Errorf("unmarshal field scopes: %w", err)
-				}
-			}
-		case refreshtoken.FieldNonce:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field nonce", values[i])
-			} else if value.Valid {
-				rt.Nonce = value.String
-			}
-		case refreshtoken.FieldClaimsUserID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field claims_user_id", values[i])
-			} else if value.Valid {
-				rt.ClaimsUserID = value.String
-			}
-		case refreshtoken.FieldClaimsUsername:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field claims_username", values[i])
-			} else if value.Valid {
-				rt.ClaimsUsername = value.String
-			}
-		case refreshtoken.FieldClaimsEmail:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field claims_email", values[i])
-			} else if value.Valid {
-				rt.ClaimsEmail = value.String
-			}
-		case refreshtoken.FieldClaimsEmailVerified:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field claims_email_verified", values[i])
-			} else if value.Valid {
-				rt.ClaimsEmailVerified = value.Bool
-			}
-		case refreshtoken.FieldClaimsGroups:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field claims_groups", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &rt.ClaimsGroups); err != nil {
-					return fmt.Errorf("unmarshal field claims_groups: %w", err)
-				}
-			}
-		case refreshtoken.FieldClaimsPreferredUsername:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field claims_preferred_username", values[i])
-			} else if value.Valid {
-				rt.ClaimsPreferredUsername = value.String
-			}
-		case refreshtoken.FieldConnectorID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field connector_id", values[i])
-			} else if value.Valid {
-				rt.ConnectorID = value.String
-			}
-		case refreshtoken.FieldConnectorData:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field connector_data", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &rt.ConnectorData); err != nil {
-					return fmt.Errorf("unmarshal field connector_data: %w", err)
-				}
-			}
-		case refreshtoken.FieldToken:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field token", values[i])
-			} else if value.Valid {
-				rt.Token = value.String
-			}
-		case refreshtoken.FieldObsoleteToken:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field obsolete_token", values[i])
-			} else if value.Valid {
-				rt.ObsoleteToken = value.String
-			}
-		case refreshtoken.FieldLastUsed:
+		case refreshtoken.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field last_used", values[i])
+				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
 			} else if value.Valid {
-				rt.LastUsed = value.Time
+				rt.ExpiresAt = value.Time
+			}
+		case refreshtoken.FieldIssuedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field issued_at", values[i])
+			} else if value.Valid {
+				rt.IssuedAt = value.Time
+			}
+		case refreshtoken.FieldOrganizationID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
+			} else if value.Valid {
+				rt.OrganizationID = value.String
+			}
+		case refreshtoken.FieldUserID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				rt.UserID = value.String
 			}
 		case refreshtoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_refreshtoken", values[i])
+				return fmt.Errorf("unexpected type %T for field user_refresh_token", values[i])
 			} else if value.Valid {
-				rt.user_refreshtoken = new(string)
-				*rt.user_refreshtoken = value.String
+				rt.user_refresh_token = new(string)
+				*rt.user_refresh_token = value.String
 			}
 		default:
 			rt.selectValues.Set(columns[i], values[i])
@@ -222,11 +111,6 @@ func (rt *RefreshToken) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (rt *RefreshToken) Value(name string) (ent.Value, error) {
 	return rt.selectValues.Get(name)
-}
-
-// QueryUser queries the "user" edge of the RefreshToken entity.
-func (rt *RefreshToken) QueryUser() *UserQuery {
-	return NewRefreshTokenClient(rt.config).QueryUser(rt)
 }
 
 // Update returns a builder for updating this RefreshToken.
@@ -252,47 +136,19 @@ func (rt *RefreshToken) String() string {
 	var builder strings.Builder
 	builder.WriteString("RefreshToken(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", rt.ID))
-	builder.WriteString("client_id=")
-	builder.WriteString(rt.ClientID)
+	builder.WriteString("refresh_token=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("scopes=")
-	builder.WriteString(fmt.Sprintf("%v", rt.Scopes))
+	builder.WriteString("expires_at=")
+	builder.WriteString(rt.ExpiresAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("nonce=")
-	builder.WriteString(rt.Nonce)
+	builder.WriteString("issued_at=")
+	builder.WriteString(rt.IssuedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("claims_user_id=")
-	builder.WriteString(rt.ClaimsUserID)
+	builder.WriteString("organization_id=")
+	builder.WriteString(rt.OrganizationID)
 	builder.WriteString(", ")
-	builder.WriteString("claims_username=")
-	builder.WriteString(rt.ClaimsUsername)
-	builder.WriteString(", ")
-	builder.WriteString("claims_email=")
-	builder.WriteString(rt.ClaimsEmail)
-	builder.WriteString(", ")
-	builder.WriteString("claims_email_verified=")
-	builder.WriteString(fmt.Sprintf("%v", rt.ClaimsEmailVerified))
-	builder.WriteString(", ")
-	builder.WriteString("claims_groups=")
-	builder.WriteString(fmt.Sprintf("%v", rt.ClaimsGroups))
-	builder.WriteString(", ")
-	builder.WriteString("claims_preferred_username=")
-	builder.WriteString(rt.ClaimsPreferredUsername)
-	builder.WriteString(", ")
-	builder.WriteString("connector_id=")
-	builder.WriteString(rt.ConnectorID)
-	builder.WriteString(", ")
-	builder.WriteString("connector_data=")
-	builder.WriteString(fmt.Sprintf("%v", rt.ConnectorData))
-	builder.WriteString(", ")
-	builder.WriteString("token=")
-	builder.WriteString(rt.Token)
-	builder.WriteString(", ")
-	builder.WriteString("obsolete_token=")
-	builder.WriteString(rt.ObsoleteToken)
-	builder.WriteString(", ")
-	builder.WriteString("last_used=")
-	builder.WriteString(rt.LastUsed.Format(time.ANSIC))
+	builder.WriteString("user_id=")
+	builder.WriteString(rt.UserID)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -8,11 +8,13 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -29,6 +31,9 @@ type Noder interface {
 }
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *AccessToken) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *Entitlement) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
@@ -42,6 +47,9 @@ func (n *Integration) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *OauthProvider) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *OhAuthTooToken) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Organization) IsNode() {}
@@ -122,6 +130,18 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
 	switch table {
+	case accesstoken.Table:
+		query := c.AccessToken.Query().
+			Where(accesstoken.ID(id))
+		query, err := query.CollectFields(ctx, "AccessToken")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.ID(id))
@@ -174,6 +194,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.OauthProvider.Query().
 			Where(oauthprovider.ID(id))
 		query, err := query.CollectFields(ctx, "OauthProvider")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case ohauthtootoken.Table:
+		query := c.OhAuthTooToken.Query().
+			Where(ohauthtootoken.ID(id))
+		query, err := query.CollectFields(ctx, "OhAuthTooToken")
 		if err != nil {
 			return nil, err
 		}
@@ -339,6 +371,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
+	case accesstoken.Table:
+		query := c.AccessToken.Query().
+			Where(accesstoken.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "AccessToken")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.IDIn(ids...))
@@ -407,6 +455,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.OauthProvider.Query().
 			Where(oauthprovider.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "OauthProvider")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case ohauthtootoken.Table:
+		query := c.OhAuthTooToken.Query().
+			Where(ohauthtootoken.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "OhAuthTooToken")
 		if err != nil {
 			return nil, err
 		}

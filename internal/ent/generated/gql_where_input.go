@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -21,6 +23,624 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
+
+// AccessTokenWhereInput represents a where input for filtering AccessToken queries.
+type AccessTokenWhereInput struct {
+	Predicates []predicate.AccessToken  `json:"-"`
+	Not        *AccessTokenWhereInput   `json:"not,omitempty"`
+	Or         []*AccessTokenWhereInput `json:"or,omitempty"`
+	And        []*AccessTokenWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
+
+	// "created_at" field predicates.
+	CreatedAt      *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ   *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn    []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT    *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE   *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT    *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE   *time.Time  `json:"createdAtLTE,omitempty"`
+
+	// "updated_at" field predicates.
+	UpdatedAt      *time.Time  `json:"updatedAt,omitempty"`
+	UpdatedAtNEQ   *time.Time  `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn    []time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn []time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGT    *time.Time  `json:"updatedAtGT,omitempty"`
+	UpdatedAtGTE   *time.Time  `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLT    *time.Time  `json:"updatedAtLT,omitempty"`
+	UpdatedAtLTE   *time.Time  `json:"updatedAtLTE,omitempty"`
+
+	// "created_by" field predicates.
+	CreatedBy             *string  `json:"createdBy,omitempty"`
+	CreatedByNEQ          *string  `json:"createdByNEQ,omitempty"`
+	CreatedByIn           []string `json:"createdByIn,omitempty"`
+	CreatedByNotIn        []string `json:"createdByNotIn,omitempty"`
+	CreatedByGT           *string  `json:"createdByGT,omitempty"`
+	CreatedByGTE          *string  `json:"createdByGTE,omitempty"`
+	CreatedByLT           *string  `json:"createdByLT,omitempty"`
+	CreatedByLTE          *string  `json:"createdByLTE,omitempty"`
+	CreatedByContains     *string  `json:"createdByContains,omitempty"`
+	CreatedByHasPrefix    *string  `json:"createdByHasPrefix,omitempty"`
+	CreatedByHasSuffix    *string  `json:"createdByHasSuffix,omitempty"`
+	CreatedByIsNil        bool     `json:"createdByIsNil,omitempty"`
+	CreatedByNotNil       bool     `json:"createdByNotNil,omitempty"`
+	CreatedByEqualFold    *string  `json:"createdByEqualFold,omitempty"`
+	CreatedByContainsFold *string  `json:"createdByContainsFold,omitempty"`
+
+	// "updated_by" field predicates.
+	UpdatedBy             *string  `json:"updatedBy,omitempty"`
+	UpdatedByNEQ          *string  `json:"updatedByNEQ,omitempty"`
+	UpdatedByIn           []string `json:"updatedByIn,omitempty"`
+	UpdatedByNotIn        []string `json:"updatedByNotIn,omitempty"`
+	UpdatedByGT           *string  `json:"updatedByGT,omitempty"`
+	UpdatedByGTE          *string  `json:"updatedByGTE,omitempty"`
+	UpdatedByLT           *string  `json:"updatedByLT,omitempty"`
+	UpdatedByLTE          *string  `json:"updatedByLTE,omitempty"`
+	UpdatedByContains     *string  `json:"updatedByContains,omitempty"`
+	UpdatedByHasPrefix    *string  `json:"updatedByHasPrefix,omitempty"`
+	UpdatedByHasSuffix    *string  `json:"updatedByHasSuffix,omitempty"`
+	UpdatedByIsNil        bool     `json:"updatedByIsNil,omitempty"`
+	UpdatedByNotNil       bool     `json:"updatedByNotNil,omitempty"`
+	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
+	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
+
+	// "access_token" field predicates.
+	AccessToken             *string  `json:"accessToken,omitempty"`
+	AccessTokenNEQ          *string  `json:"accessTokenNEQ,omitempty"`
+	AccessTokenIn           []string `json:"accessTokenIn,omitempty"`
+	AccessTokenNotIn        []string `json:"accessTokenNotIn,omitempty"`
+	AccessTokenGT           *string  `json:"accessTokenGT,omitempty"`
+	AccessTokenGTE          *string  `json:"accessTokenGTE,omitempty"`
+	AccessTokenLT           *string  `json:"accessTokenLT,omitempty"`
+	AccessTokenLTE          *string  `json:"accessTokenLTE,omitempty"`
+	AccessTokenContains     *string  `json:"accessTokenContains,omitempty"`
+	AccessTokenHasPrefix    *string  `json:"accessTokenHasPrefix,omitempty"`
+	AccessTokenHasSuffix    *string  `json:"accessTokenHasSuffix,omitempty"`
+	AccessTokenEqualFold    *string  `json:"accessTokenEqualFold,omitempty"`
+	AccessTokenContainsFold *string  `json:"accessTokenContainsFold,omitempty"`
+
+	// "expires_at" field predicates.
+	ExpiresAt      *time.Time  `json:"expiresAt,omitempty"`
+	ExpiresAtNEQ   *time.Time  `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn    []time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn []time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGT    *time.Time  `json:"expiresAtGT,omitempty"`
+	ExpiresAtGTE   *time.Time  `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLT    *time.Time  `json:"expiresAtLT,omitempty"`
+	ExpiresAtLTE   *time.Time  `json:"expiresAtLTE,omitempty"`
+
+	// "issued_at" field predicates.
+	IssuedAt      *time.Time  `json:"issuedAt,omitempty"`
+	IssuedAtNEQ   *time.Time  `json:"issuedAtNEQ,omitempty"`
+	IssuedAtIn    []time.Time `json:"issuedAtIn,omitempty"`
+	IssuedAtNotIn []time.Time `json:"issuedAtNotIn,omitempty"`
+	IssuedAtGT    *time.Time  `json:"issuedAtGT,omitempty"`
+	IssuedAtGTE   *time.Time  `json:"issuedAtGTE,omitempty"`
+	IssuedAtLT    *time.Time  `json:"issuedAtLT,omitempty"`
+	IssuedAtLTE   *time.Time  `json:"issuedAtLTE,omitempty"`
+
+	// "last_used_at" field predicates.
+	LastUsedAt       *time.Time  `json:"lastUsedAt,omitempty"`
+	LastUsedAtNEQ    *time.Time  `json:"lastUsedAtNEQ,omitempty"`
+	LastUsedAtIn     []time.Time `json:"lastUsedAtIn,omitempty"`
+	LastUsedAtNotIn  []time.Time `json:"lastUsedAtNotIn,omitempty"`
+	LastUsedAtGT     *time.Time  `json:"lastUsedAtGT,omitempty"`
+	LastUsedAtGTE    *time.Time  `json:"lastUsedAtGTE,omitempty"`
+	LastUsedAtLT     *time.Time  `json:"lastUsedAtLT,omitempty"`
+	LastUsedAtLTE    *time.Time  `json:"lastUsedAtLTE,omitempty"`
+	LastUsedAtIsNil  bool        `json:"lastUsedAtIsNil,omitempty"`
+	LastUsedAtNotNil bool        `json:"lastUsedAtNotNil,omitempty"`
+
+	// "organization_id" field predicates.
+	OrganizationID             *string  `json:"organizationID,omitempty"`
+	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
+	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
+	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
+	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
+	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
+	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
+	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
+	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
+	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
+	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
+	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
+
+	// "user_id" field predicates.
+	UserID             *string  `json:"userID,omitempty"`
+	UserIDNEQ          *string  `json:"userIDNEQ,omitempty"`
+	UserIDIn           []string `json:"userIDIn,omitempty"`
+	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
+	UserIDGT           *string  `json:"userIDGT,omitempty"`
+	UserIDGTE          *string  `json:"userIDGTE,omitempty"`
+	UserIDLT           *string  `json:"userIDLT,omitempty"`
+	UserIDLTE          *string  `json:"userIDLTE,omitempty"`
+	UserIDContains     *string  `json:"userIDContains,omitempty"`
+	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
+	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
+	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
+	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
+
+	// "owner" edge predicates.
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *AccessTokenWhereInput) AddPredicates(predicates ...predicate.AccessToken) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the AccessTokenWhereInput filter on the AccessTokenQuery builder.
+func (i *AccessTokenWhereInput) Filter(q *AccessTokenQuery) (*AccessTokenQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyAccessTokenWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyAccessTokenWhereInput is returned in case the AccessTokenWhereInput is empty.
+var ErrEmptyAccessTokenWhereInput = errors.New("generated: empty predicate AccessTokenWhereInput")
+
+// P returns a predicate for filtering accesstokens.
+// An error is returned if the input is empty or invalid.
+func (i *AccessTokenWhereInput) P() (predicate.AccessToken, error) {
+	var predicates []predicate.AccessToken
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, accesstoken.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.AccessToken, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, accesstoken.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.AccessToken, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, accesstoken.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, accesstoken.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, accesstoken.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, accesstoken.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, accesstoken.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, accesstoken.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, accesstoken.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, accesstoken.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, accesstoken.IDLTE(*i.IDLTE))
+	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, accesstoken.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, accesstoken.IDContainsFold(*i.IDContainsFold))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, accesstoken.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, accesstoken.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, accesstoken.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, accesstoken.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, accesstoken.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, accesstoken.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, accesstoken.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, accesstoken.CreatedAtLTE(*i.CreatedAtLTE))
+	}
+	if i.UpdatedAt != nil {
+		predicates = append(predicates, accesstoken.UpdatedAtEQ(*i.UpdatedAt))
+	}
+	if i.UpdatedAtNEQ != nil {
+		predicates = append(predicates, accesstoken.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+	}
+	if len(i.UpdatedAtIn) > 0 {
+		predicates = append(predicates, accesstoken.UpdatedAtIn(i.UpdatedAtIn...))
+	}
+	if len(i.UpdatedAtNotIn) > 0 {
+		predicates = append(predicates, accesstoken.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+	}
+	if i.UpdatedAtGT != nil {
+		predicates = append(predicates, accesstoken.UpdatedAtGT(*i.UpdatedAtGT))
+	}
+	if i.UpdatedAtGTE != nil {
+		predicates = append(predicates, accesstoken.UpdatedAtGTE(*i.UpdatedAtGTE))
+	}
+	if i.UpdatedAtLT != nil {
+		predicates = append(predicates, accesstoken.UpdatedAtLT(*i.UpdatedAtLT))
+	}
+	if i.UpdatedAtLTE != nil {
+		predicates = append(predicates, accesstoken.UpdatedAtLTE(*i.UpdatedAtLTE))
+	}
+	if i.CreatedBy != nil {
+		predicates = append(predicates, accesstoken.CreatedByEQ(*i.CreatedBy))
+	}
+	if i.CreatedByNEQ != nil {
+		predicates = append(predicates, accesstoken.CreatedByNEQ(*i.CreatedByNEQ))
+	}
+	if len(i.CreatedByIn) > 0 {
+		predicates = append(predicates, accesstoken.CreatedByIn(i.CreatedByIn...))
+	}
+	if len(i.CreatedByNotIn) > 0 {
+		predicates = append(predicates, accesstoken.CreatedByNotIn(i.CreatedByNotIn...))
+	}
+	if i.CreatedByGT != nil {
+		predicates = append(predicates, accesstoken.CreatedByGT(*i.CreatedByGT))
+	}
+	if i.CreatedByGTE != nil {
+		predicates = append(predicates, accesstoken.CreatedByGTE(*i.CreatedByGTE))
+	}
+	if i.CreatedByLT != nil {
+		predicates = append(predicates, accesstoken.CreatedByLT(*i.CreatedByLT))
+	}
+	if i.CreatedByLTE != nil {
+		predicates = append(predicates, accesstoken.CreatedByLTE(*i.CreatedByLTE))
+	}
+	if i.CreatedByContains != nil {
+		predicates = append(predicates, accesstoken.CreatedByContains(*i.CreatedByContains))
+	}
+	if i.CreatedByHasPrefix != nil {
+		predicates = append(predicates, accesstoken.CreatedByHasPrefix(*i.CreatedByHasPrefix))
+	}
+	if i.CreatedByHasSuffix != nil {
+		predicates = append(predicates, accesstoken.CreatedByHasSuffix(*i.CreatedByHasSuffix))
+	}
+	if i.CreatedByIsNil {
+		predicates = append(predicates, accesstoken.CreatedByIsNil())
+	}
+	if i.CreatedByNotNil {
+		predicates = append(predicates, accesstoken.CreatedByNotNil())
+	}
+	if i.CreatedByEqualFold != nil {
+		predicates = append(predicates, accesstoken.CreatedByEqualFold(*i.CreatedByEqualFold))
+	}
+	if i.CreatedByContainsFold != nil {
+		predicates = append(predicates, accesstoken.CreatedByContainsFold(*i.CreatedByContainsFold))
+	}
+	if i.UpdatedBy != nil {
+		predicates = append(predicates, accesstoken.UpdatedByEQ(*i.UpdatedBy))
+	}
+	if i.UpdatedByNEQ != nil {
+		predicates = append(predicates, accesstoken.UpdatedByNEQ(*i.UpdatedByNEQ))
+	}
+	if len(i.UpdatedByIn) > 0 {
+		predicates = append(predicates, accesstoken.UpdatedByIn(i.UpdatedByIn...))
+	}
+	if len(i.UpdatedByNotIn) > 0 {
+		predicates = append(predicates, accesstoken.UpdatedByNotIn(i.UpdatedByNotIn...))
+	}
+	if i.UpdatedByGT != nil {
+		predicates = append(predicates, accesstoken.UpdatedByGT(*i.UpdatedByGT))
+	}
+	if i.UpdatedByGTE != nil {
+		predicates = append(predicates, accesstoken.UpdatedByGTE(*i.UpdatedByGTE))
+	}
+	if i.UpdatedByLT != nil {
+		predicates = append(predicates, accesstoken.UpdatedByLT(*i.UpdatedByLT))
+	}
+	if i.UpdatedByLTE != nil {
+		predicates = append(predicates, accesstoken.UpdatedByLTE(*i.UpdatedByLTE))
+	}
+	if i.UpdatedByContains != nil {
+		predicates = append(predicates, accesstoken.UpdatedByContains(*i.UpdatedByContains))
+	}
+	if i.UpdatedByHasPrefix != nil {
+		predicates = append(predicates, accesstoken.UpdatedByHasPrefix(*i.UpdatedByHasPrefix))
+	}
+	if i.UpdatedByHasSuffix != nil {
+		predicates = append(predicates, accesstoken.UpdatedByHasSuffix(*i.UpdatedByHasSuffix))
+	}
+	if i.UpdatedByIsNil {
+		predicates = append(predicates, accesstoken.UpdatedByIsNil())
+	}
+	if i.UpdatedByNotNil {
+		predicates = append(predicates, accesstoken.UpdatedByNotNil())
+	}
+	if i.UpdatedByEqualFold != nil {
+		predicates = append(predicates, accesstoken.UpdatedByEqualFold(*i.UpdatedByEqualFold))
+	}
+	if i.UpdatedByContainsFold != nil {
+		predicates = append(predicates, accesstoken.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+	}
+	if i.AccessToken != nil {
+		predicates = append(predicates, accesstoken.AccessTokenEQ(*i.AccessToken))
+	}
+	if i.AccessTokenNEQ != nil {
+		predicates = append(predicates, accesstoken.AccessTokenNEQ(*i.AccessTokenNEQ))
+	}
+	if len(i.AccessTokenIn) > 0 {
+		predicates = append(predicates, accesstoken.AccessTokenIn(i.AccessTokenIn...))
+	}
+	if len(i.AccessTokenNotIn) > 0 {
+		predicates = append(predicates, accesstoken.AccessTokenNotIn(i.AccessTokenNotIn...))
+	}
+	if i.AccessTokenGT != nil {
+		predicates = append(predicates, accesstoken.AccessTokenGT(*i.AccessTokenGT))
+	}
+	if i.AccessTokenGTE != nil {
+		predicates = append(predicates, accesstoken.AccessTokenGTE(*i.AccessTokenGTE))
+	}
+	if i.AccessTokenLT != nil {
+		predicates = append(predicates, accesstoken.AccessTokenLT(*i.AccessTokenLT))
+	}
+	if i.AccessTokenLTE != nil {
+		predicates = append(predicates, accesstoken.AccessTokenLTE(*i.AccessTokenLTE))
+	}
+	if i.AccessTokenContains != nil {
+		predicates = append(predicates, accesstoken.AccessTokenContains(*i.AccessTokenContains))
+	}
+	if i.AccessTokenHasPrefix != nil {
+		predicates = append(predicates, accesstoken.AccessTokenHasPrefix(*i.AccessTokenHasPrefix))
+	}
+	if i.AccessTokenHasSuffix != nil {
+		predicates = append(predicates, accesstoken.AccessTokenHasSuffix(*i.AccessTokenHasSuffix))
+	}
+	if i.AccessTokenEqualFold != nil {
+		predicates = append(predicates, accesstoken.AccessTokenEqualFold(*i.AccessTokenEqualFold))
+	}
+	if i.AccessTokenContainsFold != nil {
+		predicates = append(predicates, accesstoken.AccessTokenContainsFold(*i.AccessTokenContainsFold))
+	}
+	if i.ExpiresAt != nil {
+		predicates = append(predicates, accesstoken.ExpiresAtEQ(*i.ExpiresAt))
+	}
+	if i.ExpiresAtNEQ != nil {
+		predicates = append(predicates, accesstoken.ExpiresAtNEQ(*i.ExpiresAtNEQ))
+	}
+	if len(i.ExpiresAtIn) > 0 {
+		predicates = append(predicates, accesstoken.ExpiresAtIn(i.ExpiresAtIn...))
+	}
+	if len(i.ExpiresAtNotIn) > 0 {
+		predicates = append(predicates, accesstoken.ExpiresAtNotIn(i.ExpiresAtNotIn...))
+	}
+	if i.ExpiresAtGT != nil {
+		predicates = append(predicates, accesstoken.ExpiresAtGT(*i.ExpiresAtGT))
+	}
+	if i.ExpiresAtGTE != nil {
+		predicates = append(predicates, accesstoken.ExpiresAtGTE(*i.ExpiresAtGTE))
+	}
+	if i.ExpiresAtLT != nil {
+		predicates = append(predicates, accesstoken.ExpiresAtLT(*i.ExpiresAtLT))
+	}
+	if i.ExpiresAtLTE != nil {
+		predicates = append(predicates, accesstoken.ExpiresAtLTE(*i.ExpiresAtLTE))
+	}
+	if i.IssuedAt != nil {
+		predicates = append(predicates, accesstoken.IssuedAtEQ(*i.IssuedAt))
+	}
+	if i.IssuedAtNEQ != nil {
+		predicates = append(predicates, accesstoken.IssuedAtNEQ(*i.IssuedAtNEQ))
+	}
+	if len(i.IssuedAtIn) > 0 {
+		predicates = append(predicates, accesstoken.IssuedAtIn(i.IssuedAtIn...))
+	}
+	if len(i.IssuedAtNotIn) > 0 {
+		predicates = append(predicates, accesstoken.IssuedAtNotIn(i.IssuedAtNotIn...))
+	}
+	if i.IssuedAtGT != nil {
+		predicates = append(predicates, accesstoken.IssuedAtGT(*i.IssuedAtGT))
+	}
+	if i.IssuedAtGTE != nil {
+		predicates = append(predicates, accesstoken.IssuedAtGTE(*i.IssuedAtGTE))
+	}
+	if i.IssuedAtLT != nil {
+		predicates = append(predicates, accesstoken.IssuedAtLT(*i.IssuedAtLT))
+	}
+	if i.IssuedAtLTE != nil {
+		predicates = append(predicates, accesstoken.IssuedAtLTE(*i.IssuedAtLTE))
+	}
+	if i.LastUsedAt != nil {
+		predicates = append(predicates, accesstoken.LastUsedAtEQ(*i.LastUsedAt))
+	}
+	if i.LastUsedAtNEQ != nil {
+		predicates = append(predicates, accesstoken.LastUsedAtNEQ(*i.LastUsedAtNEQ))
+	}
+	if len(i.LastUsedAtIn) > 0 {
+		predicates = append(predicates, accesstoken.LastUsedAtIn(i.LastUsedAtIn...))
+	}
+	if len(i.LastUsedAtNotIn) > 0 {
+		predicates = append(predicates, accesstoken.LastUsedAtNotIn(i.LastUsedAtNotIn...))
+	}
+	if i.LastUsedAtGT != nil {
+		predicates = append(predicates, accesstoken.LastUsedAtGT(*i.LastUsedAtGT))
+	}
+	if i.LastUsedAtGTE != nil {
+		predicates = append(predicates, accesstoken.LastUsedAtGTE(*i.LastUsedAtGTE))
+	}
+	if i.LastUsedAtLT != nil {
+		predicates = append(predicates, accesstoken.LastUsedAtLT(*i.LastUsedAtLT))
+	}
+	if i.LastUsedAtLTE != nil {
+		predicates = append(predicates, accesstoken.LastUsedAtLTE(*i.LastUsedAtLTE))
+	}
+	if i.LastUsedAtIsNil {
+		predicates = append(predicates, accesstoken.LastUsedAtIsNil())
+	}
+	if i.LastUsedAtNotNil {
+		predicates = append(predicates, accesstoken.LastUsedAtNotNil())
+	}
+	if i.OrganizationID != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDEQ(*i.OrganizationID))
+	}
+	if i.OrganizationIDNEQ != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDNEQ(*i.OrganizationIDNEQ))
+	}
+	if len(i.OrganizationIDIn) > 0 {
+		predicates = append(predicates, accesstoken.OrganizationIDIn(i.OrganizationIDIn...))
+	}
+	if len(i.OrganizationIDNotIn) > 0 {
+		predicates = append(predicates, accesstoken.OrganizationIDNotIn(i.OrganizationIDNotIn...))
+	}
+	if i.OrganizationIDGT != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDGT(*i.OrganizationIDGT))
+	}
+	if i.OrganizationIDGTE != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDGTE(*i.OrganizationIDGTE))
+	}
+	if i.OrganizationIDLT != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDLT(*i.OrganizationIDLT))
+	}
+	if i.OrganizationIDLTE != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDLTE(*i.OrganizationIDLTE))
+	}
+	if i.OrganizationIDContains != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDContains(*i.OrganizationIDContains))
+	}
+	if i.OrganizationIDHasPrefix != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
+	}
+	if i.OrganizationIDHasSuffix != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
+	}
+	if i.OrganizationIDEqualFold != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
+	}
+	if i.OrganizationIDContainsFold != nil {
+		predicates = append(predicates, accesstoken.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
+	}
+	if i.UserID != nil {
+		predicates = append(predicates, accesstoken.UserIDEQ(*i.UserID))
+	}
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, accesstoken.UserIDNEQ(*i.UserIDNEQ))
+	}
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, accesstoken.UserIDIn(i.UserIDIn...))
+	}
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, accesstoken.UserIDNotIn(i.UserIDNotIn...))
+	}
+	if i.UserIDGT != nil {
+		predicates = append(predicates, accesstoken.UserIDGT(*i.UserIDGT))
+	}
+	if i.UserIDGTE != nil {
+		predicates = append(predicates, accesstoken.UserIDGTE(*i.UserIDGTE))
+	}
+	if i.UserIDLT != nil {
+		predicates = append(predicates, accesstoken.UserIDLT(*i.UserIDLT))
+	}
+	if i.UserIDLTE != nil {
+		predicates = append(predicates, accesstoken.UserIDLTE(*i.UserIDLTE))
+	}
+	if i.UserIDContains != nil {
+		predicates = append(predicates, accesstoken.UserIDContains(*i.UserIDContains))
+	}
+	if i.UserIDHasPrefix != nil {
+		predicates = append(predicates, accesstoken.UserIDHasPrefix(*i.UserIDHasPrefix))
+	}
+	if i.UserIDHasSuffix != nil {
+		predicates = append(predicates, accesstoken.UserIDHasSuffix(*i.UserIDHasSuffix))
+	}
+	if i.UserIDEqualFold != nil {
+		predicates = append(predicates, accesstoken.UserIDEqualFold(*i.UserIDEqualFold))
+	}
+	if i.UserIDContainsFold != nil {
+		predicates = append(predicates, accesstoken.UserIDContainsFold(*i.UserIDContainsFold))
+	}
+
+	if i.HasOwner != nil {
+		p := accesstoken.HasOwner()
+		if !*i.HasOwner {
+			p = accesstoken.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasOwnerWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasOwnerWith))
+		for _, w := range i.HasOwnerWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasOwnerWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, accesstoken.HasOwnerWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyAccessTokenWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return accesstoken.And(predicates...), nil
+	}
+}
 
 // EntitlementWhereInput represents a where input for filtering Entitlement queries.
 type EntitlementWhereInput struct {
@@ -3156,6 +3776,560 @@ func (i *OauthProviderWhereInput) P() (predicate.OauthProvider, error) {
 	}
 }
 
+// OhAuthTooTokenWhereInput represents a where input for filtering OhAuthTooToken queries.
+type OhAuthTooTokenWhereInput struct {
+	Predicates []predicate.OhAuthTooToken  `json:"-"`
+	Not        *OhAuthTooTokenWhereInput   `json:"not,omitempty"`
+	Or         []*OhAuthTooTokenWhereInput `json:"or,omitempty"`
+	And        []*OhAuthTooTokenWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
+
+	// "client_id" field predicates.
+	ClientID             *string  `json:"clientID,omitempty"`
+	ClientIDNEQ          *string  `json:"clientIDNEQ,omitempty"`
+	ClientIDIn           []string `json:"clientIDIn,omitempty"`
+	ClientIDNotIn        []string `json:"clientIDNotIn,omitempty"`
+	ClientIDGT           *string  `json:"clientIDGT,omitempty"`
+	ClientIDGTE          *string  `json:"clientIDGTE,omitempty"`
+	ClientIDLT           *string  `json:"clientIDLT,omitempty"`
+	ClientIDLTE          *string  `json:"clientIDLTE,omitempty"`
+	ClientIDContains     *string  `json:"clientIDContains,omitempty"`
+	ClientIDHasPrefix    *string  `json:"clientIDHasPrefix,omitempty"`
+	ClientIDHasSuffix    *string  `json:"clientIDHasSuffix,omitempty"`
+	ClientIDEqualFold    *string  `json:"clientIDEqualFold,omitempty"`
+	ClientIDContainsFold *string  `json:"clientIDContainsFold,omitempty"`
+
+	// "nonce" field predicates.
+	Nonce             *string  `json:"nonce,omitempty"`
+	NonceNEQ          *string  `json:"nonceNEQ,omitempty"`
+	NonceIn           []string `json:"nonceIn,omitempty"`
+	NonceNotIn        []string `json:"nonceNotIn,omitempty"`
+	NonceGT           *string  `json:"nonceGT,omitempty"`
+	NonceGTE          *string  `json:"nonceGTE,omitempty"`
+	NonceLT           *string  `json:"nonceLT,omitempty"`
+	NonceLTE          *string  `json:"nonceLTE,omitempty"`
+	NonceContains     *string  `json:"nonceContains,omitempty"`
+	NonceHasPrefix    *string  `json:"nonceHasPrefix,omitempty"`
+	NonceHasSuffix    *string  `json:"nonceHasSuffix,omitempty"`
+	NonceEqualFold    *string  `json:"nonceEqualFold,omitempty"`
+	NonceContainsFold *string  `json:"nonceContainsFold,omitempty"`
+
+	// "claims_user_id" field predicates.
+	ClaimsUserID             *string  `json:"claimsUserID,omitempty"`
+	ClaimsUserIDNEQ          *string  `json:"claimsUserIDNEQ,omitempty"`
+	ClaimsUserIDIn           []string `json:"claimsUserIDIn,omitempty"`
+	ClaimsUserIDNotIn        []string `json:"claimsUserIDNotIn,omitempty"`
+	ClaimsUserIDGT           *string  `json:"claimsUserIDGT,omitempty"`
+	ClaimsUserIDGTE          *string  `json:"claimsUserIDGTE,omitempty"`
+	ClaimsUserIDLT           *string  `json:"claimsUserIDLT,omitempty"`
+	ClaimsUserIDLTE          *string  `json:"claimsUserIDLTE,omitempty"`
+	ClaimsUserIDContains     *string  `json:"claimsUserIDContains,omitempty"`
+	ClaimsUserIDHasPrefix    *string  `json:"claimsUserIDHasPrefix,omitempty"`
+	ClaimsUserIDHasSuffix    *string  `json:"claimsUserIDHasSuffix,omitempty"`
+	ClaimsUserIDEqualFold    *string  `json:"claimsUserIDEqualFold,omitempty"`
+	ClaimsUserIDContainsFold *string  `json:"claimsUserIDContainsFold,omitempty"`
+
+	// "claims_username" field predicates.
+	ClaimsUsername             *string  `json:"claimsUsername,omitempty"`
+	ClaimsUsernameNEQ          *string  `json:"claimsUsernameNEQ,omitempty"`
+	ClaimsUsernameIn           []string `json:"claimsUsernameIn,omitempty"`
+	ClaimsUsernameNotIn        []string `json:"claimsUsernameNotIn,omitempty"`
+	ClaimsUsernameGT           *string  `json:"claimsUsernameGT,omitempty"`
+	ClaimsUsernameGTE          *string  `json:"claimsUsernameGTE,omitempty"`
+	ClaimsUsernameLT           *string  `json:"claimsUsernameLT,omitempty"`
+	ClaimsUsernameLTE          *string  `json:"claimsUsernameLTE,omitempty"`
+	ClaimsUsernameContains     *string  `json:"claimsUsernameContains,omitempty"`
+	ClaimsUsernameHasPrefix    *string  `json:"claimsUsernameHasPrefix,omitempty"`
+	ClaimsUsernameHasSuffix    *string  `json:"claimsUsernameHasSuffix,omitempty"`
+	ClaimsUsernameEqualFold    *string  `json:"claimsUsernameEqualFold,omitempty"`
+	ClaimsUsernameContainsFold *string  `json:"claimsUsernameContainsFold,omitempty"`
+
+	// "claims_email" field predicates.
+	ClaimsEmail             *string  `json:"claimsEmail,omitempty"`
+	ClaimsEmailNEQ          *string  `json:"claimsEmailNEQ,omitempty"`
+	ClaimsEmailIn           []string `json:"claimsEmailIn,omitempty"`
+	ClaimsEmailNotIn        []string `json:"claimsEmailNotIn,omitempty"`
+	ClaimsEmailGT           *string  `json:"claimsEmailGT,omitempty"`
+	ClaimsEmailGTE          *string  `json:"claimsEmailGTE,omitempty"`
+	ClaimsEmailLT           *string  `json:"claimsEmailLT,omitempty"`
+	ClaimsEmailLTE          *string  `json:"claimsEmailLTE,omitempty"`
+	ClaimsEmailContains     *string  `json:"claimsEmailContains,omitempty"`
+	ClaimsEmailHasPrefix    *string  `json:"claimsEmailHasPrefix,omitempty"`
+	ClaimsEmailHasSuffix    *string  `json:"claimsEmailHasSuffix,omitempty"`
+	ClaimsEmailEqualFold    *string  `json:"claimsEmailEqualFold,omitempty"`
+	ClaimsEmailContainsFold *string  `json:"claimsEmailContainsFold,omitempty"`
+
+	// "claims_email_verified" field predicates.
+	ClaimsEmailVerified    *bool `json:"claimsEmailVerified,omitempty"`
+	ClaimsEmailVerifiedNEQ *bool `json:"claimsEmailVerifiedNEQ,omitempty"`
+
+	// "claims_preferred_username" field predicates.
+	ClaimsPreferredUsername             *string  `json:"claimsPreferredUsername,omitempty"`
+	ClaimsPreferredUsernameNEQ          *string  `json:"claimsPreferredUsernameNEQ,omitempty"`
+	ClaimsPreferredUsernameIn           []string `json:"claimsPreferredUsernameIn,omitempty"`
+	ClaimsPreferredUsernameNotIn        []string `json:"claimsPreferredUsernameNotIn,omitempty"`
+	ClaimsPreferredUsernameGT           *string  `json:"claimsPreferredUsernameGT,omitempty"`
+	ClaimsPreferredUsernameGTE          *string  `json:"claimsPreferredUsernameGTE,omitempty"`
+	ClaimsPreferredUsernameLT           *string  `json:"claimsPreferredUsernameLT,omitempty"`
+	ClaimsPreferredUsernameLTE          *string  `json:"claimsPreferredUsernameLTE,omitempty"`
+	ClaimsPreferredUsernameContains     *string  `json:"claimsPreferredUsernameContains,omitempty"`
+	ClaimsPreferredUsernameHasPrefix    *string  `json:"claimsPreferredUsernameHasPrefix,omitempty"`
+	ClaimsPreferredUsernameHasSuffix    *string  `json:"claimsPreferredUsernameHasSuffix,omitempty"`
+	ClaimsPreferredUsernameEqualFold    *string  `json:"claimsPreferredUsernameEqualFold,omitempty"`
+	ClaimsPreferredUsernameContainsFold *string  `json:"claimsPreferredUsernameContainsFold,omitempty"`
+
+	// "connector_id" field predicates.
+	ConnectorID             *string  `json:"connectorID,omitempty"`
+	ConnectorIDNEQ          *string  `json:"connectorIDNEQ,omitempty"`
+	ConnectorIDIn           []string `json:"connectorIDIn,omitempty"`
+	ConnectorIDNotIn        []string `json:"connectorIDNotIn,omitempty"`
+	ConnectorIDGT           *string  `json:"connectorIDGT,omitempty"`
+	ConnectorIDGTE          *string  `json:"connectorIDGTE,omitempty"`
+	ConnectorIDLT           *string  `json:"connectorIDLT,omitempty"`
+	ConnectorIDLTE          *string  `json:"connectorIDLTE,omitempty"`
+	ConnectorIDContains     *string  `json:"connectorIDContains,omitempty"`
+	ConnectorIDHasPrefix    *string  `json:"connectorIDHasPrefix,omitempty"`
+	ConnectorIDHasSuffix    *string  `json:"connectorIDHasSuffix,omitempty"`
+	ConnectorIDEqualFold    *string  `json:"connectorIDEqualFold,omitempty"`
+	ConnectorIDContainsFold *string  `json:"connectorIDContainsFold,omitempty"`
+
+	// "last_used" field predicates.
+	LastUsed      *time.Time  `json:"lastUsed,omitempty"`
+	LastUsedNEQ   *time.Time  `json:"lastUsedNEQ,omitempty"`
+	LastUsedIn    []time.Time `json:"lastUsedIn,omitempty"`
+	LastUsedNotIn []time.Time `json:"lastUsedNotIn,omitempty"`
+	LastUsedGT    *time.Time  `json:"lastUsedGT,omitempty"`
+	LastUsedGTE   *time.Time  `json:"lastUsedGTE,omitempty"`
+	LastUsedLT    *time.Time  `json:"lastUsedLT,omitempty"`
+	LastUsedLTE   *time.Time  `json:"lastUsedLTE,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *OhAuthTooTokenWhereInput) AddPredicates(predicates ...predicate.OhAuthTooToken) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the OhAuthTooTokenWhereInput filter on the OhAuthTooTokenQuery builder.
+func (i *OhAuthTooTokenWhereInput) Filter(q *OhAuthTooTokenQuery) (*OhAuthTooTokenQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyOhAuthTooTokenWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyOhAuthTooTokenWhereInput is returned in case the OhAuthTooTokenWhereInput is empty.
+var ErrEmptyOhAuthTooTokenWhereInput = errors.New("generated: empty predicate OhAuthTooTokenWhereInput")
+
+// P returns a predicate for filtering ohauthtootokens.
+// An error is returned if the input is empty or invalid.
+func (i *OhAuthTooTokenWhereInput) P() (predicate.OhAuthTooToken, error) {
+	var predicates []predicate.OhAuthTooToken
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, ohauthtootoken.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.OhAuthTooToken, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, ohauthtootoken.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.OhAuthTooToken, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, ohauthtootoken.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, ohauthtootoken.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, ohauthtootoken.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, ohauthtootoken.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, ohauthtootoken.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, ohauthtootoken.IDLTE(*i.IDLTE))
+	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.IDContainsFold(*i.IDContainsFold))
+	}
+	if i.ClientID != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDEQ(*i.ClientID))
+	}
+	if i.ClientIDNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDNEQ(*i.ClientIDNEQ))
+	}
+	if len(i.ClientIDIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClientIDIn(i.ClientIDIn...))
+	}
+	if len(i.ClientIDNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClientIDNotIn(i.ClientIDNotIn...))
+	}
+	if i.ClientIDGT != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDGT(*i.ClientIDGT))
+	}
+	if i.ClientIDGTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDGTE(*i.ClientIDGTE))
+	}
+	if i.ClientIDLT != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDLT(*i.ClientIDLT))
+	}
+	if i.ClientIDLTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDLTE(*i.ClientIDLTE))
+	}
+	if i.ClientIDContains != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDContains(*i.ClientIDContains))
+	}
+	if i.ClientIDHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDHasPrefix(*i.ClientIDHasPrefix))
+	}
+	if i.ClientIDHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDHasSuffix(*i.ClientIDHasSuffix))
+	}
+	if i.ClientIDEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDEqualFold(*i.ClientIDEqualFold))
+	}
+	if i.ClientIDContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClientIDContainsFold(*i.ClientIDContainsFold))
+	}
+	if i.Nonce != nil {
+		predicates = append(predicates, ohauthtootoken.NonceEQ(*i.Nonce))
+	}
+	if i.NonceNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.NonceNEQ(*i.NonceNEQ))
+	}
+	if len(i.NonceIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.NonceIn(i.NonceIn...))
+	}
+	if len(i.NonceNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.NonceNotIn(i.NonceNotIn...))
+	}
+	if i.NonceGT != nil {
+		predicates = append(predicates, ohauthtootoken.NonceGT(*i.NonceGT))
+	}
+	if i.NonceGTE != nil {
+		predicates = append(predicates, ohauthtootoken.NonceGTE(*i.NonceGTE))
+	}
+	if i.NonceLT != nil {
+		predicates = append(predicates, ohauthtootoken.NonceLT(*i.NonceLT))
+	}
+	if i.NonceLTE != nil {
+		predicates = append(predicates, ohauthtootoken.NonceLTE(*i.NonceLTE))
+	}
+	if i.NonceContains != nil {
+		predicates = append(predicates, ohauthtootoken.NonceContains(*i.NonceContains))
+	}
+	if i.NonceHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.NonceHasPrefix(*i.NonceHasPrefix))
+	}
+	if i.NonceHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.NonceHasSuffix(*i.NonceHasSuffix))
+	}
+	if i.NonceEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.NonceEqualFold(*i.NonceEqualFold))
+	}
+	if i.NonceContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.NonceContainsFold(*i.NonceContainsFold))
+	}
+	if i.ClaimsUserID != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDEQ(*i.ClaimsUserID))
+	}
+	if i.ClaimsUserIDNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDNEQ(*i.ClaimsUserIDNEQ))
+	}
+	if len(i.ClaimsUserIDIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDIn(i.ClaimsUserIDIn...))
+	}
+	if len(i.ClaimsUserIDNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDNotIn(i.ClaimsUserIDNotIn...))
+	}
+	if i.ClaimsUserIDGT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDGT(*i.ClaimsUserIDGT))
+	}
+	if i.ClaimsUserIDGTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDGTE(*i.ClaimsUserIDGTE))
+	}
+	if i.ClaimsUserIDLT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDLT(*i.ClaimsUserIDLT))
+	}
+	if i.ClaimsUserIDLTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDLTE(*i.ClaimsUserIDLTE))
+	}
+	if i.ClaimsUserIDContains != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDContains(*i.ClaimsUserIDContains))
+	}
+	if i.ClaimsUserIDHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDHasPrefix(*i.ClaimsUserIDHasPrefix))
+	}
+	if i.ClaimsUserIDHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDHasSuffix(*i.ClaimsUserIDHasSuffix))
+	}
+	if i.ClaimsUserIDEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDEqualFold(*i.ClaimsUserIDEqualFold))
+	}
+	if i.ClaimsUserIDContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUserIDContainsFold(*i.ClaimsUserIDContainsFold))
+	}
+	if i.ClaimsUsername != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameEQ(*i.ClaimsUsername))
+	}
+	if i.ClaimsUsernameNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameNEQ(*i.ClaimsUsernameNEQ))
+	}
+	if len(i.ClaimsUsernameIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameIn(i.ClaimsUsernameIn...))
+	}
+	if len(i.ClaimsUsernameNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameNotIn(i.ClaimsUsernameNotIn...))
+	}
+	if i.ClaimsUsernameGT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameGT(*i.ClaimsUsernameGT))
+	}
+	if i.ClaimsUsernameGTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameGTE(*i.ClaimsUsernameGTE))
+	}
+	if i.ClaimsUsernameLT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameLT(*i.ClaimsUsernameLT))
+	}
+	if i.ClaimsUsernameLTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameLTE(*i.ClaimsUsernameLTE))
+	}
+	if i.ClaimsUsernameContains != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameContains(*i.ClaimsUsernameContains))
+	}
+	if i.ClaimsUsernameHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameHasPrefix(*i.ClaimsUsernameHasPrefix))
+	}
+	if i.ClaimsUsernameHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameHasSuffix(*i.ClaimsUsernameHasSuffix))
+	}
+	if i.ClaimsUsernameEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameEqualFold(*i.ClaimsUsernameEqualFold))
+	}
+	if i.ClaimsUsernameContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsUsernameContainsFold(*i.ClaimsUsernameContainsFold))
+	}
+	if i.ClaimsEmail != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailEQ(*i.ClaimsEmail))
+	}
+	if i.ClaimsEmailNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailNEQ(*i.ClaimsEmailNEQ))
+	}
+	if len(i.ClaimsEmailIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailIn(i.ClaimsEmailIn...))
+	}
+	if len(i.ClaimsEmailNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailNotIn(i.ClaimsEmailNotIn...))
+	}
+	if i.ClaimsEmailGT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailGT(*i.ClaimsEmailGT))
+	}
+	if i.ClaimsEmailGTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailGTE(*i.ClaimsEmailGTE))
+	}
+	if i.ClaimsEmailLT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailLT(*i.ClaimsEmailLT))
+	}
+	if i.ClaimsEmailLTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailLTE(*i.ClaimsEmailLTE))
+	}
+	if i.ClaimsEmailContains != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailContains(*i.ClaimsEmailContains))
+	}
+	if i.ClaimsEmailHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailHasPrefix(*i.ClaimsEmailHasPrefix))
+	}
+	if i.ClaimsEmailHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailHasSuffix(*i.ClaimsEmailHasSuffix))
+	}
+	if i.ClaimsEmailEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailEqualFold(*i.ClaimsEmailEqualFold))
+	}
+	if i.ClaimsEmailContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailContainsFold(*i.ClaimsEmailContainsFold))
+	}
+	if i.ClaimsEmailVerified != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailVerifiedEQ(*i.ClaimsEmailVerified))
+	}
+	if i.ClaimsEmailVerifiedNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsEmailVerifiedNEQ(*i.ClaimsEmailVerifiedNEQ))
+	}
+	if i.ClaimsPreferredUsername != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameEQ(*i.ClaimsPreferredUsername))
+	}
+	if i.ClaimsPreferredUsernameNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameNEQ(*i.ClaimsPreferredUsernameNEQ))
+	}
+	if len(i.ClaimsPreferredUsernameIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameIn(i.ClaimsPreferredUsernameIn...))
+	}
+	if len(i.ClaimsPreferredUsernameNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameNotIn(i.ClaimsPreferredUsernameNotIn...))
+	}
+	if i.ClaimsPreferredUsernameGT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameGT(*i.ClaimsPreferredUsernameGT))
+	}
+	if i.ClaimsPreferredUsernameGTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameGTE(*i.ClaimsPreferredUsernameGTE))
+	}
+	if i.ClaimsPreferredUsernameLT != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameLT(*i.ClaimsPreferredUsernameLT))
+	}
+	if i.ClaimsPreferredUsernameLTE != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameLTE(*i.ClaimsPreferredUsernameLTE))
+	}
+	if i.ClaimsPreferredUsernameContains != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameContains(*i.ClaimsPreferredUsernameContains))
+	}
+	if i.ClaimsPreferredUsernameHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameHasPrefix(*i.ClaimsPreferredUsernameHasPrefix))
+	}
+	if i.ClaimsPreferredUsernameHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameHasSuffix(*i.ClaimsPreferredUsernameHasSuffix))
+	}
+	if i.ClaimsPreferredUsernameEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameEqualFold(*i.ClaimsPreferredUsernameEqualFold))
+	}
+	if i.ClaimsPreferredUsernameContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.ClaimsPreferredUsernameContainsFold(*i.ClaimsPreferredUsernameContainsFold))
+	}
+	if i.ConnectorID != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDEQ(*i.ConnectorID))
+	}
+	if i.ConnectorIDNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDNEQ(*i.ConnectorIDNEQ))
+	}
+	if len(i.ConnectorIDIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDIn(i.ConnectorIDIn...))
+	}
+	if len(i.ConnectorIDNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDNotIn(i.ConnectorIDNotIn...))
+	}
+	if i.ConnectorIDGT != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDGT(*i.ConnectorIDGT))
+	}
+	if i.ConnectorIDGTE != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDGTE(*i.ConnectorIDGTE))
+	}
+	if i.ConnectorIDLT != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDLT(*i.ConnectorIDLT))
+	}
+	if i.ConnectorIDLTE != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDLTE(*i.ConnectorIDLTE))
+	}
+	if i.ConnectorIDContains != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDContains(*i.ConnectorIDContains))
+	}
+	if i.ConnectorIDHasPrefix != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDHasPrefix(*i.ConnectorIDHasPrefix))
+	}
+	if i.ConnectorIDHasSuffix != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDHasSuffix(*i.ConnectorIDHasSuffix))
+	}
+	if i.ConnectorIDEqualFold != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDEqualFold(*i.ConnectorIDEqualFold))
+	}
+	if i.ConnectorIDContainsFold != nil {
+		predicates = append(predicates, ohauthtootoken.ConnectorIDContainsFold(*i.ConnectorIDContainsFold))
+	}
+	if i.LastUsed != nil {
+		predicates = append(predicates, ohauthtootoken.LastUsedEQ(*i.LastUsed))
+	}
+	if i.LastUsedNEQ != nil {
+		predicates = append(predicates, ohauthtootoken.LastUsedNEQ(*i.LastUsedNEQ))
+	}
+	if len(i.LastUsedIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.LastUsedIn(i.LastUsedIn...))
+	}
+	if len(i.LastUsedNotIn) > 0 {
+		predicates = append(predicates, ohauthtootoken.LastUsedNotIn(i.LastUsedNotIn...))
+	}
+	if i.LastUsedGT != nil {
+		predicates = append(predicates, ohauthtootoken.LastUsedGT(*i.LastUsedGT))
+	}
+	if i.LastUsedGTE != nil {
+		predicates = append(predicates, ohauthtootoken.LastUsedGTE(*i.LastUsedGTE))
+	}
+	if i.LastUsedLT != nil {
+		predicates = append(predicates, ohauthtootoken.LastUsedLT(*i.LastUsedLT))
+	}
+	if i.LastUsedLTE != nil {
+		predicates = append(predicates, ohauthtootoken.LastUsedLTE(*i.LastUsedLTE))
+	}
+
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyOhAuthTooTokenWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return ohauthtootoken.And(predicates...), nil
+	}
+}
+
 // OrganizationWhereInput represents a where input for filtering Organization queries.
 type OrganizationWhereInput struct {
 	Predicates []predicate.Organization  `json:"-"`
@@ -5203,158 +6377,70 @@ type RefreshTokenWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
-	// "client_id" field predicates.
-	ClientID             *string  `json:"clientID,omitempty"`
-	ClientIDNEQ          *string  `json:"clientIDNEQ,omitempty"`
-	ClientIDIn           []string `json:"clientIDIn,omitempty"`
-	ClientIDNotIn        []string `json:"clientIDNotIn,omitempty"`
-	ClientIDGT           *string  `json:"clientIDGT,omitempty"`
-	ClientIDGTE          *string  `json:"clientIDGTE,omitempty"`
-	ClientIDLT           *string  `json:"clientIDLT,omitempty"`
-	ClientIDLTE          *string  `json:"clientIDLTE,omitempty"`
-	ClientIDContains     *string  `json:"clientIDContains,omitempty"`
-	ClientIDHasPrefix    *string  `json:"clientIDHasPrefix,omitempty"`
-	ClientIDHasSuffix    *string  `json:"clientIDHasSuffix,omitempty"`
-	ClientIDEqualFold    *string  `json:"clientIDEqualFold,omitempty"`
-	ClientIDContainsFold *string  `json:"clientIDContainsFold,omitempty"`
+	// "refresh_token" field predicates.
+	RefreshToken             *string  `json:"refreshToken,omitempty"`
+	RefreshTokenNEQ          *string  `json:"refreshTokenNEQ,omitempty"`
+	RefreshTokenIn           []string `json:"refreshTokenIn,omitempty"`
+	RefreshTokenNotIn        []string `json:"refreshTokenNotIn,omitempty"`
+	RefreshTokenGT           *string  `json:"refreshTokenGT,omitempty"`
+	RefreshTokenGTE          *string  `json:"refreshTokenGTE,omitempty"`
+	RefreshTokenLT           *string  `json:"refreshTokenLT,omitempty"`
+	RefreshTokenLTE          *string  `json:"refreshTokenLTE,omitempty"`
+	RefreshTokenContains     *string  `json:"refreshTokenContains,omitempty"`
+	RefreshTokenHasPrefix    *string  `json:"refreshTokenHasPrefix,omitempty"`
+	RefreshTokenHasSuffix    *string  `json:"refreshTokenHasSuffix,omitempty"`
+	RefreshTokenEqualFold    *string  `json:"refreshTokenEqualFold,omitempty"`
+	RefreshTokenContainsFold *string  `json:"refreshTokenContainsFold,omitempty"`
 
-	// "nonce" field predicates.
-	Nonce             *string  `json:"nonce,omitempty"`
-	NonceNEQ          *string  `json:"nonceNEQ,omitempty"`
-	NonceIn           []string `json:"nonceIn,omitempty"`
-	NonceNotIn        []string `json:"nonceNotIn,omitempty"`
-	NonceGT           *string  `json:"nonceGT,omitempty"`
-	NonceGTE          *string  `json:"nonceGTE,omitempty"`
-	NonceLT           *string  `json:"nonceLT,omitempty"`
-	NonceLTE          *string  `json:"nonceLTE,omitempty"`
-	NonceContains     *string  `json:"nonceContains,omitempty"`
-	NonceHasPrefix    *string  `json:"nonceHasPrefix,omitempty"`
-	NonceHasSuffix    *string  `json:"nonceHasSuffix,omitempty"`
-	NonceEqualFold    *string  `json:"nonceEqualFold,omitempty"`
-	NonceContainsFold *string  `json:"nonceContainsFold,omitempty"`
+	// "expires_at" field predicates.
+	ExpiresAt      *time.Time  `json:"expiresAt,omitempty"`
+	ExpiresAtNEQ   *time.Time  `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn    []time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn []time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGT    *time.Time  `json:"expiresAtGT,omitempty"`
+	ExpiresAtGTE   *time.Time  `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLT    *time.Time  `json:"expiresAtLT,omitempty"`
+	ExpiresAtLTE   *time.Time  `json:"expiresAtLTE,omitempty"`
 
-	// "claims_user_id" field predicates.
-	ClaimsUserID             *string  `json:"claimsUserID,omitempty"`
-	ClaimsUserIDNEQ          *string  `json:"claimsUserIDNEQ,omitempty"`
-	ClaimsUserIDIn           []string `json:"claimsUserIDIn,omitempty"`
-	ClaimsUserIDNotIn        []string `json:"claimsUserIDNotIn,omitempty"`
-	ClaimsUserIDGT           *string  `json:"claimsUserIDGT,omitempty"`
-	ClaimsUserIDGTE          *string  `json:"claimsUserIDGTE,omitempty"`
-	ClaimsUserIDLT           *string  `json:"claimsUserIDLT,omitempty"`
-	ClaimsUserIDLTE          *string  `json:"claimsUserIDLTE,omitempty"`
-	ClaimsUserIDContains     *string  `json:"claimsUserIDContains,omitempty"`
-	ClaimsUserIDHasPrefix    *string  `json:"claimsUserIDHasPrefix,omitempty"`
-	ClaimsUserIDHasSuffix    *string  `json:"claimsUserIDHasSuffix,omitempty"`
-	ClaimsUserIDEqualFold    *string  `json:"claimsUserIDEqualFold,omitempty"`
-	ClaimsUserIDContainsFold *string  `json:"claimsUserIDContainsFold,omitempty"`
+	// "issued_at" field predicates.
+	IssuedAt      *time.Time  `json:"issuedAt,omitempty"`
+	IssuedAtNEQ   *time.Time  `json:"issuedAtNEQ,omitempty"`
+	IssuedAtIn    []time.Time `json:"issuedAtIn,omitempty"`
+	IssuedAtNotIn []time.Time `json:"issuedAtNotIn,omitempty"`
+	IssuedAtGT    *time.Time  `json:"issuedAtGT,omitempty"`
+	IssuedAtGTE   *time.Time  `json:"issuedAtGTE,omitempty"`
+	IssuedAtLT    *time.Time  `json:"issuedAtLT,omitempty"`
+	IssuedAtLTE   *time.Time  `json:"issuedAtLTE,omitempty"`
 
-	// "claims_username" field predicates.
-	ClaimsUsername             *string  `json:"claimsUsername,omitempty"`
-	ClaimsUsernameNEQ          *string  `json:"claimsUsernameNEQ,omitempty"`
-	ClaimsUsernameIn           []string `json:"claimsUsernameIn,omitempty"`
-	ClaimsUsernameNotIn        []string `json:"claimsUsernameNotIn,omitempty"`
-	ClaimsUsernameGT           *string  `json:"claimsUsernameGT,omitempty"`
-	ClaimsUsernameGTE          *string  `json:"claimsUsernameGTE,omitempty"`
-	ClaimsUsernameLT           *string  `json:"claimsUsernameLT,omitempty"`
-	ClaimsUsernameLTE          *string  `json:"claimsUsernameLTE,omitempty"`
-	ClaimsUsernameContains     *string  `json:"claimsUsernameContains,omitempty"`
-	ClaimsUsernameHasPrefix    *string  `json:"claimsUsernameHasPrefix,omitempty"`
-	ClaimsUsernameHasSuffix    *string  `json:"claimsUsernameHasSuffix,omitempty"`
-	ClaimsUsernameEqualFold    *string  `json:"claimsUsernameEqualFold,omitempty"`
-	ClaimsUsernameContainsFold *string  `json:"claimsUsernameContainsFold,omitempty"`
+	// "organization_id" field predicates.
+	OrganizationID             *string  `json:"organizationID,omitempty"`
+	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
+	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
+	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
+	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
+	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
+	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
+	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
+	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
+	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
+	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
+	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 
-	// "claims_email" field predicates.
-	ClaimsEmail             *string  `json:"claimsEmail,omitempty"`
-	ClaimsEmailNEQ          *string  `json:"claimsEmailNEQ,omitempty"`
-	ClaimsEmailIn           []string `json:"claimsEmailIn,omitempty"`
-	ClaimsEmailNotIn        []string `json:"claimsEmailNotIn,omitempty"`
-	ClaimsEmailGT           *string  `json:"claimsEmailGT,omitempty"`
-	ClaimsEmailGTE          *string  `json:"claimsEmailGTE,omitempty"`
-	ClaimsEmailLT           *string  `json:"claimsEmailLT,omitempty"`
-	ClaimsEmailLTE          *string  `json:"claimsEmailLTE,omitempty"`
-	ClaimsEmailContains     *string  `json:"claimsEmailContains,omitempty"`
-	ClaimsEmailHasPrefix    *string  `json:"claimsEmailHasPrefix,omitempty"`
-	ClaimsEmailHasSuffix    *string  `json:"claimsEmailHasSuffix,omitempty"`
-	ClaimsEmailEqualFold    *string  `json:"claimsEmailEqualFold,omitempty"`
-	ClaimsEmailContainsFold *string  `json:"claimsEmailContainsFold,omitempty"`
-
-	// "claims_email_verified" field predicates.
-	ClaimsEmailVerified    *bool `json:"claimsEmailVerified,omitempty"`
-	ClaimsEmailVerifiedNEQ *bool `json:"claimsEmailVerifiedNEQ,omitempty"`
-
-	// "claims_preferred_username" field predicates.
-	ClaimsPreferredUsername             *string  `json:"claimsPreferredUsername,omitempty"`
-	ClaimsPreferredUsernameNEQ          *string  `json:"claimsPreferredUsernameNEQ,omitempty"`
-	ClaimsPreferredUsernameIn           []string `json:"claimsPreferredUsernameIn,omitempty"`
-	ClaimsPreferredUsernameNotIn        []string `json:"claimsPreferredUsernameNotIn,omitempty"`
-	ClaimsPreferredUsernameGT           *string  `json:"claimsPreferredUsernameGT,omitempty"`
-	ClaimsPreferredUsernameGTE          *string  `json:"claimsPreferredUsernameGTE,omitempty"`
-	ClaimsPreferredUsernameLT           *string  `json:"claimsPreferredUsernameLT,omitempty"`
-	ClaimsPreferredUsernameLTE          *string  `json:"claimsPreferredUsernameLTE,omitempty"`
-	ClaimsPreferredUsernameContains     *string  `json:"claimsPreferredUsernameContains,omitempty"`
-	ClaimsPreferredUsernameHasPrefix    *string  `json:"claimsPreferredUsernameHasPrefix,omitempty"`
-	ClaimsPreferredUsernameHasSuffix    *string  `json:"claimsPreferredUsernameHasSuffix,omitempty"`
-	ClaimsPreferredUsernameEqualFold    *string  `json:"claimsPreferredUsernameEqualFold,omitempty"`
-	ClaimsPreferredUsernameContainsFold *string  `json:"claimsPreferredUsernameContainsFold,omitempty"`
-
-	// "connector_id" field predicates.
-	ConnectorID             *string  `json:"connectorID,omitempty"`
-	ConnectorIDNEQ          *string  `json:"connectorIDNEQ,omitempty"`
-	ConnectorIDIn           []string `json:"connectorIDIn,omitempty"`
-	ConnectorIDNotIn        []string `json:"connectorIDNotIn,omitempty"`
-	ConnectorIDGT           *string  `json:"connectorIDGT,omitempty"`
-	ConnectorIDGTE          *string  `json:"connectorIDGTE,omitempty"`
-	ConnectorIDLT           *string  `json:"connectorIDLT,omitempty"`
-	ConnectorIDLTE          *string  `json:"connectorIDLTE,omitempty"`
-	ConnectorIDContains     *string  `json:"connectorIDContains,omitempty"`
-	ConnectorIDHasPrefix    *string  `json:"connectorIDHasPrefix,omitempty"`
-	ConnectorIDHasSuffix    *string  `json:"connectorIDHasSuffix,omitempty"`
-	ConnectorIDEqualFold    *string  `json:"connectorIDEqualFold,omitempty"`
-	ConnectorIDContainsFold *string  `json:"connectorIDContainsFold,omitempty"`
-
-	// "token" field predicates.
-	Token             *string  `json:"token,omitempty"`
-	TokenNEQ          *string  `json:"tokenNEQ,omitempty"`
-	TokenIn           []string `json:"tokenIn,omitempty"`
-	TokenNotIn        []string `json:"tokenNotIn,omitempty"`
-	TokenGT           *string  `json:"tokenGT,omitempty"`
-	TokenGTE          *string  `json:"tokenGTE,omitempty"`
-	TokenLT           *string  `json:"tokenLT,omitempty"`
-	TokenLTE          *string  `json:"tokenLTE,omitempty"`
-	TokenContains     *string  `json:"tokenContains,omitempty"`
-	TokenHasPrefix    *string  `json:"tokenHasPrefix,omitempty"`
-	TokenHasSuffix    *string  `json:"tokenHasSuffix,omitempty"`
-	TokenEqualFold    *string  `json:"tokenEqualFold,omitempty"`
-	TokenContainsFold *string  `json:"tokenContainsFold,omitempty"`
-
-	// "obsolete_token" field predicates.
-	ObsoleteToken             *string  `json:"obsoleteToken,omitempty"`
-	ObsoleteTokenNEQ          *string  `json:"obsoleteTokenNEQ,omitempty"`
-	ObsoleteTokenIn           []string `json:"obsoleteTokenIn,omitempty"`
-	ObsoleteTokenNotIn        []string `json:"obsoleteTokenNotIn,omitempty"`
-	ObsoleteTokenGT           *string  `json:"obsoleteTokenGT,omitempty"`
-	ObsoleteTokenGTE          *string  `json:"obsoleteTokenGTE,omitempty"`
-	ObsoleteTokenLT           *string  `json:"obsoleteTokenLT,omitempty"`
-	ObsoleteTokenLTE          *string  `json:"obsoleteTokenLTE,omitempty"`
-	ObsoleteTokenContains     *string  `json:"obsoleteTokenContains,omitempty"`
-	ObsoleteTokenHasPrefix    *string  `json:"obsoleteTokenHasPrefix,omitempty"`
-	ObsoleteTokenHasSuffix    *string  `json:"obsoleteTokenHasSuffix,omitempty"`
-	ObsoleteTokenEqualFold    *string  `json:"obsoleteTokenEqualFold,omitempty"`
-	ObsoleteTokenContainsFold *string  `json:"obsoleteTokenContainsFold,omitempty"`
-
-	// "last_used" field predicates.
-	LastUsed      *time.Time  `json:"lastUsed,omitempty"`
-	LastUsedNEQ   *time.Time  `json:"lastUsedNEQ,omitempty"`
-	LastUsedIn    []time.Time `json:"lastUsedIn,omitempty"`
-	LastUsedNotIn []time.Time `json:"lastUsedNotIn,omitempty"`
-	LastUsedGT    *time.Time  `json:"lastUsedGT,omitempty"`
-	LastUsedGTE   *time.Time  `json:"lastUsedGTE,omitempty"`
-	LastUsedLT    *time.Time  `json:"lastUsedLT,omitempty"`
-	LastUsedLTE   *time.Time  `json:"lastUsedLTE,omitempty"`
-
-	// "user" edge predicates.
-	HasUser     *bool             `json:"hasUser,omitempty"`
-	HasUserWith []*UserWhereInput `json:"hasUserWith,omitempty"`
+	// "user_id" field predicates.
+	UserID             *string  `json:"userID,omitempty"`
+	UserIDNEQ          *string  `json:"userIDNEQ,omitempty"`
+	UserIDIn           []string `json:"userIDIn,omitempty"`
+	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
+	UserIDGT           *string  `json:"userIDGT,omitempty"`
+	UserIDGTE          *string  `json:"userIDGTE,omitempty"`
+	UserIDLT           *string  `json:"userIDLT,omitempty"`
+	UserIDLTE          *string  `json:"userIDLTE,omitempty"`
+	UserIDContains     *string  `json:"userIDContains,omitempty"`
+	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
+	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
+	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
+	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -5458,406 +6544,172 @@ func (i *RefreshTokenWhereInput) P() (predicate.RefreshToken, error) {
 	if i.IDContainsFold != nil {
 		predicates = append(predicates, refreshtoken.IDContainsFold(*i.IDContainsFold))
 	}
-	if i.ClientID != nil {
-		predicates = append(predicates, refreshtoken.ClientIDEQ(*i.ClientID))
+	if i.RefreshToken != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenEQ(*i.RefreshToken))
 	}
-	if i.ClientIDNEQ != nil {
-		predicates = append(predicates, refreshtoken.ClientIDNEQ(*i.ClientIDNEQ))
+	if i.RefreshTokenNEQ != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenNEQ(*i.RefreshTokenNEQ))
 	}
-	if len(i.ClientIDIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClientIDIn(i.ClientIDIn...))
+	if len(i.RefreshTokenIn) > 0 {
+		predicates = append(predicates, refreshtoken.RefreshTokenIn(i.RefreshTokenIn...))
 	}
-	if len(i.ClientIDNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClientIDNotIn(i.ClientIDNotIn...))
+	if len(i.RefreshTokenNotIn) > 0 {
+		predicates = append(predicates, refreshtoken.RefreshTokenNotIn(i.RefreshTokenNotIn...))
 	}
-	if i.ClientIDGT != nil {
-		predicates = append(predicates, refreshtoken.ClientIDGT(*i.ClientIDGT))
+	if i.RefreshTokenGT != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenGT(*i.RefreshTokenGT))
 	}
-	if i.ClientIDGTE != nil {
-		predicates = append(predicates, refreshtoken.ClientIDGTE(*i.ClientIDGTE))
+	if i.RefreshTokenGTE != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenGTE(*i.RefreshTokenGTE))
 	}
-	if i.ClientIDLT != nil {
-		predicates = append(predicates, refreshtoken.ClientIDLT(*i.ClientIDLT))
+	if i.RefreshTokenLT != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenLT(*i.RefreshTokenLT))
 	}
-	if i.ClientIDLTE != nil {
-		predicates = append(predicates, refreshtoken.ClientIDLTE(*i.ClientIDLTE))
+	if i.RefreshTokenLTE != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenLTE(*i.RefreshTokenLTE))
 	}
-	if i.ClientIDContains != nil {
-		predicates = append(predicates, refreshtoken.ClientIDContains(*i.ClientIDContains))
+	if i.RefreshTokenContains != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenContains(*i.RefreshTokenContains))
 	}
-	if i.ClientIDHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ClientIDHasPrefix(*i.ClientIDHasPrefix))
+	if i.RefreshTokenHasPrefix != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenHasPrefix(*i.RefreshTokenHasPrefix))
 	}
-	if i.ClientIDHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ClientIDHasSuffix(*i.ClientIDHasSuffix))
+	if i.RefreshTokenHasSuffix != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenHasSuffix(*i.RefreshTokenHasSuffix))
 	}
-	if i.ClientIDEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ClientIDEqualFold(*i.ClientIDEqualFold))
+	if i.RefreshTokenEqualFold != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenEqualFold(*i.RefreshTokenEqualFold))
 	}
-	if i.ClientIDContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ClientIDContainsFold(*i.ClientIDContainsFold))
+	if i.RefreshTokenContainsFold != nil {
+		predicates = append(predicates, refreshtoken.RefreshTokenContainsFold(*i.RefreshTokenContainsFold))
 	}
-	if i.Nonce != nil {
-		predicates = append(predicates, refreshtoken.NonceEQ(*i.Nonce))
+	if i.ExpiresAt != nil {
+		predicates = append(predicates, refreshtoken.ExpiresAtEQ(*i.ExpiresAt))
 	}
-	if i.NonceNEQ != nil {
-		predicates = append(predicates, refreshtoken.NonceNEQ(*i.NonceNEQ))
+	if i.ExpiresAtNEQ != nil {
+		predicates = append(predicates, refreshtoken.ExpiresAtNEQ(*i.ExpiresAtNEQ))
 	}
-	if len(i.NonceIn) > 0 {
-		predicates = append(predicates, refreshtoken.NonceIn(i.NonceIn...))
+	if len(i.ExpiresAtIn) > 0 {
+		predicates = append(predicates, refreshtoken.ExpiresAtIn(i.ExpiresAtIn...))
 	}
-	if len(i.NonceNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.NonceNotIn(i.NonceNotIn...))
+	if len(i.ExpiresAtNotIn) > 0 {
+		predicates = append(predicates, refreshtoken.ExpiresAtNotIn(i.ExpiresAtNotIn...))
 	}
-	if i.NonceGT != nil {
-		predicates = append(predicates, refreshtoken.NonceGT(*i.NonceGT))
+	if i.ExpiresAtGT != nil {
+		predicates = append(predicates, refreshtoken.ExpiresAtGT(*i.ExpiresAtGT))
 	}
-	if i.NonceGTE != nil {
-		predicates = append(predicates, refreshtoken.NonceGTE(*i.NonceGTE))
+	if i.ExpiresAtGTE != nil {
+		predicates = append(predicates, refreshtoken.ExpiresAtGTE(*i.ExpiresAtGTE))
 	}
-	if i.NonceLT != nil {
-		predicates = append(predicates, refreshtoken.NonceLT(*i.NonceLT))
+	if i.ExpiresAtLT != nil {
+		predicates = append(predicates, refreshtoken.ExpiresAtLT(*i.ExpiresAtLT))
 	}
-	if i.NonceLTE != nil {
-		predicates = append(predicates, refreshtoken.NonceLTE(*i.NonceLTE))
+	if i.ExpiresAtLTE != nil {
+		predicates = append(predicates, refreshtoken.ExpiresAtLTE(*i.ExpiresAtLTE))
 	}
-	if i.NonceContains != nil {
-		predicates = append(predicates, refreshtoken.NonceContains(*i.NonceContains))
+	if i.IssuedAt != nil {
+		predicates = append(predicates, refreshtoken.IssuedAtEQ(*i.IssuedAt))
 	}
-	if i.NonceHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.NonceHasPrefix(*i.NonceHasPrefix))
+	if i.IssuedAtNEQ != nil {
+		predicates = append(predicates, refreshtoken.IssuedAtNEQ(*i.IssuedAtNEQ))
 	}
-	if i.NonceHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.NonceHasSuffix(*i.NonceHasSuffix))
+	if len(i.IssuedAtIn) > 0 {
+		predicates = append(predicates, refreshtoken.IssuedAtIn(i.IssuedAtIn...))
 	}
-	if i.NonceEqualFold != nil {
-		predicates = append(predicates, refreshtoken.NonceEqualFold(*i.NonceEqualFold))
+	if len(i.IssuedAtNotIn) > 0 {
+		predicates = append(predicates, refreshtoken.IssuedAtNotIn(i.IssuedAtNotIn...))
 	}
-	if i.NonceContainsFold != nil {
-		predicates = append(predicates, refreshtoken.NonceContainsFold(*i.NonceContainsFold))
+	if i.IssuedAtGT != nil {
+		predicates = append(predicates, refreshtoken.IssuedAtGT(*i.IssuedAtGT))
 	}
-	if i.ClaimsUserID != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDEQ(*i.ClaimsUserID))
+	if i.IssuedAtGTE != nil {
+		predicates = append(predicates, refreshtoken.IssuedAtGTE(*i.IssuedAtGTE))
 	}
-	if i.ClaimsUserIDNEQ != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDNEQ(*i.ClaimsUserIDNEQ))
+	if i.IssuedAtLT != nil {
+		predicates = append(predicates, refreshtoken.IssuedAtLT(*i.IssuedAtLT))
 	}
-	if len(i.ClaimsUserIDIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDIn(i.ClaimsUserIDIn...))
+	if i.IssuedAtLTE != nil {
+		predicates = append(predicates, refreshtoken.IssuedAtLTE(*i.IssuedAtLTE))
 	}
-	if len(i.ClaimsUserIDNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDNotIn(i.ClaimsUserIDNotIn...))
+	if i.OrganizationID != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDEQ(*i.OrganizationID))
 	}
-	if i.ClaimsUserIDGT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDGT(*i.ClaimsUserIDGT))
+	if i.OrganizationIDNEQ != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDNEQ(*i.OrganizationIDNEQ))
 	}
-	if i.ClaimsUserIDGTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDGTE(*i.ClaimsUserIDGTE))
+	if len(i.OrganizationIDIn) > 0 {
+		predicates = append(predicates, refreshtoken.OrganizationIDIn(i.OrganizationIDIn...))
 	}
-	if i.ClaimsUserIDLT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDLT(*i.ClaimsUserIDLT))
+	if len(i.OrganizationIDNotIn) > 0 {
+		predicates = append(predicates, refreshtoken.OrganizationIDNotIn(i.OrganizationIDNotIn...))
 	}
-	if i.ClaimsUserIDLTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDLTE(*i.ClaimsUserIDLTE))
+	if i.OrganizationIDGT != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDGT(*i.OrganizationIDGT))
 	}
-	if i.ClaimsUserIDContains != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDContains(*i.ClaimsUserIDContains))
+	if i.OrganizationIDGTE != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDGTE(*i.OrganizationIDGTE))
 	}
-	if i.ClaimsUserIDHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDHasPrefix(*i.ClaimsUserIDHasPrefix))
+	if i.OrganizationIDLT != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDLT(*i.OrganizationIDLT))
 	}
-	if i.ClaimsUserIDHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDHasSuffix(*i.ClaimsUserIDHasSuffix))
+	if i.OrganizationIDLTE != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDLTE(*i.OrganizationIDLTE))
 	}
-	if i.ClaimsUserIDEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDEqualFold(*i.ClaimsUserIDEqualFold))
+	if i.OrganizationIDContains != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDContains(*i.OrganizationIDContains))
 	}
-	if i.ClaimsUserIDContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUserIDContainsFold(*i.ClaimsUserIDContainsFold))
+	if i.OrganizationIDHasPrefix != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
 	}
-	if i.ClaimsUsername != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameEQ(*i.ClaimsUsername))
+	if i.OrganizationIDHasSuffix != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
 	}
-	if i.ClaimsUsernameNEQ != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameNEQ(*i.ClaimsUsernameNEQ))
+	if i.OrganizationIDEqualFold != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
 	}
-	if len(i.ClaimsUsernameIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameIn(i.ClaimsUsernameIn...))
+	if i.OrganizationIDContainsFold != nil {
+		predicates = append(predicates, refreshtoken.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
-	if len(i.ClaimsUsernameNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameNotIn(i.ClaimsUsernameNotIn...))
+	if i.UserID != nil {
+		predicates = append(predicates, refreshtoken.UserIDEQ(*i.UserID))
 	}
-	if i.ClaimsUsernameGT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameGT(*i.ClaimsUsernameGT))
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, refreshtoken.UserIDNEQ(*i.UserIDNEQ))
 	}
-	if i.ClaimsUsernameGTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameGTE(*i.ClaimsUsernameGTE))
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, refreshtoken.UserIDIn(i.UserIDIn...))
 	}
-	if i.ClaimsUsernameLT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameLT(*i.ClaimsUsernameLT))
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, refreshtoken.UserIDNotIn(i.UserIDNotIn...))
 	}
-	if i.ClaimsUsernameLTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameLTE(*i.ClaimsUsernameLTE))
+	if i.UserIDGT != nil {
+		predicates = append(predicates, refreshtoken.UserIDGT(*i.UserIDGT))
 	}
-	if i.ClaimsUsernameContains != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameContains(*i.ClaimsUsernameContains))
+	if i.UserIDGTE != nil {
+		predicates = append(predicates, refreshtoken.UserIDGTE(*i.UserIDGTE))
 	}
-	if i.ClaimsUsernameHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameHasPrefix(*i.ClaimsUsernameHasPrefix))
+	if i.UserIDLT != nil {
+		predicates = append(predicates, refreshtoken.UserIDLT(*i.UserIDLT))
 	}
-	if i.ClaimsUsernameHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameHasSuffix(*i.ClaimsUsernameHasSuffix))
+	if i.UserIDLTE != nil {
+		predicates = append(predicates, refreshtoken.UserIDLTE(*i.UserIDLTE))
 	}
-	if i.ClaimsUsernameEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameEqualFold(*i.ClaimsUsernameEqualFold))
+	if i.UserIDContains != nil {
+		predicates = append(predicates, refreshtoken.UserIDContains(*i.UserIDContains))
 	}
-	if i.ClaimsUsernameContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsUsernameContainsFold(*i.ClaimsUsernameContainsFold))
+	if i.UserIDHasPrefix != nil {
+		predicates = append(predicates, refreshtoken.UserIDHasPrefix(*i.UserIDHasPrefix))
 	}
-	if i.ClaimsEmail != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailEQ(*i.ClaimsEmail))
+	if i.UserIDHasSuffix != nil {
+		predicates = append(predicates, refreshtoken.UserIDHasSuffix(*i.UserIDHasSuffix))
 	}
-	if i.ClaimsEmailNEQ != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailNEQ(*i.ClaimsEmailNEQ))
+	if i.UserIDEqualFold != nil {
+		predicates = append(predicates, refreshtoken.UserIDEqualFold(*i.UserIDEqualFold))
 	}
-	if len(i.ClaimsEmailIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsEmailIn(i.ClaimsEmailIn...))
-	}
-	if len(i.ClaimsEmailNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsEmailNotIn(i.ClaimsEmailNotIn...))
-	}
-	if i.ClaimsEmailGT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailGT(*i.ClaimsEmailGT))
-	}
-	if i.ClaimsEmailGTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailGTE(*i.ClaimsEmailGTE))
-	}
-	if i.ClaimsEmailLT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailLT(*i.ClaimsEmailLT))
-	}
-	if i.ClaimsEmailLTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailLTE(*i.ClaimsEmailLTE))
-	}
-	if i.ClaimsEmailContains != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailContains(*i.ClaimsEmailContains))
-	}
-	if i.ClaimsEmailHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailHasPrefix(*i.ClaimsEmailHasPrefix))
-	}
-	if i.ClaimsEmailHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailHasSuffix(*i.ClaimsEmailHasSuffix))
-	}
-	if i.ClaimsEmailEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailEqualFold(*i.ClaimsEmailEqualFold))
-	}
-	if i.ClaimsEmailContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailContainsFold(*i.ClaimsEmailContainsFold))
-	}
-	if i.ClaimsEmailVerified != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailVerifiedEQ(*i.ClaimsEmailVerified))
-	}
-	if i.ClaimsEmailVerifiedNEQ != nil {
-		predicates = append(predicates, refreshtoken.ClaimsEmailVerifiedNEQ(*i.ClaimsEmailVerifiedNEQ))
-	}
-	if i.ClaimsPreferredUsername != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameEQ(*i.ClaimsPreferredUsername))
-	}
-	if i.ClaimsPreferredUsernameNEQ != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameNEQ(*i.ClaimsPreferredUsernameNEQ))
-	}
-	if len(i.ClaimsPreferredUsernameIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameIn(i.ClaimsPreferredUsernameIn...))
-	}
-	if len(i.ClaimsPreferredUsernameNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameNotIn(i.ClaimsPreferredUsernameNotIn...))
-	}
-	if i.ClaimsPreferredUsernameGT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameGT(*i.ClaimsPreferredUsernameGT))
-	}
-	if i.ClaimsPreferredUsernameGTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameGTE(*i.ClaimsPreferredUsernameGTE))
-	}
-	if i.ClaimsPreferredUsernameLT != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameLT(*i.ClaimsPreferredUsernameLT))
-	}
-	if i.ClaimsPreferredUsernameLTE != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameLTE(*i.ClaimsPreferredUsernameLTE))
-	}
-	if i.ClaimsPreferredUsernameContains != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameContains(*i.ClaimsPreferredUsernameContains))
-	}
-	if i.ClaimsPreferredUsernameHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameHasPrefix(*i.ClaimsPreferredUsernameHasPrefix))
-	}
-	if i.ClaimsPreferredUsernameHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameHasSuffix(*i.ClaimsPreferredUsernameHasSuffix))
-	}
-	if i.ClaimsPreferredUsernameEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameEqualFold(*i.ClaimsPreferredUsernameEqualFold))
-	}
-	if i.ClaimsPreferredUsernameContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ClaimsPreferredUsernameContainsFold(*i.ClaimsPreferredUsernameContainsFold))
-	}
-	if i.ConnectorID != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDEQ(*i.ConnectorID))
-	}
-	if i.ConnectorIDNEQ != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDNEQ(*i.ConnectorIDNEQ))
-	}
-	if len(i.ConnectorIDIn) > 0 {
-		predicates = append(predicates, refreshtoken.ConnectorIDIn(i.ConnectorIDIn...))
-	}
-	if len(i.ConnectorIDNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ConnectorIDNotIn(i.ConnectorIDNotIn...))
-	}
-	if i.ConnectorIDGT != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDGT(*i.ConnectorIDGT))
-	}
-	if i.ConnectorIDGTE != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDGTE(*i.ConnectorIDGTE))
-	}
-	if i.ConnectorIDLT != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDLT(*i.ConnectorIDLT))
-	}
-	if i.ConnectorIDLTE != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDLTE(*i.ConnectorIDLTE))
-	}
-	if i.ConnectorIDContains != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDContains(*i.ConnectorIDContains))
-	}
-	if i.ConnectorIDHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDHasPrefix(*i.ConnectorIDHasPrefix))
-	}
-	if i.ConnectorIDHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDHasSuffix(*i.ConnectorIDHasSuffix))
-	}
-	if i.ConnectorIDEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDEqualFold(*i.ConnectorIDEqualFold))
-	}
-	if i.ConnectorIDContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ConnectorIDContainsFold(*i.ConnectorIDContainsFold))
-	}
-	if i.Token != nil {
-		predicates = append(predicates, refreshtoken.TokenEQ(*i.Token))
-	}
-	if i.TokenNEQ != nil {
-		predicates = append(predicates, refreshtoken.TokenNEQ(*i.TokenNEQ))
-	}
-	if len(i.TokenIn) > 0 {
-		predicates = append(predicates, refreshtoken.TokenIn(i.TokenIn...))
-	}
-	if len(i.TokenNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.TokenNotIn(i.TokenNotIn...))
-	}
-	if i.TokenGT != nil {
-		predicates = append(predicates, refreshtoken.TokenGT(*i.TokenGT))
-	}
-	if i.TokenGTE != nil {
-		predicates = append(predicates, refreshtoken.TokenGTE(*i.TokenGTE))
-	}
-	if i.TokenLT != nil {
-		predicates = append(predicates, refreshtoken.TokenLT(*i.TokenLT))
-	}
-	if i.TokenLTE != nil {
-		predicates = append(predicates, refreshtoken.TokenLTE(*i.TokenLTE))
-	}
-	if i.TokenContains != nil {
-		predicates = append(predicates, refreshtoken.TokenContains(*i.TokenContains))
-	}
-	if i.TokenHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.TokenHasPrefix(*i.TokenHasPrefix))
-	}
-	if i.TokenHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.TokenHasSuffix(*i.TokenHasSuffix))
-	}
-	if i.TokenEqualFold != nil {
-		predicates = append(predicates, refreshtoken.TokenEqualFold(*i.TokenEqualFold))
-	}
-	if i.TokenContainsFold != nil {
-		predicates = append(predicates, refreshtoken.TokenContainsFold(*i.TokenContainsFold))
-	}
-	if i.ObsoleteToken != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenEQ(*i.ObsoleteToken))
-	}
-	if i.ObsoleteTokenNEQ != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenNEQ(*i.ObsoleteTokenNEQ))
-	}
-	if len(i.ObsoleteTokenIn) > 0 {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenIn(i.ObsoleteTokenIn...))
-	}
-	if len(i.ObsoleteTokenNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenNotIn(i.ObsoleteTokenNotIn...))
-	}
-	if i.ObsoleteTokenGT != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenGT(*i.ObsoleteTokenGT))
-	}
-	if i.ObsoleteTokenGTE != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenGTE(*i.ObsoleteTokenGTE))
-	}
-	if i.ObsoleteTokenLT != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenLT(*i.ObsoleteTokenLT))
-	}
-	if i.ObsoleteTokenLTE != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenLTE(*i.ObsoleteTokenLTE))
-	}
-	if i.ObsoleteTokenContains != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenContains(*i.ObsoleteTokenContains))
-	}
-	if i.ObsoleteTokenHasPrefix != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenHasPrefix(*i.ObsoleteTokenHasPrefix))
-	}
-	if i.ObsoleteTokenHasSuffix != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenHasSuffix(*i.ObsoleteTokenHasSuffix))
-	}
-	if i.ObsoleteTokenEqualFold != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenEqualFold(*i.ObsoleteTokenEqualFold))
-	}
-	if i.ObsoleteTokenContainsFold != nil {
-		predicates = append(predicates, refreshtoken.ObsoleteTokenContainsFold(*i.ObsoleteTokenContainsFold))
-	}
-	if i.LastUsed != nil {
-		predicates = append(predicates, refreshtoken.LastUsedEQ(*i.LastUsed))
-	}
-	if i.LastUsedNEQ != nil {
-		predicates = append(predicates, refreshtoken.LastUsedNEQ(*i.LastUsedNEQ))
-	}
-	if len(i.LastUsedIn) > 0 {
-		predicates = append(predicates, refreshtoken.LastUsedIn(i.LastUsedIn...))
-	}
-	if len(i.LastUsedNotIn) > 0 {
-		predicates = append(predicates, refreshtoken.LastUsedNotIn(i.LastUsedNotIn...))
-	}
-	if i.LastUsedGT != nil {
-		predicates = append(predicates, refreshtoken.LastUsedGT(*i.LastUsedGT))
-	}
-	if i.LastUsedGTE != nil {
-		predicates = append(predicates, refreshtoken.LastUsedGTE(*i.LastUsedGTE))
-	}
-	if i.LastUsedLT != nil {
-		predicates = append(predicates, refreshtoken.LastUsedLT(*i.LastUsedLT))
-	}
-	if i.LastUsedLTE != nil {
-		predicates = append(predicates, refreshtoken.LastUsedLTE(*i.LastUsedLTE))
+	if i.UserIDContainsFold != nil {
+		predicates = append(predicates, refreshtoken.UserIDContainsFold(*i.UserIDContainsFold))
 	}
 
-	if i.HasUser != nil {
-		p := refreshtoken.HasUser()
-		if !*i.HasUser {
-			p = refreshtoken.Not(p)
-		}
-		predicates = append(predicates, p)
-	}
-	if len(i.HasUserWith) > 0 {
-		with := make([]predicate.User, 0, len(i.HasUserWith))
-		for _, w := range i.HasUserWith {
-			p, err := w.P()
-			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasUserWith'", err)
-			}
-			with = append(with, p)
-		}
-		predicates = append(predicates, refreshtoken.HasUserWith(with...))
-	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyRefreshTokenWhereInput
@@ -5941,66 +6793,76 @@ type SessionWhereInput struct {
 	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
 	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
-	// "type" field predicates.
-	Type      *session.Type  `json:"type,omitempty"`
-	TypeNEQ   *session.Type  `json:"typeNEQ,omitempty"`
-	TypeIn    []session.Type `json:"typeIn,omitempty"`
-	TypeNotIn []session.Type `json:"typeNotIn,omitempty"`
+	// "session_token" field predicates.
+	SessionToken             *string  `json:"sessionToken,omitempty"`
+	SessionTokenNEQ          *string  `json:"sessionTokenNEQ,omitempty"`
+	SessionTokenIn           []string `json:"sessionTokenIn,omitempty"`
+	SessionTokenNotIn        []string `json:"sessionTokenNotIn,omitempty"`
+	SessionTokenGT           *string  `json:"sessionTokenGT,omitempty"`
+	SessionTokenGTE          *string  `json:"sessionTokenGTE,omitempty"`
+	SessionTokenLT           *string  `json:"sessionTokenLT,omitempty"`
+	SessionTokenLTE          *string  `json:"sessionTokenLTE,omitempty"`
+	SessionTokenContains     *string  `json:"sessionTokenContains,omitempty"`
+	SessionTokenHasPrefix    *string  `json:"sessionTokenHasPrefix,omitempty"`
+	SessionTokenHasSuffix    *string  `json:"sessionTokenHasSuffix,omitempty"`
+	SessionTokenEqualFold    *string  `json:"sessionTokenEqualFold,omitempty"`
+	SessionTokenContainsFold *string  `json:"sessionTokenContainsFold,omitempty"`
 
-	// "disabled" field predicates.
-	Disabled    *bool `json:"disabled,omitempty"`
-	DisabledNEQ *bool `json:"disabledNEQ,omitempty"`
+	// "issued_at" field predicates.
+	IssuedAt      *time.Time  `json:"issuedAt,omitempty"`
+	IssuedAtNEQ   *time.Time  `json:"issuedAtNEQ,omitempty"`
+	IssuedAtIn    []time.Time `json:"issuedAtIn,omitempty"`
+	IssuedAtNotIn []time.Time `json:"issuedAtNotIn,omitempty"`
+	IssuedAtGT    *time.Time  `json:"issuedAtGT,omitempty"`
+	IssuedAtGTE   *time.Time  `json:"issuedAtGTE,omitempty"`
+	IssuedAtLT    *time.Time  `json:"issuedAtLT,omitempty"`
+	IssuedAtLTE   *time.Time  `json:"issuedAtLTE,omitempty"`
 
-	// "token" field predicates.
-	Token             *string  `json:"token,omitempty"`
-	TokenNEQ          *string  `json:"tokenNEQ,omitempty"`
-	TokenIn           []string `json:"tokenIn,omitempty"`
-	TokenNotIn        []string `json:"tokenNotIn,omitempty"`
-	TokenGT           *string  `json:"tokenGT,omitempty"`
-	TokenGTE          *string  `json:"tokenGTE,omitempty"`
-	TokenLT           *string  `json:"tokenLT,omitempty"`
-	TokenLTE          *string  `json:"tokenLTE,omitempty"`
-	TokenContains     *string  `json:"tokenContains,omitempty"`
-	TokenHasPrefix    *string  `json:"tokenHasPrefix,omitempty"`
-	TokenHasSuffix    *string  `json:"tokenHasSuffix,omitempty"`
-	TokenEqualFold    *string  `json:"tokenEqualFold,omitempty"`
-	TokenContainsFold *string  `json:"tokenContainsFold,omitempty"`
+	// "expires_at" field predicates.
+	ExpiresAt       *time.Time  `json:"expiresAt,omitempty"`
+	ExpiresAtNEQ    *time.Time  `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn     []time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn  []time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGT     *time.Time  `json:"expiresAtGT,omitempty"`
+	ExpiresAtGTE    *time.Time  `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLT     *time.Time  `json:"expiresAtLT,omitempty"`
+	ExpiresAtLTE    *time.Time  `json:"expiresAtLTE,omitempty"`
+	ExpiresAtIsNil  bool        `json:"expiresAtIsNil,omitempty"`
+	ExpiresAtNotNil bool        `json:"expiresAtNotNil,omitempty"`
 
-	// "user_agent" field predicates.
-	UserAgent             *string  `json:"userAgent,omitempty"`
-	UserAgentNEQ          *string  `json:"userAgentNEQ,omitempty"`
-	UserAgentIn           []string `json:"userAgentIn,omitempty"`
-	UserAgentNotIn        []string `json:"userAgentNotIn,omitempty"`
-	UserAgentGT           *string  `json:"userAgentGT,omitempty"`
-	UserAgentGTE          *string  `json:"userAgentGTE,omitempty"`
-	UserAgentLT           *string  `json:"userAgentLT,omitempty"`
-	UserAgentLTE          *string  `json:"userAgentLTE,omitempty"`
-	UserAgentContains     *string  `json:"userAgentContains,omitempty"`
-	UserAgentHasPrefix    *string  `json:"userAgentHasPrefix,omitempty"`
-	UserAgentHasSuffix    *string  `json:"userAgentHasSuffix,omitempty"`
-	UserAgentIsNil        bool     `json:"userAgentIsNil,omitempty"`
-	UserAgentNotNil       bool     `json:"userAgentNotNil,omitempty"`
-	UserAgentEqualFold    *string  `json:"userAgentEqualFold,omitempty"`
-	UserAgentContainsFold *string  `json:"userAgentContainsFold,omitempty"`
+	// "organization_id" field predicates.
+	OrganizationID             *string  `json:"organizationID,omitempty"`
+	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
+	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
+	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
+	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
+	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
+	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
+	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
+	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
+	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
+	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
+	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
+	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 
-	// "ips" field predicates.
-	Ips             *string  `json:"ips,omitempty"`
-	IpsNEQ          *string  `json:"ipsNEQ,omitempty"`
-	IpsIn           []string `json:"ipsIn,omitempty"`
-	IpsNotIn        []string `json:"ipsNotIn,omitempty"`
-	IpsGT           *string  `json:"ipsGT,omitempty"`
-	IpsGTE          *string  `json:"ipsGTE,omitempty"`
-	IpsLT           *string  `json:"ipsLT,omitempty"`
-	IpsLTE          *string  `json:"ipsLTE,omitempty"`
-	IpsContains     *string  `json:"ipsContains,omitempty"`
-	IpsHasPrefix    *string  `json:"ipsHasPrefix,omitempty"`
-	IpsHasSuffix    *string  `json:"ipsHasSuffix,omitempty"`
-	IpsEqualFold    *string  `json:"ipsEqualFold,omitempty"`
-	IpsContainsFold *string  `json:"ipsContainsFold,omitempty"`
+	// "user_id" field predicates.
+	UserID             *string  `json:"userID,omitempty"`
+	UserIDNEQ          *string  `json:"userIDNEQ,omitempty"`
+	UserIDIn           []string `json:"userIDIn,omitempty"`
+	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
+	UserIDGT           *string  `json:"userIDGT,omitempty"`
+	UserIDGTE          *string  `json:"userIDGTE,omitempty"`
+	UserIDLT           *string  `json:"userIDLT,omitempty"`
+	UserIDLTE          *string  `json:"userIDLTE,omitempty"`
+	UserIDContains     *string  `json:"userIDContains,omitempty"`
+	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
+	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
+	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
+	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 
-	// "users" edge predicates.
-	HasUsers     *bool             `json:"hasUsers,omitempty"`
-	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
+	// "owner" edge predicates.
+	HasOwner     *bool             `json:"hasOwner,omitempty"`
+	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -6242,165 +7104,195 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 	if i.UpdatedByContainsFold != nil {
 		predicates = append(predicates, session.UpdatedByContainsFold(*i.UpdatedByContainsFold))
 	}
-	if i.Type != nil {
-		predicates = append(predicates, session.TypeEQ(*i.Type))
+	if i.SessionToken != nil {
+		predicates = append(predicates, session.SessionTokenEQ(*i.SessionToken))
 	}
-	if i.TypeNEQ != nil {
-		predicates = append(predicates, session.TypeNEQ(*i.TypeNEQ))
+	if i.SessionTokenNEQ != nil {
+		predicates = append(predicates, session.SessionTokenNEQ(*i.SessionTokenNEQ))
 	}
-	if len(i.TypeIn) > 0 {
-		predicates = append(predicates, session.TypeIn(i.TypeIn...))
+	if len(i.SessionTokenIn) > 0 {
+		predicates = append(predicates, session.SessionTokenIn(i.SessionTokenIn...))
 	}
-	if len(i.TypeNotIn) > 0 {
-		predicates = append(predicates, session.TypeNotIn(i.TypeNotIn...))
+	if len(i.SessionTokenNotIn) > 0 {
+		predicates = append(predicates, session.SessionTokenNotIn(i.SessionTokenNotIn...))
 	}
-	if i.Disabled != nil {
-		predicates = append(predicates, session.DisabledEQ(*i.Disabled))
+	if i.SessionTokenGT != nil {
+		predicates = append(predicates, session.SessionTokenGT(*i.SessionTokenGT))
 	}
-	if i.DisabledNEQ != nil {
-		predicates = append(predicates, session.DisabledNEQ(*i.DisabledNEQ))
+	if i.SessionTokenGTE != nil {
+		predicates = append(predicates, session.SessionTokenGTE(*i.SessionTokenGTE))
 	}
-	if i.Token != nil {
-		predicates = append(predicates, session.TokenEQ(*i.Token))
+	if i.SessionTokenLT != nil {
+		predicates = append(predicates, session.SessionTokenLT(*i.SessionTokenLT))
 	}
-	if i.TokenNEQ != nil {
-		predicates = append(predicates, session.TokenNEQ(*i.TokenNEQ))
+	if i.SessionTokenLTE != nil {
+		predicates = append(predicates, session.SessionTokenLTE(*i.SessionTokenLTE))
 	}
-	if len(i.TokenIn) > 0 {
-		predicates = append(predicates, session.TokenIn(i.TokenIn...))
+	if i.SessionTokenContains != nil {
+		predicates = append(predicates, session.SessionTokenContains(*i.SessionTokenContains))
 	}
-	if len(i.TokenNotIn) > 0 {
-		predicates = append(predicates, session.TokenNotIn(i.TokenNotIn...))
+	if i.SessionTokenHasPrefix != nil {
+		predicates = append(predicates, session.SessionTokenHasPrefix(*i.SessionTokenHasPrefix))
 	}
-	if i.TokenGT != nil {
-		predicates = append(predicates, session.TokenGT(*i.TokenGT))
+	if i.SessionTokenHasSuffix != nil {
+		predicates = append(predicates, session.SessionTokenHasSuffix(*i.SessionTokenHasSuffix))
 	}
-	if i.TokenGTE != nil {
-		predicates = append(predicates, session.TokenGTE(*i.TokenGTE))
+	if i.SessionTokenEqualFold != nil {
+		predicates = append(predicates, session.SessionTokenEqualFold(*i.SessionTokenEqualFold))
 	}
-	if i.TokenLT != nil {
-		predicates = append(predicates, session.TokenLT(*i.TokenLT))
+	if i.SessionTokenContainsFold != nil {
+		predicates = append(predicates, session.SessionTokenContainsFold(*i.SessionTokenContainsFold))
 	}
-	if i.TokenLTE != nil {
-		predicates = append(predicates, session.TokenLTE(*i.TokenLTE))
+	if i.IssuedAt != nil {
+		predicates = append(predicates, session.IssuedAtEQ(*i.IssuedAt))
 	}
-	if i.TokenContains != nil {
-		predicates = append(predicates, session.TokenContains(*i.TokenContains))
+	if i.IssuedAtNEQ != nil {
+		predicates = append(predicates, session.IssuedAtNEQ(*i.IssuedAtNEQ))
 	}
-	if i.TokenHasPrefix != nil {
-		predicates = append(predicates, session.TokenHasPrefix(*i.TokenHasPrefix))
+	if len(i.IssuedAtIn) > 0 {
+		predicates = append(predicates, session.IssuedAtIn(i.IssuedAtIn...))
 	}
-	if i.TokenHasSuffix != nil {
-		predicates = append(predicates, session.TokenHasSuffix(*i.TokenHasSuffix))
+	if len(i.IssuedAtNotIn) > 0 {
+		predicates = append(predicates, session.IssuedAtNotIn(i.IssuedAtNotIn...))
 	}
-	if i.TokenEqualFold != nil {
-		predicates = append(predicates, session.TokenEqualFold(*i.TokenEqualFold))
+	if i.IssuedAtGT != nil {
+		predicates = append(predicates, session.IssuedAtGT(*i.IssuedAtGT))
 	}
-	if i.TokenContainsFold != nil {
-		predicates = append(predicates, session.TokenContainsFold(*i.TokenContainsFold))
+	if i.IssuedAtGTE != nil {
+		predicates = append(predicates, session.IssuedAtGTE(*i.IssuedAtGTE))
 	}
-	if i.UserAgent != nil {
-		predicates = append(predicates, session.UserAgentEQ(*i.UserAgent))
+	if i.IssuedAtLT != nil {
+		predicates = append(predicates, session.IssuedAtLT(*i.IssuedAtLT))
 	}
-	if i.UserAgentNEQ != nil {
-		predicates = append(predicates, session.UserAgentNEQ(*i.UserAgentNEQ))
+	if i.IssuedAtLTE != nil {
+		predicates = append(predicates, session.IssuedAtLTE(*i.IssuedAtLTE))
 	}
-	if len(i.UserAgentIn) > 0 {
-		predicates = append(predicates, session.UserAgentIn(i.UserAgentIn...))
+	if i.ExpiresAt != nil {
+		predicates = append(predicates, session.ExpiresAtEQ(*i.ExpiresAt))
 	}
-	if len(i.UserAgentNotIn) > 0 {
-		predicates = append(predicates, session.UserAgentNotIn(i.UserAgentNotIn...))
+	if i.ExpiresAtNEQ != nil {
+		predicates = append(predicates, session.ExpiresAtNEQ(*i.ExpiresAtNEQ))
 	}
-	if i.UserAgentGT != nil {
-		predicates = append(predicates, session.UserAgentGT(*i.UserAgentGT))
+	if len(i.ExpiresAtIn) > 0 {
+		predicates = append(predicates, session.ExpiresAtIn(i.ExpiresAtIn...))
 	}
-	if i.UserAgentGTE != nil {
-		predicates = append(predicates, session.UserAgentGTE(*i.UserAgentGTE))
+	if len(i.ExpiresAtNotIn) > 0 {
+		predicates = append(predicates, session.ExpiresAtNotIn(i.ExpiresAtNotIn...))
 	}
-	if i.UserAgentLT != nil {
-		predicates = append(predicates, session.UserAgentLT(*i.UserAgentLT))
+	if i.ExpiresAtGT != nil {
+		predicates = append(predicates, session.ExpiresAtGT(*i.ExpiresAtGT))
 	}
-	if i.UserAgentLTE != nil {
-		predicates = append(predicates, session.UserAgentLTE(*i.UserAgentLTE))
+	if i.ExpiresAtGTE != nil {
+		predicates = append(predicates, session.ExpiresAtGTE(*i.ExpiresAtGTE))
 	}
-	if i.UserAgentContains != nil {
-		predicates = append(predicates, session.UserAgentContains(*i.UserAgentContains))
+	if i.ExpiresAtLT != nil {
+		predicates = append(predicates, session.ExpiresAtLT(*i.ExpiresAtLT))
 	}
-	if i.UserAgentHasPrefix != nil {
-		predicates = append(predicates, session.UserAgentHasPrefix(*i.UserAgentHasPrefix))
+	if i.ExpiresAtLTE != nil {
+		predicates = append(predicates, session.ExpiresAtLTE(*i.ExpiresAtLTE))
 	}
-	if i.UserAgentHasSuffix != nil {
-		predicates = append(predicates, session.UserAgentHasSuffix(*i.UserAgentHasSuffix))
+	if i.ExpiresAtIsNil {
+		predicates = append(predicates, session.ExpiresAtIsNil())
 	}
-	if i.UserAgentIsNil {
-		predicates = append(predicates, session.UserAgentIsNil())
+	if i.ExpiresAtNotNil {
+		predicates = append(predicates, session.ExpiresAtNotNil())
 	}
-	if i.UserAgentNotNil {
-		predicates = append(predicates, session.UserAgentNotNil())
+	if i.OrganizationID != nil {
+		predicates = append(predicates, session.OrganizationIDEQ(*i.OrganizationID))
 	}
-	if i.UserAgentEqualFold != nil {
-		predicates = append(predicates, session.UserAgentEqualFold(*i.UserAgentEqualFold))
+	if i.OrganizationIDNEQ != nil {
+		predicates = append(predicates, session.OrganizationIDNEQ(*i.OrganizationIDNEQ))
 	}
-	if i.UserAgentContainsFold != nil {
-		predicates = append(predicates, session.UserAgentContainsFold(*i.UserAgentContainsFold))
+	if len(i.OrganizationIDIn) > 0 {
+		predicates = append(predicates, session.OrganizationIDIn(i.OrganizationIDIn...))
 	}
-	if i.Ips != nil {
-		predicates = append(predicates, session.IpsEQ(*i.Ips))
+	if len(i.OrganizationIDNotIn) > 0 {
+		predicates = append(predicates, session.OrganizationIDNotIn(i.OrganizationIDNotIn...))
 	}
-	if i.IpsNEQ != nil {
-		predicates = append(predicates, session.IpsNEQ(*i.IpsNEQ))
+	if i.OrganizationIDGT != nil {
+		predicates = append(predicates, session.OrganizationIDGT(*i.OrganizationIDGT))
 	}
-	if len(i.IpsIn) > 0 {
-		predicates = append(predicates, session.IpsIn(i.IpsIn...))
+	if i.OrganizationIDGTE != nil {
+		predicates = append(predicates, session.OrganizationIDGTE(*i.OrganizationIDGTE))
 	}
-	if len(i.IpsNotIn) > 0 {
-		predicates = append(predicates, session.IpsNotIn(i.IpsNotIn...))
+	if i.OrganizationIDLT != nil {
+		predicates = append(predicates, session.OrganizationIDLT(*i.OrganizationIDLT))
 	}
-	if i.IpsGT != nil {
-		predicates = append(predicates, session.IpsGT(*i.IpsGT))
+	if i.OrganizationIDLTE != nil {
+		predicates = append(predicates, session.OrganizationIDLTE(*i.OrganizationIDLTE))
 	}
-	if i.IpsGTE != nil {
-		predicates = append(predicates, session.IpsGTE(*i.IpsGTE))
+	if i.OrganizationIDContains != nil {
+		predicates = append(predicates, session.OrganizationIDContains(*i.OrganizationIDContains))
 	}
-	if i.IpsLT != nil {
-		predicates = append(predicates, session.IpsLT(*i.IpsLT))
+	if i.OrganizationIDHasPrefix != nil {
+		predicates = append(predicates, session.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
 	}
-	if i.IpsLTE != nil {
-		predicates = append(predicates, session.IpsLTE(*i.IpsLTE))
+	if i.OrganizationIDHasSuffix != nil {
+		predicates = append(predicates, session.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
 	}
-	if i.IpsContains != nil {
-		predicates = append(predicates, session.IpsContains(*i.IpsContains))
+	if i.OrganizationIDEqualFold != nil {
+		predicates = append(predicates, session.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
 	}
-	if i.IpsHasPrefix != nil {
-		predicates = append(predicates, session.IpsHasPrefix(*i.IpsHasPrefix))
+	if i.OrganizationIDContainsFold != nil {
+		predicates = append(predicates, session.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
-	if i.IpsHasSuffix != nil {
-		predicates = append(predicates, session.IpsHasSuffix(*i.IpsHasSuffix))
+	if i.UserID != nil {
+		predicates = append(predicates, session.UserIDEQ(*i.UserID))
 	}
-	if i.IpsEqualFold != nil {
-		predicates = append(predicates, session.IpsEqualFold(*i.IpsEqualFold))
+	if i.UserIDNEQ != nil {
+		predicates = append(predicates, session.UserIDNEQ(*i.UserIDNEQ))
 	}
-	if i.IpsContainsFold != nil {
-		predicates = append(predicates, session.IpsContainsFold(*i.IpsContainsFold))
+	if len(i.UserIDIn) > 0 {
+		predicates = append(predicates, session.UserIDIn(i.UserIDIn...))
+	}
+	if len(i.UserIDNotIn) > 0 {
+		predicates = append(predicates, session.UserIDNotIn(i.UserIDNotIn...))
+	}
+	if i.UserIDGT != nil {
+		predicates = append(predicates, session.UserIDGT(*i.UserIDGT))
+	}
+	if i.UserIDGTE != nil {
+		predicates = append(predicates, session.UserIDGTE(*i.UserIDGTE))
+	}
+	if i.UserIDLT != nil {
+		predicates = append(predicates, session.UserIDLT(*i.UserIDLT))
+	}
+	if i.UserIDLTE != nil {
+		predicates = append(predicates, session.UserIDLTE(*i.UserIDLTE))
+	}
+	if i.UserIDContains != nil {
+		predicates = append(predicates, session.UserIDContains(*i.UserIDContains))
+	}
+	if i.UserIDHasPrefix != nil {
+		predicates = append(predicates, session.UserIDHasPrefix(*i.UserIDHasPrefix))
+	}
+	if i.UserIDHasSuffix != nil {
+		predicates = append(predicates, session.UserIDHasSuffix(*i.UserIDHasSuffix))
+	}
+	if i.UserIDEqualFold != nil {
+		predicates = append(predicates, session.UserIDEqualFold(*i.UserIDEqualFold))
+	}
+	if i.UserIDContainsFold != nil {
+		predicates = append(predicates, session.UserIDContainsFold(*i.UserIDContainsFold))
 	}
 
-	if i.HasUsers != nil {
-		p := session.HasUsers()
-		if !*i.HasUsers {
+	if i.HasOwner != nil {
+		p := session.HasOwner()
+		if !*i.HasOwner {
 			p = session.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasUsersWith) > 0 {
-		with := make([]predicate.User, 0, len(i.HasUsersWith))
-		for _, w := range i.HasUsersWith {
+	if len(i.HasOwnerWith) > 0 {
+		with := make([]predicate.User, 0, len(i.HasOwnerWith))
+		for _, w := range i.HasOwnerWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasUsersWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasOwnerWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, session.HasUsersWith(with...))
+		predicates = append(predicates, session.HasOwnerWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -6690,9 +7582,13 @@ type UserWhereInput struct {
 	HasSetting     *bool                    `json:"hasSetting,omitempty"`
 	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
 
-	// "refreshtoken" edge predicates.
-	HasRefreshtoken     *bool                     `json:"hasRefreshtoken,omitempty"`
-	HasRefreshtokenWith []*RefreshTokenWhereInput `json:"hasRefreshtokenWith,omitempty"`
+	// "refresh_token" edge predicates.
+	HasRefreshToken     *bool                     `json:"hasRefreshToken,omitempty"`
+	HasRefreshTokenWith []*RefreshTokenWhereInput `json:"hasRefreshTokenWith,omitempty"`
+
+	// "access_token" edge predicates.
+	HasAccessToken     *bool                    `json:"hasAccessToken,omitempty"`
+	HasAccessTokenWith []*AccessTokenWhereInput `json:"hasAccessTokenWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -7502,23 +8398,41 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		}
 		predicates = append(predicates, user.HasSettingWith(with...))
 	}
-	if i.HasRefreshtoken != nil {
-		p := user.HasRefreshtoken()
-		if !*i.HasRefreshtoken {
+	if i.HasRefreshToken != nil {
+		p := user.HasRefreshToken()
+		if !*i.HasRefreshToken {
 			p = user.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasRefreshtokenWith) > 0 {
-		with := make([]predicate.RefreshToken, 0, len(i.HasRefreshtokenWith))
-		for _, w := range i.HasRefreshtokenWith {
+	if len(i.HasRefreshTokenWith) > 0 {
+		with := make([]predicate.RefreshToken, 0, len(i.HasRefreshTokenWith))
+		for _, w := range i.HasRefreshTokenWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasRefreshtokenWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasRefreshTokenWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, user.HasRefreshtokenWith(with...))
+		predicates = append(predicates, user.HasRefreshTokenWith(with...))
+	}
+	if i.HasAccessToken != nil {
+		p := user.HasAccessToken()
+		if !*i.HasAccessToken {
+			p = user.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasAccessTokenWith) > 0 {
+		with := make([]predicate.AccessToken, 0, len(i.HasAccessTokenWith))
+		for _, w := range i.HasAccessTokenWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasAccessTokenWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, user.HasAccessTokenWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

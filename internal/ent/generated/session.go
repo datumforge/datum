@@ -26,28 +26,26 @@ type Session struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
-	// Sessions can derrive from the local (password auth), oauth, or app_password
-	Type session.Type `json:"type,omitempty"`
-	// The session may be disabled by the user or by automatic security policy
-	Disabled bool `json:"disabled,omitempty"`
-	// random 32 bytes encoded as base64
-	Token string `json:"token,omitempty"`
-	// The last known user-agent
-	UserAgent string `json:"user_agent,omitempty"`
-	// All IPs that have been associated with this session. Reverse-chronological order. The current IP is the first item in the slice
-	Ips string `json:"ips,omitempty"`
+	// token is a string token issued to users that has a limited lifetime
+	SessionToken string `json:"session_token,omitempty"`
+	// IssuedAt holds the value of the "issued_at" field.
+	IssuedAt time.Time `json:"issued_at,omitempty"`
+	// projected expiration of the session token
+	ExpiresAt time.Time `json:"expires_at,omitempty"`
+	// organization ID of the organization the user is accessing
+	OrganizationID string `json:"organization_id,omitempty"`
+	// the user the session is associated with
+	UserID string `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the SessionQuery when eager-loading is set.
-	Edges         SessionEdges `json:"edges"`
-	session_users *string
-	user_sessions *string
-	selectValues  sql.SelectValues
+	Edges        SessionEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // SessionEdges holds the relations/edges for other nodes in the graph.
 type SessionEdges struct {
 	// Sessions belong to users
-	Users *User `json:"users,omitempty"`
+	Owner *User `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
@@ -55,17 +53,17 @@ type SessionEdges struct {
 	totalCount [1]map[string]int
 }
 
-// UsersOrErr returns the Users value or an error if the edge
+// OwnerOrErr returns the Owner value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e SessionEdges) UsersOrErr() (*User, error) {
+func (e SessionEdges) OwnerOrErr() (*User, error) {
 	if e.loadedTypes[0] {
-		if e.Users == nil {
+		if e.Owner == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: user.Label}
 		}
-		return e.Users, nil
+		return e.Owner, nil
 	}
-	return nil, &NotLoadedError{edge: "users"}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -73,16 +71,10 @@ func (*Session) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case session.FieldDisabled:
-			values[i] = new(sql.NullBool)
-		case session.FieldID, session.FieldCreatedBy, session.FieldUpdatedBy, session.FieldType, session.FieldToken, session.FieldUserAgent, session.FieldIps:
+		case session.FieldID, session.FieldCreatedBy, session.FieldUpdatedBy, session.FieldSessionToken, session.FieldOrganizationID, session.FieldUserID:
 			values[i] = new(sql.NullString)
-		case session.FieldCreatedAt, session.FieldUpdatedAt:
+		case session.FieldCreatedAt, session.FieldUpdatedAt, session.FieldIssuedAt, session.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
-		case session.ForeignKeys[0]: // session_users
-			values[i] = new(sql.NullString)
-		case session.ForeignKeys[1]: // user_sessions
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -128,49 +120,35 @@ func (s *Session) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				s.UpdatedBy = value.String
 			}
-		case session.FieldType:
+		case session.FieldSessionToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
+				return fmt.Errorf("unexpected type %T for field session_token", values[i])
 			} else if value.Valid {
-				s.Type = session.Type(value.String)
+				s.SessionToken = value.String
 			}
-		case session.FieldDisabled:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field disabled", values[i])
+		case session.FieldIssuedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field issued_at", values[i])
 			} else if value.Valid {
-				s.Disabled = value.Bool
+				s.IssuedAt = value.Time
 			}
-		case session.FieldToken:
+		case session.FieldExpiresAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
+			} else if value.Valid {
+				s.ExpiresAt = value.Time
+			}
+		case session.FieldOrganizationID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field token", values[i])
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
 			} else if value.Valid {
-				s.Token = value.String
+				s.OrganizationID = value.String
 			}
-		case session.FieldUserAgent:
+		case session.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_agent", values[i])
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				s.UserAgent = value.String
-			}
-		case session.FieldIps:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field ips", values[i])
-			} else if value.Valid {
-				s.Ips = value.String
-			}
-		case session.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field session_users", values[i])
-			} else if value.Valid {
-				s.session_users = new(string)
-				*s.session_users = value.String
-			}
-		case session.ForeignKeys[1]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_sessions", values[i])
-			} else if value.Valid {
-				s.user_sessions = new(string)
-				*s.user_sessions = value.String
+				s.UserID = value.String
 			}
 		default:
 			s.selectValues.Set(columns[i], values[i])
@@ -185,9 +163,9 @@ func (s *Session) Value(name string) (ent.Value, error) {
 	return s.selectValues.Get(name)
 }
 
-// QueryUsers queries the "users" edge of the Session entity.
-func (s *Session) QueryUsers() *UserQuery {
-	return NewSessionClient(s.config).QueryUsers(s)
+// QueryOwner queries the "owner" edge of the Session entity.
+func (s *Session) QueryOwner() *UserQuery {
+	return NewSessionClient(s.config).QueryOwner(s)
 }
 
 // Update returns a builder for updating this Session.
@@ -225,20 +203,20 @@ func (s *Session) String() string {
 	builder.WriteString("updated_by=")
 	builder.WriteString(s.UpdatedBy)
 	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", s.Type))
+	builder.WriteString("session_token=")
+	builder.WriteString(s.SessionToken)
 	builder.WriteString(", ")
-	builder.WriteString("disabled=")
-	builder.WriteString(fmt.Sprintf("%v", s.Disabled))
+	builder.WriteString("issued_at=")
+	builder.WriteString(s.IssuedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("token=")
-	builder.WriteString(s.Token)
+	builder.WriteString("expires_at=")
+	builder.WriteString(s.ExpiresAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("user_agent=")
-	builder.WriteString(s.UserAgent)
+	builder.WriteString("organization_id=")
+	builder.WriteString(s.OrganizationID)
 	builder.WriteString(", ")
-	builder.WriteString("ips=")
-	builder.WriteString(s.Ips)
+	builder.WriteString("user_id=")
+	builder.WriteString(s.UserID)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -28,7 +28,7 @@ func (Session) Fields() []ent.Field {
 		field.Time("issued_at").
 			Default(time.Now),
 		field.Time("expires_at").
-			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 1) }).
+			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 1) }). // nolint: gomnd
 			Comment("projected expiration of the session token").
 			Optional(),
 		field.String("organization_id").

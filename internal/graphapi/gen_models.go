@@ -6,6 +6,24 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// Return response for createAccessToken mutation
+type AccessTokenCreatePayload struct {
+	// Created accessToken
+	AccessToken *generated.AccessToken `json:"accessToken"`
+}
+
+// Return response for deleteAccessToken mutation
+type AccessTokenDeletePayload struct {
+	// Deleted accessToken ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateAccessToken mutation
+type AccessTokenUpdatePayload struct {
+	// Updated accessToken
+	AccessToken *generated.AccessToken `json:"accessToken"`
+}
+
 // Return response for createEntitlement mutation
 type EntitlementCreatePayload struct {
 	// Created entitlement
@@ -94,6 +112,24 @@ type OauthProviderDeletePayload struct {
 type OauthProviderUpdatePayload struct {
 	// Updated oauthProvider
 	OauthProvider *generated.OauthProvider `json:"OauthProvider"`
+}
+
+// Return response for createOhAuthTooToken mutation
+type OhAuthTooTokenCreatePayload struct {
+	// Created ohAuthTooToken
+	OhAuthTooToken *generated.OhAuthTooToken `json:"ohAuthTooToken"`
+}
+
+// Return response for deleteOhAuthTooToken mutation
+type OhAuthTooTokenDeletePayload struct {
+	// Deleted ohAuthTooToken ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateOhAuthTooToken mutation
+type OhAuthTooTokenUpdatePayload struct {
+	// Updated ohAuthTooToken
+	OhAuthTooToken *generated.OhAuthTooToken `json:"ohAuthTooToken"`
 }
 
 // Return response for createOrganization mutation

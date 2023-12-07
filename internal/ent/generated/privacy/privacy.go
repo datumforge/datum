@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op generated.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The AccessTokenQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AccessTokenQueryRuleFunc func(context.Context, *generated.AccessTokenQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AccessTokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.AccessTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.AccessTokenQuery", q)
+}
+
+// The AccessTokenMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AccessTokenMutationRuleFunc func(context.Context, *generated.AccessTokenMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AccessTokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.AccessTokenMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.AccessTokenMutation", m)
+}
+
 // The EntitlementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EntitlementQueryRuleFunc func(context.Context, *generated.EntitlementQuery) error
@@ -229,6 +253,30 @@ func (f OauthProviderMutationRuleFunc) EvalMutation(ctx context.Context, m gener
 		return f(ctx, m)
 	}
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OauthProviderMutation", m)
+}
+
+// The OhAuthTooTokenQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type OhAuthTooTokenQueryRuleFunc func(context.Context, *generated.OhAuthTooTokenQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f OhAuthTooTokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OhAuthTooTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.OhAuthTooTokenQuery", q)
+}
+
+// The OhAuthTooTokenMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type OhAuthTooTokenMutationRuleFunc func(context.Context, *generated.OhAuthTooTokenMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f OhAuthTooTokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.OhAuthTooTokenMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OhAuthTooTokenMutation", m)
 }
 
 // The OrganizationQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -434,6 +482,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q generated.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *generated.AccessTokenQuery:
+		return q.Filter(), nil
 	case *generated.EntitlementQuery:
 		return q.Filter(), nil
 	case *generated.GroupQuery:
@@ -443,6 +493,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 	case *generated.IntegrationQuery:
 		return q.Filter(), nil
 	case *generated.OauthProviderQuery:
+		return q.Filter(), nil
+	case *generated.OhAuthTooTokenQuery:
 		return q.Filter(), nil
 	case *generated.OrganizationQuery:
 		return q.Filter(), nil
@@ -465,6 +517,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 
 func mutationFilter(m generated.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *generated.AccessTokenMutation:
+		return m.Filter(), nil
 	case *generated.EntitlementMutation:
 		return m.Filter(), nil
 	case *generated.GroupMutation:
@@ -474,6 +528,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.IntegrationMutation:
 		return m.Filter(), nil
 	case *generated.OauthProviderMutation:
+		return m.Filter(), nil
+	case *generated.OhAuthTooTokenMutation:
 		return m.Filter(), nil
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil

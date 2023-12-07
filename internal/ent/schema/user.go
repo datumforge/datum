@@ -142,7 +142,8 @@ func (User) Edges() []ent.Edge {
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
-		edge.To("refreshtoken", RefreshToken.Type),
+		edge.To("refresh_token", RefreshToken.Type),
+		edge.To("access_token", AccessToken.Type),
 	}
 }
 

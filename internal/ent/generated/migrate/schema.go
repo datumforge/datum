@@ -9,6 +9,41 @@ import (
 )
 
 var (
+	// AccessTokensColumns holds the columns for the "access_tokens" table.
+	AccessTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "access_token", Type: field.TypeString, Unique: true},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "issued_at", Type: field.TypeTime},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// AccessTokensTable holds the schema information for the "access_tokens" table.
+	AccessTokensTable = &schema.Table{
+		Name:       "access_tokens",
+		Columns:    AccessTokensColumns,
+		PrimaryKey: []*schema.Column{AccessTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "access_tokens_users_access_token",
+				Columns:    []*schema.Column{AccessTokensColumns[10]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "accesstoken_access_token",
+				Unique:  false,
+				Columns: []*schema.Column{AccessTokensColumns[5]},
+			},
+		},
+	}
 	// EntitlementsColumns holds the columns for the "entitlements" table.
 	EntitlementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -167,6 +202,28 @@ var (
 			},
 		},
 	}
+	// OhAuthTooTokensColumns holds the columns for the "oh_auth_too_tokens" table.
+	OhAuthTooTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "client_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
+		{Name: "nonce", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_user_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_username", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_email", Type: field.TypeString, Size: 2147483647},
+		{Name: "claims_email_verified", Type: field.TypeBool},
+		{Name: "claims_groups", Type: field.TypeJSON, Nullable: true},
+		{Name: "claims_preferred_username", Type: field.TypeString, Size: 2147483647},
+		{Name: "connector_id", Type: field.TypeString, Size: 2147483647},
+		{Name: "connector_data", Type: field.TypeJSON, Nullable: true},
+		{Name: "last_used", Type: field.TypeTime},
+	}
+	// OhAuthTooTokensTable holds the schema information for the "oh_auth_too_tokens" table.
+	OhAuthTooTokensTable = &schema.Table{
+		Name:       "oh_auth_too_tokens",
+		Columns:    OhAuthTooTokensColumns,
+		PrimaryKey: []*schema.Column{OhAuthTooTokensColumns[0]},
+	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -277,21 +334,12 @@ var (
 	// RefreshTokensColumns holds the columns for the "refresh_tokens" table.
 	RefreshTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
-		{Name: "client_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "scopes", Type: field.TypeJSON, Nullable: true},
-		{Name: "nonce", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_user_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_username", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_email", Type: field.TypeString, Size: 2147483647},
-		{Name: "claims_email_verified", Type: field.TypeBool},
-		{Name: "claims_groups", Type: field.TypeJSON, Nullable: true},
-		{Name: "claims_preferred_username", Type: field.TypeString, Size: 2147483647},
-		{Name: "connector_id", Type: field.TypeString, Size: 2147483647},
-		{Name: "connector_data", Type: field.TypeJSON, Nullable: true},
-		{Name: "token", Type: field.TypeString, Size: 2147483647},
-		{Name: "obsolete_token", Type: field.TypeString, Size: 2147483647},
-		{Name: "last_used", Type: field.TypeTime},
-		{Name: "user_refreshtoken", Type: field.TypeString, Nullable: true},
+		{Name: "refresh_token", Type: field.TypeString, Unique: true},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "issued_at", Type: field.TypeTime},
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "user_refresh_token", Type: field.TypeString, Nullable: true},
 	}
 	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
 	RefreshTokensTable = &schema.Table{
@@ -300,8 +348,8 @@ var (
 		PrimaryKey: []*schema.Column{RefreshTokensColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "refresh_tokens_users_refreshtoken",
-				Columns:    []*schema.Column{RefreshTokensColumns[15]},
+				Symbol:     "refresh_tokens_users_refresh_token",
+				Columns:    []*schema.Column{RefreshTokensColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -314,13 +362,11 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"local", "oauth", "app_password"}},
-		{Name: "disabled", Type: field.TypeBool},
-		{Name: "token", Type: field.TypeString, Unique: true},
-		{Name: "user_agent", Type: field.TypeString, Nullable: true},
-		{Name: "ips", Type: field.TypeString},
-		{Name: "session_users", Type: field.TypeString, Nullable: true},
-		{Name: "user_sessions", Type: field.TypeString, Nullable: true},
+		{Name: "session_token", Type: field.TypeString, Unique: true},
+		{Name: "issued_at", Type: field.TypeTime},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "organization_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
 	}
 	// SessionsTable holds the schema information for the "sessions" table.
 	SessionsTable = &schema.Table{
@@ -329,23 +375,17 @@ var (
 		PrimaryKey: []*schema.Column{SessionsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "sessions_users_users",
-				Columns:    []*schema.Column{SessionsColumns[10]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
 				Symbol:     "sessions_users_sessions",
-				Columns:    []*schema.Column{SessionsColumns[11]},
+				Columns:    []*schema.Column{SessionsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "session_id",
+				Name:    "session_session_token",
 				Unique:  true,
-				Columns: []*schema.Column{SessionsColumns[0]},
+				Columns: []*schema.Column{SessionsColumns[5]},
 			},
 		},
 	}
@@ -467,11 +507,13 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AccessTokensTable,
 		EntitlementsTable,
 		GroupsTable,
 		GroupSettingsTable,
 		IntegrationsTable,
 		OauthProvidersTable,
+		OhAuthTooTokensTable,
 		OrganizationsTable,
 		OrganizationSettingsTable,
 		PersonalAccessTokensTable,
@@ -485,6 +527,7 @@ var (
 )
 
 func init() {
+	AccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
@@ -495,7 +538,6 @@ func init() {
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	RefreshTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
-	SessionsTable.ForeignKeys[1].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable

@@ -9,6 +9,18 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
+// The AccessTokenFunc type is an adapter to allow the use of ordinary
+// function as AccessToken mutator.
+type AccessTokenFunc func(context.Context, *generated.AccessTokenMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AccessTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.AccessTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.AccessTokenMutation", m)
+}
+
 // The EntitlementFunc type is an adapter to allow the use of ordinary
 // function as Entitlement mutator.
 type EntitlementFunc func(context.Context, *generated.EntitlementMutation) (generated.Value, error)
@@ -67,6 +79,18 @@ func (f OauthProviderFunc) Mutate(ctx context.Context, m generated.Mutation) (ge
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OauthProviderMutation", m)
+}
+
+// The OhAuthTooTokenFunc type is an adapter to allow the use of ordinary
+// function as OhAuthTooToken mutator.
+type OhAuthTooTokenFunc func(context.Context, *generated.OhAuthTooTokenMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OhAuthTooTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OhAuthTooTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OhAuthTooTokenMutation", m)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary

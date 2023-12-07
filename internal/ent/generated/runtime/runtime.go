@@ -6,11 +6,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -28,6 +30,41 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accesstokenMixin := schema.AccessToken{}.Mixin()
+	accesstokenMixinHooks0 := accesstokenMixin[0].Hooks()
+	accesstoken.Hooks[0] = accesstokenMixinHooks0[0]
+	accesstokenMixinFields0 := accesstokenMixin[0].Fields()
+	_ = accesstokenMixinFields0
+	accesstokenMixinFields1 := accesstokenMixin[1].Fields()
+	_ = accesstokenMixinFields1
+	accesstokenFields := schema.AccessToken{}.Fields()
+	_ = accesstokenFields
+	// accesstokenDescCreatedAt is the schema descriptor for created_at field.
+	accesstokenDescCreatedAt := accesstokenMixinFields0[0].Descriptor()
+	// accesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	accesstoken.DefaultCreatedAt = accesstokenDescCreatedAt.Default.(func() time.Time)
+	// accesstokenDescUpdatedAt is the schema descriptor for updated_at field.
+	accesstokenDescUpdatedAt := accesstokenMixinFields0[1].Descriptor()
+	// accesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	accesstoken.DefaultUpdatedAt = accesstokenDescUpdatedAt.Default.(func() time.Time)
+	// accesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	accesstoken.UpdateDefaultUpdatedAt = accesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// accesstokenDescExpiresAt is the schema descriptor for expires_at field.
+	accesstokenDescExpiresAt := accesstokenFields[1].Descriptor()
+	// accesstoken.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	accesstoken.DefaultExpiresAt = accesstokenDescExpiresAt.Default.(func() time.Time)
+	// accesstokenDescIssuedAt is the schema descriptor for issued_at field.
+	accesstokenDescIssuedAt := accesstokenFields[2].Descriptor()
+	// accesstoken.DefaultIssuedAt holds the default value on creation for the issued_at field.
+	accesstoken.DefaultIssuedAt = accesstokenDescIssuedAt.Default.(time.Time)
+	// accesstokenDescLastUsedAt is the schema descriptor for last_used_at field.
+	accesstokenDescLastUsedAt := accesstokenFields[3].Descriptor()
+	// accesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
+	accesstoken.UpdateDefaultLastUsedAt = accesstokenDescLastUsedAt.UpdateDefault.(func() time.Time)
+	// accesstokenDescID is the schema descriptor for id field.
+	accesstokenDescID := accesstokenMixinFields1[0].Descriptor()
+	// accesstoken.DefaultID holds the default value on creation for the id field.
+	accesstoken.DefaultID = accesstokenDescID.Default.(func() string)
 	entitlementMixin := schema.Entitlement{}.Mixin()
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
 	entitlement.Hooks[0] = entitlementMixinHooks0[0]
@@ -207,6 +244,43 @@ func init() {
 	oauthproviderDescID := oauthproviderMixinFields1[0].Descriptor()
 	// oauthprovider.DefaultID holds the default value on creation for the id field.
 	oauthprovider.DefaultID = oauthproviderDescID.Default.(func() string)
+	ohauthtootokenMixin := schema.OhAuthTooToken{}.Mixin()
+	ohauthtootokenMixinFields0 := ohauthtootokenMixin[0].Fields()
+	_ = ohauthtootokenMixinFields0
+	ohauthtootokenFields := schema.OhAuthTooToken{}.Fields()
+	_ = ohauthtootokenFields
+	// ohauthtootokenDescClientID is the schema descriptor for client_id field.
+	ohauthtootokenDescClientID := ohauthtootokenFields[0].Descriptor()
+	// ohauthtootoken.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
+	ohauthtootoken.ClientIDValidator = ohauthtootokenDescClientID.Validators[0].(func(string) error)
+	// ohauthtootokenDescNonce is the schema descriptor for nonce field.
+	ohauthtootokenDescNonce := ohauthtootokenFields[2].Descriptor()
+	// ohauthtootoken.NonceValidator is a validator for the "nonce" field. It is called by the builders before save.
+	ohauthtootoken.NonceValidator = ohauthtootokenDescNonce.Validators[0].(func(string) error)
+	// ohauthtootokenDescClaimsUserID is the schema descriptor for claims_user_id field.
+	ohauthtootokenDescClaimsUserID := ohauthtootokenFields[3].Descriptor()
+	// ohauthtootoken.ClaimsUserIDValidator is a validator for the "claims_user_id" field. It is called by the builders before save.
+	ohauthtootoken.ClaimsUserIDValidator = ohauthtootokenDescClaimsUserID.Validators[0].(func(string) error)
+	// ohauthtootokenDescClaimsUsername is the schema descriptor for claims_username field.
+	ohauthtootokenDescClaimsUsername := ohauthtootokenFields[4].Descriptor()
+	// ohauthtootoken.ClaimsUsernameValidator is a validator for the "claims_username" field. It is called by the builders before save.
+	ohauthtootoken.ClaimsUsernameValidator = ohauthtootokenDescClaimsUsername.Validators[0].(func(string) error)
+	// ohauthtootokenDescClaimsEmail is the schema descriptor for claims_email field.
+	ohauthtootokenDescClaimsEmail := ohauthtootokenFields[5].Descriptor()
+	// ohauthtootoken.ClaimsEmailValidator is a validator for the "claims_email" field. It is called by the builders before save.
+	ohauthtootoken.ClaimsEmailValidator = ohauthtootokenDescClaimsEmail.Validators[0].(func(string) error)
+	// ohauthtootokenDescConnectorID is the schema descriptor for connector_id field.
+	ohauthtootokenDescConnectorID := ohauthtootokenFields[9].Descriptor()
+	// ohauthtootoken.ConnectorIDValidator is a validator for the "connector_id" field. It is called by the builders before save.
+	ohauthtootoken.ConnectorIDValidator = ohauthtootokenDescConnectorID.Validators[0].(func(string) error)
+	// ohauthtootokenDescLastUsed is the schema descriptor for last_used field.
+	ohauthtootokenDescLastUsed := ohauthtootokenFields[11].Descriptor()
+	// ohauthtootoken.DefaultLastUsed holds the default value on creation for the last_used field.
+	ohauthtootoken.DefaultLastUsed = ohauthtootokenDescLastUsed.Default.(func() time.Time)
+	// ohauthtootokenDescID is the schema descriptor for id field.
+	ohauthtootokenDescID := ohauthtootokenMixinFields0[0].Descriptor()
+	// ohauthtootoken.DefaultID holds the default value on creation for the id field.
+	ohauthtootoken.DefaultID = ohauthtootokenDescID.Default.(func() string)
 	organizationMixin := schema.Organization{}.Mixin()
 	organization.Policy = privacy.NewPolicies(schema.Organization{})
 	organization.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -384,34 +458,14 @@ func init() {
 	_ = refreshtokenMixinFields0
 	refreshtokenFields := schema.RefreshToken{}.Fields()
 	_ = refreshtokenFields
-	// refreshtokenDescClientID is the schema descriptor for client_id field.
-	refreshtokenDescClientID := refreshtokenFields[0].Descriptor()
-	// refreshtoken.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
-	refreshtoken.ClientIDValidator = refreshtokenDescClientID.Validators[0].(func(string) error)
-	// refreshtokenDescNonce is the schema descriptor for nonce field.
-	refreshtokenDescNonce := refreshtokenFields[2].Descriptor()
-	// refreshtoken.NonceValidator is a validator for the "nonce" field. It is called by the builders before save.
-	refreshtoken.NonceValidator = refreshtokenDescNonce.Validators[0].(func(string) error)
-	// refreshtokenDescClaimsUserID is the schema descriptor for claims_user_id field.
-	refreshtokenDescClaimsUserID := refreshtokenFields[3].Descriptor()
-	// refreshtoken.ClaimsUserIDValidator is a validator for the "claims_user_id" field. It is called by the builders before save.
-	refreshtoken.ClaimsUserIDValidator = refreshtokenDescClaimsUserID.Validators[0].(func(string) error)
-	// refreshtokenDescClaimsUsername is the schema descriptor for claims_username field.
-	refreshtokenDescClaimsUsername := refreshtokenFields[4].Descriptor()
-	// refreshtoken.ClaimsUsernameValidator is a validator for the "claims_username" field. It is called by the builders before save.
-	refreshtoken.ClaimsUsernameValidator = refreshtokenDescClaimsUsername.Validators[0].(func(string) error)
-	// refreshtokenDescClaimsEmail is the schema descriptor for claims_email field.
-	refreshtokenDescClaimsEmail := refreshtokenFields[5].Descriptor()
-	// refreshtoken.ClaimsEmailValidator is a validator for the "claims_email" field. It is called by the builders before save.
-	refreshtoken.ClaimsEmailValidator = refreshtokenDescClaimsEmail.Validators[0].(func(string) error)
-	// refreshtokenDescConnectorID is the schema descriptor for connector_id field.
-	refreshtokenDescConnectorID := refreshtokenFields[9].Descriptor()
-	// refreshtoken.ConnectorIDValidator is a validator for the "connector_id" field. It is called by the builders before save.
-	refreshtoken.ConnectorIDValidator = refreshtokenDescConnectorID.Validators[0].(func(string) error)
-	// refreshtokenDescLastUsed is the schema descriptor for last_used field.
-	refreshtokenDescLastUsed := refreshtokenFields[13].Descriptor()
-	// refreshtoken.DefaultLastUsed holds the default value on creation for the last_used field.
-	refreshtoken.DefaultLastUsed = refreshtokenDescLastUsed.Default.(func() time.Time)
+	// refreshtokenDescExpiresAt is the schema descriptor for expires_at field.
+	refreshtokenDescExpiresAt := refreshtokenFields[1].Descriptor()
+	// refreshtoken.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	refreshtoken.DefaultExpiresAt = refreshtokenDescExpiresAt.Default.(func() time.Time)
+	// refreshtokenDescIssuedAt is the schema descriptor for issued_at field.
+	refreshtokenDescIssuedAt := refreshtokenFields[2].Descriptor()
+	// refreshtoken.DefaultIssuedAt holds the default value on creation for the issued_at field.
+	refreshtoken.DefaultIssuedAt = refreshtokenDescIssuedAt.Default.(time.Time)
 	// refreshtokenDescID is the schema descriptor for id field.
 	refreshtokenDescID := refreshtokenMixinFields0[0].Descriptor()
 	// refreshtoken.DefaultID holds the default value on creation for the id field.
@@ -435,12 +489,14 @@ func init() {
 	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
 	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// sessionDescToken is the schema descriptor for token field.
-	sessionDescToken := sessionFields[2].Descriptor()
-	// session.DefaultToken holds the default value on creation for the token field.
-	session.DefaultToken = sessionDescToken.Default.(func() string)
-	// session.TokenValidator is a validator for the "token" field. It is called by the builders before save.
-	session.TokenValidator = sessionDescToken.Validators[0].(func(string) error)
+	// sessionDescIssuedAt is the schema descriptor for issued_at field.
+	sessionDescIssuedAt := sessionFields[1].Descriptor()
+	// session.DefaultIssuedAt holds the default value on creation for the issued_at field.
+	session.DefaultIssuedAt = sessionDescIssuedAt.Default.(func() time.Time)
+	// sessionDescExpiresAt is the schema descriptor for expires_at field.
+	sessionDescExpiresAt := sessionFields[2].Descriptor()
+	// session.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	session.DefaultExpiresAt = sessionDescExpiresAt.Default.(func() time.Time)
 	// sessionDescID is the schema descriptor for id field.
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.

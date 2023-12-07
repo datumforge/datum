@@ -12,11 +12,13 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -84,11 +86,13 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			accesstoken.Table:         accesstoken.ValidColumn,
 			entitlement.Table:         entitlement.ValidColumn,
 			group.Table:               group.ValidColumn,
 			groupsetting.Table:        groupsetting.ValidColumn,
 			integration.Table:         integration.ValidColumn,
 			oauthprovider.Table:       oauthprovider.ValidColumn,
+			ohauthtootoken.Table:      ohauthtootoken.ValidColumn,
 			organization.Table:        organization.ValidColumn,
 			organizationsetting.Table: organizationsetting.ValidColumn,
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,

@@ -10,11 +10,13 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/dialect/sql"
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -23,6 +25,127 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (at *AccessTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*AccessTokenQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return at, nil
+	}
+	if err := at.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return at, nil
+}
+
+func (at *AccessTokenQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(accesstoken.Columns))
+		selectedFields = []string{accesstoken.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: at.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			at.withOwner = query
+			if _, ok := fieldSeen[accesstoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldUserID)
+				fieldSeen[accesstoken.FieldUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[accesstoken.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldCreatedAt)
+				fieldSeen[accesstoken.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[accesstoken.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldUpdatedAt)
+				fieldSeen[accesstoken.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[accesstoken.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldCreatedBy)
+				fieldSeen[accesstoken.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[accesstoken.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldUpdatedBy)
+				fieldSeen[accesstoken.FieldUpdatedBy] = struct{}{}
+			}
+		case "expiresAt":
+			if _, ok := fieldSeen[accesstoken.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldExpiresAt)
+				fieldSeen[accesstoken.FieldExpiresAt] = struct{}{}
+			}
+		case "issuedAt":
+			if _, ok := fieldSeen[accesstoken.FieldIssuedAt]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldIssuedAt)
+				fieldSeen[accesstoken.FieldIssuedAt] = struct{}{}
+			}
+		case "lastUsedAt":
+			if _, ok := fieldSeen[accesstoken.FieldLastUsedAt]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldLastUsedAt)
+				fieldSeen[accesstoken.FieldLastUsedAt] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[accesstoken.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldOrganizationID)
+				fieldSeen[accesstoken.FieldOrganizationID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[accesstoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, accesstoken.FieldUserID)
+				fieldSeen[accesstoken.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		at.Select(selectedFields...)
+	}
+	return nil
+}
+
+type accesstokenPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []AccessTokenPaginateOption
+}
+
+func newAccessTokenPaginateArgs(rv map[string]any) *accesstokenPaginateArgs {
+	args := &accesstokenPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*AccessTokenWhereInput); ok {
+		args.opts = append(args.opts, WithAccessTokenFilter(v.Filter))
+	}
+	return args
+}
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (e *EntitlementQuery) CollectFields(ctx context.Context, satisfies ...string) (*EntitlementQuery, error) {
@@ -711,6 +834,128 @@ func newOauthProviderPaginateArgs(rv map[string]any) *oauthproviderPaginateArgs 
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (oatt *OhAuthTooTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*OhAuthTooTokenQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return oatt, nil
+	}
+	if err := oatt.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return oatt, nil
+}
+
+func (oatt *OhAuthTooTokenQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(ohauthtootoken.Columns))
+		selectedFields = []string{ohauthtootoken.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "clientID":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClientID]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClientID)
+				fieldSeen[ohauthtootoken.FieldClientID] = struct{}{}
+			}
+		case "scopes":
+			if _, ok := fieldSeen[ohauthtootoken.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldScopes)
+				fieldSeen[ohauthtootoken.FieldScopes] = struct{}{}
+			}
+		case "nonce":
+			if _, ok := fieldSeen[ohauthtootoken.FieldNonce]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldNonce)
+				fieldSeen[ohauthtootoken.FieldNonce] = struct{}{}
+			}
+		case "claimsUserID":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClaimsUserID]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClaimsUserID)
+				fieldSeen[ohauthtootoken.FieldClaimsUserID] = struct{}{}
+			}
+		case "claimsUsername":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClaimsUsername]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClaimsUsername)
+				fieldSeen[ohauthtootoken.FieldClaimsUsername] = struct{}{}
+			}
+		case "claimsEmail":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClaimsEmail]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClaimsEmail)
+				fieldSeen[ohauthtootoken.FieldClaimsEmail] = struct{}{}
+			}
+		case "claimsEmailVerified":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClaimsEmailVerified]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClaimsEmailVerified)
+				fieldSeen[ohauthtootoken.FieldClaimsEmailVerified] = struct{}{}
+			}
+		case "claimsGroups":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClaimsGroups]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClaimsGroups)
+				fieldSeen[ohauthtootoken.FieldClaimsGroups] = struct{}{}
+			}
+		case "claimsPreferredUsername":
+			if _, ok := fieldSeen[ohauthtootoken.FieldClaimsPreferredUsername]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldClaimsPreferredUsername)
+				fieldSeen[ohauthtootoken.FieldClaimsPreferredUsername] = struct{}{}
+			}
+		case "connectorID":
+			if _, ok := fieldSeen[ohauthtootoken.FieldConnectorID]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldConnectorID)
+				fieldSeen[ohauthtootoken.FieldConnectorID] = struct{}{}
+			}
+		case "connectorData":
+			if _, ok := fieldSeen[ohauthtootoken.FieldConnectorData]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldConnectorData)
+				fieldSeen[ohauthtootoken.FieldConnectorData] = struct{}{}
+			}
+		case "lastUsed":
+			if _, ok := fieldSeen[ohauthtootoken.FieldLastUsed]; !ok {
+				selectedFields = append(selectedFields, ohauthtootoken.FieldLastUsed)
+				fieldSeen[ohauthtootoken.FieldLastUsed] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		oatt.Select(selectedFields...)
+	}
+	return nil
+}
+
+type ohauthtootokenPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OhAuthTooTokenPaginateOption
+}
+
+func newOhAuthTooTokenPaginateArgs(rv map[string]any) *ohauthtootokenPaginateArgs {
+	args := &ohauthtootokenPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OhAuthTooTokenWhereInput); ok {
+		args.opts = append(args.opts, WithOhAuthTooTokenFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...string) (*OrganizationQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1287,85 +1532,25 @@ func (rt *RefreshTokenQuery) collectField(ctx context.Context, opCtx *graphql.Op
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "user":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&UserClient{config: rt.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
+		case "expiresAt":
+			if _, ok := fieldSeen[refreshtoken.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldExpiresAt)
+				fieldSeen[refreshtoken.FieldExpiresAt] = struct{}{}
 			}
-			rt.withUser = query
-		case "clientID":
-			if _, ok := fieldSeen[refreshtoken.FieldClientID]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClientID)
-				fieldSeen[refreshtoken.FieldClientID] = struct{}{}
+		case "issuedAt":
+			if _, ok := fieldSeen[refreshtoken.FieldIssuedAt]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldIssuedAt)
+				fieldSeen[refreshtoken.FieldIssuedAt] = struct{}{}
 			}
-		case "scopes":
-			if _, ok := fieldSeen[refreshtoken.FieldScopes]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldScopes)
-				fieldSeen[refreshtoken.FieldScopes] = struct{}{}
+		case "organizationID":
+			if _, ok := fieldSeen[refreshtoken.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldOrganizationID)
+				fieldSeen[refreshtoken.FieldOrganizationID] = struct{}{}
 			}
-		case "nonce":
-			if _, ok := fieldSeen[refreshtoken.FieldNonce]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldNonce)
-				fieldSeen[refreshtoken.FieldNonce] = struct{}{}
-			}
-		case "claimsUserID":
-			if _, ok := fieldSeen[refreshtoken.FieldClaimsUserID]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClaimsUserID)
-				fieldSeen[refreshtoken.FieldClaimsUserID] = struct{}{}
-			}
-		case "claimsUsername":
-			if _, ok := fieldSeen[refreshtoken.FieldClaimsUsername]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClaimsUsername)
-				fieldSeen[refreshtoken.FieldClaimsUsername] = struct{}{}
-			}
-		case "claimsEmail":
-			if _, ok := fieldSeen[refreshtoken.FieldClaimsEmail]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClaimsEmail)
-				fieldSeen[refreshtoken.FieldClaimsEmail] = struct{}{}
-			}
-		case "claimsEmailVerified":
-			if _, ok := fieldSeen[refreshtoken.FieldClaimsEmailVerified]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClaimsEmailVerified)
-				fieldSeen[refreshtoken.FieldClaimsEmailVerified] = struct{}{}
-			}
-		case "claimsGroups":
-			if _, ok := fieldSeen[refreshtoken.FieldClaimsGroups]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClaimsGroups)
-				fieldSeen[refreshtoken.FieldClaimsGroups] = struct{}{}
-			}
-		case "claimsPreferredUsername":
-			if _, ok := fieldSeen[refreshtoken.FieldClaimsPreferredUsername]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldClaimsPreferredUsername)
-				fieldSeen[refreshtoken.FieldClaimsPreferredUsername] = struct{}{}
-			}
-		case "connectorID":
-			if _, ok := fieldSeen[refreshtoken.FieldConnectorID]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldConnectorID)
-				fieldSeen[refreshtoken.FieldConnectorID] = struct{}{}
-			}
-		case "connectorData":
-			if _, ok := fieldSeen[refreshtoken.FieldConnectorData]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldConnectorData)
-				fieldSeen[refreshtoken.FieldConnectorData] = struct{}{}
-			}
-		case "token":
-			if _, ok := fieldSeen[refreshtoken.FieldToken]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldToken)
-				fieldSeen[refreshtoken.FieldToken] = struct{}{}
-			}
-		case "obsoleteToken":
-			if _, ok := fieldSeen[refreshtoken.FieldObsoleteToken]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldObsoleteToken)
-				fieldSeen[refreshtoken.FieldObsoleteToken] = struct{}{}
-			}
-		case "lastUsed":
-			if _, ok := fieldSeen[refreshtoken.FieldLastUsed]; !ok {
-				selectedFields = append(selectedFields, refreshtoken.FieldLastUsed)
-				fieldSeen[refreshtoken.FieldLastUsed] = struct{}{}
+		case "userID":
+			if _, ok := fieldSeen[refreshtoken.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, refreshtoken.FieldUserID)
+				fieldSeen[refreshtoken.FieldUserID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1429,7 +1614,7 @@ func (s *SessionQuery) collectField(ctx context.Context, opCtx *graphql.Operatio
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "users":
+		case "owner":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1438,7 +1623,11 @@ func (s *SessionQuery) collectField(ctx context.Context, opCtx *graphql.Operatio
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			s.withUsers = query
+			s.withOwner = query
+			if _, ok := fieldSeen[session.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, session.FieldUserID)
+				fieldSeen[session.FieldUserID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[session.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, session.FieldCreatedAt)
@@ -1459,30 +1648,30 @@ func (s *SessionQuery) collectField(ctx context.Context, opCtx *graphql.Operatio
 				selectedFields = append(selectedFields, session.FieldUpdatedBy)
 				fieldSeen[session.FieldUpdatedBy] = struct{}{}
 			}
-		case "type":
-			if _, ok := fieldSeen[session.FieldType]; !ok {
-				selectedFields = append(selectedFields, session.FieldType)
-				fieldSeen[session.FieldType] = struct{}{}
+		case "sessionToken":
+			if _, ok := fieldSeen[session.FieldSessionToken]; !ok {
+				selectedFields = append(selectedFields, session.FieldSessionToken)
+				fieldSeen[session.FieldSessionToken] = struct{}{}
 			}
-		case "disabled":
-			if _, ok := fieldSeen[session.FieldDisabled]; !ok {
-				selectedFields = append(selectedFields, session.FieldDisabled)
-				fieldSeen[session.FieldDisabled] = struct{}{}
+		case "issuedAt":
+			if _, ok := fieldSeen[session.FieldIssuedAt]; !ok {
+				selectedFields = append(selectedFields, session.FieldIssuedAt)
+				fieldSeen[session.FieldIssuedAt] = struct{}{}
 			}
-		case "token":
-			if _, ok := fieldSeen[session.FieldToken]; !ok {
-				selectedFields = append(selectedFields, session.FieldToken)
-				fieldSeen[session.FieldToken] = struct{}{}
+		case "expiresAt":
+			if _, ok := fieldSeen[session.FieldExpiresAt]; !ok {
+				selectedFields = append(selectedFields, session.FieldExpiresAt)
+				fieldSeen[session.FieldExpiresAt] = struct{}{}
 			}
-		case "userAgent":
-			if _, ok := fieldSeen[session.FieldUserAgent]; !ok {
-				selectedFields = append(selectedFields, session.FieldUserAgent)
-				fieldSeen[session.FieldUserAgent] = struct{}{}
+		case "organizationID":
+			if _, ok := fieldSeen[session.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, session.FieldOrganizationID)
+				fieldSeen[session.FieldOrganizationID] = struct{}{}
 			}
-		case "ips":
-			if _, ok := fieldSeen[session.FieldIps]; !ok {
-				selectedFields = append(selectedFields, session.FieldIps)
-				fieldSeen[session.FieldIps] = struct{}{}
+		case "userID":
+			if _, ok := fieldSeen[session.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, session.FieldUserID)
+				fieldSeen[session.FieldUserID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1604,7 +1793,7 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.withSetting = query
-		case "refreshtoken":
+		case "refreshToken":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1613,7 +1802,19 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			u.WithNamedRefreshtoken(alias, func(wq *RefreshTokenQuery) {
+			u.WithNamedRefreshToken(alias, func(wq *RefreshTokenQuery) {
+				*wq = *query
+			})
+		case "accessToken":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&AccessTokenClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedAccessToken(alias, func(wq *AccessTokenQuery) {
 				*wq = *query
 			})
 		case "createdAt":

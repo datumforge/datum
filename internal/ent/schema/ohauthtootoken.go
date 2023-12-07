@@ -11,13 +11,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
-// OAuth2Token holds the schema definition for the OAuth2Token entity
-type OAuth2Token struct {
+// OhAuthTooToken holds the schema definition for the OhAuthTooToken entity
+type OhAuthTooToken struct {
 	ent.Schema
 }
 
-// Fields of the OAuth2Token
-func (OAuth2Token) Fields() []ent.Field {
+// Fields of the OhAuthTooToken
+func (OhAuthTooToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.Text("client_id").
 			NotEmpty(),
@@ -44,20 +44,20 @@ func (OAuth2Token) Fields() []ent.Field {
 	}
 }
 
-// Edges of the OAuth2Token
-func (OAuth2Token) Edges() []ent.Edge {
+// Edges of the OhAuthTooToken
+func (OhAuthTooToken) Edges() []ent.Edge {
 	return nil
 }
 
-// Mixin of the OAuth2Token
-func (OAuth2Token) Mixin() []ent.Mixin {
+// Mixin of the OhAuthTooToken
+func (OhAuthTooToken) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.IDMixin{},
 	}
 }
 
-// Annotations of the OAuth2Token
-func (OAuth2Token) Annotations() []schema.Annotation {
+// Annotations of the OhAuthTooToken
+func (OhAuthTooToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.QueryField(),
 		entgql.RelayConnection(),

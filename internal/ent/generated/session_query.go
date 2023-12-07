@@ -24,8 +24,7 @@ type SessionQuery struct {
 	order      []session.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Session
-	withUsers  *UserQuery
-	withFKs    bool
+	withOwner  *UserQuery
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*Session) error
 	// intermediate query (i.e. traversal path).
@@ -64,8 +63,8 @@ func (sq *SessionQuery) Order(o ...session.OrderOption) *SessionQuery {
 	return sq
 }
 
-// QueryUsers chains the current query on the "users" edge.
-func (sq *SessionQuery) QueryUsers() *UserQuery {
+// QueryOwner chains the current query on the "owner" edge.
+func (sq *SessionQuery) QueryOwner() *UserQuery {
 	query := (&UserClient{config: sq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := sq.prepareQuery(ctx); err != nil {
@@ -78,7 +77,7 @@ func (sq *SessionQuery) QueryUsers() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(session.Table, session.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, session.UsersTable, session.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, session.OwnerTable, session.OwnerColumn),
 		)
 		schemaConfig := sq.schemaConfig
 		step.To.Schema = schemaConfig.User
@@ -281,21 +280,21 @@ func (sq *SessionQuery) Clone() *SessionQuery {
 		order:      append([]session.OrderOption{}, sq.order...),
 		inters:     append([]Interceptor{}, sq.inters...),
 		predicates: append([]predicate.Session{}, sq.predicates...),
-		withUsers:  sq.withUsers.Clone(),
+		withOwner:  sq.withOwner.Clone(),
 		// clone intermediate query.
 		sql:  sq.sql.Clone(),
 		path: sq.path,
 	}
 }
 
-// WithUsers tells the query-builder to eager-load the nodes that are connected to
-// the "users" edge. The optional arguments are used to configure the query builder of the edge.
-func (sq *SessionQuery) WithUsers(opts ...func(*UserQuery)) *SessionQuery {
+// WithOwner tells the query-builder to eager-load the nodes that are connected to
+// the "owner" edge. The optional arguments are used to configure the query builder of the edge.
+func (sq *SessionQuery) WithOwner(opts ...func(*UserQuery)) *SessionQuery {
 	query := (&UserClient{config: sq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	sq.withUsers = query
+	sq.withOwner = query
 	return sq
 }
 
@@ -376,18 +375,11 @@ func (sq *SessionQuery) prepareQuery(ctx context.Context) error {
 func (sq *SessionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Session, error) {
 	var (
 		nodes       = []*Session{}
-		withFKs     = sq.withFKs
 		_spec       = sq.querySpec()
 		loadedTypes = [1]bool{
-			sq.withUsers != nil,
+			sq.withOwner != nil,
 		}
 	)
-	if sq.withUsers != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, session.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Session).scanValues(nil, columns)
 	}
@@ -411,9 +403,9 @@ func (sq *SessionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Sess
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := sq.withUsers; query != nil {
-		if err := sq.loadUsers(ctx, query, nodes, nil,
-			func(n *Session, e *User) { n.Edges.Users = e }); err != nil {
+	if query := sq.withOwner; query != nil {
+		if err := sq.loadOwner(ctx, query, nodes, nil,
+			func(n *Session, e *User) { n.Edges.Owner = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -425,14 +417,11 @@ func (sq *SessionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Sess
 	return nodes, nil
 }
 
-func (sq *SessionQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Session, init func(*Session), assign func(*Session, *User)) error {
+func (sq *SessionQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*Session, init func(*Session), assign func(*Session, *User)) error {
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Session)
 	for i := range nodes {
-		if nodes[i].session_users == nil {
-			continue
-		}
-		fk := *nodes[i].session_users
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +438,7 @@ func (sq *SessionQuery) loadUsers(ctx context.Context, query *UserQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "session_users" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +476,9 @@ func (sq *SessionQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != session.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if sq.withOwner != nil {
+			_spec.Node.AddColumnOnce(session.FieldUserID)
 		}
 	}
 	if ps := sq.predicates; len(ps) > 0 {

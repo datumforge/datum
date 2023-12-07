@@ -1322,12 +1322,12 @@ func HasSettingWith(preds ...predicate.UserSetting) predicate.User {
 	})
 }
 
-// HasRefreshtoken applies the HasEdge predicate on the "refreshtoken" edge.
-func HasRefreshtoken() predicate.User {
+// HasRefreshToken applies the HasEdge predicate on the "refresh_token" edge.
+func HasRefreshToken() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, RefreshtokenTable, RefreshtokenColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, RefreshTokenTable, RefreshTokenColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.RefreshToken
@@ -1336,13 +1336,42 @@ func HasRefreshtoken() predicate.User {
 	})
 }
 
-// HasRefreshtokenWith applies the HasEdge predicate on the "refreshtoken" edge with a given conditions (other predicates).
-func HasRefreshtokenWith(preds ...predicate.RefreshToken) predicate.User {
+// HasRefreshTokenWith applies the HasEdge predicate on the "refresh_token" edge with a given conditions (other predicates).
+func HasRefreshTokenWith(preds ...predicate.RefreshToken) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newRefreshtokenStep()
+		step := newRefreshTokenStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.RefreshToken
 		step.Edge.Schema = schemaConfig.RefreshToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAccessToken applies the HasEdge predicate on the "access_token" edge.
+func HasAccessToken() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AccessTokenTable, AccessTokenColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.AccessToken
+		step.Edge.Schema = schemaConfig.AccessToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAccessTokenWith applies the HasEdge predicate on the "access_token" edge with a given conditions (other predicates).
+func HasAccessTokenWith(preds ...predicate.AccessToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAccessTokenStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.AccessToken
+		step.Edge.Schema = schemaConfig.AccessToken
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

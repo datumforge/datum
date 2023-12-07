@@ -23,7 +23,7 @@ func (RefreshToken) Fields() []ent.Field {
 			Unique().
 			Immutable(),
 		field.Time("expires_at").
-			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }),
+			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }), // nolint: gomnd
 		field.Time("issued_at").
 			Default(time.Now()),
 		field.String("organization_id").

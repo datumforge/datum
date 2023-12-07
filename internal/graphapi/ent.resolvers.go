@@ -28,6 +28,11 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 	panic(fmt.Errorf("not implemented: Nodes - nodes"))
 }
 
+// AccessTokens is the resolver for the accessTokens field.
+func (r *queryResolver) AccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.AccessTokenWhereInput) (*generated.AccessTokenConnection, error) {
+	panic(fmt.Errorf("not implemented: AccessTokens - accessTokens"))
+}
+
 // Entitlements is the resolver for the entitlements field.
 func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error) {
 	panic(fmt.Errorf("not implemented: Entitlements - entitlements"))
@@ -51,6 +56,11 @@ func (r *queryResolver) Integrations(ctx context.Context, after *entgql.Cursor[s
 // OauthProviders is the resolver for the oauthProviders field.
 func (r *queryResolver) OauthProviders(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OauthProviderWhereInput) (*generated.OauthProviderConnection, error) {
 	panic(fmt.Errorf("not implemented: OauthProviders - oauthProviders"))
+}
+
+// OhAuthTooTokens is the resolver for the ohAuthTooTokens field.
+func (r *queryResolver) OhAuthTooTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OhAuthTooTokenWhereInput) (*generated.OhAuthTooTokenConnection, error) {
+	panic(fmt.Errorf("not implemented: OhAuthTooTokens - ohAuthTooTokens"))
 }
 
 // Organizations is the resolver for the organizations field.

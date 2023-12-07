@@ -6,6 +6,364 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/access-tokens": {
+      "get": {
+        "tags": [
+          "AccessToken"
+        ],
+        "summary": "List AccessTokens",
+        "description": "List AccessTokens.",
+        "operationId": "listAccessToken",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result AccessToken list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccessTokenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "AccessToken"
+        ],
+        "summary": "Create a new AccessToken",
+        "description": "Creates a new AccessToken and persists it to storage.",
+        "operationId": "createAccessToken",
+        "requestBody": {
+          "description": "AccessToken to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "access_token": {
+                    "type": "string"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "last_used_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "organization_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "access_token",
+                  "expires_at",
+                  "issued_at",
+                  "organization_id",
+                  "user_id",
+                  "owner"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "AccessToken created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/access-tokens/{id}": {
+      "get": {
+        "tags": [
+          "AccessToken"
+        ],
+        "summary": "Find a AccessToken by ID",
+        "description": "Finds the AccessToken with the requested ID and returns it.",
+        "operationId": "readAccessToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AccessToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AccessToken with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AccessToken"
+        ],
+        "summary": "Deletes a AccessToken by ID",
+        "description": "Deletes the AccessToken with the requested ID.",
+        "operationId": "deleteAccessToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AccessToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "AccessToken with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "AccessToken"
+        ],
+        "summary": "Updates a AccessToken",
+        "description": "Updates a AccessToken and persists changes to storage.",
+        "operationId": "updateAccessToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AccessToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "AccessToken properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "last_used_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "organization_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "AccessToken updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/access-tokens/{id}/owner": {
+      "get": {
+        "tags": [
+          "AccessToken"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the AccessToken with the given ID",
+        "operationId": "readAccessTokenOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the AccessToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to AccessToken with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken_OwnerRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/entitlements": {
       "get": {
         "tags": [
@@ -1971,6 +2329,346 @@
         }
       }
     },
+    "/oh-auth-too-tokens": {
+      "get": {
+        "tags": [
+          "OhAuthTooToken"
+        ],
+        "summary": "List OhAuthTooTokens",
+        "description": "List OhAuthTooTokens.",
+        "operationId": "listOhAuthTooToken",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OhAuthTooToken list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OhAuthTooTokenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OhAuthTooToken"
+        ],
+        "summary": "Create a new OhAuthTooToken",
+        "description": "Creates a new OhAuthTooToken and persists it to storage.",
+        "operationId": "createOhAuthTooToken",
+        "requestBody": {
+          "description": "OhAuthTooToken to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "scopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "nonce": {
+                    "type": "string"
+                  },
+                  "claims_user_id": {
+                    "type": "string"
+                  },
+                  "claims_username": {
+                    "type": "string"
+                  },
+                  "claims_email": {
+                    "type": "string"
+                  },
+                  "claims_email_verified": {
+                    "type": "boolean"
+                  },
+                  "claims_groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "claims_preferred_username": {
+                    "type": "string"
+                  },
+                  "connector_id": {
+                    "type": "string"
+                  },
+                  "connector_data": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "last_used": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "client_id",
+                  "nonce",
+                  "claims_user_id",
+                  "claims_username",
+                  "claims_email",
+                  "claims_email_verified",
+                  "claims_preferred_username",
+                  "connector_id",
+                  "last_used"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OhAuthTooToken created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OhAuthTooTokenCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/oh-auth-too-tokens/{id}": {
+      "get": {
+        "tags": [
+          "OhAuthTooToken"
+        ],
+        "summary": "Find a OhAuthTooToken by ID",
+        "description": "Finds the OhAuthTooToken with the requested ID and returns it.",
+        "operationId": "readOhAuthTooToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OhAuthTooToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OhAuthTooToken with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OhAuthTooTokenRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OhAuthTooToken"
+        ],
+        "summary": "Deletes a OhAuthTooToken by ID",
+        "description": "Deletes the OhAuthTooToken with the requested ID.",
+        "operationId": "deleteOhAuthTooToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OhAuthTooToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OhAuthTooToken with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OhAuthTooToken"
+        ],
+        "summary": "Updates a OhAuthTooToken",
+        "description": "Updates a OhAuthTooToken and persists changes to storage.",
+        "operationId": "updateOhAuthTooToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OhAuthTooToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OhAuthTooToken properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_id": {
+                    "type": "string"
+                  },
+                  "scopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "nonce": {
+                    "type": "string"
+                  },
+                  "claims_user_id": {
+                    "type": "string"
+                  },
+                  "claims_username": {
+                    "type": "string"
+                  },
+                  "claims_email": {
+                    "type": "string"
+                  },
+                  "claims_email_verified": {
+                    "type": "boolean"
+                  },
+                  "claims_groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "claims_preferred_username": {
+                    "type": "string"
+                  },
+                  "connector_id": {
+                    "type": "string"
+                  },
+                  "connector_data": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "last_used": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OhAuthTooToken updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OhAuthTooTokenUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organization-settings": {
       "get": {
         "tags": [
@@ -3654,74 +4352,30 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "client_id": {
+                  "refresh_token": {
                     "type": "string"
                   },
-                  "scopes": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "nonce": {
-                    "type": "string"
-                  },
-                  "claims_user_id": {
-                    "type": "string"
-                  },
-                  "claims_username": {
-                    "type": "string"
-                  },
-                  "claims_email": {
-                    "type": "string"
-                  },
-                  "claims_email_verified": {
-                    "type": "boolean"
-                  },
-                  "claims_groups": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "claims_preferred_username": {
-                    "type": "string"
-                  },
-                  "connector_id": {
-                    "type": "string"
-                  },
-                  "connector_data": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "token": {
-                    "type": "string"
-                  },
-                  "obsolete_token": {
-                    "type": "string"
-                  },
-                  "last_used": {
+                  "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "user": {
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "organization_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "client_id",
-                  "nonce",
-                  "claims_user_id",
-                  "claims_username",
-                  "claims_email",
-                  "claims_email_verified",
-                  "claims_preferred_username",
-                  "connector_id",
-                  "token",
-                  "obsolete_token",
-                  "last_used"
+                  "refresh_token",
+                  "expires_at",
+                  "issued_at",
+                  "organization_id",
+                  "user_id"
                 ]
               }
             }
@@ -3856,59 +4510,18 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "client_id": {
-                    "type": "string"
-                  },
-                  "scopes": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "nonce": {
-                    "type": "string"
-                  },
-                  "claims_user_id": {
-                    "type": "string"
-                  },
-                  "claims_username": {
-                    "type": "string"
-                  },
-                  "claims_email": {
-                    "type": "string"
-                  },
-                  "claims_email_verified": {
-                    "type": "boolean"
-                  },
-                  "claims_groups": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "claims_preferred_username": {
-                    "type": "string"
-                  },
-                  "connector_id": {
-                    "type": "string"
-                  },
-                  "connector_data": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "token": {
-                    "type": "string"
-                  },
-                  "obsolete_token": {
-                    "type": "string"
-                  },
-                  "last_used": {
+                  "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "user": {
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "organization_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
                     "type": "string"
                   }
                 }
@@ -3924,51 +4537,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RefreshTokenUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/refresh-tokens/{id}/user": {
-      "get": {
-        "tags": [
-          "RefreshToken"
-        ],
-        "summary": "Find the attached User",
-        "description": "Find the attached User of the RefreshToken with the given ID",
-        "operationId": "readRefreshTokenUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the RefreshToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User attached to RefreshToken with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RefreshToken_UserRead"
                 }
               }
             }
@@ -4073,37 +4641,35 @@
                   "updated_by": {
                     "type": "string"
                   },
-                  "type": {
+                  "session_token": {
+                    "type": "string"
+                  },
+                  "issued_at": {
                     "type": "string",
-                    "enum": [
-                      "local",
-                      "oauth",
-                      "app_password"
-                    ]
+                    "format": "date-time"
                   },
-                  "disabled": {
-                    "type": "boolean"
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
                   },
-                  "token": {
+                  "organization_id": {
                     "type": "string"
                   },
-                  "user_agent": {
+                  "user_id": {
                     "type": "string"
                   },
-                  "ips": {
-                    "type": "string"
-                  },
-                  "users": {
+                  "owner": {
                     "type": "string"
                   }
                 },
                 "required": [
                   "created_at",
                   "updated_at",
-                  "type",
-                  "disabled",
-                  "token",
-                  "ips"
+                  "session_token",
+                  "issued_at",
+                  "organization_id",
+                  "user_id",
+                  "owner"
                 ]
               }
             }
@@ -4245,16 +4811,21 @@
                   "updated_by": {
                     "type": "string"
                   },
-                  "disabled": {
-                    "type": "boolean"
+                  "issued_at": {
+                    "type": "string",
+                    "format": "date-time"
                   },
-                  "user_agent": {
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "organization_id": {
                     "type": "string"
                   },
-                  "ips": {
+                  "user_id": {
                     "type": "string"
                   },
-                  "users": {
+                  "owner": {
                     "type": "string"
                   }
                 }
@@ -4289,14 +4860,14 @@
         }
       }
     },
-    "/sessions/{id}/users": {
+    "/sessions/{id}/owner": {
       "get": {
         "tags": [
           "Session"
         ],
         "summary": "Find the attached User",
         "description": "Find the attached User of the Session with the given ID",
-        "operationId": "readSessionUsers",
+        "operationId": "readSessionOwner",
         "parameters": [
           {
             "name": "id",
@@ -4314,7 +4885,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Session_UsersRead"
+                  "$ref": "#/components/schemas/Session_OwnerRead"
                 }
               }
             }
@@ -4903,7 +5474,13 @@
                   "setting": {
                     "type": "string"
                   },
-                  "refreshtoken": {
+                  "refresh_token": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "access_token": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5129,7 +5706,13 @@
                   "setting": {
                     "type": "string"
                   },
-                  "refreshtoken": {
+                  "refresh_token": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "access_token": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5148,6 +5731,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{id}/access-token": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached AccessTokens",
+        "description": "List attached AccessTokens.",
+        "operationId": "listUserAccessToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_AccessTokenList"
+                  }
                 }
               }
             }
@@ -5359,14 +6006,14 @@
         }
       }
     },
-    "/users/{id}/refreshtoken": {
+    "/users/{id}/refresh-token": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "List attached Refreshtokens",
-        "description": "List attached Refreshtokens.",
-        "operationId": "listUserRefreshtoken",
+        "summary": "List attached RefreshTokens",
+        "description": "List attached RefreshTokens.",
+        "operationId": "listUserRefreshToken",
         "parameters": [
           {
             "name": "id",
@@ -5402,7 +6049,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/User_RefreshtokenList"
+                    "$ref": "#/components/schemas/User_RefreshTokenList"
                   }
                 }
               }
@@ -5535,6 +6182,333 @@
   },
   "components": {
     "schemas": {
+      "AccessToken": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "access_token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "access_token",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id",
+          "owner"
+        ]
+      },
+      "AccessTokenCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
+        ]
+      },
+      "AccessTokenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
+        ]
+      },
+      "AccessTokenRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
+        ]
+      },
+      "AccessTokenUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
+        ]
+      },
+      "AccessToken_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "password": {
+            "type": "string"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name",
+          "oauth"
+        ]
+      },
       "Entitlement": {
         "type": "object",
         "properties": {
@@ -7348,6 +8322,336 @@
           "display_name"
         ]
       },
+      "OhAuthTooToken": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "last_used"
+        ]
+      },
+      "OhAuthTooTokenCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "last_used"
+        ]
+      },
+      "OhAuthTooTokenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "last_used"
+        ]
+      },
+      "OhAuthTooTokenRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "last_used"
+        ]
+      },
+      "OhAuthTooTokenUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "claims_user_id": {
+            "type": "string"
+          },
+          "claims_username": {
+            "type": "string"
+          },
+          "claims_email": {
+            "type": "string"
+          },
+          "claims_email_verified": {
+            "type": "boolean"
+          },
+          "claims_groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "claims_preferred_username": {
+            "type": "string"
+          },
+          "connector_id": {
+            "type": "string"
+          },
+          "connector_data": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "last_used": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "client_id",
+          "nonce",
+          "claims_user_id",
+          "claims_username",
+          "claims_email",
+          "claims_email_verified",
+          "claims_preferred_username",
+          "connector_id",
+          "last_used"
+        ]
+      },
       "Organization": {
         "type": "object",
         "properties": {
@@ -8840,75 +10144,31 @@
           "id": {
             "type": "string"
           },
-          "client_id": {
+          "refresh_token": {
             "type": "string"
           },
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "nonce": {
-            "type": "string"
-          },
-          "claims_user_id": {
-            "type": "string"
-          },
-          "claims_username": {
-            "type": "string"
-          },
-          "claims_email": {
-            "type": "string"
-          },
-          "claims_email_verified": {
-            "type": "boolean"
-          },
-          "claims_groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "claims_preferred_username": {
-            "type": "string"
-          },
-          "connector_id": {
-            "type": "string"
-          },
-          "connector_data": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "token": {
-            "type": "string"
-          },
-          "obsolete_token": {
-            "type": "string"
-          },
-          "last_used": {
+          "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "user": {
-            "$ref": "#/components/schemas/User"
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "client_id",
-          "nonce",
-          "claims_user_id",
-          "claims_username",
-          "claims_email",
-          "claims_email_verified",
-          "claims_preferred_username",
-          "connector_id",
-          "token",
-          "obsolete_token",
-          "last_used"
+          "refresh_token",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "RefreshTokenCreate": {
@@ -8917,72 +10177,27 @@
           "id": {
             "type": "string"
           },
-          "client_id": {
-            "type": "string"
-          },
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "nonce": {
-            "type": "string"
-          },
-          "claims_user_id": {
-            "type": "string"
-          },
-          "claims_username": {
-            "type": "string"
-          },
-          "claims_email": {
-            "type": "string"
-          },
-          "claims_email_verified": {
-            "type": "boolean"
-          },
-          "claims_groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "claims_preferred_username": {
-            "type": "string"
-          },
-          "connector_id": {
-            "type": "string"
-          },
-          "connector_data": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "token": {
-            "type": "string"
-          },
-          "obsolete_token": {
-            "type": "string"
-          },
-          "last_used": {
+          "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "client_id",
-          "nonce",
-          "claims_user_id",
-          "claims_username",
-          "claims_email",
-          "claims_email_verified",
-          "claims_preferred_username",
-          "connector_id",
-          "token",
-          "obsolete_token",
-          "last_used"
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "RefreshTokenList": {
@@ -8991,72 +10206,27 @@
           "id": {
             "type": "string"
           },
-          "client_id": {
-            "type": "string"
-          },
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "nonce": {
-            "type": "string"
-          },
-          "claims_user_id": {
-            "type": "string"
-          },
-          "claims_username": {
-            "type": "string"
-          },
-          "claims_email": {
-            "type": "string"
-          },
-          "claims_email_verified": {
-            "type": "boolean"
-          },
-          "claims_groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "claims_preferred_username": {
-            "type": "string"
-          },
-          "connector_id": {
-            "type": "string"
-          },
-          "connector_data": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "token": {
-            "type": "string"
-          },
-          "obsolete_token": {
-            "type": "string"
-          },
-          "last_used": {
+          "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "client_id",
-          "nonce",
-          "claims_user_id",
-          "claims_username",
-          "claims_email",
-          "claims_email_verified",
-          "claims_preferred_username",
-          "connector_id",
-          "token",
-          "obsolete_token",
-          "last_used"
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "RefreshTokenRead": {
@@ -9065,72 +10235,27 @@
           "id": {
             "type": "string"
           },
-          "client_id": {
-            "type": "string"
-          },
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "nonce": {
-            "type": "string"
-          },
-          "claims_user_id": {
-            "type": "string"
-          },
-          "claims_username": {
-            "type": "string"
-          },
-          "claims_email": {
-            "type": "string"
-          },
-          "claims_email_verified": {
-            "type": "boolean"
-          },
-          "claims_groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "claims_preferred_username": {
-            "type": "string"
-          },
-          "connector_id": {
-            "type": "string"
-          },
-          "connector_data": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "token": {
-            "type": "string"
-          },
-          "obsolete_token": {
-            "type": "string"
-          },
-          "last_used": {
+          "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "client_id",
-          "nonce",
-          "claims_user_id",
-          "claims_username",
-          "claims_email",
-          "claims_email_verified",
-          "claims_preferred_username",
-          "connector_id",
-          "token",
-          "obsolete_token",
-          "last_used"
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "RefreshTokenUpdate": {
@@ -9139,146 +10264,27 @@
           "id": {
             "type": "string"
           },
-          "client_id": {
-            "type": "string"
-          },
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "nonce": {
-            "type": "string"
-          },
-          "claims_user_id": {
-            "type": "string"
-          },
-          "claims_username": {
-            "type": "string"
-          },
-          "claims_email": {
-            "type": "string"
-          },
-          "claims_email_verified": {
-            "type": "boolean"
-          },
-          "claims_groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "claims_preferred_username": {
-            "type": "string"
-          },
-          "connector_id": {
-            "type": "string"
-          },
-          "connector_data": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "token": {
-            "type": "string"
-          },
-          "obsolete_token": {
-            "type": "string"
-          },
-          "last_used": {
+          "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "client_id",
-          "nonce",
-          "claims_user_id",
-          "claims_username",
-          "claims_email",
-          "claims_email_verified",
-          "claims_preferred_username",
-          "connector_id",
-          "token",
-          "obsolete_token",
-          "last_used"
-        ]
-      },
-      "RefreshToken_UserRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "password": {
-            "type": "string"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "Session": {
@@ -9301,27 +10307,24 @@
           "updated_by": {
             "type": "string"
           },
-          "type": {
+          "session_token": {
+            "type": "string"
+          },
+          "issued_at": {
             "type": "string",
-            "enum": [
-              "local",
-              "oauth",
-              "app_password"
-            ]
+            "format": "date-time"
           },
-          "disabled": {
-            "type": "boolean"
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           },
-          "token": {
+          "organization_id": {
             "type": "string"
           },
-          "user_agent": {
+          "user_id": {
             "type": "string"
           },
-          "ips": {
-            "type": "string"
-          },
-          "users": {
+          "owner": {
             "$ref": "#/components/schemas/User"
           }
         },
@@ -9329,10 +10332,11 @@
           "id",
           "created_at",
           "updated_at",
-          "type",
-          "disabled",
-          "token",
-          "ips"
+          "session_token",
+          "issued_at",
+          "organization_id",
+          "user_id",
+          "owner"
         ]
       },
       "SessionCreate": {
@@ -9355,24 +10359,21 @@
           "updated_by": {
             "type": "string"
           },
-          "type": {
+          "session_token": {
+            "type": "string"
+          },
+          "issued_at": {
             "type": "string",
-            "enum": [
-              "local",
-              "oauth",
-              "app_password"
-            ]
+            "format": "date-time"
           },
-          "disabled": {
-            "type": "boolean"
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           },
-          "token": {
+          "organization_id": {
             "type": "string"
           },
-          "user_agent": {
-            "type": "string"
-          },
-          "ips": {
+          "user_id": {
             "type": "string"
           }
         },
@@ -9380,10 +10381,10 @@
           "id",
           "created_at",
           "updated_at",
-          "type",
-          "disabled",
-          "token",
-          "ips"
+          "session_token",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "SessionList": {
@@ -9406,24 +10407,21 @@
           "updated_by": {
             "type": "string"
           },
-          "type": {
+          "session_token": {
+            "type": "string"
+          },
+          "issued_at": {
             "type": "string",
-            "enum": [
-              "local",
-              "oauth",
-              "app_password"
-            ]
+            "format": "date-time"
           },
-          "disabled": {
-            "type": "boolean"
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           },
-          "token": {
+          "organization_id": {
             "type": "string"
           },
-          "user_agent": {
-            "type": "string"
-          },
-          "ips": {
+          "user_id": {
             "type": "string"
           }
         },
@@ -9431,10 +10429,10 @@
           "id",
           "created_at",
           "updated_at",
-          "type",
-          "disabled",
-          "token",
-          "ips"
+          "session_token",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "SessionRead": {
@@ -9457,24 +10455,21 @@
           "updated_by": {
             "type": "string"
           },
-          "type": {
+          "session_token": {
+            "type": "string"
+          },
+          "issued_at": {
             "type": "string",
-            "enum": [
-              "local",
-              "oauth",
-              "app_password"
-            ]
+            "format": "date-time"
           },
-          "disabled": {
-            "type": "boolean"
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           },
-          "token": {
+          "organization_id": {
             "type": "string"
           },
-          "user_agent": {
-            "type": "string"
-          },
-          "ips": {
+          "user_id": {
             "type": "string"
           }
         },
@@ -9482,10 +10477,10 @@
           "id",
           "created_at",
           "updated_at",
-          "type",
-          "disabled",
-          "token",
-          "ips"
+          "session_token",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "SessionUpdate": {
@@ -9508,24 +10503,21 @@
           "updated_by": {
             "type": "string"
           },
-          "type": {
+          "session_token": {
+            "type": "string"
+          },
+          "issued_at": {
             "type": "string",
-            "enum": [
-              "local",
-              "oauth",
-              "app_password"
-            ]
+            "format": "date-time"
           },
-          "disabled": {
-            "type": "boolean"
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           },
-          "token": {
+          "organization_id": {
             "type": "string"
           },
-          "user_agent": {
-            "type": "string"
-          },
-          "ips": {
+          "user_id": {
             "type": "string"
           }
         },
@@ -9533,13 +10525,13 @@
           "id",
           "created_at",
           "updated_at",
-          "type",
-          "disabled",
-          "token",
-          "ips"
+          "session_token",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
-      "Session_UsersRead": {
+      "Session_OwnerRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -9702,10 +10694,16 @@
           "setting": {
             "$ref": "#/components/schemas/UserSetting"
           },
-          "refreshtoken": {
+          "refresh_token": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RefreshToken"
+            }
+          },
+          "access_token": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessToken"
             }
           }
         },
@@ -10487,6 +11485,55 @@
           "oauth"
         ]
       },
+      "User_AccessTokenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_used_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
+        ]
+      },
       "User_GroupsList": {
         "type": "object",
         "properties": {
@@ -10635,78 +11682,33 @@
           "description"
         ]
       },
-      "User_RefreshtokenList": {
+      "User_RefreshTokenList": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
           },
-          "client_id": {
-            "type": "string"
-          },
-          "scopes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "nonce": {
-            "type": "string"
-          },
-          "claims_user_id": {
-            "type": "string"
-          },
-          "claims_username": {
-            "type": "string"
-          },
-          "claims_email": {
-            "type": "string"
-          },
-          "claims_email_verified": {
-            "type": "boolean"
-          },
-          "claims_groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "claims_preferred_username": {
-            "type": "string"
-          },
-          "connector_id": {
-            "type": "string"
-          },
-          "connector_data": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "token": {
-            "type": "string"
-          },
-          "obsolete_token": {
-            "type": "string"
-          },
-          "last_used": {
+          "expires_at": {
             "type": "string",
             "format": "date-time"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "organization_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
           }
         },
         "required": [
           "id",
-          "client_id",
-          "nonce",
-          "claims_user_id",
-          "claims_username",
-          "claims_email",
-          "claims_email_verified",
-          "claims_preferred_username",
-          "connector_id",
-          "token",
-          "obsolete_token",
-          "last_used"
+          "expires_at",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "User_SessionsList": {
@@ -10729,24 +11731,21 @@
           "updated_by": {
             "type": "string"
           },
-          "type": {
+          "session_token": {
+            "type": "string"
+          },
+          "issued_at": {
             "type": "string",
-            "enum": [
-              "local",
-              "oauth",
-              "app_password"
-            ]
+            "format": "date-time"
           },
-          "disabled": {
-            "type": "boolean"
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
           },
-          "token": {
+          "organization_id": {
             "type": "string"
           },
-          "user_agent": {
-            "type": "string"
-          },
-          "ips": {
+          "user_id": {
             "type": "string"
           }
         },
@@ -10754,10 +11753,10 @@
           "id",
           "created_at",
           "updated_at",
-          "type",
-          "disabled",
-          "token",
-          "ips"
+          "session_token",
+          "issued_at",
+          "organization_id",
+          "user_id"
         ]
       },
       "User_SettingRead": {

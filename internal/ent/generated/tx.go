@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AccessToken is the client for interacting with the AccessToken builders.
+	AccessToken *AccessTokenClient
 	// Entitlement is the client for interacting with the Entitlement builders.
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
@@ -22,6 +24,8 @@ type Tx struct {
 	Integration *IntegrationClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
+	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
+	OhAuthTooToken *OhAuthTooTokenClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
@@ -167,11 +171,13 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AccessToken = NewAccessTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
+	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
@@ -188,7 +194,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Entitlement.QueryXXX(), the query will be executed
+// applies a query, for example: AccessToken.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

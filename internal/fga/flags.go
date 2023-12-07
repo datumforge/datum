@@ -33,7 +33,7 @@ func RegisterFGAFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 		return err
 	}
 
-	err = viperconfig.BindConfigFlag(v, flags, "fga.model.create", "fga-model-create", "", "force create a fga authorization model, this should be used when a model exists, but transitioning to a new model", flags.String)
+	err = viperconfig.BindConfigFlag(v, flags, "fga.model.create", "fga-model-create", false, "force create a fga authorization model, this should be used when a model exists, but transitioning to a new model", flags.Bool)
 	if err != nil {
 		return err
 	}

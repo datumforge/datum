@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"entgo.io/ent/dialect"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -20,10 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
-)
-
-var (
-	serveDevMode bool
+	"github.com/datumforge/datum/internal/httpserve/serveropts"
 )
 
 var serveCmd = &cobra.Command{
@@ -56,57 +52,44 @@ func init() {
 	if err := fga.RegisterFGAFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
 		log.Fatal(err)
 	}
-
-	// only available as a CLI arg because these should only be used in dev environments
-	serveCmd.Flags().BoolVar(&serveDevMode, "dev", false, "dev mode: enables graph playground")
 }
 
 func serve(ctx context.Context) error {
 	// setup db connection for server
 	var (
-		entdbClient      *ent.Client
-		fgaClient        *fga.Client
-		err              error
-		mw               []echo.MiddlewareFunc
-		enablePlayground bool
+		entdbClient *ent.Client
+		fgaClient   *fga.Client
+		err         error
+		mw          []echo.MiddlewareFunc
 	)
 
 	// create ready checks
 	readyChecks := handlers.Checks{}
 
-	// auth setting
-	authEnabled := viper.GetBool("oidc.enabled")
-
-	// dev mode settings
-	if serveDevMode {
-		enablePlayground = true
-	}
-
 	// create ent dependency injection
 	opts := []ent.Option{ent.Logger(*logger)}
 
-	// Setup server config
-	serverConfig, err := setupConfig(readyChecks, authEnabled)
-	if err != nil {
-		return err
-	}
+	// get settings for the server
+	settings := viper.AllSettings()
 
-	cp, err := config.NewConfigProviderWithRefresh(serverConfig)
-	if err != nil {
-		return err
-	}
+	serverOpts := []serveropts.ServerOption{}
+	serverOpts = append(serverOpts,
+		serveropts.WithConfigProvider(&config.ConfigProviderWithRefresh{}),
+		serveropts.WithServer(settings),
+		serveropts.WithHTTPS(settings),
+		serveropts.WithSQLiteDB(settings),
+		serveropts.WithAuth(settings),
+		serveropts.WithFGAAuthz(settings),
+		serveropts.WithLogger(logger),
+	)
 
-	// Get server refresh config
-	s, err := cp.GetConfig()
-	if err != nil {
-		return err
-	}
+	so := serveropts.NewServerOptions(serverOpts)
 
 	// setup Authz connection
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
-	if authEnabled {
-		config := fga.NewAuthzConfig(s.Authz, logger)
+	if so.Config.Authz.Enabled {
+		config := fga.NewAuthzConfig(so.Config.Authz, logger)
 
 		fgaClient, err = fga.CreateFGAClientWithStore(ctx, *config)
 		if err != nil {
@@ -127,7 +110,7 @@ func serve(ctx context.Context) error {
 	}
 
 	// Setup DB connection
-	dbConfig := entdb.NewDBConfig(s.DB, logger)
+	dbConfig := entdb.NewDBConfig(so.Config.DB, logger)
 
 	if viper.GetBool("db.multi-write") {
 		entdbClient, err = dbConfig.NewMultiDriverDBClient(ctx, opts)
@@ -144,15 +127,15 @@ func serve(ctx context.Context) error {
 	defer entdbClient.Close()
 
 	// Add ready checks right before creating the server
-	serverConfig.Server.Checks = readyChecks
+	so.Config.Server.Checks = readyChecks
 
-	srv := server.NewServer(s.Server, s.Logger.Desugar())
+	srv := server.NewServer(so.Config.Server, so.Config.Logger.Desugar())
 
 	// Setup Graph API Handlers
-	r := graphapi.NewResolver(entdbClient, serverConfig.Auth.Enabled).
+	r := graphapi.NewResolver(entdbClient, so.Config.Auth.Enabled).
 		WithLogger(logger.Named("resolvers"))
 
-	handler := r.Handler(enablePlayground, mw...)
+	handler := r.Handler(viper.GetBool("server.dev"), mw...)
 
 	// Add Graph Handler
 	srv.AddHandler(handler)
@@ -162,74 +145,4 @@ func serve(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-// TODO: move this to serveropts
-func setupConfig(readyChecks handlers.Checks, authEnabled bool) (*config.Config, error) {
-	// Setup server config
-	httpsEnabled := viper.GetBool("server.https")
-	listenAddr := viper.GetString("server.listen")
-	shutdownGracePeriod := viper.GetDuration("server.shutdown-grace-period")
-	serverDebug := viper.GetBool("server.debug")
-	autoCert := viper.GetBool("server.auto-cert")
-
-	serverConfig := config.NewConfig().
-		WithListen(listenAddr).                       // set custom port
-		WithHTTPS(httpsEnabled).                      // enable https
-		WithShutdownGracePeriod(shutdownGracePeriod). // override default grace period shutdown
-		WithDebug(serverDebug).                       // enable debug mode
-		WithDev(serveDevMode).                        // enable dev mode
-		SetDefaults()                                 // set defaults if not already set
-
-	if httpsEnabled {
-		serverConfig.WithTLSDefaults()
-
-		if autoCert {
-			serverConfig.WithAutoCert(viper.GetString("server.cert-host"))
-		} else {
-			certFile, certKey, err := server.GetCertFiles(viper.GetString("server.ssl-cert"), viper.GetString("server.ssl-key"))
-			if err != nil {
-				return nil, err
-			}
-
-			serverConfig.WithTLSCerts(certFile, certKey)
-		}
-	}
-
-	// Logger setup
-	serverConfig.Logger = logger
-
-	// Refresh Interval Setup
-	serverConfig.RefreshInterval = viper.GetDuration("server.config-refresh")
-
-	// Auth Setup
-	serverConfig.Auth.Enabled = authEnabled
-
-	// Database Settings
-	dbConfig := config.DB{
-		Debug:           serverDebug,
-		DriverName:      dialect.SQLite,
-		PrimaryDBSource: viper.GetString("db.primary"),
-	}
-
-	if viper.GetBool("db.multi-write") {
-		dbConfig.SecondaryDBSource = viper.GetString("db.secondary")
-	}
-
-	serverConfig.DB = dbConfig
-
-	// Authz Setup
-	authzConfig := config.Authz{
-		Enabled:        authEnabled,
-		StoreName:      "datum",
-		Host:           viper.GetString("fga.host"),
-		Scheme:         viper.GetString("fga.scheme"),
-		StoreID:        viper.GetString("fga.store.id"),
-		ModelID:        viper.GetString("fga.model.id"),
-		CreateNewModel: viper.GetBool("fga.model.create"),
-	}
-
-	serverConfig.Authz = authzConfig
-
-	return serverConfig, nil
 }

@@ -14,6 +14,11 @@ func RegisterServerFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 		return err
 	}
 
+	err = viperconfig.BindConfigFlag(v, flags, "server.dev", "dev", false, "enables the graph playground", flags.Bool)
+	if err != nil {
+		return err
+	}
+
 	err = viperconfig.BindConfigFlag(v, flags, "server.listen", "listen", DefaultListenAddr, "address to listen on", flags.String)
 	if err != nil {
 		return err

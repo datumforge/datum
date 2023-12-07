@@ -2,18 +2,13 @@ package auth
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"net/http"
 	"regexp"
 	"time"
 
 	"github.com/lestrrat-go/jwx/v2/jwk"
-	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/tokens"
-	api "github.com/datumforge/datum/internal/utils/responses"
-	echo "github.com/datumforge/echox"
 )
 
 const (
@@ -30,10 +25,17 @@ const (
 	RefreshTokenCookie        = "refresh_token"
 )
 
+// EchoContextKey is the context key for the echo.Context
+var ContextUser = &ContextKey{"ContextUserKey"}
+
+// ContextKey is the key name for the additional context
+type ContextKey struct {
+	name string
+}
+
 // used to extract the access token from the header
 var (
 	bearer = regexp.MustCompile(`^\s*[Bb]earer\s+([a-zA-Z0-9_\-\.]+)\s*$`)
-	logger *zap.SugaredLogger
 )
 
 // AuthOption allows users to optionally supply configuration to the Authorization middleware.
@@ -65,58 +67,6 @@ type LoginReply struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token,omitempty"`
 	LastLogin    string `json:"last_login,omitempty"`
-}
-
-func Authenticate() echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-
-		conf := NewAuthOptions()
-
-		var validator tokens.Validator
-
-		if validator, err = conf.Validator(); err != nil {
-			return err
-		}
-
-		// Create a reauthenticator function to handle refresh tokens if they are provided.
-		reauthenticate := Reauthenticate(conf, validator)
-
-		return func(c echo.Context) error {
-			var (
-				err         error
-				accessToken string
-				claims      *tokens.Claims
-			)
-
-			// Get access token from the request, if not available then attempt to refresh
-			// using the refresh token cookie.
-			if accessToken, err = GetAccessToken(c); err != nil {
-				switch {
-				case errors.Is(err, ErrNoAuthorization):
-					if accessToken, err = reauthenticate(c); err != nil {
-
-						ErrorResponse(ErrAuthRequired)
-						return err
-					}
-				default:
-					ErrorResponse(ErrAuthRequired)
-					return err
-				}
-			}
-
-			// Verify the access token is authorized for use with datum and extract claims.
-			if claims, err = validator.Verify(accessToken); err != nil {
-				ErrorResponse(ErrAuthRequired)
-				return err
-			}
-
-			// Add claims to context for use in downstream processing and continue handlers
-			ctx := context.WithValue(c.Request().Context(), ContextUserClaims, claims)
-			c.SetRequest(c.Request().WithContext(ctx))
-
-			return next(c)
-		}
-	}
 }
 
 // NewAuthOptions creates an AuthOptions object with reasonable defaults and any user
@@ -236,158 +186,4 @@ func WithReauthenticator(reauth Reauthenticator) AuthOption {
 	return func(opts *AuthOptions) {
 		opts.reauth = reauth
 	}
-}
-
-// Reauthenticate is a middleware helper that can use refresh tokens in the echo context
-// to obtain a new access token. If it is unable to obtain a new valid access token,
-// then an error is returned and processing should stop.
-func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c *echo.Context) (string, error) {
-	// If no reauthenticator is available on the configuration, always return an error.
-	if conf.reauth == nil {
-		return func(c *echo.Context) (string, error) {
-			return "", ErrRefreshDisabled
-		}
-	}
-
-	// If the reauthenticator is available, return a function that utilizes it.
-	return func(c *echo.Context) (_ string, err error) {
-		// Get the refresh token from the cookies or the headers of the request.
-
-		refreshToken := GetRefreshToken(c)
-
-		if err != nil {
-			return "", err
-		}
-
-		// Check to ensure the refresh token is still valid.
-		if _, err = validator.Verify(refreshToken); err != nil {
-			return "", err
-		}
-
-		// Reauthenticate using the refresh token.
-		req := &RefreshRequest{RefreshToken: refreshToken}
-		reply, err := conf.reauth.Refresh(c.Request.Context(), req)
-		if err != nil {
-			return "", err
-		}
-
-		// Set the new access and refresh cookies
-		if err = SetAuthCookies(c, reply.AccessToken, reply.RefreshToken, conf.CookieDomain); err != nil {
-			return "", err
-		}
-
-		return reply.AccessToken, nil
-	}
-}
-
-// GetAccessToken retrieves the bearer token from the authorization header and parses it
-// to return only the JWT access token component of the header. Alternatively, if the
-// authorization header is not present, then the token is fetched from cookies. If the
-// header is missing or the token is not available, an error is returned.
-//
-// NOTE: the authorization header takes precedence over access tokens in cookies.
-func GetAccessToken(c echo.Context) (tks string, err error) {
-	// Attempt to get the access token from the header.
-
-	if origin := c.Request().Header.Get("Origin"); len(origin) == 0 {
-		c.Request().Header.Set("Origin", "*")
-	}
-
-	if header := echo.Context.Request().Header.Get(authorization); header != "" {
-		match := bearer.FindStringSubmatch(header)
-		if len(match) == 2 {
-			return match[1], nil
-		}
-		return "", ErrParseBearer
-	}
-
-	// Attempt to get the access token from cookies.
-	var cookie string
-
-	if cookie, err = c.SetCookie(AccessTokenCookie); err == nil {
-		// If the error is nil, that means we were able to retrieve the access token cookie
-		return cookie, nil
-	}
-	return "", ErrNoAuthorization
-}
-
-// GetRefreshToken retrieves the refresh token from the cookies in the request. If the
-// cookie is not present or expired then an error is returned.
-func GetRefreshToken(c echo.Context) (tks string, err error) {
-	rftc := c.Cookie(RefreshTokenCookie)
-	if tks, err = c.Cookie(RefreshTokenCookie); err != nil {
-		return "", ErrNoRefreshToken
-	}
-	return tks, nil
-}
-
-// GetClaims fetches and parses datum claims from the echo context. Returns an
-// error if no claims exist on the context; panics if the claims are not the correct
-// type -- however the panic should be recovered by middleware.
-func GetClaims(c *echo.Context) (*tokens.Claims, error) {
-	claims, exists := c.Get(ContextUserClaims)
-	if !exists {
-		return nil, ErrNoClaims
-	}
-	return claims.(*tokens.Claims), nil
-}
-
-// ContextFromRequest creates a context from the echo request context, copying fields
-// that may be required for forwarded requests. This method should be called by
-// handlers which need to forward requests to other services and need to preserve data
-// from the original request such as the user's credentials.
-func ContextFromRequest(c *echo.Context) (ctx context.Context, err error) {
-	var req *http.Request
-	if req = c.Request; req == nil {
-		return nil, ErrNoRequest
-	}
-
-	// Add access token to context (from either header or cookie using Authenticate middleware)
-	ctx = req.Context()
-	if token := c.GetString(ContextAccessToken); token != "" {
-		ctx = api.ContextWithToken(ctx, token)
-	}
-
-	// Add request id to context
-	if requestID := c.GetString(ContextRequestID); requestID != "" {
-		ctx = api.ContextWithRequestID(ctx, requestID)
-	} else if requestID := c.Request.Header.Get("X-Request-ID"); requestID != "" {
-		ctx = api.ContextWithRequestID(ctx, requestID)
-	}
-	return ctx, nil
-}
-
-// SetAuthCookies is a helper function to set authentication cookies on a echo request.
-// The access token cookie (access_token) is an http only cookie that expires when the
-// access token expires. The refresh token cookie is not an http only cookie (it can be
-// accessed by client-side scripts) and it expires when the refresh token expires. Both
-// cookies require https and will not be set (silently) over http connections.
-func SetAuthCookies(c *echo.Context, accessToken, refreshToken, domain string) (err error) {
-	// Parse access token to get expiration time
-	var accessExpires time.Time
-	if accessExpires, err = tokens.ExpiresAt(accessToken); err != nil {
-		return err
-	}
-
-	// Set the access token cookie: httpOnly is true; cannot be accessed by Javascript
-	accessMaxAge := int((time.Until(accessExpires)).Seconds())
-	c.SetCookie(AccessTokenCookie, accessToken, accessMaxAge, "/", domain, true, true)
-
-	// Parse refresh token to get expiration time
-	var refreshExpires time.Time
-	if refreshExpires, err = tokens.ExpiresAt(refreshToken); err != nil {
-		return err
-	}
-
-	// Set the refresh token cookie: httpOnly is false; can be accessed by Javascript
-	refreshMaxAge := int((time.Until(refreshExpires)).Seconds())
-	c.SetCookie(RefreshTokenCookie, refreshToken, refreshMaxAge, "/", domain, true, false)
-	return nil
-}
-
-// ClearAuthCookies is a helper function to clear authentication cookies on a echo
-// request to effectively logger out a user.
-func ClearAuthCookies(c *echo.Context, domain string) {
-	c.SetCookie(AccessTokenCookie, "", -1, "/", domain, true, true)
-	c.SetCookie(RefreshTokenCookie, "", -1, "/", domain, true, false)
 }

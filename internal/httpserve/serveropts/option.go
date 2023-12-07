@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
@@ -95,11 +94,12 @@ func WithSQLiteDB(settings map[string]any) ServerOption {
 		// Database Settings
 		dbConfig := config.DB{
 			Debug:           serverSettings["debug"].(bool),
+			MultiWrite:      dbSettings["multi-write"].(bool),
 			DriverName:      dialect.SQLite,
 			PrimaryDBSource: dbSettings["primary"].(string),
 		}
 
-		if viper.GetBool("db.multi-write") {
+		if dbConfig.MultiWrite {
 			dbConfig.SecondaryDBSource = dbSettings["secondary"].(string)
 		}
 

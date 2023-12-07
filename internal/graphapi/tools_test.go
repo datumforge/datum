@@ -74,7 +74,7 @@ func setupDB() {
 
 	opts := []ent.Option{ent.Logger(*logger)}
 
-	c, err := entConfig.NewEntDBDriver(ctx, opts)
+	c, err := entConfig.NewMultiDriverDBClient(ctx, opts)
 	if err != nil {
 		errPanic("failed opening connection to database:", err)
 	}
@@ -110,7 +110,7 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 
 	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
 
-	c, err := entConfig.NewEntDBDriver(ctx, opts)
+	c, err := entConfig.NewMultiDriverDBClient(ctx, opts)
 	if err != nil {
 		errPanic("failed opening connection to database:", err)
 	}

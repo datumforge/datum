@@ -67,7 +67,7 @@ func serve(ctx context.Context) error {
 	readyChecks := handlers.Checks{}
 
 	// create ent dependency injection
-	opts := []ent.Option{ent.Logger(*logger)}
+	entOpts := []ent.Option{ent.Logger(*logger)}
 
 	// get settings for the server
 	settings := viper.AllSettings()
@@ -97,7 +97,7 @@ func serve(ctx context.Context) error {
 		}
 
 		// add client as ent dependency
-		opts = append(opts, ent.Authz(*fgaClient))
+		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
 		// add ready checkz
 		readyChecks.AddReadinessCheck("fga", fga.Healthcheck(*fgaClient))
@@ -112,16 +112,9 @@ func serve(ctx context.Context) error {
 	// Setup DB connection
 	dbConfig := entdb.NewDBConfig(so.Config.DB, logger)
 
-	if viper.GetBool("db.multi-write") {
-		entdbClient, err = dbConfig.NewMultiDriverDBClient(ctx, opts)
-		if err != nil {
-			return err
-		}
-	} else {
-		entdbClient, err = dbConfig.NewEntDBDriver(ctx, opts)
-		if err != nil {
-			return err
-		}
+	entdbClient, err = dbConfig.NewMultiDriverDBClient(ctx, entOpts)
+	if err != nil {
+		return err
 	}
 
 	defer entdbClient.Close()

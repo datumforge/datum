@@ -51,45 +51,7 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 	return entsql.OpenDB(dialect.SQLite, db), nil
 }
 
-// NewEntDBDriver returns a ent db client
-func (c *EntClientConfig) NewEntDBDriver(ctx context.Context, opts []ent.Option) (*ent.Client, error) {
-	db, err := c.newEntDB(c.config.PrimaryDBSource)
-	if err != nil {
-		return nil, err
-	}
-
-	// Decorates the sql.Driver with entcache.Driver.
-	drv := entcache.NewDriver(
-		db,
-		entcache.TTL(cacheTTL), // set the TTL on the cache
-	)
-
-	cOpts := []ent.Option{ent.Driver(drv)}
-
-	cOpts = append(cOpts, opts...)
-
-	if c.config.Debug {
-		cOpts = append(cOpts,
-			ent.Log(c.logger.Named("ent").Debugln),
-			ent.Debug(),
-		)
-	}
-
-	client := ent.NewClient(cOpts...)
-
-	client.Intercept(interceptors.QueryLogger(c.logger))
-
-	// Run the automatic migration tool to create all schema resources.
-	if err := client.Schema.Create(ctx); err != nil {
-		c.logger.Errorf("failed creating schema resources", zap.Error(err))
-
-		return nil, err
-	}
-
-	return client, nil
-}
-
-// NewMultiDriverDBClient returns a ent client with a primary and secondary write database
+// NewMultiDriverDBClient returns a ent client with a primary and secondary, if configured, write database
 func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent.Option) (*ent.Client, error) {
 	primaryDB, err := c.newEntDB(c.config.PrimaryDBSource)
 	if err != nil {
@@ -103,28 +65,39 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 	)
 
 	if err := c.createSchema(ctx, primaryDB); err != nil {
+		c.logger.Errorf("failed creating schema resources", zap.Error(err))
+
 		return nil, err
 	}
 
-	secondaryDB, err := c.newEntDB(c.config.SecondaryDBSource)
-	if err != nil {
-		return nil, err
+	var cOpts []ent.Option
+
+	if c.config.MultiWrite {
+		secondaryDB, err := c.newEntDB(c.config.SecondaryDBSource)
+		if err != nil {
+			return nil, err
+		}
+
+		// Decorates the sql.Driver with entcache.Driver on the primaryDB
+		drvSecondary := entcache.NewDriver(
+			secondaryDB,
+			entcache.TTL(cacheTTL), // set the TTL on the cache
+		)
+
+		if err := c.createSchema(ctx, secondaryDB); err != nil {
+			c.logger.Errorf("failed creating schema resources", zap.Error(err))
+
+			return nil, err
+		}
+
+		// Create Multiwrite driver
+		cOpts = []ent.Option{ent.Driver(&MultiWriteDriver{Wp: drvPrimary, Ws: drvSecondary})}
+	} else {
+		cOpts = []ent.Option{ent.Driver(drvPrimary)}
 	}
-
-	// Decorates the sql.Driver with entcache.Driver on the primaryDB
-	drvSecondary := entcache.NewDriver(
-		secondaryDB,
-		entcache.TTL(cacheTTL), // set the TTL on the cache
-	)
-
-	if err := c.createSchema(ctx, secondaryDB); err != nil {
-		return nil, err
-	}
-
-	// Create Multiwrite driver
-	cOpts := []ent.Option{ent.Driver(&MultiWriteDriver{Wp: drvPrimary, Ws: drvSecondary})}
 
 	cOpts = append(cOpts, opts...)
+
 	if c.config.Debug {
 		cOpts = append(cOpts,
 			ent.Log(c.logger.Named("ent").Debugln),

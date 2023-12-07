@@ -71,6 +71,8 @@ type (
 		Debug bool
 		// SQL Driver name from dialect.Driver
 		DriverName string
+		// MultiWrite enabled writing to two databases
+		MultiWrite bool
 		// Primary write database source (required)
 		PrimaryDBSource string
 		// Secondary write databsae source (optional)

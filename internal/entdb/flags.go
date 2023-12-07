@@ -14,7 +14,7 @@ const (
 
 // RegisterDatabaseFlags registers the flags for the database configuration
 func RegisterDatabaseFlags(v *viper.Viper, flags *pflag.FlagSet) error {
-	err := viperconfig.BindConfigFlag(v, flags, "db.mutli-write", "db-mutli-write", false, "write to a primary and secondary database", flags.Bool)
+	err := viperconfig.BindConfigFlag(v, flags, "db.multi-write", "db-multi-write", false, "write to a primary and secondary database", flags.Bool)
 	if err != nil {
 		return err
 	}

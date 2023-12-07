@@ -257,7 +257,7 @@ func (s *TokenTestSuite) TestInvalidTokens() {
 	require.NoError(err, "could not sign token with good keys")
 
 	_, err = tm.Verify(tks)
-	require.EqualError(err, `invalid audience ["http://foo.example.com"]`)
+	require.EqualError(err, "token has invalid audience")
 
 	// Token is finally valid
 	claims.Audience = jwt.ClaimStrings{"http://localhost:3000"}

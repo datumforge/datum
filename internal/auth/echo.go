@@ -6,7 +6,7 @@ import (
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/echomw"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
 // GetActorSubject returns the user from the echo.Context
@@ -31,7 +31,7 @@ func GetActorSubject(c echo.Context) (string, error) {
 
 // GetUserIDFromContext returns the actor subject from the echo context
 func GetUserIDFromContext(ctx context.Context) (string, error) {
-	ec, err := echomw.EchoContextFromContext(ctx)
+	ec, err := echocontext.EchoContextFromContext(ctx)
 	if err != nil {
 		return "", err
 	}

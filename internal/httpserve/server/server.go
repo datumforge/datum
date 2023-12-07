@@ -9,7 +9,7 @@ import (
 
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echomw"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
@@ -58,13 +58,13 @@ func (s *Server) StartEchoServer() error {
 	// default middleware
 	defaultMW := []echo.MiddlewareFunc{}
 	defaultMW = append(defaultMW,
-		middleware.RequestID(),                  // add request id
-		middleware.Recover(),                    // recover server from any panic/fatal error gracefully
-		echoprometheus.MetricsMiddleware(),      // add prometheus metrics
-		echozap.ZapLogger(s.logger),             // add zap logger
-		echomw.EchoContextToContextMiddleware(), // adds echo context to parent
-		cors.New(),                              // add cors middleware
-		mime.New(),                              // add mime middleware
+		middleware.RequestID(),                       // add request id
+		middleware.Recover(),                         // recover server from any panic/fatal error gracefully
+		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
+		echozap.ZapLogger(s.logger),                  // add zap logger
+		echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
+		cors.New(), // add cors middleware
+		mime.New(), // add mime middleware
 	)
 
 	for _, m := range defaultMW {

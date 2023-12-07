@@ -10,21 +10,21 @@ import (
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echomw"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
 func TestQuery_User(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(EntClient)
 
-	ec, err := echomw.NewTestContextWithValidUser(subClaim)
+	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -71,14 +71,14 @@ func TestQuery_Users(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(EntClient)
 
-	ec, err := echomw.NewTestContextWithValidUser(subClaim)
+	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -117,14 +117,14 @@ func TestMutation_CreateUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echomw.NewTestContextWithValidUser(subClaim)
+	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -227,14 +227,14 @@ func TestMutation_UpdateUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echomw.NewTestContextWithValidUser(subClaim)
+	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -345,14 +345,14 @@ func TestMutation_DeleteUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echomw.NewTestContextWithValidUser(subClaim)
+	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
 	if err != nil {
 		t.Fatal()
 	}
 
 	echoContext := *ec
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echomw.EchoContextKey, echoContext)
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 

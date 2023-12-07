@@ -7,18 +7,18 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/echomw"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 )
 
 func Test_GetActorSubject(t *testing.T) {
 	// context with no user set
-	basicContext := echomw.NewTestEchoContext()
+	basicContext := echocontext.NewTestEchoContext()
 
-	missingSubCtx := echomw.NewTestEchoContext()
+	missingSubCtx := echocontext.NewTestEchoContext()
 	jBasic := jwt.New(jwt.SigningMethodHS256)
 	missingSubCtx.Set("user", jBasic)
 
-	validCtx, err := echomw.NewTestContextWithValidUser("foobar")
+	validCtx, err := echocontext.NewTestContextWithValidUser("foobar")
 	if err != nil {
 		t.Fatal()
 	}

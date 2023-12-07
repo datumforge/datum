@@ -7,13 +7,6 @@ import (
 
 // Error constants
 var (
-	ErrInvalidKey      = errors.New("key is invalid")
-	ErrInvalidKeyType  = errors.New("key is of invalid type")
-	ErrHashUnavailable = errors.New("the requested hash function is unavailable")
-
-	ErrCacheMiss    = errors.New("requested key is not in the cache")
-	ErrCacheExpired = errors.New("requested key is expired")
-
 	// ErrTokenManagerFailedInit returns when the token manager was not correctly provided signing keys
 	ErrTokenManagerFailedInit = errors.New("token manager not initialized with signing keys")
 
@@ -36,51 +29,68 @@ var (
 	// ErrTokenMalformed returns when a token is malformed
 	ErrTokenMalformed = errors.New("token is malformed")
 
-	// ErrTokenUnverifiable
+	// ErrTokenUnverifiable is returned when the tokencould not be verified because of signing problems
 	ErrTokenUnverifiable = errors.New("token is unverifiable")
 
-	// ErrTokenSignatureInvalid
+	// ErrTokenSignatureInvalid  is returned when the signature is invalid
 	ErrTokenSignatureInvalid = errors.New("token signature is invalid")
 
-	// ErrTokenInvalidAudience
+	// ErrTokenInvalidAudience is returned when AUD validation failed
 	ErrTokenInvalidAudience = errors.New("token has invalid audience")
 
-	// ErrTokenExpired
+	// ErrTokenExpired  is returned when EXP validation failed
 	ErrTokenExpired = errors.New("token is expired")
 
-	// ErrTokenUsedBeforeIssued
+	// ErrTokenUsedBeforeIssued is returned when the token is used before issued
 	ErrTokenUsedBeforeIssued = errors.New("token used before issued")
 
-	// ErrTokenInvalidIssuer
+	// ErrTokenInvalidIssuer is returned when ISS validation failed
 	ErrTokenInvalidIssuer = errors.New("token has invalid issuer")
 
-	// ErrTokenNotValidYet
+	// ErrTokenNotValidYet is returned when NBF validation failed
 	ErrTokenNotValidYet = errors.New("token is not valid yet")
 
-	// ErrTokenNotValid
+	// ErrTokenNotValid is returned when the token is invalid
 	ErrTokenNotValid = errors.New("token is invalid")
 
-	// ErrTokenInvalidID
+	// ErrTokenInvalidID is returned when the token has an invalid id
 	ErrTokenInvalidID = errors.New("token has invalid id")
 
-	// ErrTokenInvalidClaims
+	// ErrTokenInvalidClaims is returned when the token has invalid claims
 	ErrTokenInvalidClaims = errors.New("token has invalid claims")
 )
 
 // The errors that might occur when parsing and validating a token
 const (
-	ValidationErrorMalformed        uint32 = 1 << iota // Token is malformed
-	ValidationErrorUnverifiable                        // Token could not be verified because of signing problems
-	ValidationErrorSignatureInvalid                    // Signature validation failed
+	// ValidationErrorMalformed is returned when the token is malformed
+	ValidationErrorMalformed uint32 = 1 << iota
 
-	// Standard Claim validation errors
-	ValidationErrorAudience      // AUD validation failed
-	ValidationErrorExpired       // EXP validation failed
-	ValidationErrorIssuedAt      // IAT validation failed
-	ValidationErrorIssuer        // ISS validation failed
-	ValidationErrorNotValidYet   // NBF validation failed
-	ValidationErrorID            // JTI validation failed
-	ValidationErrorClaimsInvalid // Generic claims validation error
+	// ValidationErrorUnverifiableToken is returned when the tokencould not be verified because of signing problems
+	ValidationErrorUnverifiable
+
+	// ValidationErrorSignatureInvalid is returned when the signature is invalid
+	ValidationErrorSignatureInvalid
+
+	// ValidationErrorAudience is returned when AUD validation failed
+	ValidationErrorAudience
+
+	// ValidationErrorExpired is returned when EXP validation failed
+	ValidationErrorExpired
+
+	// ValidationErrorIssuedAt is returned wwhen IAT validation failed
+	ValidationErrorIssuedAt
+
+	// ValidationErrorIssuer is returned when ISS validation failed
+	ValidationErrorIssuer
+
+	// ValidationErrorNotValidYet is returned when NBF validation failed
+	ValidationErrorNotValidYet
+
+	// ValidationErrorID is returned when JTI validation failed
+	ValidationErrorID
+
+	// ValidationErrorClaimsInvalid is returned when there is a generic claims validation failure
+	ValidationErrorClaimsInvalid
 )
 
 // NewValidationError is a helper for constructing a ValidationError with a string error message

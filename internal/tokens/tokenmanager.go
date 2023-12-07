@@ -54,14 +54,20 @@ type Keyfunc func(*Token) (interface{}, error)
 // Token represents a JWT Token.  Different fields will be used depending on whether you're
 // creating or parsing/verifying a token
 type Token struct {
-	Raw              string                 // The raw token; populated when you parse a token
-	Method           SigningMethod          // The signing method
-	Header           map[string]interface{} // The first segment of the token
-	Claims           Claims                 // The second segment of the token
+	// Raw is the raw token; populated when you parse a token
+	Raw string
+	// Method is the signing metehod of the token
+	Method SigningMethod
+	// Header is the first segment of the token
+	Header map[string]interface{}
+	// Claims is the second segment of the token
+	Claims           Claims
 	ClaimBytes       []byte
 	ToBeSignedString string
-	Signature        string // The third segment of the token; populated when you parse a token
-	Valid            bool   // Is the token valid; populated when you parse/verify a token
+	// Signature is the third segment of the token; populated when you parse a token
+	Signature string
+	// Valid is a bool determining if the token is valid; populated when you parse or verify a toekn
+	Valid bool
 }
 
 // New creates a TokenManager with the specified keys which should be a mapping of ULID
@@ -179,7 +185,7 @@ func (tm *TokenManager) CreateTokenPair(claims *Claims) (accessToken, refreshTok
 		return "", "", fmt.Errorf("could not sign refresh token: %w", err)
 	}
 
-	return 
+	return
 }
 
 // CreateToken from the claims payload without modifying the claims unless the claims
@@ -208,7 +214,7 @@ func (tm *TokenManager) CreateAccessToken(claims *Claims) (_ *jwt.Token, err err
 		return nil, err
 	}
 
-        issueTime := jwt.NewNumericDate(now)
+	issueTime := jwt.NewNumericDate(now)
 	claims.RegisteredClaims = jwt.RegisteredClaims{
 		ID:        strings.ToLower(kid.String()), // ID is randomly generated and shared between access and refresh
 		Subject:   sub,
@@ -226,7 +232,7 @@ func (tm *TokenManager) CreateAccessToken(claims *Claims) (_ *jwt.Token, err err
 func (tm *TokenManager) CreateRefreshToken(accessToken *jwt.Token) (refreshToken *jwt.Token, err error) {
 	accessClaims, ok := accessToken.Claims.(*Claims)
 	if !ok {
-		return nil, ErrFailedRetreiveClaimsFromToken
+		return nil, ErrFailedRetrieveClaimsFromToken
 	}
 
 	audience := accessClaims.Audience

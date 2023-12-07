@@ -8,6 +8,7 @@ import (
 
 	jwt "github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/datumforge/datum/config"
@@ -247,7 +248,7 @@ func (s *TokenTestSuite) TestInvalidTokens() {
 
 	// Test time-based validation: exp
 	claims.NotBefore = jwt.NewNumericDate(now.Add(-1 * time.Hour))
-	tks, err = tm.Sign(jwt.NewWithClaims(jwt.SigningMethodRS256, claims))
+	tks, err = tm.Sign(jwt.NewWithClaims(jwt.SigningMethodRS256, claims)) // nolint
 	require.NoError(err, "could not sign token with good keys")
 
 	// Test audience verification
@@ -378,4 +379,14 @@ func (s *TokenTestSuite) TestParseExpiredToken() {
 // Execute suite as a go test
 func TestTokenTestSuite(t *testing.T) {
 	suite.Run(t, new(TokenTestSuite))
+}
+
+func TestParseUnverifiedTokenClaims(t *testing.T) {
+	claims, err := tokens.ParseUnverifiedTokenClaims(accessToken)
+	require.NoError(t, err, "should not be able to parse a bad token")
+	require.NotEmpty(t, claims, "should not return empty claims")
+
+	// Should return an error when a bad token is parsed.
+	_, err = tokens.ParseUnverifiedTokenClaims("notarealtoken")
+	require.Error(t, err, "should not be able to parse a bad token")
 }

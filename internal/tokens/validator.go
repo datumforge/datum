@@ -2,7 +2,6 @@ package tokens
 
 import (
 	"crypto/subtle"
-	"fmt"
 
 	jwt "github.com/golang-jwt/jwt/v5"
 )
@@ -37,17 +36,17 @@ func (v *validator) Verify(tks string) (claims *Claims, err error) {
 
 	if claims, ok = token.Claims.(*Claims); ok && token.Valid {
 		if !claims.VerifyAudience(v.audience, true) {
-			return nil, fmt.Errorf("invalid audience %q", claims.Audience)
+			return nil, ErrTokenInvalidAudience
 		}
 
 		if !claims.VerifyIssuer(v.issuer, true) {
-			return nil, fmt.Errorf("invalid issuer %q", claims.Issuer)
+			return nil, ErrTokenInvalidIssuer
 		}
 
 		return claims, nil
 	}
 
-	return nil, fmt.Errorf("could not parse or verify claims from %T", token.Claims)
+	return nil, ErrTokenInvalidClaims
 }
 
 // Parse an access or refresh token verifying its signature but without verifying its

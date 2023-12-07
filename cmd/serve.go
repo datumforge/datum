@@ -15,7 +15,6 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
-	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
@@ -117,14 +116,8 @@ func serve(ctx context.Context) error {
 
 	srv := server.NewServer(so.Config.Server, so.Config.Logger.Desugar())
 
-	// Setup Graph API Handlers
-	r := graphapi.NewResolver(entdbClient, so.Config.Auth.Enabled).
-		WithLogger(logger.Named("resolvers"))
-
-	handler := r.Handler(viper.GetBool("server.dev"), mw...)
-
-	// Add Graph Handler
-	srv.AddHandler(handler)
+	// // Setup Graph API Handlers
+	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient, settings, mw))
 
 	if err := srv.StartEchoServer(); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

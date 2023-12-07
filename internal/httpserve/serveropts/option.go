@@ -4,10 +4,13 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
+	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 
+	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
@@ -177,5 +180,33 @@ func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 		if s.Config.Authz.Enabled {
 			s.Config.Server.Checks.AddReadinessCheck("fga", fga.Healthcheck(*f))
 		}
+	})
+}
+
+// WithGraphRoute adds the graph handler to the server
+func WithGraphRoute(srv *server.Server, c *generated.Client, settings map[string]any, mw []echo.MiddlewareFunc) ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		serverSettings := settings["server"].(map[string]any)
+
+		// Setup Graph API Handlers
+		r := graphapi.NewResolver(c, s.Config.Auth.Enabled).
+			WithLogger(s.Config.Logger.Named("resolvers"))
+
+		handler := r.Handler(serverSettings["dev"].(bool), mw...)
+
+		// Add Graph Handler
+		srv.AddHandler(handler)
+	})
+}
+
+// WithMiddleware adds the middleware to the server
+func WithMiddleware(mw []echo.MiddlewareFunc) ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// Initialize middleware if null
+		if s.Config.Server.Middleware == nil {
+			s.Config.Server.Middleware = []echo.MiddlewareFunc{}
+		}
+
+		s.Config.Server.Middleware = append(s.Config.Server.Middleware, mw...)
 	})
 }

@@ -17,8 +17,8 @@ var (
 	// ErrTokenManagerFailedInit returns when the token manager was not correctly provided signing keys
 	ErrTokenManagerFailedInit = errors.New("token manager not initialized with signing keys")
 
-	// ErrFailedRetreiveClaimsFromToken returns when claims can not be retreived from an access token
-	ErrFailedRetreiveClaimsFromToken = errors.New("could not retrieve claims from access token")
+	// ErrFailedRetrieveClaimsFromToken returns when claims can not be retrieved from an access token
+	ErrFailedRetrieveClaimsFromToken = errors.New("could not retrieve claims from access token")
 
 	// ErrTokenMissingKid returns when the kid cannot be found in the header of the token
 	ErrTokenMissingKid = errors.New("token does not have kid in header")

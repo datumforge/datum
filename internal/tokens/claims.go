@@ -17,7 +17,7 @@ type Claims struct {
 	// the organization ID the JWT token is valid for
 	OrgID string `json:"org,omitempty"`
 	// the ID of the parent organization, if a child
-	ParentOrgID string `json:"project,omitempty"`
+	ParentOrgID string `json:"parentorg,omitempty"`
 	// the entitlement tier the token is valid for
 	Tier string `json:"tier,omitempty"`
 }

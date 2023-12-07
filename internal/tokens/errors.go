@@ -117,11 +117,6 @@ func (e *ValidationError) Unwrap() error {
 	return e.Inner
 }
 
-// No errors
-func (e *ValidationError) valid() bool {
-	return e.Errors == 0
-}
-
 // Is checks if this ValidationError is of the supplied error. We are first checking for the exact
 // error message by comparing the inner error message. If that fails, we compare using the error
 // flags. This way we can use custom error messages and leverage errors.Is using the global error

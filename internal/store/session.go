@@ -1,11 +1,47 @@
 package store
 
 import (
+	"context"
 	"encoding/base64"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/sessions"
+	"github.com/oklog/ulid/v2"
+
+	ent "github.com/datumforge/datum/internal/ent/generated"
 )
+
+type AuthSession struct {
+	client *ent.Client
+}
+
+func NewAuthSession(c *ent.Client) AuthSessions {
+	return &AuthSession{
+		client: c,
+	}
+}
+
+type AuthSessions interface {
+	StoreSession(ctx context.Context, sessionId string, userId ulid.ULID) error
+	GetUserIdFromSession(ctx context.Context, sessionId string) (ulid.ULID, error)
+	DeleteSession(ctx context.Context, sessionID string) error
+	GetExpiryFromSession(ctx context.Context, sessionId string) (time.Time, error)
+}
+
+func (sess *AuthSession) StoreSession(ctx context.Context, sessionID string, user *ent.User) error {
+	_, err := sess.client.Session.
+		Create().
+		Set(user.ID).
+		SetID(sessionID).
+		SetExpiry(time.Now().Add(time.Hour * 24 * 1)).
+		Save(ctx)
+	if err != nil {
+		return fmt.Errorf("loginSessions.Create: %w", err)
+	}
+	return nil
+}
 
 // SessionStore interface specifies a single method `Get` that takes an
 // `http.Request` and a string as parameters and returns a `*sessions.Session` and an error. Any type that implements this `Get` method can be considered as implementing the `SessionStore` interface

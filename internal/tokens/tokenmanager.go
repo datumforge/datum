@@ -116,7 +116,7 @@ func New(conf config.TokenConfig) (tm *TokenManager, err error) {
 
 // NewWithKey is a constructor function that creates a new instance of the TokenManager struct
 // with a specified RSA private key. It takes in the private key as a parameter and initializes the
-// TokenManager with the provided key, along with other configuration settings from the TokenConfig
+// TokenManager with the provided key, along with other configuration settings from the config.TokenConfig
 // struct. It returns the created TokenManager instance or an error if there was a problem
 // initializing the TokenManager.
 func NewWithKey(key *rsa.PrivateKey, conf config.TokenConfig) (tm *TokenManager, err error) {
@@ -352,6 +352,17 @@ func ParseUnverified(tks string) (claims *jwt.RegisteredClaims, err error) {
 		return nil, err
 	}
 
+	return claims, nil
+
+}
+
+// Parse token claims from an access token.
+func ParseUnverifiedTokenClaims(tks string) (claims *Claims, err error) {
+	claims = &Claims{}
+	parser := jwt.NewParser(jwt.WithoutClaimsValidation())
+	if _, _, err = parser.ParseUnverified(tks, claims); err != nil {
+		return nil, err
+	}
 	return claims, nil
 }
 

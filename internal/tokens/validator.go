@@ -1,30 +1,11 @@
 package tokens
 
 import (
-	"errors"
+	"crypto/subtle"
 	"fmt"
 
 	jwt "github.com/golang-jwt/jwt/v5"
 )
-
-type ClaimsValidator interface {
-	Claims
-	Validate() error
-}
-
-func (c Claims) Validate() (tks string, err error) {
-	var token *jwt.Token
-
-	if token, err = jwt.ParseWithClaims(tks, &Claims{}, v.keyFunc); err != nil {
-		return nil, err
-	}
-
-	if m.Foo != "bar" {
-		return errors.New("must be foobar")
-	}
-	return nil, fmt.Errorf("could not parse or verify claims from %T", token.Claims) //nolint:goerr113
-
-}
 
 // Validator are able to verify that access and refresh tokens were issued by
 // Datum and that their claims are valid (e.g. not expired).
@@ -44,7 +25,7 @@ type validator struct {
 	keyFunc  jwt.Keyfunc
 }
 
-// Verify an access or a refresh token after parsing and return its claims
+// Verify an access or a refresh token after parsing and return its claims.
 func (v *validator) Verify(tks string) (claims *Claims, err error) {
 	var token *jwt.Token
 
@@ -52,9 +33,21 @@ func (v *validator) Verify(tks string) (claims *Claims, err error) {
 		return nil, err
 	}
 
-	// TODO figure out how to use the v5 validators
+	var ok bool
 
-	return nil, fmt.Errorf("could not parse or verify claims from %T", token.Claims) //nolint:goerr113
+	if claims, ok = token.Claims.(*Claims); ok && token.Valid {
+		if !claims.VerifyAudience(v.audience, true) {
+			return nil, fmt.Errorf("invalid audience %q", claims.Audience)
+		}
+
+		if !claims.VerifyIssuer(v.issuer, true) {
+			return nil, fmt.Errorf("invalid issuer %q", claims.Issuer)
+		}
+
+		return claims, nil
+	}
+
+	return nil, fmt.Errorf("could not parse or verify claims from %T", token.Claims)
 }
 
 // Parse an access or refresh token verifying its signature but without verifying its
@@ -62,12 +55,54 @@ func (v *validator) Verify(tks string) (claims *Claims, err error) {
 // handled on a case-by-case basis; for example by validating an expired access token
 // during reauthentication
 func (v *validator) Parse(tks string) (claims *Claims, err error) {
+	method := GetAlgorithms()
+	parser := jwt.NewParser(jwt.WithValidMethods(method), jwt.WithoutClaimsValidation())
 	claims = &Claims{}
-	parser := jwt.NewParser(jwt.WithoutClaimsValidation())
 
 	if _, err = parser.ParseWithClaims(tks, claims, v.keyFunc); err != nil {
 		return nil, err
 	}
 
 	return claims, nil
+}
+
+func (c *Claims) VerifyAudience(cmp string, req bool) bool {
+	return verifyAud(c.Audience, cmp, req)
+}
+
+func (c *Claims) VerifyIssuer(cmp string, req bool) bool {
+	return verifyIss(c.Issuer, cmp, req)
+}
+
+func verifyIss(iss string, cmp string, required bool) bool {
+	if iss == "" {
+		return !required
+	}
+
+	return subtle.ConstantTimeCompare([]byte(iss), []byte(cmp)) != 0
+}
+
+func verifyAud(aud []string, cmp string, required bool) bool {
+	if len(aud) == 0 {
+		return !required
+	}
+	// use a var here to keep constant time compare when looping over a number of claims
+	result := false
+
+	var stringClaims string
+
+	for _, a := range aud {
+		if subtle.ConstantTimeCompare([]byte(a), []byte(cmp)) != 0 {
+			result = true
+		}
+
+		stringClaims += a
+	}
+
+	// case where "" is sent in one or many aud claims
+	if len(stringClaims) == 0 {
+		return !required
+	}
+
+	return result
 }

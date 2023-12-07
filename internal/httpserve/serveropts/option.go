@@ -110,10 +110,7 @@ func WithSQLiteDB(settings map[string]any) ServerOption {
 // WithFGAAuthz supplies the FGA authz config for the server
 func WithFGAAuthz(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		oidcSettings := settings["oidc"].(map[string]any)
-		fgaSettings := settings["fga"].(map[string]any)
-
-		authzEnabled := oidcSettings["enabled"].(bool)
+		authzEnabled := settings["auth"].(bool)
 
 		if !authzEnabled {
 			s.Config.Authz = config.Authz{
@@ -122,9 +119,11 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 
 			return
 		}
+
+		fgaSettings := settings["fga"].(map[string]any)
+
 		// Authz Setup
 		authzConfig := config.Authz{
-			// TODO: name that flag better, should have an auth.enabled
 			Enabled:        authzEnabled,
 			StoreName:      "datum",
 			Host:           fgaSettings["host"].(string),
@@ -142,9 +141,12 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 // TODO: expand these settings
 func WithAuth(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		oidcSettings := settings["oidc"].(map[string]any)
+		authEnabled := settings["auth"].(bool)
 
-		s.Config.Auth.Enabled = oidcSettings["enabled"].(bool)
+		// Commenting out until this is implemented
+		// oidcSettings := settings["oidc"].(map[string]any)
+
+		s.Config.Auth.Enabled = authEnabled
 	})
 }
 

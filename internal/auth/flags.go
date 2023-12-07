@@ -21,12 +21,13 @@ func RegisterAuthFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 		return err
 	}
 
-	// OIDC Flags
-	err = viperconfig.BindConfigFlag(v, flags, "oidc.enabled", "oidc", true, "enable authentication checks", flags.Bool)
+	// Auth Flags
+	err = viperconfig.BindConfigFlag(v, flags, "auth", "auth", true, "enable authentication checks", flags.Bool)
 	if err != nil {
 		return err
 	}
 
+	// OIDC Flags
 	err = viperconfig.BindConfigFlag(v, flags, "oidc.audience", "oidc-audience", "", "expected audience on OIDC JWT", flags.String)
 	if err != nil {
 		return err

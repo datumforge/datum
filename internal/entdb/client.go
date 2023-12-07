@@ -9,12 +9,12 @@ import (
 	"ariga.io/entcache"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/pkg/errors"
 )
 
 const (
@@ -67,6 +67,7 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 // NewMultiDriverDBClient returns a ent client with a primary and secondary, if configured, write database
 func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent.Option) (*ent.Client, error) {
 	var err error
+
 	c.primaryDB, err = c.newEntDB(c.config.PrimaryDBSource)
 	if err != nil {
 		return nil, err

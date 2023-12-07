@@ -2,7 +2,6 @@ package serveropts
 
 import (
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 type ServerOptions struct {
@@ -14,10 +13,6 @@ func NewServerOptions(opts []ServerOption) *ServerOptions {
 	so := &ServerOptions{
 		Config: config.Config{
 			RefreshInterval: config.DefaultConfigRefresh,
-			// Ensure checks are not null so they can be added
-			Server: config.Server{
-				Checks: handlers.Checks{},
-			},
 		},
 	}
 

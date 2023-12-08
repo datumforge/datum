@@ -94,6 +94,7 @@ func NewAuthOptions(opts ...AuthOption) (conf AuthOptions) {
 func (conf *AuthOptions) Validator() (tokens.Validator, error) {
 	if conf.validator == nil {
 		cache := jwk.NewCache(conf.Context)
+
 		err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval))
 		if err != nil {
 			return nil, ErrShitWentBad

@@ -11086,7 +11086,7 @@ type UserMutation struct {
 	avatar_local_file             *string
 	avatar_updated_at             *time.Time
 	last_seen                     *time.Time
-	passwordHash                  *string
+	password                      *string
 	sub                           *string
 	oauth                         *bool
 	clearedFields                 map[string]struct{}
@@ -11824,53 +11824,53 @@ func (m *UserMutation) ResetLastSeen() {
 	delete(m.clearedFields, user.FieldLastSeen)
 }
 
-// SetPasswordHash sets the "passwordHash" field.
-func (m *UserMutation) SetPasswordHash(s string) {
-	m.passwordHash = &s
+// SetPassword sets the "password" field.
+func (m *UserMutation) SetPassword(s string) {
+	m.password = &s
 }
 
-// PasswordHash returns the value of the "passwordHash" field in the mutation.
-func (m *UserMutation) PasswordHash() (r string, exists bool) {
-	v := m.passwordHash
+// Password returns the value of the "password" field in the mutation.
+func (m *UserMutation) Password() (r string, exists bool) {
+	v := m.password
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldPasswordHash returns the old "passwordHash" field's value of the User entity.
+// OldPassword returns the old "password" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldPasswordHash(ctx context.Context) (v *string, err error) {
+func (m *UserMutation) OldPassword(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPasswordHash is only allowed on UpdateOne operations")
+		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPasswordHash requires an ID field in the mutation")
+		return v, errors.New("OldPassword requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPasswordHash: %w", err)
+		return v, fmt.Errorf("querying old value for OldPassword: %w", err)
 	}
-	return oldValue.PasswordHash, nil
+	return oldValue.Password, nil
 }
 
-// ClearPasswordHash clears the value of the "passwordHash" field.
-func (m *UserMutation) ClearPasswordHash() {
-	m.passwordHash = nil
-	m.clearedFields[user.FieldPasswordHash] = struct{}{}
+// ClearPassword clears the value of the "password" field.
+func (m *UserMutation) ClearPassword() {
+	m.password = nil
+	m.clearedFields[user.FieldPassword] = struct{}{}
 }
 
-// PasswordHashCleared returns if the "passwordHash" field was cleared in this mutation.
-func (m *UserMutation) PasswordHashCleared() bool {
-	_, ok := m.clearedFields[user.FieldPasswordHash]
+// PasswordCleared returns if the "password" field was cleared in this mutation.
+func (m *UserMutation) PasswordCleared() bool {
+	_, ok := m.clearedFields[user.FieldPassword]
 	return ok
 }
 
-// ResetPasswordHash resets all changes to the "passwordHash" field.
-func (m *UserMutation) ResetPasswordHash() {
-	m.passwordHash = nil
-	delete(m.clearedFields, user.FieldPasswordHash)
+// ResetPassword resets all changes to the "password" field.
+func (m *UserMutation) ResetPassword() {
+	m.password = nil
+	delete(m.clearedFields, user.FieldPassword)
 }
 
 // SetSub sets the "sub" field.
@@ -12344,8 +12344,8 @@ func (m *UserMutation) Fields() []string {
 	if m.last_seen != nil {
 		fields = append(fields, user.FieldLastSeen)
 	}
-	if m.passwordHash != nil {
-		fields = append(fields, user.FieldPasswordHash)
+	if m.password != nil {
+		fields = append(fields, user.FieldPassword)
 	}
 	if m.sub != nil {
 		fields = append(fields, user.FieldSub)
@@ -12389,8 +12389,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.AvatarUpdatedAt()
 	case user.FieldLastSeen:
 		return m.LastSeen()
-	case user.FieldPasswordHash:
-		return m.PasswordHash()
+	case user.FieldPassword:
+		return m.Password()
 	case user.FieldSub:
 		return m.Sub()
 	case user.FieldOauth:
@@ -12432,8 +12432,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAvatarUpdatedAt(ctx)
 	case user.FieldLastSeen:
 		return m.OldLastSeen(ctx)
-	case user.FieldPasswordHash:
-		return m.OldPasswordHash(ctx)
+	case user.FieldPassword:
+		return m.OldPassword(ctx)
 	case user.FieldSub:
 		return m.OldSub(ctx)
 	case user.FieldOauth:
@@ -12545,12 +12545,12 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLastSeen(v)
 		return nil
-	case user.FieldPasswordHash:
+	case user.FieldPassword:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetPasswordHash(v)
+		m.SetPassword(v)
 		return nil
 	case user.FieldSub:
 		v, ok := value.(string)
@@ -12620,8 +12620,8 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldLastSeen) {
 		fields = append(fields, user.FieldLastSeen)
 	}
-	if m.FieldCleared(user.FieldPasswordHash) {
-		fields = append(fields, user.FieldPasswordHash)
+	if m.FieldCleared(user.FieldPassword) {
+		fields = append(fields, user.FieldPassword)
 	}
 	if m.FieldCleared(user.FieldSub) {
 		fields = append(fields, user.FieldSub)
@@ -12664,8 +12664,8 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldLastSeen:
 		m.ClearLastSeen()
 		return nil
-	case user.FieldPasswordHash:
-		m.ClearPasswordHash()
+	case user.FieldPassword:
+		m.ClearPassword()
 		return nil
 	case user.FieldSub:
 		m.ClearSub()
@@ -12720,8 +12720,8 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldLastSeen:
 		m.ResetLastSeen()
 		return nil
-	case user.FieldPasswordHash:
-		m.ResetPasswordHash()
+	case user.FieldPassword:
+		m.ResetPassword()
 		return nil
 	case user.FieldSub:
 		m.ResetSub()

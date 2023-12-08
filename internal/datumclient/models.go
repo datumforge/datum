@@ -234,7 +234,7 @@ type CreateUserInput struct {
 	// the time the user was last seen
 	LastSeen *time.Time `json:"lastSeen,omitempty"`
 	// user bcrypt password hash
-	Passwordhash *string `json:"passwordhash,omitempty"`
+	Password *string `json:"password,omitempty"`
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
@@ -2560,8 +2560,8 @@ type UpdateUserInput struct {
 	LastSeen      *time.Time `json:"lastSeen,omitempty"`
 	ClearLastSeen *bool      `json:"clearLastSeen,omitempty"`
 	// user bcrypt password hash
-	Passwordhash      *string `json:"passwordhash,omitempty"`
-	ClearPasswordHash *bool   `json:"clearPasswordHash,omitempty"`
+	Password      *string `json:"password,omitempty"`
+	ClearPassword *bool   `json:"clearPassword,omitempty"`
 	// the Subject of the user JWT
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
@@ -2635,6 +2635,8 @@ type User struct {
 	AvatarUpdatedAt *time.Time `json:"avatarUpdatedAt,omitempty"`
 	// the time the user was last seen
 	LastSeen *time.Time `json:"lastSeen,omitempty"`
+	// user bcrypt password hash
+	Password *string `json:"password,omitempty"`
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
@@ -3066,6 +3068,22 @@ type UserWhereInput struct {
 	LastSeenLte    *time.Time   `json:"lastSeenLTE,omitempty"`
 	LastSeenIsNil  *bool        `json:"lastSeenIsNil,omitempty"`
 	LastSeenNotNil *bool        `json:"lastSeenNotNil,omitempty"`
+	// password field predicates
+	Password             *string  `json:"password,omitempty"`
+	PasswordNeq          *string  `json:"passwordNEQ,omitempty"`
+	PasswordIn           []string `json:"passwordIn,omitempty"`
+	PasswordNotIn        []string `json:"passwordNotIn,omitempty"`
+	PasswordGt           *string  `json:"passwordGT,omitempty"`
+	PasswordGte          *string  `json:"passwordGTE,omitempty"`
+	PasswordLt           *string  `json:"passwordLT,omitempty"`
+	PasswordLte          *string  `json:"passwordLTE,omitempty"`
+	PasswordContains     *string  `json:"passwordContains,omitempty"`
+	PasswordHasPrefix    *string  `json:"passwordHasPrefix,omitempty"`
+	PasswordHasSuffix    *string  `json:"passwordHasSuffix,omitempty"`
+	PasswordIsNil        *bool    `json:"passwordIsNil,omitempty"`
+	PasswordNotNil       *bool    `json:"passwordNotNil,omitempty"`
+	PasswordEqualFold    *string  `json:"passwordEqualFold,omitempty"`
+	PasswordContainsFold *string  `json:"passwordContainsFold,omitempty"`
 	// sub field predicates
 	Sub             *string  `json:"sub,omitempty"`
 	SubNeq          *string  `json:"subNEQ,omitempty"`

@@ -30,6 +30,9 @@ func init() {
 	userCreateCmd.Flags().StringP("email", "e", "", "email of the user")
 	viperBindFlag("user.create.email", userCreateCmd.Flags().Lookup("email"))
 
+	userCreateCmd.Flags().StringP("password", "p", "", "password of the user")
+	viperBindFlag("user.create.password", userCreateCmd.Flags().Lookup("password"))
+
 	userCreateCmd.Flags().StringP("first-name", "f", "", "first name of the user")
 	viperBindFlag("user.create.first-name", userCreateCmd.Flags().Lookup("first-name"))
 
@@ -80,6 +83,8 @@ func createUser(ctx context.Context) error {
 		displayName = strings.ToLower(fmt.Sprintf("%s.%s", firstName, lastName))
 	}
 
+	password := viper.GetString("user.create.password")
+
 	input := datumclient.CreateUserInput{
 		Email:     email,
 		FirstName: firstName,
@@ -88,6 +93,10 @@ func createUser(ctx context.Context) error {
 
 	if displayName != "" {
 		input.DisplayName = &displayName
+	}
+
+	if password != "" {
+		input.Password = &password
 	}
 
 	u, err := c.CreateUser(ctx, input, i)

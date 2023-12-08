@@ -198,16 +198,16 @@ func (uc *UserCreate) SetNillableLastSeen(t *time.Time) *UserCreate {
 	return uc
 }
 
-// SetPasswordHash sets the "passwordHash" field.
-func (uc *UserCreate) SetPasswordHash(s string) *UserCreate {
-	uc.mutation.SetPasswordHash(s)
+// SetPassword sets the "password" field.
+func (uc *UserCreate) SetPassword(s string) *UserCreate {
+	uc.mutation.SetPassword(s)
 	return uc
 }
 
-// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
-func (uc *UserCreate) SetNillablePasswordHash(s *string) *UserCreate {
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePassword(s *string) *UserCreate {
 	if s != nil {
-		uc.SetPasswordHash(*s)
+		uc.SetPassword(*s)
 	}
 	return uc
 }
@@ -557,9 +557,9 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldLastSeen, field.TypeTime, value)
 		_node.LastSeen = value
 	}
-	if value, ok := uc.mutation.PasswordHash(); ok {
-		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
-		_node.PasswordHash = &value
+	if value, ok := uc.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+		_node.Password = &value
 	}
 	if value, ok := uc.mutation.Sub(); ok {
 		_spec.SetField(user.FieldSub, field.TypeString, value)

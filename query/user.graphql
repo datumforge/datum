@@ -55,20 +55,26 @@ query GetAllUsers {
 mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     user {
-      id
+      email
       firstName
       lastName
-      email
       displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      organizations {
+        id
+      }
+      groups {
+        id
+      }
       setting {
         status
         locked
         emailConfirmed
-      }
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
+        }
     }
   }
 }
@@ -77,14 +83,29 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
   updateUser(id: $updateUserId, input: $input) {
     user {
       id
+      email
       firstName
       lastName
-      email
       displayName
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      groups {
+        id
+      }
+      organizations {
+        id
+      }
+      personalAccessTokens {
+        id
+      }
+      setting {
+        status
+        locked
+        emailConfirmed
+      }
     }
   }
 }

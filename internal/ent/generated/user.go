@@ -47,7 +47,7 @@ type User struct {
 	// the time the user was last seen
 	LastSeen time.Time `json:"last_seen,omitempty"`
 	// user bcrypt password hash
-	PasswordHash *string `json:"-"`
+	Password *string `json:"password,omitempty"`
 	// the Subject of the user JWT
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
@@ -150,7 +150,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldOauth:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash, user.FieldSub:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -262,12 +262,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.LastSeen = value.Time
 			}
-		case user.FieldPasswordHash:
+		case user.FieldPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field passwordHash", values[i])
+				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
-				u.PasswordHash = new(string)
-				*u.PasswordHash = value.String
+				u.Password = new(string)
+				*u.Password = value.String
 			}
 		case user.FieldSub:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -395,7 +395,10 @@ func (u *User) String() string {
 	builder.WriteString("last_seen=")
 	builder.WriteString(u.LastSeen.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("passwordHash=<sensitive>")
+	if v := u.Password; v != nil {
+		builder.WriteString("password=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("sub=")
 	builder.WriteString(u.Sub)

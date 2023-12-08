@@ -43,8 +43,8 @@ const (
 	FieldAvatarUpdatedAt = "avatar_updated_at"
 	// FieldLastSeen holds the string denoting the last_seen field in the database.
 	FieldLastSeen = "last_seen"
-	// FieldPasswordHash holds the string denoting the passwordhash field in the database.
-	FieldPasswordHash = "password_hash"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
 	// FieldSub holds the string denoting the sub field in the database.
 	FieldSub = "sub"
 	// FieldOauth holds the string denoting the oauth field in the database.
@@ -120,7 +120,7 @@ var Columns = []string{
 	FieldAvatarLocalFile,
 	FieldAvatarUpdatedAt,
 	FieldLastSeen,
-	FieldPasswordHash,
+	FieldPassword,
 	FieldSub,
 	FieldOauth,
 }
@@ -150,7 +150,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks        [3]ent.Hook
+	Hooks        [4]ent.Hook
 	Interceptors [1]ent.Interceptor
 	Policy       ent.Policy
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
@@ -261,9 +261,9 @@ func ByLastSeen(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastSeen, opts...).ToFunc()
 }
 
-// ByPasswordHash orders the results by the passwordHash field.
-func ByPasswordHash(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldPasswordHash, opts...).ToFunc()
+// ByPassword orders the results by the password field.
+func ByPassword(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPassword, opts...).ToFunc()
 }
 
 // BySub orders the results by the sub field.

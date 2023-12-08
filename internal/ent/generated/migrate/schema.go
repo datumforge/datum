@@ -366,7 +366,7 @@ var (
 		{Name: "avatar_local_file", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "last_seen", Type: field.TypeTime, Nullable: true},
-		{Name: "password_hash", Type: field.TypeString, Nullable: true},
+		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Default: false},
 	}

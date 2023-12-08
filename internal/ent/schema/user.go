@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"net/mail"
 	"net/url"
 	"strings"
@@ -14,8 +15,12 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/utils/gravatar"
 )
 
 const (
@@ -99,9 +104,8 @@ func (User) Fields() []ent.Field {
 			Comment("the time the user was last seen").
 			UpdateDefault(time.Now).
 			Optional(),
-		field.String("passwordHash").
+		field.String("password").
 			Comment("user bcrypt password hash").
-			Sensitive().
 			Nillable().
 			Optional(),
 		field.String("sub").
@@ -157,5 +161,29 @@ func (User) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{},
 		Query:    privacy.QueryPolicy{},
+	}
+}
+
+func (User) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hook.On(func(next ent.Mutator) ent.Mutator {
+			return hook.UserFunc(func(ctx context.Context, mutation *generated.UserMutation) (generated.Value, error) {
+				if password, ok := mutation.Password(); ok {
+					hash, err := passwd.CreateDerivedKey(password)
+					if err != nil {
+						return nil, err
+					}
+
+					mutation.SetPassword(hash)
+				}
+
+				if email, ok := mutation.Email(); ok {
+					url := gravatar.New(email, nil)
+					mutation.SetAvatarRemoteURL(url)
+				}
+
+				return next.Mutate(ctx, mutation)
+			})
+		}, ent.OpCreate|ent.OpUpdateOne),
 	}
 }

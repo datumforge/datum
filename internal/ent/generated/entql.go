@@ -291,7 +291,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldAvatarLocalFile: {Type: field.TypeString, Column: user.FieldAvatarLocalFile},
 			user.FieldAvatarUpdatedAt: {Type: field.TypeTime, Column: user.FieldAvatarUpdatedAt},
 			user.FieldLastSeen:        {Type: field.TypeTime, Column: user.FieldLastSeen},
-			user.FieldPasswordHash:    {Type: field.TypeString, Column: user.FieldPasswordHash},
+			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
 			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 		},
@@ -1969,9 +1969,9 @@ func (f *UserFilter) WhereLastSeen(p entql.TimeP) {
 	f.Where(p.Field(user.FieldLastSeen))
 }
 
-// WherePasswordHash applies the entql string predicate on the passwordHash field.
-func (f *UserFilter) WherePasswordHash(p entql.StringP) {
-	f.Where(p.Field(user.FieldPasswordHash))
+// WherePassword applies the entql string predicate on the password field.
+func (f *UserFilter) WherePassword(p entql.StringP) {
+	f.Where(p.Field(user.FieldPassword))
 }
 
 // WhereSub applies the entql string predicate on the sub field.

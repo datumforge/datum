@@ -1863,6 +1863,28 @@ func (t *GetAllUsers_Users) GetEdges() []*GetAllUsers_Users_Edges {
 	return t.Edges
 }
 
+type CreateUser_CreateUser_User_Organizations struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateUser_CreateUser_User_Organizations) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Organizations{}
+	}
+	return t.ID
+}
+
+type CreateUser_CreateUser_User_Groups struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *CreateUser_CreateUser_User_Groups) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Groups{}
+	}
+	return t.ID
+}
+
 type CreateUser_CreateUser_User_Setting struct {
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
@@ -1889,23 +1911,25 @@ func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
 }
 
 type CreateUser_CreateUser_User struct {
-	ID          string                             "json:\"id\" graphql:\"id\""
-	FirstName   string                             "json:\"firstName\" graphql:\"firstName\""
-	LastName    string                             "json:\"lastName\" graphql:\"lastName\""
-	Email       string                             "json:\"email\" graphql:\"email\""
-	DisplayName string                             "json:\"displayName\" graphql:\"displayName\""
-	Setting     CreateUser_CreateUser_User_Setting "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Email           string                                      "json:\"email\" graphql:\"email\""
+	FirstName       string                                      "json:\"firstName\" graphql:\"firstName\""
+	LastName        string                                      "json:\"lastName\" graphql:\"lastName\""
+	DisplayName     string                                      "json:\"displayName\" graphql:\"displayName\""
+	AvatarRemoteURL *string                                     "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile *string                                     "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Password        *string                                     "json:\"password,omitempty\" graphql:\"password\""
+	Sub             *string                                     "json:\"sub,omitempty\" graphql:\"sub\""
+	Oauth           bool                                        "json:\"oauth\" graphql:\"oauth\""
+	Organizations   []*CreateUser_CreateUser_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+	Groups          []*CreateUser_CreateUser_User_Groups        "json:\"groups,omitempty\" graphql:\"groups\""
+	Setting         CreateUser_CreateUser_User_Setting          "json:\"setting\" graphql:\"setting\""
 }
 
-func (t *CreateUser_CreateUser_User) GetID() string {
+func (t *CreateUser_CreateUser_User) GetEmail() string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
-	return t.ID
+	return t.Email
 }
 func (t *CreateUser_CreateUser_User) GetFirstName() string {
 	if t == nil {
@@ -1919,47 +1943,59 @@ func (t *CreateUser_CreateUser_User) GetLastName() string {
 	}
 	return t.LastName
 }
-func (t *CreateUser_CreateUser_User) GetEmail() string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.Email
-}
 func (t *CreateUser_CreateUser_User) GetDisplayName() string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
 	return t.DisplayName
 }
+func (t *CreateUser_CreateUser_User) GetAvatarRemoteURL() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.AvatarRemoteURL
+}
+func (t *CreateUser_CreateUser_User) GetAvatarLocalFile() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.AvatarLocalFile
+}
+func (t *CreateUser_CreateUser_User) GetPassword() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Password
+}
+func (t *CreateUser_CreateUser_User) GetSub() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Sub
+}
+func (t *CreateUser_CreateUser_User) GetOauth() bool {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Oauth
+}
+func (t *CreateUser_CreateUser_User) GetOrganizations() []*CreateUser_CreateUser_User_Organizations {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Organizations
+}
+func (t *CreateUser_CreateUser_User) GetGroups() []*CreateUser_CreateUser_User_Groups {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.Groups
+}
 func (t *CreateUser_CreateUser_User) GetSetting() *CreateUser_CreateUser_User_Setting {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
 	return &t.Setting
-}
-func (t *CreateUser_CreateUser_User) GetCreatedAt() *time.Time {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return &t.CreatedAt
-}
-func (t *CreateUser_CreateUser_User) GetCreatedBy() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.CreatedBy
-}
-func (t *CreateUser_CreateUser_User) GetUpdatedAt() *time.Time {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return &t.UpdatedAt
-}
-func (t *CreateUser_CreateUser_User) GetUpdatedBy() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.UpdatedBy
 }
 
 type CreateUser_CreateUser struct {
@@ -1973,16 +2009,79 @@ func (t *CreateUser_CreateUser) GetUser() *CreateUser_CreateUser_User {
 	return &t.User
 }
 
+type UpdateUser_UpdateUser_User_Groups struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateUser_UpdateUser_User_Groups) GetID() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Groups{}
+	}
+	return t.ID
+}
+
+type UpdateUser_UpdateUser_User_Organizations struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateUser_UpdateUser_User_Organizations) GetID() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Organizations{}
+	}
+	return t.ID
+}
+
+type UpdateUser_UpdateUser_User_PersonalAccessTokens struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *UpdateUser_UpdateUser_User_PersonalAccessTokens) GetID() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_PersonalAccessTokens{}
+	}
+	return t.ID
+}
+
+type UpdateUser_UpdateUser_User_Setting struct {
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+}
+
+func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *usersetting.Status {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return &t.Status
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetLocked() bool {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.Locked
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.EmailConfirmed
+}
+
 type UpdateUser_UpdateUser_User struct {
-	ID          string    "json:\"id\" graphql:\"id\""
-	FirstName   string    "json:\"firstName\" graphql:\"firstName\""
-	LastName    string    "json:\"lastName\" graphql:\"lastName\""
-	Email       string    "json:\"email\" graphql:\"email\""
-	DisplayName string    "json:\"displayName\" graphql:\"displayName\""
-	CreatedAt   time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID                   string                                             "json:\"id\" graphql:\"id\""
+	Email                string                                             "json:\"email\" graphql:\"email\""
+	FirstName            string                                             "json:\"firstName\" graphql:\"firstName\""
+	LastName             string                                             "json:\"lastName\" graphql:\"lastName\""
+	DisplayName          string                                             "json:\"displayName\" graphql:\"displayName\""
+	AvatarRemoteURL      *string                                            "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile      *string                                            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Password             *string                                            "json:\"password,omitempty\" graphql:\"password\""
+	Sub                  *string                                            "json:\"sub,omitempty\" graphql:\"sub\""
+	Oauth                bool                                               "json:\"oauth\" graphql:\"oauth\""
+	Groups               []*UpdateUser_UpdateUser_User_Groups               "json:\"groups,omitempty\" graphql:\"groups\""
+	Organizations        []*UpdateUser_UpdateUser_User_Organizations        "json:\"organizations,omitempty\" graphql:\"organizations\""
+	PersonalAccessTokens []*UpdateUser_UpdateUser_User_PersonalAccessTokens "json:\"personalAccessTokens,omitempty\" graphql:\"personalAccessTokens\""
+	Setting              UpdateUser_UpdateUser_User_Setting                 "json:\"setting\" graphql:\"setting\""
 }
 
 func (t *UpdateUser_UpdateUser_User) GetID() string {
@@ -1990,6 +2089,12 @@ func (t *UpdateUser_UpdateUser_User) GetID() string {
 		t = &UpdateUser_UpdateUser_User{}
 	}
 	return t.ID
+}
+func (t *UpdateUser_UpdateUser_User) GetEmail() string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.Email
 }
 func (t *UpdateUser_UpdateUser_User) GetFirstName() string {
 	if t == nil {
@@ -2003,41 +2108,65 @@ func (t *UpdateUser_UpdateUser_User) GetLastName() string {
 	}
 	return t.LastName
 }
-func (t *UpdateUser_UpdateUser_User) GetEmail() string {
-	if t == nil {
-		t = &UpdateUser_UpdateUser_User{}
-	}
-	return t.Email
-}
 func (t *UpdateUser_UpdateUser_User) GetDisplayName() string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
 	return t.DisplayName
 }
-func (t *UpdateUser_UpdateUser_User) GetCreatedAt() *time.Time {
+func (t *UpdateUser_UpdateUser_User) GetAvatarRemoteURL() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return &t.CreatedAt
+	return t.AvatarRemoteURL
 }
-func (t *UpdateUser_UpdateUser_User) GetCreatedBy() *string {
+func (t *UpdateUser_UpdateUser_User) GetAvatarLocalFile() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return t.CreatedBy
+	return t.AvatarLocalFile
 }
-func (t *UpdateUser_UpdateUser_User) GetUpdatedAt() *time.Time {
+func (t *UpdateUser_UpdateUser_User) GetPassword() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return &t.UpdatedAt
+	return t.Password
 }
-func (t *UpdateUser_UpdateUser_User) GetUpdatedBy() *string {
+func (t *UpdateUser_UpdateUser_User) GetSub() *string {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return t.UpdatedBy
+	return t.Sub
+}
+func (t *UpdateUser_UpdateUser_User) GetOauth() bool {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.Oauth
+}
+func (t *UpdateUser_UpdateUser_User) GetGroups() []*UpdateUser_UpdateUser_User_Groups {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.Groups
+}
+func (t *UpdateUser_UpdateUser_User) GetOrganizations() []*UpdateUser_UpdateUser_User_Organizations {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.Organizations
+}
+func (t *UpdateUser_UpdateUser_User) GetPersonalAccessTokens() []*UpdateUser_UpdateUser_User_PersonalAccessTokens {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return t.PersonalAccessTokens
+}
+func (t *UpdateUser_UpdateUser_User) GetSetting() *UpdateUser_UpdateUser_User_Setting {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User{}
+	}
+	return &t.Setting
 }
 
 type UpdateUser_UpdateUser struct {
@@ -2893,20 +3022,26 @@ func (c *Client) GetAllUsers(ctx context.Context, interceptors ...clientv2.Reque
 const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 	createUser(input: $input) {
 		user {
-			id
+			email
 			firstName
 			lastName
-			email
 			displayName
+			avatarRemoteURL
+			avatarLocalFile
+			password
+			sub
+			oauth
+			organizations {
+				id
+			}
+			groups {
+				id
+			}
 			setting {
 				status
 				locked
 				emailConfirmed
 			}
-			createdAt
-			createdBy
-			updatedAt
-			updatedBy
 		}
 	}
 }
@@ -2933,14 +3068,29 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 	updateUser(id: $updateUserId, input: $input) {
 		user {
 			id
+			email
 			firstName
 			lastName
-			email
 			displayName
-			createdAt
-			createdBy
-			updatedAt
-			updatedBy
+			avatarRemoteURL
+			avatarLocalFile
+			password
+			sub
+			oauth
+			groups {
+				id
+			}
+			organizations {
+				id
+			}
+			personalAccessTokens {
+				id
+			}
+			setting {
+				status
+				locked
+				emailConfirmed
+			}
 		}
 	}
 }

@@ -232,7 +232,7 @@ input CreateUserInput {
 	"""the time the user was last seen"""
 	lastSeen: Time
 	"""user bcrypt password hash"""
-	passwordhash: String
+	password: String
 	"""the Subject of the user JWT"""
 	sub: String
 	"""whether the user uses oauth for login or not"""
@@ -3076,8 +3076,8 @@ input UpdateUserInput {
 	lastSeen: Time
 	clearLastSeen: Boolean
 	"""user bcrypt password hash"""
-	passwordhash: String
-	clearPasswordHash: Boolean
+	password: String
+	clearPassword: Boolean
 	"""the Subject of the user JWT"""
 	sub: String
 	clearSub: Boolean
@@ -3151,6 +3151,8 @@ type User implements Node {
 	avatarUpdatedAt: Time
 	"""the time the user was last seen"""
 	lastSeen: Time
+	"""user bcrypt password hash"""
+	password: String
 	"""the Subject of the user JWT"""
 	sub: String
 	"""whether the user uses oauth for login or not"""
@@ -3587,6 +3589,22 @@ input UserWhereInput {
 	lastSeenLTE: Time
 	lastSeenIsNil: Boolean
 	lastSeenNotNil: Boolean
+	"""password field predicates"""
+	password: String
+	passwordNEQ: String
+	passwordIn: [String!]
+	passwordNotIn: [String!]
+	passwordGT: String
+	passwordGTE: String
+	passwordLT: String
+	passwordLTE: String
+	passwordContains: String
+	passwordHasPrefix: String
+	passwordHasSuffix: String
+	passwordIsNil: Boolean
+	passwordNotNil: Boolean
+	passwordEqualFold: String
+	passwordContainsFold: String
 	"""sub field predicates"""
 	sub: String
 	subNEQ: String

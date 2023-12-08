@@ -222,23 +222,23 @@ func (uu *UserUpdate) ClearLastSeen() *UserUpdate {
 	return uu
 }
 
-// SetPasswordHash sets the "passwordHash" field.
-func (uu *UserUpdate) SetPasswordHash(s string) *UserUpdate {
-	uu.mutation.SetPasswordHash(s)
+// SetPassword sets the "password" field.
+func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
+	uu.mutation.SetPassword(s)
 	return uu
 }
 
-// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
-func (uu *UserUpdate) SetNillablePasswordHash(s *string) *UserUpdate {
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 	if s != nil {
-		uu.SetPasswordHash(*s)
+		uu.SetPassword(*s)
 	}
 	return uu
 }
 
-// ClearPasswordHash clears the value of the "passwordHash" field.
-func (uu *UserUpdate) ClearPasswordHash() *UserUpdate {
-	uu.mutation.ClearPasswordHash()
+// ClearPassword clears the value of the "password" field.
+func (uu *UserUpdate) ClearPassword() *UserUpdate {
+	uu.mutation.ClearPassword()
 	return uu
 }
 
@@ -644,11 +644,11 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.LastSeenCleared() {
 		_spec.ClearField(user.FieldLastSeen, field.TypeTime)
 	}
-	if value, ok := uu.mutation.PasswordHash(); ok {
-		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
+	if value, ok := uu.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
-	if uu.mutation.PasswordHashCleared() {
-		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
+	if uu.mutation.PasswordCleared() {
+		_spec.ClearField(user.FieldPassword, field.TypeString)
 	}
 	if value, ok := uu.mutation.Sub(); ok {
 		_spec.SetField(user.FieldSub, field.TypeString, value)
@@ -1138,23 +1138,23 @@ func (uuo *UserUpdateOne) ClearLastSeen() *UserUpdateOne {
 	return uuo
 }
 
-// SetPasswordHash sets the "passwordHash" field.
-func (uuo *UserUpdateOne) SetPasswordHash(s string) *UserUpdateOne {
-	uuo.mutation.SetPasswordHash(s)
+// SetPassword sets the "password" field.
+func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
+	uuo.mutation.SetPassword(s)
 	return uuo
 }
 
-// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillablePasswordHash(s *string) *UserUpdateOne {
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 	if s != nil {
-		uuo.SetPasswordHash(*s)
+		uuo.SetPassword(*s)
 	}
 	return uuo
 }
 
-// ClearPasswordHash clears the value of the "passwordHash" field.
-func (uuo *UserUpdateOne) ClearPasswordHash() *UserUpdateOne {
-	uuo.mutation.ClearPasswordHash()
+// ClearPassword clears the value of the "password" field.
+func (uuo *UserUpdateOne) ClearPassword() *UserUpdateOne {
+	uuo.mutation.ClearPassword()
 	return uuo
 }
 
@@ -1590,11 +1590,11 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if uuo.mutation.LastSeenCleared() {
 		_spec.ClearField(user.FieldLastSeen, field.TypeTime)
 	}
-	if value, ok := uuo.mutation.PasswordHash(); ok {
-		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
+	if value, ok := uuo.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
-	if uuo.mutation.PasswordHashCleared() {
-		_spec.ClearField(user.FieldPasswordHash, field.TypeString)
+	if uuo.mutation.PasswordCleared() {
+		_spec.ClearField(user.FieldPassword, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Sub(); ok {
 		_spec.SetField(user.FieldSub, field.TypeString, value)

@@ -6632,22 +6632,22 @@ type UserWhereInput struct {
 	LastSeenIsNil  bool        `json:"lastSeenIsNil,omitempty"`
 	LastSeenNotNil bool        `json:"lastSeenNotNil,omitempty"`
 
-	// "passwordHash" field predicates.
-	PasswordHash             *string  `json:"passwordhash,omitempty"`
-	PasswordHashNEQ          *string  `json:"passwordhashNEQ,omitempty"`
-	PasswordHashIn           []string `json:"passwordhashIn,omitempty"`
-	PasswordHashNotIn        []string `json:"passwordhashNotIn,omitempty"`
-	PasswordHashGT           *string  `json:"passwordhashGT,omitempty"`
-	PasswordHashGTE          *string  `json:"passwordhashGTE,omitempty"`
-	PasswordHashLT           *string  `json:"passwordhashLT,omitempty"`
-	PasswordHashLTE          *string  `json:"passwordhashLTE,omitempty"`
-	PasswordHashContains     *string  `json:"passwordhashContains,omitempty"`
-	PasswordHashHasPrefix    *string  `json:"passwordhashHasPrefix,omitempty"`
-	PasswordHashHasSuffix    *string  `json:"passwordhashHasSuffix,omitempty"`
-	PasswordHashIsNil        bool     `json:"passwordhashIsNil,omitempty"`
-	PasswordHashNotNil       bool     `json:"passwordhashNotNil,omitempty"`
-	PasswordHashEqualFold    *string  `json:"passwordhashEqualFold,omitempty"`
-	PasswordHashContainsFold *string  `json:"passwordhashContainsFold,omitempty"`
+	// "password" field predicates.
+	Password             *string  `json:"password,omitempty"`
+	PasswordNEQ          *string  `json:"passwordNEQ,omitempty"`
+	PasswordIn           []string `json:"passwordIn,omitempty"`
+	PasswordNotIn        []string `json:"passwordNotIn,omitempty"`
+	PasswordGT           *string  `json:"passwordGT,omitempty"`
+	PasswordGTE          *string  `json:"passwordGTE,omitempty"`
+	PasswordLT           *string  `json:"passwordLT,omitempty"`
+	PasswordLTE          *string  `json:"passwordLTE,omitempty"`
+	PasswordContains     *string  `json:"passwordContains,omitempty"`
+	PasswordHasPrefix    *string  `json:"passwordHasPrefix,omitempty"`
+	PasswordHasSuffix    *string  `json:"passwordHasSuffix,omitempty"`
+	PasswordIsNil        bool     `json:"passwordIsNil,omitempty"`
+	PasswordNotNil       bool     `json:"passwordNotNil,omitempty"`
+	PasswordEqualFold    *string  `json:"passwordEqualFold,omitempty"`
+	PasswordContainsFold *string  `json:"passwordContainsFold,omitempty"`
 
 	// "sub" field predicates.
 	Sub             *string  `json:"sub,omitempty"`
@@ -7315,50 +7315,50 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	if i.LastSeenNotNil {
 		predicates = append(predicates, user.LastSeenNotNil())
 	}
-	if i.PasswordHash != nil {
-		predicates = append(predicates, user.PasswordHashEQ(*i.PasswordHash))
+	if i.Password != nil {
+		predicates = append(predicates, user.PasswordEQ(*i.Password))
 	}
-	if i.PasswordHashNEQ != nil {
-		predicates = append(predicates, user.PasswordHashNEQ(*i.PasswordHashNEQ))
+	if i.PasswordNEQ != nil {
+		predicates = append(predicates, user.PasswordNEQ(*i.PasswordNEQ))
 	}
-	if len(i.PasswordHashIn) > 0 {
-		predicates = append(predicates, user.PasswordHashIn(i.PasswordHashIn...))
+	if len(i.PasswordIn) > 0 {
+		predicates = append(predicates, user.PasswordIn(i.PasswordIn...))
 	}
-	if len(i.PasswordHashNotIn) > 0 {
-		predicates = append(predicates, user.PasswordHashNotIn(i.PasswordHashNotIn...))
+	if len(i.PasswordNotIn) > 0 {
+		predicates = append(predicates, user.PasswordNotIn(i.PasswordNotIn...))
 	}
-	if i.PasswordHashGT != nil {
-		predicates = append(predicates, user.PasswordHashGT(*i.PasswordHashGT))
+	if i.PasswordGT != nil {
+		predicates = append(predicates, user.PasswordGT(*i.PasswordGT))
 	}
-	if i.PasswordHashGTE != nil {
-		predicates = append(predicates, user.PasswordHashGTE(*i.PasswordHashGTE))
+	if i.PasswordGTE != nil {
+		predicates = append(predicates, user.PasswordGTE(*i.PasswordGTE))
 	}
-	if i.PasswordHashLT != nil {
-		predicates = append(predicates, user.PasswordHashLT(*i.PasswordHashLT))
+	if i.PasswordLT != nil {
+		predicates = append(predicates, user.PasswordLT(*i.PasswordLT))
 	}
-	if i.PasswordHashLTE != nil {
-		predicates = append(predicates, user.PasswordHashLTE(*i.PasswordHashLTE))
+	if i.PasswordLTE != nil {
+		predicates = append(predicates, user.PasswordLTE(*i.PasswordLTE))
 	}
-	if i.PasswordHashContains != nil {
-		predicates = append(predicates, user.PasswordHashContains(*i.PasswordHashContains))
+	if i.PasswordContains != nil {
+		predicates = append(predicates, user.PasswordContains(*i.PasswordContains))
 	}
-	if i.PasswordHashHasPrefix != nil {
-		predicates = append(predicates, user.PasswordHashHasPrefix(*i.PasswordHashHasPrefix))
+	if i.PasswordHasPrefix != nil {
+		predicates = append(predicates, user.PasswordHasPrefix(*i.PasswordHasPrefix))
 	}
-	if i.PasswordHashHasSuffix != nil {
-		predicates = append(predicates, user.PasswordHashHasSuffix(*i.PasswordHashHasSuffix))
+	if i.PasswordHasSuffix != nil {
+		predicates = append(predicates, user.PasswordHasSuffix(*i.PasswordHasSuffix))
 	}
-	if i.PasswordHashIsNil {
-		predicates = append(predicates, user.PasswordHashIsNil())
+	if i.PasswordIsNil {
+		predicates = append(predicates, user.PasswordIsNil())
 	}
-	if i.PasswordHashNotNil {
-		predicates = append(predicates, user.PasswordHashNotNil())
+	if i.PasswordNotNil {
+		predicates = append(predicates, user.PasswordNotNil())
 	}
-	if i.PasswordHashEqualFold != nil {
-		predicates = append(predicates, user.PasswordHashEqualFold(*i.PasswordHashEqualFold))
+	if i.PasswordEqualFold != nil {
+		predicates = append(predicates, user.PasswordEqualFold(*i.PasswordEqualFold))
 	}
-	if i.PasswordHashContainsFold != nil {
-		predicates = append(predicates, user.PasswordHashContainsFold(*i.PasswordHashContainsFold))
+	if i.PasswordContainsFold != nil {
+		predicates = append(predicates, user.PasswordContainsFold(*i.PasswordContainsFold))
 	}
 	if i.Sub != nil {
 		predicates = append(predicates, user.SubEQ(*i.Sub))

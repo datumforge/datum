@@ -457,10 +457,13 @@ func init() {
 	}
 	userMixinHooks0 := userMixin[0].Hooks()
 	userMixinHooks1 := userMixin[1].Hooks()
+	userHooks := schema.User{}.Hooks()
 
 	user.Hooks[1] = userMixinHooks0[0]
 
 	user.Hooks[2] = userMixinHooks1[0]
+
+	user.Hooks[3] = userHooks[0]
 	userMixinInters1 := userMixin[1].Interceptors()
 	user.Interceptors[0] = userMixinInters1[0]
 	userMixinFields0 := userMixin[0].Fields()

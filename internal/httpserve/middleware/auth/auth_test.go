@@ -1,6 +1,7 @@
-package auth
+package auth_test
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -12,12 +13,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
 func TestGetAccessToken(t *testing.T) {
-	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o"
+	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o" // nolint: gosec
 	tests := []struct {
 		name        string
 		headerKey   string
@@ -29,7 +31,7 @@ func TestGetAccessToken(t *testing.T) {
 	}{
 		{
 			name:        "happy path from header",
-			headerKey:   authorization,
+			headerKey:   auth.Authorization,
 			headerValue: fmt.Sprintf("Bearer %s", testAccessToken),
 			wantTks:     testAccessToken,
 			wantErr:     false,
@@ -40,7 +42,7 @@ func TestGetAccessToken(t *testing.T) {
 			headerKey:   "",
 			headerValue: "",
 			cookie: &http.Cookie{
-				Name:  AccessTokenCookie,
+				Name:  auth.AccessTokenCookie,
 				Value: testAccessToken,
 			},
 			wantTks: testAccessToken,
@@ -49,10 +51,10 @@ func TestGetAccessToken(t *testing.T) {
 		},
 		{
 			name:        "happy path cookie and header set",
-			headerKey:   authorization,
+			headerKey:   auth.Authorization,
 			headerValue: fmt.Sprintf("Bearer %s", testAccessToken),
 			cookie: &http.Cookie{
-				Name:  AccessTokenCookie,
+				Name:  auth.AccessTokenCookie,
 				Value: "access_token_from_cookie", // to confirm we get the one from the header, this will be a different value
 			},
 			wantTks: testAccessToken,
@@ -65,23 +67,23 @@ func TestGetAccessToken(t *testing.T) {
 			headerValue: fmt.Sprintf("Bearer %s", testAccessToken),
 			wantTks:     "",
 			wantErr:     true,
-			err:         ErrNoAuthorization,
+			err:         auth.ErrNoAuthorization,
 		},
 		{
 			name:        "no bearer",
-			headerKey:   authorization,
+			headerKey:   auth.Authorization,
 			headerValue: fmt.Sprintf("Bear %s", testAccessToken),
 			wantTks:     "",
 			wantErr:     true,
-			err:         ErrParseBearer,
+			err:         auth.ErrParseBearer,
 		},
 		{
 			name:        "bearer not spaced",
-			headerKey:   authorization,
+			headerKey:   auth.Authorization,
 			headerValue: fmt.Sprintf("Bearer%s", testAccessToken),
 			wantTks:     "",
 			wantErr:     true,
-			err:         ErrParseBearer,
+			err:         auth.ErrParseBearer,
 		},
 		{
 			name:        "cookie set, but no access token cookie",
@@ -93,7 +95,7 @@ func TestGetAccessToken(t *testing.T) {
 			},
 			wantTks: "",
 			wantErr: true,
-			err:     ErrNoAuthorization,
+			err:     auth.ErrNoAuthorization,
 		},
 	}
 	for _, tc := range tests {
@@ -116,7 +118,7 @@ func TestGetAccessToken(t *testing.T) {
 
 			ctx := e.NewContext(req, res)
 
-			gotTks, err := GetAccessToken(ctx)
+			gotTks, err := auth.GetAccessToken(ctx)
 			if tc.wantErr {
 				assert.Error(t, err)
 				assert.Equal(t, tc.err, err)
@@ -144,7 +146,7 @@ func TestGetRefreshToken(t *testing.T) {
 		{
 			name: "happy path from cookie",
 			cookie: &http.Cookie{
-				Name:  RefreshTokenCookie,
+				Name:  auth.RefreshTokenCookie,
 				Value: testRefreshToken,
 			},
 			wantTks: testRefreshToken,
@@ -155,7 +157,7 @@ func TestGetRefreshToken(t *testing.T) {
 			name:    "no cookie",
 			wantTks: "",
 			wantErr: true,
-			err:     ErrNoRefreshToken,
+			err:     auth.ErrNoRefreshToken,
 		},
 		{
 			name: "cookie present, but no refresh cookie",
@@ -165,7 +167,7 @@ func TestGetRefreshToken(t *testing.T) {
 			},
 			wantTks: "",
 			wantErr: true,
-			err:     ErrNoRefreshToken,
+			err:     auth.ErrNoRefreshToken,
 		},
 	}
 	for _, tc := range tests {
@@ -187,7 +189,7 @@ func TestGetRefreshToken(t *testing.T) {
 
 			ctx := e.NewContext(req, res)
 
-			gotTks, err := GetRefreshToken(ctx)
+			gotTks, err := auth.GetRefreshToken(ctx)
 			if tc.wantErr {
 				assert.Error(t, err)
 				assert.Equal(t, tc.err, err)
@@ -205,7 +207,7 @@ func TestGetRefreshToken(t *testing.T) {
 func TestSetAuthCookies(t *testing.T) {
 	domain := "foobar.example.net"
 
-	validCtx, err := NewTestContextWithValidUser("funks")
+	validCtx, err := auth.NewTestContextWithValidUser("funks")
 	if err != nil {
 		t.Fatal()
 	}
@@ -248,7 +250,7 @@ func TestSetAuthCookies(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			err := SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken, domain)
+			err := auth.SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken, domain)
 			if tc.wantErr {
 				assert.Error(t, err)
 				assert.ErrorContains(t, err, tc.err.Error())
@@ -265,7 +267,7 @@ func TestSetAuthCookies(t *testing.T) {
 func TestClearAuthCookies(t *testing.T) {
 	domain := "foobar.example.net"
 
-	validCtx, err := NewTestContextWithValidUser("funks")
+	validCtx, err := auth.NewTestContextWithValidUser("funks")
 	if err != nil {
 		t.Fatal()
 	}
@@ -287,7 +289,7 @@ func TestClearAuthCookies(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			// TODO: verify cookie is actually unset somehow?
-			ClearAuthCookies(tc.ctx, domain)
+			auth.ClearAuthCookies(tc.ctx, domain)
 		})
 	}
 }
@@ -301,7 +303,7 @@ func TestCookieExpired(t *testing.T) {
 		{
 			name: "expired cookie based on expires",
 			cookie: &http.Cookie{
-				Name:    AccessTokenCookie,
+				Name:    auth.AccessTokenCookie,
 				Value:   "access_token_from_cookie",
 				Expires: time.Now().Add(-1 * time.Minute),
 			},
@@ -310,7 +312,7 @@ func TestCookieExpired(t *testing.T) {
 		{
 			name: "expired cookie based on max age",
 			cookie: &http.Cookie{
-				Name:   AccessTokenCookie,
+				Name:   auth.AccessTokenCookie,
 				Value:  "access_token_from_cookie",
 				MaxAge: -1,
 			},
@@ -319,7 +321,7 @@ func TestCookieExpired(t *testing.T) {
 		{
 			name: "not expired",
 			cookie: &http.Cookie{
-				Name:   AccessTokenCookie,
+				Name:   auth.AccessTokenCookie,
 				Value:  "access_token_from_cookie",
 				MaxAge: 3600,
 			},
@@ -328,7 +330,7 @@ func TestCookieExpired(t *testing.T) {
 		{
 			name: "not expired",
 			cookie: &http.Cookie{
-				Name:    AccessTokenCookie,
+				Name:    auth.AccessTokenCookie,
 				Value:   "access_token_from_cookie",
 				Expires: time.Now().Add(10 * time.Minute),
 			},
@@ -337,7 +339,7 @@ func TestCookieExpired(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := cookieExpired(tc.cookie)
+			got := auth.CookieExpired(tc.cookie)
 			assert.Equal(t, tc.want, got)
 		})
 	}
@@ -349,9 +351,9 @@ func TestGetClaims(t *testing.T) {
 
 	missingSubCtx := echocontext.NewTestEchoContext()
 	jBasic := jwt.New(jwt.SigningMethodHS256)
-	missingSubCtx.Set(ContextUserClaims, jBasic)
+	missingSubCtx.Set(auth.ContextUserClaims, jBasic)
 
-	validCtx, err := NewTestContextWithValidUser("foobar")
+	validCtx, err := auth.NewTestContextWithValidUser("foobar")
 	if err != nil {
 		t.Fatal()
 	}
@@ -369,17 +371,17 @@ func TestGetClaims(t *testing.T) {
 		{
 			name: "no user",
 			e:    basicContext,
-			err:  ErrNoClaims,
+			err:  auth.ErrNoClaims,
 		},
 		{
 			name: "no user",
 			e:    missingSubCtx,
-			err:  ErrNoClaims,
+			err:  auth.ErrNoClaims,
 		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			c, err := GetClaims(tc.e)
+			c, err := auth.GetClaims(tc.e)
 			if tc.err != nil {
 				assert.Error(t, err)
 				assert.Empty(t, c)
@@ -396,4 +398,64 @@ func TestGetClaims(t *testing.T) {
 			assert.Equal(t, "nano_id_of_org", c.OrgID)
 		})
 	}
+}
+
+func TestDefaultAuthOptions(t *testing.T) {
+	// Should be able to create a default auth options with no extra input.
+
+	conf := auth.NewAuthOptions()
+	require.NotZero(t, conf, "a zero valued configuration was returned")
+	require.Equal(t, auth.DefaultKeysURL, conf.KeysURL)
+	require.Equal(t, auth.DefaultAudience, conf.Audience)
+	require.Equal(t, auth.DefaultIssuer, conf.Issuer)
+	require.Equal(t, auth.DefaultMinRefreshInterval, conf.MinRefreshInterval)
+	require.NotNil(t, conf.Context, "no context was created")
+}
+
+func TestAuthOptions(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	conf := auth.NewAuthOptions(
+		auth.WithJWKSEndpoint("http://localhost:8088/.well-known/jwks.json"),
+		auth.WithAudience("http://localhost:3000"),
+		auth.WithIssuer("http://localhost:8088"),
+		auth.WithMinRefreshInterval(67*time.Minute),
+		auth.WithContext(ctx),
+	)
+
+	cancel()
+	require.NotZero(t, conf, "a zero valued configuration was returned")
+	require.Equal(t, "http://localhost:8088/.well-known/jwks.json", conf.KeysURL)
+	require.Equal(t, "http://localhost:3000", conf.Audience)
+	require.Equal(t, "http://localhost:8088", conf.Issuer)
+	require.Equal(t, 67*time.Minute, conf.MinRefreshInterval)
+	require.ErrorIs(t, conf.Context.Err(), context.Canceled)
+}
+
+func TestAuthOptionsOverride(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	opts := auth.AuthOptions{
+		KeysURL:            "http://localhost:8088/.well-known/jwks.json",
+		Audience:           "http://localhost:3000",
+		Issuer:             "http://localhost:8088",
+		MinRefreshInterval: 42 * time.Minute,
+		Context:            ctx,
+	}
+
+	conf := auth.NewAuthOptions(auth.WithAuthOptions(opts))
+	require.NotSame(t, opts, conf, "expected a new configuration object to be created")
+	require.Equal(t, opts, conf, "expected the opts to override the configuration defaults")
+
+	// Ensure the context is the same on the configuration
+	cancel()
+	require.ErrorIs(t, conf.Context.Err(), context.Canceled)
+}
+
+func TestAuthOptionsValidator(t *testing.T) {
+	validator := &tokens.MockValidator{}
+	conf := auth.NewAuthOptions(auth.WithValidator(validator))
+	require.NotZero(t, conf, "a zero valued configuration was returned")
+
+	actual, err := conf.Validator()
+	require.NoError(t, err, "could not create default validator")
+	require.Same(t, validator, actual, "conf did not reutn the same validator")
 }

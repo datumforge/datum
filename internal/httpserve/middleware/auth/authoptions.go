@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	authorization             = "Authorization"
+	Authorization             = "Authorization"
 	ContextUserClaims         = "user_claims"
 	ContextAccessToken        = "access_token"
 	ContextRequestID          = "request_id"

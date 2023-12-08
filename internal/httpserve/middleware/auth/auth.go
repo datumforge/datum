@@ -105,7 +105,7 @@ func Reauthenticate(conf AuthOptions, validator tokens.Validator) func(c echo.Co
 // NOTE: the authorization header takes precedence over access tokens in cookies.
 func GetAccessToken(c echo.Context) (string, error) {
 	// Attempt to get the access token from the header.
-	if h := c.Request().Header.Get(authorization); h != "" {
+	if h := c.Request().Header.Get(Authorization); h != "" {
 		match := bearer.FindStringSubmatch(h)
 		if len(match) == 2 { //nolint:gomnd
 			return match[1], nil
@@ -117,7 +117,7 @@ func GetAccessToken(c echo.Context) (string, error) {
 	// Attempt to get the access token from cookies.
 	if cookie, err := c.Cookie(AccessTokenCookie); err == nil {
 		// If the error is nil, that means we were able to retrieve the access token cookie
-		if cookieExpired(cookie) {
+		if CookieExpired(cookie) {
 			return "", ErrNoAuthorization
 		}
 
@@ -136,7 +136,7 @@ func GetRefreshToken(c echo.Context) (string, error) {
 	}
 
 	// ensure cookie is not expired
-	if cookieExpired(cookie) {
+	if CookieExpired(cookie) {
 		return "", ErrNoRefreshToken
 	}
 
@@ -255,7 +255,8 @@ func ClearAuthCookies(c echo.Context, domain string) {
 	c.SetCookie(cookie)
 }
 
-func cookieExpired(cookie *http.Cookie) bool {
+// CookieExpired checks to see if a cookie is expired
+func CookieExpired(cookie *http.Cookie) bool {
 	// ensure cookie is not expired
 	if !cookie.Expires.IsZero() && cookie.Expires.Before(time.Now()) {
 		return true

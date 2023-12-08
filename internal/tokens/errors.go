@@ -29,7 +29,7 @@ var (
 	// ErrTokenMalformed returns when a token is malformed
 	ErrTokenMalformed = errors.New("token is malformed")
 
-	// ErrTokenUnverifiable is returned when the tokencould not be verified because of signing problems
+	// ErrTokenUnverifiable is returned when the token could not be verified because of signing problems
 	ErrTokenUnverifiable = errors.New("token is unverifiable")
 
 	// ErrTokenSignatureInvalid  is returned when the signature is invalid
@@ -65,7 +65,7 @@ const (
 	// ValidationErrorMalformed is returned when the token is malformed
 	ValidationErrorMalformed uint32 = 1 << iota
 
-	// ValidationErrorUnverifiableToken is returned when the tokencould not be verified because of signing problems
+	// ValidationErrorUnverifiableToken is returned when the token could not be verified because of signing problems
 	ValidationErrorUnverifiable
 
 	// ValidationErrorSignatureInvalid is returned when the signature is invalid
@@ -77,7 +77,7 @@ const (
 	// ValidationErrorExpired is returned when EXP validation failed
 	ValidationErrorExpired
 
-	// ValidationErrorIssuedAt is returned wwhen IAT validation failed
+	// ValidationErrorIssuedAt is returned when IAT validation failed
 	ValidationErrorIssuedAt
 
 	// ValidationErrorIssuer is returned when ISS validation failed

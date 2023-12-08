@@ -12,13 +12,13 @@ type Claims struct {
 	jwt.RegisteredClaims
 	// UserID is the internal generated ID for the user
 	UserID string `json:"user_id,omitempty"`
-	// the email associated with the user
+	// Email associated with the user
 	Email string `json:"email,omitempty"`
-	// the organization ID the JWT token is valid for
+	// OrgID the JWT token is valid for
 	OrgID string `json:"org,omitempty"`
-	// the ID of the parent organization, if a child
+	// ParentOrgID of the parent organization, if a child
 	ParentOrgID string `json:"parentorg,omitempty"`
-	// the entitlement tier the token is valid for
+	// Tier the token is valid for
 	Tier string `json:"tier,omitempty"`
 }
 

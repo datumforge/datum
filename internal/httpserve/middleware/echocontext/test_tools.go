@@ -19,9 +19,6 @@ func NewTestEchoContext() echo.Context {
 
 	// Set writer for tests that write on the response
 	recorder := httptest.NewRecorder()
-	// res := &echo.Response{
-	// 	Writer: recorder,
-	// }
 
 	return e.NewContext(req, recorder)
 }

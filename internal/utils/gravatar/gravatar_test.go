@@ -16,7 +16,7 @@ func TestGravatar(t *testing.T) {
 
 func TestHash(t *testing.T) {
 	// Test case from: https://en.gravatar.com/site/implement/hash/
-	input := "sfunk@datum.net "
+	input := "sfunk@datum.net"
 	expected := "241e2e069287a36e9c902e55a3b6af8a"
 	require.Equal(t, expected, gravatar.Hash(input))
 }

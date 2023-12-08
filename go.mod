@@ -19,7 +19,7 @@ require (
 	github.com/jaevor/go-nanoid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v0.79.1
+	github.com/ogen-go/ogen v0.80.1
 	github.com/openfga/go-sdk v0.2.3
 	github.com/openfga/language/pkg/go v0.0.0-20231205215259-92fa8fbddd50
 	github.com/pkg/errors v0.9.1

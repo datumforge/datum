@@ -55,6 +55,7 @@ func (sess *AuthSession) DeleteSession(ctx context.Context, sessionID string) er
 	if err != nil {
 		return fmt.Errorf("loginsession.Delete: %w", err)
 	}
+
 	return nil
 }
 

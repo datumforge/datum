@@ -10,9 +10,9 @@ func RemarshalJSON(data []byte) (string, error) {
 	}
 
 	pretty, err := json.MarshalIndent(obj, "", "  ")
-
 	if err != nil {
 		return "", err
 	}
+
 	return string(pretty), nil
 }

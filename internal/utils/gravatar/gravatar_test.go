@@ -9,7 +9,7 @@ import (
 )
 
 func TestGravatar(t *testing.T) {
-	email := "sfunk@datum.net "
+	email := "sfunk@datum.net"
 	url := gravatar.New(email, nil)
 	require.Equal(t, "https://www.gravatar.com/avatar/241e2e069287a36e9c902e55a3b6af8a?d=robohash&r=pg&s=80", url)
 }

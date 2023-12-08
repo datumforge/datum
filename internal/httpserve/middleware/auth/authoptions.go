@@ -31,17 +31,26 @@ type AuthOption func(opts *AuthOptions)
 
 // AuthOptions is constructed from variadic AuthOption arguments with reasonable defaults.
 type AuthOptions struct {
-	KeysURL            string           // The URL endpoint to the JWKS public keys on the datum server
-	Audience           string           // The audience to verify on tokens
-	Issuer             string           // The issuer to verify on tokens
-	MinRefreshInterval time.Duration    // Minimum amount of time the JWKS public keys are cached
-	CookieDomain       string           // The domain to use for auth cookies
-	Context            context.Context  // The context object to control the lifecycle of the background fetch routine
-	validator          tokens.Validator // The validator constructed by the auth options (can be directly supplied by the user).
-	reauth             Reauthenticator  // The refresher constructed by the auth options (can be directly supplied by the user).
+	// KeysURL endpoint to the JWKS public keys on the datum server
+	KeysURL string
+	// Audience to verify on tokens
+	Audience string
+	// Issuer to verify on tokens
+	Issuer string
+	// MinRefreshInterval to cache the JWKS public keys
+	MinRefreshInterval time.Duration
+	// CookieDomain to use for auth cookies
+	CookieDomain string
+	// Context to control the lifecycle of the background fetch routine
+	Context context.Context
+
+	//  validator constructed by the auth options (can be directly supplied by the user).
+	validator tokens.Validator
+	// reauth constructed by the auth options (can be directly supplied by the user).
+	reauth Reauthenticator
 }
 
-// A Reauthenticator generates new access and refresh pair given a valid refresh token.
+// Reauthenticator generates new access and refresh pair given a valid refresh token.
 type Reauthenticator interface {
 	Refresh(context.Context, *RefreshRequest) (*LoginReply, error)
 }
@@ -82,14 +91,16 @@ func NewAuthOptions(opts ...AuthOption) (conf AuthOptions) {
 // Validator returns the user supplied validator or constructs a new JWKS Cache
 // Validator from the supplied options. If the options are invalid or the validator
 // cannot be created an error is returned
-func (conf *AuthOptions) Validator() (_ tokens.Validator, err error) {
+func (conf *AuthOptions) Validator() (tokens.Validator, error) {
 	if conf.validator == nil {
 		cache := jwk.NewCache(conf.Context)
-		if err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval)); err != nil {
+		err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval))
+		if err != nil {
 			return nil, ErrShitWentBad
 		}
 
-		if conf.validator, err = tokens.NewCachedJWKSValidator(conf.Context, cache, conf.KeysURL, conf.Audience, conf.Issuer); err != nil {
+		conf.validator, err = tokens.NewCachedJWKSValidator(conf.Context, cache, conf.KeysURL, conf.Audience, conf.Issuer)
+		if err != nil {
 			return nil, err
 		}
 	}

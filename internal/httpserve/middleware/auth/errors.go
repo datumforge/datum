@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/datumforge/datum/internal/utils/responses"
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/utils/responses"
 )
 
 type Reply struct {
@@ -35,6 +36,7 @@ var (
 	ErrRateLimit        = errors.New("rate limit reached: too many requests")
 	ErrNoRefreshToken   = errors.New("no refresh token available on request")
 	ErrRefreshDisabled  = errors.New("reauthentication with refresh tokens disabled")
+	ErrShitWentBad      = errors.New("shit went bad")
 )
 
 var (
@@ -61,7 +63,7 @@ var (
 	ErrUnknownUserRole    = errors.New("unknown user role")
 )
 
-// Construct a new response for an error or simply return unsuccessful.
+// ErrorResponse constructs a new response for an error or simply returns unsuccessful
 func ErrorResponse(err interface{}) Reply {
 	if err == nil {
 		return unsuccessful
@@ -80,6 +82,7 @@ func ErrorResponse(err interface{}) Reply {
 		if e != nil {
 			panic(err)
 		}
+
 		rep.Error = string(data)
 	default:
 		rep.Error = "unhandled error response"
@@ -93,18 +96,18 @@ func ErrorResponse(err interface{}) Reply {
 // here in the client/api side package but it unifies where we keep our error handling
 // mechanisms.
 func NotFound(c echo.Context) {
-	c.JSON(http.StatusNotFound, notFound)
+	c.JSON(http.StatusNotFound, notFound) //nolint:errcheck
 }
 
 // NotAllowed returns a JSON 405 response for the API.
 func NotAllowed(c echo.Context) {
-	c.JSON(http.StatusMethodNotAllowed, notAllowed)
+	c.JSON(http.StatusMethodNotAllowed, notAllowed) //nolint:errcheck
 }
 
 // Unverified returns a JSON 403 response indicating that the user has not verified
 // their email address.
 func Unverified(c echo.Context) {
-	c.JSON(http.StatusForbidden, unverified)
+	c.JSON(http.StatusForbidden, unverified) //nolint:errcheck
 }
 
 // FieldError provides a general mechanism for specifying errors with specific API

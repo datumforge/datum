@@ -45,7 +45,7 @@ func NewTestContextWithValidUser(subject string) (*echo.Context, error) {
 		return nil, err
 	}
 
-	ec.Set(ContextUserClaims, j)
+	ec.Set(ContextUserClaims.name, j)
 
 	return &ec, nil
 }

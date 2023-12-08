@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/stretchr/testify/require"
 )
 
 func TestDefaultAuthOptions(t *testing.T) {
 	// Should be able to create a default auth options with no extra input.
-
 	conf := auth.NewAuthOptions()
 	require.NotZero(t, conf, "a zero valued configuration was returned")
 	require.Equal(t, auth.DefaultKeysURL, conf.KeysURL)

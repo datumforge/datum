@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"time"
 
@@ -13,9 +12,6 @@ import (
 
 const (
 	Authorization             = "Authorization"
-	ContextUserClaims         = "user_claims"
-	ContextAccessToken        = "access_token"
-	ContextRequestID          = "request_id"
 	DefaultKeysURL            = "https://auth.datum.net/.well-known/jwks.json"
 	DefaultAudience           = "https://datum.net"
 	DefaultIssuer             = "https://auth.datum.net"
@@ -24,14 +20,6 @@ const (
 	AccessTokenCookie         = "access_token"
 	RefreshTokenCookie        = "refresh_token"
 )
-
-// EchoContextKey is the context key for the echo.Context
-var ContextUser = &ContextKey{"ContextUserKey"}
-
-// ContextKey is the key name for the additional context
-type ContextKey struct {
-	name string
-}
 
 // used to extract the access token from the header
 var (
@@ -87,6 +75,7 @@ func NewAuthOptions(opts ...AuthOption) (conf AuthOptions) {
 	if conf.Context == nil && conf.validator == nil {
 		conf.Context = context.Background()
 	}
+
 	return conf
 }
 
@@ -97,13 +86,14 @@ func (conf *AuthOptions) Validator() (_ tokens.Validator, err error) {
 	if conf.validator == nil {
 		cache := jwk.NewCache(conf.Context)
 		if err := cache.Register(conf.KeysURL, jwk.WithMinRefreshInterval(conf.MinRefreshInterval)); err != nil {
-			return nil, fmt.Errorf("shit went bad")
+			return nil, ErrShitWentBad
 		}
 
 		if conf.validator, err = tokens.NewCachedJWKSValidator(conf.Context, cache, conf.KeysURL, conf.Audience, conf.Issuer); err != nil {
 			return nil, err
 		}
 	}
+
 	return conf.validator, nil
 }
 

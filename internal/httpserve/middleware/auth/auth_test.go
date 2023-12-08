@@ -18,7 +18,7 @@ import (
 )
 
 func TestGetAccessToken(t *testing.T) {
-	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o" // nolint: gosec
+	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o" //nolint:gosec
 	tests := []struct {
 		name        string
 		headerKey   string
@@ -97,9 +97,11 @@ func TestGetAccessToken(t *testing.T) {
 			err:     auth.ErrNoAuthorization,
 		},
 	}
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			e := echo.New()
+
 			req := &http.Request{
 				Header: http.Header{},
 			}
@@ -133,7 +135,7 @@ func TestGetAccessToken(t *testing.T) {
 }
 
 func TestGetRefreshToken(t *testing.T) {
-	testRefreshToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o"
+	testRefreshToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE0NTg3ODU3OTYsImV4cCI6MTQ1ODg3MjE5Nn0.oXIjG4PauoHXEmZRDKRE018bkMv9rdZTjn563ujUh6o" //nolint:gosec
 	tests := []struct {
 		name    string
 		cookie  *http.Cookie
@@ -169,9 +171,11 @@ func TestGetRefreshToken(t *testing.T) {
 			err:     auth.ErrNoRefreshToken,
 		},
 	}
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			e := echo.New()
+
 			req := &http.Request{
 				Header: http.Header{},
 			}
@@ -211,8 +215,8 @@ func TestSetAuthCookies(t *testing.T) {
 		t.Fatal()
 	}
 
-	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE3MDE5ODc2NDYsImV4cCI6MzMyNTg4OTY0NDZ9.y51S2D9qMHLRixj230YZbvQZyhWzDOQ2RPbyJmnEYXA"
-	testRefreshToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE3MDE5ODc2NDYsImV4cCI6MzMyNTg4OTY0NDZ9.y51S2D9qMHLRixj230YZbvQZyhWzDOQ2RPbyJmnEYXA"
+	testAccessToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE3MDE5ODc2NDYsImV4cCI6MzMyNTg4OTY0NDZ9.y51S2D9qMHLRixj230YZbvQZyhWzDOQ2RPbyJmnEYXA"  //nolint:gosec
+	testRefreshToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2F1dGguZGF0dW0ubmV0IiwiYXVkIjoiaHR0cHM6Ly9kYXR1bS5uZXQiLCJzdWIiOiJVMVdNNHVGLTNxcGRsLWRtS0lISjQiLCJpYXQiOjE3MDE5ODc2NDYsImV4cCI6MzMyNTg4OTY0NDZ9.y51S2D9qMHLRixj230YZbvQZyhWzDOQ2RPbyJmnEYXA" //nolint:gosec
 	tests := []struct {
 		name         string
 		ctx          echo.Context
@@ -247,6 +251,7 @@ func TestSetAuthCookies(t *testing.T) {
 			err:          tokens.ErrTokenMalformed,
 		},
 	}
+
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			err := auth.SetAuthCookies(tc.ctx, tc.accessToken, tc.refreshToken, domain)
@@ -350,7 +355,7 @@ func TestGetClaims(t *testing.T) {
 
 	missingSubCtx := echocontext.NewTestEchoContext()
 	jBasic := jwt.New(jwt.SigningMethodHS256)
-	missingSubCtx.Set(auth.ContextUserClaims, jBasic)
+	missingSubCtx.Set("user_claims", jBasic)
 
 	validCtx, err := auth.NewTestContextWithValidUser("foobar")
 	if err != nil {

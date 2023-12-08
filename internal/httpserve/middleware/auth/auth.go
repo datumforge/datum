@@ -6,9 +6,24 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/datumforge/datum/internal/tokens"
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/tokens"
 )
+
+// ContextUserClaims is the context key for the user claims
+var ContextUserClaims = &ContextKey{"user_claims"}
+
+// ContextAccessToken is the context key for the access token
+var ContextAccessToken = &ContextKey{"access_token"}
+
+// ContextRequestID is the context key for the request ID
+var ContextRequestID = &ContextKey{"request_id"}
+
+// ContextKey is the key name for the additional context
+type ContextKey struct {
+	name string
+}
 
 func Authenticate() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -30,7 +45,6 @@ func Authenticate() echo.MiddlewareFunc {
 				switch {
 				case errors.Is(err, ErrNoAuthorization):
 					if accessToken, err = reauthenticate(c); err != nil {
-
 						ErrorResponse(ErrAuthRequired)
 						return err
 					}
@@ -48,7 +62,7 @@ func Authenticate() echo.MiddlewareFunc {
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers
-			ctx := context.WithValue(c.Request().Context(), ContextUser, claims)
+			ctx := context.WithValue(c.Request().Context(), ContextUserClaims, claims)
 			c.SetRequest(c.Request().WithContext(ctx))
 
 			return next(c)
@@ -146,7 +160,7 @@ func GetRefreshToken(c echo.Context) (string, error) {
 // GetClaims fetches and parses datum claims from the echo context. Returns an
 // error if no claims exist on the context
 func GetClaims(c echo.Context) (*tokens.Claims, error) {
-	t, ok := c.Get(ContextUserClaims).(*tokens.Token)
+	t, ok := c.Get(ContextUserClaims.name).(*tokens.Token)
 	if !ok {
 		return nil, ErrNoClaims
 	}
@@ -166,12 +180,12 @@ func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
 
 	// Add access token to context (from either header or cookie using Authenticate middleware)
 	ctx := req.Context()
-	if token := c.Get(ContextAccessToken); token != "" {
+	if token := c.Get(ContextAccessToken.name); token != "" {
 		ctx = context.WithValue(ctx, ContextAccessToken, token)
 	}
 
 	// Add request id to context
-	if requestID := c.Get(ContextRequestID); requestID != "" {
+	if requestID := c.Get(ContextRequestID.name); requestID != "" {
 		ctx = context.WithValue(ctx, ContextRequestID, requestID)
 	} else if requestID := c.Request().Header.Get("X-Request-ID"); requestID != "" {
 		ctx = context.WithValue(ctx, ContextRequestID, requestID)

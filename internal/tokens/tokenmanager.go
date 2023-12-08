@@ -14,8 +14,6 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/oklog/ulid/v2"
-
-	"github.com/datumforge/datum/config"
 )
 
 const DefaultRefreshAudience = "https://auth.datum.net/v1/refresh"
@@ -39,7 +37,7 @@ var (
 type TokenManager struct {
 	validator
 	refreshAudience string
-	conf            config.TokenConfig
+	conf            TokenConfig
 	currentKeyID    ulid.ULID
 	currentKey      *rsa.PrivateKey
 	keys            map[ulid.ULID]*rsa.PublicKey
@@ -74,7 +72,7 @@ type Token struct {
 // strings to paths to files that contain PEM encoded RSA private keys. This input is
 // specifically designed for the config environment variable so that keys can be loaded
 // from k8s or vault secrets that are mounted as files on disk
-func New(conf config.TokenConfig) (tm *TokenManager, err error) {
+func New(conf TokenConfig) (tm *TokenManager, err error) {
 	tm = &TokenManager{
 		validator: validator{
 			audience: conf.Audience,
@@ -122,10 +120,10 @@ func New(conf config.TokenConfig) (tm *TokenManager, err error) {
 
 // NewWithKey is a constructor function that creates a new instance of the TokenManager struct
 // with a specified RSA private key. It takes in the private key as a parameter and initializes the
-// TokenManager with the provided key, along with other configuration settings from the config.TokenConfig
+// TokenManager with the provided key, along with other configuration settings from the TokenConfig
 // struct. It returns the created TokenManager instance or an error if there was a problem
 // initializing the TokenManager.
-func NewWithKey(key *rsa.PrivateKey, conf config.TokenConfig) (tm *TokenManager, err error) {
+func NewWithKey(key *rsa.PrivateKey, conf TokenConfig) (tm *TokenManager, err error) {
 	tm = &TokenManager{
 		validator: validator{
 			audience: conf.Audience,

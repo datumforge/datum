@@ -64,18 +64,18 @@ func Hash(email string) string {
 }
 
 type Options struct {
-	// The square size of the image; an request images from 1px up to 2048px.
+	// Size of the image square; request images from 1px up to 2048px.
 	Size int
 
-	// One of 404, mp, identicon, monsterid, wavatar, retro, robohash, or blank.
+	// DefaultImage is can be of 404, mp, identicon, monsterid, wavatar, retro, robohash, or blank.
 	DefaultImage string
 
-	// Force the default image to always load
+	// ForceDefault image to always load
 	ForceDefault bool
 
 	// Rating indicates image appropriateness, one of g, pg, r, or x.
 	Rating string
 
-	// File extension is optional, can be one of .png, .jpg, etc.
+	// FileExtension is optional, can be one of .png, .jpg, etc.
 	FileExtension string
 }

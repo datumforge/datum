@@ -11,7 +11,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/datumforge/datum/config"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -48,7 +47,7 @@ func NewServer() (s *Server, err error) {
 		return nil, err
 	}
 
-	conf := config.TokenConfig{
+	conf := tokens.TokenConfig{
 		Audience:        Audience,
 		Issuer:          Issuer,
 		AccessDuration:  1 * time.Hour,

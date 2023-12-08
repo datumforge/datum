@@ -154,31 +154,31 @@ func GetClaims(c echo.Context) (*tokens.Claims, error) {
 	return &t.Claims, nil
 }
 
-// // ContextFromRequest creates a context from the echo request context, copying fields
-// // that may be required for forwarded requests. This method should be called by
-// // handlers which need to forward requests to other services and need to preserve data
-// // from the original request such as the user's credentials.
-// func ContextFromRequest(c echo.Context) (context.Context, error) {
-// 	req := c.Request
-// 	if req == nil {
-// 		return nil, ErrNoRequest
-// 	}
+// AuthContextFromRequest creates a context from the echo request context, copying fields
+// that may be required for forwarded requests. This method should be called by
+// handlers which need to forward requests to other services and need to preserve data
+// from the original request such as the user's credentials.
+func AuthContextFromRequest(c echo.Context) (*context.Context, error) {
+	req := c.Request()
+	if req == nil {
+		return nil, ErrNoRequest
+	}
 
-// 	// Add access token to context (from either header or cookie using Authenticate middleware)
-// 	ctx := req.Get
-// 	if token := c.GetString(ContextAccessToken); token != "" {
-// 		ctx = api.ContextWithToken(ctx, token)
-// 	}
+	// Add access token to context (from either header or cookie using Authenticate middleware)
+	ctx := req.Context()
+	if token := c.Get(ContextAccessToken); token != "" {
+		ctx = context.WithValue(ctx, ContextAccessToken, token)
+	}
 
-// 	// Add request id to context
-// 	if requestID := c.GetString(ContextRequestID); requestID != "" {
-// 		ctx = api.ContextWithRequestID(ctx, requestID)
-// 	} else if requestID := c.Request.Header.Get("X-Request-ID"); requestID != "" {
-// 		ctx = api.ContextWithRequestID(ctx, requestID)
-// 	}
+	// Add request id to context
+	if requestID := c.Get(ContextRequestID); requestID != "" {
+		ctx = context.WithValue(ctx, ContextRequestID, requestID)
+	} else if requestID := c.Request().Header.Get("X-Request-ID"); requestID != "" {
+		ctx = context.WithValue(ctx, ContextRequestID, requestID)
+	}
 
-// 	return ctx, nil
-// }
+	return &ctx, nil
+}
 
 // SetAuthCookies is a helper function to set authentication cookies on a echo request.
 // The access token cookie (access_token) is an http only cookie that expires when the

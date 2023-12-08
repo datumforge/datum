@@ -12,7 +12,7 @@ import (
 // This test generates an example token with fake RSA keys for use in examples,
 // documentation and other tests that don't need a valid token (since it will expire).
 func TestGenerateToken(t *testing.T) {
-	//	t.Skip("comment the skip out if you want to generate a token")
+	t.Skip("comment the skip out if you want to generate a token")
 
 	srv, err := authtest.NewServer()
 	require.NoError(t, err, "could not start authtest server")

@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
 )
@@ -95,8 +96,8 @@ func serve(ctx context.Context) error {
 		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
 		// add jwt middleware
-		secretKey := []byte(viper.GetString("jwt.secretkey"))
-		jwtMiddleware := auth.CreateJwtMiddleware([]byte(secretKey))
+		// secretKey := []byte(viper.GetString("jwt.secretkey"))
+		jwtMiddleware := authmw.Authenticate()
 
 		mw = append(mw, jwtMiddleware)
 	}

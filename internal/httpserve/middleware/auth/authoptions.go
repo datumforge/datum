@@ -12,11 +12,11 @@ import (
 
 const (
 	Authorization             = "Authorization"
-	DefaultKeysURL            = "https://auth.datum.net/.well-known/jwks.json"
-	DefaultAudience           = "https://datum.net"
-	DefaultIssuer             = "https://auth.datum.net"
+	DefaultKeysURL            = "http://localhost:17608/.well-known/jwks.json"
+	DefaultAudience           = "http://localhost:17608"
+	DefaultIssuer             = "http://localhost:17608"
 	DefaultMinRefreshInterval = 5 * time.Minute
-	DefaultCookieDomain       = "datum.net"
+	DefaultCookieDomain       = "localhost:17608"
 	AccessTokenCookie         = "access_token"
 	RefreshTokenCookie        = "refresh_token"
 )

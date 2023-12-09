@@ -59,6 +59,10 @@ func RegisterRoutes(router *echo.Echo, checks *handlers.Checks) error {
 		return err
 	}
 
+	if err := registerJwksWellKnownHandler(router); err != nil {
+		return err
+	}
+
 	return nil
 }
 

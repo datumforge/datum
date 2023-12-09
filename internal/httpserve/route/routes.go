@@ -31,6 +31,34 @@ func RegisterRoutes(router *echo.Echo, checks *handlers.Checks) error {
 		return err
 	}
 
+	if err := registerForgotPasswordHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerVerifyHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerResetPasswordHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerResendEmailHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerRegisterHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerRefreshHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerAuthenticateHandler(router); err != nil {
+		return err
+	}
+
 	return nil
 }
 

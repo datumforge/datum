@@ -159,7 +159,7 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 // WithGeneratedKeys will generate a public/private key pair
 // that can be used for jwt signing.
 // This should only be used in a development environment
-func WithGeneratedKeys() ServerOption {
+func WithGeneratedKeys(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		privFileName := "private_key.pem"
 
@@ -191,7 +191,20 @@ func WithGeneratedKeys() ServerOption {
 
 		keys := map[string]string{}
 
-		kidPriv := ulids.New().String()
+		// check if kid was passed in
+		var kidPriv string
+		jwtSettings, ok := settings["jwt"].(map[string]any)
+		if ok {
+			kid, ok := jwtSettings["kid"].(string)
+			if ok {
+				kidPriv = kid
+			}
+		}
+
+		// if we didn't get a kid in the settings, assign one
+		if kidPriv == "" {
+			kidPriv = ulids.New().String()
+		}
 
 		keys[kidPriv] = fmt.Sprintf("%v", privFileName)
 
@@ -205,18 +218,14 @@ func WithGeneratedKeys() ServerOption {
 func WithAuth(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		authEnabled := settings["auth"].(bool)
-		jwtSettings := settings["jwt"].(map[string]any)
 
 		// Commenting out until this is implemented
-		oidcSettings := settings["oidc"].(map[string]any)
+		jwtSettings := settings["jwt"].(map[string]any)
 
 		s.Config.Auth.Enabled = authEnabled
 
-		// add signing key for tokens
-		s.Config.Auth.JWTSigningKey = []byte(jwtSettings["signingkey"].(string))
-
-		s.Config.Auth.Token.Issuer = oidcSettings["issuer"].(string)
-		s.Config.Auth.Token.Audience = oidcSettings["audience"].(string)
+		s.Config.Auth.Token.Issuer = jwtSettings["issuer"].(string)
+		s.Config.Auth.Token.Audience = jwtSettings["audience"].(string)
 	})
 }
 

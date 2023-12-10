@@ -11,7 +11,6 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/auth"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
@@ -19,6 +18,7 @@ import (
 	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 var serveCmd = &cobra.Command{
@@ -43,7 +43,7 @@ func init() {
 	}
 
 	// Auth configuration settings
-	if err := auth.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
+	if err := tokens.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
 		log.Fatal(err)
 	}
 
@@ -75,7 +75,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(settings),
 		serveropts.WithSQLiteDB(settings),
-		serveropts.WithGeneratedKeys(), // TODO: only use in dev mode
+		serveropts.WithGeneratedKeys(settings), // TODO: only use in dev mode
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
 	)

@@ -93,6 +93,18 @@ const (
 	ValidationErrorClaimsInvalid
 )
 
+var (
+	ErrMissingEmail             = errors.New("email address is required")
+	ErrMissingUserID            = errors.New("user id is required")
+	ErrTokenMissingEmail        = errors.New("email verification token is missing email address")
+	ErrTokenMissingUserID       = errors.New("email verification token is missing user id")
+	ErrVerificationTokenExpired = errors.New("email verification token has expired")
+	ErrInvalidSecret            = errors.New("invalid secret for email token verification")
+	ErrTokenInvalid             = errors.New("email verification token has invalid signature")
+	ErrExpirationIsRequired     = errors.New("expiration is required")
+	ErrFailedSigning            = errors.New("could not generate signing info")
+)
+
 // NewValidationError is a helper for constructing a ValidationError with a string error message
 func NewValidationError(errorText string, errorFlags uint32) *ValidationError {
 	return &ValidationError{

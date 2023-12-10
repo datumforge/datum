@@ -90,20 +90,20 @@ func New(conf TokenConfig) (tm *TokenManager, err error) {
 		var keyID ulid.ULID
 
 		if keyID, err = ulid.Parse(kid); err != nil {
-			return nil, newParseError("path", kid, err)
+			return nil, newParseError("kid", kid, err)
 		}
 
 		// Load the keys from disk
 		var data []byte
 
 		if data, err = os.ReadFile(path); err != nil {
-			return nil, newParseError("path", kid, err)
+			return nil, newParseError("path", path, err)
 		}
 
 		var key *rsa.PrivateKey
 
 		if key, err = jwt.ParseRSAPrivateKeyFromPEM(data); err != nil {
-			return nil, newParseError("path", kid, err)
+			return nil, newParseError("path", path, err)
 		}
 
 		tm.keys[keyID] = &key.PublicKey

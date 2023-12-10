@@ -87,6 +87,8 @@ type (
 		JWTSigningKey []byte `yaml:"jwtSigningKey"`
 		// A list of auth providers. Currently enables only the first provider in the list.
 		Providers []AuthProvider `yaml:"providers"`
+		// TODO: clean up
+		Token Token `yaml:"token"`
 	}
 
 	// Authz settings for openFGA configuration and the ability to enable/disable authz all together
@@ -151,6 +153,25 @@ type (
 		CallbackURL string `yaml:"callbackUrl"`
 		// Options added as URL query params when redirecting to auth provider. Can be used to configure custom auth flows such as Auth0 invitation flow.
 		Options map[string]interface{} `yaml:"options"`
+	}
+
+	// Token struct {
+	// 	// IssuerURL is only needed when it differs from the ProviderURL (optional)
+	// 	IssuerURL string `yaml:"issuerUrl"`
+	// 	// Audience
+	// 	Audience string `yaml:"audience"`
+	// }
+
+	// TODO: clean up
+	Token struct {
+		// Keys contains the kid as the key and a path to the pem file as the value
+		Keys            map[string]string `required:"false"`                  // $DATUM_TOKEN_KEYS
+		Audience        string            `default:"https://datum.net"`       // $DATUM_TOKEN_AUDIENCE
+		RefreshAudience string            `required:"false"`                  // $DATUM_TOKEN_REFRESH_AUDIENCE
+		Issuer          string            `default:"https://auth.datum.net"`  // $DATUM_TOKEN_ISSUER
+		AccessDuration  time.Duration     `split_words:"true" default:"1h"`   // $DATUM_TOKEN_ACCESS_DURATION
+		RefreshDuration time.Duration     `split_words:"true" default:"2h"`   // $DATUM_TOKEN_REFRESH_DURATION
+		RefreshOverlap  time.Duration     `split_words:"true" default:"-15m"` // $DATUM_TOKEN_REFRESH_OVERLAP
 	}
 )
 

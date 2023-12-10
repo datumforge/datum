@@ -23,6 +23,8 @@ datum
 datum-cli
 server.crt 
 server.key 
+private_key.pem
+public_key.pem
 
 # Packages
 *.7z

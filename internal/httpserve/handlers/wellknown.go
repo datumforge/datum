@@ -33,22 +33,21 @@ type OpenIDConfiguration struct {
 
 // JWKSWellKnownHandler provides the JWK used to verify all Datum-issued JWTs
 func JWKSWellKnownHandler(ctx echo.Context) error {
-	tokenConfig := tokens.TokenConfig{
-		Audience: "http://localhost:17608",
+
+	// Setup Token manager
+	conf := tokens.TokenConfig{
 		Issuer:   "http://localhost:17608",
+		Audience: "http://localhost:17608",
 	}
 
-	tm, err := tokens.New(tokenConfig)
-	if err != nil {
-		return err
-	}
-	// Parse the token issuer for the OpenID configuration
-	_, err = tm.Keys()
+	tm, err := tokens.New(conf)
 	if err != nil {
 		return err
 	}
 
-	base, err := url.Parse(tokenConfig.Issuer)
+	tm.Keys()
+
+	base, err := url.Parse("http://localhost:17608")
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse("openid is not configured correctly"))
 	}

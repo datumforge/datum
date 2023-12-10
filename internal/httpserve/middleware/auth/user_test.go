@@ -27,6 +27,11 @@ func Test_GetActorSubject(t *testing.T) {
 		t.Fatal()
 	}
 
+	invalidUserCtx, err := auth.NewTestContextWithValidUser(ulids.Null.String())
+	if err != nil {
+		t.Fatal()
+	}
+
 	testCases := []struct {
 		name string
 		e    echo.Context
@@ -46,6 +51,11 @@ func Test_GetActorSubject(t *testing.T) {
 			name: "no user",
 			e:    missingSubCtx,
 			err:  auth.ErrNoClaims,
+		},
+		{
+			name: "null user",
+			e:    *invalidUserCtx,
+			err:  auth.ErrNoUserInfo,
 		},
 	}
 

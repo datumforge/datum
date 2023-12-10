@@ -89,8 +89,6 @@ type (
 		JWTSigningKey []byte `yaml:"jwtSigningKey"`
 		// A list of auth providers. Currently enables only the first provider in the list.
 		Providers []AuthProvider `yaml:"providers"`
-		// TODO: clean up
-		Token Token `yaml:"token"`
 	}
 
 	// Authz settings for openFGA configuration and the ability to enable/disable authz all together

@@ -7,6 +7,7 @@ import (
 
 	authtest "github.com/datumforge/datum/internal/httpserve/middleware/authtest"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 // This test generates an example token with fake RSA keys for use in examples,
@@ -23,8 +24,9 @@ func TestGenerateToken(t *testing.T) {
 
 	defer srv.Close()
 
+	userID := ulids.New().String()
 	claims := &tokens.Claims{
-		UserID:      "Rusty Shackleford",
+		UserID:      userID,
 		Email:       "rustys@datum.net",
 		OrgID:       "01H6PGFG71N0AFEVTK3NJB71T9",
 		ParentOrgID: "01H6PGFTK2X53RGG2KMSGR2M61",

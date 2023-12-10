@@ -75,10 +75,14 @@ func serve(ctx context.Context) error {
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(settings),
 		serveropts.WithSQLiteDB(settings),
-		serveropts.WithGeneratedKeys(settings), // TODO: only use in dev mode
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
 	)
+
+	// Create keys for development
+	if dev := viper.GetBool("server.dev"); dev {
+		serverOpts = append(serverOpts, serveropts.WithGeneratedKeys(settings))
+	}
 
 	so := serveropts.NewServerOptions(serverOpts)
 

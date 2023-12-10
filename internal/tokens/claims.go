@@ -24,7 +24,7 @@ type Claims struct {
 
 // ParseUserID returns the ID of the user from the Subject of the claims
 func (c Claims) ParseUserID() ulid.ULID {
-	userID, err := ulid.Parse(c.Subject)
+	userID, err := ulid.Parse(c.UserID)
 	if err != nil {
 		return ulids.Null
 	}
@@ -50,4 +50,14 @@ func (c Claims) ParseParentOrgID() ulid.ULID {
 	}
 
 	return parentOrgID
+}
+
+// ParseEmail is used to parse and return the email from the `Email` field of the claims.
+func (c Claims) ParseEmail() ulid.ULID {
+	email, err := ulid.Parse(c.Email)
+	if err != nil {
+		return ulids.Null
+	}
+
+	return email
 }

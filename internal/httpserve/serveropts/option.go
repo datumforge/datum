@@ -208,7 +208,6 @@ func WithGeneratedKeys(settings map[string]any) ServerOption {
 
 		keys[kidPriv] = fmt.Sprintf("%v", privFileName)
 
-		s.Config.Auth.Token.Keys = keys
 		s.Config.Server.Token.Keys = keys
 	})
 }
@@ -224,8 +223,8 @@ func WithAuth(settings map[string]any) ServerOption {
 
 		s.Config.Auth.Enabled = authEnabled
 
-		s.Config.Auth.Token.Issuer = jwtSettings["issuer"].(string)
-		s.Config.Auth.Token.Audience = jwtSettings["audience"].(string)
+		s.Config.Server.Token.Issuer = jwtSettings["issuer"].(string)
+		s.Config.Server.Token.Audience = jwtSettings["audience"].(string)
 	})
 }
 

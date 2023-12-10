@@ -21,6 +21,8 @@ func registerRegisterHandler(router *echo.Echo) (err error) { //nolint:unused
 		Method: http.MethodGet,
 		Path:   "/register",
 		Handler: func(c echo.Context) error {
+			ctx := c.Request()
+
 			return c.JSON(http.StatusNotImplemented, echo.Map{
 				"error": "Not implemented",
 			})

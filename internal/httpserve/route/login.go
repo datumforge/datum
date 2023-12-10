@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/oklog/ulid"
 )
 
 // Login is oriented towards human users who use their email and password for
@@ -21,9 +22,10 @@ import (
 // TODO: implement login handler
 func registerLoginHandler(router *echo.Echo) (err error) { //nolint:unused
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
+		Method: http.MethodPost,
 		Path:   "/login",
 		Handler: func(c echo.Context) error {
+
 			return c.JSON(http.StatusNotImplemented, echo.Map{
 				"error": "Not implemented",
 			})
@@ -31,4 +33,11 @@ func registerLoginHandler(router *echo.Echo) (err error) { //nolint:unused
 	})
 
 	return
+}
+
+type LoginRequest struct {
+	Email       string    `json:"email"`
+	Password    string    `json:"password"`
+	OrgID       ulid.ULID `json:"org_id,omitempty"`
+	InviteToken string    `json:"invite_token,omitempty"`
 }

@@ -39,7 +39,7 @@ func NewVerificationToken(email string) (token *VerificationToken, err error) {
 }
 
 // VerificationToken packages an email address with random data and an expiration
-// time so that it can be serialized and hashed into a token which can be sent to users.
+// time so that it can be serialized and hashed into a token which can be sent to users
 type VerificationToken struct {
 	Email string `msgpack:"email"`
 	SigningInfo
@@ -58,7 +58,7 @@ func (t *VerificationToken) Sign() (_ string, secret []byte, err error) {
 	return t.signData(data)
 }
 
-// Verify checks that a token was signed with the secret and is not expired.
+// Verify checks that a token was signed with the secret and is not expired
 func (t *VerificationToken) Verify(signature string, secret []byte) (err error) {
 	if t.Email == "" {
 		return ErrTokenMissingEmail
@@ -84,7 +84,7 @@ func (t *VerificationToken) Verify(signature string, secret []byte) (err error) 
 	return t.verifyData(data, signature, secret)
 }
 
-// NewResetToken creates a token struct from a user ID that expires in 15 minutes.
+// NewResetToken creates a token struct from a user ID that expires in 30 minutes
 func NewResetToken(id ulid.ULID) (token *ResetToken, err error) {
 	if ulids.IsZero(id) {
 		return nil, ErrMissingUserID
@@ -102,7 +102,7 @@ func NewResetToken(id ulid.ULID) (token *ResetToken, err error) {
 }
 
 // ResetToken packages a user ID with random data and an expiration time so that it can
-// be serialized and hashed into a token which can be sent to users.
+// be serialized and hashed into a token which can be sent to users
 type ResetToken struct {
 	UserID ulid.ULID `msgpack:"user_id"`
 	SigningInfo
@@ -110,7 +110,7 @@ type ResetToken struct {
 
 // Sign creates a base64 encoded string from the token data so that it can be sent to
 // users as part of a URL. The returned secret should be stored in the database so that
-// the string can be recomputed when verifying a user provided token.
+// the string can be recomputed when verifying a user provided token
 func (t *ResetToken) Sign() (_ string, secret []byte, err error) {
 	var data []byte
 
@@ -121,7 +121,7 @@ func (t *ResetToken) Sign() (_ string, secret []byte, err error) {
 	return t.signData(data)
 }
 
-// Verify checks that a token was signed with the secret and is not expired.
+// Verify checks that a token was signed with the secret and is not expired
 func (t *ResetToken) Verify(signature string, secret []byte) (err error) {
 	if ulids.IsZero(t.UserID) {
 		return ErrTokenMissingUserID

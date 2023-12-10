@@ -49,8 +49,6 @@ github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDk
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cpuguy83/go-md2man/v2 v2.0.3 h1:qMCsGGgs+MAzDFyp9LpAe1Lqy/fY/qCovCm0qnXZOBM=
 github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
-github.com/datumforge/echo-jwt/v5 v5.0.0-20231205220550-63228bd9b7fb h1:HUkx+FCz9BVYGaaD60rgeKq/A7pcJh9MfRhsQxadAmU=
-github.com/datumforge/echo-jwt/v5 v5.0.0-20231205220550-63228bd9b7fb/go.mod h1:+R/xeWmyiTI/dKxT9A81pghQE0EBEmJqF0hdyITq5O4=
 github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58 h1:/coVSf+8DmRkPRYaH2pWn/DhvcMNbHSb1IgqjFb5GUg=
 github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58/go.mod h1:nXVOsuzExmWX51klS2y/qQe0EUee4gALCOe3CP6BIjE=
 github.com/datumforge/echox v0.0.0-20231205221251-eb30d6bad77a h1:UizrTzL6gE4DdemoVWc7sOZtCO4tULes5I3Chc+C1CU=

@@ -161,56 +161,42 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 // This should only be used in a development environment
 func WithGeneratedKeys() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		// Generate a new RSA private key with 2048 bits
-		privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
-		if err != nil {
-			s.Config.Logger.Panicf("Error generating RSA private key:", err)
-		}
-
-		// Encode the private key to the PEM format
-		privateKeyPEM := &pem.Block{
-			Type:  "RSA PRIVATE KEY",
-			Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
-		}
-
 		privFileName := "private_key.pem"
-		privateKeyFile, err := os.Create(privFileName)
-		if err != nil {
-			s.Config.Logger.Panicf("Error creating private key file:", err)
+
+		// generate a new private key if one doesn't exist
+		if _, err := os.Stat(privFileName); err != nil {
+			// Generate a new RSA private key with 2048 bits
+			privateKey, err := rsa.GenerateKey(rand.Reader, 2048) //nolint:gomnd
+			if err != nil {
+				s.Config.Logger.Panicf("Error generating RSA private key:", err)
+			}
+
+			// Encode the private key to the PEM format
+			privateKeyPEM := &pem.Block{
+				Type:  "RSA PRIVATE KEY",
+				Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
+			}
+
+			privateKeyFile, err := os.Create(privFileName)
+			if err != nil {
+				s.Config.Logger.Panicf("Error creating private key file:", err)
+			}
+
+			if err := pem.Encode(privateKeyFile, privateKeyPEM); err != nil {
+				s.Config.Logger.Panicw("unable to encode pem on startup", "error", err.Error())
+			}
+
+			privateKeyFile.Close()
 		}
-
-		pem.Encode(privateKeyFile, privateKeyPEM)
-		privateKeyFile.Close()
-
-		// Extract the public key from the private key
-		publicKey := &privateKey.PublicKey
-
-		// Encode the public key to the PEM format
-		publicKeyPEM := &pem.Block{
-			Type:  "RSA PUBLIC KEY",
-			Bytes: x509.MarshalPKCS1PublicKey(publicKey),
-		}
-
-		pubFileName := "public_key.pem"
-		publicKeyFile, err := os.Create(pubFileName)
-		if err != nil {
-			fmt.Println("Error creating public key file:", err)
-			os.Exit(1)
-		}
-		pem.Encode(publicKeyFile, publicKeyPEM)
-		publicKeyFile.Close()
-
-		fmt.Println("RSA key pair generated successfully!")
 
 		keys := map[string]string{}
 
 		kidPriv := ulids.New().String()
-		kidPub := ulids.New().String()
 
 		keys[kidPriv] = fmt.Sprintf("%v", privFileName)
-		keys[kidPub] = fmt.Sprintf("%v", pubFileName)
 
 		s.Config.Auth.Token.Keys = keys
+		s.Config.Server.Token.Keys = keys
 	})
 }
 
@@ -219,18 +205,18 @@ func WithGeneratedKeys() ServerOption {
 func WithAuth(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		authEnabled := settings["auth"].(bool)
-		// jwtSettings := settings["jwt"].(map[string]any)
+		jwtSettings := settings["jwt"].(map[string]any)
 
 		// Commenting out until this is implemented
-		// oidcSettings := settings["oidc"].(map[string]any)
+		oidcSettings := settings["oidc"].(map[string]any)
 
 		s.Config.Auth.Enabled = authEnabled
 
 		// add signing key for tokens
-		//s.Config.Auth.JWTSigningKey = []byte(jwtSettings["signingkey"].(string))
+		s.Config.Auth.JWTSigningKey = []byte(jwtSettings["signingkey"].(string))
 
-		s.Config.Auth.Token.Issuer = "http://localhost:17608"
-		s.Config.Auth.Token.Audience = "http://localhost:17608"
+		s.Config.Auth.Token.Issuer = oidcSettings["issuer"].(string)
+		s.Config.Auth.Token.Audience = oidcSettings["audience"].(string)
 	})
 }
 

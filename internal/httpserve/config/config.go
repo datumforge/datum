@@ -63,6 +63,8 @@ type (
 		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
 		// Checks contains readiness checks
 		Checks handlers.Checks `yaml:"checks"`
+		// Token contains the token config settings
+		Token Token `yaml:"token"`
 	}
 
 	// DB Settings
@@ -155,14 +157,7 @@ type (
 		Options map[string]interface{} `yaml:"options"`
 	}
 
-	// Token struct {
-	// 	// IssuerURL is only needed when it differs from the ProviderURL (optional)
-	// 	IssuerURL string `yaml:"issuerUrl"`
-	// 	// Audience
-	// 	Audience string `yaml:"audience"`
-	// }
-
-	// TODO: clean up
+	// Token defines the configuration settings for authentication tokens used in the server
 	Token struct {
 		// Keys contains the kid as the key and a path to the pem file as the value
 		Keys            map[string]string `required:"false"`                  // $DATUM_TOKEN_KEYS

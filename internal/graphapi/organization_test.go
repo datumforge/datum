@@ -14,7 +14,9 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
+	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func TestQuery_Organization(t *testing.T) {
@@ -30,7 +32,9 @@ func TestQuery_Organization(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
 
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -154,7 +158,9 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
 
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -226,8 +232,11 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 	// Setup Test Graph Client
 	client := graphTestClient(entClient)
+
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -467,7 +476,9 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	client := graphTestClient(entClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -586,7 +597,9 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	client := graphTestClient(entClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}

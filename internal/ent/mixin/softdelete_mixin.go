@@ -10,10 +10,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 
-	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 // SoftDeleteMixin implements the soft delete pattern for schemas.

@@ -10,12 +10,12 @@ import (
 
 // registerJwksWellKnownHandler supplies the JWKS endpoint.
 // This endpoint will contain the JWK used to verify all Datum JWTs
-func registerJwksWellKnownHandler(router *echo.Echo) (err error) { //nolint:unused
+func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Tokens) (err error) { //nolint:unused
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
 		Path:   "/.well-known/jwks.json",
 		Handler: func(c echo.Context) error {
-			return handlers.JWKSWellKnownHandler(c)
+			return h.JWKSWellKnownHandler(c)
 		},
 	})
 

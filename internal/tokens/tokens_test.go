@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
+	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -22,8 +23,8 @@ const (
 type TokenTestSuite struct {
 	suite.Suite
 	testdata    map[string]string
-	conf        tokens.TokenConfig
-	expiredConf tokens.TokenConfig
+	conf        config.Token
+	expiredConf config.Token
 }
 
 func (s *TokenTestSuite) SetupSuite() {
@@ -32,7 +33,7 @@ func (s *TokenTestSuite) SetupSuite() {
 	s.testdata["01GE6191AQTGMCJ9BN0QC3CCVG"] = "testdata/01GE6191AQTGMCJ9BN0QC3CCVG.pem"
 	s.testdata["01GE62EXXR0X0561XD53RDFBQJ"] = "testdata/01GE62EXXR0X0561XD53RDFBQJ.pem"
 
-	s.conf = tokens.TokenConfig{
+	s.conf = config.Token{
 		Keys:            s.testdata,
 		Audience:        audience,
 		Issuer:          issuer,
@@ -42,7 +43,7 @@ func (s *TokenTestSuite) SetupSuite() {
 	}
 
 	// Some tests require expired tokens to test expiration checking logic.
-	s.expiredConf = tokens.TokenConfig{
+	s.expiredConf = config.Token{
 		Keys:            s.testdata,
 		Audience:        audience,
 		Issuer:          issuer,
@@ -272,7 +273,7 @@ func (s *TokenTestSuite) TestKeyRotation() {
 	require := s.Require()
 
 	// Create the "old token manager"
-	conf := tokens.TokenConfig{
+	conf := config.Token{
 		Keys: map[string]string{
 			"01GE6191AQTGMCJ9BN0QC3CCVG": "testdata/01GE6191AQTGMCJ9BN0QC3CCVG.pem",
 		},

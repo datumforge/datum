@@ -75,9 +75,9 @@ func serve(ctx context.Context) error {
 		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(settings),
 		serveropts.WithSQLiteDB(settings),
+		serveropts.WithGeneratedKeys(), // TODO: only use in dev mode
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
-		serveropts.WithGeneratedKeys(), // TODO: only use in dev mode
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)

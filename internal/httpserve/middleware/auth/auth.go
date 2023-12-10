@@ -62,8 +62,7 @@ func Authenticate() echo.MiddlewareFunc {
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers
-			ctx := context.WithValue(c.Request().Context(), ContextUserClaims, claims)
-			c.SetRequest(c.Request().WithContext(ctx))
+			c.Set(ContextUserClaims.name, claims)
 
 			return next(c)
 		}
@@ -160,12 +159,12 @@ func GetRefreshToken(c echo.Context) (string, error) {
 // GetClaims fetches and parses datum claims from the echo context. Returns an
 // error if no claims exist on the context
 func GetClaims(c echo.Context) (*tokens.Claims, error) {
-	t, ok := c.Get(ContextUserClaims.name).(*tokens.Token)
+	claims, ok := c.Get(ContextUserClaims.name).(*tokens.Claims)
 	if !ok {
 		return nil, ErrNoClaims
 	}
 
-	return &t.Claims, nil
+	return claims, nil
 }
 
 // AuthContextFromRequest creates a context from the echo request context, copying fields

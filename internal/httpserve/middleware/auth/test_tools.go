@@ -10,8 +10,8 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 )
 
-// newValidSignedJWTWithClaims creates a jwt with a fake subject for testing purposes ONLY
-func newValidSignedJWTWithClaims(subject string) (*tokens.Token, error) {
+// newValidClaims returns claims with a fake subject for testing purposes ONLY
+func newValidClaims(subject string) *tokens.Claims {
 	iat := time.Now()
 	nbf := iat
 	exp := time.Now().Add(time.Hour)
@@ -24,28 +24,23 @@ func newValidSignedJWTWithClaims(subject string) (*tokens.Token, error) {
 			NotBefore: jwt.NewNumericDate(nbf),
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
+		UserID:      subject,
+		Email:       "rustys@datum.net",
 		OrgID:       "nano_id_of_org",
 		ParentOrgID: "nano_id_of_parent_org",
 		Tier:        "premium",
 	}
 
-	t := &tokens.Token{
-		Claims: *claims,
-	}
-
-	return t, nil
+	return claims
 }
 
 // NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
 func NewTestContextWithValidUser(subject string) (*echo.Context, error) {
 	ec := echocontext.NewTestEchoContext()
 
-	j, err := newValidSignedJWTWithClaims(subject)
-	if err != nil {
-		return nil, err
-	}
+	claims := newValidClaims(subject)
 
-	ec.Set(ContextUserClaims.name, j)
+	ec.Set(ContextUserClaims.name, claims)
 
 	return &ec, nil
 }

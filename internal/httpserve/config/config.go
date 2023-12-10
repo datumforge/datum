@@ -61,7 +61,7 @@ type (
 		Routes []http.Handler `yaml:"routes"`
 		// Middleware to enable on the echo server
 		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
-		// Checks contains readiness checks
+		// Handler contains the required settings for REST handlers including ready checks and JWT keys
 		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings
 		Token Token `yaml:"token"`

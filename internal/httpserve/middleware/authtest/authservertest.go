@@ -102,8 +102,7 @@ func (s *Server) JWKS(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) KeysURL() string {
-	// return s.URL.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String()
-	return "http://localhost:17608/.well-known/jwks.json"
+	return s.URL.ResolveReference(&url.URL{Path: "/.well-known/jwks.json"}).String()
 }
 
 // CreateToken creates a token without overwriting the claims, which is useful for

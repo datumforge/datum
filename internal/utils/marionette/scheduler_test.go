@@ -16,7 +16,7 @@ import (
 	. "github.com/datumforge/datum/internal/utils/marionette"
 )
 
-var discard = *zap.NewNop().Sugar()
+var discard = zap.NewNop().Sugar()
 
 func TestScheduler(t *testing.T) {
 	if testing.Short() {

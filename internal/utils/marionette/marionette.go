@@ -17,7 +17,7 @@ var (
 type TaskManager struct {
 	sync.RWMutex
 	conf      Config
-	logger    zap.SugaredLogger
+	logger    *zap.SugaredLogger
 	scheduler *Scheduler
 	wg        *sync.WaitGroup
 	add       chan Task
@@ -35,7 +35,7 @@ func New(conf Config) *TaskManager {
 
 	add := make(chan Task, conf.QueueSize)
 
-	scheduler := NewScheduler(add, zap.SugaredLogger{})
+	scheduler := NewScheduler(add, conf.Logger)
 
 	return &TaskManager{
 		conf:      conf,
@@ -44,7 +44,7 @@ func New(conf Config) *TaskManager {
 		add:       add,
 		stop:      make(chan struct{}, 1),
 		running:   false,
-		logger:    zap.SugaredLogger{},
+		logger:    conf.Logger,
 	}
 }
 

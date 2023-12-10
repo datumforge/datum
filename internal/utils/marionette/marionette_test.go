@@ -10,6 +10,7 @@ import (
 
 	backoff "github.com/cenkalti/backoff/v4"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
@@ -25,7 +26,8 @@ func TestMain(m *testing.M) {
 func TestTasks(t *testing.T) {
 	// NOTE: ensure the queue size is zero so that queueing blocks until all tasks are
 	// queued to prevent a race condition with the call to stop.
-	tm := marionette.New(marionette.Config{Workers: 4, QueueSize: 0, ServerName: "test"})
+	logger := zap.NewNop().Sugar()
+	tm := marionette.New(marionette.Config{Logger: logger, Workers: 4, QueueSize: 0, ServerName: "test"})
 	tm.Start()
 
 	// Should be able to call start twice without panic
@@ -62,9 +64,11 @@ func TestTasksRetry(t *testing.T) {
 		t.Skip("skipping long running test in short mode")
 	}
 
+	logger := zap.NewNop().Sugar()
+
 	// NOTE: ensure the queue size is zero so that queueing blocks until all tasks are
 	// queued to prevent a race condition with the call to stop.
-	tm := marionette.New(marionette.Config{Workers: 4, QueueSize: 0, ServerName: "test"})
+	tm := marionette.New(marionette.Config{Logger: logger, Workers: 4, QueueSize: 0, ServerName: "test"})
 	tm.Start()
 
 	// Create a state of tasks that hold the number of attempts and success
@@ -106,9 +110,11 @@ func TestTasksRetryFailure(t *testing.T) {
 		t.Skip("skipping long running test in short mode")
 	}
 
+	logger := zap.NewNop().Sugar()
+
 	// NOTE: ensure the queue size is zero so that queueing blocks until all tasks are
 	// queued to prevent a race condition with the call to stop.
-	tm := marionette.New(marionette.Config{Workers: 4, QueueSize: 0, ServerName: "test"})
+	tm := marionette.New(marionette.Config{Logger: logger, Workers: 4, QueueSize: 0, ServerName: "test"})
 	tm.Start()
 
 	// Create a state of tasks that hold the number of attempts and success
@@ -145,9 +151,11 @@ func TestTasksRetryFailure(t *testing.T) {
 }
 
 func TestTasksRetryBackoff(t *testing.T) {
+	logger := zap.NewNop().Sugar()
+
 	// NOTE: ensure the queue size is zero so that queueing blocks until all tasks are
 	// queued to prevent a race condition with the call to stop.
-	tm := marionette.New(marionette.Config{Workers: 4, QueueSize: 0, ServerName: "test"})
+	tm := marionette.New(marionette.Config{Logger: logger, Workers: 4, QueueSize: 0, ServerName: "test"})
 	tm.Start()
 
 	// Create a state of tasks that hold the number of attempts and success
@@ -190,9 +198,12 @@ func TestTasksRetryContextCanceled(t *testing.T) {
 		t.Skip("skipping long running test in short mode")
 	}
 
+	logger := zap.NewNop().Sugar()
+
 	// NOTE: ensure the queue size is zero so that queueing blocks until all tasks are
 	// queued to prevent a race condition with the call to stop.
-	tm := marionette.New(marionette.Config{Workers: 4, QueueSize: 0, ServerName: "test"})
+
+	tm := marionette.New(marionette.Config{Logger: logger, Workers: 4, QueueSize: 0, ServerName: "test"})
 	tm.Start()
 
 	var completed, attempts int32
@@ -230,10 +241,12 @@ func TestTasksRetrySuccessAndFailure(t *testing.T) {
 		t.Skip("skipping long running test in short mode")
 	}
 
+	logger := zap.NewNop().Sugar()
+
 	// Test non-retry tasks alongside retry tasks
 	// NOTE: ensure the queue size is zero so that queueing blocks until all tasks are
 	// queued to prevent a race condition with the call to stop.
-	tm := marionette.New(marionette.Config{Workers: 4, QueueSize: 0, ServerName: "test"})
+	tm := marionette.New(marionette.Config{Logger: logger, Workers: 4, QueueSize: 0, ServerName: "test"})
 	tm.Start()
 
 	// Create a state of tasks that hold the number of attempts and success

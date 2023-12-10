@@ -22,7 +22,7 @@ import (
 // second, preferring longer sleeps and interrupts instead.
 type Scheduler struct {
 	sync.RWMutex
-	logger  zap.SugaredLogger
+	logger  *zap.SugaredLogger
 	tasks   Futures
 	out     chan<- Task
 	add     chan *Future
@@ -35,7 +35,7 @@ type Scheduler struct {
 // that the task should be executed as soon as possible. The scheduler makes no
 // guarantees about exact timing of tasks scheduled except that the task will not be
 // sent on the out channel before its scheduled time.
-func NewScheduler(out chan<- Task, logger zap.SugaredLogger) *Scheduler {
+func NewScheduler(out chan<- Task, logger *zap.SugaredLogger) *Scheduler {
 	return &Scheduler{
 		out:     out,
 		add:     make(chan *Future, 1),

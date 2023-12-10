@@ -18,7 +18,8 @@ type JWKSValidator struct {
 }
 
 // NewJWKSValidator is a constructor for creating a new instance of the `JWKSValidator`
-// struct. It takes in a `jwk.Set` containing the JSON Web Key Set (JWKS), as well as the audience and issuer strings. It initializes a new `JWKSValidator` with the provided JWKS, audience, and issuer
+// struct. It takes in a `jwk.Set` containing the JSON Web Key Set (JWKS), as well as the audience and issuer strings.
+// It initializes a new `JWKSValidator` with the provided JWKS, audience, and issuer
 func NewJWKSValidator(keys jwk.Set, audience, issuer string) *JWKSValidator {
 	validator := &JWKSValidator{
 		validator: validator{

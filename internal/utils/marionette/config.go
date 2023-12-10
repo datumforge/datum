@@ -1,8 +1,11 @@
 package marionette
 
+import "go.uber.org/zap"
+
 // Config configures the marionette task manager so that different processes can utilize
 // different asynchronous task processing resources depending on process compute constraints
 type Config struct {
+	Logger     *zap.SugaredLogger
 	Workers    int    `default:"4" desc:"the number of workers to process tasks asynchronously"`
 	QueueSize  int    `split_words:"true" default:"64" desc:"the number of async tasks to buffer in the queue before blocking"`
 	ServerName string `split_words:"true" default:"marionette" desc:"used to describe the marionette service in the log"`

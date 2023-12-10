@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 type (
@@ -64,7 +65,7 @@ type (
 		// Handler contains the required settings for REST handlers including ready checks and JWT keys
 		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings
-		Token Token `yaml:"token"`
+		Token tokens.Config `yaml:"token"`
 	}
 
 	// DB Settings
@@ -153,18 +154,6 @@ type (
 		CallbackURL string `yaml:"callbackUrl"`
 		// Options added as URL query params when redirecting to auth provider. Can be used to configure custom auth flows such as Auth0 invitation flow.
 		Options map[string]interface{} `yaml:"options"`
-	}
-
-	// Token defines the configuration settings for authentication tokens used in the server
-	Token struct {
-		// Keys contains the kid as the key and a path to the pem file as the value
-		Keys            map[string]string `required:"false"`                  // $DATUM_TOKEN_KEYS
-		Audience        string            `default:"https://datum.net"`       // $DATUM_TOKEN_AUDIENCE
-		RefreshAudience string            `required:"false"`                  // $DATUM_TOKEN_REFRESH_AUDIENCE
-		Issuer          string            `default:"https://auth.datum.net"`  // $DATUM_TOKEN_ISSUER
-		AccessDuration  time.Duration     `split_words:"true" default:"1h"`   // $DATUM_TOKEN_ACCESS_DURATION
-		RefreshDuration time.Duration     `split_words:"true" default:"2h"`   // $DATUM_TOKEN_REFRESH_DURATION
-		RefreshOverlap  time.Duration     `split_words:"true" default:"-15m"` // $DATUM_TOKEN_REFRESH_OVERLAP
 	}
 )
 

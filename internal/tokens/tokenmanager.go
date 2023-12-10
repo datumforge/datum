@@ -14,8 +14,6 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"github.com/oklog/ulid/v2"
-
-	"github.com/datumforge/datum/internal/httpserve/config"
 )
 
 const DefaultRefreshAudience = "https://auth.datum.net/v1/refresh"
@@ -39,7 +37,7 @@ var (
 type TokenManager struct {
 	validator
 	refreshAudience string
-	conf            config.Token
+	conf            Config
 	currentKeyID    ulid.ULID
 	currentKey      *rsa.PrivateKey
 	keys            map[ulid.ULID]*rsa.PublicKey
@@ -74,7 +72,7 @@ type Token struct {
 // strings to paths to files that contain PEM encoded RSA private keys. This input is
 // specifically designed for the config environment variable so that keys can be loaded
 // from k8s or vault secrets that are mounted as files on disk
-func New(conf config.Token) (tm *TokenManager, err error) {
+func New(conf Config) (tm *TokenManager, err error) {
 	tm = &TokenManager{
 		validator: validator{
 			audience: conf.Audience,
@@ -125,7 +123,7 @@ func New(conf config.Token) (tm *TokenManager, err error) {
 // TokenManager with the provided key, along with other configuration settings from the TokenConfig
 // struct. It returns the created TokenManager instance or an error if there was a problem
 // initializing the TokenManager.
-func NewWithKey(key *rsa.PrivateKey, conf config.Token) (tm *TokenManager, err error) {
+func NewWithKey(key *rsa.PrivateKey, conf Config) (tm *TokenManager, err error) {
 	tm = &TokenManager{
 		validator: validator{
 			audience: conf.Audience,

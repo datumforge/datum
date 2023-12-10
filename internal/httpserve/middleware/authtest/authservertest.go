@@ -13,7 +13,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -49,7 +48,7 @@ func NewServer() (s *Server, err error) {
 	// Checks for the file in the root of this repo
 	privFileName := "../../../../private_key.pem"
 
-	conf := config.Token{
+	conf := tokens.Config{
 		Audience:        Audience,
 		Issuer:          Issuer,
 		AccessDuration:  1 * time.Hour,

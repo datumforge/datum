@@ -232,19 +232,19 @@ func WithAuth(settings map[string]any) ServerOption {
 func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Initialize checks
-		s.Config.Server.Checks = handlers.Checks{}
+		s.Config.Server.Handler = handlers.Handler{}
 
 		// Always add a check to the primary db connection
-		s.Config.Server.Checks.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
+		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
 
 		// Check the secondary db, if enabled
 		if s.Config.DB.MultiWrite {
-			s.Config.Server.Checks.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
+			s.Config.Server.Handler.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
 		}
 
 		// Check the connection to openFGA, if enabled
 		if s.Config.Authz.Enabled {
-			s.Config.Server.Checks.AddReadinessCheck("fga", fga.Healthcheck(*f))
+			s.Config.Server.Handler.AddReadinessCheck("fga", fga.Healthcheck(*f))
 		}
 	})
 }

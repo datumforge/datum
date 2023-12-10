@@ -13,7 +13,7 @@ type Route struct {
 }
 
 // RegisterRoutes with the echo routers
-func RegisterRoutes(router *echo.Echo, h *handlers.Checks, t *handlers.Tokens) error {
+func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
 		return err
@@ -59,7 +59,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Checks, t *handlers.Tokens) e
 		return err
 	}
 
-	if err := registerJwksWellKnownHandler(router, t); err != nil {
+	if err := registerJwksWellKnownHandler(router, h); err != nil {
 		return err
 	}
 

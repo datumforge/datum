@@ -62,7 +62,7 @@ type (
 		// Middleware to enable on the echo server
 		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
 		// Checks contains readiness checks
-		Checks handlers.Checks `yaml:"checks"`
+		Handler handlers.Handler `yaml:"checks"`
 		// Token contains the token config settings
 		Token Token `yaml:"token"`
 	}

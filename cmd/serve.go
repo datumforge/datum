@@ -100,11 +100,10 @@ func serve(ctx context.Context) error {
 		// add client as ent dependency
 		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
-		// add jwt middleware
-		// secretKey := []byte(viper.GetString("jwt.secretkey"))
-		jwtMiddleware := authmw.Authenticate()
+		// add auth middleware
+		authMiddleware := authmw.Authenticate()
 
-		mw = append(mw, jwtMiddleware)
+		mw = append(mw, authMiddleware)
 	}
 
 	// Setup DB connection

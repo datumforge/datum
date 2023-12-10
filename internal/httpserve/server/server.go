@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
@@ -89,12 +88,9 @@ func (s *Server) StartEchoServer() error {
 		return err
 	}
 
-	conf := handlers.Tokens{
-		Keys: keys,
-	}
-
+	s.config.Handler.JWTKeys = keys
 	// Add base routes to the server
-	if err := route.RegisterRoutes(srv, &s.config.Checks, &conf); err != nil {
+	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {
 		return err
 	}
 

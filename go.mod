@@ -17,7 +17,6 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/google/uuid v1.4.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/jaevor/go-nanoid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.80.1
@@ -71,7 +70,6 @@ require (
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/api v0.153.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/genproto v0.0.0-20231127180814-3a041ad873d4 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231127180814-3a041ad873d4 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231127180814-3a041ad873d4 // indirect

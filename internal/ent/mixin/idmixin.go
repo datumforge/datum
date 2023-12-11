@@ -1,15 +1,15 @@
 package mixin
 
 import (
+	"entgo.io/contrib/entgql"
+	"entgo.io/contrib/entoas"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 
-	"github.com/jaevor/go-nanoid"
-)
+	"github.com/ogen-go/ogen"
 
-const (
-	idLength = 21
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 // IDMixin holds the schema definition for the ID
@@ -22,26 +22,9 @@ func (IDMixin) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").
 			Immutable().
-			DefaultFunc(mustGetNewID),
+			DefaultFunc(func() string { return ulids.New().String() }).
+			Annotations(
+				entgql.Type("ID"),
+				entoas.Schema(ogen.String())),
 	}
-}
-
-// getNewID returns an ID based on go-nanoid
-func getNewID() (string, error) {
-	canonicID, err := nanoid.Standard(idLength)
-	if err != nil {
-		return "", err
-	}
-
-	return canonicID(), nil
-}
-
-// mustGetNewID returns an ID
-func mustGetNewID() string {
-	v, err := getNewID()
-	if err != nil {
-		panic(err)
-	}
-
-	return v
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"io"
+	"strconv"
 	"time"
 
 	"github.com/oklog/ulid/v2"
@@ -20,6 +21,8 @@ func init() {
 		MonotonicReader: ulid.Monotonic(rand.Reader, 0),
 	}
 }
+
+type ULID string
 
 // Null ULID pre-allocated for easier checking.
 var Null = ulid.ULID{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
@@ -117,4 +120,40 @@ func MustBytes(uid any) []byte {
 	}
 
 	return id
+}
+
+// Scan implements sql.Scanner so PrefixedIDs can be read from databases
+// transparently. The value returned is not checked to ensure it's a
+// properly formatted PrefixedID.
+func (u *ULID) Scan(v any) error {
+	if v == nil {
+		*u = ""
+		return nil
+	}
+
+	switch src := v.(type) {
+	case string:
+		*u = ULID(src)
+	case []byte:
+		*u = ULID(string(src))
+	case ULID:
+		*u = src
+	default:
+		return ErrUnsupportedType
+	}
+
+	return nil
+}
+
+// MarshalGQL provides GraphQL marshaling so that PrefixedIDs can be returned
+// in GraphQL results transparently. Only types that map to a string are supported.
+func (u ULID) MarshalGQL(w io.Writer) {
+	// graphql ID is a scalar which must be quoted
+	io.WriteString(w, strconv.Quote(string(u))) //nolint:errcheck
+}
+
+// UnmarshalGQL provides GraphQL unmarshaling so that PrefixedIDs can be parsed
+// in GraphQL requests transparently. Only input types that map to a string are supported.
+func (u *ULID) UnmarshalGQL(v interface{}) error {
+	return u.Scan(v)
 }

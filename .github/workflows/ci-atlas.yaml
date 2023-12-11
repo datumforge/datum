@@ -31,7 +31,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - uses: ariga/atlas-action/migrate/push@v1
-        if: github.ref == 'refs/heads/main'
+        if: (success() || failure()) && github.ref == 'refs/heads/main'
         with:
             dir: 'file://db/migrations'
             dir-name: 'datum'

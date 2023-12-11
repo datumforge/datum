@@ -7,10 +7,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-// logger zap.SugaredLogger
-)
-
 // TaskManager execute Tasks using a fixed number of workers that operate in their own
 // go routines. The TaskManager also has a fixed task queue size, so that if there are
 // more tasks added to the task manager than the queue size, back pressure is applied

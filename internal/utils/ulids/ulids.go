@@ -136,6 +136,8 @@ func (u *ULID) Scan(v any) error {
 		*u = ULID(src)
 	case []byte:
 		*u = ULID(string(src))
+	case ulid.ULID:
+		*u = ULID(src.String())
 	case ULID:
 		*u = src
 	default:
@@ -145,14 +147,14 @@ func (u *ULID) Scan(v any) error {
 	return nil
 }
 
-// MarshalGQL provides GraphQL marshaling so that PrefixedIDs can be returned
+// MarshalGQL provides GraphQL marshaling so that ULIDs can be returned
 // in GraphQL results transparently. Only types that map to a string are supported.
 func (u ULID) MarshalGQL(w io.Writer) {
 	// graphql ID is a scalar which must be quoted
 	io.WriteString(w, strconv.Quote(string(u))) //nolint:errcheck
 }
 
-// UnmarshalGQL provides GraphQL unmarshaling so that PrefixedIDs can be parsed
+// UnmarshalGQL provides GraphQL unmarshaling so that ULIDs can be parsed
 // in GraphQL requests transparently. Only input types that map to a string are supported.
 func (u *ULID) UnmarshalGQL(v interface{}) error {
 	return u.Scan(v)

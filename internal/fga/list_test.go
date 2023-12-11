@@ -73,7 +73,7 @@ func Test_ListObjectsRequest(t *testing.T) {
 		{
 			name:       "happy path",
 			relation:   "can_view",
-			userID:     "nano-id-of-user",
+			userID:     "ulid-of-user",
 			objectType: "organization",
 			expectedRes: &ofgaclient.ClientListObjectsResponse{
 				Objects: &objects,
@@ -83,7 +83,7 @@ func Test_ListObjectsRequest(t *testing.T) {
 		{
 			name:        "error response",
 			relation:    "can_view",
-			userID:      "nano-id-of-user",
+			userID:      "ulid-of-user",
 			objectType:  "organization",
 			expectedRes: nil,
 			errRes:      errors.New("boom"), //nolint:goerr113

@@ -140,7 +140,7 @@ func Test_CreateRelationshipTuple(t *testing.T) {
 			expectedRes: []ofgaclient.ClientWriteSingleResponse{
 				{
 					TupleKey: ofgaclient.ClientTupleKey{
-						User:     "user:nano-id-of-member",
+						User:     "user:ulid-of-member",
 						Relation: "member",
 						Object:   "organization:datum",
 					},
@@ -178,7 +178,7 @@ func Test_CreateRelationshipTuple(t *testing.T) {
 			// mock response for input
 			ctk := []ofgaclient.ClientTupleKey{
 				{
-					User:     "user:nano-id-of-member",
+					User:     "user:ulid-of-member",
 					Relation: tc.relation,
 					Object:   tc.object,
 				},
@@ -246,7 +246,7 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tuples := []ofgaclient.ClientTupleKey{
 				{
-					User:     "user:nano-id-of-member",
+					User:     "user:ulid-of-member",
 					Relation: tc.relation,
 					Object:   tc.object,
 				},

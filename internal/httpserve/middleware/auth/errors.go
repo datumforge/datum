@@ -12,12 +12,6 @@ import (
 	"github.com/datumforge/datum/internal/utils/responses"
 )
 
-type Reply struct {
-	Success    bool   `json:"success"`
-	Error      string `json:"error,omitempty"`
-	Unverified bool   `json:"unverified,omitempty"`
-}
-
 var (
 	ErrUnauthenticated  = errors.New("request is unauthenticated")
 	ErrNoClaims         = errors.New("no claims found on the request context")
@@ -30,20 +24,20 @@ var (
 	ErrIncompleteUser   = errors.New("user is missing required fields")
 	ErrUnverifiedUser   = errors.New("user is not verified")
 	ErrCSRFVerification = errors.New("csrf verification failed for request")
-	ErrParseBearer      = errors.New("could not parse Bearer token from Authorization header")
+	ErrParseBearer      = errors.New("could not parse bearer token from authorization header")
 	ErrNoAuthorization  = errors.New("no authorization header in request")
 	ErrNoRequest        = errors.New("no request found on the context")
 	ErrRateLimit        = errors.New("rate limit reached: too many requests")
 	ErrNoRefreshToken   = errors.New("no refresh token available on request")
-	ErrRefreshDisabled  = errors.New("reauthentication with refresh tokens disabled")
+	ErrRefreshDisabled  = errors.New("re-authentication with refresh tokens disabled")
 	ErrShitWentBad      = errors.New("shit went bad")
 )
 
 var (
-	unsuccessful = Reply{Success: false}
-	notFound     = Reply{Success: false, Error: "resource not found"}
-	notAllowed   = Reply{Success: false, Error: "method not allowed"}
-	unverified   = Reply{Success: false, Unverified: true, Error: responses.ErrVerifyEmail}
+	unsuccessful = echo.HTTPError{}
+	notFound     = echo.HTTPError{Message: "resource not found"}
+	notAllowed   = echo.HTTPError{Message: "method not allowed"}
+	unverified   = echo.HTTPError{Message: responses.ErrVerifyEmail}
 )
 
 var (
@@ -64,31 +58,31 @@ var (
 )
 
 // ErrorResponse constructs a new response for an error or simply returns unsuccessful
-func ErrorResponse(err interface{}) Reply {
+func ErrorResponse(err interface{}) *echo.HTTPError {
 	if err == nil {
-		return unsuccessful
+		return &unsuccessful
 	}
 
-	rep := Reply{Success: false}
+	rep := echo.HTTPError{Code: http.StatusBadRequest}
 	switch err := err.(type) {
 	case error:
-		rep.Error = err.Error()
+		rep.Message = err.Error()
 	case string:
-		rep.Error = err
+		rep.Message = err
 	case fmt.Stringer:
-		rep.Error = err.String()
+		rep.Message = err.String()
 	case json.Marshaler:
 		data, e := err.MarshalJSON()
 		if e != nil {
 			panic(err)
 		}
 
-		rep.Error = string(data)
+		rep.Message = string(data)
 	default:
-		rep.Error = "unhandled error response"
+		rep.Message = "unhandled error response"
 	}
 
-	return rep
+	return &rep
 }
 
 // NotFound returns a JSON 404 response for the API.
@@ -145,28 +139,4 @@ func RestrictedField(field string) error {
 
 func ConflictingFields(fields ...string) error {
 	return &FieldError{Field: strings.Join(fields, ", "), Err: ErrConflictingFields}
-}
-
-// StatusError decodes an error response from datum.
-type StatusError struct {
-	StatusCode int
-	Reply      Reply
-}
-
-func (e *StatusError) Error() string {
-	return fmt.Sprintf("[%d] %s", e.StatusCode, e.Reply.Error)
-}
-
-// ErrorStatus returns the HTTP status code from an error or 500 if the error is not a
-// StatusError.
-func ErrorStatus(err error) int {
-	if err == nil {
-		return http.StatusOK
-	}
-
-	if e, ok := err.(*StatusError); !ok || e.StatusCode < 100 || e.StatusCode >= 600 {
-		return http.StatusInternalServerError
-	} else {
-		return e.StatusCode
-	}
 }

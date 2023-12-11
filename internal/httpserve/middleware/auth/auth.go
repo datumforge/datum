@@ -45,20 +45,17 @@ func Authenticate() echo.MiddlewareFunc {
 				switch {
 				case errors.Is(err, ErrNoAuthorization):
 					if accessToken, err = reauthenticate(c); err != nil {
-						ErrorResponse(ErrAuthRequired)
-						return err
+						return ErrorResponse(err)
 					}
 				default:
-					ErrorResponse(ErrAuthRequired)
-					return err
+					return ErrorResponse(err)
 				}
 			}
 
 			// Verify the access token is authorized for use with datum and extract claims.
 			claims, err := validator.Verify(accessToken)
 			if err != nil {
-				ErrorResponse(ErrAuthRequired)
-				return err
+				return ErrorResponse(err)
 			}
 
 			// Add claims to context for use in downstream processing and continue handlers

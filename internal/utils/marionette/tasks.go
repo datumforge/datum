@@ -86,9 +86,9 @@ func (h *TaskHandler) Exec() {
 	var err error
 	if err = h.task.Do(ctx); err == nil {
 		// Success!
-		h.parent.logger.Desugar().Sugar().Debug("task_id", h.id.String())
-		h.parent.logger.Desugar().Sugar().Debug("duration", time.Since(h.queuedAt))
-		h.parent.logger.Desugar().Sugar().Debug("attempts", h.attempts+1)
+		h.parent.logger.Debug("task_id", h.id.String())
+		h.parent.logger.Debug("duration", time.Since(h.queuedAt))
+		h.parent.logger.Debug("attempts", h.attempts+1)
 
 		return
 	}

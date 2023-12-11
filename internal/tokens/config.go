@@ -1,10 +1,10 @@
 package tokens
 
-import (
-	"time"
-)
+import "time"
 
-type TokenConfig struct {
+// Config defines the configuration settings for authentication tokens used in the server
+type Config struct {
+	// Keys contains the kid as the key and a path to the pem file as the value
 	Keys            map[string]string `required:"false"`                  // $DATUM_TOKEN_KEYS
 	Audience        string            `default:"https://datum.net"`       // $DATUM_TOKEN_AUDIENCE
 	RefreshAudience string            `required:"false"`                  // $DATUM_TOKEN_REFRESH_AUDIENCE

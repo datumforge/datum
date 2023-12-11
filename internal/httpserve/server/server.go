@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/route"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 type Server struct {
@@ -76,8 +77,20 @@ func (s *Server) StartEchoServer() error {
 		srv.Use(m)
 	}
 
+	// Setup token manager (TODO: should this go elsewhere?)
+	tm, err := tokens.New(s.config.Token)
+	if err != nil {
+		return err
+	}
+
+	keys, err := tm.Keys()
+	if err != nil {
+		return err
+	}
+
+	s.config.Handler.JWTKeys = keys
 	// Add base routes to the server
-	if err := route.RegisterRoutes(srv, &s.config.Checks); err != nil {
+	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {
 		return err
 	}
 

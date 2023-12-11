@@ -91,7 +91,7 @@ tasks:
   run-dev-auth:
     desc: runs the datum server with oidc enabled
     cmds: 
-    - go run main.go serve  --debug --pretty --dev --jwt-secretkey=mysupersecretkey  --fga-host=localhost:8080 --fga-scheme=http
+    - go run main.go serve  --debug --pretty --dev --fga-host=localhost:8080 --fga-scheme=http --jwt-audience=http://localhost:17608 --jwt-issuer=http://localhost:17608 --jwt-kid=01HHAS67AM73778S0QEZ3CEAGE
   run-dev:
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:

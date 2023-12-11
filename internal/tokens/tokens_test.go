@@ -22,8 +22,8 @@ const (
 type TokenTestSuite struct {
 	suite.Suite
 	testdata    map[string]string
-	conf        tokens.TokenConfig
-	expiredConf tokens.TokenConfig
+	conf        tokens.Config
+	expiredConf tokens.Config
 }
 
 func (s *TokenTestSuite) SetupSuite() {
@@ -32,7 +32,7 @@ func (s *TokenTestSuite) SetupSuite() {
 	s.testdata["01GE6191AQTGMCJ9BN0QC3CCVG"] = "testdata/01GE6191AQTGMCJ9BN0QC3CCVG.pem"
 	s.testdata["01GE62EXXR0X0561XD53RDFBQJ"] = "testdata/01GE62EXXR0X0561XD53RDFBQJ.pem"
 
-	s.conf = tokens.TokenConfig{
+	s.conf = tokens.Config{
 		Keys:            s.testdata,
 		Audience:        audience,
 		Issuer:          issuer,
@@ -42,7 +42,7 @@ func (s *TokenTestSuite) SetupSuite() {
 	}
 
 	// Some tests require expired tokens to test expiration checking logic.
-	s.expiredConf = tokens.TokenConfig{
+	s.expiredConf = tokens.Config{
 		Keys:            s.testdata,
 		Audience:        audience,
 		Issuer:          issuer,
@@ -272,7 +272,7 @@ func (s *TokenTestSuite) TestKeyRotation() {
 	require := s.Require()
 
 	// Create the "old token manager"
-	conf := tokens.TokenConfig{
+	conf := tokens.Config{
 		Keys: map[string]string{
 			"01GE6191AQTGMCJ9BN0QC3CCVG": "testdata/01GE6191AQTGMCJ9BN0QC3CCVG.pem",
 		},

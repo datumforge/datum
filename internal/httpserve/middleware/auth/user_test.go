@@ -1,4 +1,4 @@
-package auth
+package auth_test
 
 import (
 	"testing"
@@ -7,7 +7,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func Test_GetActorSubject(t *testing.T) {
@@ -18,7 +20,14 @@ func Test_GetActorSubject(t *testing.T) {
 	jBasic := jwt.New(jwt.SigningMethodHS256)
 	missingSubCtx.Set("user", jBasic)
 
-	validCtx, err := echocontext.NewTestContextWithValidUser("foobar")
+	sub := ulids.New().String()
+
+	validCtx, err := auth.NewTestContextWithValidUser(sub)
+	if err != nil {
+		t.Fatal()
+	}
+
+	invalidUserCtx, err := auth.NewTestContextWithValidUser(ulids.Null.String())
 	if err != nil {
 		t.Fatal()
 	}
@@ -36,27 +45,33 @@ func Test_GetActorSubject(t *testing.T) {
 		{
 			name: "no user",
 			e:    basicContext,
-			err:  ErrJWTMissingInvalid,
+			err:  auth.ErrNoClaims,
 		},
 		{
 			name: "no user",
 			e:    missingSubCtx,
-			err:  ErrSubjectNotFound,
+			err:  auth.ErrNoClaims,
+		},
+		{
+			name: "null user",
+			e:    *invalidUserCtx,
+			err:  auth.ErrNoUserInfo,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			sub, err := GetActorSubject(tc.e)
+			got, err := auth.GetActorSubject(tc.e)
 			if tc.err != nil {
 				assert.Error(t, err)
-				assert.Empty(t, sub)
+				assert.Empty(t, got)
+				assert.ErrorContains(t, err, tc.err.Error())
 
 				return
 			}
 
 			assert.NoError(t, err)
-			assert.Equal(t, "foobar", sub)
+			assert.Equal(t, sub, got)
 		})
 	}
 }

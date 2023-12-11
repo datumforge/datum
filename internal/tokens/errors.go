@@ -58,6 +58,30 @@ var (
 
 	// ErrTokenInvalidClaims is returned when the token has invalid claims
 	ErrTokenInvalidClaims = errors.New("token has invalid claims")
+
+	// ErrMissingEmail is returned when the token is attempted to be verified but the email is missing
+	ErrMissingEmail = errors.New("unable to create verification token, email is missing")
+
+	// ErrTokenMissingEmail is returned when the verification is missing an email address
+	ErrTokenMissingEmail = errors.New("email verification token is missing email address")
+
+	// ErrInvalidSecret is returned when the verification contains of secret of invalid length
+	ErrInvalidSecret = errors.New("email verification token contains an invalid secret")
+
+	// ErrMissingUserID is returned when a reset token is trying to be created but no user id is provided
+	ErrMissingUserID = errors.New("unable to create reset token, user id is required")
+
+	// ErrTokenMissingUserID is returned when the reset token is missing the required user id
+	ErrTokenMissingUserID = errors.New("reset token is missing user id")
+
+	// ErrExpirationIsRequired is returned when signing info is provided a zero-value expiration
+	ErrExpirationIsRequired = errors.New("signing info requires a non-zero expiration")
+
+	// ErrFailedSigning is returned when an error occurs when trying to generate signing info with expiration
+	ErrFailedSigning = errors.New("error occurred when attempting to signing info")
+
+	// ErrTokenInvalid is returned when unable to verify the token with the signature and secret provided
+	ErrTokenInvalid = errors.New("unable to verify token")
 )
 
 // The errors that might occur when parsing and validating a token

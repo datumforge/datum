@@ -10,14 +10,18 @@ import (
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func TestQuery_User(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(EntClient)
 
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -71,7 +75,9 @@ func TestQuery_Users(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(EntClient)
 
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -117,7 +123,9 @@ func TestMutation_CreateUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -227,7 +235,9 @@ func TestMutation_UpdateUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -345,7 +355,9 @@ func TestMutation_DeleteUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}

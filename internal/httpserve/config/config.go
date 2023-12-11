@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 type (
@@ -61,8 +62,10 @@ type (
 		Routes []http.Handler `yaml:"routes"`
 		// Middleware to enable on the echo server
 		Middleware []echo.MiddlewareFunc `yaml:"middleware"`
-		// Checks contains readiness checks
-		Checks handlers.Checks `yaml:"checks"`
+		// Handler contains the required settings for REST handlers including ready checks and JWT keys
+		Handler handlers.Handler `yaml:"checks"`
+		// Token contains the token config settings
+		Token tokens.Config `yaml:"token"`
 	}
 
 	// DB Settings

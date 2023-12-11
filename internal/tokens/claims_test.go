@@ -25,10 +25,10 @@ func TestClaimsParseUserID(t *testing.T) {
 	claims := &tokens.Claims{}
 	require.Equal(t, ulids.Null, claims.ParseUserID())
 
-	claims.Subject = "notvalid"
+	claims.UserID = "notvalid"
 	require.Equal(t, ulids.Null, claims.ParseUserID())
 
 	userID := ulids.New()
-	claims.Subject = userID.String()
+	claims.UserID = userID.String()
 	require.Equal(t, userID, claims.ParseUserID())
 }

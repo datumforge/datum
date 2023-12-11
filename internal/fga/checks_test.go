@@ -49,7 +49,7 @@ func Test_CheckTuple(t *testing.T) {
 
 			// mock response for input
 			body := ofgaclient.ClientCheckRequest{
-				User:     "user:nano-id-of-member",
+				User:     "user:ulid-of-member",
 				Relation: tc.relation,
 				Object:   tc.object,
 			}

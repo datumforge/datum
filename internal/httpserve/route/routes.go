@@ -13,13 +13,13 @@ type Route struct {
 }
 
 // RegisterRoutes with the echo routers
-func RegisterRoutes(router *echo.Echo, checks *handlers.Checks) error {
+func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
 		return err
 	}
 
-	if err := registerReadinessHandler(router, checks); err != nil {
+	if err := registerReadinessHandler(router, h); err != nil {
 		return err
 	}
 
@@ -56,6 +56,10 @@ func RegisterRoutes(router *echo.Echo, checks *handlers.Checks) error {
 	}
 
 	if err := registerAuthenticateHandler(router); err != nil {
+		return err
+	}
+
+	if err := registerJwksWellKnownHandler(router, h); err != nil {
 		return err
 	}
 

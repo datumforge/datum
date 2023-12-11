@@ -6,10 +6,10 @@ import (
 
 	"entgo.io/ent"
 
-	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 // InterceptorOrganization is middleware to change the Organization query

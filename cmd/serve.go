@@ -11,13 +11,14 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/auth"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 var serveCmd = &cobra.Command{
@@ -42,7 +43,7 @@ func init() {
 	}
 
 	// Auth configuration settings
-	if err := auth.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
+	if err := tokens.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
 		log.Fatal(err)
 	}
 
@@ -78,6 +79,11 @@ func serve(ctx context.Context) error {
 		serveropts.WithFGAAuthz(settings),
 	)
 
+	// Create keys for development
+	if dev := viper.GetBool("server.dev"); dev {
+		serverOpts = append(serverOpts, serveropts.WithGeneratedKeys(settings))
+	}
+
 	so := serveropts.NewServerOptions(serverOpts)
 
 	// setup Authz connection
@@ -94,11 +100,10 @@ func serve(ctx context.Context) error {
 		// add client as ent dependency
 		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
-		// add jwt middleware
-		secretKey := []byte(viper.GetString("jwt.secretkey"))
-		jwtMiddleware := auth.CreateJwtMiddleware([]byte(secretKey))
+		// add auth middleware
+		authMiddleware := authmw.Authenticate()
 
-		mw = append(mw, jwtMiddleware)
+		mw = append(mw, authMiddleware)
 	}
 
 	// Setup DB connection

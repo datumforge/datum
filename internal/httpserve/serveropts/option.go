@@ -1,6 +1,12 @@
 package serveropts
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
+	"fmt"
+	"os"
 	"time"
 
 	"entgo.io/ent/dialect"
@@ -14,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 type ServerOption interface {
@@ -149,6 +156,62 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 	})
 }
 
+// WithGeneratedKeys will generate a public/private key pair
+// that can be used for jwt signing.
+// This should only be used in a development environment
+func WithGeneratedKeys(settings map[string]any) ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		privFileName := "private_key.pem"
+
+		// generate a new private key if one doesn't exist
+		if _, err := os.Stat(privFileName); err != nil {
+			// Generate a new RSA private key with 2048 bits
+			privateKey, err := rsa.GenerateKey(rand.Reader, 2048) //nolint:gomnd
+			if err != nil {
+				s.Config.Logger.Panicf("Error generating RSA private key:", err)
+			}
+
+			// Encode the private key to the PEM format
+			privateKeyPEM := &pem.Block{
+				Type:  "RSA PRIVATE KEY",
+				Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
+			}
+
+			privateKeyFile, err := os.Create(privFileName)
+			if err != nil {
+				s.Config.Logger.Panicf("Error creating private key file:", err)
+			}
+
+			if err := pem.Encode(privateKeyFile, privateKeyPEM); err != nil {
+				s.Config.Logger.Panicw("unable to encode pem on startup", "error", err.Error())
+			}
+
+			privateKeyFile.Close()
+		}
+
+		keys := map[string]string{}
+
+		// check if kid was passed in
+		var kidPriv string
+		jwtSettings, ok := settings["jwt"].(map[string]any)
+		if ok {
+			kid, ok := jwtSettings["kid"].(string)
+			if ok {
+				kidPriv = kid
+			}
+		}
+
+		// if we didn't get a kid in the settings, assign one
+		if kidPriv == "" {
+			kidPriv = ulids.New().String()
+		}
+
+		keys[kidPriv] = fmt.Sprintf("%v", privFileName)
+
+		s.Config.Server.Token.Keys = keys
+	})
+}
+
 // WithAuth supplies the authn config for the server
 // TODO: expand these settings
 func WithAuth(settings map[string]any) ServerOption {
@@ -156,9 +219,12 @@ func WithAuth(settings map[string]any) ServerOption {
 		authEnabled := settings["auth"].(bool)
 
 		// Commenting out until this is implemented
-		// oidcSettings := settings["oidc"].(map[string]any)
+		jwtSettings := settings["jwt"].(map[string]any)
 
 		s.Config.Auth.Enabled = authEnabled
+
+		s.Config.Server.Token.Issuer = jwtSettings["issuer"].(string)
+		s.Config.Server.Token.Audience = jwtSettings["audience"].(string)
 	})
 }
 
@@ -166,19 +232,19 @@ func WithAuth(settings map[string]any) ServerOption {
 func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Initialize checks
-		s.Config.Server.Checks = handlers.Checks{}
+		s.Config.Server.Handler = handlers.Handler{}
 
 		// Always add a check to the primary db connection
-		s.Config.Server.Checks.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
+		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
 
 		// Check the secondary db, if enabled
 		if s.Config.DB.MultiWrite {
-			s.Config.Server.Checks.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
+			s.Config.Server.Handler.AddReadinessCheck("sqlite_db_secondary", entdb.Healthcheck(c.GetSecondaryDB()))
 		}
 
 		// Check the connection to openFGA, if enabled
 		if s.Config.Authz.Enabled {
-			s.Config.Server.Checks.AddReadinessCheck("fga", fga.Healthcheck(*f))
+			s.Config.Server.Handler.AddReadinessCheck("fga", fga.Healthcheck(*f))
 		}
 	})
 }

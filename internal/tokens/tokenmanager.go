@@ -37,7 +37,7 @@ var (
 type TokenManager struct {
 	validator
 	refreshAudience string
-	conf            TokenConfig
+	conf            Config
 	currentKeyID    ulid.ULID
 	currentKey      *rsa.PrivateKey
 	keys            map[ulid.ULID]*rsa.PublicKey
@@ -72,7 +72,7 @@ type Token struct {
 // strings to paths to files that contain PEM encoded RSA private keys. This input is
 // specifically designed for the config environment variable so that keys can be loaded
 // from k8s or vault secrets that are mounted as files on disk
-func New(conf TokenConfig) (tm *TokenManager, err error) {
+func New(conf Config) (tm *TokenManager, err error) {
 	tm = &TokenManager{
 		validator: validator{
 			audience: conf.Audience,
@@ -90,20 +90,20 @@ func New(conf TokenConfig) (tm *TokenManager, err error) {
 		var keyID ulid.ULID
 
 		if keyID, err = ulid.Parse(kid); err != nil {
-			return nil, newParseError("path", kid, err)
+			return nil, newParseError("kid", kid, err)
 		}
 
 		// Load the keys from disk
 		var data []byte
 
 		if data, err = os.ReadFile(path); err != nil {
-			return nil, newParseError("path", kid, err)
+			return nil, newParseError("path - read", path, err)
 		}
 
 		var key *rsa.PrivateKey
 
 		if key, err = jwt.ParseRSAPrivateKeyFromPEM(data); err != nil {
-			return nil, newParseError("path", kid, err)
+			return nil, newParseError("path - retrieve", path, err)
 		}
 
 		tm.keys[keyID] = &key.PublicKey
@@ -123,7 +123,7 @@ func New(conf TokenConfig) (tm *TokenManager, err error) {
 // TokenManager with the provided key, along with other configuration settings from the TokenConfig
 // struct. It returns the created TokenManager instance or an error if there was a problem
 // initializing the TokenManager.
-func NewWithKey(key *rsa.PrivateKey, conf TokenConfig) (tm *TokenManager, err error) {
+func NewWithKey(key *rsa.PrivateKey, conf Config) (tm *TokenManager, err error) {
 	tm = &TokenManager{
 		validator: validator{
 			audience: conf.Audience,

@@ -1607,16 +1607,25 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 }
 
 type GetUserByID_User_Setting struct {
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
+	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
+	Tags           []string           "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
-func (t *GetUserByID_User_Setting) GetStatus() *usersetting.Status {
+func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
 	}
-	return &t.Status
+	return t.EmailConfirmed
 }
 func (t *GetUserByID_User_Setting) GetLocked() bool {
 	if t == nil {
@@ -1624,20 +1633,83 @@ func (t *GetUserByID_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
+func (t *GetUserByID_User_Setting) GetStatus() *usersetting.Status {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
 	}
-	return t.EmailConfirmed
+	return &t.Status
+}
+func (t *GetUserByID_User_Setting) GetRole() *usersetting.Role {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return &t.Role
+}
+func (t *GetUserByID_User_Setting) GetPermissions() []string {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.Permissions
+}
+func (t *GetUserByID_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.Tags
+}
+func (t *GetUserByID_User_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *GetUserByID_User_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetUserByID_User_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetUserByID_User_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetUserByID_User_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetUserByID_User_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.SilencedAt
 }
 
 type GetUserByID_User struct {
-	ID          string                   "json:\"id\" graphql:\"id\""
-	FirstName   string                   "json:\"firstName\" graphql:\"firstName\""
-	LastName    string                   "json:\"lastName\" graphql:\"lastName\""
-	Email       string                   "json:\"email\" graphql:\"email\""
-	DisplayName string                   "json:\"displayName\" graphql:\"displayName\""
-	Setting     GetUserByID_User_Setting "json:\"setting\" graphql:\"setting\""
+	ID              string                   "json:\"id\" graphql:\"id\""
+	FirstName       string                   "json:\"firstName\" graphql:\"firstName\""
+	LastName        string                   "json:\"lastName\" graphql:\"lastName\""
+	DisplayName     string                   "json:\"displayName\" graphql:\"displayName\""
+	Email           string                   "json:\"email\" graphql:\"email\""
+	LastSeen        *time.Time               "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
+	Sub             *string                  "json:\"sub,omitempty\" graphql:\"sub\""
+	AvatarRemoteURL *string                  "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile *string                  "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Oauth           bool                     "json:\"oauth\" graphql:\"oauth\""
+	Setting         GetUserByID_User_Setting "json:\"setting\" graphql:\"setting\""
+	UpdatedAt       time.Time                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy       *string                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt       time.Time                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy       *string                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 }
 
 func (t *GetUserByID_User) GetID() string {
@@ -1658,17 +1730,47 @@ func (t *GetUserByID_User) GetLastName() string {
 	}
 	return t.LastName
 }
+func (t *GetUserByID_User) GetDisplayName() string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.DisplayName
+}
 func (t *GetUserByID_User) GetEmail() string {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
 	return t.Email
 }
-func (t *GetUserByID_User) GetDisplayName() string {
+func (t *GetUserByID_User) GetLastSeen() *time.Time {
 	if t == nil {
 		t = &GetUserByID_User{}
 	}
-	return t.DisplayName
+	return t.LastSeen
+}
+func (t *GetUserByID_User) GetSub() *string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.Sub
+}
+func (t *GetUserByID_User) GetAvatarRemoteURL() *string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.AvatarRemoteURL
+}
+func (t *GetUserByID_User) GetAvatarLocalFile() *string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.AvatarLocalFile
+}
+func (t *GetUserByID_User) GetOauth() bool {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.Oauth
 }
 func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
 	if t == nil {
@@ -1676,18 +1778,51 @@ func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
 	}
 	return &t.Setting
 }
-
-type GetUserByIDWithOrgs_User_Setting struct {
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
-	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+func (t *GetUserByID_User) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetUserByID_User) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetUserByID_User) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetUserByID_User) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.CreatedBy
 }
 
-func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *usersetting.Status {
+type GetUserByIDWithOrgs_User_Setting struct {
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
+	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
+	Tags           []string           "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+}
+
+func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
-	return &t.Status
+	return t.EmailConfirmed
 }
 func (t *GetUserByIDWithOrgs_User_Setting) GetLocked() bool {
 	if t == nil {
@@ -1695,11 +1830,65 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
+func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *usersetting.Status {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
-	return t.EmailConfirmed
+	return &t.Status
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetRole() *usersetting.Role {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return &t.Role
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetPermissions() []string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.Permissions
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.Tags
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetUserByIDWithOrgs_User_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.SilencedAt
 }
 
 type GetUserByIDWithOrgs_User_Organizations struct {
@@ -1728,13 +1917,22 @@ func (t *GetUserByIDWithOrgs_User_Organizations) GetDisplayName() string {
 }
 
 type GetUserByIDWithOrgs_User struct {
-	ID            string                                    "json:\"id\" graphql:\"id\""
-	FirstName     string                                    "json:\"firstName\" graphql:\"firstName\""
-	LastName      string                                    "json:\"lastName\" graphql:\"lastName\""
-	Email         string                                    "json:\"email\" graphql:\"email\""
-	DisplayName   string                                    "json:\"displayName\" graphql:\"displayName\""
-	Setting       GetUserByIDWithOrgs_User_Setting          "json:\"setting\" graphql:\"setting\""
-	Organizations []*GetUserByIDWithOrgs_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+	ID              string                                    "json:\"id\" graphql:\"id\""
+	FirstName       string                                    "json:\"firstName\" graphql:\"firstName\""
+	LastName        string                                    "json:\"lastName\" graphql:\"lastName\""
+	DisplayName     string                                    "json:\"displayName\" graphql:\"displayName\""
+	Email           string                                    "json:\"email\" graphql:\"email\""
+	LastSeen        *time.Time                                "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
+	Sub             *string                                   "json:\"sub,omitempty\" graphql:\"sub\""
+	AvatarRemoteURL *string                                   "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile *string                                   "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Oauth           bool                                      "json:\"oauth\" graphql:\"oauth\""
+	Setting         GetUserByIDWithOrgs_User_Setting          "json:\"setting\" graphql:\"setting\""
+	UpdatedAt       time.Time                                 "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy       *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt       time.Time                                 "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy       *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Organizations   []*GetUserByIDWithOrgs_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
 }
 
 func (t *GetUserByIDWithOrgs_User) GetID() string {
@@ -1755,23 +1953,77 @@ func (t *GetUserByIDWithOrgs_User) GetLastName() string {
 	}
 	return t.LastName
 }
-func (t *GetUserByIDWithOrgs_User) GetEmail() string {
-	if t == nil {
-		t = &GetUserByIDWithOrgs_User{}
-	}
-	return t.Email
-}
 func (t *GetUserByIDWithOrgs_User) GetDisplayName() string {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
 	return t.DisplayName
 }
+func (t *GetUserByIDWithOrgs_User) GetEmail() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.Email
+}
+func (t *GetUserByIDWithOrgs_User) GetLastSeen() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.LastSeen
+}
+func (t *GetUserByIDWithOrgs_User) GetSub() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.Sub
+}
+func (t *GetUserByIDWithOrgs_User) GetAvatarRemoteURL() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.AvatarRemoteURL
+}
+func (t *GetUserByIDWithOrgs_User) GetAvatarLocalFile() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.AvatarLocalFile
+}
+func (t *GetUserByIDWithOrgs_User) GetOauth() bool {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.Oauth
+}
 func (t *GetUserByIDWithOrgs_User) GetSetting() *GetUserByIDWithOrgs_User_Setting {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
 	return &t.Setting
+}
+func (t *GetUserByIDWithOrgs_User) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetUserByIDWithOrgs_User) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetUserByIDWithOrgs_User) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetUserByIDWithOrgs_User) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User{}
+	}
+	return t.CreatedBy
 }
 func (t *GetUserByIDWithOrgs_User) GetOrganizations() []*GetUserByIDWithOrgs_User_Organizations {
 	if t == nil {
@@ -1781,16 +2033,25 @@ func (t *GetUserByIDWithOrgs_User) GetOrganizations() []*GetUserByIDWithOrgs_Use
 }
 
 type GetAllUsers_Users_Edges_Node_Setting struct {
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
+	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
+	Tags           []string           "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *usersetting.Status {
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
-	return &t.Status
+	return t.EmailConfirmed
 }
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
 	if t == nil {
@@ -1798,20 +2059,83 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *usersetting.Status {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
-	return t.EmailConfirmed
+	return &t.Status
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetRole() *usersetting.Role {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return &t.Role
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetPermissions() []string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.Permissions
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.SilencedAt
 }
 
 type GetAllUsers_Users_Edges_Node struct {
-	ID          string                               "json:\"id\" graphql:\"id\""
-	FirstName   string                               "json:\"firstName\" graphql:\"firstName\""
-	LastName    string                               "json:\"lastName\" graphql:\"lastName\""
-	Email       string                               "json:\"email\" graphql:\"email\""
-	DisplayName string                               "json:\"displayName\" graphql:\"displayName\""
-	Setting     GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
+	ID              string                               "json:\"id\" graphql:\"id\""
+	FirstName       string                               "json:\"firstName\" graphql:\"firstName\""
+	LastName        string                               "json:\"lastName\" graphql:\"lastName\""
+	DisplayName     string                               "json:\"displayName\" graphql:\"displayName\""
+	Email           string                               "json:\"email\" graphql:\"email\""
+	LastSeen        *time.Time                           "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
+	Sub             *string                              "json:\"sub,omitempty\" graphql:\"sub\""
+	AvatarRemoteURL *string                              "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile *string                              "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Oauth           bool                                 "json:\"oauth\" graphql:\"oauth\""
+	Setting         GetAllUsers_Users_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
+	UpdatedAt       time.Time                            "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy       *string                              "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt       time.Time                            "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy       *string                              "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 }
 
 func (t *GetAllUsers_Users_Edges_Node) GetID() string {
@@ -1832,23 +2156,77 @@ func (t *GetAllUsers_Users_Edges_Node) GetLastName() string {
 	}
 	return t.LastName
 }
-func (t *GetAllUsers_Users_Edges_Node) GetEmail() string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node{}
-	}
-	return t.Email
-}
 func (t *GetAllUsers_Users_Edges_Node) GetDisplayName() string {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
 	return t.DisplayName
 }
+func (t *GetAllUsers_Users_Edges_Node) GetEmail() string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Email
+}
+func (t *GetAllUsers_Users_Edges_Node) GetLastSeen() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.LastSeen
+}
+func (t *GetAllUsers_Users_Edges_Node) GetSub() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Sub
+}
+func (t *GetAllUsers_Users_Edges_Node) GetAvatarRemoteURL() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.AvatarRemoteURL
+}
+func (t *GetAllUsers_Users_Edges_Node) GetAvatarLocalFile() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.AvatarLocalFile
+}
+func (t *GetAllUsers_Users_Edges_Node) GetOauth() bool {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.Oauth
+}
 func (t *GetAllUsers_Users_Edges_Node) GetSetting() *GetAllUsers_Users_Edges_Node_Setting {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node{}
 	}
 	return &t.Setting
+}
+func (t *GetAllUsers_Users_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetAllUsers_Users_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetAllUsers_Users_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node{}
+	}
+	return t.CreatedBy
 }
 
 type GetAllUsers_Users_Edges struct {
@@ -1896,16 +2274,25 @@ func (t *CreateUser_CreateUser_User_Groups) GetID() string {
 }
 
 type CreateUser_CreateUser_User_Setting struct {
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
+	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
+	Tags           []string           "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
-func (t *CreateUser_CreateUser_User_Setting) GetStatus() *usersetting.Status {
+func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
-	return &t.Status
+	return t.EmailConfirmed
 }
 func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
 	if t == nil {
@@ -1913,11 +2300,65 @@ func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
+func (t *CreateUser_CreateUser_User_Setting) GetStatus() *usersetting.Status {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
-	return t.EmailConfirmed
+	return &t.Status
+}
+func (t *CreateUser_CreateUser_User_Setting) GetRole() *usersetting.Role {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return &t.Role
+}
+func (t *CreateUser_CreateUser_User_Setting) GetPermissions() []string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.Permissions
+}
+func (t *CreateUser_CreateUser_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.Tags
+}
+func (t *CreateUser_CreateUser_User_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *CreateUser_CreateUser_User_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *CreateUser_CreateUser_User_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *CreateUser_CreateUser_User_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.SilencedAt
 }
 
 type CreateUser_CreateUser_User struct {
@@ -2053,16 +2494,25 @@ func (t *UpdateUser_UpdateUser_User_PersonalAccessTokens) GetID() string {
 }
 
 type UpdateUser_UpdateUser_User_Setting struct {
-	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
+	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
+	Tags           []string           "json:\"tags\" graphql:\"tags\""
+	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 }
 
-func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *usersetting.Status {
+func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
-	return &t.Status
+	return t.EmailConfirmed
 }
 func (t *UpdateUser_UpdateUser_User_Setting) GetLocked() bool {
 	if t == nil {
@@ -2070,11 +2520,65 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetLocked() bool {
 	}
 	return t.Locked
 }
-func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
+func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *usersetting.Status {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
-	return t.EmailConfirmed
+	return &t.Status
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetRole() *usersetting.Role {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return &t.Role
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetPermissions() []string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.Permissions
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetTags() []string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.Tags
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.SuspendedAt
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateUser_UpdateUser_User_Setting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.SilencedAt
 }
 
 type UpdateUser_UpdateUser_User struct {
@@ -2928,13 +3432,31 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 		id
 		firstName
 		lastName
-		email
 		displayName
+		email
+		lastSeen
+		sub
+		avatarRemoteURL
+		avatarLocalFile
+		oauth
 		setting {
-			status
-			locked
 			emailConfirmed
+			locked
+			status
+			role
+			permissions
+			tags
+			suspendedAt
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+			silencedAt
 		}
+		updatedAt
+		updatedBy
+		createdAt
+		createdBy
 	}
 }
 `
@@ -2961,13 +3483,31 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		id
 		firstName
 		lastName
-		email
 		displayName
+		email
+		lastSeen
+		sub
+		avatarRemoteURL
+		avatarLocalFile
+		oauth
 		setting {
-			status
-			locked
 			emailConfirmed
+			locked
+			status
+			role
+			permissions
+			tags
+			suspendedAt
+			createdAt
+			createdBy
+			updatedAt
+			updatedBy
+			silencedAt
 		}
+		updatedAt
+		updatedBy
+		createdAt
+		createdBy
 		organizations {
 			id
 			name
@@ -3001,13 +3541,31 @@ const GetAllUsersDocument = `query GetAllUsers {
 				id
 				firstName
 				lastName
-				email
 				displayName
+				email
+				lastSeen
+				sub
+				avatarRemoteURL
+				avatarLocalFile
+				oauth
 				setting {
-					status
-					locked
 					emailConfirmed
+					locked
+					status
+					role
+					permissions
+					tags
+					suspendedAt
+					createdAt
+					createdBy
+					updatedAt
+					updatedBy
+					silencedAt
 				}
+				updatedAt
+				updatedBy
+				createdAt
+				createdBy
 			}
 		}
 	}
@@ -3048,9 +3606,18 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 				id
 			}
 			setting {
-				status
-				locked
 				emailConfirmed
+				locked
+				status
+				role
+				permissions
+				tags
+				suspendedAt
+				createdAt
+				createdBy
+				updatedAt
+				updatedBy
+				silencedAt
 			}
 		}
 	}
@@ -3097,9 +3664,18 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 				id
 			}
 			setting {
-				status
-				locked
 				emailConfirmed
+				locked
+				status
+				role
+				permissions
+				tags
+				suspendedAt
+				createdAt
+				createdBy
+				updatedAt
+				updatedBy
+				silencedAt
 			}
 		}
 	}

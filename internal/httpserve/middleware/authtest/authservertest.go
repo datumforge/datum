@@ -4,9 +4,11 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -15,8 +17,8 @@ import (
 )
 
 const (
-	Audience = "http://127.0.0.1"
-	Issuer   = "http://127.0.0.1"
+	Audience = "http://localhost:17608"
+	Issuer   = "http://localhost:17608"
 )
 
 // Server implements an endpoint to host JWKS public keys and also provides simple
@@ -38,16 +40,15 @@ func NewServer() (s *Server, err error) {
 
 	// Setup httptest Server
 	s.srv = httptest.NewServer(s.mux)
-	s.URL, _ = url.Parse(s.srv.URL)
+	s.URL, _ = url.Parse("http://localhost:17608/.well-known/jwks.json")
 
 	// Create token manager
-	var key *rsa.PrivateKey
+	keys := map[string]string{}
 
-	if key, err = rsa.GenerateKey(rand.Reader, 2048); err != nil { // nolint: gomnd
-		return nil, err
-	}
+	// Checks for the file in the root of this repo
+	privFileName := "../../../../private_key.pem"
 
-	conf := tokens.TokenConfig{
+	conf := tokens.Config{
 		Audience:        Audience,
 		Issuer:          Issuer,
 		AccessDuration:  1 * time.Hour,
@@ -55,8 +56,26 @@ func NewServer() (s *Server, err error) {
 		RefreshOverlap:  -15 * time.Minute,
 	}
 
-	if s.tokens, err = tokens.NewWithKey(key, conf); err != nil {
-		return nil, err
+	// if the file isn't there, generate with a new key
+	if _, err := os.Stat(privFileName); err != nil {
+		var key *rsa.PrivateKey
+
+		if key, err = rsa.GenerateKey(rand.Reader, 2048); err != nil { // nolint: gomnd
+			return nil, err
+		}
+
+		if s.tokens, err = tokens.NewWithKey(key, conf); err != nil {
+			return nil, err
+		}
+	} else {
+		// This is the same KID that the task file uses, so your server and generated
+		// tokens will have same ID
+		keys["01HHAS67AM73778S0QEZ3CEAGE"] = fmt.Sprintf("%v", privFileName)
+		conf.Keys = keys
+
+		if s.tokens, err = tokens.New(conf); err != nil {
+			return nil, err
+		}
 	}
 
 	return s, nil

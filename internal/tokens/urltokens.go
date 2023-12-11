@@ -51,7 +51,8 @@ type VerificationToken struct {
 func (t *VerificationToken) Sign() (string, []byte, error) {
 	var data []byte
 
-	if data, err := msgpack.Marshal(t); err != nil {
+	data, err := msgpack.Marshal(t)
+	if err != nil {
 		return "", nil, err
 	}
 
@@ -114,7 +115,8 @@ type ResetToken struct {
 func (t *ResetToken) Sign() (string, []byte, error) {
 	var data []byte
 
-	if data, err := msgpack.Marshal(t); err != nil {
+	data, err := msgpack.Marshal(t)
+	if err != nil {
 		return "", nil, err
 	}
 

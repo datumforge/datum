@@ -241,7 +241,7 @@ func (f Futures) Insert(t *Future) Futures {
 // the garbage collector to cleanup the previous slice and free up memory.
 // See: https://forum.golangbridge.org/t/free-memory-of-slice/3713/2
 func (f Futures) Resize() Futures {
-	// Create new features slice with size of old features but at least the specified cap
+	// Create new futures slice with size of old  futures but at least the specified cap
 	var r Futures
 	if len(f) < minFuturesCapacity {
 		r = make(Futures, len(f), minFuturesCapacity)

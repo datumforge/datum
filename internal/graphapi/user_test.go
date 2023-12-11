@@ -341,7 +341,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 			errorMsg: "value is greater than the required length",
 		},
 		{
-			name: "update with weak passwor",
+			name: "update with weak password",
 			updateInput: datumclient.UpdateUserInput{
 				Password: &weakPassword,
 			},

@@ -3,28 +3,64 @@ query GetUserByID($userId: ID!) {
     id
     firstName
     lastName
-    email
     displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
     setting {
-        status
-        locked
-        emailConfirmed
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
     }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
   }
 }
 
 query GetUserByIDWithOrgs($userId: ID!) {
   user(id: $userId) {
-    id
+id
     firstName
     lastName
-    email
     displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
     setting {
-        status
-        locked
-        emailConfirmed
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
     }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
     organizations{
       id
       name
@@ -40,13 +76,31 @@ query GetAllUsers {
         id
         firstName
         lastName
-        email
         displayName
+        email
+        lastSeen
+        sub
+        avatarRemoteURL
+        avatarLocalFile
+        oauth
         setting {
-            status
-            locked
-            emailConfirmed
+          emailConfirmed
+          locked
+          status
+          role
+          permissions
+          tags
+          suspendedAt
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          silencedAt
         }
+        updatedAt
+        updatedBy
+        createdAt
+        createdBy
       }
     }
   }
@@ -71,10 +125,19 @@ mutation CreateUser($input: CreateUserInput!) {
         id
       }
       setting {
-        status
-        locked
         emailConfirmed
-        }
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
     }
   }
 }
@@ -102,9 +165,18 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
         id
       }
       setting {
-        status
-        locked
         emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
       }
     }
   }

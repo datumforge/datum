@@ -111,10 +111,10 @@ type ResetToken struct {
 // Sign creates a base64 encoded string from the token data so that it can be sent to
 // users as part of a URL. The returned secret should be stored in the database so that
 // the string can be recomputed when verifying a user provided token
-func (t *ResetToken) Sign() (_ string, secret []byte, err error) {
+func (t *ResetToken) Sign() (string, []byte, error) {
 	var data []byte
 
-	if data, err = msgpack.Marshal(t); err != nil {
+	if data, err := msgpack.Marshal(t); err != nil {
 		return "", nil, err
 	}
 

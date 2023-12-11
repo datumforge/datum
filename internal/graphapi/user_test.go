@@ -271,6 +271,9 @@ func TestMutation_UpdateUser(t *testing.T) {
 
 	user := (&UserBuilder{}).MustNew(reqCtx)
 
+	weakPassword := "notsecure"
+	strongPassword := "my&supers3cr3tpassw0rd!"
+
 	testCases := []struct {
 		name        string
 		updateInput datumclient.UpdateUserInput
@@ -278,7 +281,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name: "update first name, happy path",
+			name: "update first name and password, happy path",
 			updateInput: datumclient.UpdateUserInput{
 				FirstName: &firstNameUpdate,
 			},
@@ -288,6 +291,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 				LastName:    user.LastName,
 				DisplayName: user.DisplayName,
 				Email:       user.Email,
+				Password:    &strongPassword,
 			},
 		},
 		{
@@ -335,6 +339,13 @@ func TestMutation_UpdateUser(t *testing.T) {
 				FirstName: &nameUpdateLong,
 			},
 			errorMsg: "value is greater than the required length",
+		},
+		{
+			name: "update with weak passwor",
+			updateInput: datumclient.UpdateUserInput{
+				Password: &weakPassword,
+			},
+			errorMsg: passwd.ErrWeakPassword.Error(),
 		},
 	}
 

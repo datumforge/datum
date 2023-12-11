@@ -35,9 +35,9 @@ var (
 
 var (
 	unsuccessful = echo.HTTPError{}
-	notFound     = echo.HTTPError{Message: "resource not found"}
-	notAllowed   = echo.HTTPError{Message: "method not allowed"}
-	unverified   = echo.HTTPError{Message: responses.ErrVerifyEmail}
+	notFound     = echo.HTTPError{Code: http.StatusNotFound, Message: "resource not found"}
+	notAllowed   = echo.HTTPError{Code: http.StatusMethodNotAllowed, Message: "method not allowed"}
+	unverified   = echo.HTTPError{Code: http.StatusForbidden, Message: responses.ErrVerifyEmail}
 )
 
 var (

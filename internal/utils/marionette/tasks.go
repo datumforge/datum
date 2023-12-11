@@ -101,7 +101,7 @@ func (h *TaskHandler) Exec() {
 	// Check if we have retries left
 	if h.attempts <= h.retries {
 		// Schedule the retry be added back to the queue
-		h.parent.logger.Desugar().Sugar().Debug("warn!", err)
+		h.parent.logger.Debug("warn!", err)
 
 		h.parent.scheduler.Delay(h.backoff.NextBackOff(), h) // nolint: errcheck
 

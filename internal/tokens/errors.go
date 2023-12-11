@@ -77,7 +77,7 @@ var (
 	// ErrExpirationIsRequired is returned when signing info is provided a zero-value expiration
 	ErrExpirationIsRequired = errors.New("signing info requires a non-zero expiration")
 
-	// ErrFailedSigning is returned when an error occurs when truing to generate signing info with expiration
+	// ErrFailedSigning is returned when an error occurs when trying to generate signing info with expiration
 	ErrFailedSigning = errors.New("error occurred when attempting to signing info")
 
 	// ErrTokenInvalid is returned when unable to verify the token with the signature and secret provided

@@ -49,8 +49,6 @@ type VerificationToken struct {
 // users as part of a URL. The returned secret should be stored in the database so that
 // the string can be recomputed when verifying a user provided token.
 func (t *VerificationToken) Sign() (string, []byte, error) {
-	var data []byte
-
 	data, err := msgpack.Marshal(t)
 	if err != nil {
 		return "", nil, err
@@ -113,8 +111,6 @@ type ResetToken struct {
 // users as part of a URL. The returned secret should be stored in the database so that
 // the string can be recomputed when verifying a user provided token
 func (t *ResetToken) Sign() (string, []byte, error) {
-	var data []byte
-
 	data, err := msgpack.Marshal(t)
 	if err != nil {
 		return "", nil, err

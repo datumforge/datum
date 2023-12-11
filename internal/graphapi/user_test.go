@@ -12,6 +12,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
@@ -138,6 +139,9 @@ func TestMutation_CreateUser(t *testing.T) {
 
 	displayName := gofakeit.LetterN(50)
 
+	weakPassword := "notsecure"
+	strongPassword := "my&supers3cr3tpassw0rd!"
+
 	testCases := []struct {
 		name      string
 		userInput datumclient.CreateUserInput
@@ -150,6 +154,7 @@ func TestMutation_CreateUser(t *testing.T) {
 				LastName:    gofakeit.LastName(),
 				DisplayName: &displayName,
 				Email:       gofakeit.Email(),
+				Password:    &strongPassword,
 			},
 			errorMsg: "",
 		},
@@ -191,6 +196,16 @@ func TestMutation_CreateUser(t *testing.T) {
 				Email:     gofakeit.Email(),
 			},
 			errorMsg: "",
+		},
+		{
+			name: "weak password",
+			userInput: datumclient.CreateUserInput{
+				FirstName: gofakeit.FirstName(),
+				LastName:  gofakeit.LastName(),
+				Email:     gofakeit.Email(),
+				Password:  &weakPassword,
+			},
+			errorMsg: passwd.ErrWeakPassword.Error(),
 		},
 	}
 

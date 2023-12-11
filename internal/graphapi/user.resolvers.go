@@ -6,10 +6,12 @@ package graphapi
 
 import (
 	"context"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	"github.com/datumforge/datum/internal/passwd"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -37,6 +39,12 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 		}
 
 		if generated.IsConstraintError(err) {
+			return nil, err
+		}
+
+		// the password field is encrypted so we cannot use the
+		// built in validation function/validation error
+		if errors.Is(err, passwd.ErrWeakPassword) {
 			return nil, err
 		}
 
@@ -69,6 +77,12 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 	user, err = user.Update().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
+			return nil, err
+		}
+
+		// the password field is encrypted so we cannot use the
+		// built in validation function/validation error
+		if errors.Is(err, passwd.ErrWeakPassword) {
 			return nil, err
 		}
 

@@ -170,6 +170,11 @@ func (User) Hooks() []ent.Hook {
 		hook.On(func(next ent.Mutator) ent.Mutator {
 			return hook.UserFunc(func(ctx context.Context, mutation *generated.UserMutation) (generated.Value, error) {
 				if password, ok := mutation.Password(); ok {
+					// validate password before its encrypted
+					if passwd.Strength(password) < passwd.Moderate {
+						return nil, passwd.ErrWeakPassword
+					}
+
 					hash, err := passwd.CreateDerivedKey(password)
 					if err != nil {
 						return nil, err

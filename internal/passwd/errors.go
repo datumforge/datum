@@ -23,7 +23,7 @@ var (
 	ErrCannotParseEncodedEK = errors.New("cannot parse encoded derived key, matched expression does not contain enough subgroups")
 
 	// ErrWeakPassword is returned when the password provided does not meet minimum complexity requirements
-	ErrWeakPassword = errors.New("provided password is too weak, try add numbers or special characters")
+	ErrWeakPassword = errors.New("provided password is too weak, try adding numbers or special characters")
 )
 
 // ParseError is defining a custom error type called `ParseError`. It is a struct

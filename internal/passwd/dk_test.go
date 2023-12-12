@@ -3,8 +3,9 @@ package passwd_test
 import (
 	"testing"
 
-	"github.com/datumforge/datum/internal/passwd"
 	"github.com/stretchr/testify/require"
+
+	"github.com/datumforge/datum/internal/passwd"
 )
 
 func TestDerivedKey(t *testing.T) {
@@ -27,9 +28,9 @@ func TestDerivedKey(t *testing.T) {
 			false,
 		},
 	}
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-
 			// Create a derived key from a password
 			password, err := passwd.CreateDerivedKey(tc.passwordCreate)
 			require.NoError(t, err)
@@ -39,9 +40,7 @@ func TestDerivedKey(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tc.verified, verified)
 		})
-
 	}
-
 }
 
 func TestDerivedKeyErrors(t *testing.T) {
@@ -106,6 +105,7 @@ func TestDerivedKeyErrors(t *testing.T) {
 			"could not parse dk",
 		},
 	}
+
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := passwd.VerifyDerivedKey(tc.dk, tc.password)

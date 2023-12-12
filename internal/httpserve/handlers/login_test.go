@@ -115,6 +115,18 @@ func TestLoginHandler(t *testing.T) {
 			password: validPassword,
 			err:      auth.ErrNoAuthUser,
 		},
+		{
+			name:     "empty username",
+			username: "",
+			password: validPassword,
+			err:      handlers.ErrMissingRequiredFields,
+		},
+		{
+			name:     "empty username",
+			username: validConfirmedUser,
+			password: "",
+			err:      handlers.ErrMissingRequiredFields,
+		},
 	}
 
 	for _, tc := range testCases {

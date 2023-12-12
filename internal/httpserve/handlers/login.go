@@ -59,8 +59,13 @@ func (h *Handler) verifyCredentials(ctx echo.Context) (*User, error) {
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&u); err != nil {
-		auth.ErrorResponse(err) //nolint:errcheck
+		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, ErrBadRequest
+	}
+
+	if u.Username == "" || u.Password == "" {
+		auth.Unauthorized(ctx) //nolint:errcheck
+		return nil, ErrMissingRequiredFields
 	}
 
 	// check user in the database, username == email and ensure only one record is returned
@@ -68,7 +73,7 @@ func (h *Handler) verifyCredentials(ctx echo.Context) (*User, error) {
 		s.Where(sql.EQ("email", u.Username))
 	}).Only(ctx.Request().Context())
 	if err != nil {
-		auth.ErrorResponse(err) //nolint:errcheck
+		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, auth.ErrNoAuthUser
 	}
 

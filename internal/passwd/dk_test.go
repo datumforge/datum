@@ -22,7 +22,7 @@ func TestDerivedKey(t *testing.T) {
 			true,
 		},
 		{
-			"happy path, matching",
+			"not matching",
 			"supersafesa$#%asaf!",
 			"notthesamething",
 			false,

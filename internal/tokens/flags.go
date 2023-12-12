@@ -32,6 +32,11 @@ func RegisterAuthFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 		return err
 	}
 
+	err = viperconfig.BindConfigFlag(v, flags, "jwt.cookie-domain", "jwt-cookie-domain", "datum.net", "cookie domain for datum JWT", flags.String)
+	if err != nil {
+		return err
+	}
+
 	err = viperconfig.BindConfigFlag(v, flags, "jwt.kid", "jwt-kid", "", "kid for the JWT keys", flags.String)
 	if err != nil {
 		return err

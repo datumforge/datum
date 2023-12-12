@@ -11,7 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
-	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -44,7 +44,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 
 		// the password field is encrypted so we cannot use the
 		// built in validation function/validation error
-		if errors.Is(err, passwd.ErrWeakPassword) {
+		if errors.Is(err, auth.ErrPasswordTooWeak) {
 			return nil, err
 		}
 
@@ -82,7 +82,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 
 		// the password field is encrypted so we cannot use the
 		// built in validation function/validation error
-		if errors.Is(err, passwd.ErrWeakPassword) {
+		if errors.Is(err, auth.ErrPasswordTooWeak) {
 			return nil, err
 		}
 

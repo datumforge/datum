@@ -26,7 +26,7 @@ var (
 	AllResponses = map[string]struct{}{}
 )
 
-// response creates a standard error message to ensure uniqueness and testability for external paackages
+// response creates a standard error message to ensure uniqueness and testability for external packages
 func response(msg string) string {
 	if _, ok := AllResponses[msg]; ok {
 		panic("duplicate error response defined: " + msg)

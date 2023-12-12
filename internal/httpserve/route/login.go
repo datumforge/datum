@@ -3,7 +3,9 @@ package route
 import (
 	"net/http"
 
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/echox/middleware"
 )
 
 // Login is oriented towards human users who use their email and password for
@@ -17,17 +19,14 @@ import (
 // without the user having to log in again. The refresh token overlaps with the access
 // token to provide a seamless authentication experience and the user can refresh their
 // access token so long as the refresh token is valid.
-
-// TODO: implement login handler
-func registerLoginHandler(router *echo.Echo) (err error) { //nolint:unused
+func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
+		Method: http.MethodPost,
 		Path:   "/login",
 		Handler: func(c echo.Context) error {
-			return c.JSON(http.StatusNotImplemented, echo.Map{
-				"error": "Not implemented",
-			})
+			return h.LoginHandler(c)
 		},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return

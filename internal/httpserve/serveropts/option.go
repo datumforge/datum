@@ -50,7 +50,10 @@ func WithConfigProvider(cfgProvider config.ConfigProvider) ServerOption {
 // WithLogger supplies the logger for the server
 func WithLogger(l *zap.SugaredLogger) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
+		// Add logger to main config
 		s.Config.Logger = l
+		// Add logger to the handlers config
+		s.Config.Server.Handler.Logger = l
 	})
 }
 
@@ -224,6 +227,7 @@ func WithAuth(settings map[string]any) ServerOption {
 
 		s.Config.Server.Token.Issuer = jwtSettings["issuer"].(string)
 		s.Config.Server.Token.Audience = jwtSettings["audience"].(string)
+		s.Config.Server.Token.CookieDomain = jwtSettings["cookie-domain"].(string)
 	})
 }
 

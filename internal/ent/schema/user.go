@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/gravatar"
 )
@@ -172,7 +173,7 @@ func (User) Hooks() []ent.Hook {
 				if password, ok := mutation.Password(); ok {
 					// validate password before its encrypted
 					if passwd.Strength(password) < passwd.Moderate {
-						return nil, passwd.ErrWeakPassword
+						return nil, auth.ErrPasswordTooWeak
 					}
 
 					hash, err := passwd.CreateDerivedKey(password)

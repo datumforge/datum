@@ -38,6 +38,7 @@ var (
 	notFound     = echo.HTTPError{Code: http.StatusNotFound, Message: "resource not found"}
 	notAllowed   = echo.HTTPError{Code: http.StatusMethodNotAllowed, Message: "method not allowed"}
 	unverified   = echo.HTTPError{Code: http.StatusForbidden, Message: responses.ErrVerifyEmail}
+	unauthorized = echo.HTTPError{Code: http.StatusUnauthorized, Message: responses.ErrTryLoginAgain}
 )
 
 var (
@@ -89,19 +90,24 @@ func ErrorResponse(err interface{}) *echo.HTTPError {
 // NOTE: we know it's weird to put server-side handlers like NotFound and NotAllowed
 // here in the client/api side package but it unifies where we keep our error handling
 // mechanisms.
-func NotFound(c echo.Context) {
-	c.JSON(http.StatusNotFound, notFound) //nolint:errcheck
+func NotFound(c echo.Context) error {
+	return c.JSON(http.StatusNotFound, notFound) //nolint:errcheck
 }
 
 // NotAllowed returns a JSON 405 response for the API.
-func NotAllowed(c echo.Context) {
-	c.JSON(http.StatusMethodNotAllowed, notAllowed) //nolint:errcheck
+func NotAllowed(c echo.Context) error {
+	return c.JSON(http.StatusMethodNotAllowed, notAllowed) //nolint:errcheck
 }
 
 // Unverified returns a JSON 403 response indicating that the user has not verified
 // their email address.
-func Unverified(c echo.Context) {
-	c.JSON(http.StatusForbidden, unverified) //nolint:errcheck
+func Unverified(c echo.Context) error {
+	return c.JSON(http.StatusForbidden, unverified) //nolint:errcheck
+}
+
+// Unauthorized returns a JSON 401 response indicating that the request failed authorization
+func Unauthorized(c echo.Context) error {
+	return c.JSON(http.StatusUnauthorized, unauthorized) //nolint:errcheck
 }
 
 // FieldError provides a general mechanism for specifying errors with specific API

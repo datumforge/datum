@@ -93,24 +93,6 @@ type (
 		Providers []AuthProvider `yaml:"providers"`
 	}
 
-	// // Authz settings for openFGA configuration and the ability to enable/disable authz all together
-	// Authz struct {
-	// 	// Enabled - checks this first before reading the config
-	// 	Enabled bool `yaml:"enabled"`
-	// 	// StoreName of the FGA Store
-	// 	StoreName string `yaml:"storeName"`
-	// 	// Host of the fga API
-	// 	Host string `yaml:"host"`
-	// 	// Scheme to connect to the fga API (http or https)
-	// 	Scheme string `yaml:"enabled"`
-	// 	// StoreID of the authorization store in FGA
-	// 	StoreID string `yaml:"enabled"`
-	// 	// ModelID that already exists in authorization store to be used
-	// 	ModelID string `yaml:"enabled"`
-	// 	// CreateNewModel force creates a new model, even if one already exists
-	// 	CreateNewModel bool `yaml:"enabled"`
-	// }
-
 	// CORS settings
 	CORS struct {
 		// AllowOrigins is a list of allowed origin to indicate whether the response can be shared with

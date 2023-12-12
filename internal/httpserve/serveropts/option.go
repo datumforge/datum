@@ -132,7 +132,7 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 		authzEnabled := settings["auth"].(bool)
 
 		if !authzEnabled {
-			s.Config.Authz = config.Authz{
+			s.Config.Authz = fga.Config{
 				Enabled: false,
 			}
 
@@ -142,7 +142,7 @@ func WithFGAAuthz(settings map[string]any) ServerOption {
 		fgaSettings := settings["fga"].(map[string]any)
 
 		// Authz Setup
-		authzConfig := config.Authz{
+		authzConfig := fga.Config{
 			Enabled:        authzEnabled,
 			StoreName:      "datum",
 			Host:           fgaSettings["host"].(string),

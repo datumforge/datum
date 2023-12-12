@@ -90,9 +90,10 @@ func serve(ctx context.Context) error {
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
 	if so.Config.Authz.Enabled {
-		config := fga.NewAuthzConfig(so.Config.Authz, logger)
+		az := so.Config.Authz
+		config := fga.NewAuthzConfig(az, logger)
 
-		fgaClient, err = fga.CreateFGAClientWithStore(ctx, *config)
+		fgaClient, err = fga.CreateFGAClientWithStore(ctx, config)
 		if err != nil {
 			return err
 		}
@@ -113,6 +114,9 @@ func serve(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	// Add Driver to the Handlers Config
+	so.Config.Server.Handler.DBClient = entdbClient
 
 	defer entdbClient.Close()
 

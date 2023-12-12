@@ -10,6 +10,7 @@ import (
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 
+	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -27,7 +28,7 @@ type (
 		Auth Auth `yaml:"auth"`
 
 		// Authz contains the authorization settings
-		Authz Authz `yaml:"authz"`
+		Authz fga.Config `yaml:"authz"`
 
 		// DB contains the database configuration
 		DB DB `yaml:"auth"`
@@ -92,23 +93,23 @@ type (
 		Providers []AuthProvider `yaml:"providers"`
 	}
 
-	// Authz settings for openFGA configuration and the ability to enable/disable authz all together
-	Authz struct {
-		// Enabled - checks this first before reading the config
-		Enabled bool `yaml:"enabled"`
-		// StoreName of the FGA Store
-		StoreName string `yaml:"storeName"`
-		// Host of the fga API
-		Host string `yaml:"host"`
-		// Scheme to connect to the fga API (http or https)
-		Scheme string `yaml:"enabled"`
-		// StoreID of the authorization store in FGA
-		StoreID string `yaml:"enabled"`
-		// ModelID that already exists in authorization store to be used
-		ModelID string `yaml:"enabled"`
-		// CreateNewModel force creates a new model, even if one already exists
-		CreateNewModel bool `yaml:"enabled"`
-	}
+	// // Authz settings for openFGA configuration and the ability to enable/disable authz all together
+	// Authz struct {
+	// 	// Enabled - checks this first before reading the config
+	// 	Enabled bool `yaml:"enabled"`
+	// 	// StoreName of the FGA Store
+	// 	StoreName string `yaml:"storeName"`
+	// 	// Host of the fga API
+	// 	Host string `yaml:"host"`
+	// 	// Scheme to connect to the fga API (http or https)
+	// 	Scheme string `yaml:"enabled"`
+	// 	// StoreID of the authorization store in FGA
+	// 	StoreID string `yaml:"enabled"`
+	// 	// ModelID that already exists in authorization store to be used
+	// 	ModelID string `yaml:"enabled"`
+	// 	// CreateNewModel force creates a new model, even if one already exists
+	// 	CreateNewModel bool `yaml:"enabled"`
+	// }
 
 	// CORS settings
 	CORS struct {

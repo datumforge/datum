@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"entgo.io/ent/dialect/sql"
+	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/tokens"
-	echo "github.com/datumforge/echox"
 )
 
 type User struct {
@@ -36,7 +36,9 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 
 	// set cookies on request with the access and refresh token
 	// when cookie domain is localhost, this is dropped but expected
-	auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain)
+	if err := auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain); err != nil {
+		return auth.ErrorResponse(err)
+	}
 
 	return ctx.JSON(http.StatusOK, "success")
 }

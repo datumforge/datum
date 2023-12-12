@@ -3,9 +3,10 @@ package route
 import (
 	"net/http"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // Login is oriented towards human users who use their email and password for

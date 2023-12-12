@@ -22,7 +22,7 @@ type User struct {
 // LoginHandler validates the user credentials and returns a valid cookie
 // this only supports username password login today (not oauth)
 func (h *Handler) LoginHandler(ctx echo.Context) error {
-	user, err := h.verifyCredentials(ctx)
+	user, err := h.verifyUserPassword(ctx)
 	if err != nil {
 		return err
 	}
@@ -53,8 +53,8 @@ func createClaims(u *User) *tokens.Claims {
 	}
 }
 
-// verifyCredentials verifies the username and password are valid
-func (h *Handler) verifyCredentials(ctx echo.Context) (*User, error) {
+// verifyUserPassword verifies the username and password are valid
+func (h *Handler) verifyUserPassword(ctx echo.Context) (*User, error) {
 	var u User
 
 	// parse request body

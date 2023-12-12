@@ -115,13 +115,13 @@ func serve(ctx context.Context) error {
 		return err
 	}
 
-	// Add Driver to the Handlers Config
-	so.Config.Server.Handler.DBClient = entdbClient
-
 	defer entdbClient.Close()
 
 	// add ready checks
 	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient))
+
+	// Add Driver to the Handlers Config
+	so.Config.Server.Handler.DBClient = entdbClient
 
 	srv := server.NewServer(so.Config.Server, so.Config.Logger.Desugar())
 

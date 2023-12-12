@@ -18,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
@@ -231,9 +230,6 @@ func WithAuth(settings map[string]any) ServerOption {
 // WithReadyChecks adds readiness checks to the server
 func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		// Initialize checks
-		s.Config.Server.Handler = handlers.Handler{}
-
 		// Always add a check to the primary db connection
 		s.Config.Server.Handler.AddReadinessCheck("sqlite_db_primary", entdb.Healthcheck(c.GetPrimaryDB()))
 

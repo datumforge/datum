@@ -59,7 +59,8 @@ func (h *Handler) verifyCredentials(ctx echo.Context) (*User, error) {
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&u); err != nil {
-		return nil, auth.ErrorResponse(err)
+		auth.ErrorResponse(err) //nolint:errcheck
+		return nil, ErrBadRequest
 	}
 
 	// check user in the database, username == email and ensure only one record is returned
@@ -67,18 +68,21 @@ func (h *Handler) verifyCredentials(ctx echo.Context) (*User, error) {
 		s.Where(sql.EQ("email", u.Username))
 	}).Only(ctx.Request().Context())
 	if err != nil {
-		return nil, auth.ErrorResponse(err)
+		auth.ErrorResponse(err) //nolint:errcheck
+		return nil, auth.ErrNoAuthUser
 	}
 
 	// verify the password is correct
 	valid, err := passwd.VerifyDerivedKey(*user.Password, u.Password)
 	if err != nil || !valid {
-		return nil, auth.Unauthorized(ctx)
+		auth.Unauthorized(ctx) //nolint:errcheck
+		return nil, auth.ErrInvalidCredentials
 	}
 
 	// verify email is verified
 	if !user.Edges.Setting.EmailConfirmed {
-		return nil, auth.Unverified(ctx)
+		auth.Unverified(ctx) //nolint:errcheck
+		return nil, auth.ErrUnverifiedUser
 	}
 
 	u.userID = user.ID

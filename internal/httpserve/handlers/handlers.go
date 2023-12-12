@@ -8,13 +8,18 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 )
 
-// Handler contains configuration options for handlers including ReadyChecks and JWTKeys
+// Handler contains configuration options for handlers
 type Handler struct {
 	// DBClient to interact with the generated ent schema
-	DBClient     *ent.Client
-	TM           *tokens.TokenManager
+	DBClient *ent.Client
+	// TM contains the token manager in order to validate auth requests
+	TM *tokens.TokenManager
+	// CookieDomain is the domain set in cookie for authenticated requests, defaults to datum.net
 	CookieDomain string
-	Logger       *zap.SugaredLogger
-	ReadyChecks  Checks
-	JWTKeys      jwk.Set
+	// Logger provides the zap logger to do logging things from the handlers
+	Logger *zap.SugaredLogger
+	// ReadyChecks is a set of checkFuncs to determine if the application is "ready" upon startup
+	ReadyChecks Checks
+	// JWTKeys contains the set of valid JWT authentication key
+	JWTKeys jwk.Set
 }

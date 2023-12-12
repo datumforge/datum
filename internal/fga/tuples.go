@@ -96,7 +96,7 @@ func (c *Client) CreateRelationshipTuple(ctx context.Context, tuples []ofgaclien
 		return nil, nil
 	}
 
-	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(*c.Config.AuthorizationModelId)}
+	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(c.Config.AuthorizationModelId)}
 
 	resp, err := c.Ofga.WriteTuples(ctx).Body(tuples).Options(opts).Execute()
 	if err != nil {
@@ -117,12 +117,12 @@ func (c *Client) CreateRelationshipTuple(ctx context.Context, tuples []ofgaclien
 }
 
 // deleteRelationshipTuple deletes a relationship tuple in the openFGA store
-func (c *Client) deleteRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
+func (c *Client) deleteRelationshipTuple(ctx context.Context, tuples []openfga.TupleKeyWithoutCondition) (*ofgaclient.ClientWriteResponse, error) {
 	if len(tuples) == 0 {
 		return nil, nil
 	}
 
-	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(*c.Config.AuthorizationModelId)}
+	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(c.Config.AuthorizationModelId)}
 
 	resp, err := c.Ofga.DeleteTuples(ctx).Body(tuples).Options(opts).Execute()
 	if err != nil {
@@ -163,15 +163,15 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 		return err
 	}
 
-	var tuplesToDelete []ofgaclient.ClientTupleKey
+	var tuplesToDelete []openfga.TupleKeyWithoutCondition
 
 	// check all the tuples for the object?
 	for _, t := range resp.GetTuples() {
-		if *t.Key.Object == object {
-			k := ofgaclient.ClientTupleKey{
-				User:     *t.Key.User,
-				Relation: *t.Key.Relation,
-				Object:   *t.Key.Object,
+		if t.Key.Object == object {
+			k := openfga.TupleKeyWithoutCondition{
+				User:     t.Key.User,
+				Relation: t.Key.Relation,
+				Object:   t.Key.Object,
 			}
 			tuplesToDelete = append(tuplesToDelete, k)
 		}

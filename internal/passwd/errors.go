@@ -29,20 +29,20 @@ var (
 // ParseError is defining a custom error type called `ParseError`. It is a struct
 // that holds intermediary values for comparison in errors
 type ParseError struct {
-	Object string
-	Value  string
-	Err    error
+	Object        string
+	Value         string
+	ExpectedValue string
 }
 
 // Error returns the ParseError in string format
 func (e *ParseError) Error() string {
-	return fmt.Sprintf("could not parse %s %s: %v", e.Object, e.Value, e.Err)
+	return fmt.Sprintf("could not parse %s %s, got %s", e.Object, e.ExpectedValue, e.Value)
 }
 
-func newParseError(o string, v string, err error) *ParseError {
+func newParseError(o string, v string, ev string) *ParseError {
 	return &ParseError{
-		Object: o,
-		Value:  v,
-		Err:    err,
+		Object:        o,
+		Value:         v,
+		ExpectedValue: ev,
 	}
 }

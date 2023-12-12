@@ -60,12 +60,6 @@ func VerifyDerivedKey(dk, password string) (bool, error) {
 		return false, err
 	}
 
-	fmt.Printf("dkb: %v\n", string(dkb[:]))
-	fmt.Printf("salt: %v\n", salt)
-	fmt.Printf("t: %v\n", t)
-	fmt.Printf("m: %v\n", m)
-	fmt.Printf("p: %v\n", p)
-
 	vdk := argon2.IDKey([]byte(password), salt, t, m, p, uint32(len(dkb)))
 
 	return bytes.Equal(dkb, vdk), nil

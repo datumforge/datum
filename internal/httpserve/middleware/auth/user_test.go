@@ -12,7 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-func Test_GetActorSubject(t *testing.T) {
+func Test_GetActorUserID(t *testing.T) {
 	// context with no user set
 	basicContext := echocontext.NewTestEchoContext()
 
@@ -61,7 +61,7 @@ func Test_GetActorSubject(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			got, err := auth.GetActorSubject(tc.e)
+			got, err := auth.GetActorUserID(tc.e)
 			if tc.err != nil {
 				assert.Error(t, err)
 				assert.Empty(t, got)

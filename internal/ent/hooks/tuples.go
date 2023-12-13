@@ -18,8 +18,6 @@ func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([
 		return nil, err
 	}
 
-	// TODO: convert jwt sub --> uuid
-
 	tuples := []ofgaclient.ClientTupleKey{{
 		User:     fmt.Sprintf("user:%s", actor),
 		Relation: relation,

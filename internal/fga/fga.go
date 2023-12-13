@@ -89,7 +89,7 @@ func NewClient(host string, opts ...Option) (*Client, error) {
 }
 
 func (c *Client) GetModelID() string {
-	return *c.Config.AuthorizationModelId
+	return c.Config.AuthorizationModelId
 }
 
 // WithScheme sets the open fga scheme, defaults to "https"
@@ -109,7 +109,7 @@ func WithStoreID(storeID string) Option {
 // WithAuthorizationModelID sets the authorization model ID
 func WithAuthorizationModelID(authModelID string) Option {
 	return func(c *Client) {
-		c.Config.AuthorizationModelId = &authModelID
+		c.Config.AuthorizationModelId = authModelID
 	}
 }
 
@@ -200,7 +200,7 @@ func (c *Client) CreateStore(ctx context.Context, storeName string) (string, err
 
 	// Only create a new test store if one does not exist
 	if len(stores.GetStores()) > 0 {
-		storeID := *stores.GetStores()[0].Id
+		storeID := stores.GetStores()[0].Id
 		c.Logger.Infow("fga store exists", "store_id", storeID)
 
 		return storeID, nil
@@ -234,8 +234,8 @@ func (c *Client) CreateModel(ctx context.Context, fn string, forceCreate bool) (
 
 	// Only create a new test model if one does not exist and we aren't forcing a new model to be created
 	if !forceCreate {
-		if len(*models.AuthorizationModels) > 0 {
-			modelID := *models.GetAuthorizationModels()[0].Id
+		if len(models.AuthorizationModels) > 0 {
+			modelID := models.GetAuthorizationModels()[0].Id
 			c.Logger.Infow("fga model exists", "model_id", modelID)
 
 			return modelID, nil
@@ -286,7 +286,7 @@ func dslToJSON(dslString []byte) ([]byte, error) {
 func Healthcheck(client Client) func(ctx context.Context) error {
 	return func(ctx context.Context) error {
 		opts := ofgaclient.ClientReadAuthorizationModelOptions{
-			AuthorizationModelId: client.Config.AuthorizationModelId,
+			AuthorizationModelId: &client.Config.AuthorizationModelId,
 		}
 
 		_, err := client.Ofga.ReadAuthorizationModel(ctx).Options(opts).Execute()

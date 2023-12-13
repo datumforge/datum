@@ -1720,7 +1720,7 @@ func (m *MockSdkClientWriteTuplesRequestInterface) EXPECT() *MockSdkClientWriteT
 }
 
 // Body mocks base method.
-func (m *MockSdkClientWriteTuplesRequestInterface) Body(arg0 []client.ClientTupleKey) client.SdkClientWriteTuplesRequestInterface {
+func (m *MockSdkClientWriteTuplesRequestInterface) Body(arg0 []openfga.TupleKey) client.SdkClientWriteTuplesRequestInterface {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Body", arg0)
 	ret0, _ := ret[0].(client.SdkClientWriteTuplesRequestInterface)
@@ -1749,10 +1749,10 @@ func (mr *MockSdkClientWriteTuplesRequestInterfaceMockRecorder) Execute() *gomoc
 }
 
 // GetBody mocks base method.
-func (m *MockSdkClientWriteTuplesRequestInterface) GetBody() *[]client.ClientTupleKey {
+func (m *MockSdkClientWriteTuplesRequestInterface) GetBody() *[]openfga.TupleKey {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBody")
-	ret0, _ := ret[0].(*[]client.ClientTupleKey)
+	ret0, _ := ret[0].(*[]openfga.TupleKey)
 	return ret0
 }
 
@@ -1828,7 +1828,7 @@ func (m *MockSdkClientDeleteTuplesRequestInterface) EXPECT() *MockSdkClientDelet
 }
 
 // Body mocks base method.
-func (m *MockSdkClientDeleteTuplesRequestInterface) Body(arg0 []client.ClientTupleKey) client.SdkClientDeleteTuplesRequestInterface {
+func (m *MockSdkClientDeleteTuplesRequestInterface) Body(arg0 []openfga.TupleKeyWithoutCondition) client.SdkClientDeleteTuplesRequestInterface {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Body", arg0)
 	ret0, _ := ret[0].(client.SdkClientDeleteTuplesRequestInterface)
@@ -1857,10 +1857,10 @@ func (mr *MockSdkClientDeleteTuplesRequestInterfaceMockRecorder) Execute() *gomo
 }
 
 // GetBody mocks base method.
-func (m *MockSdkClientDeleteTuplesRequestInterface) GetBody() *[]client.ClientTupleKey {
+func (m *MockSdkClientDeleteTuplesRequestInterface) GetBody() *[]openfga.TupleKeyWithoutCondition {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBody")
-	ret0, _ := ret[0].(*[]client.ClientTupleKey)
+	ret0, _ := ret[0].(*[]openfga.TupleKeyWithoutCondition)
 	return ret0
 }
 

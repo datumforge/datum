@@ -26,7 +26,7 @@ func NewTestFGAClient(t testing.TB, mockCtrl *gomock.Controller, c *mock_client.
 		Config: ofgaclient.ClientConfiguration{
 			// The api host is the only required field when setting up a new FGA client connection
 			ApiHost:              "fga.datum.net",
-			AuthorizationModelId: openfga.PtrString("test-model-id"),
+			AuthorizationModelId: *openfga.PtrString("test-model-id"),
 			StoreId:              *openfga.PtrString("test-store-id"),
 		},
 		Ofga:   c,
@@ -47,10 +47,10 @@ func mockListStores(c *mock_client.MockSdkClient, mockCtrl *gomock.Controller) {
 	mockExecute := mock_client.NewMockSdkClientListStoresRequestInterface(mockCtrl)
 
 	// No stores exist, tests will create a store
-	var stores *[]openfga.Store
+	var stores []openfga.Store
 
 	response := openfga.ListStoresResponse{
-		ContinuationToken: openfga.PtrString(""),
+		ContinuationToken: "",
 		Stores:            stores,
 	}
 
@@ -72,10 +72,10 @@ func mockCreateStore(c *mock_client.MockSdkClient, mockCtrl *gomock.Controller) 
 	expectedTime := time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC)
 
 	expectedResponse := ofgaclient.ClientCreateStoreResponse{
-		Id:        openfga.PtrString("01HFJ0PR7XGSNP1H747YW0KZ6R"),
-		Name:      openfga.PtrString(storeName),
-		CreatedAt: openfga.PtrTime(expectedTime),
-		UpdatedAt: openfga.PtrTime(expectedTime),
+		Id:        "01HFJ0PR7XGSNP1H747YW0KZ6R",
+		Name:      storeName,
+		CreatedAt: expectedTime,
+		UpdatedAt: expectedTime,
 	}
 
 	mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -75,8 +76,8 @@ func Test_ListObjectsRequest(t *testing.T) {
 			relation:   "can_view",
 			userID:     "ulid-of-user",
 			objectType: "organization",
-			expectedRes: &ofgaclient.ClientListObjectsResponse{
-				Objects: &objects,
+			expectedRes: &openfga.ListObjectsResponse{
+				Objects: objects,
 			},
 			errRes: nil,
 		},
@@ -134,7 +135,7 @@ func mockListAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx 
 	mockExecute := mock_client.NewMockSdkClientListObjectsRequestInterface(mockCtrl)
 
 	resp := ofgaclient.ClientListObjectsResponse{
-		Objects: &allowedObjects,
+		Objects: allowedObjects,
 	}
 
 	if err == nil {

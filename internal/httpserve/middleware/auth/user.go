@@ -9,8 +9,8 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-// GetActorSubject returns the user from the echo.Context
-func GetActorSubject(c echo.Context) (string, error) {
+// GetActorUserID returns the user from the echo.Context
+func GetActorUserID(c echo.Context) (string, error) {
 	claims, err := GetClaims(c)
 	if err != nil {
 		return "", err
@@ -32,5 +32,5 @@ func GetUserIDFromContext(ctx context.Context) (string, error) {
 		return "", err
 	}
 
-	return GetActorSubject(*ec)
+	return GetActorUserID(*ec)
 }

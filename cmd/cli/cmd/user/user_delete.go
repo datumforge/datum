@@ -1,4 +1,4 @@
-package datum
+package datumuser
 
 import (
 	"context"
@@ -11,25 +11,26 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
-var patDeleteCmd = &cobra.Command{
+var userDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete an existing datum personal access token",
+	Short: "Delete an existing datum user",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return deletePat(cmd.Context())
+		return deleteUser(cmd.Context())
 	},
 }
 
 func init() {
-	patCmd.AddCommand(patDeleteCmd)
+	userCmd.AddCommand(userDeleteCmd)
 
-	patDeleteCmd.Flags().StringP("id", "i", "", "pat id to delete")
-	viperBindFlag("pat.delete.id", patDeleteCmd.Flags().Lookup("id"))
+	userDeleteCmd.Flags().StringP("id", "i", "", "user id to delete")
+	datum.ViperBindFlag("user.delete.id", userDeleteCmd.Flags().Lookup("id"))
 }
 
-func deletePat(ctx context.Context) error {
+func deleteUser(ctx context.Context) error {
 	// setup datum http client
 	h := &http.Client{}
 
@@ -44,16 +45,16 @@ func deletePat(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
-	oID := viper.GetString("pat.delete.id")
-	if oID == "" {
-		return ErrTokenIDRequired
+	userID := viper.GetString("user.delete.id")
+	if userID == "" {
+		return datum.NewRequiredFieldMissingError("user id")
 	}
 
-	o, err := c.DeletePersonalAccessToken(ctx, oID, i)
+	o, err := c.DeleteUser(ctx, userID, i)
 	if err != nil {
 		return err
 	}
@@ -63,5 +64,5 @@ func deletePat(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

@@ -1,6 +1,11 @@
-package datum
+// Package datumgroup is our cobra/viper cli for group endpoints
+package datumgroup
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
+)
 
 // groupCmd represents the base group command when called without any subcommands
 var groupCmd = &cobra.Command{
@@ -9,5 +14,5 @@ var groupCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(groupCmd)
+	datum.RootCmd.AddCommand(groupCmd)
 }

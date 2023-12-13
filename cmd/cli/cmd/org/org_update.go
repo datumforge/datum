@@ -1,4 +1,4 @@
-package datum
+package datumorg
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,16 +27,16 @@ func init() {
 	orgCmd.AddCommand(orgUpdateCmd)
 
 	orgUpdateCmd.Flags().StringP("id", "i", "", "org id to update")
-	viperBindFlag("org.update.id", orgUpdateCmd.Flags().Lookup("id"))
+	datum.ViperBindFlag("org.update.id", orgUpdateCmd.Flags().Lookup("id"))
 
 	orgUpdateCmd.Flags().StringP("name", "n", "", "name of the organization")
-	viperBindFlag("org.update.name", orgUpdateCmd.Flags().Lookup("name"))
+	datum.ViperBindFlag("org.update.name", orgUpdateCmd.Flags().Lookup("name"))
 
 	orgUpdateCmd.Flags().StringP("short-name", "s", "", "display name of the organization")
-	viperBindFlag("org.update.short-name", orgUpdateCmd.Flags().Lookup("short-name"))
+	datum.ViperBindFlag("org.update.short-name", orgUpdateCmd.Flags().Lookup("short-name"))
 
 	orgUpdateCmd.Flags().StringP("description", "d", "", "description of the organization")
-	viperBindFlag("org.update.description", orgUpdateCmd.Flags().Lookup("description"))
+	datum.ViperBindFlag("org.update.description", orgUpdateCmd.Flags().Lookup("description"))
 }
 
 func updateOrg(ctx context.Context) error {
@@ -53,13 +54,13 @@ func updateOrg(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	oID := viper.GetString("org.update.id")
 	if oID == "" {
-		return ErrOrgIDRequired
+		return datum.NewRequiredFieldMissingError("organization id")
 	}
 
 	name := viper.GetString("org.update.name")
@@ -90,5 +91,5 @@ func updateOrg(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

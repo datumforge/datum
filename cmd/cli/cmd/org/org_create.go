@@ -1,4 +1,4 @@
-package datum
+package datumorg
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,16 +27,16 @@ func init() {
 	orgCmd.AddCommand(orgCreateCmd)
 
 	orgCreateCmd.Flags().StringP("name", "n", "", "name of the organization")
-	viperBindFlag("org.create.name", orgCreateCmd.Flags().Lookup("name"))
+	datum.ViperBindFlag("org.create.name", orgCreateCmd.Flags().Lookup("name"))
 
 	orgCreateCmd.Flags().StringP("short-name", "s", "", "display name of the organization")
-	viperBindFlag("org.create.short-name", orgCreateCmd.Flags().Lookup("short-name"))
+	datum.ViperBindFlag("org.create.short-name", orgCreateCmd.Flags().Lookup("short-name"))
 
 	orgCreateCmd.Flags().StringP("description", "d", "", "description of the organization")
-	viperBindFlag("org.create.description", orgCreateCmd.Flags().Lookup("description"))
+	datum.ViperBindFlag("org.create.description", orgCreateCmd.Flags().Lookup("description"))
 
 	orgCreateCmd.Flags().StringP("parent-org-id", "p", "", "parent organization id, leave empty to create a root org")
-	viperBindFlag("org.create.parent-org-id", orgCreateCmd.Flags().Lookup("parent-org-id"))
+	datum.ViperBindFlag("org.create.parent-org-id", orgCreateCmd.Flags().Lookup("parent-org-id"))
 }
 
 func createOrg(ctx context.Context) error {
@@ -53,13 +54,13 @@ func createOrg(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	name := viper.GetString("org.create.name")
 	if name == "" {
-		return ErrOrgNameRequired
+		return datum.NewRequiredFieldMissingError("organization name")
 	}
 
 	displayName := viper.GetString("org.create.short-name")
@@ -92,5 +93,5 @@ func createOrg(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

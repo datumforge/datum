@@ -1,4 +1,4 @@
-package datum
+package datumorg
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,7 +27,7 @@ func init() {
 	orgCmd.AddCommand(orgGetCmd)
 
 	orgGetCmd.Flags().StringP("id", "i", "", "org id to query")
-	viperBindFlag("org.get.id", orgGetCmd.Flags().Lookup("id"))
+	datum.ViperBindFlag("org.get.id", orgGetCmd.Flags().Lookup("id"))
 }
 
 func orgs(ctx context.Context) error {
@@ -44,7 +45,7 @@ func orgs(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	// filter options
 	oID := viper.GetString("org.get.id")
@@ -74,5 +75,5 @@ func orgs(ctx context.Context) error {
 		}
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

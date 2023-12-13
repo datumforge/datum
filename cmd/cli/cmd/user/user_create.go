@@ -1,4 +1,4 @@
-package datum
+package datumuser
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -28,19 +29,19 @@ func init() {
 	userCmd.AddCommand(userCreateCmd)
 
 	userCreateCmd.Flags().StringP("email", "e", "", "email of the user")
-	viperBindFlag("user.create.email", userCreateCmd.Flags().Lookup("email"))
+	datum.ViperBindFlag("user.create.email", userCreateCmd.Flags().Lookup("email"))
 
 	userCreateCmd.Flags().StringP("password", "p", "", "password of the user")
-	viperBindFlag("user.create.password", userCreateCmd.Flags().Lookup("password"))
+	datum.ViperBindFlag("user.create.password", userCreateCmd.Flags().Lookup("password"))
 
 	userCreateCmd.Flags().StringP("first-name", "f", "", "first name of the user")
-	viperBindFlag("user.create.first-name", userCreateCmd.Flags().Lookup("first-name"))
+	datum.ViperBindFlag("user.create.first-name", userCreateCmd.Flags().Lookup("first-name"))
 
 	userCreateCmd.Flags().StringP("last-name", "l", "", "last name of the user")
-	viperBindFlag("user.create.last-name", userCreateCmd.Flags().Lookup("last-name"))
+	datum.ViperBindFlag("user.create.last-name", userCreateCmd.Flags().Lookup("last-name"))
 
 	userCreateCmd.Flags().StringP("display-name", "d", "", "first name of the user")
-	viperBindFlag("user.create.display-name", userCreateCmd.Flags().Lookup("display-name"))
+	datum.ViperBindFlag("user.create.display-name", userCreateCmd.Flags().Lookup("display-name"))
 }
 
 func createUser(ctx context.Context) error {
@@ -58,23 +59,23 @@ func createUser(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	email := viper.GetString("user.create.email")
 	if email == "" {
-		return ErrUserEmailRequired
+		return datum.NewRequiredFieldMissingError("email")
 	}
 
 	firstName := viper.GetString("user.create.first-name")
 	if firstName == "" {
-		return ErrUserFirstNameRequired
+		return datum.NewRequiredFieldMissingError("first name")
 	}
 
 	lastName := viper.GetString("user.create.last-name")
 	if lastName == "" {
-		return ErrUserLastNameRequired
+		return datum.NewRequiredFieldMissingError("last name")
 	}
 
 	displayName := viper.GetString("user.create.display-name")
@@ -109,5 +110,5 @@ func createUser(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

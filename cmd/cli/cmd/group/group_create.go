@@ -1,4 +1,4 @@
-package datum
+package datumgroup
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,16 +27,16 @@ func init() {
 	groupCmd.AddCommand(groupCreateCmd)
 
 	groupCreateCmd.Flags().StringP("name", "n", "", "name of the group")
-	viperBindFlag("group.create.name", groupCreateCmd.Flags().Lookup("name"))
+	datum.ViperBindFlag("group.create.name", groupCreateCmd.Flags().Lookup("name"))
 
 	groupCreateCmd.Flags().StringP("short-name", "s", "", "display name of the group")
-	viperBindFlag("group.create.short-name", groupCreateCmd.Flags().Lookup("short-name"))
+	datum.ViperBindFlag("group.create.short-name", groupCreateCmd.Flags().Lookup("short-name"))
 
 	groupCreateCmd.Flags().StringP("description", "d", "", "description of the group")
-	viperBindFlag("group.create.description", groupCreateCmd.Flags().Lookup("description"))
+	datum.ViperBindFlag("group.create.description", groupCreateCmd.Flags().Lookup("description"))
 
 	groupCreateCmd.Flags().StringP("owner-id", "o", "", "owner org id")
-	viperBindFlag("group.create.owner-id", groupCreateCmd.Flags().Lookup("owner-id"))
+	datum.ViperBindFlag("group.create.owner-id", groupCreateCmd.Flags().Lookup("owner-id"))
 }
 
 func createGroup(ctx context.Context) error {
@@ -53,18 +54,18 @@ func createGroup(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	name := viper.GetString("group.create.name")
 	if name == "" {
-		return ErrGroupNameRequired
+		return datum.NewRequiredFieldMissingError("group name")
 	}
 
 	owner := viper.GetString("group.create.owner-id")
 	if owner == "" {
-		return ErrOrgIDRequired
+		return datum.NewRequiredFieldMissingError("organization id")
 	}
 
 	displayName := viper.GetString("group.create.short-name")
@@ -93,5 +94,5 @@ func createGroup(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

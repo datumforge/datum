@@ -1,4 +1,4 @@
-package datum
+package datumgroup
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,7 +27,7 @@ func init() {
 	groupCmd.AddCommand(groupDeleteCmd)
 
 	groupDeleteCmd.Flags().StringP("id", "i", "", "group id to delete")
-	viperBindFlag("group.delete.id", groupDeleteCmd.Flags().Lookup("id"))
+	datum.ViperBindFlag("group.delete.id", groupDeleteCmd.Flags().Lookup("id"))
 }
 
 func deleteGroup(ctx context.Context) error {
@@ -44,13 +45,13 @@ func deleteGroup(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	oID := viper.GetString("group.delete.id")
 	if oID == "" {
-		return ErrGroupIDRequired
+		return datum.NewRequiredFieldMissingError("group id")
 	}
 
 	o, err := c.DeleteGroup(ctx, oID, i)
@@ -63,5 +64,5 @@ func deleteGroup(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

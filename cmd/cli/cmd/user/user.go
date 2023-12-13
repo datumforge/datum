@@ -1,6 +1,11 @@
-package datum
+// Package datumuser is our cobra/viper cli for user endpoints
+package datumuser
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
+)
 
 // userCmd represents the base user command when called without any subcommands
 var userCmd = &cobra.Command{
@@ -9,5 +14,5 @@ var userCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(userCmd)
+	datum.RootCmd.AddCommand(userCmd)
 }

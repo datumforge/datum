@@ -1,6 +1,11 @@
-package datum
+// Package datumorg is our cobra/viper cli for organization endpoints
+package datumorg
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
+
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
+)
 
 // orgCmd represents the base org command when called without any subcommands
 var orgCmd = &cobra.Command{
@@ -9,5 +14,5 @@ var orgCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(orgCmd)
+	datum.RootCmd.AddCommand(orgCmd)
 }

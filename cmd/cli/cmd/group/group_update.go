@@ -1,4 +1,4 @@
-package datum
+package datumgroup
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,16 +27,16 @@ func init() {
 	groupCmd.AddCommand(groupUpdateCmd)
 
 	groupUpdateCmd.Flags().StringP("id", "i", "", "group id to update")
-	viperBindFlag("group.update.id", groupUpdateCmd.Flags().Lookup("id"))
+	datum.ViperBindFlag("group.update.id", groupUpdateCmd.Flags().Lookup("id"))
 
 	groupUpdateCmd.Flags().StringP("name", "n", "", "name of the group")
-	viperBindFlag("group.update.name", groupUpdateCmd.Flags().Lookup("name"))
+	datum.ViperBindFlag("group.update.name", groupUpdateCmd.Flags().Lookup("name"))
 
 	groupUpdateCmd.Flags().StringP("short-name", "s", "", "display name of the group")
-	viperBindFlag("group.update.short-name", groupUpdateCmd.Flags().Lookup("short-name"))
+	datum.ViperBindFlag("group.update.short-name", groupUpdateCmd.Flags().Lookup("short-name"))
 
 	groupUpdateCmd.Flags().StringP("description", "d", "", "description of the group")
-	viperBindFlag("group.update.description", groupUpdateCmd.Flags().Lookup("description"))
+	datum.ViperBindFlag("group.update.description", groupUpdateCmd.Flags().Lookup("description"))
 }
 
 func updateGroup(ctx context.Context) error {
@@ -53,13 +54,13 @@ func updateGroup(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	oID := viper.GetString("group.update.id")
 	if oID == "" {
-		return ErrGroupIDRequired
+		return datum.NewRequiredFieldMissingError("group id")
 	}
 
 	name := viper.GetString("group.update.name")
@@ -90,5 +91,5 @@ func updateGroup(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

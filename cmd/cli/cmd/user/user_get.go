@@ -1,4 +1,4 @@
-package datum
+package datumuser
 
 import (
 	"context"
@@ -11,7 +11,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 var userGetCmd = &cobra.Command{
@@ -25,12 +27,11 @@ var userGetCmd = &cobra.Command{
 func init() {
 	userCmd.AddCommand(userGetCmd)
 
-	// TODO: implement get self once we know the sub -> user ID
-	// orgGetCmd.Flags().BoolP("current-user", "c", false, "get current user info")
-	// viperBindFlag("user.get.current", orgGetCmd.Flags().Lookup("current-user"))
+	userGetCmd.Flags().BoolP("self", "s", false, "get current user info, requires authentication")
+	datum.ViperBindFlag("user.get.self", userGetCmd.Flags().Lookup("self"))
 
 	userGetCmd.Flags().StringP("id", "i", "", "user id to query")
-	viperBindFlag("user.get.id", userGetCmd.Flags().Lookup("id"))
+	datum.ViperBindFlag("user.get.id", userGetCmd.Flags().Lookup("id"))
 }
 
 func users(ctx context.Context) error {
@@ -48,13 +49,22 @@ func users(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	// filter options
 	userID := viper.GetString("user.get.id")
-	// self := viper.GetBool("user.get.current")
+	self := viper.GetBool("user.get.self")
 
 	var s []byte
+
+	if self {
+		claims, err := tokens.ParseUnverifiedTokenClaims(token)
+		if err != nil {
+			return err
+		}
+
+		userID = claims.ParseUserID().String()
+	}
 
 	// if a user ID is provided, filter on that user, otherwise get all
 	if userID == "" {
@@ -79,5 +89,5 @@ func users(ctx context.Context) error {
 		}
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

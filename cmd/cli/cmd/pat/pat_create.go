@@ -1,4 +1,4 @@
-package datum
+package datumpat
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,13 +27,13 @@ func init() {
 	patCmd.AddCommand(patCreateCmd)
 
 	patCreateCmd.Flags().StringP("name", "n", "", "name of the personal access token")
-	viperBindFlag("pat.create.name", patCreateCmd.Flags().Lookup("name"))
+	datum.ViperBindFlag("pat.create.name", patCreateCmd.Flags().Lookup("name"))
 
 	patCreateCmd.Flags().StringP("description", "d", "", "description of the pat")
-	viperBindFlag("pat.create.description", patCreateCmd.Flags().Lookup("description"))
+	datum.ViperBindFlag("pat.create.description", patCreateCmd.Flags().Lookup("description"))
 
 	patCreateCmd.Flags().StringP("owner-id", "o", "", "the owner of the personal access token")
-	viperBindFlag("pat.create.owner-id", patCreateCmd.Flags().Lookup("owner-id"))
+	datum.ViperBindFlag("pat.create.owner-id", patCreateCmd.Flags().Lookup("owner-id"))
 }
 
 func createPat(ctx context.Context) error {
@@ -50,18 +51,18 @@ func createPat(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	name := viper.GetString("pat.create.name")
 	if name == "" {
-		return ErrTokenNameRequired
+		return datum.NewRequiredFieldMissingError("token name")
 	}
 
 	owner := viper.GetString("pat.create.owner-id")
 	if owner == "" {
-		return ErrUserIDRequired
+		return datum.NewRequiredFieldMissingError("user id")
 	}
 
 	description := viper.GetString("pat.create.description")
@@ -85,5 +86,5 @@ func createPat(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

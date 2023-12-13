@@ -1,4 +1,4 @@
-package datum
+package datumuser
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 )
 
@@ -26,19 +27,19 @@ func init() {
 	userCmd.AddCommand(userUpdateCmd)
 
 	userUpdateCmd.Flags().StringP("id", "i", "", "user id to update")
-	viperBindFlag("user.update.id", userUpdateCmd.Flags().Lookup("id"))
+	datum.ViperBindFlag("user.update.id", userUpdateCmd.Flags().Lookup("id"))
 
 	userUpdateCmd.Flags().StringP("first-name", "f", "", "first name of the user")
-	viperBindFlag("user.update.first-name", userUpdateCmd.Flags().Lookup("first-name"))
+	datum.ViperBindFlag("user.update.first-name", userUpdateCmd.Flags().Lookup("first-name"))
 
 	userUpdateCmd.Flags().StringP("last-name", "l", "", "last name of the user")
-	viperBindFlag("user.update.last-name", userUpdateCmd.Flags().Lookup("last-name"))
+	datum.ViperBindFlag("user.update.last-name", userUpdateCmd.Flags().Lookup("last-name"))
 
 	userUpdateCmd.Flags().StringP("display-name", "d", "", "display name of the user")
-	viperBindFlag("user.update.display-name", userUpdateCmd.Flags().Lookup("display-name"))
+	datum.ViperBindFlag("user.update.display-name", userUpdateCmd.Flags().Lookup("display-name"))
 
 	userUpdateCmd.Flags().StringP("email", "e", "", "email of the user")
-	viperBindFlag("user.update.email", userUpdateCmd.Flags().Lookup("email"))
+	datum.ViperBindFlag("user.update.email", userUpdateCmd.Flags().Lookup("email"))
 }
 
 func updateUser(ctx context.Context) error {
@@ -56,13 +57,13 @@ func updateUser(ctx context.Context) error {
 	i := datumclient.WithAccessToken(token)
 
 	// new client with params
-	c := datumclient.NewClient(h, host, opt, i)
+	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
 	userID := viper.GetString("user.update.id")
 	if userID == "" {
-		return ErrUserIDRequired
+		return datum.NewRequiredFieldMissingError("user id")
 	}
 
 	firstName := viper.GetString("user.update.first-name")
@@ -100,5 +101,5 @@ func updateUser(ctx context.Context) error {
 		return err
 	}
 
-	return jsonPrint(s)
+	return datum.JSONPrint(s)
 }

@@ -21,12 +21,13 @@ const (
 
 var (
 	cfgFile string
-	host    string
 	logger  *zap.SugaredLogger
+	// GraphAPIHost contains the url for the graph api
+	GraphAPIHost string
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
+// RootCmd represents the base command when called without any subcommands
+var RootCmd = &cobra.Command{
 	Use:   appName,
 	Short: "the datum cli",
 }
@@ -34,24 +35,24 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	cobra.CheckErr(rootCmd.Execute())
+	cobra.CheckErr(RootCmd.Execute())
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
-	viperBindFlag("config", rootCmd.PersistentFlags().Lookup("config"))
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
+	ViperBindFlag("config", RootCmd.PersistentFlags().Lookup("config"))
 
-	rootCmd.PersistentFlags().StringVar(&host, "host", defaultGraphHost, "graph api host url")
-	viperBindFlag("datum.host", rootCmd.PersistentFlags().Lookup("host"))
+	RootCmd.PersistentFlags().StringVar(&GraphAPIHost, "host", defaultGraphHost, "graph api host url")
+	ViperBindFlag("datum.host", RootCmd.PersistentFlags().Lookup("host"))
 
 	// Logging flags
-	rootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
-	viperBindFlag("logging.debug", rootCmd.PersistentFlags().Lookup("debug"))
+	RootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
+	ViperBindFlag("logging.debug", RootCmd.PersistentFlags().Lookup("debug"))
 
-	rootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
-	viperBindFlag("logging.pretty", rootCmd.PersistentFlags().Lookup("pretty"))
+	RootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
+	ViperBindFlag("logging.pretty", RootCmd.PersistentFlags().Lookup("pretty"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -103,15 +104,15 @@ func setupLogging() {
 	defer logger.Sync() //nolint:errcheck
 }
 
-// viperBindFlag provides a wrapper around the viper bindings that panics if an error occurs
-func viperBindFlag(name string, flag *pflag.Flag) {
+// ViperBindFlag provides a wrapper around the viper bindings that panics if an error occurs
+func ViperBindFlag(name string, flag *pflag.Flag) {
 	err := viper.BindPFlag(name, flag)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func jsonPrint(s []byte) error {
+func JSONPrint(s []byte) error {
 	var obj map[string]interface{}
 
 	err := json.Unmarshal(s, &obj)

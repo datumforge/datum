@@ -9,7 +9,7 @@ require (
 	github.com/99designs/gqlgen v0.17.41
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.16.0
-	github.com/brianvoe/gofakeit/v6 v6.26.2
+	github.com/brianvoe/gofakeit/v6 v6.26.3
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2

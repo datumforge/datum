@@ -219,8 +219,6 @@ func WithGeneratedKeys(settings map[string]any) ServerOption {
 func WithAuth(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		authEnabled := settings["auth"].(bool)
-
-		// Commenting out until this is implemented
 		jwtSettings := settings["jwt"].(map[string]any)
 
 		s.Config.Auth.Enabled = authEnabled
@@ -228,6 +226,11 @@ func WithAuth(settings map[string]any) ServerOption {
 		s.Config.Server.Token.Issuer = jwtSettings["issuer"].(string)
 		s.Config.Server.Token.Audience = jwtSettings["audience"].(string)
 		s.Config.Server.Token.CookieDomain = jwtSettings["cookie-domain"].(string)
+
+		// Set durations
+		s.Config.Server.Token.AccessDuration = time.Duration(1 * time.Hour)     //nolint:gomnd
+		s.Config.Server.Token.RefreshDuration = time.Duration(2 * time.Hour)    //nolint:gomnd
+		s.Config.Server.Token.RefreshOverlap = time.Duration(-15 * time.Minute) //nolint:gomnd
 	})
 }
 

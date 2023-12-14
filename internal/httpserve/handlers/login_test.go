@@ -16,6 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -54,6 +55,10 @@ func TestLoginHandler(t *testing.T) {
 	}
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
+
+	// set privacy allow in order to allow the creation of the users without
+	// authentication in the tests
+	ec = privacy.DecisionContext(ec, privacy.Allow)
 
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"

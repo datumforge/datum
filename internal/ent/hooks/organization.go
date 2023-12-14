@@ -17,6 +17,21 @@ import (
 func HookOrganization() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.OrganizationFunc(func(ctx context.Context, mutation *generated.OrganizationMutation) (generated.Value, error) {
+			if mutation.Op().Is(ent.OpCreate) {
+				// if this is empty generate a default org setting schema
+				settingID, _ := mutation.SettingID()
+				if settingID == "" {
+					// sets up default org settings using schema defaults
+					orgSettingID, err := defaultOrganizationSettings(ctx, mutation)
+					if err != nil {
+						return nil, err
+					}
+
+					// add the org setting ID to the input
+					mutation.SetSettingID(orgSettingID)
+				}
+			}
+
 			if name, ok := mutation.Name(); ok {
 				if displayName, ok := mutation.DisplayName(); ok {
 					if displayName == "" {
@@ -104,4 +119,16 @@ func organizationDeleteHook(ctx context.Context, m *generated.OrganizationMutati
 	}
 
 	return nil
+}
+
+// defaultOrganizationSettings creates the default organizations settings for a new org
+func defaultOrganizationSettings(ctx context.Context, mutation *generated.OrganizationMutation) (string, error) {
+	input := generated.CreateOrganizationSettingInput{}
+
+	organizationSetting, err := mutation.Client().OrganizationSetting.Create().SetInput(input).Save(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	return organizationSetting.ID, nil
 }

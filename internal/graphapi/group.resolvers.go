@@ -17,18 +17,6 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	// group settings are required, if this is empty generate a default setting schema
-	if input.SettingID == "" {
-		// sets up default group settings using schema defaults
-		groupSettingID, err := r.defaultGroupSettings(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		// add the group setting ID to the input
-		input.SettingID = groupSettingID
-	}
-
 	group, err := r.client.Group.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {

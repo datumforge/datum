@@ -20,18 +20,6 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	// user settings are required, if this is empty generate a default setting schema
-	if input.SettingID == "" {
-		// sets up default user settings using schema defaults
-		userSettingID, err := r.defaultUserSettings(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		// add the user setting ID to the input
-		input.SettingID = userSettingID
-	}
-
 	user, err := r.client.User.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
@@ -49,11 +37,6 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 		}
 
 		r.logger.Errorw("failed to create user", "error", err)
-		return nil, ErrInternalServerError
-	}
-
-	// when a user is created, we create a personal user org
-	if err := r.createPersonalOrg(ctx, user); err != nil {
 		return nil, ErrInternalServerError
 	}
 

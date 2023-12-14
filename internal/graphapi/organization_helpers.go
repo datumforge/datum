@@ -9,7 +9,7 @@ import (
 )
 
 func (r *mutationResolver) createOrg(ctx context.Context, input generated.CreateOrganizationInput) (*OrganizationCreatePayload, error) {
-	// user settings are required, if this is empty generate a default setting schema
+	// if this is empty generate a default org setting schema
 	if input.SettingID == nil {
 		// sets up default org settings using schema defaults
 		orgSettingID, err := r.defaultOrganizationSettings(ctx)

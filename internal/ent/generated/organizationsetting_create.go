@@ -131,9 +131,25 @@ func (osc *OrganizationSettingCreate) SetBillingContact(s string) *OrganizationS
 	return osc
 }
 
+// SetNillableBillingContact sets the "billing_contact" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableBillingContact(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetBillingContact(*s)
+	}
+	return osc
+}
+
 // SetBillingEmail sets the "billing_email" field.
 func (osc *OrganizationSettingCreate) SetBillingEmail(s string) *OrganizationSettingCreate {
 	osc.mutation.SetBillingEmail(s)
+	return osc
+}
+
+// SetNillableBillingEmail sets the "billing_email" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableBillingEmail(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetBillingEmail(*s)
+	}
 	return osc
 }
 
@@ -143,15 +159,39 @@ func (osc *OrganizationSettingCreate) SetBillingPhone(s string) *OrganizationSet
 	return osc
 }
 
+// SetNillableBillingPhone sets the "billing_phone" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableBillingPhone(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetBillingPhone(*s)
+	}
+	return osc
+}
+
 // SetBillingAddress sets the "billing_address" field.
 func (osc *OrganizationSettingCreate) SetBillingAddress(s string) *OrganizationSettingCreate {
 	osc.mutation.SetBillingAddress(s)
 	return osc
 }
 
+// SetNillableBillingAddress sets the "billing_address" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableBillingAddress(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetBillingAddress(*s)
+	}
+	return osc
+}
+
 // SetTaxIdentifier sets the "tax_identifier" field.
 func (osc *OrganizationSettingCreate) SetTaxIdentifier(s string) *OrganizationSettingCreate {
 	osc.mutation.SetTaxIdentifier(s)
+	return osc
+}
+
+// SetNillableTaxIdentifier sets the "tax_identifier" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableTaxIdentifier(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetTaxIdentifier(*s)
+	}
 	return osc
 }
 
@@ -245,18 +285,6 @@ func (osc *OrganizationSettingCreate) defaults() error {
 		v := organizationsetting.DefaultUpdatedAt()
 		osc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := osc.mutation.SSOCert(); !ok {
-		v := organizationsetting.DefaultSSOCert
-		osc.mutation.SetSSOCert(v)
-	}
-	if _, ok := osc.mutation.SSOEntrypoint(); !ok {
-		v := organizationsetting.DefaultSSOEntrypoint
-		osc.mutation.SetSSOEntrypoint(v)
-	}
-	if _, ok := osc.mutation.SSOIssuer(); !ok {
-		v := organizationsetting.DefaultSSOIssuer
-		osc.mutation.SetSSOIssuer(v)
-	}
 	if _, ok := osc.mutation.Tags(); !ok {
 		v := organizationsetting.DefaultTags
 		osc.mutation.SetTags(v)
@@ -278,30 +306,6 @@ func (osc *OrganizationSettingCreate) check() error {
 	}
 	if _, ok := osc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "OrganizationSetting.updated_at"`)}
-	}
-	if _, ok := osc.mutation.SSOCert(); !ok {
-		return &ValidationError{Name: "sso_cert", err: errors.New(`generated: missing required field "OrganizationSetting.sso_cert"`)}
-	}
-	if _, ok := osc.mutation.SSOEntrypoint(); !ok {
-		return &ValidationError{Name: "sso_entrypoint", err: errors.New(`generated: missing required field "OrganizationSetting.sso_entrypoint"`)}
-	}
-	if _, ok := osc.mutation.SSOIssuer(); !ok {
-		return &ValidationError{Name: "sso_issuer", err: errors.New(`generated: missing required field "OrganizationSetting.sso_issuer"`)}
-	}
-	if _, ok := osc.mutation.BillingContact(); !ok {
-		return &ValidationError{Name: "billing_contact", err: errors.New(`generated: missing required field "OrganizationSetting.billing_contact"`)}
-	}
-	if _, ok := osc.mutation.BillingEmail(); !ok {
-		return &ValidationError{Name: "billing_email", err: errors.New(`generated: missing required field "OrganizationSetting.billing_email"`)}
-	}
-	if _, ok := osc.mutation.BillingPhone(); !ok {
-		return &ValidationError{Name: "billing_phone", err: errors.New(`generated: missing required field "OrganizationSetting.billing_phone"`)}
-	}
-	if _, ok := osc.mutation.BillingAddress(); !ok {
-		return &ValidationError{Name: "billing_address", err: errors.New(`generated: missing required field "OrganizationSetting.billing_address"`)}
-	}
-	if _, ok := osc.mutation.TaxIdentifier(); !ok {
-		return &ValidationError{Name: "tax_identifier", err: errors.New(`generated: missing required field "OrganizationSetting.tax_identifier"`)}
 	}
 	return nil
 }

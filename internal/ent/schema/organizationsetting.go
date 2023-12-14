@@ -22,18 +22,23 @@ func (OrganizationSetting) Fields() []ent.Field {
 			Comment("domains associated with the organization").
 			Optional(),
 		field.Text("sso_cert").
-			Default(""),
+			Optional(),
 		field.String("sso_entrypoint").
-			Default(""),
+			Optional(),
 		field.String("sso_issuer").
-			Default(""),
+			Optional(),
 		field.String("billing_contact").
-			Comment("Name of the person to contact for billing"),
-		field.String("billing_email"),
-		field.String("billing_phone"),
-		field.String("billing_address"),
+			Comment("Name of the person to contact for billing").
+			Optional(),
+		field.String("billing_email").
+			Optional(),
+		field.String("billing_phone").
+			Optional(),
+		field.String("billing_address").
+			Optional(),
 		field.String("tax_identifier").
-			Comment("Usually government-issued tax ID or business ID such as ABN in Australia"),
+			Comment("Usually government-issued tax ID or business ID such as ABN in Australia").
+			Optional(),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").
 			Default([]string{}).

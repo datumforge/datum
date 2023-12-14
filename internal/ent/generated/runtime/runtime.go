@@ -382,18 +382,6 @@ func init() {
 	organizationsetting.DefaultUpdatedAt = organizationsettingDescUpdatedAt.Default.(func() time.Time)
 	// organizationsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	organizationsetting.UpdateDefaultUpdatedAt = organizationsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// organizationsettingDescSSOCert is the schema descriptor for sso_cert field.
-	organizationsettingDescSSOCert := organizationsettingFields[1].Descriptor()
-	// organizationsetting.DefaultSSOCert holds the default value on creation for the sso_cert field.
-	organizationsetting.DefaultSSOCert = organizationsettingDescSSOCert.Default.(string)
-	// organizationsettingDescSSOEntrypoint is the schema descriptor for sso_entrypoint field.
-	organizationsettingDescSSOEntrypoint := organizationsettingFields[2].Descriptor()
-	// organizationsetting.DefaultSSOEntrypoint holds the default value on creation for the sso_entrypoint field.
-	organizationsetting.DefaultSSOEntrypoint = organizationsettingDescSSOEntrypoint.Default.(string)
-	// organizationsettingDescSSOIssuer is the schema descriptor for sso_issuer field.
-	organizationsettingDescSSOIssuer := organizationsettingFields[3].Descriptor()
-	// organizationsetting.DefaultSSOIssuer holds the default value on creation for the sso_issuer field.
-	organizationsetting.DefaultSSOIssuer = organizationsettingDescSSOIssuer.Default.(string)
 	// organizationsettingDescTags is the schema descriptor for tags field.
 	organizationsettingDescTags := organizationsettingFields[9].Descriptor()
 	// organizationsetting.DefaultTags holds the default value on creation for the tags field.

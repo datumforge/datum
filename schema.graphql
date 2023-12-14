@@ -351,12 +351,12 @@ input CreateOrganizationSettingInput {
 	ssoEntrypoint: String
 	ssoIssuer: String
 	"""Name of the person to contact for billing"""
-	billingContact: String!
-	billingEmail: String!
-	billingPhone: String!
-	billingAddress: String!
+	billingContact: String
+	billingEmail: String
+	billingPhone: String
+	billingAddress: String
 	"""Usually government-issued tax ID or business ID such as ABN in Australia"""
-	taxIdentifier: String!
+	taxIdentifier: String
 	"""tags associated with the object"""
 	tags: [String!]
 	organizationID: ID
@@ -2005,16 +2005,16 @@ type OrganizationSetting implements Node {
 	updatedBy: String
 	"""domains associated with the organization"""
 	domains: [String!]
-	ssoCert: String!
-	ssoEntrypoint: String!
-	ssoIssuer: String!
+	ssoCert: String
+	ssoEntrypoint: String
+	ssoIssuer: String
 	"""Name of the person to contact for billing"""
-	billingContact: String!
-	billingEmail: String!
-	billingPhone: String!
-	billingAddress: String!
+	billingContact: String
+	billingEmail: String
+	billingPhone: String
+	billingAddress: String
 	"""Usually government-issued tax ID or business ID such as ABN in Australia"""
-	taxIdentifier: String!
+	taxIdentifier: String
 	"""tags associated with the object"""
 	tags: [String!]
 	organization: Organization
@@ -2131,6 +2131,8 @@ input OrganizationSettingWhereInput {
 	ssoCertContains: String
 	ssoCertHasPrefix: String
 	ssoCertHasSuffix: String
+	ssoCertIsNil: Boolean
+	ssoCertNotNil: Boolean
 	ssoCertEqualFold: String
 	ssoCertContainsFold: String
 	"""sso_entrypoint field predicates"""
@@ -2145,6 +2147,8 @@ input OrganizationSettingWhereInput {
 	ssoEntrypointContains: String
 	ssoEntrypointHasPrefix: String
 	ssoEntrypointHasSuffix: String
+	ssoEntrypointIsNil: Boolean
+	ssoEntrypointNotNil: Boolean
 	ssoEntrypointEqualFold: String
 	ssoEntrypointContainsFold: String
 	"""sso_issuer field predicates"""
@@ -2159,6 +2163,8 @@ input OrganizationSettingWhereInput {
 	ssoIssuerContains: String
 	ssoIssuerHasPrefix: String
 	ssoIssuerHasSuffix: String
+	ssoIssuerIsNil: Boolean
+	ssoIssuerNotNil: Boolean
 	ssoIssuerEqualFold: String
 	ssoIssuerContainsFold: String
 	"""billing_contact field predicates"""
@@ -2173,6 +2179,8 @@ input OrganizationSettingWhereInput {
 	billingContactContains: String
 	billingContactHasPrefix: String
 	billingContactHasSuffix: String
+	billingContactIsNil: Boolean
+	billingContactNotNil: Boolean
 	billingContactEqualFold: String
 	billingContactContainsFold: String
 	"""billing_email field predicates"""
@@ -2187,6 +2195,8 @@ input OrganizationSettingWhereInput {
 	billingEmailContains: String
 	billingEmailHasPrefix: String
 	billingEmailHasSuffix: String
+	billingEmailIsNil: Boolean
+	billingEmailNotNil: Boolean
 	billingEmailEqualFold: String
 	billingEmailContainsFold: String
 	"""billing_phone field predicates"""
@@ -2201,6 +2211,8 @@ input OrganizationSettingWhereInput {
 	billingPhoneContains: String
 	billingPhoneHasPrefix: String
 	billingPhoneHasSuffix: String
+	billingPhoneIsNil: Boolean
+	billingPhoneNotNil: Boolean
 	billingPhoneEqualFold: String
 	billingPhoneContainsFold: String
 	"""billing_address field predicates"""
@@ -2215,6 +2227,8 @@ input OrganizationSettingWhereInput {
 	billingAddressContains: String
 	billingAddressHasPrefix: String
 	billingAddressHasSuffix: String
+	billingAddressIsNil: Boolean
+	billingAddressNotNil: Boolean
 	billingAddressEqualFold: String
 	billingAddressContainsFold: String
 	"""tax_identifier field predicates"""
@@ -2229,6 +2243,8 @@ input OrganizationSettingWhereInput {
 	taxIdentifierContains: String
 	taxIdentifierHasPrefix: String
 	taxIdentifierHasSuffix: String
+	taxIdentifierIsNil: Boolean
+	taxIdentifierNotNil: Boolean
 	taxIdentifierEqualFold: String
 	taxIdentifierContainsFold: String
 	"""organization edge predicates"""
@@ -3365,15 +3381,23 @@ input UpdateOrganizationSettingInput {
 	appendDomains: [String!]
 	clearDomains: Boolean
 	ssoCert: String
+	clearSSOCert: Boolean
 	ssoEntrypoint: String
+	clearSSOEntrypoint: Boolean
 	ssoIssuer: String
+	clearSSOIssuer: Boolean
 	"""Name of the person to contact for billing"""
 	billingContact: String
+	clearBillingContact: Boolean
 	billingEmail: String
+	clearBillingEmail: Boolean
 	billingPhone: String
+	clearBillingPhone: Boolean
 	billingAddress: String
+	clearBillingAddress: Boolean
 	"""Usually government-issued tax ID or business ID such as ABN in Australia"""
 	taxIdentifier: String
+	clearTaxIdentifier: Boolean
 	"""tags associated with the object"""
 	tags: [String!]
 	appendTags: [String!]

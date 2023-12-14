@@ -5135,6 +5135,8 @@ type OrganizationSettingWhereInput struct {
 	SSOCertContains     *string  `json:"ssoCertContains,omitempty"`
 	SSOCertHasPrefix    *string  `json:"ssoCertHasPrefix,omitempty"`
 	SSOCertHasSuffix    *string  `json:"ssoCertHasSuffix,omitempty"`
+	SSOCertIsNil        bool     `json:"ssoCertIsNil,omitempty"`
+	SSOCertNotNil       bool     `json:"ssoCertNotNil,omitempty"`
 	SSOCertEqualFold    *string  `json:"ssoCertEqualFold,omitempty"`
 	SSOCertContainsFold *string  `json:"ssoCertContainsFold,omitempty"`
 
@@ -5150,6 +5152,8 @@ type OrganizationSettingWhereInput struct {
 	SSOEntrypointContains     *string  `json:"ssoEntrypointContains,omitempty"`
 	SSOEntrypointHasPrefix    *string  `json:"ssoEntrypointHasPrefix,omitempty"`
 	SSOEntrypointHasSuffix    *string  `json:"ssoEntrypointHasSuffix,omitempty"`
+	SSOEntrypointIsNil        bool     `json:"ssoEntrypointIsNil,omitempty"`
+	SSOEntrypointNotNil       bool     `json:"ssoEntrypointNotNil,omitempty"`
 	SSOEntrypointEqualFold    *string  `json:"ssoEntrypointEqualFold,omitempty"`
 	SSOEntrypointContainsFold *string  `json:"ssoEntrypointContainsFold,omitempty"`
 
@@ -5165,6 +5169,8 @@ type OrganizationSettingWhereInput struct {
 	SSOIssuerContains     *string  `json:"ssoIssuerContains,omitempty"`
 	SSOIssuerHasPrefix    *string  `json:"ssoIssuerHasPrefix,omitempty"`
 	SSOIssuerHasSuffix    *string  `json:"ssoIssuerHasSuffix,omitempty"`
+	SSOIssuerIsNil        bool     `json:"ssoIssuerIsNil,omitempty"`
+	SSOIssuerNotNil       bool     `json:"ssoIssuerNotNil,omitempty"`
 	SSOIssuerEqualFold    *string  `json:"ssoIssuerEqualFold,omitempty"`
 	SSOIssuerContainsFold *string  `json:"ssoIssuerContainsFold,omitempty"`
 
@@ -5180,6 +5186,8 @@ type OrganizationSettingWhereInput struct {
 	BillingContactContains     *string  `json:"billingContactContains,omitempty"`
 	BillingContactHasPrefix    *string  `json:"billingContactHasPrefix,omitempty"`
 	BillingContactHasSuffix    *string  `json:"billingContactHasSuffix,omitempty"`
+	BillingContactIsNil        bool     `json:"billingContactIsNil,omitempty"`
+	BillingContactNotNil       bool     `json:"billingContactNotNil,omitempty"`
 	BillingContactEqualFold    *string  `json:"billingContactEqualFold,omitempty"`
 	BillingContactContainsFold *string  `json:"billingContactContainsFold,omitempty"`
 
@@ -5195,6 +5203,8 @@ type OrganizationSettingWhereInput struct {
 	BillingEmailContains     *string  `json:"billingEmailContains,omitempty"`
 	BillingEmailHasPrefix    *string  `json:"billingEmailHasPrefix,omitempty"`
 	BillingEmailHasSuffix    *string  `json:"billingEmailHasSuffix,omitempty"`
+	BillingEmailIsNil        bool     `json:"billingEmailIsNil,omitempty"`
+	BillingEmailNotNil       bool     `json:"billingEmailNotNil,omitempty"`
 	BillingEmailEqualFold    *string  `json:"billingEmailEqualFold,omitempty"`
 	BillingEmailContainsFold *string  `json:"billingEmailContainsFold,omitempty"`
 
@@ -5210,6 +5220,8 @@ type OrganizationSettingWhereInput struct {
 	BillingPhoneContains     *string  `json:"billingPhoneContains,omitempty"`
 	BillingPhoneHasPrefix    *string  `json:"billingPhoneHasPrefix,omitempty"`
 	BillingPhoneHasSuffix    *string  `json:"billingPhoneHasSuffix,omitempty"`
+	BillingPhoneIsNil        bool     `json:"billingPhoneIsNil,omitempty"`
+	BillingPhoneNotNil       bool     `json:"billingPhoneNotNil,omitempty"`
 	BillingPhoneEqualFold    *string  `json:"billingPhoneEqualFold,omitempty"`
 	BillingPhoneContainsFold *string  `json:"billingPhoneContainsFold,omitempty"`
 
@@ -5225,6 +5237,8 @@ type OrganizationSettingWhereInput struct {
 	BillingAddressContains     *string  `json:"billingAddressContains,omitempty"`
 	BillingAddressHasPrefix    *string  `json:"billingAddressHasPrefix,omitempty"`
 	BillingAddressHasSuffix    *string  `json:"billingAddressHasSuffix,omitempty"`
+	BillingAddressIsNil        bool     `json:"billingAddressIsNil,omitempty"`
+	BillingAddressNotNil       bool     `json:"billingAddressNotNil,omitempty"`
 	BillingAddressEqualFold    *string  `json:"billingAddressEqualFold,omitempty"`
 	BillingAddressContainsFold *string  `json:"billingAddressContainsFold,omitempty"`
 
@@ -5240,6 +5254,8 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierContains     *string  `json:"taxIdentifierContains,omitempty"`
 	TaxIdentifierHasPrefix    *string  `json:"taxIdentifierHasPrefix,omitempty"`
 	TaxIdentifierHasSuffix    *string  `json:"taxIdentifierHasSuffix,omitempty"`
+	TaxIdentifierIsNil        bool     `json:"taxIdentifierIsNil,omitempty"`
+	TaxIdentifierNotNil       bool     `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
 
@@ -5520,6 +5536,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	if i.SSOCertHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.SSOCertHasSuffix(*i.SSOCertHasSuffix))
 	}
+	if i.SSOCertIsNil {
+		predicates = append(predicates, organizationsetting.SSOCertIsNil())
+	}
+	if i.SSOCertNotNil {
+		predicates = append(predicates, organizationsetting.SSOCertNotNil())
+	}
 	if i.SSOCertEqualFold != nil {
 		predicates = append(predicates, organizationsetting.SSOCertEqualFold(*i.SSOCertEqualFold))
 	}
@@ -5558,6 +5580,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.SSOEntrypointHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.SSOEntrypointHasSuffix(*i.SSOEntrypointHasSuffix))
+	}
+	if i.SSOEntrypointIsNil {
+		predicates = append(predicates, organizationsetting.SSOEntrypointIsNil())
+	}
+	if i.SSOEntrypointNotNil {
+		predicates = append(predicates, organizationsetting.SSOEntrypointNotNil())
 	}
 	if i.SSOEntrypointEqualFold != nil {
 		predicates = append(predicates, organizationsetting.SSOEntrypointEqualFold(*i.SSOEntrypointEqualFold))
@@ -5598,6 +5626,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	if i.SSOIssuerHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.SSOIssuerHasSuffix(*i.SSOIssuerHasSuffix))
 	}
+	if i.SSOIssuerIsNil {
+		predicates = append(predicates, organizationsetting.SSOIssuerIsNil())
+	}
+	if i.SSOIssuerNotNil {
+		predicates = append(predicates, organizationsetting.SSOIssuerNotNil())
+	}
 	if i.SSOIssuerEqualFold != nil {
 		predicates = append(predicates, organizationsetting.SSOIssuerEqualFold(*i.SSOIssuerEqualFold))
 	}
@@ -5636,6 +5670,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.BillingContactHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.BillingContactHasSuffix(*i.BillingContactHasSuffix))
+	}
+	if i.BillingContactIsNil {
+		predicates = append(predicates, organizationsetting.BillingContactIsNil())
+	}
+	if i.BillingContactNotNil {
+		predicates = append(predicates, organizationsetting.BillingContactNotNil())
 	}
 	if i.BillingContactEqualFold != nil {
 		predicates = append(predicates, organizationsetting.BillingContactEqualFold(*i.BillingContactEqualFold))
@@ -5676,6 +5716,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	if i.BillingEmailHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.BillingEmailHasSuffix(*i.BillingEmailHasSuffix))
 	}
+	if i.BillingEmailIsNil {
+		predicates = append(predicates, organizationsetting.BillingEmailIsNil())
+	}
+	if i.BillingEmailNotNil {
+		predicates = append(predicates, organizationsetting.BillingEmailNotNil())
+	}
 	if i.BillingEmailEqualFold != nil {
 		predicates = append(predicates, organizationsetting.BillingEmailEqualFold(*i.BillingEmailEqualFold))
 	}
@@ -5714,6 +5760,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.BillingPhoneHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.BillingPhoneHasSuffix(*i.BillingPhoneHasSuffix))
+	}
+	if i.BillingPhoneIsNil {
+		predicates = append(predicates, organizationsetting.BillingPhoneIsNil())
+	}
+	if i.BillingPhoneNotNil {
+		predicates = append(predicates, organizationsetting.BillingPhoneNotNil())
 	}
 	if i.BillingPhoneEqualFold != nil {
 		predicates = append(predicates, organizationsetting.BillingPhoneEqualFold(*i.BillingPhoneEqualFold))
@@ -5754,6 +5806,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	if i.BillingAddressHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.BillingAddressHasSuffix(*i.BillingAddressHasSuffix))
 	}
+	if i.BillingAddressIsNil {
+		predicates = append(predicates, organizationsetting.BillingAddressIsNil())
+	}
+	if i.BillingAddressNotNil {
+		predicates = append(predicates, organizationsetting.BillingAddressNotNil())
+	}
 	if i.BillingAddressEqualFold != nil {
 		predicates = append(predicates, organizationsetting.BillingAddressEqualFold(*i.BillingAddressEqualFold))
 	}
@@ -5792,6 +5850,12 @@ func (i *OrganizationSettingWhereInput) P() (predicate.OrganizationSetting, erro
 	}
 	if i.TaxIdentifierHasSuffix != nil {
 		predicates = append(predicates, organizationsetting.TaxIdentifierHasSuffix(*i.TaxIdentifierHasSuffix))
+	}
+	if i.TaxIdentifierIsNil {
+		predicates = append(predicates, organizationsetting.TaxIdentifierIsNil())
+	}
+	if i.TaxIdentifierNotNil {
+		predicates = append(predicates, organizationsetting.TaxIdentifierNotNil())
 	}
 	if i.TaxIdentifierEqualFold != nil {
 		predicates = append(predicates, organizationsetting.TaxIdentifierEqualFold(*i.TaxIdentifierEqualFold))

@@ -1080,11 +1080,11 @@ type CreateOrganizationSettingInput struct {
 	SSOCert        *string
 	SSOEntrypoint  *string
 	SSOIssuer      *string
-	BillingContact string
-	BillingEmail   string
-	BillingPhone   string
-	BillingAddress string
-	TaxIdentifier  string
+	BillingContact *string
+	BillingEmail   *string
+	BillingPhone   *string
+	BillingAddress *string
+	TaxIdentifier  *string
 	Tags           []string
 	OrganizationID *string
 }
@@ -1115,11 +1115,21 @@ func (i *CreateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if v := i.SSOIssuer; v != nil {
 		m.SetSSOIssuer(*v)
 	}
-	m.SetBillingContact(i.BillingContact)
-	m.SetBillingEmail(i.BillingEmail)
-	m.SetBillingPhone(i.BillingPhone)
-	m.SetBillingAddress(i.BillingAddress)
-	m.SetTaxIdentifier(i.TaxIdentifier)
+	if v := i.BillingContact; v != nil {
+		m.SetBillingContact(*v)
+	}
+	if v := i.BillingEmail; v != nil {
+		m.SetBillingEmail(*v)
+	}
+	if v := i.BillingPhone; v != nil {
+		m.SetBillingPhone(*v)
+	}
+	if v := i.BillingAddress; v != nil {
+		m.SetBillingAddress(*v)
+	}
+	if v := i.TaxIdentifier; v != nil {
+		m.SetTaxIdentifier(*v)
+	}
 	if v := i.Tags; v != nil {
 		m.SetTags(v)
 	}
@@ -1136,25 +1146,33 @@ func (c *OrganizationSettingCreate) SetInput(i CreateOrganizationSettingInput) *
 
 // UpdateOrganizationSettingInput represents a mutation input for updating organizationsettings.
 type UpdateOrganizationSettingInput struct {
-	UpdatedAt         *time.Time
-	ClearUpdatedBy    bool
-	UpdatedBy         *string
-	ClearDomains      bool
-	Domains           []string
-	AppendDomains     []string
-	SSOCert           *string
-	SSOEntrypoint     *string
-	SSOIssuer         *string
-	BillingContact    *string
-	BillingEmail      *string
-	BillingPhone      *string
-	BillingAddress    *string
-	TaxIdentifier     *string
-	ClearTags         bool
-	Tags              []string
-	AppendTags        []string
-	ClearOrganization bool
-	OrganizationID    *string
+	UpdatedAt           *time.Time
+	ClearUpdatedBy      bool
+	UpdatedBy           *string
+	ClearDomains        bool
+	Domains             []string
+	AppendDomains       []string
+	ClearSSOCert        bool
+	SSOCert             *string
+	ClearSSOEntrypoint  bool
+	SSOEntrypoint       *string
+	ClearSSOIssuer      bool
+	SSOIssuer           *string
+	ClearBillingContact bool
+	BillingContact      *string
+	ClearBillingEmail   bool
+	BillingEmail        *string
+	ClearBillingPhone   bool
+	BillingPhone        *string
+	ClearBillingAddress bool
+	BillingAddress      *string
+	ClearTaxIdentifier  bool
+	TaxIdentifier       *string
+	ClearTags           bool
+	Tags                []string
+	AppendTags          []string
+	ClearOrganization   bool
+	OrganizationID      *string
 }
 
 // Mutate applies the UpdateOrganizationSettingInput on the OrganizationSettingMutation builder.
@@ -1177,26 +1195,50 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	if i.AppendDomains != nil {
 		m.AppendDomains(i.Domains)
 	}
+	if i.ClearSSOCert {
+		m.ClearSSOCert()
+	}
 	if v := i.SSOCert; v != nil {
 		m.SetSSOCert(*v)
+	}
+	if i.ClearSSOEntrypoint {
+		m.ClearSSOEntrypoint()
 	}
 	if v := i.SSOEntrypoint; v != nil {
 		m.SetSSOEntrypoint(*v)
 	}
+	if i.ClearSSOIssuer {
+		m.ClearSSOIssuer()
+	}
 	if v := i.SSOIssuer; v != nil {
 		m.SetSSOIssuer(*v)
+	}
+	if i.ClearBillingContact {
+		m.ClearBillingContact()
 	}
 	if v := i.BillingContact; v != nil {
 		m.SetBillingContact(*v)
 	}
+	if i.ClearBillingEmail {
+		m.ClearBillingEmail()
+	}
 	if v := i.BillingEmail; v != nil {
 		m.SetBillingEmail(*v)
+	}
+	if i.ClearBillingPhone {
+		m.ClearBillingPhone()
 	}
 	if v := i.BillingPhone; v != nil {
 		m.SetBillingPhone(*v)
 	}
+	if i.ClearBillingAddress {
+		m.ClearBillingAddress()
+	}
 	if v := i.BillingAddress; v != nil {
 		m.SetBillingAddress(*v)
+	}
+	if i.ClearTaxIdentifier {
+		m.ClearTaxIdentifier()
 	}
 	if v := i.TaxIdentifier; v != nil {
 		m.SetTaxIdentifier(*v)

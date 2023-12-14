@@ -361,12 +361,12 @@ type CreateOrganizationSettingInput struct {
 	SsoEntrypoint *string  `json:"ssoEntrypoint,omitempty"`
 	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`
 	// Name of the person to contact for billing
-	BillingContact string `json:"billingContact"`
-	BillingEmail   string `json:"billingEmail"`
-	BillingPhone   string `json:"billingPhone"`
-	BillingAddress string `json:"billingAddress"`
+	BillingContact *string `json:"billingContact,omitempty"`
+	BillingEmail   *string `json:"billingEmail,omitempty"`
+	BillingPhone   *string `json:"billingPhone,omitempty"`
+	BillingAddress *string `json:"billingAddress,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
-	TaxIdentifier string `json:"taxIdentifier"`
+	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
 	Tags           []string `json:"tags,omitempty"`
 	OrganizationID *string  `json:"organizationID,omitempty"`
@@ -1736,16 +1736,16 @@ type OrganizationSetting struct {
 	UpdatedBy *string   `json:"updatedBy,omitempty"`
 	// domains associated with the organization
 	Domains       []string `json:"domains,omitempty"`
-	SsoCert       string   `json:"ssoCert"`
-	SsoEntrypoint string   `json:"ssoEntrypoint"`
-	SsoIssuer     string   `json:"ssoIssuer"`
+	SsoCert       *string  `json:"ssoCert,omitempty"`
+	SsoEntrypoint *string  `json:"ssoEntrypoint,omitempty"`
+	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`
 	// Name of the person to contact for billing
-	BillingContact string `json:"billingContact"`
-	BillingEmail   string `json:"billingEmail"`
-	BillingPhone   string `json:"billingPhone"`
-	BillingAddress string `json:"billingAddress"`
+	BillingContact *string `json:"billingContact,omitempty"`
+	BillingEmail   *string `json:"billingEmail,omitempty"`
+	BillingPhone   *string `json:"billingPhone,omitempty"`
+	BillingAddress *string `json:"billingAddress,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
-	TaxIdentifier string `json:"taxIdentifier"`
+	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
 	// tags associated with the object
 	Tags         []string      `json:"tags,omitempty"`
 	Organization *Organization `json:"organization,omitempty"`
@@ -1868,6 +1868,8 @@ type OrganizationSettingWhereInput struct {
 	SsoCertContains     *string  `json:"ssoCertContains,omitempty"`
 	SsoCertHasPrefix    *string  `json:"ssoCertHasPrefix,omitempty"`
 	SsoCertHasSuffix    *string  `json:"ssoCertHasSuffix,omitempty"`
+	SsoCertIsNil        *bool    `json:"ssoCertIsNil,omitempty"`
+	SsoCertNotNil       *bool    `json:"ssoCertNotNil,omitempty"`
 	SsoCertEqualFold    *string  `json:"ssoCertEqualFold,omitempty"`
 	SsoCertContainsFold *string  `json:"ssoCertContainsFold,omitempty"`
 	// sso_entrypoint field predicates
@@ -1882,6 +1884,8 @@ type OrganizationSettingWhereInput struct {
 	SsoEntrypointContains     *string  `json:"ssoEntrypointContains,omitempty"`
 	SsoEntrypointHasPrefix    *string  `json:"ssoEntrypointHasPrefix,omitempty"`
 	SsoEntrypointHasSuffix    *string  `json:"ssoEntrypointHasSuffix,omitempty"`
+	SsoEntrypointIsNil        *bool    `json:"ssoEntrypointIsNil,omitempty"`
+	SsoEntrypointNotNil       *bool    `json:"ssoEntrypointNotNil,omitempty"`
 	SsoEntrypointEqualFold    *string  `json:"ssoEntrypointEqualFold,omitempty"`
 	SsoEntrypointContainsFold *string  `json:"ssoEntrypointContainsFold,omitempty"`
 	// sso_issuer field predicates
@@ -1896,6 +1900,8 @@ type OrganizationSettingWhereInput struct {
 	SsoIssuerContains     *string  `json:"ssoIssuerContains,omitempty"`
 	SsoIssuerHasPrefix    *string  `json:"ssoIssuerHasPrefix,omitempty"`
 	SsoIssuerHasSuffix    *string  `json:"ssoIssuerHasSuffix,omitempty"`
+	SsoIssuerIsNil        *bool    `json:"ssoIssuerIsNil,omitempty"`
+	SsoIssuerNotNil       *bool    `json:"ssoIssuerNotNil,omitempty"`
 	SsoIssuerEqualFold    *string  `json:"ssoIssuerEqualFold,omitempty"`
 	SsoIssuerContainsFold *string  `json:"ssoIssuerContainsFold,omitempty"`
 	// billing_contact field predicates
@@ -1910,6 +1916,8 @@ type OrganizationSettingWhereInput struct {
 	BillingContactContains     *string  `json:"billingContactContains,omitempty"`
 	BillingContactHasPrefix    *string  `json:"billingContactHasPrefix,omitempty"`
 	BillingContactHasSuffix    *string  `json:"billingContactHasSuffix,omitempty"`
+	BillingContactIsNil        *bool    `json:"billingContactIsNil,omitempty"`
+	BillingContactNotNil       *bool    `json:"billingContactNotNil,omitempty"`
 	BillingContactEqualFold    *string  `json:"billingContactEqualFold,omitempty"`
 	BillingContactContainsFold *string  `json:"billingContactContainsFold,omitempty"`
 	// billing_email field predicates
@@ -1924,6 +1932,8 @@ type OrganizationSettingWhereInput struct {
 	BillingEmailContains     *string  `json:"billingEmailContains,omitempty"`
 	BillingEmailHasPrefix    *string  `json:"billingEmailHasPrefix,omitempty"`
 	BillingEmailHasSuffix    *string  `json:"billingEmailHasSuffix,omitempty"`
+	BillingEmailIsNil        *bool    `json:"billingEmailIsNil,omitempty"`
+	BillingEmailNotNil       *bool    `json:"billingEmailNotNil,omitempty"`
 	BillingEmailEqualFold    *string  `json:"billingEmailEqualFold,omitempty"`
 	BillingEmailContainsFold *string  `json:"billingEmailContainsFold,omitempty"`
 	// billing_phone field predicates
@@ -1938,6 +1948,8 @@ type OrganizationSettingWhereInput struct {
 	BillingPhoneContains     *string  `json:"billingPhoneContains,omitempty"`
 	BillingPhoneHasPrefix    *string  `json:"billingPhoneHasPrefix,omitempty"`
 	BillingPhoneHasSuffix    *string  `json:"billingPhoneHasSuffix,omitempty"`
+	BillingPhoneIsNil        *bool    `json:"billingPhoneIsNil,omitempty"`
+	BillingPhoneNotNil       *bool    `json:"billingPhoneNotNil,omitempty"`
 	BillingPhoneEqualFold    *string  `json:"billingPhoneEqualFold,omitempty"`
 	BillingPhoneContainsFold *string  `json:"billingPhoneContainsFold,omitempty"`
 	// billing_address field predicates
@@ -1952,6 +1964,8 @@ type OrganizationSettingWhereInput struct {
 	BillingAddressContains     *string  `json:"billingAddressContains,omitempty"`
 	BillingAddressHasPrefix    *string  `json:"billingAddressHasPrefix,omitempty"`
 	BillingAddressHasSuffix    *string  `json:"billingAddressHasSuffix,omitempty"`
+	BillingAddressIsNil        *bool    `json:"billingAddressIsNil,omitempty"`
+	BillingAddressNotNil       *bool    `json:"billingAddressNotNil,omitempty"`
 	BillingAddressEqualFold    *string  `json:"billingAddressEqualFold,omitempty"`
 	BillingAddressContainsFold *string  `json:"billingAddressContainsFold,omitempty"`
 	// tax_identifier field predicates
@@ -1966,6 +1980,8 @@ type OrganizationSettingWhereInput struct {
 	TaxIdentifierContains     *string  `json:"taxIdentifierContains,omitempty"`
 	TaxIdentifierHasPrefix    *string  `json:"taxIdentifierHasPrefix,omitempty"`
 	TaxIdentifierHasSuffix    *string  `json:"taxIdentifierHasSuffix,omitempty"`
+	TaxIdentifierIsNil        *bool    `json:"taxIdentifierIsNil,omitempty"`
+	TaxIdentifierNotNil       *bool    `json:"taxIdentifierNotNil,omitempty"`
 	TaxIdentifierEqualFold    *string  `json:"taxIdentifierEqualFold,omitempty"`
 	TaxIdentifierContainsFold *string  `json:"taxIdentifierContainsFold,omitempty"`
 	// organization edge predicates
@@ -2786,19 +2802,27 @@ type UpdateOrganizationSettingInput struct {
 	UpdatedBy      *string    `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool      `json:"clearUpdatedBy,omitempty"`
 	// domains associated with the organization
-	Domains       []string `json:"domains,omitempty"`
-	AppendDomains []string `json:"appendDomains,omitempty"`
-	ClearDomains  *bool    `json:"clearDomains,omitempty"`
-	SsoCert       *string  `json:"ssoCert,omitempty"`
-	SsoEntrypoint *string  `json:"ssoEntrypoint,omitempty"`
-	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`
+	Domains            []string `json:"domains,omitempty"`
+	AppendDomains      []string `json:"appendDomains,omitempty"`
+	ClearDomains       *bool    `json:"clearDomains,omitempty"`
+	SsoCert            *string  `json:"ssoCert,omitempty"`
+	ClearSSOCert       *bool    `json:"clearSSOCert,omitempty"`
+	SsoEntrypoint      *string  `json:"ssoEntrypoint,omitempty"`
+	ClearSSOEntrypoint *bool    `json:"clearSSOEntrypoint,omitempty"`
+	SsoIssuer          *string  `json:"ssoIssuer,omitempty"`
+	ClearSSOIssuer     *bool    `json:"clearSSOIssuer,omitempty"`
 	// Name of the person to contact for billing
-	BillingContact *string `json:"billingContact,omitempty"`
-	BillingEmail   *string `json:"billingEmail,omitempty"`
-	BillingPhone   *string `json:"billingPhone,omitempty"`
-	BillingAddress *string `json:"billingAddress,omitempty"`
+	BillingContact      *string `json:"billingContact,omitempty"`
+	ClearBillingContact *bool   `json:"clearBillingContact,omitempty"`
+	BillingEmail        *string `json:"billingEmail,omitempty"`
+	ClearBillingEmail   *bool   `json:"clearBillingEmail,omitempty"`
+	BillingPhone        *string `json:"billingPhone,omitempty"`
+	ClearBillingPhone   *bool   `json:"clearBillingPhone,omitempty"`
+	BillingAddress      *string `json:"billingAddress,omitempty"`
+	ClearBillingAddress *bool   `json:"clearBillingAddress,omitempty"`
 	// Usually government-issued tax ID or business ID such as ABN in Australia
-	TaxIdentifier *string `json:"taxIdentifier,omitempty"`
+	TaxIdentifier      *string `json:"taxIdentifier,omitempty"`
+	ClearTaxIdentifier *bool   `json:"clearTaxIdentifier,omitempty"`
 	// tags associated with the object
 	Tags              []string `json:"tags,omitempty"`
 	AppendTags        []string `json:"appendTags,omitempty"`

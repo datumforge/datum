@@ -4390,12 +4390,12 @@ input CreateOrganizationSettingInput {
   ssoEntrypoint: String
   ssoIssuer: String
   """Name of the person to contact for billing"""
-  billingContact: String!
-  billingEmail: String!
-  billingPhone: String!
-  billingAddress: String!
+  billingContact: String
+  billingEmail: String
+  billingPhone: String
+  billingAddress: String
   """Usually government-issued tax ID or business ID such as ABN in Australia"""
-  taxIdentifier: String!
+  taxIdentifier: String
   """tags associated with the object"""
   tags: [String!]
   organizationID: ID
@@ -5690,16 +5690,16 @@ type OrganizationSetting implements Node {
   updatedBy: String
   """domains associated with the organization"""
   domains: [String!]
-  ssoCert: String!
-  ssoEntrypoint: String!
-  ssoIssuer: String!
+  ssoCert: String
+  ssoEntrypoint: String
+  ssoIssuer: String
   """Name of the person to contact for billing"""
-  billingContact: String!
-  billingEmail: String!
-  billingPhone: String!
-  billingAddress: String!
+  billingContact: String
+  billingEmail: String
+  billingPhone: String
+  billingAddress: String
   """Usually government-issued tax ID or business ID such as ABN in Australia"""
-  taxIdentifier: String!
+  taxIdentifier: String
   """tags associated with the object"""
   tags: [String!]
   organization: Organization
@@ -5801,6 +5801,8 @@ input OrganizationSettingWhereInput {
   ssoCertContains: String
   ssoCertHasPrefix: String
   ssoCertHasSuffix: String
+  ssoCertIsNil: Boolean
+  ssoCertNotNil: Boolean
   ssoCertEqualFold: String
   ssoCertContainsFold: String
   """sso_entrypoint field predicates"""
@@ -5815,6 +5817,8 @@ input OrganizationSettingWhereInput {
   ssoEntrypointContains: String
   ssoEntrypointHasPrefix: String
   ssoEntrypointHasSuffix: String
+  ssoEntrypointIsNil: Boolean
+  ssoEntrypointNotNil: Boolean
   ssoEntrypointEqualFold: String
   ssoEntrypointContainsFold: String
   """sso_issuer field predicates"""
@@ -5829,6 +5833,8 @@ input OrganizationSettingWhereInput {
   ssoIssuerContains: String
   ssoIssuerHasPrefix: String
   ssoIssuerHasSuffix: String
+  ssoIssuerIsNil: Boolean
+  ssoIssuerNotNil: Boolean
   ssoIssuerEqualFold: String
   ssoIssuerContainsFold: String
   """billing_contact field predicates"""
@@ -5843,6 +5849,8 @@ input OrganizationSettingWhereInput {
   billingContactContains: String
   billingContactHasPrefix: String
   billingContactHasSuffix: String
+  billingContactIsNil: Boolean
+  billingContactNotNil: Boolean
   billingContactEqualFold: String
   billingContactContainsFold: String
   """billing_email field predicates"""
@@ -5857,6 +5865,8 @@ input OrganizationSettingWhereInput {
   billingEmailContains: String
   billingEmailHasPrefix: String
   billingEmailHasSuffix: String
+  billingEmailIsNil: Boolean
+  billingEmailNotNil: Boolean
   billingEmailEqualFold: String
   billingEmailContainsFold: String
   """billing_phone field predicates"""
@@ -5871,6 +5881,8 @@ input OrganizationSettingWhereInput {
   billingPhoneContains: String
   billingPhoneHasPrefix: String
   billingPhoneHasSuffix: String
+  billingPhoneIsNil: Boolean
+  billingPhoneNotNil: Boolean
   billingPhoneEqualFold: String
   billingPhoneContainsFold: String
   """billing_address field predicates"""
@@ -5885,6 +5897,8 @@ input OrganizationSettingWhereInput {
   billingAddressContains: String
   billingAddressHasPrefix: String
   billingAddressHasSuffix: String
+  billingAddressIsNil: Boolean
+  billingAddressNotNil: Boolean
   billingAddressEqualFold: String
   billingAddressContainsFold: String
   """tax_identifier field predicates"""
@@ -5899,6 +5913,8 @@ input OrganizationSettingWhereInput {
   taxIdentifierContains: String
   taxIdentifierHasPrefix: String
   taxIdentifierHasSuffix: String
+  taxIdentifierIsNil: Boolean
+  taxIdentifierNotNil: Boolean
   taxIdentifierEqualFold: String
   taxIdentifierContainsFold: String
   """organization edge predicates"""
@@ -6912,15 +6928,23 @@ input UpdateOrganizationSettingInput {
   appendDomains: [String!]
   clearDomains: Boolean
   ssoCert: String
+  clearSSOCert: Boolean
   ssoEntrypoint: String
+  clearSSOEntrypoint: Boolean
   ssoIssuer: String
+  clearSSOIssuer: Boolean
   """Name of the person to contact for billing"""
   billingContact: String
+  clearBillingContact: Boolean
   billingEmail: String
+  clearBillingEmail: Boolean
   billingPhone: String
+  clearBillingPhone: Boolean
   billingAddress: String
+  clearBillingAddress: Boolean
   """Usually government-issued tax ID or business ID such as ABN in Australia"""
   taxIdentifier: String
+  clearTaxIdentifier: Boolean
   """tags associated with the object"""
   tags: [String!]
   appendTags: [String!]
@@ -21758,14 +21782,11 @@ func (ec *executionContext) _OrganizationSetting_ssoCert(ctx context.Context, fi
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_ssoCert(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21802,14 +21823,11 @@ func (ec *executionContext) _OrganizationSetting_ssoEntrypoint(ctx context.Conte
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_ssoEntrypoint(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21846,14 +21864,11 @@ func (ec *executionContext) _OrganizationSetting_ssoIssuer(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_ssoIssuer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21890,14 +21905,11 @@ func (ec *executionContext) _OrganizationSetting_billingContact(ctx context.Cont
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_billingContact(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21934,14 +21946,11 @@ func (ec *executionContext) _OrganizationSetting_billingEmail(ctx context.Contex
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_billingEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21978,14 +21987,11 @@ func (ec *executionContext) _OrganizationSetting_billingPhone(ctx context.Contex
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_billingPhone(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -22022,14 +22028,11 @@ func (ec *executionContext) _OrganizationSetting_billingAddress(ctx context.Cont
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_billingAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -22066,14 +22069,11 @@ func (ec *executionContext) _OrganizationSetting_taxIdentifier(ctx context.Conte
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_taxIdentifier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -34176,35 +34176,35 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 			it.SSOIssuer = data
 		case "billingContact":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingContact"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.BillingContact = data
 		case "billingEmail":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingEmail"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.BillingEmail = data
 		case "billingPhone":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingPhone"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.BillingPhone = data
 		case "billingAddress":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingAddress"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.BillingAddress = data
 		case "taxIdentifier":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxIdentifier"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -40158,7 +40158,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertIsNil", "ssoCertNotNil", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointIsNil", "ssoEntrypointNotNil", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerIsNil", "ssoIssuerNotNil", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40655,6 +40655,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.SSOCertHasSuffix = data
+		case "ssoCertIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoCertIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SSOCertIsNil = data
+		case "ssoCertNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoCertNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SSOCertNotNil = data
 		case "ssoCertEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoCertEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -40746,6 +40760,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.SSOEntrypointHasSuffix = data
+		case "ssoEntrypointIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoEntrypointIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SSOEntrypointIsNil = data
+		case "ssoEntrypointNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoEntrypointNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SSOEntrypointNotNil = data
 		case "ssoEntrypointEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoEntrypointEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -40837,6 +40865,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.SSOIssuerHasSuffix = data
+		case "ssoIssuerIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoIssuerIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SSOIssuerIsNil = data
+		case "ssoIssuerNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoIssuerNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SSOIssuerNotNil = data
 		case "ssoIssuerEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoIssuerEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -40928,6 +40970,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.BillingContactHasSuffix = data
+		case "billingContactIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingContactIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingContactIsNil = data
+		case "billingContactNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingContactNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingContactNotNil = data
 		case "billingContactEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingContactEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -41019,6 +41075,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.BillingEmailHasSuffix = data
+		case "billingEmailIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingEmailIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingEmailIsNil = data
+		case "billingEmailNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingEmailNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingEmailNotNil = data
 		case "billingEmailEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingEmailEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -41110,6 +41180,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.BillingPhoneHasSuffix = data
+		case "billingPhoneIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingPhoneIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingPhoneIsNil = data
+		case "billingPhoneNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingPhoneNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingPhoneNotNil = data
 		case "billingPhoneEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingPhoneEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -41201,6 +41285,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.BillingAddressHasSuffix = data
+		case "billingAddressIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingAddressIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingAddressIsNil = data
+		case "billingAddressNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingAddressNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.BillingAddressNotNil = data
 		case "billingAddressEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingAddressEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -41292,6 +41390,20 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.TaxIdentifierHasSuffix = data
+		case "taxIdentifierIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxIdentifierIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TaxIdentifierIsNil = data
+		case "taxIdentifierNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxIdentifierNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TaxIdentifierNotNil = data
 		case "taxIdentifierEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxIdentifierEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45145,7 +45257,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "ssoCert", "clearSSOCert", "ssoEntrypoint", "clearSSOEntrypoint", "ssoIssuer", "clearSSOIssuer", "billingContact", "clearBillingContact", "billingEmail", "clearBillingEmail", "billingPhone", "clearBillingPhone", "billingAddress", "clearBillingAddress", "taxIdentifier", "clearTaxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -45201,6 +45313,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.SSOCert = data
+		case "clearSSOCert":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSSOCert"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSSOCert = data
 		case "ssoEntrypoint":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoEntrypoint"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45208,6 +45327,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.SSOEntrypoint = data
+		case "clearSSOEntrypoint":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSSOEntrypoint"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSSOEntrypoint = data
 		case "ssoIssuer":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoIssuer"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45215,6 +45341,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.SSOIssuer = data
+		case "clearSSOIssuer":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSSOIssuer"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSSOIssuer = data
 		case "billingContact":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingContact"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45222,6 +45355,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.BillingContact = data
+		case "clearBillingContact":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearBillingContact"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearBillingContact = data
 		case "billingEmail":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingEmail"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45229,6 +45369,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.BillingEmail = data
+		case "clearBillingEmail":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearBillingEmail"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearBillingEmail = data
 		case "billingPhone":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingPhone"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45236,6 +45383,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.BillingPhone = data
+		case "clearBillingPhone":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearBillingPhone"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearBillingPhone = data
 		case "billingAddress":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("billingAddress"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45243,6 +45397,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.BillingAddress = data
+		case "clearBillingAddress":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearBillingAddress"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearBillingAddress = data
 		case "taxIdentifier":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("taxIdentifier"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -45250,6 +45411,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.TaxIdentifier = data
+		case "clearTaxIdentifier":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearTaxIdentifier"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearTaxIdentifier = data
 		case "tags":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tags"))
 			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
@@ -51568,44 +51736,20 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._OrganizationSetting_domains(ctx, field, obj)
 		case "ssoCert":
 			out.Values[i] = ec._OrganizationSetting_ssoCert(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "ssoEntrypoint":
 			out.Values[i] = ec._OrganizationSetting_ssoEntrypoint(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "ssoIssuer":
 			out.Values[i] = ec._OrganizationSetting_ssoIssuer(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "billingContact":
 			out.Values[i] = ec._OrganizationSetting_billingContact(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "billingEmail":
 			out.Values[i] = ec._OrganizationSetting_billingEmail(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "billingPhone":
 			out.Values[i] = ec._OrganizationSetting_billingPhone(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "billingAddress":
 			out.Values[i] = ec._OrganizationSetting_billingAddress(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "taxIdentifier":
 			out.Values[i] = ec._OrganizationSetting_taxIdentifier(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "tags":
 			out.Values[i] = ec._OrganizationSetting_tags(ctx, field, obj)
 		case "organization":

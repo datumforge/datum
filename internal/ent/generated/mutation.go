@@ -9174,9 +9174,22 @@ func (m *OrganizationSettingMutation) OldSSOCert(ctx context.Context) (v string,
 	return oldValue.SSOCert, nil
 }
 
+// ClearSSOCert clears the value of the "sso_cert" field.
+func (m *OrganizationSettingMutation) ClearSSOCert() {
+	m.sso_cert = nil
+	m.clearedFields[organizationsetting.FieldSSOCert] = struct{}{}
+}
+
+// SSOCertCleared returns if the "sso_cert" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) SSOCertCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldSSOCert]
+	return ok
+}
+
 // ResetSSOCert resets all changes to the "sso_cert" field.
 func (m *OrganizationSettingMutation) ResetSSOCert() {
 	m.sso_cert = nil
+	delete(m.clearedFields, organizationsetting.FieldSSOCert)
 }
 
 // SetSSOEntrypoint sets the "sso_entrypoint" field.
@@ -9210,9 +9223,22 @@ func (m *OrganizationSettingMutation) OldSSOEntrypoint(ctx context.Context) (v s
 	return oldValue.SSOEntrypoint, nil
 }
 
+// ClearSSOEntrypoint clears the value of the "sso_entrypoint" field.
+func (m *OrganizationSettingMutation) ClearSSOEntrypoint() {
+	m.sso_entrypoint = nil
+	m.clearedFields[organizationsetting.FieldSSOEntrypoint] = struct{}{}
+}
+
+// SSOEntrypointCleared returns if the "sso_entrypoint" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) SSOEntrypointCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldSSOEntrypoint]
+	return ok
+}
+
 // ResetSSOEntrypoint resets all changes to the "sso_entrypoint" field.
 func (m *OrganizationSettingMutation) ResetSSOEntrypoint() {
 	m.sso_entrypoint = nil
+	delete(m.clearedFields, organizationsetting.FieldSSOEntrypoint)
 }
 
 // SetSSOIssuer sets the "sso_issuer" field.
@@ -9246,9 +9272,22 @@ func (m *OrganizationSettingMutation) OldSSOIssuer(ctx context.Context) (v strin
 	return oldValue.SSOIssuer, nil
 }
 
+// ClearSSOIssuer clears the value of the "sso_issuer" field.
+func (m *OrganizationSettingMutation) ClearSSOIssuer() {
+	m.sso_issuer = nil
+	m.clearedFields[organizationsetting.FieldSSOIssuer] = struct{}{}
+}
+
+// SSOIssuerCleared returns if the "sso_issuer" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) SSOIssuerCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldSSOIssuer]
+	return ok
+}
+
 // ResetSSOIssuer resets all changes to the "sso_issuer" field.
 func (m *OrganizationSettingMutation) ResetSSOIssuer() {
 	m.sso_issuer = nil
+	delete(m.clearedFields, organizationsetting.FieldSSOIssuer)
 }
 
 // SetBillingContact sets the "billing_contact" field.
@@ -9282,9 +9321,22 @@ func (m *OrganizationSettingMutation) OldBillingContact(ctx context.Context) (v 
 	return oldValue.BillingContact, nil
 }
 
+// ClearBillingContact clears the value of the "billing_contact" field.
+func (m *OrganizationSettingMutation) ClearBillingContact() {
+	m.billing_contact = nil
+	m.clearedFields[organizationsetting.FieldBillingContact] = struct{}{}
+}
+
+// BillingContactCleared returns if the "billing_contact" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) BillingContactCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldBillingContact]
+	return ok
+}
+
 // ResetBillingContact resets all changes to the "billing_contact" field.
 func (m *OrganizationSettingMutation) ResetBillingContact() {
 	m.billing_contact = nil
+	delete(m.clearedFields, organizationsetting.FieldBillingContact)
 }
 
 // SetBillingEmail sets the "billing_email" field.
@@ -9318,9 +9370,22 @@ func (m *OrganizationSettingMutation) OldBillingEmail(ctx context.Context) (v st
 	return oldValue.BillingEmail, nil
 }
 
+// ClearBillingEmail clears the value of the "billing_email" field.
+func (m *OrganizationSettingMutation) ClearBillingEmail() {
+	m.billing_email = nil
+	m.clearedFields[organizationsetting.FieldBillingEmail] = struct{}{}
+}
+
+// BillingEmailCleared returns if the "billing_email" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) BillingEmailCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldBillingEmail]
+	return ok
+}
+
 // ResetBillingEmail resets all changes to the "billing_email" field.
 func (m *OrganizationSettingMutation) ResetBillingEmail() {
 	m.billing_email = nil
+	delete(m.clearedFields, organizationsetting.FieldBillingEmail)
 }
 
 // SetBillingPhone sets the "billing_phone" field.
@@ -9354,9 +9419,22 @@ func (m *OrganizationSettingMutation) OldBillingPhone(ctx context.Context) (v st
 	return oldValue.BillingPhone, nil
 }
 
+// ClearBillingPhone clears the value of the "billing_phone" field.
+func (m *OrganizationSettingMutation) ClearBillingPhone() {
+	m.billing_phone = nil
+	m.clearedFields[organizationsetting.FieldBillingPhone] = struct{}{}
+}
+
+// BillingPhoneCleared returns if the "billing_phone" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) BillingPhoneCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldBillingPhone]
+	return ok
+}
+
 // ResetBillingPhone resets all changes to the "billing_phone" field.
 func (m *OrganizationSettingMutation) ResetBillingPhone() {
 	m.billing_phone = nil
+	delete(m.clearedFields, organizationsetting.FieldBillingPhone)
 }
 
 // SetBillingAddress sets the "billing_address" field.
@@ -9390,9 +9468,22 @@ func (m *OrganizationSettingMutation) OldBillingAddress(ctx context.Context) (v 
 	return oldValue.BillingAddress, nil
 }
 
+// ClearBillingAddress clears the value of the "billing_address" field.
+func (m *OrganizationSettingMutation) ClearBillingAddress() {
+	m.billing_address = nil
+	m.clearedFields[organizationsetting.FieldBillingAddress] = struct{}{}
+}
+
+// BillingAddressCleared returns if the "billing_address" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) BillingAddressCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldBillingAddress]
+	return ok
+}
+
 // ResetBillingAddress resets all changes to the "billing_address" field.
 func (m *OrganizationSettingMutation) ResetBillingAddress() {
 	m.billing_address = nil
+	delete(m.clearedFields, organizationsetting.FieldBillingAddress)
 }
 
 // SetTaxIdentifier sets the "tax_identifier" field.
@@ -9426,9 +9517,22 @@ func (m *OrganizationSettingMutation) OldTaxIdentifier(ctx context.Context) (v s
 	return oldValue.TaxIdentifier, nil
 }
 
+// ClearTaxIdentifier clears the value of the "tax_identifier" field.
+func (m *OrganizationSettingMutation) ClearTaxIdentifier() {
+	m.tax_identifier = nil
+	m.clearedFields[organizationsetting.FieldTaxIdentifier] = struct{}{}
+}
+
+// TaxIdentifierCleared returns if the "tax_identifier" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) TaxIdentifierCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldTaxIdentifier]
+	return ok
+}
+
 // ResetTaxIdentifier resets all changes to the "tax_identifier" field.
 func (m *OrganizationSettingMutation) ResetTaxIdentifier() {
 	m.tax_identifier = nil
+	delete(m.clearedFields, organizationsetting.FieldTaxIdentifier)
 }
 
 // SetTags sets the "tags" field.
@@ -9831,6 +9935,30 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationsetting.FieldDomains) {
 		fields = append(fields, organizationsetting.FieldDomains)
 	}
+	if m.FieldCleared(organizationsetting.FieldSSOCert) {
+		fields = append(fields, organizationsetting.FieldSSOCert)
+	}
+	if m.FieldCleared(organizationsetting.FieldSSOEntrypoint) {
+		fields = append(fields, organizationsetting.FieldSSOEntrypoint)
+	}
+	if m.FieldCleared(organizationsetting.FieldSSOIssuer) {
+		fields = append(fields, organizationsetting.FieldSSOIssuer)
+	}
+	if m.FieldCleared(organizationsetting.FieldBillingContact) {
+		fields = append(fields, organizationsetting.FieldBillingContact)
+	}
+	if m.FieldCleared(organizationsetting.FieldBillingEmail) {
+		fields = append(fields, organizationsetting.FieldBillingEmail)
+	}
+	if m.FieldCleared(organizationsetting.FieldBillingPhone) {
+		fields = append(fields, organizationsetting.FieldBillingPhone)
+	}
+	if m.FieldCleared(organizationsetting.FieldBillingAddress) {
+		fields = append(fields, organizationsetting.FieldBillingAddress)
+	}
+	if m.FieldCleared(organizationsetting.FieldTaxIdentifier) {
+		fields = append(fields, organizationsetting.FieldTaxIdentifier)
+	}
 	if m.FieldCleared(organizationsetting.FieldTags) {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
@@ -9856,6 +9984,30 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 		return nil
 	case organizationsetting.FieldDomains:
 		m.ClearDomains()
+		return nil
+	case organizationsetting.FieldSSOCert:
+		m.ClearSSOCert()
+		return nil
+	case organizationsetting.FieldSSOEntrypoint:
+		m.ClearSSOEntrypoint()
+		return nil
+	case organizationsetting.FieldSSOIssuer:
+		m.ClearSSOIssuer()
+		return nil
+	case organizationsetting.FieldBillingContact:
+		m.ClearBillingContact()
+		return nil
+	case organizationsetting.FieldBillingEmail:
+		m.ClearBillingEmail()
+		return nil
+	case organizationsetting.FieldBillingPhone:
+		m.ClearBillingPhone()
+		return nil
+	case organizationsetting.FieldBillingAddress:
+		m.ClearBillingAddress()
+		return nil
+	case organizationsetting.FieldTaxIdentifier:
+		m.ClearTaxIdentifier()
 		return nil
 	case organizationsetting.FieldTags:
 		m.ClearTags()

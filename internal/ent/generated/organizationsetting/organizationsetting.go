@@ -109,12 +109,6 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// DefaultSSOCert holds the default value on creation for the "sso_cert" field.
-	DefaultSSOCert string
-	// DefaultSSOEntrypoint holds the default value on creation for the "sso_entrypoint" field.
-	DefaultSSOEntrypoint string
-	// DefaultSSOIssuer holds the default value on creation for the "sso_issuer" field.
-	DefaultSSOIssuer string
 	// DefaultTags holds the default value on creation for the "tags" field.
 	DefaultTags []string
 	// DefaultID holds the default value on creation for the "id" field.

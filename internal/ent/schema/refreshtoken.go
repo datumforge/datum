@@ -6,7 +6,6 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -20,38 +19,23 @@ type RefreshToken struct {
 // Fields of the RefreshToken
 func (RefreshToken) Fields() []ent.Field {
 	return []ent.Field{
-		field.Text("client_id").
-			NotEmpty(),
-		field.JSON("scopes", []string{}).
-			Optional(),
-		field.Text("nonce").
-			NotEmpty(),
-		field.Text("claims_user_id").
-			NotEmpty(),
-		field.Text("claims_username").
-			NotEmpty(),
-		field.Text("claims_email").
-			NotEmpty(),
-		field.Bool("claims_email_verified"),
-		field.JSON("claims_groups", []string{}).
-			Optional(),
-		field.Text("claims_preferred_username"),
-		field.Text("connector_id").
-			NotEmpty(),
-		field.JSON("connector_data", []string{}).
-			Optional(),
-		field.Text("token"),
-		field.Text("obsolete_token"),
-		field.Time("last_used").
-			Default(time.Now),
+		field.String("refresh_token").Sensitive().
+			Unique().
+			Immutable(),
+		field.Time("expires_at").
+			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }), // nolint: gomnd
+		field.Time("issued_at").
+			Default(time.Now()),
+		field.String("organization_id").
+			Comment("organization ID of the organization the user is accessing"),
+		field.String("user_id").
+			Comment("the user the session is associated with"),
 	}
 }
 
 // Edges of the RefreshToken
 func (RefreshToken) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("user", User.Type).Ref("refreshtoken").Unique(),
-	}
+	return nil
 }
 
 // Mixin of the RefreshToken

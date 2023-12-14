@@ -11,27 +11,27 @@ import (
 type CheckFunc func(ctx context.Context) error
 
 type Checks struct {
-	readinessChecks map[string]CheckFunc
+	checks map[string]CheckFunc
 }
 
 // AddReadinessCheck will accept a function to be ran during calls to /readyz
 // These functions should accept a context and only return an error. When adding
 // a readiness check a name is also provided, this name will be used when returning
 // the state of all the checks
-func (c *Checks) AddReadinessCheck(name string, f CheckFunc) {
+func (h *Handler) AddReadinessCheck(name string, f CheckFunc) {
 	// if this is null, create the struct before trying to add
-	if c.readinessChecks == nil {
-		c.readinessChecks = map[string]CheckFunc{}
+	if h.ReadyChecks.checks == nil {
+		h.ReadyChecks.checks = map[string]CheckFunc{}
 	}
 
-	c.readinessChecks[name] = f
+	h.ReadyChecks.checks[name] = f
 }
 
 func (c *Checks) ReadyHandler(ctx echo.Context) error {
 	failed := false
 	status := map[string]string{}
 
-	for name, check := range c.readinessChecks {
+	for name, check := range c.checks {
 		if err := check(ctx.Request().Context()); err != nil {
 			failed = true
 			status[name] = err.Error()

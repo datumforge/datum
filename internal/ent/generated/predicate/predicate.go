@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AccessToken is the predicate function for accesstoken builders.
+type AccessToken func(*sql.Selector)
+
 // Entitlement is the predicate function for entitlement builders.
 type Entitlement func(*sql.Selector)
 
@@ -20,6 +23,9 @@ type Integration func(*sql.Selector)
 
 // OauthProvider is the predicate function for oauthprovider builders.
 type OauthProvider func(*sql.Selector)
+
+// OhAuthTooToken is the predicate function for ohauthtootoken builders.
+type OhAuthTooToken func(*sql.Selector)
 
 // Organization is the predicate function for organization builders.
 type Organization func(*sql.Selector)

@@ -25,6 +25,7 @@ type UserBuilder struct {
 	FirstName string
 	LastName  string
 	Email     string
+	Password  string
 }
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
@@ -76,6 +77,10 @@ func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
 		u.Email = gofakeit.Email()
 	}
 
+	if u.Password == "" {
+		u.Password = gofakeit.Password(true, true, true, true, false, 20)
+	}
+
 	// create user setting
 	userSetting := EntClient.UserSetting.Create().SaveX(ctx)
 
@@ -83,6 +88,7 @@ func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
 		SetFirstName(u.FirstName).
 		SetLastName(u.LastName).
 		SetEmail(u.Email).
+		SetPassword(u.Password).
 		SetSetting(userSetting).
 		SaveX(ctx)
 }

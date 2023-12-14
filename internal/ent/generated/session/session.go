@@ -3,9 +3,6 @@
 package session
 
 import (
-	"fmt"
-	"io"
-	"strconv"
 	"time"
 
 	"entgo.io/ent"
@@ -26,27 +23,27 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
-	// FieldDisabled holds the string denoting the disabled field in the database.
-	FieldDisabled = "disabled"
-	// FieldToken holds the string denoting the token field in the database.
-	FieldToken = "token"
-	// FieldUserAgent holds the string denoting the user_agent field in the database.
-	FieldUserAgent = "user_agent"
-	// FieldIps holds the string denoting the ips field in the database.
-	FieldIps = "ips"
-	// EdgeUsers holds the string denoting the users edge name in mutations.
-	EdgeUsers = "users"
+	// FieldSessionToken holds the string denoting the session_token field in the database.
+	FieldSessionToken = "session_token"
+	// FieldIssuedAt holds the string denoting the issued_at field in the database.
+	FieldIssuedAt = "issued_at"
+	// FieldExpiresAt holds the string denoting the expires_at field in the database.
+	FieldExpiresAt = "expires_at"
+	// FieldOrganizationID holds the string denoting the organization_id field in the database.
+	FieldOrganizationID = "organization_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
+	// EdgeOwner holds the string denoting the owner edge name in mutations.
+	EdgeOwner = "owner"
 	// Table holds the table name of the session in the database.
 	Table = "sessions"
-	// UsersTable is the table that holds the users relation/edge.
-	UsersTable = "sessions"
-	// UsersInverseTable is the table name for the User entity.
+	// OwnerTable is the table that holds the owner relation/edge.
+	OwnerTable = "sessions"
+	// OwnerInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
-	UsersInverseTable = "users"
-	// UsersColumn is the table column denoting the users relation/edge.
-	UsersColumn = "session_users"
+	OwnerInverseTable = "users"
+	// OwnerColumn is the table column denoting the owner relation/edge.
+	OwnerColumn = "user_id"
 )
 
 // Columns holds all SQL columns for session fields.
@@ -56,29 +53,17 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
-	FieldType,
-	FieldDisabled,
-	FieldToken,
-	FieldUserAgent,
-	FieldIps,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sessions"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"session_users",
-	"user_sessions",
+	FieldSessionToken,
+	FieldIssuedAt,
+	FieldExpiresAt,
+	FieldOrganizationID,
+	FieldUserID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -98,37 +83,13 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
-	// DefaultToken holds the default value on creation for the "token" field.
-	DefaultToken func() string
-	// TokenValidator is a validator for the "token" field. It is called by the builders before save.
-	TokenValidator func(string) error
+	// DefaultIssuedAt holds the default value on creation for the "issued_at" field.
+	DefaultIssuedAt func() time.Time
+	// DefaultExpiresAt holds the default value on creation for the "expires_at" field.
+	DefaultExpiresAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
-
-// Type defines the type for the "type" enum field.
-type Type string
-
-// Type values.
-const (
-	TypeLocal       Type = "local"
-	TypeOauth       Type = "oauth"
-	TypeAppPassword Type = "app_password"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
-
-// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
-	switch _type {
-	case TypeLocal, TypeOauth, TypeAppPassword:
-		return nil
-	default:
-		return fmt.Errorf("session: invalid enum value for type field: %q", _type)
-	}
-}
 
 // OrderOption defines the ordering options for the Session queries.
 type OrderOption func(*sql.Selector)
@@ -158,59 +119,41 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
-// ByType orders the results by the type field.
-func ByType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldType, opts...).ToFunc()
+// BySessionToken orders the results by the session_token field.
+func BySessionToken(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSessionToken, opts...).ToFunc()
 }
 
-// ByDisabled orders the results by the disabled field.
-func ByDisabled(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDisabled, opts...).ToFunc()
+// ByIssuedAt orders the results by the issued_at field.
+func ByIssuedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIssuedAt, opts...).ToFunc()
 }
 
-// ByToken orders the results by the token field.
-func ByToken(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldToken, opts...).ToFunc()
+// ByExpiresAt orders the results by the expires_at field.
+func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpiresAt, opts...).ToFunc()
 }
 
-// ByUserAgent orders the results by the user_agent field.
-func ByUserAgent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUserAgent, opts...).ToFunc()
+// ByOrganizationID orders the results by the organization_id field.
+func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
-// ByIps orders the results by the ips field.
-func ByIps(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldIps, opts...).ToFunc()
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
-// ByUsersField orders the results by users field.
-func ByUsersField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newUsersStep() *sqlgraph.Step {
+func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UsersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, false, UsersTable, UsersColumn),
+		sqlgraph.To(OwnerInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
 	)
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (e Type) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *Type) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = Type(str)
-	if err := TypeValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid Type", str)
-	}
-	return nil
 }

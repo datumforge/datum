@@ -11,15 +11,14 @@ import (
 
 	echo "github.com/datumforge/echox"
 
-	"github.com/datumforge/datum/internal/auth"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
-	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
+	authmw "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 var serveCmd = &cobra.Command{
@@ -44,7 +43,7 @@ func init() {
 	}
 
 	// Auth configuration settings
-	if err := auth.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
+	if err := tokens.RegisterAuthFlags(viper.GetViper(), serveCmd.PersistentFlags()); err != nil {
 		log.Fatal(err)
 	}
 
@@ -63,9 +62,6 @@ func serve(ctx context.Context) error {
 		mw          []echo.MiddlewareFunc
 	)
 
-	// create ready checks
-	readyChecks := handlers.Checks{}
-
 	// create ent dependency injection
 	entOpts := []ent.Option{ent.Logger(*logger)}
 
@@ -76,12 +72,17 @@ func serve(ctx context.Context) error {
 	serverOpts = append(serverOpts,
 		serveropts.WithConfigProvider(&config.ConfigProviderWithRefresh{}),
 		serveropts.WithServer(settings),
+		serveropts.WithLogger(logger),
 		serveropts.WithHTTPS(settings),
 		serveropts.WithSQLiteDB(settings),
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
-		serveropts.WithLogger(logger),
 	)
+
+	// Create keys for development
+	if dev := viper.GetBool("server.dev"); dev {
+		serverOpts = append(serverOpts, serveropts.WithGeneratedKeys(settings))
+	}
 
 	so := serveropts.NewServerOptions(serverOpts)
 
@@ -89,9 +90,10 @@ func serve(ctx context.Context) error {
 	// this must come before the database setup because the FGA Client
 	// is used as an ent dependency
 	if so.Config.Authz.Enabled {
-		config := fga.NewAuthzConfig(so.Config.Authz, logger)
+		az := so.Config.Authz
+		config := fga.NewAuthzConfig(az, logger)
 
-		fgaClient, err = fga.CreateFGAClientWithStore(ctx, *config)
+		fgaClient, err = fga.CreateFGAClientWithStore(ctx, config)
 		if err != nil {
 			return err
 		}
@@ -99,14 +101,10 @@ func serve(ctx context.Context) error {
 		// add client as ent dependency
 		entOpts = append(entOpts, ent.Authz(*fgaClient))
 
-		// add ready checkz
-		readyChecks.AddReadinessCheck("fga", fga.Healthcheck(*fgaClient))
+		// add auth middleware
+		authMiddleware := authmw.Authenticate()
 
-		// add jwt middleware
-		secretKey := []byte(viper.GetString("jwt.secretkey"))
-		jwtMiddleware := auth.CreateJwtMiddleware([]byte(secretKey))
-
-		mw = append(mw, jwtMiddleware)
+		mw = append(mw, authMiddleware)
 	}
 
 	// Setup DB connection
@@ -119,19 +117,16 @@ func serve(ctx context.Context) error {
 
 	defer entdbClient.Close()
 
-	// Add ready checks right before creating the server
-	so.Config.Server.Checks = readyChecks
+	// add ready checks
+	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient))
+
+	// Add Driver to the Handlers Config
+	so.Config.Server.Handler.DBClient = entdbClient
 
 	srv := server.NewServer(so.Config.Server, so.Config.Logger.Desugar())
 
-	// Setup Graph API Handlers
-	r := graphapi.NewResolver(entdbClient, so.Config.Auth.Enabled).
-		WithLogger(logger.Named("resolvers"))
-
-	handler := r.Handler(viper.GetBool("server.dev"), mw...)
-
-	// Add Graph Handler
-	srv.AddHandler(handler)
+	// // Setup Graph API Handlers
+	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient, settings, mw))
 
 	if err := srv.StartEchoServer(); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

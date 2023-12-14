@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -198,16 +199,16 @@ func (uc *UserCreate) SetNillableLastSeen(t *time.Time) *UserCreate {
 	return uc
 }
 
-// SetPasswordHash sets the "passwordHash" field.
-func (uc *UserCreate) SetPasswordHash(s string) *UserCreate {
-	uc.mutation.SetPasswordHash(s)
+// SetPassword sets the "password" field.
+func (uc *UserCreate) SetPassword(s string) *UserCreate {
+	uc.mutation.SetPassword(s)
 	return uc
 }
 
-// SetNillablePasswordHash sets the "passwordHash" field if the given value is not nil.
-func (uc *UserCreate) SetNillablePasswordHash(s *string) *UserCreate {
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePassword(s *string) *UserCreate {
 	if s != nil {
-		uc.SetPasswordHash(*s)
+		uc.SetPassword(*s)
 	}
 	return uc
 }
@@ -325,19 +326,34 @@ func (uc *UserCreate) SetSetting(u *UserSetting) *UserCreate {
 	return uc.SetSettingID(u.ID)
 }
 
-// AddRefreshtokenIDs adds the "refreshtoken" edge to the RefreshToken entity by IDs.
-func (uc *UserCreate) AddRefreshtokenIDs(ids ...string) *UserCreate {
-	uc.mutation.AddRefreshtokenIDs(ids...)
+// AddRefreshTokenIDs adds the "refresh_token" edge to the RefreshToken entity by IDs.
+func (uc *UserCreate) AddRefreshTokenIDs(ids ...string) *UserCreate {
+	uc.mutation.AddRefreshTokenIDs(ids...)
 	return uc
 }
 
-// AddRefreshtoken adds the "refreshtoken" edges to the RefreshToken entity.
-func (uc *UserCreate) AddRefreshtoken(r ...*RefreshToken) *UserCreate {
+// AddRefreshToken adds the "refresh_token" edges to the RefreshToken entity.
+func (uc *UserCreate) AddRefreshToken(r ...*RefreshToken) *UserCreate {
 	ids := make([]string, len(r))
 	for i := range r {
 		ids[i] = r[i].ID
 	}
-	return uc.AddRefreshtokenIDs(ids...)
+	return uc.AddRefreshTokenIDs(ids...)
+}
+
+// AddAccessTokenIDs adds the "access_token" edge to the AccessToken entity by IDs.
+func (uc *UserCreate) AddAccessTokenIDs(ids ...string) *UserCreate {
+	uc.mutation.AddAccessTokenIDs(ids...)
+	return uc
+}
+
+// AddAccessToken adds the "access_token" edges to the AccessToken entity.
+func (uc *UserCreate) AddAccessToken(a ...*AccessToken) *UserCreate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uc.AddAccessTokenIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -557,9 +573,9 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldLastSeen, field.TypeTime, value)
 		_node.LastSeen = value
 	}
-	if value, ok := uc.mutation.PasswordHash(); ok {
-		_spec.SetField(user.FieldPasswordHash, field.TypeString, value)
-		_node.PasswordHash = &value
+	if value, ok := uc.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+		_node.Password = &value
 	}
 	if value, ok := uc.mutation.Sub(); ok {
 		_spec.SetField(user.FieldSub, field.TypeString, value)
@@ -654,18 +670,35 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.RefreshtokenIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.RefreshTokenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.RefreshtokenTable,
-			Columns: []string{user.RefreshtokenColumn},
+			Table:   user.RefreshTokenTable,
+			Columns: []string{user.RefreshTokenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
 			},
 		}
 		edge.Schema = uc.schemaConfig.RefreshToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.AccessTokenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AccessTokenTable,
+			Columns: []string{user.AccessTokenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.AccessToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

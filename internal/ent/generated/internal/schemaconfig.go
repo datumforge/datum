@@ -7,12 +7,14 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
+	AccessToken         string // AccessToken table.
 	Entitlement         string // Entitlement table.
 	Group               string // Group table.
 	GroupUsers          string // Group-users->User table.
 	GroupSetting        string // GroupSetting table.
 	Integration         string // Integration table.
 	OauthProvider       string // OauthProvider table.
+	OhAuthTooToken      string // OhAuthTooToken table.
 	Organization        string // Organization table.
 	OrganizationSetting string // OrganizationSetting table.
 	PersonalAccessToken string // PersonalAccessToken table.

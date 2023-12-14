@@ -130,17 +130,17 @@ func Test_CreateRelationshipTuple(t *testing.T) {
 		name        string
 		relation    string
 		object      string
-		expectedRes []ofgaclient.ClientWriteSingleResponse
+		expectedRes []ofgaclient.ClientWriteRequestWriteResponse
 		errRes      error
 	}{
 		{
 			name:     "happy path with relation",
 			object:   "organization:datum",
 			relation: "member",
-			expectedRes: []ofgaclient.ClientWriteSingleResponse{
+			expectedRes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					TupleKey: ofgaclient.ClientTupleKey{
-						User:     "user:nano-id-of-member",
+						User:     "user:ulid-of-member",
 						Relation: "member",
 						Object:   "organization:datum",
 					},
@@ -153,7 +153,7 @@ func Test_CreateRelationshipTuple(t *testing.T) {
 			name:     "error, missing relation",
 			object:   "organization:datum",
 			relation: "",
-			expectedRes: []ofgaclient.ClientWriteSingleResponse{
+			expectedRes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					Status: ofgaclient.FAILURE,
 				},
@@ -164,7 +164,7 @@ func Test_CreateRelationshipTuple(t *testing.T) {
 			name:     "error, missing object",
 			object:   "",
 			relation: "can_view",
-			expectedRes: []ofgaclient.ClientWriteSingleResponse{
+			expectedRes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					Status: ofgaclient.FAILURE,
 				},
@@ -178,7 +178,7 @@ func Test_CreateRelationshipTuple(t *testing.T) {
 			// mock response for input
 			ctk := []ofgaclient.ClientTupleKey{
 				{
-					User:     "user:nano-id-of-member",
+					User:     "user:ulid-of-member",
 					Relation: tc.relation,
 					Object:   tc.object,
 				},
@@ -244,9 +244,9 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			tuples := []ofgaclient.ClientTupleKey{
+			tuples := []openfga.TupleKeyWithoutCondition{
 				{
-					User:     "user:nano-id-of-member",
+					User:     "user:ulid-of-member",
 					Relation: tc.relation,
 					Object:   tc.object,
 				},
@@ -274,7 +274,7 @@ func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, 
 
 	if errMsg == nil {
 		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteSingleResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					TupleKey: tuples[0],
 					Status:   ofgaclient.SUCCESS,
@@ -285,7 +285,7 @@ func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, 
 		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
 	} else {
 		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteSingleResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					TupleKey: tuples[0],
 					Status:   ofgaclient.FAILURE,
@@ -310,12 +310,12 @@ func mockWriteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, 
 }
 
 // mockDeleteTuples creates mock responses based on the mock FGA client
-func mockDeleteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, tuples []ofgaclient.ClientTupleKey, errMsg string) {
+func mockDeleteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, tuples []openfga.TupleKeyWithoutCondition, errMsg string) {
 	mockExecute := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
 
 	if errMsg == "" {
 		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteSingleResponse{
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
 				{
 					TupleKey: tuples[0],
 					Status:   ofgaclient.SUCCESS,
@@ -328,7 +328,7 @@ func mockDeleteTuples(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient,
 		var err error
 
 		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteSingleResponse{
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
 				{
 					TupleKey: tuples[0],
 					Status:   ofgaclient.FAILURE,

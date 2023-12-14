@@ -17,7 +17,7 @@ func init() {
 
 // In order to use this driver, specify the DriverName to sql.Open.
 const (
-	DriverName = "ensign_sqlite3"
+	DriverName = "datum_sqlite3"
 )
 
 var (

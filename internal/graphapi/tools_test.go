@@ -33,7 +33,6 @@ var (
 )
 
 const (
-	subClaim = "1234567890"
 	rawToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.oGFhqfFFDi9sJMJ1U2dWJZNYEiUQBEtZRVuwKE7Uiak" //nolint:gosec
 )
 
@@ -198,7 +197,7 @@ func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClien
 
 	if errMsg == nil {
 		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteSingleResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					Status: ofgaclient.SUCCESS,
 				},
@@ -208,7 +207,7 @@ func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClien
 		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
 	} else {
 		expectedResponse := ofgaclient.ClientWriteResponse{
-			Writes: []ofgaclient.ClientWriteSingleResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
 				{
 					Status: ofgaclient.FAILURE,
 				},

@@ -77,49 +77,49 @@ func (sc *SessionCreate) SetNillableUpdatedBy(s *string) *SessionCreate {
 	return sc
 }
 
-// SetType sets the "type" field.
-func (sc *SessionCreate) SetType(s session.Type) *SessionCreate {
-	sc.mutation.SetType(s)
+// SetSessionToken sets the "session_token" field.
+func (sc *SessionCreate) SetSessionToken(s string) *SessionCreate {
+	sc.mutation.SetSessionToken(s)
 	return sc
 }
 
-// SetDisabled sets the "disabled" field.
-func (sc *SessionCreate) SetDisabled(b bool) *SessionCreate {
-	sc.mutation.SetDisabled(b)
+// SetIssuedAt sets the "issued_at" field.
+func (sc *SessionCreate) SetIssuedAt(t time.Time) *SessionCreate {
+	sc.mutation.SetIssuedAt(t)
 	return sc
 }
 
-// SetToken sets the "token" field.
-func (sc *SessionCreate) SetToken(s string) *SessionCreate {
-	sc.mutation.SetToken(s)
-	return sc
-}
-
-// SetNillableToken sets the "token" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableToken(s *string) *SessionCreate {
-	if s != nil {
-		sc.SetToken(*s)
+// SetNillableIssuedAt sets the "issued_at" field if the given value is not nil.
+func (sc *SessionCreate) SetNillableIssuedAt(t *time.Time) *SessionCreate {
+	if t != nil {
+		sc.SetIssuedAt(*t)
 	}
 	return sc
 }
 
-// SetUserAgent sets the "user_agent" field.
-func (sc *SessionCreate) SetUserAgent(s string) *SessionCreate {
-	sc.mutation.SetUserAgent(s)
+// SetExpiresAt sets the "expires_at" field.
+func (sc *SessionCreate) SetExpiresAt(t time.Time) *SessionCreate {
+	sc.mutation.SetExpiresAt(t)
 	return sc
 }
 
-// SetNillableUserAgent sets the "user_agent" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableUserAgent(s *string) *SessionCreate {
-	if s != nil {
-		sc.SetUserAgent(*s)
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (sc *SessionCreate) SetNillableExpiresAt(t *time.Time) *SessionCreate {
+	if t != nil {
+		sc.SetExpiresAt(*t)
 	}
 	return sc
 }
 
-// SetIps sets the "ips" field.
-func (sc *SessionCreate) SetIps(s string) *SessionCreate {
-	sc.mutation.SetIps(s)
+// SetOrganizationID sets the "organization_id" field.
+func (sc *SessionCreate) SetOrganizationID(s string) *SessionCreate {
+	sc.mutation.SetOrganizationID(s)
+	return sc
+}
+
+// SetUserID sets the "user_id" field.
+func (sc *SessionCreate) SetUserID(s string) *SessionCreate {
+	sc.mutation.SetUserID(s)
 	return sc
 }
 
@@ -137,23 +137,15 @@ func (sc *SessionCreate) SetNillableID(s *string) *SessionCreate {
 	return sc
 }
 
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (sc *SessionCreate) SetUsersID(id string) *SessionCreate {
-	sc.mutation.SetUsersID(id)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (sc *SessionCreate) SetOwnerID(id string) *SessionCreate {
+	sc.mutation.SetOwnerID(id)
 	return sc
 }
 
-// SetNillableUsersID sets the "users" edge to the User entity by ID if the given value is not nil.
-func (sc *SessionCreate) SetNillableUsersID(id *string) *SessionCreate {
-	if id != nil {
-		sc = sc.SetUsersID(*id)
-	}
-	return sc
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (sc *SessionCreate) SetUsers(u *User) *SessionCreate {
-	return sc.SetUsersID(u.ID)
+// SetOwner sets the "owner" edge to the User entity.
+func (sc *SessionCreate) SetOwner(u *User) *SessionCreate {
+	return sc.SetOwnerID(u.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
@@ -207,12 +199,19 @@ func (sc *SessionCreate) defaults() error {
 		v := session.DefaultUpdatedAt()
 		sc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := sc.mutation.Token(); !ok {
-		if session.DefaultToken == nil {
-			return fmt.Errorf("generated: uninitialized session.DefaultToken (forgotten import generated/runtime?)")
+	if _, ok := sc.mutation.IssuedAt(); !ok {
+		if session.DefaultIssuedAt == nil {
+			return fmt.Errorf("generated: uninitialized session.DefaultIssuedAt (forgotten import generated/runtime?)")
 		}
-		v := session.DefaultToken()
-		sc.mutation.SetToken(v)
+		v := session.DefaultIssuedAt()
+		sc.mutation.SetIssuedAt(v)
+	}
+	if _, ok := sc.mutation.ExpiresAt(); !ok {
+		if session.DefaultExpiresAt == nil {
+			return fmt.Errorf("generated: uninitialized session.DefaultExpiresAt (forgotten import generated/runtime?)")
+		}
+		v := session.DefaultExpiresAt()
+		sc.mutation.SetExpiresAt(v)
 	}
 	if _, ok := sc.mutation.ID(); !ok {
 		if session.DefaultID == nil {
@@ -232,27 +231,20 @@ func (sc *SessionCreate) check() error {
 	if _, ok := sc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Session.updated_at"`)}
 	}
-	if _, ok := sc.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`generated: missing required field "Session.type"`)}
+	if _, ok := sc.mutation.SessionToken(); !ok {
+		return &ValidationError{Name: "session_token", err: errors.New(`generated: missing required field "Session.session_token"`)}
 	}
-	if v, ok := sc.mutation.GetType(); ok {
-		if err := session.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`generated: validator failed for field "Session.type": %w`, err)}
-		}
+	if _, ok := sc.mutation.IssuedAt(); !ok {
+		return &ValidationError{Name: "issued_at", err: errors.New(`generated: missing required field "Session.issued_at"`)}
 	}
-	if _, ok := sc.mutation.Disabled(); !ok {
-		return &ValidationError{Name: "disabled", err: errors.New(`generated: missing required field "Session.disabled"`)}
+	if _, ok := sc.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Session.organization_id"`)}
 	}
-	if _, ok := sc.mutation.Token(); !ok {
-		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "Session.token"`)}
+	if _, ok := sc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`generated: missing required field "Session.user_id"`)}
 	}
-	if v, ok := sc.mutation.Token(); ok {
-		if err := session.TokenValidator(v); err != nil {
-			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "Session.token": %w`, err)}
-		}
-	}
-	if _, ok := sc.mutation.Ips(); !ok {
-		return &ValidationError{Name: "ips", err: errors.New(`generated: missing required field "Session.ips"`)}
+	if _, ok := sc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Session.owner"`)}
 	}
 	return nil
 }
@@ -306,32 +298,28 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_spec.SetField(session.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
-	if value, ok := sc.mutation.GetType(); ok {
-		_spec.SetField(session.FieldType, field.TypeEnum, value)
-		_node.Type = value
+	if value, ok := sc.mutation.SessionToken(); ok {
+		_spec.SetField(session.FieldSessionToken, field.TypeString, value)
+		_node.SessionToken = value
 	}
-	if value, ok := sc.mutation.Disabled(); ok {
-		_spec.SetField(session.FieldDisabled, field.TypeBool, value)
-		_node.Disabled = value
+	if value, ok := sc.mutation.IssuedAt(); ok {
+		_spec.SetField(session.FieldIssuedAt, field.TypeTime, value)
+		_node.IssuedAt = value
 	}
-	if value, ok := sc.mutation.Token(); ok {
-		_spec.SetField(session.FieldToken, field.TypeString, value)
-		_node.Token = value
+	if value, ok := sc.mutation.ExpiresAt(); ok {
+		_spec.SetField(session.FieldExpiresAt, field.TypeTime, value)
+		_node.ExpiresAt = value
 	}
-	if value, ok := sc.mutation.UserAgent(); ok {
-		_spec.SetField(session.FieldUserAgent, field.TypeString, value)
-		_node.UserAgent = value
+	if value, ok := sc.mutation.OrganizationID(); ok {
+		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)
+		_node.OrganizationID = value
 	}
-	if value, ok := sc.mutation.Ips(); ok {
-		_spec.SetField(session.FieldIps, field.TypeString, value)
-		_node.Ips = value
-	}
-	if nodes := sc.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := sc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   session.UsersTable,
-			Columns: []string{session.UsersColumn},
+			Inverse: true,
+			Table:   session.OwnerTable,
+			Columns: []string{session.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -341,7 +329,7 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.session_users = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

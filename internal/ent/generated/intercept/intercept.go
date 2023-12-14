@@ -8,11 +8,13 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -77,6 +79,33 @@ func (f TraverseFunc) Traverse(ctx context.Context, q generated.Query) error {
 		return err
 	}
 	return f(ctx, query)
+}
+
+// The AccessTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AccessTokenFunc func(context.Context, *generated.AccessTokenQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f AccessTokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.AccessTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.AccessTokenQuery", q)
+}
+
+// The TraverseAccessToken type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAccessToken func(context.Context, *generated.AccessTokenQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAccessToken) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAccessToken) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.AccessTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.AccessTokenQuery", q)
 }
 
 // The EntitlementFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -212,6 +241,33 @@ func (f TraverseOauthProvider) Traverse(ctx context.Context, q generated.Query) 
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.OauthProviderQuery", q)
+}
+
+// The OhAuthTooTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
+type OhAuthTooTokenFunc func(context.Context, *generated.OhAuthTooTokenQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f OhAuthTooTokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.OhAuthTooTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.OhAuthTooTokenQuery", q)
+}
+
+// The TraverseOhAuthTooToken type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseOhAuthTooToken func(context.Context, *generated.OhAuthTooTokenQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseOhAuthTooToken) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseOhAuthTooToken) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OhAuthTooTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.OhAuthTooTokenQuery", q)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -406,6 +462,8 @@ func (f TraverseUserSetting) Traverse(ctx context.Context, q generated.Query) er
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
+	case *generated.AccessTokenQuery:
+		return &query[*generated.AccessTokenQuery, predicate.AccessToken, accesstoken.OrderOption]{typ: generated.TypeAccessToken, tq: q}, nil
 	case *generated.EntitlementQuery:
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.GroupQuery:
@@ -416,6 +474,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.IntegrationQuery, predicate.Integration, integration.OrderOption]{typ: generated.TypeIntegration, tq: q}, nil
 	case *generated.OauthProviderQuery:
 		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
+	case *generated.OhAuthTooTokenQuery:
+		return &query[*generated.OhAuthTooTokenQuery, predicate.OhAuthTooToken, ohauthtootoken.OrderOption]{typ: generated.TypeOhAuthTooToken, tq: q}, nil
 	case *generated.OrganizationQuery:
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.OrganizationSettingQuery:

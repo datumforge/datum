@@ -2,6 +2,7 @@ package echocontext
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"time"
 
 	echo "github.com/datumforge/echox"
@@ -15,9 +16,11 @@ func NewTestEchoContext() echo.Context {
 	req := &http.Request{
 		Header: http.Header{},
 	}
-	res := &echo.Response{}
 
-	return e.NewContext(req, res)
+	// Set writer for tests that write on the response
+	recorder := httptest.NewRecorder()
+
+	return e.NewContext(req, recorder)
 }
 
 // newValidSignedJWT creates a jwt with a fake subject for testing purposes ONLY

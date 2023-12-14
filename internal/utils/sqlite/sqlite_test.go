@@ -14,7 +14,7 @@ import (
 )
 
 func TestDriver(t *testing.T) {
-	db, err := sql.Open("ensign_sqlite3", filepath.Join(t.TempDir(), "test.db"))
+	db, err := sql.Open("datum_sqlite3", filepath.Join(t.TempDir(), "test.db"))
 	require.NoError(t, err, "could not open connection to testdb")
 
 	conn, err := db.Conn(context.Background())
@@ -41,7 +41,7 @@ func TestOpenMany(t *testing.T) {
 	conns := make([]*sqlite.Conn, expectedConnections)
 
 	for i := 0; i < expectedConnections; i++ {
-		db, err := sql.Open("ensign_sqlite3", filepath.Join(tmpdir, fmt.Sprintf("test-%d.db", i+1)))
+		db, err := sql.Open("datum_sqlite3", filepath.Join(tmpdir, fmt.Sprintf("test-%d.db", i+1)))
 		require.NoError(t, err, "could not open connection to database")
 		require.NoError(t, db.Ping(), "could not ping database to establish a connection")
 		closers[i] = db

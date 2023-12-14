@@ -9,6 +9,7 @@ import (
 	"ariga.io/entcache"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -24,6 +25,10 @@ const (
 type EntClientConfig struct {
 	// config contains the base database settings
 	config config.DB
+	// primaryDB contains the primary db connection
+	primaryDB *entsql.Driver
+	// secondaryDB contains the secondary db connection, if set
+	secondaryDB *entsql.Driver
 	// logger contains the zap logger
 	logger *zap.SugaredLogger
 }
@@ -34,6 +39,14 @@ func NewDBConfig(c config.DB, l *zap.SugaredLogger) *EntClientConfig {
 		config: c,
 		logger: l,
 	}
+}
+
+func (c *EntClientConfig) GetPrimaryDB() *entsql.Driver {
+	return c.primaryDB
+}
+
+func (c *EntClientConfig) GetSecondaryDB() *entsql.Driver {
+	return c.secondaryDB
 }
 
 func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
@@ -53,18 +66,20 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 
 // NewMultiDriverDBClient returns a ent client with a primary and secondary, if configured, write database
 func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent.Option) (*ent.Client, error) {
-	primaryDB, err := c.newEntDB(c.config.PrimaryDBSource)
+	var err error
+
+	c.primaryDB, err = c.newEntDB(c.config.PrimaryDBSource)
 	if err != nil {
 		return nil, err
 	}
 
 	// Decorates the sql.Driver with entcache.Driver on the primaryDB
 	drvPrimary := entcache.NewDriver(
-		primaryDB,
+		c.primaryDB,
 		entcache.TTL(cacheTTL), // set the TTL on the cache
 	)
 
-	if err := c.createSchema(ctx, primaryDB); err != nil {
+	if err := c.createSchema(ctx, c.primaryDB); err != nil {
 		c.logger.Errorf("failed creating schema resources", zap.Error(err))
 
 		return nil, err
@@ -73,18 +88,18 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 	var cOpts []ent.Option
 
 	if c.config.MultiWrite {
-		secondaryDB, err := c.newEntDB(c.config.SecondaryDBSource)
+		c.secondaryDB, err = c.newEntDB(c.config.SecondaryDBSource)
 		if err != nil {
 			return nil, err
 		}
 
 		// Decorates the sql.Driver with entcache.Driver on the primaryDB
 		drvSecondary := entcache.NewDriver(
-			secondaryDB,
+			c.secondaryDB,
 			entcache.TTL(cacheTTL), // set the TTL on the cache
 		)
 
-		if err := c.createSchema(ctx, secondaryDB); err != nil {
+		if err := c.createSchema(ctx, c.secondaryDB); err != nil {
 			c.logger.Errorf("failed creating schema resources", zap.Error(err))
 
 			return nil, err
@@ -138,4 +153,15 @@ func (c *EntClientConfig) createSchema(ctx context.Context, db *entsql.Driver) e
 	}
 
 	return nil
+}
+
+// Healthcheck pings the DB to check if the connection is working
+func Healthcheck(client *entsql.Driver) func(ctx context.Context) error {
+	return func(ctx context.Context) error {
+		if err := client.DB().Ping(); err != nil {
+			return errors.Wrap(err, "db connection failed")
+		}
+
+		return nil
+	}
 }

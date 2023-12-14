@@ -17,11 +17,13 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -41,6 +43,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// AccessToken is the client for interacting with the AccessToken builders.
+	AccessToken *AccessTokenClient
 	// Entitlement is the client for interacting with the Entitlement builders.
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
@@ -51,6 +55,8 @@ type Client struct {
 	Integration *IntegrationClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
+	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
+	OhAuthTooToken *OhAuthTooTokenClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
@@ -76,11 +82,13 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.AccessToken = NewAccessTokenClient(c.config)
 	c.Entitlement = NewEntitlementClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupSetting = NewGroupSettingClient(c.config)
 	c.Integration = NewIntegrationClient(c.config)
 	c.OauthProvider = NewOauthProviderClient(c.config)
+	c.OhAuthTooToken = NewOhAuthTooTokenClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
@@ -214,11 +222,13 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
+		AccessToken:         NewAccessTokenClient(cfg),
 		Entitlement:         NewEntitlementClient(cfg),
 		Group:               NewGroupClient(cfg),
 		GroupSetting:        NewGroupSettingClient(cfg),
 		Integration:         NewIntegrationClient(cfg),
 		OauthProvider:       NewOauthProviderClient(cfg),
+		OhAuthTooToken:      NewOhAuthTooTokenClient(cfg),
 		Organization:        NewOrganizationClient(cfg),
 		OrganizationSetting: NewOrganizationSettingClient(cfg),
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
@@ -245,11 +255,13 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                 ctx,
 		config:              cfg,
+		AccessToken:         NewAccessTokenClient(cfg),
 		Entitlement:         NewEntitlementClient(cfg),
 		Group:               NewGroupClient(cfg),
 		GroupSetting:        NewGroupSettingClient(cfg),
 		Integration:         NewIntegrationClient(cfg),
 		OauthProvider:       NewOauthProviderClient(cfg),
+		OhAuthTooToken:      NewOhAuthTooTokenClient(cfg),
 		Organization:        NewOrganizationClient(cfg),
 		OrganizationSetting: NewOrganizationSettingClient(cfg),
 		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
@@ -263,7 +275,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Entitlement.
+//		AccessToken.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -286,9 +298,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Entitlement, c.Group, c.GroupSetting, c.Integration, c.OauthProvider,
-		c.Organization, c.OrganizationSetting, c.PersonalAccessToken, c.RefreshToken,
-		c.Session, c.User, c.UserSetting,
+		c.AccessToken, c.Entitlement, c.Group, c.GroupSetting, c.Integration,
+		c.OauthProvider, c.OhAuthTooToken, c.Organization, c.OrganizationSetting,
+		c.PersonalAccessToken, c.RefreshToken, c.Session, c.User, c.UserSetting,
 	} {
 		n.Use(hooks...)
 	}
@@ -298,9 +310,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Entitlement, c.Group, c.GroupSetting, c.Integration, c.OauthProvider,
-		c.Organization, c.OrganizationSetting, c.PersonalAccessToken, c.RefreshToken,
-		c.Session, c.User, c.UserSetting,
+		c.AccessToken, c.Entitlement, c.Group, c.GroupSetting, c.Integration,
+		c.OauthProvider, c.OhAuthTooToken, c.Organization, c.OrganizationSetting,
+		c.PersonalAccessToken, c.RefreshToken, c.Session, c.User, c.UserSetting,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -309,6 +321,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *AccessTokenMutation:
+		return c.AccessToken.mutate(ctx, m)
 	case *EntitlementMutation:
 		return c.Entitlement.mutate(ctx, m)
 	case *GroupMutation:
@@ -319,6 +333,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Integration.mutate(ctx, m)
 	case *OauthProviderMutation:
 		return c.OauthProvider.mutate(ctx, m)
+	case *OhAuthTooTokenMutation:
+		return c.OhAuthTooToken.mutate(ctx, m)
 	case *OrganizationMutation:
 		return c.Organization.mutate(ctx, m)
 	case *OrganizationSettingMutation:
@@ -335,6 +351,159 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserSetting.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("generated: unknown mutation type %T", m)
+	}
+}
+
+// AccessTokenClient is a client for the AccessToken schema.
+type AccessTokenClient struct {
+	config
+}
+
+// NewAccessTokenClient returns a client for the AccessToken from the given config.
+func NewAccessTokenClient(c config) *AccessTokenClient {
+	return &AccessTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `accesstoken.Hooks(f(g(h())))`.
+func (c *AccessTokenClient) Use(hooks ...Hook) {
+	c.hooks.AccessToken = append(c.hooks.AccessToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `accesstoken.Intercept(f(g(h())))`.
+func (c *AccessTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AccessToken = append(c.inters.AccessToken, interceptors...)
+}
+
+// Create returns a builder for creating a AccessToken entity.
+func (c *AccessTokenClient) Create() *AccessTokenCreate {
+	mutation := newAccessTokenMutation(c.config, OpCreate)
+	return &AccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AccessToken entities.
+func (c *AccessTokenClient) CreateBulk(builders ...*AccessTokenCreate) *AccessTokenCreateBulk {
+	return &AccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AccessTokenClient) MapCreateBulk(slice any, setFunc func(*AccessTokenCreate, int)) *AccessTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AccessTokenCreateBulk{err: fmt.Errorf("calling to AccessTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AccessTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AccessTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AccessToken.
+func (c *AccessTokenClient) Update() *AccessTokenUpdate {
+	mutation := newAccessTokenMutation(c.config, OpUpdate)
+	return &AccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AccessTokenClient) UpdateOne(at *AccessToken) *AccessTokenUpdateOne {
+	mutation := newAccessTokenMutation(c.config, OpUpdateOne, withAccessToken(at))
+	return &AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AccessTokenClient) UpdateOneID(id string) *AccessTokenUpdateOne {
+	mutation := newAccessTokenMutation(c.config, OpUpdateOne, withAccessTokenID(id))
+	return &AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AccessToken.
+func (c *AccessTokenClient) Delete() *AccessTokenDelete {
+	mutation := newAccessTokenMutation(c.config, OpDelete)
+	return &AccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AccessTokenClient) DeleteOne(at *AccessToken) *AccessTokenDeleteOne {
+	return c.DeleteOneID(at.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AccessTokenClient) DeleteOneID(id string) *AccessTokenDeleteOne {
+	builder := c.Delete().Where(accesstoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AccessTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for AccessToken.
+func (c *AccessTokenClient) Query() *AccessTokenQuery {
+	return &AccessTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAccessToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AccessToken entity by its id.
+func (c *AccessTokenClient) Get(ctx context.Context, id string) (*AccessToken, error) {
+	return c.Query().Where(accesstoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AccessTokenClient) GetX(ctx context.Context, id string) *AccessToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a AccessToken.
+func (c *AccessTokenClient) QueryOwner(at *AccessToken) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := at.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(accesstoken.Table, accesstoken.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, accesstoken.OwnerTable, accesstoken.OwnerColumn),
+		)
+		schemaConfig := at.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.AccessToken
+		fromV = sqlgraph.Neighbors(at.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AccessTokenClient) Hooks() []Hook {
+	hooks := c.hooks.AccessToken
+	return append(hooks[:len(hooks):len(hooks)], accesstoken.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AccessTokenClient) Interceptors() []Interceptor {
+	return c.inters.AccessToken
+}
+
+func (c *AccessTokenClient) mutate(ctx context.Context, m *AccessTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AccessTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AccessTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AccessTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AccessTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown AccessToken mutation op: %q", m.Op())
 	}
 }
 
@@ -1142,6 +1311,139 @@ func (c *OauthProviderClient) mutate(ctx context.Context, m *OauthProviderMutati
 	}
 }
 
+// OhAuthTooTokenClient is a client for the OhAuthTooToken schema.
+type OhAuthTooTokenClient struct {
+	config
+}
+
+// NewOhAuthTooTokenClient returns a client for the OhAuthTooToken from the given config.
+func NewOhAuthTooTokenClient(c config) *OhAuthTooTokenClient {
+	return &OhAuthTooTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `ohauthtootoken.Hooks(f(g(h())))`.
+func (c *OhAuthTooTokenClient) Use(hooks ...Hook) {
+	c.hooks.OhAuthTooToken = append(c.hooks.OhAuthTooToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `ohauthtootoken.Intercept(f(g(h())))`.
+func (c *OhAuthTooTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OhAuthTooToken = append(c.inters.OhAuthTooToken, interceptors...)
+}
+
+// Create returns a builder for creating a OhAuthTooToken entity.
+func (c *OhAuthTooTokenClient) Create() *OhAuthTooTokenCreate {
+	mutation := newOhAuthTooTokenMutation(c.config, OpCreate)
+	return &OhAuthTooTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OhAuthTooToken entities.
+func (c *OhAuthTooTokenClient) CreateBulk(builders ...*OhAuthTooTokenCreate) *OhAuthTooTokenCreateBulk {
+	return &OhAuthTooTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OhAuthTooTokenClient) MapCreateBulk(slice any, setFunc func(*OhAuthTooTokenCreate, int)) *OhAuthTooTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OhAuthTooTokenCreateBulk{err: fmt.Errorf("calling to OhAuthTooTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OhAuthTooTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OhAuthTooTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OhAuthTooToken.
+func (c *OhAuthTooTokenClient) Update() *OhAuthTooTokenUpdate {
+	mutation := newOhAuthTooTokenMutation(c.config, OpUpdate)
+	return &OhAuthTooTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OhAuthTooTokenClient) UpdateOne(oatt *OhAuthTooToken) *OhAuthTooTokenUpdateOne {
+	mutation := newOhAuthTooTokenMutation(c.config, OpUpdateOne, withOhAuthTooToken(oatt))
+	return &OhAuthTooTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OhAuthTooTokenClient) UpdateOneID(id string) *OhAuthTooTokenUpdateOne {
+	mutation := newOhAuthTooTokenMutation(c.config, OpUpdateOne, withOhAuthTooTokenID(id))
+	return &OhAuthTooTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OhAuthTooToken.
+func (c *OhAuthTooTokenClient) Delete() *OhAuthTooTokenDelete {
+	mutation := newOhAuthTooTokenMutation(c.config, OpDelete)
+	return &OhAuthTooTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OhAuthTooTokenClient) DeleteOne(oatt *OhAuthTooToken) *OhAuthTooTokenDeleteOne {
+	return c.DeleteOneID(oatt.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OhAuthTooTokenClient) DeleteOneID(id string) *OhAuthTooTokenDeleteOne {
+	builder := c.Delete().Where(ohauthtootoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OhAuthTooTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for OhAuthTooToken.
+func (c *OhAuthTooTokenClient) Query() *OhAuthTooTokenQuery {
+	return &OhAuthTooTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOhAuthTooToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OhAuthTooToken entity by its id.
+func (c *OhAuthTooTokenClient) Get(ctx context.Context, id string) (*OhAuthTooToken, error) {
+	return c.Query().Where(ohauthtootoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OhAuthTooTokenClient) GetX(ctx context.Context, id string) *OhAuthTooToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OhAuthTooTokenClient) Hooks() []Hook {
+	return c.hooks.OhAuthTooToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *OhAuthTooTokenClient) Interceptors() []Interceptor {
+	return c.inters.OhAuthTooToken
+}
+
+func (c *OhAuthTooTokenClient) mutate(ctx context.Context, m *OhAuthTooTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OhAuthTooTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OhAuthTooTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OhAuthTooTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OhAuthTooTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown OhAuthTooToken mutation op: %q", m.Op())
+	}
+}
+
 // OrganizationClient is a client for the Organization schema.
 type OrganizationClient struct {
 	config
@@ -1843,25 +2145,6 @@ func (c *RefreshTokenClient) GetX(ctx context.Context, id string) *RefreshToken 
 	return obj
 }
 
-// QueryUser queries the user edge of a RefreshToken.
-func (c *RefreshTokenClient) QueryUser(rt *RefreshToken) *UserQuery {
-	query := (&UserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := rt.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(refreshtoken.Table, refreshtoken.FieldID, id),
-			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, refreshtoken.UserTable, refreshtoken.UserColumn),
-		)
-		schemaConfig := rt.schemaConfig
-		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.RefreshToken
-		fromV = sqlgraph.Neighbors(rt.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *RefreshTokenClient) Hooks() []Hook {
 	return c.hooks.RefreshToken
@@ -1995,15 +2278,15 @@ func (c *SessionClient) GetX(ctx context.Context, id string) *Session {
 	return obj
 }
 
-// QueryUsers queries the users edge of a Session.
-func (c *SessionClient) QueryUsers(s *Session) *UserQuery {
+// QueryOwner queries the owner edge of a Session.
+func (c *SessionClient) QueryOwner(s *Session) *UserQuery {
 	query := (&UserClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := s.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(session.Table, session.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, session.UsersTable, session.UsersColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, session.OwnerTable, session.OwnerColumn),
 		)
 		schemaConfig := s.schemaConfig
 		step.To.Schema = schemaConfig.User
@@ -2243,19 +2526,38 @@ func (c *UserClient) QuerySetting(u *User) *UserSettingQuery {
 	return query
 }
 
-// QueryRefreshtoken queries the refreshtoken edge of a User.
-func (c *UserClient) QueryRefreshtoken(u *User) *RefreshTokenQuery {
+// QueryRefreshToken queries the refresh_token edge of a User.
+func (c *UserClient) QueryRefreshToken(u *User) *RefreshTokenQuery {
 	query := (&RefreshTokenClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(refreshtoken.Table, refreshtoken.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.RefreshtokenTable, user.RefreshtokenColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.RefreshTokenTable, user.RefreshTokenColumn),
 		)
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.RefreshToken
 		step.Edge.Schema = schemaConfig.RefreshToken
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAccessToken queries the access_token edge of a User.
+func (c *UserClient) QueryAccessToken(u *User) *AccessTokenQuery {
+	query := (&AccessTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(accesstoken.Table, accesstoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.AccessTokenTable, user.AccessTokenColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.AccessToken
+		step.Edge.Schema = schemaConfig.AccessToken
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -2445,14 +2747,14 @@ func (c *UserSettingClient) mutate(ctx context.Context, m *UserSettingMutation) 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Entitlement, Group, GroupSetting, Integration, OauthProvider, Organization,
-		OrganizationSetting, PersonalAccessToken, RefreshToken, Session, User,
-		UserSetting []ent.Hook
+		AccessToken, Entitlement, Group, GroupSetting, Integration, OauthProvider,
+		OhAuthTooToken, Organization, OrganizationSetting, PersonalAccessToken,
+		RefreshToken, Session, User, UserSetting []ent.Hook
 	}
 	inters struct {
-		Entitlement, Group, GroupSetting, Integration, OauthProvider, Organization,
-		OrganizationSetting, PersonalAccessToken, RefreshToken, Session, User,
-		UserSetting []ent.Interceptor
+		AccessToken, Entitlement, Group, GroupSetting, Integration, OauthProvider,
+		OhAuthTooToken, Organization, OrganizationSetting, PersonalAccessToken,
+		RefreshToken, Session, User, UserSetting []ent.Interceptor
 	}
 )
 

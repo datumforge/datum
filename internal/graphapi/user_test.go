@@ -10,14 +10,18 @@ import (
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func TestQuery_User(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(EntClient)
 
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -71,7 +75,9 @@ func TestQuery_Users(t *testing.T) {
 	// Setup Test Graph Client
 	client := graphTestClient(EntClient)
 
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -117,7 +123,9 @@ func TestMutation_CreateUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -129,6 +137,9 @@ func TestMutation_CreateUser(t *testing.T) {
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	displayName := gofakeit.LetterN(50)
+
+	weakPassword := "notsecure"
+	strongPassword := "my&supers3cr3tpassw0rd!"
 
 	testCases := []struct {
 		name      string
@@ -142,6 +153,7 @@ func TestMutation_CreateUser(t *testing.T) {
 				LastName:    gofakeit.LastName(),
 				DisplayName: &displayName,
 				Email:       gofakeit.Email(),
+				Password:    &strongPassword,
 			},
 			errorMsg: "",
 		},
@@ -183,6 +195,16 @@ func TestMutation_CreateUser(t *testing.T) {
 				Email:     gofakeit.Email(),
 			},
 			errorMsg: "",
+		},
+		{
+			name: "weak password",
+			userInput: datumclient.CreateUserInput{
+				FirstName: gofakeit.FirstName(),
+				LastName:  gofakeit.LastName(),
+				Email:     gofakeit.Email(),
+				Password:  &weakPassword,
+			},
+			errorMsg: auth.ErrPasswordTooWeak.Error(),
 		},
 	}
 
@@ -227,7 +249,9 @@ func TestMutation_UpdateUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}
@@ -246,6 +270,9 @@ func TestMutation_UpdateUser(t *testing.T) {
 
 	user := (&UserBuilder{}).MustNew(reqCtx)
 
+	weakPassword := "notsecure"
+	strongPassword := "my&supers3cr3tpassw0rd!"
+
 	testCases := []struct {
 		name        string
 		updateInput datumclient.UpdateUserInput
@@ -253,7 +280,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 		errorMsg    string
 	}{
 		{
-			name: "update first name, happy path",
+			name: "update first name and password, happy path",
 			updateInput: datumclient.UpdateUserInput{
 				FirstName: &firstNameUpdate,
 			},
@@ -263,6 +290,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 				LastName:    user.LastName,
 				DisplayName: user.DisplayName,
 				Email:       user.Email,
+				Password:    &strongPassword,
 			},
 		},
 		{
@@ -311,6 +339,13 @@ func TestMutation_UpdateUser(t *testing.T) {
 			},
 			errorMsg: "value is greater than the required length",
 		},
+		{
+			name: "update with weak password",
+			updateInput: datumclient.UpdateUserInput{
+				Password: &weakPassword,
+			},
+			errorMsg: auth.ErrPasswordTooWeak.Error(),
+		},
 	}
 
 	for _, tc := range testCases {
@@ -345,7 +380,9 @@ func TestMutation_DeleteUser(t *testing.T) {
 	client := graphTestClient(EntClient)
 
 	// Setup echo context
-	ec, err := echocontext.NewTestContextWithValidUser(subClaim)
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
 	if err != nil {
 		t.Fatal()
 	}

@@ -47,7 +47,7 @@ type User struct {
 	// the time the user was last seen
 	LastSeen time.Time `json:"last_seen,omitempty"`
 	// user bcrypt password hash
-	PasswordHash *string `json:"-"`
+	Password *string `json:"password,omitempty"`
 	// the Subject of the user JWT
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
@@ -70,19 +70,22 @@ type UserEdges struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
-	// Refreshtoken holds the value of the refreshtoken edge.
-	Refreshtoken []*RefreshToken `json:"refreshtoken,omitempty"`
+	// RefreshToken holds the value of the refresh_token edge.
+	RefreshToken []*RefreshToken `json:"refresh_token,omitempty"`
+	// AccessToken holds the value of the access_token edge.
+	AccessToken []*AccessToken `json:"access_token,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 	// totalCount holds the count of the edges above.
-	totalCount [6]map[string]int
+	totalCount [7]map[string]int
 
 	namedOrganizations        map[string][]*Organization
 	namedSessions             map[string][]*Session
 	namedGroups               map[string][]*Group
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
-	namedRefreshtoken         map[string][]*RefreshToken
+	namedRefreshToken         map[string][]*RefreshToken
+	namedAccessToken          map[string][]*AccessToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -134,13 +137,22 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 	return nil, &NotLoadedError{edge: "setting"}
 }
 
-// RefreshtokenOrErr returns the Refreshtoken value or an error if the edge
+// RefreshTokenOrErr returns the RefreshToken value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) RefreshtokenOrErr() ([]*RefreshToken, error) {
+func (e UserEdges) RefreshTokenOrErr() ([]*RefreshToken, error) {
 	if e.loadedTypes[5] {
-		return e.Refreshtoken, nil
+		return e.RefreshToken, nil
 	}
-	return nil, &NotLoadedError{edge: "refreshtoken"}
+	return nil, &NotLoadedError{edge: "refresh_token"}
+}
+
+// AccessTokenOrErr returns the AccessToken value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) AccessTokenOrErr() ([]*AccessToken, error) {
+	if e.loadedTypes[6] {
+		return e.AccessToken, nil
+	}
+	return nil, &NotLoadedError{edge: "access_token"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -150,7 +162,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldOauth:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPasswordHash, user.FieldSub:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
@@ -262,12 +274,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.LastSeen = value.Time
 			}
-		case user.FieldPasswordHash:
+		case user.FieldPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field passwordHash", values[i])
+				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
-				u.PasswordHash = new(string)
-				*u.PasswordHash = value.String
+				u.Password = new(string)
+				*u.Password = value.String
 			}
 		case user.FieldSub:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -319,9 +331,14 @@ func (u *User) QuerySetting() *UserSettingQuery {
 	return NewUserClient(u.config).QuerySetting(u)
 }
 
-// QueryRefreshtoken queries the "refreshtoken" edge of the User entity.
-func (u *User) QueryRefreshtoken() *RefreshTokenQuery {
-	return NewUserClient(u.config).QueryRefreshtoken(u)
+// QueryRefreshToken queries the "refresh_token" edge of the User entity.
+func (u *User) QueryRefreshToken() *RefreshTokenQuery {
+	return NewUserClient(u.config).QueryRefreshToken(u)
+}
+
+// QueryAccessToken queries the "access_token" edge of the User entity.
+func (u *User) QueryAccessToken() *AccessTokenQuery {
+	return NewUserClient(u.config).QueryAccessToken(u)
 }
 
 // Update returns a builder for updating this User.
@@ -395,7 +412,10 @@ func (u *User) String() string {
 	builder.WriteString("last_seen=")
 	builder.WriteString(u.LastSeen.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("passwordHash=<sensitive>")
+	if v := u.Password; v != nil {
+		builder.WriteString("password=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("sub=")
 	builder.WriteString(u.Sub)
@@ -502,27 +522,51 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 	}
 }
 
-// NamedRefreshtoken returns the Refreshtoken named value or an error if the edge was not
+// NamedRefreshToken returns the RefreshToken named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (u *User) NamedRefreshtoken(name string) ([]*RefreshToken, error) {
-	if u.Edges.namedRefreshtoken == nil {
+func (u *User) NamedRefreshToken(name string) ([]*RefreshToken, error) {
+	if u.Edges.namedRefreshToken == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := u.Edges.namedRefreshtoken[name]
+	nodes, ok := u.Edges.namedRefreshToken[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (u *User) appendNamedRefreshtoken(name string, edges ...*RefreshToken) {
-	if u.Edges.namedRefreshtoken == nil {
-		u.Edges.namedRefreshtoken = make(map[string][]*RefreshToken)
+func (u *User) appendNamedRefreshToken(name string, edges ...*RefreshToken) {
+	if u.Edges.namedRefreshToken == nil {
+		u.Edges.namedRefreshToken = make(map[string][]*RefreshToken)
 	}
 	if len(edges) == 0 {
-		u.Edges.namedRefreshtoken[name] = []*RefreshToken{}
+		u.Edges.namedRefreshToken[name] = []*RefreshToken{}
 	} else {
-		u.Edges.namedRefreshtoken[name] = append(u.Edges.namedRefreshtoken[name], edges...)
+		u.Edges.namedRefreshToken[name] = append(u.Edges.namedRefreshToken[name], edges...)
+	}
+}
+
+// NamedAccessToken returns the AccessToken named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedAccessToken(name string) ([]*AccessToken, error) {
+	if u.Edges.namedAccessToken == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedAccessToken[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedAccessToken(name string, edges ...*AccessToken) {
+	if u.Edges.namedAccessToken == nil {
+		u.Edges.namedAccessToken = make(map[string][]*AccessToken)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedAccessToken[name] = []*AccessToken{}
+	} else {
+		u.Edges.namedAccessToken[name] = append(u.Edges.namedAccessToken[name], edges...)
 	}
 }
 

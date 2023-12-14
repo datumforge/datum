@@ -3,28 +3,64 @@ query GetUserByID($userId: ID!) {
     id
     firstName
     lastName
-    email
     displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
     setting {
-        status
-        locked
-        emailConfirmed
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
     }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
   }
 }
 
 query GetUserByIDWithOrgs($userId: ID!) {
   user(id: $userId) {
-    id
+id
     firstName
     lastName
-    email
     displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
     setting {
-        status
-        locked
-        emailConfirmed
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
     }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
     organizations{
       id
       name
@@ -40,13 +76,31 @@ query GetAllUsers {
         id
         firstName
         lastName
-        email
         displayName
+        email
+        lastSeen
+        sub
+        avatarRemoteURL
+        avatarLocalFile
+        oauth
         setting {
-            status
-            locked
-            emailConfirmed
+          emailConfirmed
+          locked
+          status
+          role
+          permissions
+          tags
+          suspendedAt
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          silencedAt
         }
+        updatedAt
+        updatedBy
+        createdAt
+        createdBy
       }
     }
   }
@@ -55,20 +109,35 @@ query GetAllUsers {
 mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     user {
-      id
+      email
       firstName
       lastName
-      email
       displayName
-      setting {
-        status
-        locked
-        emailConfirmed
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      organizations {
+        id
       }
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
+      groups {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
     }
   }
 }
@@ -77,14 +146,38 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
   updateUser(id: $updateUserId, input: $input) {
     user {
       id
+      email
       firstName
       lastName
-      email
       displayName
-      createdAt
-      createdBy
-      updatedAt
-      updatedBy
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      groups {
+        id
+      }
+      organizations {
+        id
+      }
+      personalAccessTokens {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
     }
   }
 }

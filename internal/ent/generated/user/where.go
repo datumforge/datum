@@ -137,9 +137,9 @@ func LastSeen(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldLastSeen, v))
 }
 
-// PasswordHash applies equality check predicate on the "passwordHash" field. It's identical to PasswordHashEQ.
-func PasswordHash(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldPasswordHash, v))
+// Password applies equality check predicate on the "password" field. It's identical to PasswordEQ.
+func Password(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPassword, v))
 }
 
 // Sub applies equality check predicate on the "sub" field. It's identical to SubEQ.
@@ -1017,79 +1017,79 @@ func LastSeenNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldLastSeen))
 }
 
-// PasswordHashEQ applies the EQ predicate on the "passwordHash" field.
-func PasswordHashEQ(v string) predicate.User {
-	return predicate.User(sql.FieldEQ(FieldPasswordHash, v))
+// PasswordEQ applies the EQ predicate on the "password" field.
+func PasswordEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldPassword, v))
 }
 
-// PasswordHashNEQ applies the NEQ predicate on the "passwordHash" field.
-func PasswordHashNEQ(v string) predicate.User {
-	return predicate.User(sql.FieldNEQ(FieldPasswordHash, v))
+// PasswordNEQ applies the NEQ predicate on the "password" field.
+func PasswordNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldPassword, v))
 }
 
-// PasswordHashIn applies the In predicate on the "passwordHash" field.
-func PasswordHashIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldIn(FieldPasswordHash, vs...))
+// PasswordIn applies the In predicate on the "password" field.
+func PasswordIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldPassword, vs...))
 }
 
-// PasswordHashNotIn applies the NotIn predicate on the "passwordHash" field.
-func PasswordHashNotIn(vs ...string) predicate.User {
-	return predicate.User(sql.FieldNotIn(FieldPasswordHash, vs...))
+// PasswordNotIn applies the NotIn predicate on the "password" field.
+func PasswordNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldPassword, vs...))
 }
 
-// PasswordHashGT applies the GT predicate on the "passwordHash" field.
-func PasswordHashGT(v string) predicate.User {
-	return predicate.User(sql.FieldGT(FieldPasswordHash, v))
+// PasswordGT applies the GT predicate on the "password" field.
+func PasswordGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldPassword, v))
 }
 
-// PasswordHashGTE applies the GTE predicate on the "passwordHash" field.
-func PasswordHashGTE(v string) predicate.User {
-	return predicate.User(sql.FieldGTE(FieldPasswordHash, v))
+// PasswordGTE applies the GTE predicate on the "password" field.
+func PasswordGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldPassword, v))
 }
 
-// PasswordHashLT applies the LT predicate on the "passwordHash" field.
-func PasswordHashLT(v string) predicate.User {
-	return predicate.User(sql.FieldLT(FieldPasswordHash, v))
+// PasswordLT applies the LT predicate on the "password" field.
+func PasswordLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldPassword, v))
 }
 
-// PasswordHashLTE applies the LTE predicate on the "passwordHash" field.
-func PasswordHashLTE(v string) predicate.User {
-	return predicate.User(sql.FieldLTE(FieldPasswordHash, v))
+// PasswordLTE applies the LTE predicate on the "password" field.
+func PasswordLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldPassword, v))
 }
 
-// PasswordHashContains applies the Contains predicate on the "passwordHash" field.
-func PasswordHashContains(v string) predicate.User {
-	return predicate.User(sql.FieldContains(FieldPasswordHash, v))
+// PasswordContains applies the Contains predicate on the "password" field.
+func PasswordContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldPassword, v))
 }
 
-// PasswordHashHasPrefix applies the HasPrefix predicate on the "passwordHash" field.
-func PasswordHashHasPrefix(v string) predicate.User {
-	return predicate.User(sql.FieldHasPrefix(FieldPasswordHash, v))
+// PasswordHasPrefix applies the HasPrefix predicate on the "password" field.
+func PasswordHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldPassword, v))
 }
 
-// PasswordHashHasSuffix applies the HasSuffix predicate on the "passwordHash" field.
-func PasswordHashHasSuffix(v string) predicate.User {
-	return predicate.User(sql.FieldHasSuffix(FieldPasswordHash, v))
+// PasswordHasSuffix applies the HasSuffix predicate on the "password" field.
+func PasswordHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldPassword, v))
 }
 
-// PasswordHashIsNil applies the IsNil predicate on the "passwordHash" field.
-func PasswordHashIsNil() predicate.User {
-	return predicate.User(sql.FieldIsNull(FieldPasswordHash))
+// PasswordIsNil applies the IsNil predicate on the "password" field.
+func PasswordIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldPassword))
 }
 
-// PasswordHashNotNil applies the NotNil predicate on the "passwordHash" field.
-func PasswordHashNotNil() predicate.User {
-	return predicate.User(sql.FieldNotNull(FieldPasswordHash))
+// PasswordNotNil applies the NotNil predicate on the "password" field.
+func PasswordNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldPassword))
 }
 
-// PasswordHashEqualFold applies the EqualFold predicate on the "passwordHash" field.
-func PasswordHashEqualFold(v string) predicate.User {
-	return predicate.User(sql.FieldEqualFold(FieldPasswordHash, v))
+// PasswordEqualFold applies the EqualFold predicate on the "password" field.
+func PasswordEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldPassword, v))
 }
 
-// PasswordHashContainsFold applies the ContainsFold predicate on the "passwordHash" field.
-func PasswordHashContainsFold(v string) predicate.User {
-	return predicate.User(sql.FieldContainsFold(FieldPasswordHash, v))
+// PasswordContainsFold applies the ContainsFold predicate on the "password" field.
+func PasswordContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldPassword, v))
 }
 
 // SubEQ applies the EQ predicate on the "sub" field.
@@ -1322,12 +1322,12 @@ func HasSettingWith(preds ...predicate.UserSetting) predicate.User {
 	})
 }
 
-// HasRefreshtoken applies the HasEdge predicate on the "refreshtoken" edge.
-func HasRefreshtoken() predicate.User {
+// HasRefreshToken applies the HasEdge predicate on the "refresh_token" edge.
+func HasRefreshToken() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, RefreshtokenTable, RefreshtokenColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, RefreshTokenTable, RefreshTokenColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.RefreshToken
@@ -1336,13 +1336,42 @@ func HasRefreshtoken() predicate.User {
 	})
 }
 
-// HasRefreshtokenWith applies the HasEdge predicate on the "refreshtoken" edge with a given conditions (other predicates).
-func HasRefreshtokenWith(preds ...predicate.RefreshToken) predicate.User {
+// HasRefreshTokenWith applies the HasEdge predicate on the "refresh_token" edge with a given conditions (other predicates).
+func HasRefreshTokenWith(preds ...predicate.RefreshToken) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newRefreshtokenStep()
+		step := newRefreshTokenStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.RefreshToken
 		step.Edge.Schema = schemaConfig.RefreshToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAccessToken applies the HasEdge predicate on the "access_token" edge.
+func HasAccessToken() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, AccessTokenTable, AccessTokenColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.AccessToken
+		step.Edge.Schema = schemaConfig.AccessToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAccessTokenWith applies the HasEdge predicate on the "access_token" edge with a given conditions (other predicates).
+func HasAccessTokenWith(preds ...predicate.AccessToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newAccessTokenStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.AccessToken
+		step.Edge.Schema = schemaConfig.AccessToken
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

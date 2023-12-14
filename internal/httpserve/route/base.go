@@ -23,12 +23,12 @@ func registerLivenessHandler(router *echo.Echo) (err error) {
 	return
 }
 
-func registerReadinessHandler(router *echo.Echo, readinessChecks *handlers.Checks) (err error) {
+func registerReadinessHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodGet,
 		Path:   "/ready",
 		Handler: func(c echo.Context) error {
-			return readinessChecks.ReadyHandler(c)
+			return h.ReadyChecks.ReadyHandler(c)
 		},
 	})
 

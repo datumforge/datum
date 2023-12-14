@@ -6,11 +6,11 @@ import (
 	"entgo.io/ent"
 	"github.com/99designs/gqlgen/graphql"
 
-	"github.com/datumforge/datum/internal/auth"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 // DenyIfNoSubject is a rule that returns deny decision if the subject is missing in the context.

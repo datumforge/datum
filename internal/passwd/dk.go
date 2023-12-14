@@ -79,12 +79,12 @@ func ParseDerivedKey(encoded string) (dk, salt []byte, time, memory uint32, thre
 
 	// check the algorithm
 	if parts[1] != dkAlg {
-		return nil, nil, 0, 0, 0, newParseError("dkAlg", parts[1], err)
+		return nil, nil, 0, 0, 0, newParseError("dkAlg", parts[1], dkAlg)
 	}
 
 	// check the version
 	if version, err := strconv.Atoi(parts[2]); err != nil || version != argon2.Version {
-		return nil, nil, 0, 0, 0, newParseError("version", parts[2], err)
+		return nil, nil, 0, 0, 0, newParseError("version", parts[2], fmt.Sprintf("%d", argon2.Version))
 	}
 
 	var (
@@ -94,29 +94,29 @@ func ParseDerivedKey(encoded string) (dk, salt []byte, time, memory uint32, thre
 	)
 
 	if memory64, err = strconv.ParseUint(parts[3], 10, 32); err != nil {
-		return nil, nil, 0, 0, 0, newParseError("memory", parts[3], err)
+		return nil, nil, 0, 0, 0, newParseError("memory", parts[3], err.Error())
 	}
 
 	memory = uint32(memory64)
 
 	if time64, err = strconv.ParseUint(parts[4], 10, 32); err != nil {
-		return nil, nil, 0, 0, 0, newParseError("time", parts[4], err)
+		return nil, nil, 0, 0, 0, newParseError("time", parts[4], err.Error())
 	}
 
 	time = uint32(time64)
 
 	if threads64, err = strconv.ParseUint(parts[5], 10, 8); err != nil {
-		return nil, nil, 0, 0, 0, newParseError("threads", parts[5], err)
+		return nil, nil, 0, 0, 0, newParseError("threads", parts[5], err.Error())
 	}
 
 	threads = uint8(threads64)
 
 	if salt, err = base64.StdEncoding.DecodeString(parts[6]); err != nil {
-		return nil, nil, 0, 0, 0, newParseError("salt", parts[6], err)
+		return nil, nil, 0, 0, 0, newParseError("salt", parts[6], err.Error())
 	}
 
 	if dk, err = base64.StdEncoding.DecodeString(parts[7]); err != nil {
-		return nil, nil, 0, 0, 0, newParseError("dk", parts[7], err)
+		return nil, nil, 0, 0, 0, newParseError("dk", parts[7], err.Error())
 	}
 
 	return dk, salt, time, memory, threads, nil

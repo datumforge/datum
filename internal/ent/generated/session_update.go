@@ -57,71 +57,77 @@ func (su *SessionUpdate) ClearUpdatedBy() *SessionUpdate {
 	return su
 }
 
-// SetDisabled sets the "disabled" field.
-func (su *SessionUpdate) SetDisabled(b bool) *SessionUpdate {
-	su.mutation.SetDisabled(b)
+// SetIssuedAt sets the "issued_at" field.
+func (su *SessionUpdate) SetIssuedAt(t time.Time) *SessionUpdate {
+	su.mutation.SetIssuedAt(t)
 	return su
 }
 
-// SetNillableDisabled sets the "disabled" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableDisabled(b *bool) *SessionUpdate {
-	if b != nil {
-		su.SetDisabled(*b)
+// SetNillableIssuedAt sets the "issued_at" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableIssuedAt(t *time.Time) *SessionUpdate {
+	if t != nil {
+		su.SetIssuedAt(*t)
 	}
 	return su
 }
 
-// SetUserAgent sets the "user_agent" field.
-func (su *SessionUpdate) SetUserAgent(s string) *SessionUpdate {
-	su.mutation.SetUserAgent(s)
+// SetExpiresAt sets the "expires_at" field.
+func (su *SessionUpdate) SetExpiresAt(t time.Time) *SessionUpdate {
+	su.mutation.SetExpiresAt(t)
 	return su
 }
 
-// SetNillableUserAgent sets the "user_agent" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableUserAgent(s *string) *SessionUpdate {
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableExpiresAt(t *time.Time) *SessionUpdate {
+	if t != nil {
+		su.SetExpiresAt(*t)
+	}
+	return su
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (su *SessionUpdate) ClearExpiresAt() *SessionUpdate {
+	su.mutation.ClearExpiresAt()
+	return su
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (su *SessionUpdate) SetOrganizationID(s string) *SessionUpdate {
+	su.mutation.SetOrganizationID(s)
+	return su
+}
+
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableOrganizationID(s *string) *SessionUpdate {
 	if s != nil {
-		su.SetUserAgent(*s)
+		su.SetOrganizationID(*s)
 	}
 	return su
 }
 
-// ClearUserAgent clears the value of the "user_agent" field.
-func (su *SessionUpdate) ClearUserAgent() *SessionUpdate {
-	su.mutation.ClearUserAgent()
+// SetUserID sets the "user_id" field.
+func (su *SessionUpdate) SetUserID(s string) *SessionUpdate {
+	su.mutation.SetUserID(s)
 	return su
 }
 
-// SetIps sets the "ips" field.
-func (su *SessionUpdate) SetIps(s string) *SessionUpdate {
-	su.mutation.SetIps(s)
-	return su
-}
-
-// SetNillableIps sets the "ips" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableIps(s *string) *SessionUpdate {
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableUserID(s *string) *SessionUpdate {
 	if s != nil {
-		su.SetIps(*s)
+		su.SetUserID(*s)
 	}
 	return su
 }
 
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (su *SessionUpdate) SetUsersID(id string) *SessionUpdate {
-	su.mutation.SetUsersID(id)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (su *SessionUpdate) SetOwnerID(id string) *SessionUpdate {
+	su.mutation.SetOwnerID(id)
 	return su
 }
 
-// SetNillableUsersID sets the "users" edge to the User entity by ID if the given value is not nil.
-func (su *SessionUpdate) SetNillableUsersID(id *string) *SessionUpdate {
-	if id != nil {
-		su = su.SetUsersID(*id)
-	}
-	return su
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (su *SessionUpdate) SetUsers(u *User) *SessionUpdate {
-	return su.SetUsersID(u.ID)
+// SetOwner sets the "owner" edge to the User entity.
+func (su *SessionUpdate) SetOwner(u *User) *SessionUpdate {
+	return su.SetOwnerID(u.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
@@ -129,9 +135,9 @@ func (su *SessionUpdate) Mutation() *SessionMutation {
 	return su.mutation
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (su *SessionUpdate) ClearUsers() *SessionUpdate {
-	su.mutation.ClearUsers()
+// ClearOwner clears the "owner" edge to the User entity.
+func (su *SessionUpdate) ClearOwner() *SessionUpdate {
+	su.mutation.ClearOwner()
 	return su
 }
 
@@ -177,7 +183,18 @@ func (su *SessionUpdate) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (su *SessionUpdate) check() error {
+	if _, ok := su.mutation.OwnerID(); su.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Session.owner"`)
+	}
+	return nil
+}
+
 func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := su.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeString))
 	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -198,24 +215,24 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if su.mutation.UpdatedByCleared() {
 		_spec.ClearField(session.FieldUpdatedBy, field.TypeString)
 	}
-	if value, ok := su.mutation.Disabled(); ok {
-		_spec.SetField(session.FieldDisabled, field.TypeBool, value)
+	if value, ok := su.mutation.IssuedAt(); ok {
+		_spec.SetField(session.FieldIssuedAt, field.TypeTime, value)
 	}
-	if value, ok := su.mutation.UserAgent(); ok {
-		_spec.SetField(session.FieldUserAgent, field.TypeString, value)
+	if value, ok := su.mutation.ExpiresAt(); ok {
+		_spec.SetField(session.FieldExpiresAt, field.TypeTime, value)
 	}
-	if su.mutation.UserAgentCleared() {
-		_spec.ClearField(session.FieldUserAgent, field.TypeString)
+	if su.mutation.ExpiresAtCleared() {
+		_spec.ClearField(session.FieldExpiresAt, field.TypeTime)
 	}
-	if value, ok := su.mutation.Ips(); ok {
-		_spec.SetField(session.FieldIps, field.TypeString, value)
+	if value, ok := su.mutation.OrganizationID(); ok {
+		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)
 	}
-	if su.mutation.UsersCleared() {
+	if su.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   session.UsersTable,
-			Columns: []string{session.UsersColumn},
+			Inverse: true,
+			Table:   session.OwnerTable,
+			Columns: []string{session.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -224,12 +241,12 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		edge.Schema = su.schemaConfig.Session
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := su.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := su.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   session.UsersTable,
-			Columns: []string{session.UsersColumn},
+			Inverse: true,
+			Table:   session.OwnerTable,
+			Columns: []string{session.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -289,71 +306,77 @@ func (suo *SessionUpdateOne) ClearUpdatedBy() *SessionUpdateOne {
 	return suo
 }
 
-// SetDisabled sets the "disabled" field.
-func (suo *SessionUpdateOne) SetDisabled(b bool) *SessionUpdateOne {
-	suo.mutation.SetDisabled(b)
+// SetIssuedAt sets the "issued_at" field.
+func (suo *SessionUpdateOne) SetIssuedAt(t time.Time) *SessionUpdateOne {
+	suo.mutation.SetIssuedAt(t)
 	return suo
 }
 
-// SetNillableDisabled sets the "disabled" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableDisabled(b *bool) *SessionUpdateOne {
-	if b != nil {
-		suo.SetDisabled(*b)
+// SetNillableIssuedAt sets the "issued_at" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableIssuedAt(t *time.Time) *SessionUpdateOne {
+	if t != nil {
+		suo.SetIssuedAt(*t)
 	}
 	return suo
 }
 
-// SetUserAgent sets the "user_agent" field.
-func (suo *SessionUpdateOne) SetUserAgent(s string) *SessionUpdateOne {
-	suo.mutation.SetUserAgent(s)
+// SetExpiresAt sets the "expires_at" field.
+func (suo *SessionUpdateOne) SetExpiresAt(t time.Time) *SessionUpdateOne {
+	suo.mutation.SetExpiresAt(t)
 	return suo
 }
 
-// SetNillableUserAgent sets the "user_agent" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUserAgent(s *string) *SessionUpdateOne {
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableExpiresAt(t *time.Time) *SessionUpdateOne {
+	if t != nil {
+		suo.SetExpiresAt(*t)
+	}
+	return suo
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (suo *SessionUpdateOne) ClearExpiresAt() *SessionUpdateOne {
+	suo.mutation.ClearExpiresAt()
+	return suo
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (suo *SessionUpdateOne) SetOrganizationID(s string) *SessionUpdateOne {
+	suo.mutation.SetOrganizationID(s)
+	return suo
+}
+
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableOrganizationID(s *string) *SessionUpdateOne {
 	if s != nil {
-		suo.SetUserAgent(*s)
+		suo.SetOrganizationID(*s)
 	}
 	return suo
 }
 
-// ClearUserAgent clears the value of the "user_agent" field.
-func (suo *SessionUpdateOne) ClearUserAgent() *SessionUpdateOne {
-	suo.mutation.ClearUserAgent()
+// SetUserID sets the "user_id" field.
+func (suo *SessionUpdateOne) SetUserID(s string) *SessionUpdateOne {
+	suo.mutation.SetUserID(s)
 	return suo
 }
 
-// SetIps sets the "ips" field.
-func (suo *SessionUpdateOne) SetIps(s string) *SessionUpdateOne {
-	suo.mutation.SetIps(s)
-	return suo
-}
-
-// SetNillableIps sets the "ips" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableIps(s *string) *SessionUpdateOne {
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableUserID(s *string) *SessionUpdateOne {
 	if s != nil {
-		suo.SetIps(*s)
+		suo.SetUserID(*s)
 	}
 	return suo
 }
 
-// SetUsersID sets the "users" edge to the User entity by ID.
-func (suo *SessionUpdateOne) SetUsersID(id string) *SessionUpdateOne {
-	suo.mutation.SetUsersID(id)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (suo *SessionUpdateOne) SetOwnerID(id string) *SessionUpdateOne {
+	suo.mutation.SetOwnerID(id)
 	return suo
 }
 
-// SetNillableUsersID sets the "users" edge to the User entity by ID if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUsersID(id *string) *SessionUpdateOne {
-	if id != nil {
-		suo = suo.SetUsersID(*id)
-	}
-	return suo
-}
-
-// SetUsers sets the "users" edge to the User entity.
-func (suo *SessionUpdateOne) SetUsers(u *User) *SessionUpdateOne {
-	return suo.SetUsersID(u.ID)
+// SetOwner sets the "owner" edge to the User entity.
+func (suo *SessionUpdateOne) SetOwner(u *User) *SessionUpdateOne {
+	return suo.SetOwnerID(u.ID)
 }
 
 // Mutation returns the SessionMutation object of the builder.
@@ -361,9 +384,9 @@ func (suo *SessionUpdateOne) Mutation() *SessionMutation {
 	return suo.mutation
 }
 
-// ClearUsers clears the "users" edge to the User entity.
-func (suo *SessionUpdateOne) ClearUsers() *SessionUpdateOne {
-	suo.mutation.ClearUsers()
+// ClearOwner clears the "owner" edge to the User entity.
+func (suo *SessionUpdateOne) ClearOwner() *SessionUpdateOne {
+	suo.mutation.ClearOwner()
 	return suo
 }
 
@@ -422,7 +445,18 @@ func (suo *SessionUpdateOne) defaults() error {
 	return nil
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (suo *SessionUpdateOne) check() error {
+	if _, ok := suo.mutation.OwnerID(); suo.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Session.owner"`)
+	}
+	return nil
+}
+
 func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err error) {
+	if err := suo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(session.Table, session.Columns, sqlgraph.NewFieldSpec(session.FieldID, field.TypeString))
 	id, ok := suo.mutation.ID()
 	if !ok {
@@ -460,24 +494,24 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 	if suo.mutation.UpdatedByCleared() {
 		_spec.ClearField(session.FieldUpdatedBy, field.TypeString)
 	}
-	if value, ok := suo.mutation.Disabled(); ok {
-		_spec.SetField(session.FieldDisabled, field.TypeBool, value)
+	if value, ok := suo.mutation.IssuedAt(); ok {
+		_spec.SetField(session.FieldIssuedAt, field.TypeTime, value)
 	}
-	if value, ok := suo.mutation.UserAgent(); ok {
-		_spec.SetField(session.FieldUserAgent, field.TypeString, value)
+	if value, ok := suo.mutation.ExpiresAt(); ok {
+		_spec.SetField(session.FieldExpiresAt, field.TypeTime, value)
 	}
-	if suo.mutation.UserAgentCleared() {
-		_spec.ClearField(session.FieldUserAgent, field.TypeString)
+	if suo.mutation.ExpiresAtCleared() {
+		_spec.ClearField(session.FieldExpiresAt, field.TypeTime)
 	}
-	if value, ok := suo.mutation.Ips(); ok {
-		_spec.SetField(session.FieldIps, field.TypeString, value)
+	if value, ok := suo.mutation.OrganizationID(); ok {
+		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)
 	}
-	if suo.mutation.UsersCleared() {
+	if suo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   session.UsersTable,
-			Columns: []string{session.UsersColumn},
+			Inverse: true,
+			Table:   session.OwnerTable,
+			Columns: []string{session.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
@@ -486,12 +520,12 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 		edge.Schema = suo.schemaConfig.Session
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := suo.mutation.UsersIDs(); len(nodes) > 0 {
+	if nodes := suo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   session.UsersTable,
-			Columns: []string{session.UsersColumn},
+			Inverse: true,
+			Table:   session.OwnerTable,
+			Columns: []string{session.OwnerColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),

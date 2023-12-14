@@ -8,15 +8,15 @@ tuples:
     relation: parent
     object: organization:catum
   # setup org primary owner
-  - user: user:nano-id-of-owner
+  - user: user:ulid-of-owner
     relation: owner
     object: organization:datum
   # setup org admin
-  - user: user:nano-id-of-admin
+  - user: user:ulid-of-admin
     relation: admin
     object: organization:datum
   # setup org member
-  - user: user:nano-id-of-member
+  - user: user:ulid-of-member
     relation: member
     object: organization:datum
 tests: 
@@ -25,7 +25,7 @@ tests:
     tuples:
     # add test local tuples here
     check: 
-      - user: user:nano-id-of-owner 
+      - user: user:ulid-of-owner 
         object: organization:datum # parent org
         assertions:
           member: true
@@ -34,7 +34,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:nano-id-of-member 
+      - user: user:ulid-of-member 
         object: organization:datum # parent org
         assertions:
           member: true
@@ -43,7 +43,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
-      - user: user:nano-id-of-admin 
+      - user: user:ulid-of-admin 
         object: organization:datum # parent org
         assertions:
           member: true
@@ -52,7 +52,7 @@ tests:
           can_delete: false
           can_edit: true
           can_view: true
-      - user: user:nano-id-of-owner 
+      - user: user:ulid-of-owner 
         object: organization:catum #child org
         assertions:
           member: true
@@ -61,7 +61,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:nano-id-of-member  
+      - user: user:ulid-of-member  
         object: organization:catum # child org
         assertions:
           member: true
@@ -70,7 +70,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: true
-      - user: user:nano-id-of-admin 
+      - user: user:ulid-of-admin 
         object: organization:catum # child org
         assertions:
           member: true
@@ -80,7 +80,7 @@ tests:
           can_edit: true
           can_view: true
     list_objects:
-      - user: user:nano-id-of-owner
+      - user: user:ulid-of-owner
         type: organization
         assertions:
           owner: 
@@ -90,7 +90,7 @@ tests:
           member:
             - organization:catum
             - organization:datum
-      - user: user:nano-id-of-member
+      - user: user:ulid-of-member
         type: organization
         assertions:
           owner:
@@ -98,7 +98,7 @@ tests:
           member:
             - organization:catum
             - organization:datum
-      - user: user:nano-id-of-admin
+      - user: user:ulid-of-admin
         type: organization
         assertions:
           owner:
@@ -116,15 +116,15 @@ tests:
         relation: parent
         object: group:cat-lovers
       # add group admin
-      - user: user:nano-id-of-owner 
+      - user: user:ulid-of-owner 
         relation: admin
         object: group:cat-lovers
       # add group member but not a member of the org
-      - user: user:nano-id-of-cat-lover-member
+      - user: user:ulid-of-cat-lover-member
         relation: member
         object: group:cat-lovers
       # add group admin
-      - user: user:nano-id-of-member 
+      - user: user:ulid-of-member 
         relation: member
         object: group:cat-lovers
     check: 
@@ -132,7 +132,7 @@ tests:
         object: group:cat-lovers
         assertions:
           parent: true
-      - user: user:nano-id-of-owner 
+      - user: user:ulid-of-owner 
         object: group:cat-lovers
         assertions:
           admin: true
@@ -140,7 +140,7 @@ tests:
           can_delete: true
           can_edit: true
           can_view: true
-      - user: user:nano-id-of-cat-lover-member 
+      - user: user:ulid-of-cat-lover-member 
         object: group:cat-lovers
         assertions:
           admin: false
@@ -148,7 +148,7 @@ tests:
           can_delete: false
           can_edit: false
           can_view: false
-      - user: user:nano-id-of-member 
+      - user: user:ulid-of-member 
         object: group:cat-lovers
         assertions:
           admin: false
@@ -157,19 +157,19 @@ tests:
           can_edit: false
           can_view: true
     list_objects:
-      - user: user:nano-id-of-owner
+      - user: user:ulid-of-owner
         type: group
         assertions:
           admin:
             - group:cat-lovers
           member:
-      - user: user:nano-id-of-member
+      - user: user:ulid-of-member
         type: group
         assertions:
           admin: 
           member:
             - group:cat-lovers
-      - user: user:nano-id-of-admin # user wasn't added to group
+      - user: user:ulid-of-admin # user wasn't added to group
         type: group
         assertions:
           admin: 
@@ -201,35 +201,35 @@ tests:
         assertions:
           subscriber: true
           subscriber_member: false
-      - user: user:nano-id-of-member
+      - user: user:ulid-of-member
         object: subscription_tier:pro
         assertions:
           subscriber: false
           subscriber_member: true
-      - user: user:nano-id-of-owner
+      - user: user:ulid-of-owner
         object: subscription_tier:pro
         assertions:
           subscriber: false
           subscriber_member: true
-      - user: user:nano-id-of-admin
+      - user: user:ulid-of-admin
         object: subscription_tier:pro
         assertions:
           subscriber: false
           subscriber_member: true
     list_objects:
-      - user: user:nano-id-of-owner
+      - user: user:ulid-of-owner
         type: subscription_tier
         assertions:
           subscriber_member:
             - subscription_tier:pro 
           subscriber:
-      - user: user:nano-id-of-admin
+      - user: user:ulid-of-admin
         type: subscription_tier
         assertions:
           subscriber_member:
             - subscription_tier:pro
           subscriber:
-      - user: user:nano-id-of-member
+      - user: user:ulid-of-member
         type: subscription_tier
         assertions:
           subscriber_member:
@@ -264,7 +264,7 @@ tests:
         relation: subscriber
         object: subscription_tier:free
       # setup org member
-      - user: user:nano-id-of-startup-member
+      - user: user:ulid-of-startup-member
         relation: member
         object: organization:startup
       - user: subscription_tier:free
@@ -274,22 +274,22 @@ tests:
         relation: associated_subscription_tier
         object: feature:sso
     check: 
-      - user: user:nano-id-of-startup-member
+      - user: user:ulid-of-startup-member
         object: feature:asset-management
         assertions:
           associated_subscription_tier: false
           access: true
-      - user: user:nano-id-of-admin
+      - user: user:ulid-of-admin
         object: feature:sso
         assertions:
           associated_subscription_tier: false
           access: true
-      - user: user:nano-id-of-owner
+      - user: user:ulid-of-owner
         object: feature:sso
         assertions:
           associated_subscription_tier: false
           access: true
-      - user: user:nano-id-of-member
+      - user: user:ulid-of-member
         object: feature:sso
         assertions:
           associated_subscription_tier: false
@@ -305,13 +305,13 @@ tests:
           associated_subscription_tier: true
           access: false
     list_objects:
-      - user: user:nano-id-of-owner
+      - user: user:ulid-of-owner
         type: feature
         assertions:
           associated_subscription_tier:
           access:
             - feature:sso
-      - user: user:nano-id-of-startup-member
+      - user: user:ulid-of-startup-member
         type: feature
         assertions:
           associated_subscription_tier:

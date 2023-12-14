@@ -23,3 +23,7 @@ type Handler struct {
 	// JWTKeys contains the set of valid JWT authentication key
 	JWTKeys jwk.Set
 }
+
+type Response struct {
+	Message string `json:"message"`
+}

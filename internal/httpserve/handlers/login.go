@@ -14,8 +14,8 @@ import (
 )
 
 type User struct {
-	Username string
-	Password string
+	Username string `json:"username"`
+	Password string `json:"password"`
 	userID   string
 }
 
@@ -40,7 +40,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return auth.ErrorResponse(err)
 	}
 
-	return ctx.JSON(http.StatusOK, "success")
+	return ctx.JSON(http.StatusOK, Response{Message: "success"})
 }
 
 func createClaims(u *User) *tokens.Claims {

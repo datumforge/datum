@@ -3,7 +3,7 @@ model:
   filename: ./internal/datumclient/models.go
 client:
   package: datumclient
-  filename: ./internal/datumclient/client.go
+  filename: ./internal/datumclient/graphclient.go
 models:
   Int:
     model: github.com/99designs/gqlgen/graphql.Int64

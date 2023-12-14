@@ -1,5 +1,4 @@
-// Package datumpat is our cobra/viper cli for personal access token endpoints
-package datumpat
+package datumtokens
 
 import (
 	"github.com/spf13/cobra"

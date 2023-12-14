@@ -1,12 +1,9 @@
-package datumpat
+package datumtokens
 
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"os"
 
-	"github.com/Yamashou/gqlgenc/clientv2"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -38,20 +35,10 @@ func init() {
 
 func createPat(ctx context.Context) error {
 	// setup datum http client
-	h := &http.Client{}
-
-	// set options
-	opt := &clientv2.Options{
-		ParseDataAlongWithErrors: false,
+	cli, err := datum.GetClient(ctx)
+	if err != nil {
+		return err
 	}
-
-	// setup interceptors
-	token := os.Getenv("DATUM_ACCESS_TOKEN")
-
-	i := datumclient.WithAccessToken(token)
-
-	// new client with params
-	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	var s []byte
 
@@ -76,7 +63,7 @@ func createPat(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := c.CreatePersonalAccessToken(ctx, input, i)
+	o, err := cli.Client.CreatePersonalAccessToken(ctx, input, cli.Interceptor)
 	if err != nil {
 		return err
 	}

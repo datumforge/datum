@@ -3,16 +3,12 @@ package datumuser
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"os"
 
-	"github.com/Yamashou/gqlgenc/clientv2"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
-	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -36,20 +32,10 @@ func init() {
 
 func users(ctx context.Context) error {
 	// setup datum http client
-	h := &http.Client{}
-
-	// set options
-	opt := &clientv2.Options{
-		ParseDataAlongWithErrors: false,
+	cli, err := datum.GetClient(ctx)
+	if err != nil {
+		return err
 	}
-
-	// setup interceptors
-	token := os.Getenv("DATUM_ACCESS_TOKEN")
-
-	i := datumclient.WithAccessToken(token)
-
-	// new client with params
-	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
 
 	// filter options
 	userID := viper.GetString("user.get.id")
@@ -58,7 +44,7 @@ func users(ctx context.Context) error {
 	var s []byte
 
 	if self {
-		claims, err := tokens.ParseUnverifiedTokenClaims(token)
+		claims, err := tokens.ParseUnverifiedTokenClaims(cli.AccessToken)
 		if err != nil {
 			return err
 		}
@@ -68,7 +54,7 @@ func users(ctx context.Context) error {
 
 	// if a user ID is provided, filter on that user, otherwise get all
 	if userID == "" {
-		users, err := c.GetAllUsers(ctx, i)
+		users, err := cli.Client.GetAllUsers(ctx, cli.Interceptor)
 		if err != nil {
 			return err
 		}
@@ -78,7 +64,7 @@ func users(ctx context.Context) error {
 			return err
 		}
 	} else {
-		user, err := c.GetUserByID(ctx, userID, i)
+		user, err := cli.Client.GetUserByID(ctx, userID, cli.Interceptor)
 		if err != nil {
 			return err
 		}

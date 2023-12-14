@@ -22,3 +22,10 @@ func WithAccessToken(accessToken string) clientv2.RequestInterceptor {
 		return next(ctx, req, gqlInfo, res)
 	}
 }
+
+// WithEmptyInterceptor adds an empty interceptor
+func WithEmptyInterceptor() clientv2.RequestInterceptor {
+	return func(ctx context.Context, req *http.Request, gqlInfo *clientv2.GQLRequestInfo, res interface{}, next clientv2.RequestInterceptorFunc) error {
+		return next(ctx, req, gqlInfo, res)
+	}
+}

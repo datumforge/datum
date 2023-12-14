@@ -517,7 +517,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate,
-				DisplayName: "unknown", // this is the default if not set
+				DisplayName: org.DisplayName,
 				Description: &org.Description,
 			},
 		},
@@ -529,7 +529,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
 				ID:          org.ID,
 				Name:        nameUpdate, // this would have been updated on the prior test
-				DisplayName: "unknown",  // this is the default if not set
+				DisplayName: org.DisplayName,
 				Description: &descriptionUpdate,
 			},
 		},

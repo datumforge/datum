@@ -132,7 +132,7 @@ require (
 	github.com/zclconf/go-cty v1.14.1 // indirect
 	gocloud.dev v0.35.0
 	golang.org/x/crypto v0.16.0
-	golang.org/x/exp v0.0.0-20231206192017-f3f8817b8deb
+	golang.org/x/exp v0.0.0-20231214170342-aacd6d4b4611
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.19.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect

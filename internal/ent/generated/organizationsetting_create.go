@@ -279,9 +279,6 @@ func (osc *OrganizationSettingCreate) check() error {
 	if _, ok := osc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "OrganizationSetting.updated_at"`)}
 	}
-	if _, ok := osc.mutation.Domains(); !ok {
-		return &ValidationError{Name: "domains", err: errors.New(`generated: missing required field "OrganizationSetting.domains"`)}
-	}
 	if _, ok := osc.mutation.SSOCert(); !ok {
 		return &ValidationError{Name: "sso_cert", err: errors.New(`generated: missing required field "OrganizationSetting.sso_cert"`)}
 	}
@@ -294,34 +291,14 @@ func (osc *OrganizationSettingCreate) check() error {
 	if _, ok := osc.mutation.BillingContact(); !ok {
 		return &ValidationError{Name: "billing_contact", err: errors.New(`generated: missing required field "OrganizationSetting.billing_contact"`)}
 	}
-	if v, ok := osc.mutation.BillingContact(); ok {
-		if err := organizationsetting.BillingContactValidator(v); err != nil {
-			return &ValidationError{Name: "billing_contact", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_contact": %w`, err)}
-		}
-	}
 	if _, ok := osc.mutation.BillingEmail(); !ok {
 		return &ValidationError{Name: "billing_email", err: errors.New(`generated: missing required field "OrganizationSetting.billing_email"`)}
-	}
-	if v, ok := osc.mutation.BillingEmail(); ok {
-		if err := organizationsetting.BillingEmailValidator(v); err != nil {
-			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
-		}
 	}
 	if _, ok := osc.mutation.BillingPhone(); !ok {
 		return &ValidationError{Name: "billing_phone", err: errors.New(`generated: missing required field "OrganizationSetting.billing_phone"`)}
 	}
-	if v, ok := osc.mutation.BillingPhone(); ok {
-		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
-			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
-		}
-	}
 	if _, ok := osc.mutation.BillingAddress(); !ok {
 		return &ValidationError{Name: "billing_address", err: errors.New(`generated: missing required field "OrganizationSetting.billing_address"`)}
-	}
-	if v, ok := osc.mutation.BillingAddress(); ok {
-		if err := organizationsetting.BillingAddressValidator(v); err != nil {
-			return &ValidationError{Name: "billing_address", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_address": %w`, err)}
-		}
 	}
 	if _, ok := osc.mutation.TaxIdentifier(); !ok {
 		return &ValidationError{Name: "tax_identifier", err: errors.New(`generated: missing required field "OrganizationSetting.tax_identifier"`)}

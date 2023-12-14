@@ -70,6 +70,12 @@ func (osu *OrganizationSettingUpdate) AppendDomains(s []string) *OrganizationSet
 	return osu
 }
 
+// ClearDomains clears the value of the "domains" field.
+func (osu *OrganizationSettingUpdate) ClearDomains() *OrganizationSettingUpdate {
+	osu.mutation.ClearDomains()
+	return osu
+}
+
 // SetSSOCert sets the "sso_cert" field.
 func (osu *OrganizationSettingUpdate) SetSSOCert(s string) *OrganizationSettingUpdate {
 	osu.mutation.SetSSOCert(s)
@@ -272,35 +278,7 @@ func (osu *OrganizationSettingUpdate) defaults() error {
 	return nil
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (osu *OrganizationSettingUpdate) check() error {
-	if v, ok := osu.mutation.BillingContact(); ok {
-		if err := organizationsetting.BillingContactValidator(v); err != nil {
-			return &ValidationError{Name: "billing_contact", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_contact": %w`, err)}
-		}
-	}
-	if v, ok := osu.mutation.BillingEmail(); ok {
-		if err := organizationsetting.BillingEmailValidator(v); err != nil {
-			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
-		}
-	}
-	if v, ok := osu.mutation.BillingPhone(); ok {
-		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
-			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
-		}
-	}
-	if v, ok := osu.mutation.BillingAddress(); ok {
-		if err := organizationsetting.BillingAddressValidator(v); err != nil {
-			return &ValidationError{Name: "billing_address", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_address": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := osu.check(); err != nil {
-		return n, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(organizationsetting.Table, organizationsetting.Columns, sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString))
 	if ps := osu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -328,6 +306,9 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, organizationsetting.FieldDomains, value)
 		})
+	}
+	if osu.mutation.DomainsCleared() {
+		_spec.ClearField(organizationsetting.FieldDomains, field.TypeJSON)
 	}
 	if value, ok := osu.mutation.SSOCert(); ok {
 		_spec.SetField(organizationsetting.FieldSSOCert, field.TypeString, value)
@@ -452,6 +433,12 @@ func (osuo *OrganizationSettingUpdateOne) SetDomains(s []string) *OrganizationSe
 // AppendDomains appends s to the "domains" field.
 func (osuo *OrganizationSettingUpdateOne) AppendDomains(s []string) *OrganizationSettingUpdateOne {
 	osuo.mutation.AppendDomains(s)
+	return osuo
+}
+
+// ClearDomains clears the value of the "domains" field.
+func (osuo *OrganizationSettingUpdateOne) ClearDomains() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearDomains()
 	return osuo
 }
 
@@ -670,35 +657,7 @@ func (osuo *OrganizationSettingUpdateOne) defaults() error {
 	return nil
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (osuo *OrganizationSettingUpdateOne) check() error {
-	if v, ok := osuo.mutation.BillingContact(); ok {
-		if err := organizationsetting.BillingContactValidator(v); err != nil {
-			return &ValidationError{Name: "billing_contact", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_contact": %w`, err)}
-		}
-	}
-	if v, ok := osuo.mutation.BillingEmail(); ok {
-		if err := organizationsetting.BillingEmailValidator(v); err != nil {
-			return &ValidationError{Name: "billing_email", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_email": %w`, err)}
-		}
-	}
-	if v, ok := osuo.mutation.BillingPhone(); ok {
-		if err := organizationsetting.BillingPhoneValidator(v); err != nil {
-			return &ValidationError{Name: "billing_phone", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_phone": %w`, err)}
-		}
-	}
-	if v, ok := osuo.mutation.BillingAddress(); ok {
-		if err := organizationsetting.BillingAddressValidator(v); err != nil {
-			return &ValidationError{Name: "billing_address", err: fmt.Errorf(`generated: validator failed for field "OrganizationSetting.billing_address": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *OrganizationSetting, err error) {
-	if err := osuo.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(organizationsetting.Table, organizationsetting.Columns, sqlgraph.NewFieldSpec(organizationsetting.FieldID, field.TypeString))
 	id, ok := osuo.mutation.ID()
 	if !ok {
@@ -743,6 +702,9 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
 			sqljson.Append(u, organizationsetting.FieldDomains, value)
 		})
+	}
+	if osuo.mutation.DomainsCleared() {
+		_spec.ClearField(organizationsetting.FieldDomains, field.TypeJSON)
 	}
 	if value, ok := osuo.mutation.SSOCert(); ok {
 		_spec.SetField(organizationsetting.FieldSSOCert, field.TypeString, value)

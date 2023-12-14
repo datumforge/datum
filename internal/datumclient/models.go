@@ -356,7 +356,7 @@ type CreateOrganizationSettingInput struct {
 	CreatedBy *string    `json:"createdBy,omitempty"`
 	UpdatedBy *string    `json:"updatedBy,omitempty"`
 	// domains associated with the organization
-	Domains       []string `json:"domains"`
+	Domains       []string `json:"domains,omitempty"`
 	SsoCert       *string  `json:"ssoCert,omitempty"`
 	SsoEntrypoint *string  `json:"ssoEntrypoint,omitempty"`
 	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`
@@ -1735,7 +1735,7 @@ type OrganizationSetting struct {
 	CreatedBy *string   `json:"createdBy,omitempty"`
 	UpdatedBy *string   `json:"updatedBy,omitempty"`
 	// domains associated with the organization
-	Domains       []string `json:"domains"`
+	Domains       []string `json:"domains,omitempty"`
 	SsoCert       string   `json:"ssoCert"`
 	SsoEntrypoint string   `json:"ssoEntrypoint"`
 	SsoIssuer     string   `json:"ssoIssuer"`
@@ -2788,6 +2788,7 @@ type UpdateOrganizationSettingInput struct {
 	// domains associated with the organization
 	Domains       []string `json:"domains,omitempty"`
 	AppendDomains []string `json:"appendDomains,omitempty"`
+	ClearDomains  *bool    `json:"clearDomains,omitempty"`
 	SsoCert       *string  `json:"ssoCert,omitempty"`
 	SsoEntrypoint *string  `json:"ssoEntrypoint,omitempty"`
 	SsoIssuer     *string  `json:"ssoIssuer,omitempty"`

@@ -9123,10 +9123,24 @@ func (m *OrganizationSettingMutation) AppendedDomains() ([]string, bool) {
 	return m.appenddomains, true
 }
 
+// ClearDomains clears the value of the "domains" field.
+func (m *OrganizationSettingMutation) ClearDomains() {
+	m.domains = nil
+	m.appenddomains = nil
+	m.clearedFields[organizationsetting.FieldDomains] = struct{}{}
+}
+
+// DomainsCleared returns if the "domains" field was cleared in this mutation.
+func (m *OrganizationSettingMutation) DomainsCleared() bool {
+	_, ok := m.clearedFields[organizationsetting.FieldDomains]
+	return ok
+}
+
 // ResetDomains resets all changes to the "domains" field.
 func (m *OrganizationSettingMutation) ResetDomains() {
 	m.domains = nil
 	m.appenddomains = nil
+	delete(m.clearedFields, organizationsetting.FieldDomains)
 }
 
 // SetSSOCert sets the "sso_cert" field.
@@ -9814,6 +9828,9 @@ func (m *OrganizationSettingMutation) ClearedFields() []string {
 	if m.FieldCleared(organizationsetting.FieldUpdatedBy) {
 		fields = append(fields, organizationsetting.FieldUpdatedBy)
 	}
+	if m.FieldCleared(organizationsetting.FieldDomains) {
+		fields = append(fields, organizationsetting.FieldDomains)
+	}
 	if m.FieldCleared(organizationsetting.FieldTags) {
 		fields = append(fields, organizationsetting.FieldTags)
 	}
@@ -9836,6 +9853,9 @@ func (m *OrganizationSettingMutation) ClearField(name string) error {
 		return nil
 	case organizationsetting.FieldUpdatedBy:
 		m.ClearUpdatedBy()
+		return nil
+	case organizationsetting.FieldDomains:
+		m.ClearDomains()
 		return nil
 	case organizationsetting.FieldTags:
 		m.ClearTags()

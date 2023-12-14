@@ -1139,6 +1139,7 @@ type UpdateOrganizationSettingInput struct {
 	UpdatedAt         *time.Time
 	ClearUpdatedBy    bool
 	UpdatedBy         *string
+	ClearDomains      bool
 	Domains           []string
 	AppendDomains     []string
 	SSOCert           *string
@@ -1166,6 +1167,9 @@ func (i *UpdateOrganizationSettingInput) Mutate(m *OrganizationSettingMutation) 
 	}
 	if v := i.UpdatedBy; v != nil {
 		m.SetUpdatedBy(*v)
+	}
+	if i.ClearDomains {
+		m.ClearDomains()
 	}
 	if v := i.Domains; v != nil {
 		m.SetDomains(v)

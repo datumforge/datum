@@ -346,7 +346,7 @@ input CreateOrganizationSettingInput {
 	createdBy: String
 	updatedBy: String
 	"""domains associated with the organization"""
-	domains: [String!]!
+	domains: [String!]
 	ssoCert: String
 	ssoEntrypoint: String
 	ssoIssuer: String
@@ -2004,7 +2004,7 @@ type OrganizationSetting implements Node {
 	createdBy: String
 	updatedBy: String
 	"""domains associated with the organization"""
-	domains: [String!]!
+	domains: [String!]
 	ssoCert: String!
 	ssoEntrypoint: String!
 	ssoIssuer: String!
@@ -3363,6 +3363,7 @@ input UpdateOrganizationSettingInput {
 	"""domains associated with the organization"""
 	domains: [String!]
 	appendDomains: [String!]
+	clearDomains: Boolean
 	ssoCert: String
 	ssoEntrypoint: String
 	ssoIssuer: String

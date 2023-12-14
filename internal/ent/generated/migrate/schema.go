@@ -269,7 +269,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "domains", Type: field.TypeJSON},
+		{Name: "domains", Type: field.TypeJSON, Nullable: true},
 		{Name: "sso_cert", Type: field.TypeString, Size: 2147483647, Default: ""},
 		{Name: "sso_entrypoint", Type: field.TypeString, Default: ""},
 		{Name: "sso_issuer", Type: field.TypeString, Default: ""},

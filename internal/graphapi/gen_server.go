@@ -4385,7 +4385,7 @@ input CreateOrganizationSettingInput {
   createdBy: String
   updatedBy: String
   """domains associated with the organization"""
-  domains: [String!]!
+  domains: [String!]
   ssoCert: String
   ssoEntrypoint: String
   ssoIssuer: String
@@ -5689,7 +5689,7 @@ type OrganizationSetting implements Node {
   createdBy: String
   updatedBy: String
   """domains associated with the organization"""
-  domains: [String!]!
+  domains: [String!]
   ssoCert: String!
   ssoEntrypoint: String!
   ssoIssuer: String!
@@ -6910,6 +6910,7 @@ input UpdateOrganizationSettingInput {
   """domains associated with the organization"""
   domains: [String!]
   appendDomains: [String!]
+  clearDomains: Boolean
   ssoCert: String
   ssoEntrypoint: String
   ssoIssuer: String
@@ -21716,14 +21717,11 @@ func (ec *executionContext) _OrganizationSetting_domains(ctx context.Context, fi
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_domains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -34150,7 +34148,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationSettingInput(ctx con
 			it.UpdatedBy = data
 		case "domains":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("domains"))
-			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -45147,7 +45145,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "domains", "appendDomains", "clearDomains", "ssoCert", "ssoEntrypoint", "ssoIssuer", "billingContact", "billingEmail", "billingPhone", "billingAddress", "taxIdentifier", "tags", "appendTags", "clearTags", "organizationID", "clearOrganization"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -45189,6 +45187,13 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationSettingInput(ctx con
 				return it, err
 			}
 			it.AppendDomains = data
+		case "clearDomains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDomains"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearDomains = data
 		case "ssoCert":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoCert"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -51561,9 +51566,6 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._OrganizationSetting_updatedBy(ctx, field, obj)
 		case "domains":
 			out.Values[i] = ec._OrganizationSetting_domains(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "ssoCert":
 			out.Values[i] = ec._OrganizationSetting_ssoCert(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

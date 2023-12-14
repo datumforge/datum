@@ -19,7 +19,8 @@ type OrganizationSetting struct {
 func (OrganizationSetting) Fields() []ent.Field {
 	return []ent.Field{
 		field.JSON("domains", []string{}).
-			Comment("domains associated with the organization"),
+			Comment("domains associated with the organization").
+			Optional(),
 		field.Text("sso_cert").
 			Default(""),
 		field.String("sso_entrypoint").
@@ -27,14 +28,10 @@ func (OrganizationSetting) Fields() []ent.Field {
 		field.String("sso_issuer").
 			Default(""),
 		field.String("billing_contact").
-			NotEmpty().
 			Comment("Name of the person to contact for billing"),
-		field.String("billing_email").
-			NotEmpty(),
-		field.String("billing_phone").
-			NotEmpty(),
-		field.String("billing_address").
-			NotEmpty(),
+		field.String("billing_email"),
+		field.String("billing_phone"),
+		field.String("billing_address"),
 		field.String("tax_identifier").
 			Comment("Usually government-issued tax ID or business ID such as ABN in Australia"),
 		field.JSON("tags", []string{}).

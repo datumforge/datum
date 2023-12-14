@@ -3,8 +3,6 @@ package datumuser
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"strings"
 
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
@@ -66,10 +64,6 @@ func createUser(ctx context.Context) error {
 	}
 
 	displayName := viper.GetString("user.create.display-name")
-	if displayName == "" {
-		// set a default display name if not set
-		displayName = strings.ToLower(fmt.Sprintf("%s.%s", firstName, lastName))
-	}
 
 	password := viper.GetString("user.create.password")
 
@@ -79,6 +73,7 @@ func createUser(ctx context.Context) error {
 		LastName:  lastName,
 	}
 
+	// if a displayName is not provided, the email is used
 	if displayName != "" {
 		input.DisplayName = &displayName
 	}

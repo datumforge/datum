@@ -88,7 +88,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "logo_url", Type: field.TypeString},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "organization_groups", Type: field.TypeString},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
@@ -234,7 +234,7 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Size: 160},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
@@ -401,7 +401,7 @@ var (
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},
-		{Name: "display_name", Type: field.TypeString, Size: 64, Default: "unknown"},
+		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "avatar_remote_url", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_local_file", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "avatar_updated_at", Type: field.TypeTime, Nullable: true},

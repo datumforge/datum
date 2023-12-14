@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"strings"
+	"context"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
@@ -13,6 +13,8 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/ogen-go/ogen"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/interceptors"
@@ -42,18 +44,9 @@ func (Organization) Fields() []ent.Field {
 		field.String("display_name").
 			Comment("The organization's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
-			NotEmpty().
-			Default("unknown").
+			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
-			).
-			Validate(
-				func(s string) error {
-					if strings.Contains(s, " ") {
-						return ErrContainsSpaces
-					}
-					return nil
-				},
 			),
 		field.String("description").
 			Comment("An optional description of the organization").
@@ -134,16 +127,28 @@ func (Organization) Policy() ent.Policy {
 	}
 }
 
-// Hooks of the Organization
-func (Organization) Hooks() []ent.Hook {
-	return []ent.Hook{
-		hooks.HookOrganization(),
-	}
-}
-
 // Interceptors of the Organization
 func (Organization) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		interceptors.InterceptorOrganization(),
+	}
+}
+
+// Hooks of the Organization
+func (Organization) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookOrganization(),
+		hook.On(func(next ent.Mutator) ent.Mutator {
+			return hook.OrganizationFunc(func(ctx context.Context, mutation *generated.OrganizationMutation) (generated.Value, error) {
+				if name, ok := mutation.Name(); ok {
+					if displayName, ok := mutation.DisplayName(); ok {
+						if displayName == "" {
+							mutation.SetDisplayName(name)
+						}
+					}
+				}
+				return next.Mutate(ctx, mutation)
+			})
+		}, ent.OpCreate|ent.OpUpdateOne),
 	}
 }

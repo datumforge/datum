@@ -70,7 +70,7 @@ func (User) Fields() []ent.Field {
 			Comment("The user's displayed 'friendly' name").
 			MaxLen(nameMaxLen).
 			NotEmpty().
-			Default("unknown").
+			Default("").
 			Annotations(
 				entgql.OrderField("display_name"),
 			).
@@ -187,6 +187,11 @@ func (User) Hooks() []ent.Hook {
 				if email, ok := mutation.Email(); ok {
 					url := gravatar.New(email, nil)
 					mutation.SetAvatarRemoteURL(url)
+					if displayName, ok := mutation.DisplayName(); ok {
+						if displayName == "" {
+							mutation.SetDisplayName(email)
+						}
+					}
 				}
 
 				return next.Mutate(ctx, mutation)

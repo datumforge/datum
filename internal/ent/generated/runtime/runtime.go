@@ -104,10 +104,13 @@ func init() {
 	}
 	groupMixinHooks0 := groupMixin[0].Hooks()
 	groupMixinHooks1 := groupMixin[1].Hooks()
+	groupHooks := schema.Group{}.Hooks()
 
 	group.Hooks[1] = groupMixinHooks0[0]
 
 	group.Hooks[2] = groupMixinHooks1[0]
+
+	group.Hooks[3] = groupHooks[0]
 	groupMixinInters1 := groupMixin[1].Interceptors()
 	group.Interceptors[0] = groupMixinInters1[0]
 	groupMixinFields0 := groupMixin[0].Fields()
@@ -139,22 +142,7 @@ func init() {
 	// group.DefaultDisplayName holds the default value on creation for the display_name field.
 	group.DefaultDisplayName = groupDescDisplayName.Default.(string)
 	// group.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
-	group.DisplayNameValidator = func() func(string) error {
-		validators := groupDescDisplayName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-			validators[2].(func(string) error),
-		}
-		return func(display_name string) error {
-			for _, fn := range fns {
-				if err := fn(display_name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	group.DisplayNameValidator = groupDescDisplayName.Validators[0].(func(string) error)
 	// groupDescID is the schema descriptor for id field.
 	groupDescID := groupMixinFields3[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
@@ -300,6 +288,8 @@ func init() {
 	organization.Hooks[2] = organizationMixinHooks2[0]
 
 	organization.Hooks[3] = organizationHooks[0]
+
+	organization.Hooks[4] = organizationHooks[1]
 	organizationMixinInters2 := organizationMixin[2].Interceptors()
 	organizationInters := schema.Organization{}.Interceptors()
 	organization.Interceptors[0] = organizationMixinInters2[0]
@@ -343,22 +333,7 @@ func init() {
 	// organization.DefaultDisplayName holds the default value on creation for the display_name field.
 	organization.DefaultDisplayName = organizationDescDisplayName.Default.(string)
 	// organization.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
-	organization.DisplayNameValidator = func() func(string) error {
-		validators := organizationDescDisplayName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-			validators[2].(func(string) error),
-		}
-		return func(display_name string) error {
-			for _, fn := range fns {
-				if err := fn(display_name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	organization.DisplayNameValidator = organizationDescDisplayName.Validators[0].(func(string) error)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

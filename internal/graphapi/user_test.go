@@ -231,7 +231,7 @@ func TestMutation_CreateUser(t *testing.T) {
 
 			// display name defaults to unknown if not provided
 			if tc.userInput.DisplayName == nil {
-				assert.Equal(t, "unknown", resp.CreateUser.User.DisplayName)
+				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {
 				assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
 			}

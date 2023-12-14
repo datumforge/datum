@@ -10,7 +10,7 @@ require (
 	github.com/99designs/keyring v1.2.2
 	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2
 	github.com/Yamashou/gqlgenc v0.16.0
-	github.com/brianvoe/gofakeit/v6 v6.26.2
+	github.com/brianvoe/gofakeit/v6 v6.26.3
 	github.com/datumforge/echo-prometheus/v5 v5.0.0-20231205192725-e697eaa86d58
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
@@ -21,7 +21,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.80.1
 	github.com/openfga/go-sdk v0.3.0
-	github.com/openfga/language/pkg/go v0.0.0-20231211171514-8dfc3b8e6549
+	github.com/openfga/language/pkg/go v0.0.0-20231214002416-cca4c4312106
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/spf13/cobra v1.8.0

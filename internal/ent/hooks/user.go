@@ -3,7 +3,6 @@ package hooks
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"entgo.io/ent"
 	petname "github.com/dustinkirkland/golang-petname"
@@ -92,17 +91,12 @@ func getPersonalOrgInput(user *generated.UserMutation) generated.CreateOrganizat
 
 	// generate random name for personal orgs
 	name := caser.String(petname.Generate(2, " ")) //nolint:gomnd
+	displayName := name
 
 	firstName, _ := user.FirstName()
-	lastName, _ := user.FirstName()
+	lastName, _ := user.LastName()
 
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(firstName), caser.String(lastName))
-
-	displayName, _ := user.DisplayName()
-
-	if displayName == "" {
-		displayName = fmt.Sprintf("%s%s", strings.ToLower(firstName), strings.ToTitle(lastName))
-	}
 
 	return generated.CreateOrganizationInput{
 		Name:        name,

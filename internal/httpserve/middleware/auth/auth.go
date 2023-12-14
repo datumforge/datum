@@ -58,6 +58,15 @@ func Authenticate() echo.MiddlewareFunc {
 				return ErrorResponse(err)
 			}
 
+			iat, err := claims.GetIssuedAt()
+			if err != nil {
+				return echo.NewHTTPError(http.StatusUnauthorized, ErrInvalidCredentials)
+			}
+
+			if time.Now().After(iat.Add(time.Minute * 15)) { // nolint: gomnd
+				return echo.NewHTTPError(http.StatusForbidden, "This session is too old to access this resource")
+			}
+
 			// Add claims to context for use in downstream processing and continue handlers
 			c.Set(ContextUserClaims.name, claims)
 

@@ -369,6 +369,12 @@ func TestMutation_CreateOrganization(t *testing.T) {
 				assert.Equal(t, tc.parentOrgID, parent.ID)
 			}
 
+			// Ensure org settings is not null
+			assert.NotNil(t, resp.CreateOrganization.Organization.Setting.ID)
+
+			// Ensure display name is not unknown
+			assert.NotEqual(t, "unknown", resp.CreateOrganization.Organization.DisplayName)
+
 			// cleanup org
 			(&OrganizationCleanup{OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx)
 		})

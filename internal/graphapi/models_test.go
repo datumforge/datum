@@ -37,7 +37,7 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organizati
 	}
 
 	if o.DisplayName == "" {
-		o.Name = gofakeit.LetterN(40)
+		o.DisplayName = gofakeit.LetterN(40)
 	}
 
 	if o.Description == nil {
@@ -51,7 +51,7 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organizati
 		m.SetParentID(o.ParentOrgID).SaveX(ctx)
 	}
 
-	return EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SaveX(ctx)
+	return EntClient.Organization.Create().SetName(o.Name).SetDisplayName(o.DisplayName).SaveX(ctx)
 }
 
 // MustDelete is used to cleanup, without authz checks, orgs in the database

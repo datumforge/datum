@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/utils/gravatar"
 )
 
+// HookUser runs on user mutations validate and hash the password and set default values that are not provided
 func HookUser() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.UserFunc(func(ctx context.Context, mutation *generated.UserMutation) (generated.Value, error) {

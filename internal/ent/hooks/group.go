@@ -9,6 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 )
 
+// HookGroup runs on group mutations to set default values that are not provided
 func HookGroup() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.GroupFunc(func(ctx context.Context, mutation *generated.GroupMutation) (generated.Value, error) {

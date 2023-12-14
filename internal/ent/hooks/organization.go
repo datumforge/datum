@@ -13,7 +13,8 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 )
 
-func HookOrgDisplayName() ent.Hook {
+// HookOrganization runs on org mutations to set default values that are not provided
+func HookOrganization() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.OrganizationFunc(func(ctx context.Context, mutation *generated.OrganizationMutation) (generated.Value, error) {
 			if name, ok := mutation.Name(); ok {
@@ -28,8 +29,8 @@ func HookOrgDisplayName() ent.Hook {
 	}, ent.OpCreate|ent.OpUpdateOne)
 }
 
-// HookOrganization runs on organization mutations to setup or remove relationship tuples
-func HookOrganization() ent.Hook {
+// HookOrganizationAuthz runs on organization mutations to setup or remove relationship tuples
+func HookOrganizationAuthz() ent.Hook {
 	return func(next ent.Mutator) ent.Mutator {
 		return hook.OrganizationFunc(func(ctx context.Context, m *generated.OrganizationMutation) (ent.Value, error) {
 			// do the mutation, and then create/delete the relationship

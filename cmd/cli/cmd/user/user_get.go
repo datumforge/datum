@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
+	datumlogin "github.com/datumforge/datum/cmd/cli/cmd/login"
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -44,9 +45,19 @@ func users(ctx context.Context) error {
 	}
 
 	// setup interceptors
-	token := os.Getenv("DATUM_ACCESS_TOKEN")
+	token, err := datumlogin.GetTokenFromKeyring(ctx)
+	if err != nil {
+		return err
+	}
 
-	i := datumclient.WithAccessToken(token)
+	accessToken := token.AccessToken
+
+	// if not stored, try the env var
+	if accessToken == "" {
+		accessToken = os.Getenv("DATUM_ACCESS_TOKEN")
+	}
+
+	i := datumclient.WithAccessToken(accessToken)
 
 	// new client with params
 	c := datumclient.NewClient(h, datum.GraphAPIHost, opt, i)
@@ -58,7 +69,7 @@ func users(ctx context.Context) error {
 	var s []byte
 
 	if self {
-		claims, err := tokens.ParseUnverifiedTokenClaims(token)
+		claims, err := tokens.ParseUnverifiedTokenClaims(accessToken)
 		if err != nil {
 			return err
 		}

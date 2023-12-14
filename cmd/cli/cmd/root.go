@@ -15,14 +15,20 @@ import (
 )
 
 const (
-	appName          = "datum"
-	defaultGraphHost = "http://localhost:17608/query"
+	appName         = "datum"
+	defaultRootHost = "http://localhost:17608/"
+	graphEndpoint   = "query"
 )
 
 var (
 	cfgFile string
-	logger  *zap.SugaredLogger
-	// GraphAPIHost contains the url for the graph api
+	Logger  *zap.SugaredLogger
+)
+
+var (
+	// DatumHost contains the root url for the Datum API
+	DatumHost string
+	// GraphAPIHost contains the url for the Datum graph api
 	GraphAPIHost string
 )
 
@@ -44,7 +50,7 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
 	ViperBindFlag("config", RootCmd.PersistentFlags().Lookup("config"))
 
-	RootCmd.PersistentFlags().StringVar(&GraphAPIHost, "host", defaultGraphHost, "graph api host url")
+	RootCmd.PersistentFlags().StringVar(&DatumHost, "host", defaultRootHost, "api host url")
 	ViperBindFlag("datum.host", RootCmd.PersistentFlags().Lookup("host"))
 
 	// Logging flags
@@ -76,10 +82,12 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 
+	GraphAPIHost = fmt.Sprintf("%s%s", DatumHost, graphEndpoint)
+
 	setupLogging()
 
 	if err == nil {
-		logger.Infow("using config file", "file", viper.ConfigFileUsed())
+		Logger.Infow("using config file", "file", viper.ConfigFileUsed())
 	}
 }
 
@@ -100,8 +108,8 @@ func setupLogging() {
 		panic(err)
 	}
 
-	logger = l.Sugar().With("app", appName)
-	defer logger.Sync() //nolint:errcheck
+	Logger = l.Sugar().With("app", appName)
+	defer Logger.Sync() //nolint:errcheck
 }
 
 // ViperBindFlag provides a wrapper around the viper bindings that panics if an error occurs

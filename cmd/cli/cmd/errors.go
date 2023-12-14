@@ -12,8 +12,8 @@ var (
 
 // RequiredFieldMissingError is returned when a field is required but not provided
 type RequiredFieldMissingError struct {
-	Field      string
-	ObjectType string
+	// Field contains the required field that was missing from the input
+	Field string
 }
 
 // Error returns the RequiredFieldMissingError in string format

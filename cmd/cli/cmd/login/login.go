@@ -65,7 +65,6 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	}
 
 	// setup datum http client
-	// setup datum http client
 	h := &http.Client{}
 
 	// set options
@@ -74,33 +73,33 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 	// new client with params
 	c := datumclient.NewClient(h, datum.DatumHost, opt, nil)
 
-	c2 := c.(*datumclient.Client)
+	// this allows the use of the graph client to be used for the REST endpoints
+	dc := c.(*datumclient.Client)
 
-	tokens, err := datumclient.Login(c2, ctx, login)
+	tokens, err := datumclient.Login(dc, ctx, login)
 	if err != nil {
 		return nil, err
 	}
 
 	fmt.Println("\nAuthentication Successful!")
 
-	if err := storeToken(tokens, "datum"); err != nil {
+	if err := storeToken(tokens); err != nil {
 		return nil, err
 	}
 
 	fmt.Println("auth token successfully stored in keychain")
-	fmt.Println(tokens.AccessToken)
 
 	return tokens, nil
 }
 
-func storeToken(token *oauth2.Token, name string) error {
+func storeToken(token *oauth2.Token) error {
 	ring, err := datum.GetKeyring()
 	if err != nil {
 		return fmt.Errorf("error opening keyring: %w", err)
 	}
 
 	err = ring.Set(keyring.Item{
-		Key:  fmt.Sprintf("%s_token", name),
+		Key:  "datum_token",
 		Data: []byte(token.AccessToken),
 	})
 	if err != nil {
@@ -108,7 +107,7 @@ func storeToken(token *oauth2.Token, name string) error {
 	}
 
 	err = ring.Set(keyring.Item{
-		Key:  fmt.Sprintf("%s_refresh_token", name),
+		Key:  "datum_refresh_token",
 		Data: []byte(token.RefreshToken),
 	})
 	if err != nil {

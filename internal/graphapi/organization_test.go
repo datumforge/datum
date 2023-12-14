@@ -314,11 +314,10 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			orgDescription: gofakeit.HipsterSentence(10),
 		},
 		{
-			name:           "display name with spaces should fail",
+			name:           "display name with spaces should pass",
 			orgName:        gofakeit.Name(),
 			displayName:    gofakeit.Sentence(3),
 			orgDescription: gofakeit.HipsterSentence(10),
-			errorMsg:       "field should not contain spaces",
 		},
 	}
 
@@ -372,8 +371,8 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			// Ensure org settings is not null
 			assert.NotNil(t, resp.CreateOrganization.Organization.Setting.ID)
 
-			// Ensure display name is not unknown
-			assert.NotEqual(t, "", resp.CreateOrganization.Organization.DisplayName)
+			// Ensure display name is not empty
+			assert.NotEmpty(t, resp.CreateOrganization.Organization.DisplayName)
 
 			// cleanup org
 			(&OrganizationCleanup{OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx)

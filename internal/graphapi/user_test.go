@@ -188,7 +188,7 @@ func TestMutation_CreateUser(t *testing.T) {
 			errorMsg: "value is less than the required length",
 		},
 		{
-			name: "no display name, should default to unknown",
+			name: "no display name, should default to email",
 			userInput: datumclient.CreateUserInput{
 				FirstName: gofakeit.FirstName(),
 				LastName:  gofakeit.LastName(),
@@ -229,7 +229,7 @@ func TestMutation_CreateUser(t *testing.T) {
 			assert.Equal(t, tc.userInput.LastName, resp.CreateUser.User.LastName)
 			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
 
-			// display name defaults to unknown if not provided
+			// display name defaults to email if not provided
 			if tc.userInput.DisplayName == nil {
 				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
 			} else {

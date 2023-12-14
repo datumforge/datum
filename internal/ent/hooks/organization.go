@@ -13,6 +13,21 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 )
 
+func HookOrgDisplayName() ent.Hook {
+	return hook.On(func(next ent.Mutator) ent.Mutator {
+		return hook.OrganizationFunc(func(ctx context.Context, mutation *generated.OrganizationMutation) (generated.Value, error) {
+			if name, ok := mutation.Name(); ok {
+				if displayName, ok := mutation.DisplayName(); ok {
+					if displayName == "" {
+						mutation.SetDisplayName(name)
+					}
+				}
+			}
+			return next.Mutate(ctx, mutation)
+		})
+	}, ent.OpCreate|ent.OpUpdateOne)
+}
+
 // HookOrganization runs on organization mutations to setup or remove relationship tuples
 func HookOrganization() ent.Hook {
 	return func(next ent.Mutator) ent.Mutator {

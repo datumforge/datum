@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"context"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -11,9 +9,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -104,17 +101,6 @@ func (Group) Policy() ent.Policy {
 // Hooks of the Group
 func (Group) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hook.On(func(next ent.Mutator) ent.Mutator {
-			return hook.GroupFunc(func(ctx context.Context, mutation *generated.GroupMutation) (generated.Value, error) {
-				if name, ok := mutation.Name(); ok {
-					if displayName, ok := mutation.DisplayName(); ok {
-						if displayName == "" {
-							mutation.SetDisplayName(name)
-						}
-					}
-				}
-				return next.Mutate(ctx, mutation)
-			})
-		}, ent.OpCreate|ent.OpUpdateOne),
+		hooks.HookGroup(),
 	}
 }

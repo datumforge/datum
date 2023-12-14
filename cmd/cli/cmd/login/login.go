@@ -2,11 +2,9 @@ package datumlogin
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
-	"path"
 	"syscall"
 
 	"github.com/99designs/keyring"
@@ -20,11 +18,6 @@ import (
 	datum "github.com/datumforge/datum/cmd/cli/cmd"
 	"github.com/datumforge/datum/internal/datumclient"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-)
-
-var (
-	userKeyring       keyring.Keyring
-	userKeyringLoaded = false
 )
 
 var loginCmd = &cobra.Command{
@@ -101,7 +94,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 }
 
 func storeToken(token *oauth2.Token, name string) error {
-	ring, err := getKeyring()
+	ring, err := datum.GetKeyring()
 	if err != nil {
 		return fmt.Errorf("error opening keyring: %w", err)
 	}
@@ -123,71 +116,4 @@ func storeToken(token *oauth2.Token, name string) error {
 	}
 
 	return nil
-}
-
-// getKeyring will return the already loaded keyring so that we don't prompt users for passwords multiple times
-func getKeyring() (keyring.Keyring, error) {
-	var err error
-
-	if userKeyringLoaded {
-		return userKeyring, nil
-	}
-
-	cfgDir, err := os.UserConfigDir()
-	if err != nil {
-		return nil, err
-	}
-
-	userKeyring, err = keyring.Open(keyring.Config{
-		ServiceName: "datum",
-
-		// MacOS keychain
-		KeychainTrustApplication: true,
-
-		// KDE Wallet
-		KWalletAppID:  "datum",
-		KWalletFolder: "datum",
-
-		// Windows
-		WinCredPrefix: "datum",
-
-		// Fallback encrypted file
-		FileDir:          path.Join(cfgDir, "datum", "keyring"),
-		FilePasswordFunc: keyring.TerminalPrompt,
-	})
-	if err == nil {
-		userKeyringLoaded = true
-	}
-
-	return userKeyring, err
-}
-
-// GetTokenFromKeyring will return the oauth token from the keyring
-func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, error) {
-	ring, err := getKeyring()
-	if err != nil {
-		return nil, fmt.Errorf("error opening keyring: %w", err)
-	}
-
-	authToken, err := ring.Get("datum_token")
-	if err != nil {
-		if errors.Is(err, keyring.ErrKeyNotFound) {
-			return login(ctx)
-		}
-
-		return nil, fmt.Errorf("error fetching auth token: %w", err)
-	}
-
-	refToken, err := ring.Get("datum_refresh_token")
-	if err != nil {
-		if errors.Is(err, keyring.ErrKeyNotFound) {
-			return login(ctx)
-		}
-
-		return nil, fmt.Errorf("error fetching refresh token: %w", err)
-	}
-
-	// TODO (sfunk): add refresh logic
-
-	return &oauth2.Token{AccessToken: string(authToken.Data), RefreshToken: string(refToken.Data)}, nil
 }

@@ -34,6 +34,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		auth.Unauthorized(ctx) //nolint:errcheck
 		return err
 	}
+
 	accessToken, refreshToken, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
 		return err

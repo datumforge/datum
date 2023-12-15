@@ -40,7 +40,12 @@ func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[s
 
 // Groups is the resolver for the groups field.
 func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.GroupOrder, where *generated.GroupWhereInput) (*generated.GroupConnection, error) {
-	panic(fmt.Errorf("not implemented: Groups - groups"))
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	return r.client.Group.Query().Paginate(ctx, after, first, before, last, generated.WithGroupOrder(orderBy), generated.WithGroupFilter(where.Filter))
 }
 
 // GroupSettings is the resolver for the groupSettings field.
@@ -179,19 +184,3 @@ type queryResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *queryResolver) GroupSettingSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
-	panic(fmt.Errorf("not implemented: GroupSettingSlice - groupSettingSlice"))
-}
-func (r *queryResolver) OrganizationSettingSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
-	panic(fmt.Errorf("not implemented: OrganizationSettingSlice - organizationSettingSlice"))
-}
-func (r *queryResolver) UserSettingSlice(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserSettingWhereInput) (*generated.UserSettingConnection, error) {
-	panic(fmt.Errorf("not implemented: UserSettingSlice - userSettingSlice"))
-}

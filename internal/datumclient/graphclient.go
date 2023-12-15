@@ -15,6 +15,7 @@ import (
 
 type DatumClient interface {
 	GetGroupByID(ctx context.Context, groupID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupByID, error)
+	GroupsWhere(ctx context.Context, where *GroupWhereInput, interceptors ...clientv2.RequestInterceptor) (*GroupsWhere, error)
 	GetAllGroups(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllGroups, error)
 	CreateGroup(ctx context.Context, input CreateGroupInput, interceptors ...clientv2.RequestInterceptor) (*CreateGroup, error)
 	UpdateGroup(ctx context.Context, updateGroupID string, input UpdateGroupInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroup, error)
@@ -316,6 +317,226 @@ func (t *GetGroupByID_Group) GetUsers() []*GetGroupByID_Group_Users {
 		t = &GetGroupByID_Group{}
 	}
 	return t.Users
+}
+
+type GroupsWhere_Groups_Edges_Node_Owner struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GroupsWhere_Groups_Edges_Node_Owner) GetID() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Owner{}
+	}
+	return t.ID
+}
+
+type GroupsWhere_Groups_Edges_Node_Setting struct {
+	ID           string                  "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string                "json:\"tags\" graphql:\"tags\""
+}
+
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetID() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return t.ID
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetVisibility() *groupsetting.Visibility {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return &t.Visibility
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return &t.JoinPolicy
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetSyncToSlack() bool {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return t.SyncToSlack
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetSyncToGithub() bool {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return t.SyncToGithub
+}
+func (t *GroupsWhere_Groups_Edges_Node_Setting) GetTags() []string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Setting{}
+	}
+	return t.Tags
+}
+
+type GroupsWhere_Groups_Edges_Node_Users struct {
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+	Email       string "json:\"email\" graphql:\"email\""
+}
+
+func (t *GroupsWhere_Groups_Edges_Node_Users) GetID() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Users{}
+	}
+	return t.ID
+}
+func (t *GroupsWhere_Groups_Edges_Node_Users) GetDisplayName() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Users{}
+	}
+	return t.DisplayName
+}
+func (t *GroupsWhere_Groups_Edges_Node_Users) GetEmail() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Users{}
+	}
+	return t.Email
+}
+
+type GroupsWhere_Groups_Edges_Node struct {
+	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Description string                                 "json:\"description\" graphql:\"description\""
+	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
+	ID          string                                 "json:\"id\" graphql:\"id\""
+	LogoURL     string                                 "json:\"logoURL\" graphql:\"logoURL\""
+	Name        string                                 "json:\"name\" graphql:\"name\""
+	Owner       GroupsWhere_Groups_Edges_Node_Owner    "json:\"owner\" graphql:\"owner\""
+	Setting     GroupsWhere_Groups_Edges_Node_Setting  "json:\"setting\" graphql:\"setting\""
+	UpdatedAt   time.Time                              "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Users       []*GroupsWhere_Groups_Edges_Node_Users "json:\"users,omitempty\" graphql:\"users\""
+}
+
+func (t *GroupsWhere_Groups_Edges_Node) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return &t.CreatedAt
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetCreatedBy() *string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.CreatedBy
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetDescription() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.Description
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetLogoURL() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.LogoURL
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetOwner() *GroupsWhere_Groups_Edges_Node_Owner {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return &t.Owner
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetSetting() *GroupsWhere_Groups_Edges_Node_Setting {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return &t.Setting
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.UpdatedBy
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetUsers() []*GroupsWhere_Groups_Edges_Node_Users {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.Users
+}
+
+type GroupsWhere_Groups_Edges struct {
+	Node *GroupsWhere_Groups_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GroupsWhere_Groups_Edges) GetNode() *GroupsWhere_Groups_Edges_Node {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges{}
+	}
+	return t.Node
+}
+
+type GroupsWhere_Groups struct {
+	Edges []*GroupsWhere_Groups_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GroupsWhere_Groups) GetEdges() []*GroupsWhere_Groups_Edges {
+	if t == nil {
+		t = &GroupsWhere_Groups{}
+	}
+	return t.Edges
 }
 
 type GetAllGroups_Groups_Edges_Node_Owner struct {
@@ -2716,6 +2937,17 @@ func (t *GetGroupByID) GetGroup() *GetGroupByID_Group {
 	return &t.Group
 }
 
+type GroupsWhere struct {
+	Groups GroupsWhere_Groups "json:\"groups\" graphql:\"groups\""
+}
+
+func (t *GroupsWhere) GetGroups() *GroupsWhere_Groups {
+	if t == nil {
+		t = &GroupsWhere{}
+	}
+	return &t.Groups
+}
+
 type GetAllGroups struct {
 	Groups GetAllGroups_Groups "json:\"groups\" graphql:\"groups\""
 }
@@ -2956,6 +3188,62 @@ func (c *Client) GetGroupByID(ctx context.Context, groupID string, interceptors 
 
 	var res GetGroupByID
 	if err := c.Client.Post(ctx, "GetGroupByID", GetGroupByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GroupsWhereDocument = `query GroupsWhere ($where: GroupWhereInput) {
+	groups(where: $where) {
+		edges {
+			node {
+				createdAt
+				createdBy
+				description
+				displayName
+				id
+				logoURL
+				name
+				owner {
+					id
+				}
+				setting {
+					id
+					createdAt
+					updatedAt
+					createdBy
+					updatedBy
+					visibility
+					joinPolicy
+					syncToSlack
+					syncToGithub
+					tags
+				}
+				updatedAt
+				updatedBy
+				users {
+					id
+					displayName
+					email
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GroupsWhere(ctx context.Context, where *GroupWhereInput, interceptors ...clientv2.RequestInterceptor) (*GroupsWhere, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res GroupsWhere
+	if err := c.Client.Post(ctx, "GroupsWhere", GroupsWhereDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -3726,6 +4014,7 @@ func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, intercepto
 
 var DocumentOperationNames = map[string]string{
 	GetGroupByIDDocument:               "GetGroupByID",
+	GroupsWhereDocument:                "GroupsWhere",
 	GetAllGroupsDocument:               "GetAllGroups",
 	CreateGroupDocument:                "CreateGroup",
 	UpdateGroupDocument:                "UpdateGroup",

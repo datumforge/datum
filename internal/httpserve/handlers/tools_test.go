@@ -2,9 +2,12 @@ package handlers_test
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"entgo.io/ent/dialect"
 	"go.uber.org/zap"
@@ -12,6 +15,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 var (
@@ -76,4 +80,21 @@ func errPanic(msg string, err error) {
 	if err != nil {
 		log.Panicf("%s err: %s", msg, err.Error())
 	}
+}
+
+func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, error) {
+	conf := tokens.Config{
+		Audience:        "http://localhost:17608",
+		Issuer:          "http://localhost:17608",
+		AccessDuration:  1 * time.Hour, // nolint: gomnd
+		RefreshDuration: 2 * time.Hour, // nolint: gomnd
+		RefreshOverlap:  refreshOverlap,
+	}
+
+	key, err := rsa.GenerateKey(rand.Reader, 2048) // nolint: gomnd
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens.NewWithKey(key, conf)
 }

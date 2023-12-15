@@ -1,8 +1,6 @@
 package handlers_test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -21,28 +19,10 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/tokens"
 )
 
-func createTokenManager() (*tokens.TokenManager, error) {
-	conf := tokens.Config{
-		Audience:        "http://localhost:17608",
-		Issuer:          "http://localhost:17608",
-		AccessDuration:  1 * time.Hour,     // nolint: gomnd
-		RefreshDuration: 2 * time.Hour,     // nolint: gomnd
-		RefreshOverlap:  -15 * time.Minute, // nolint: gomnd
-	}
-
-	key, err := rsa.GenerateKey(rand.Reader, 2048) // nolint: gomnd
-	if err != nil {
-		return nil, err
-	}
-
-	return tokens.NewWithKey(key, conf)
-}
-
 func TestLoginHandler(t *testing.T) {
-	tm, err := createTokenManager()
+	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
 	if err != nil {
 		t.Error("error creating token manager")
 	}

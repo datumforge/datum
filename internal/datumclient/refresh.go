@@ -14,7 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
-// Refresh refreshes the access + refresh token pair to the Datum API
+// Refresh the access + refresh token pair to the Datum API
 func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "refresh"

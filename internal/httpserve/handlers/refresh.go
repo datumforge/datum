@@ -36,8 +36,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return err
 	}
 
-	// ensure the user is still active
-	// check user in the database, username == email and ensure only one record is returned
+	// check user in the database, sub == claims subject and ensure only one record is returned
 	user, err := h.DBClient.User.Query().WithSetting().Where(func(s *sql.Selector) {
 		s.Where(sql.EQ("sub", claims.Subject))
 	}).Only(ctx.Request().Context())
@@ -46,6 +45,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return auth.ErrNoAuthUser
 	}
 
+	// ensure the user is still active
 	if user.Edges.Setting.Status != "ACTIVE" {
 		auth.Unauthorized(ctx) //nolint:errcheck
 		return auth.ErrNoAuthUser

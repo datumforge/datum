@@ -52,7 +52,6 @@ func getGroup(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-
 	} else if ownerID != "" {
 		whereInput := &datumclient.GroupWhereInput{
 			ID: &ownerID,

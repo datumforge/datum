@@ -23,7 +23,9 @@ func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) 
 		Handler: func(c echo.Context) error {
 			return h.RefreshHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
+		Middlewares: []echo.MiddlewareFunc{
+			middleware.Recover(),
+		},
 	})
 
 	return

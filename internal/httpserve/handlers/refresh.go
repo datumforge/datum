@@ -13,8 +13,6 @@ import (
 
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
-	OrgID        string `json:"org_id,omitempty"`
-	ParentOrgID  string `json:"parent_org_id,omitempty"`
 }
 
 // RefreshHandler allows users to refresh their access token using their refresh token.
@@ -39,7 +37,17 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return err
 	}
 
-	accessToken, refreshToken, err := h.refreshToken(claims, r)
+	// Create a new claims object using the user retrieved from the database
+	refreshClaims := &tokens.Claims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject: claims.Subject,
+		},
+		UserID:      claims.UserID,
+		OrgID:       claims.OrgID,
+		ParentOrgID: claims.ParentOrgID,
+	}
+
+	accessToken, refreshToken, err := h.TM.CreateTokenPair(refreshClaims)
 	if err != nil {
 		return err
 	}
@@ -51,32 +59,4 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, Response{Message: "success"})
-}
-
-func (h *Handler) refreshToken(claims *tokens.Claims, r RefreshRequest) (string, string, error) {
-	orgID := claims.OrgID
-
-	if r.OrgID != "" {
-		orgID = r.OrgID
-	}
-
-	parentOrgID := claims.ParentOrgID
-
-	if r.ParentOrgID != "" {
-		orgID = r.ParentOrgID
-	}
-
-	// TODO: confirm user is part of that org
-
-	// Create a new claims object using the user retrieved from the database
-	refreshClaims := &tokens.Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: claims.Subject,
-		},
-		UserID:      claims.UserID,
-		OrgID:       orgID,
-		ParentOrgID: parentOrgID,
-	}
-
-	return h.TM.CreateTokenPair(refreshClaims)
 }

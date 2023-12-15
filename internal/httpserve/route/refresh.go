@@ -3,9 +3,10 @@ package route
 import (
 	"net/http"
 
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // registerRefreshHandler re-authenticates users and api keys using a refresh token rather than

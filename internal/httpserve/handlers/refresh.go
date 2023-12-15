@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
-	"github.com/datumforge/datum/internal/tokens"
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
+
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 type RefreshRequest struct {
@@ -16,7 +17,7 @@ type RefreshRequest struct {
 	ParentOrgID  string `json:"parent_org_id,omitempty"`
 }
 
-// RefreshLogin allows users to refresh their access token using their refresh token.
+// RefreshHandler allows users to refresh their access token using their refresh token.
 func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	var r RefreshRequest
 
@@ -54,11 +55,13 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 
 func (h *Handler) refreshToken(claims *tokens.Claims, r RefreshRequest) (string, string, error) {
 	orgID := claims.OrgID
+
 	if r.OrgID != "" {
 		orgID = r.OrgID
 	}
 
 	parentOrgID := claims.ParentOrgID
+
 	if r.ParentOrgID != "" {
 		orgID = r.ParentOrgID
 	}

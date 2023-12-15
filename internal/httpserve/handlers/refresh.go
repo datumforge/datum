@@ -5,10 +5,8 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
-	"github.com/datumforge/datum/internal/tokens"
 )
 
 type RefreshRequest struct {
@@ -36,18 +34,7 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		auth.Unauthorized(ctx) //nolint:errcheck
 		return err
 	}
-
-	// Create a new claims object using the user retrieved from the database
-	refreshClaims := &tokens.Claims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Subject: claims.Subject,
-		},
-		UserID:      claims.UserID,
-		OrgID:       claims.OrgID,
-		ParentOrgID: claims.ParentOrgID,
-	}
-
-	accessToken, refreshToken, err := h.TM.CreateTokenPair(refreshClaims)
+	accessToken, refreshToken, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
 		return err
 	}

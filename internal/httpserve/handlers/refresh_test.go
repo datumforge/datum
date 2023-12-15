@@ -20,6 +20,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
 func TestRefreshHandler(t *testing.T) {
@@ -46,6 +47,8 @@ func TestRefreshHandler(t *testing.T) {
 	validUser := gofakeit.Email()
 	validPassword := gofakeit.Password(true, true, true, true, false, 20)
 
+	userID := ulids.New().String()
+
 	userSetting := EntClient.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ec)
@@ -56,6 +59,8 @@ func TestRefreshHandler(t *testing.T) {
 		SetEmail(validUser).
 		SetPassword(validPassword).
 		SetSetting(userSetting).
+		SetID(userID).
+		SetSub(userID). // this is required to parse the refresh token
 		SaveX(ec)
 
 	claims := &tokens.Claims{

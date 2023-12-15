@@ -77,6 +77,11 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*User, error) {
 		return nil, auth.ErrNoAuthUser
 	}
 
+	if user.Edges.Setting.Status != "ACTIVE" {
+		auth.Unauthorized(ctx) //nolint:errcheck
+		return nil, auth.ErrNoAuthUser
+	}
+
 	// verify the password is correct
 	valid, err := passwd.VerifyDerivedKey(*user.Password, u.Password)
 	if err != nil || !valid {

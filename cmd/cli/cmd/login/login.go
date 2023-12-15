@@ -7,7 +7,6 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/99designs/keyring"
 	"github.com/Yamashou/gqlgenc/clientv2"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
@@ -83,36 +82,11 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 
 	fmt.Println("\nAuthentication Successful!")
 
-	if err := storeToken(tokens); err != nil {
+	if err := datum.StoreToken(tokens); err != nil {
 		return nil, err
 	}
 
 	fmt.Println("auth token successfully stored in keychain")
 
 	return tokens, nil
-}
-
-func storeToken(token *oauth2.Token) error {
-	ring, err := datum.GetKeyring()
-	if err != nil {
-		return fmt.Errorf("error opening keyring: %w", err)
-	}
-
-	err = ring.Set(keyring.Item{
-		Key:  "datum_token",
-		Data: []byte(token.AccessToken),
-	})
-	if err != nil {
-		return fmt.Errorf("failed saving access token: %w", err)
-	}
-
-	err = ring.Set(keyring.Item{
-		Key:  "datum_refresh_token",
-		Data: []byte(token.RefreshToken),
-	})
-	if err != nil {
-		return fmt.Errorf("failed saving refresh token: %w", err)
-	}
-
-	return nil
 }

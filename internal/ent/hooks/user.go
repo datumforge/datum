@@ -71,9 +71,26 @@ func HookUser() ent.Hook {
 				return nil, err
 			}
 
+			userCreated, ok := v.(*generated.User)
+			if !ok {
+				return nil, ErrInternalServerError
+			}
+
 			if mutation.Op().Is(ent.OpCreate) {
+				// if using password auth, set subject to user ID
+				if userCreated.Password != nil {
+					userCreated.Sub = userCreated.ID
+
+					if _, err := mutation.Client().User.
+						UpdateOneID(userCreated.ID).
+						SetSub(userCreated.Sub).
+						Save(ctx); err != nil {
+						return nil, ErrInternalServerError
+					}
+				}
+
 				// when a user is created, we create a personal user org
-				if err := createPersonalOrg(ctx, mutation); err != nil {
+				if err := createPersonalOrg(ctx, mutation.Client(), userCreated); err != nil {
 					return nil, ErrInternalServerError
 				}
 			}
@@ -85,7 +102,7 @@ func HookUser() ent.Hook {
 
 // getPersonalOrgInput generates the input for a new personal organization
 // personal orgs are assigned to all new users when registering with Datum
-func getPersonalOrgInput(user *generated.UserMutation) generated.CreateOrganizationInput {
+func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput {
 	// caser is used to capitalize the first letter of words
 	caser := cases.Title(language.AmericanEnglish)
 
@@ -93,10 +110,7 @@ func getPersonalOrgInput(user *generated.UserMutation) generated.CreateOrganizat
 	name := caser.String(petname.Generate(2, " ")) //nolint:gomnd
 	displayName := name
 
-	firstName, _ := user.FirstName()
-	lastName, _ := user.LastName()
-
-	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(firstName), caser.String(lastName))
+	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
 	return generated.CreateOrganizationInput{
 		Name:        name,
@@ -106,14 +120,14 @@ func getPersonalOrgInput(user *generated.UserMutation) generated.CreateOrganizat
 }
 
 // createPersonalOrg creates an org for a user with a unique random name
-func createPersonalOrg(ctx context.Context, user *generated.UserMutation) error {
+func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *generated.User) error {
 	orgInput := getPersonalOrgInput(user)
 
-	_, err := user.Client().Organization.Create().SetInput(orgInput).Save(ctx)
+	_, err := dbClient.Organization.Create().SetInput(orgInput).Save(ctx)
 	if err != nil {
 		// retry on unique constraint
 		if generated.IsConstraintError(err) {
-			return createPersonalOrg(ctx, user)
+			return createPersonalOrg(ctx, dbClient, user)
 		}
 
 		user.Logger.Errorw("unable to create personal org")

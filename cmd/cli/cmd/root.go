@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/99designs/keyring"
 	"github.com/TylerBrock/colorjson"
@@ -21,6 +22,8 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 const (
@@ -192,6 +195,26 @@ func GetClient(ctx context.Context) (CLI, error) {
 		return cli, err
 	}
 
+	expired, err := isExpired(token)
+	if err != nil {
+		return cli, err
+	}
+
+	// refresh and store the new token pair if the existing access token
+	// is expired
+	if expired {
+		// refresh the token pair using the refresh token
+		token, err = refreshToken(ctx, token.RefreshToken)
+		if err != nil {
+			return cli, err
+		}
+
+		// store the new token
+		if err := StoreToken(token); err != nil {
+			return cli, err
+		}
+	}
+
 	accessToken := token.AccessToken
 
 	i := datumclient.WithAccessToken(accessToken)
@@ -205,25 +228,67 @@ func GetClient(ctx context.Context) (CLI, error) {
 }
 
 // GetTokenFromKeyring will return the oauth token from the keyring
+// if the token is expired, but the refresh token is still valid, the
+// token will be refreshed
 func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, error) {
 	ring, err := GetKeyring()
 	if err != nil {
 		return nil, fmt.Errorf("error opening keyring: %w", err)
 	}
 
-	authToken, err := ring.Get("datum_token")
+	access, err := ring.Get("datum_token")
 	if err != nil {
 		return nil, fmt.Errorf("error fetching auth token: %w", err)
 	}
 
-	refToken, err := ring.Get("datum_refresh_token")
+	refresh, err := ring.Get("datum_refresh_token")
 	if err != nil {
 		return nil, fmt.Errorf("error fetching refresh token: %w", err)
 	}
 
-	// TODO (sfunk): add refresh logic
+	return &oauth2.Token{
+		AccessToken:  string(access.Data),
+		RefreshToken: string(refresh.Data),
+	}, nil
+}
 
-	return &oauth2.Token{AccessToken: string(authToken.Data), RefreshToken: string(refToken.Data)}, nil
+func isExpired(tok *oauth2.Token) (bool, error) {
+	claims, err := tokens.ParseUnverifiedTokenClaims(tok.AccessToken)
+	if err != nil {
+		return true, err
+	}
+
+	// check if token is expired, and if so attempt to refresh
+	if claims.ExpiresAt.Time.Before(time.Now()) {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {
+	// setup datum http client
+	h := &http.Client{}
+
+	// set options
+	opt := &clientv2.Options{}
+
+	// new client with params
+	c := datumclient.NewClient(h, DatumHost, opt, nil)
+
+	// this allows the use of the graph client to be used for the REST endpoints
+	dc := c.(*datumclient.Client)
+
+	req := handlers.RefreshRequest{
+		RefreshToken: refresh,
+	}
+
+	token, err := datumclient.Refresh(dc, ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return token, nil
 }
 
 // GetKeyring will return the already loaded keyring so that we don't prompt users for passwords multiple times
@@ -261,4 +326,30 @@ func GetKeyring() (keyring.Keyring, error) {
 	}
 
 	return userKeyring, err
+}
+
+// StoreToken in local keyring
+func StoreToken(token *oauth2.Token) error {
+	ring, err := GetKeyring()
+	if err != nil {
+		return fmt.Errorf("error opening keyring: %w", err)
+	}
+
+	err = ring.Set(keyring.Item{
+		Key:  "datum_token",
+		Data: []byte(token.AccessToken),
+	})
+	if err != nil {
+		return fmt.Errorf("failed saving access token: %w", err)
+	}
+
+	err = ring.Set(keyring.Item{
+		Key:  "datum_refresh_token",
+		Data: []byte(token.RefreshToken),
+	})
+	if err != nil {
+		return fmt.Errorf("failed saving refresh token: %w", err)
+	}
+
+	return nil
 }

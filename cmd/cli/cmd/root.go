@@ -9,7 +9,6 @@ import (
 	"os"
 	"path"
 	"strings"
-	"time"
 
 	"github.com/99designs/keyring"
 	"github.com/TylerBrock/colorjson"
@@ -195,7 +194,7 @@ func GetClient(ctx context.Context) (CLI, error) {
 		return cli, err
 	}
 
-	expired, err := isExpired(token)
+	expired, err := tokens.IsExpired(token.AccessToken)
 	if err != nil {
 		return cli, err
 	}
@@ -250,20 +249,6 @@ func GetTokenFromKeyring(ctx context.Context) (*oauth2.Token, error) {
 		AccessToken:  string(access.Data),
 		RefreshToken: string(refresh.Data),
 	}, nil
-}
-
-func isExpired(tok *oauth2.Token) (bool, error) {
-	claims, err := tokens.ParseUnverifiedTokenClaims(tok.AccessToken)
-	if err != nil {
-		return true, err
-	}
-
-	// check if token is expired, and if so attempt to refresh
-	if claims.ExpiresAt.Time.Before(time.Now()) {
-		return true, nil
-	}
-
-	return false, nil
 }
 
 func refreshToken(ctx context.Context, refresh string) (*oauth2.Token, error) {

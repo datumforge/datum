@@ -393,3 +393,18 @@ func NotBefore(tks string) (_ time.Time, err error) {
 
 	return claims.NotBefore.Time, nil
 }
+
+// IsExpired attempts to check if the provided token is expired
+func IsExpired(tks string) (bool, error) {
+	expiration, err := ExpiresAt(tks)
+	if err != nil {
+		return true, err
+	}
+
+	// check if token is expired
+	if expiration.Before(time.Now()) {
+		return true, nil
+	}
+
+	return false, nil
+}

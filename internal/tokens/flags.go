@@ -11,7 +11,7 @@ import (
 
 const (
 	defaultJWKSRemoteTimeout = 5 * time.Second
-	defaultAccessDuration    = 1 * time.Hour
+	defaultAccessDuration    = 5 * time.Second
 	defaultRefreshDuration   = 2 * time.Hour
 	defaultRefreshOverlap    = -15 * time.Minute
 )

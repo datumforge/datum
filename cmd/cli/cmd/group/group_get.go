@@ -41,29 +41,49 @@ func getGroup(ctx context.Context) error {
 	gID := viper.GetString("group.get.id")
 	ownerID := viper.GetString("group.get.owner")
 
-	var (
-		s      []byte
-		groups any
-	)
-
 	// if an group ID is provided, filter on that group, otherwise get all by owner
 	if gID != "" {
-		groups, err = cli.Client.GetGroupByID(ctx, gID, cli.Interceptor)
+		groups, err := cli.Client.GetGroupByID(ctx, gID, cli.Interceptor)
 		if err != nil {
 			return err
-		}
-	} else if ownerID != "" {
-		whereInput := &datumclient.GroupWhereInput{
-			ID: &ownerID,
 		}
 
-		groups, err = cli.Client.GroupsWhere(ctx, whereInput, cli.Interceptor)
+		s, err := json.Marshal(groups)
 		if err != nil {
 			return err
 		}
+
+		return datum.JSONPrint(s)
 	}
 
-	s, err = json.Marshal(groups)
+	if ownerID != "" {
+		whereInput := &datumclient.GroupWhereInput{
+			HasOwnerWith: []*datumclient.OrganizationWhereInput{
+				{
+					ID: &ownerID,
+				},
+			},
+		}
+
+		groups, err := cli.Client.GroupsWhere(ctx, whereInput, cli.Interceptor)
+		if err != nil {
+			return err
+		}
+
+		s, err := json.Marshal(groups)
+		if err != nil {
+			return err
+		}
+
+		return datum.JSONPrint(s)
+	}
+
+	groups, err := cli.Client.GetAllGroups(ctx, cli.Interceptor)
+	if err != nil {
+		return err
+	}
+
+	s, err := json.Marshal(groups)
 	if err != nil {
 		return err
 	}

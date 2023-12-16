@@ -37,12 +37,16 @@ func (Group) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("name"),
 			),
-		field.String("description").Default("").Annotations(
-			entgql.Skip(entgql.SkipWhereInput),
-		),
-		field.String("logo_url").Annotations(
-			entgql.Skip(entgql.SkipWhereInput),
-		),
+		field.String("description").
+			Optional().
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("logo_url").
+			Optional().
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
 		field.String("display_name").
 			Comment("The group's displayed 'friendly' name").
 			MaxLen(nameMaxLen).

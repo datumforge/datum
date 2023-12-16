@@ -592,6 +592,16 @@ func DescriptionHasSuffix(v string) predicate.Group {
 	return predicate.Group(sql.FieldHasSuffix(FieldDescription, v))
 }
 
+// DescriptionIsNil applies the IsNil predicate on the "description" field.
+func DescriptionIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldDescription))
+}
+
+// DescriptionNotNil applies the NotNil predicate on the "description" field.
+func DescriptionNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldDescription))
+}
+
 // DescriptionEqualFold applies the EqualFold predicate on the "description" field.
 func DescriptionEqualFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldEqualFold(FieldDescription, v))
@@ -655,6 +665,16 @@ func LogoURLHasPrefix(v string) predicate.Group {
 // LogoURLHasSuffix applies the HasSuffix predicate on the "logo_url" field.
 func LogoURLHasSuffix(v string) predicate.Group {
 	return predicate.Group(sql.FieldHasSuffix(FieldLogoURL, v))
+}
+
+// LogoURLIsNil applies the IsNil predicate on the "logo_url" field.
+func LogoURLIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldLogoURL))
+}
+
+// LogoURLNotNil applies the NotNil predicate on the "logo_url" field.
+func LogoURLNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldLogoURL))
 }
 
 // LogoURLEqualFold applies the EqualFold predicate on the "logo_url" field.

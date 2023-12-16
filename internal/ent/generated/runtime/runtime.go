@@ -133,10 +133,6 @@ func init() {
 	groupDescName := groupFields[0].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
-	// groupDescDescription is the schema descriptor for description field.
-	groupDescDescription := groupFields[1].Descriptor()
-	// group.DefaultDescription holds the default value on creation for the description field.
-	group.DefaultDescription = groupDescDescription.Default.(string)
 	// groupDescDisplayName is the schema descriptor for display_name field.
 	groupDescDisplayName := groupFields[3].Descriptor()
 	// group.DefaultDisplayName holds the default value on creation for the display_name field.

@@ -21,6 +21,15 @@ type OrganizationCleanup struct {
 	OrgID string
 }
 
+type GroupBuilder struct {
+	Name  string
+	Owner string
+}
+
+type GroupCleanup struct {
+	GroupID string
+}
+
 type UserBuilder struct {
 	FirstName string
 	LastName  string
@@ -48,7 +57,7 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organizati
 	m := EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName)
 
 	if o.ParentOrgID != "" {
-		m.SetParentID(o.ParentOrgID).SaveX(ctx)
+		m.SetParentID(o.ParentOrgID)
 	}
 
 	return m.SaveX(ctx)
@@ -91,4 +100,30 @@ func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
 		SetPassword(u.Password).
 		SetSetting(userSetting).
 		SaveX(ctx)
+}
+
+// MustNew group builder is used to create, without authz checks, groups in the database
+func (g *GroupBuilder) MustNew(ctx context.Context) *generated.Group {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if g.Name == "" {
+		g.Name = gofakeit.AppName()
+	}
+
+	// create owner if not provided
+	owner := g.Owner
+
+	if g.Owner == "" {
+		org := (&OrganizationBuilder{}).MustNew(ctx)
+		owner = org.ID
+	}
+
+	return EntClient.Group.Create().SetName(g.Name).SetOwnerID(owner).SaveX(ctx)
+}
+
+// MustDelete is used to cleanup, without authz checks, groups in the database
+func (g *GroupCleanup) MustDelete(ctx context.Context) {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	EntClient.Group.DeleteOneID(g.GroupID).ExecX(ctx)
 }

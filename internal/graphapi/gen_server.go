@@ -4267,7 +4267,7 @@ input CreateGroupInput {
   updatedBy: String
   name: String!
   description: String
-  logoURL: String!
+  logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String
   settingID: ID!
@@ -4744,8 +4744,8 @@ type Group implements Node {
   deletedAt: Time
   deletedBy: String
   name: String!
-  description: String!
-  logoURL: String!
+  description: String
+  logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String!
   setting: GroupSetting!
@@ -6789,7 +6789,9 @@ input UpdateGroupInput {
   clearUpdatedBy: Boolean
   name: String
   description: String
+  clearDescription: Boolean
   logoURL: String
+  clearLogoURL: Boolean
   """The group's displayed 'friendly' name"""
   displayName: String
   settingID: ID
@@ -12876,14 +12878,11 @@ func (ec *executionContext) _Group_description(ctx context.Context, field graphq
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12920,14 +12919,11 @@ func (ec *executionContext) _Group_logoURL(ctx context.Context, field graphql.Co
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Group_logoURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -33550,7 +33546,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 			it.Description = data
 		case "logoURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoURL"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -44526,7 +44522,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "logoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "logoURL", "clearLogoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44568,6 +44564,13 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.Description = data
+		case "clearDescription":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDescription"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearDescription = data
 		case "logoURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -44575,6 +44578,13 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.LogoURL = data
+		case "clearLogoURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearLogoURL"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearLogoURL = data
 		case "displayName":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -49243,14 +49253,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "description":
 			out.Values[i] = ec._Group_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "logoURL":
 			out.Values[i] = ec._Group_logoURL(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "displayName":
 			out.Values[i] = ec._Group_displayName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

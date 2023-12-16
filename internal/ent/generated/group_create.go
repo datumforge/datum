@@ -133,6 +133,14 @@ func (gc *GroupCreate) SetLogoURL(s string) *GroupCreate {
 	return gc
 }
 
+// SetNillableLogoURL sets the "logo_url" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableLogoURL(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetLogoURL(*s)
+	}
+	return gc
+}
+
 // SetDisplayName sets the "display_name" field.
 func (gc *GroupCreate) SetDisplayName(s string) *GroupCreate {
 	gc.mutation.SetDisplayName(s)
@@ -249,10 +257,6 @@ func (gc *GroupCreate) defaults() error {
 		v := group.DefaultUpdatedAt()
 		gc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := gc.mutation.Description(); !ok {
-		v := group.DefaultDescription
-		gc.mutation.SetDescription(v)
-	}
 	if _, ok := gc.mutation.DisplayName(); !ok {
 		v := group.DefaultDisplayName
 		gc.mutation.SetDisplayName(v)
@@ -282,12 +286,6 @@ func (gc *GroupCreate) check() error {
 		if err := group.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Group.name": %w`, err)}
 		}
-	}
-	if _, ok := gc.mutation.Description(); !ok {
-		return &ValidationError{Name: "description", err: errors.New(`generated: missing required field "Group.description"`)}
-	}
-	if _, ok := gc.mutation.LogoURL(); !ok {
-		return &ValidationError{Name: "logo_url", err: errors.New(`generated: missing required field "Group.logo_url"`)}
 	}
 	if _, ok := gc.mutation.DisplayName(); !ok {
 		return &ValidationError{Name: "display_name", err: errors.New(`generated: missing required field "Group.display_name"`)}

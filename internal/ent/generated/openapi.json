@@ -1250,8 +1250,6 @@
                   "created_at",
                   "updated_at",
                   "name",
-                  "description",
-                  "logo_url",
                   "display_name",
                   "setting",
                   "owner"
@@ -6933,8 +6931,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name",
           "setting",
           "owner"
@@ -6985,8 +6981,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },
@@ -7035,8 +7029,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },
@@ -7085,8 +7077,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },
@@ -7448,8 +7438,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },
@@ -7498,8 +7486,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },
@@ -9449,8 +9435,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },
@@ -11516,8 +11500,6 @@
           "created_at",
           "updated_at",
           "name",
-          "description",
-          "logo_url",
           "display_name"
         ]
       },

@@ -2687,9 +2687,22 @@ func (m *GroupMutation) OldDescription(ctx context.Context) (v string, err error
 	return oldValue.Description, nil
 }
 
+// ClearDescription clears the value of the "description" field.
+func (m *GroupMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[group.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *GroupMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[group.FieldDescription]
+	return ok
+}
+
 // ResetDescription resets all changes to the "description" field.
 func (m *GroupMutation) ResetDescription() {
 	m.description = nil
+	delete(m.clearedFields, group.FieldDescription)
 }
 
 // SetLogoURL sets the "logo_url" field.
@@ -2723,9 +2736,22 @@ func (m *GroupMutation) OldLogoURL(ctx context.Context) (v string, err error) {
 	return oldValue.LogoURL, nil
 }
 
+// ClearLogoURL clears the value of the "logo_url" field.
+func (m *GroupMutation) ClearLogoURL() {
+	m.logo_url = nil
+	m.clearedFields[group.FieldLogoURL] = struct{}{}
+}
+
+// LogoURLCleared returns if the "logo_url" field was cleared in this mutation.
+func (m *GroupMutation) LogoURLCleared() bool {
+	_, ok := m.clearedFields[group.FieldLogoURL]
+	return ok
+}
+
 // ResetLogoURL resets all changes to the "logo_url" field.
 func (m *GroupMutation) ResetLogoURL() {
 	m.logo_url = nil
+	delete(m.clearedFields, group.FieldLogoURL)
 }
 
 // SetDisplayName sets the "display_name" field.
@@ -3139,6 +3165,12 @@ func (m *GroupMutation) ClearedFields() []string {
 	if m.FieldCleared(group.FieldDeletedBy) {
 		fields = append(fields, group.FieldDeletedBy)
 	}
+	if m.FieldCleared(group.FieldDescription) {
+		fields = append(fields, group.FieldDescription)
+	}
+	if m.FieldCleared(group.FieldLogoURL) {
+		fields = append(fields, group.FieldLogoURL)
+	}
 	return fields
 }
 
@@ -3164,6 +3196,12 @@ func (m *GroupMutation) ClearField(name string) error {
 		return nil
 	case group.FieldDeletedBy:
 		m.ClearDeletedBy()
+		return nil
+	case group.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case group.FieldLogoURL:
+		m.ClearLogoURL()
 		return nil
 	}
 	return fmt.Errorf("unknown Group nullable field %s", name)

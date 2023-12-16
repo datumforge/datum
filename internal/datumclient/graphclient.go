@@ -234,10 +234,10 @@ func (t *GetGroupByID_Group_Users) GetEmail() string {
 type GetGroupByID_Group struct {
 	CreatedAt   time.Time                   "json:\"createdAt\" graphql:\"createdAt\""
 	CreatedBy   *string                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description string                      "json:\"description\" graphql:\"description\""
+	Description *string                     "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                      "json:\"displayName\" graphql:\"displayName\""
 	ID          string                      "json:\"id\" graphql:\"id\""
-	LogoURL     string                      "json:\"logoURL\" graphql:\"logoURL\""
+	LogoURL     *string                     "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Name        string                      "json:\"name\" graphql:\"name\""
 	Owner       GetGroupByID_Group_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     GetGroupByID_Group_Setting  "json:\"setting\" graphql:\"setting\""
@@ -258,7 +258,7 @@ func (t *GetGroupByID_Group) GetCreatedBy() *string {
 	}
 	return t.CreatedBy
 }
-func (t *GetGroupByID_Group) GetDescription() string {
+func (t *GetGroupByID_Group) GetDescription() *string {
 	if t == nil {
 		t = &GetGroupByID_Group{}
 	}
@@ -276,7 +276,7 @@ func (t *GetGroupByID_Group) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetGroupByID_Group) GetLogoURL() string {
+func (t *GetGroupByID_Group) GetLogoURL() *string {
 	if t == nil {
 		t = &GetGroupByID_Group{}
 	}
@@ -432,10 +432,10 @@ func (t *GroupsWhere_Groups_Edges_Node_Users) GetEmail() string {
 type GroupsWhere_Groups_Edges_Node struct {
 	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
 	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description string                                 "json:\"description\" graphql:\"description\""
+	Description *string                                "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
 	ID          string                                 "json:\"id\" graphql:\"id\""
-	LogoURL     string                                 "json:\"logoURL\" graphql:\"logoURL\""
+	LogoURL     *string                                "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Name        string                                 "json:\"name\" graphql:\"name\""
 	Owner       GroupsWhere_Groups_Edges_Node_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     GroupsWhere_Groups_Edges_Node_Setting  "json:\"setting\" graphql:\"setting\""
@@ -456,7 +456,7 @@ func (t *GroupsWhere_Groups_Edges_Node) GetCreatedBy() *string {
 	}
 	return t.CreatedBy
 }
-func (t *GroupsWhere_Groups_Edges_Node) GetDescription() string {
+func (t *GroupsWhere_Groups_Edges_Node) GetDescription() *string {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
@@ -474,7 +474,7 @@ func (t *GroupsWhere_Groups_Edges_Node) GetID() string {
 	}
 	return t.ID
 }
-func (t *GroupsWhere_Groups_Edges_Node) GetLogoURL() string {
+func (t *GroupsWhere_Groups_Edges_Node) GetLogoURL() *string {
 	if t == nil {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
@@ -652,10 +652,10 @@ func (t *GetAllGroups_Groups_Edges_Node_Users) GetEmail() string {
 type GetAllGroups_Groups_Edges_Node struct {
 	CreatedAt   time.Time                               "json:\"createdAt\" graphql:\"createdAt\""
 	CreatedBy   *string                                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description string                                  "json:\"description\" graphql:\"description\""
+	Description *string                                 "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                                  "json:\"displayName\" graphql:\"displayName\""
 	ID          string                                  "json:\"id\" graphql:\"id\""
-	LogoURL     string                                  "json:\"logoURL\" graphql:\"logoURL\""
+	LogoURL     *string                                 "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Name        string                                  "json:\"name\" graphql:\"name\""
 	Owner       GetAllGroups_Groups_Edges_Node_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     GetAllGroups_Groups_Edges_Node_Setting  "json:\"setting\" graphql:\"setting\""
@@ -676,7 +676,7 @@ func (t *GetAllGroups_Groups_Edges_Node) GetCreatedBy() *string {
 	}
 	return t.CreatedBy
 }
-func (t *GetAllGroups_Groups_Edges_Node) GetDescription() string {
+func (t *GetAllGroups_Groups_Edges_Node) GetDescription() *string {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
@@ -694,7 +694,7 @@ func (t *GetAllGroups_Groups_Edges_Node) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetAllGroups_Groups_Edges_Node) GetLogoURL() string {
+func (t *GetAllGroups_Groups_Edges_Node) GetLogoURL() *string {
 	if t == nil {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
@@ -872,10 +872,10 @@ func (t *CreateGroup_CreateGroup_Group_Users) GetEmail() string {
 type CreateGroup_CreateGroup_Group struct {
 	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
 	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Description string                                 "json:\"description\" graphql:\"description\""
+	Description *string                                "json:\"description,omitempty\" graphql:\"description\""
 	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
 	ID          string                                 "json:\"id\" graphql:\"id\""
-	LogoURL     string                                 "json:\"logoURL\" graphql:\"logoURL\""
+	LogoURL     *string                                "json:\"logoURL,omitempty\" graphql:\"logoURL\""
 	Name        string                                 "json:\"name\" graphql:\"name\""
 	Owner       CreateGroup_CreateGroup_Group_Owner    "json:\"owner\" graphql:\"owner\""
 	Setting     CreateGroup_CreateGroup_Group_Setting  "json:\"setting\" graphql:\"setting\""
@@ -896,7 +896,7 @@ func (t *CreateGroup_CreateGroup_Group) GetCreatedBy() *string {
 	}
 	return t.CreatedBy
 }
-func (t *CreateGroup_CreateGroup_Group) GetDescription() string {
+func (t *CreateGroup_CreateGroup_Group) GetDescription() *string {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
@@ -914,7 +914,7 @@ func (t *CreateGroup_CreateGroup_Group) GetID() string {
 	}
 	return t.ID
 }
-func (t *CreateGroup_CreateGroup_Group) GetLogoURL() string {
+func (t *CreateGroup_CreateGroup_Group) GetLogoURL() *string {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
@@ -969,10 +969,10 @@ func (t *CreateGroup_CreateGroup) GetGroup() *CreateGroup_CreateGroup_Group {
 }
 
 type UpdateGroup_UpdateGroup_Group struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	Name        string "json:\"name\" graphql:\"name\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Description string "json:\"description\" graphql:\"description\""
+	ID          string  "json:\"id\" graphql:\"id\""
+	Name        string  "json:\"name\" graphql:\"name\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Description *string "json:\"description,omitempty\" graphql:\"description\""
 }
 
 func (t *UpdateGroup_UpdateGroup_Group) GetID() string {
@@ -993,7 +993,7 @@ func (t *UpdateGroup_UpdateGroup_Group) GetDisplayName() string {
 	}
 	return t.DisplayName
 }
-func (t *UpdateGroup_UpdateGroup_Group) GetDescription() string {
+func (t *UpdateGroup_UpdateGroup_Group) GetDescription() *string {
 	if t == nil {
 		t = &UpdateGroup_UpdateGroup_Group{}
 	}

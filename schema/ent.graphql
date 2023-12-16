@@ -213,7 +213,7 @@ input CreateGroupInput {
   updatedBy: String
   name: String!
   description: String
-  logoURL: String!
+  logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String
   settingID: ID!
@@ -690,8 +690,8 @@ type Group implements Node {
   deletedAt: Time
   deletedBy: String
   name: String!
-  description: String!
-  logoURL: String!
+  description: String
+  logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String!
   setting: GroupSetting!
@@ -2735,7 +2735,9 @@ input UpdateGroupInput {
   clearUpdatedBy: Boolean
   name: String
   description: String
+  clearDescription: Boolean
   logoURL: String
+  clearLogoURL: Boolean
   """The group's displayed 'friendly' name"""
   displayName: String
   settingID: ID

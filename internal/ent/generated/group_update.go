@@ -127,6 +127,12 @@ func (gu *GroupUpdate) SetNillableDescription(s *string) *GroupUpdate {
 	return gu
 }
 
+// ClearDescription clears the value of the "description" field.
+func (gu *GroupUpdate) ClearDescription() *GroupUpdate {
+	gu.mutation.ClearDescription()
+	return gu
+}
+
 // SetLogoURL sets the "logo_url" field.
 func (gu *GroupUpdate) SetLogoURL(s string) *GroupUpdate {
 	gu.mutation.SetLogoURL(s)
@@ -138,6 +144,12 @@ func (gu *GroupUpdate) SetNillableLogoURL(s *string) *GroupUpdate {
 	if s != nil {
 		gu.SetLogoURL(*s)
 	}
+	return gu
+}
+
+// ClearLogoURL clears the value of the "logo_url" field.
+func (gu *GroupUpdate) ClearLogoURL() *GroupUpdate {
+	gu.mutation.ClearLogoURL()
 	return gu
 }
 
@@ -335,8 +347,14 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := gu.mutation.Description(); ok {
 		_spec.SetField(group.FieldDescription, field.TypeString, value)
 	}
+	if gu.mutation.DescriptionCleared() {
+		_spec.ClearField(group.FieldDescription, field.TypeString)
+	}
 	if value, ok := gu.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
+	}
+	if gu.mutation.LogoURLCleared() {
+		_spec.ClearField(group.FieldLogoURL, field.TypeString)
 	}
 	if value, ok := gu.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
@@ -567,6 +585,12 @@ func (guo *GroupUpdateOne) SetNillableDescription(s *string) *GroupUpdateOne {
 	return guo
 }
 
+// ClearDescription clears the value of the "description" field.
+func (guo *GroupUpdateOne) ClearDescription() *GroupUpdateOne {
+	guo.mutation.ClearDescription()
+	return guo
+}
+
 // SetLogoURL sets the "logo_url" field.
 func (guo *GroupUpdateOne) SetLogoURL(s string) *GroupUpdateOne {
 	guo.mutation.SetLogoURL(s)
@@ -578,6 +602,12 @@ func (guo *GroupUpdateOne) SetNillableLogoURL(s *string) *GroupUpdateOne {
 	if s != nil {
 		guo.SetLogoURL(*s)
 	}
+	return guo
+}
+
+// ClearLogoURL clears the value of the "logo_url" field.
+func (guo *GroupUpdateOne) ClearLogoURL() *GroupUpdateOne {
+	guo.mutation.ClearLogoURL()
 	return guo
 }
 
@@ -805,8 +835,14 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	if value, ok := guo.mutation.Description(); ok {
 		_spec.SetField(group.FieldDescription, field.TypeString, value)
 	}
+	if guo.mutation.DescriptionCleared() {
+		_spec.ClearField(group.FieldDescription, field.TypeString)
+	}
 	if value, ok := guo.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
+	}
+	if guo.mutation.LogoURLCleared() {
+		_spec.ClearField(group.FieldLogoURL, field.TypeString)
 	}
 	if value, ok := guo.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)

@@ -693,7 +693,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			assert.ErrorContains(t, err, "not found")
 
 			// check that the soft delete occurred
-			// mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockCheckAny(mockCtrl, mc, reqCtx, true)
 
 			ctx := mixin.SkipSoftDelete(reqCtx)
 

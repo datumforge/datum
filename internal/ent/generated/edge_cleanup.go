@@ -11,78 +11,78 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 )
 
-func AccessTokenEdgeCleanup(r *Client, id string) error {
+func AccessTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func EntitlementEdgeCleanup(r *Client, id string) error {
+func EntitlementEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func GroupEdgeCleanup(r *Client, id string) error {
+func GroupEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func GroupSettingEdgeCleanup(r *Client, id string) error {
+func GroupSettingEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func IntegrationEdgeCleanup(r *Client, id string) error {
+func IntegrationEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func OauthProviderEdgeCleanup(r *Client, id string) error {
+func OauthProviderEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func OhAuthTooTokenEdgeCleanup(r *Client, id string) error {
+func OhAuthTooTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func OrganizationEdgeCleanup(r *Client, id string) error {
+func OrganizationEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
-	_ = r.Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).ExecX(context.TODO())
+	_ = r.Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).ExecX(ctx)
 
-	_ = r.Integration.Delete().Where(integration.HasOwnerWith(organization.ID(id))).ExecX(context.TODO())
+	_ = r.Integration.Delete().Where(integration.HasOwnerWith(organization.ID(id))).ExecX(ctx)
 
-	_ = r.OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).ExecX(context.TODO())
-
-	return nil
-}
-
-func OrganizationSettingEdgeCleanup(r *Client, id string) error {
+	_ = r.OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).ExecX(ctx)
 
 	return nil
 }
 
-func PersonalAccessTokenEdgeCleanup(r *Client, id string) error {
+func OrganizationSettingEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func RefreshTokenEdgeCleanup(r *Client, id string) error {
+func PersonalAccessTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func SessionEdgeCleanup(r *Client, id string) error {
+func RefreshTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func UserEdgeCleanup(r *Client, id string) error {
+func SessionEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }
 
-func UserSettingEdgeCleanup(r *Client, id string) error {
+func UserEdgeCleanup(ctx context.Context, r *Client, id string) error {
+
+	return nil
+}
+
+func UserSettingEdgeCleanup(ctx context.Context, r *Client, id string) error {
 
 	return nil
 }

@@ -128,6 +128,8 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		return nil, err
 	}
 
+	_ = generated.OrganizationEdgeCleanup(ctx, r.client, id)
+
 	return &OrganizationDeletePayload{DeletedID: id}, nil
 }
 

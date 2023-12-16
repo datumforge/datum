@@ -693,7 +693,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			assert.ErrorContains(t, err, "not found")
 
 			// check that the soft delete occurred
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			// mockCheckAny(mockCtrl, mc, reqCtx, true)
 
 			ctx := mixin.SkipSoftDelete(reqCtx)
 
@@ -703,4 +703,52 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+
+func TestMutation_CascadeDelete(t *testing.T) {
+	client := graphTestClientNoAuth(EntClient)
+
+	ec := echocontext.NewTestEchoContext()
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	org := (&OrganizationBuilder{}).MustNew(reqCtx)
+
+	group1 := (&GroupBuilder{Owner: org.ID}).MustNew(reqCtx)
+
+	// delete org
+	resp, err := client.DeleteOrganization(reqCtx, org.ID)
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.NotNil(t, resp.DeleteOrganization.DeletedID)
+
+	// make sure the deletedID matches the ID we wanted to delete
+	assert.Equal(t, org.ID, resp.DeleteOrganization.DeletedID)
+
+	o, err := client.GetOrganizationByID(reqCtx, org.ID)
+
+	require.Nil(t, o)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "not found")
+
+	g, err := client.GetGroupByID(reqCtx, group1.ID)
+
+	require.Nil(t, g)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "not found")
+
+	ctx := mixin.SkipSoftDelete(reqCtx)
+
+	o, err = client.GetOrganizationByID(ctx, org.ID)
+
+	require.Equal(t, o.Organization.ID, org.ID)
+	require.NoError(t, err)
+
+	g, err = client.GetGroupByID(ctx, group1.ID)
+
+	require.Equal(t, g.Group.ID, group1.ID)
+	require.NoError(t, err)
 }

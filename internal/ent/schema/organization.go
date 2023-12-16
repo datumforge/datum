@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/entx"
 )
 
 const (
@@ -74,9 +75,9 @@ func (Organization) Edges() []ent.Edge {
 			Unique(),
 		// an org can have and belong to many users
 		edge.From("users", User.Type).Ref("organizations"),
-		edge.To("groups", Group.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
-		edge.To("integrations", Integration.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
-		edge.To("setting", OrganizationSetting.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}),
+		edge.To("groups", Group.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}, entx.CascadeAnnotationField("Owner")),
+		edge.To("integrations", Integration.Type).Annotations(entsql.Annotation{OnDelete: entsql.Cascade}, entx.CascadeAnnotationField("Owner")),
+		edge.To("setting", OrganizationSetting.Type).Unique().Annotations(entsql.Annotation{OnDelete: entsql.Cascade}, entx.CascadeAnnotationField("Organization")),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
 	}

@@ -40,8 +40,24 @@ steps:
           command: ["-no-fail", "-exclude-generated", "-fmt sarif", "-out", "results.sarif", "./..."]
     artifact_paths: ["results.sarif"]
 
+  - label: ":github: upload fork PR sarif report"
+    key: "gosec-upload-pr"
+    if: (build.pull_request.labels includes "run-ci" ) 
+    depends_on: ["gosec"]
+    plugins:
+      - artifacts#v1.9.2:
+          download: results.sarif
+      - docker#v5.9.0:
+            image: "j3ssie/codeql-docker"
+            entrypoint: codeql
+            environment:
+              - "GITHUB_TOKEN"
+              - "BUILDKITE_PULL_REQUEST"
+            command: ["github", "upload-results", "--sarif=results.sarif", "--ref=refs/pull/${BUILDKITE_PULL_REQUEST}/head"]
+
   - label: ":github: upload sarif report"
     key: "gosec-upload"
+    if: (build.branch == "main") || (build.branch !~ /:/i)
     depends_on: ["gosec"]
     plugins:
       - artifacts#v1.9.2:

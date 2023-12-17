@@ -109,6 +109,7 @@ query GetAllUsers {
 mutation CreateUser($input: CreateUserInput!) {
   createUser(input: $input) {
     user {
+      id
       email
       firstName
       lastName

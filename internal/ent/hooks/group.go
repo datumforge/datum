@@ -57,7 +57,7 @@ func HookGroupAuthz() ent.Hook {
 			}
 
 			if m.Op().Is(ent.OpCreate) {
-				// create the relationship tuple for the owner
+				// create the relationship tuple for the admin
 				err = groupCreateHook(ctx, m)
 			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
 				// delete all relationship tuples on delete, or soft delete (Update Op)
@@ -76,10 +76,10 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 		objType := strings.ToLower(m.Type())
 		object := fmt.Sprintf("%s:%s", objType, objID)
 
-		m.Logger.Infow("creating relationship tuples", "relation", fga.OwnerRelation, "object", object)
+		m.Logger.Infow("creating relationship tuples", "relation", fga.AdminRelation, "object", object)
 
 		if exists {
-			tuples, err := createTuple(ctx, &m.Authz, fga.OwnerRelation, object)
+			tuples, err := createTuple(ctx, &m.Authz, fga.AdminRelation, object)
 			if err != nil {
 				return err
 			}
@@ -92,7 +92,7 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 			}
 		}
 
-		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", object)
+		m.Logger.Infow("created relationship tuples", "relation", fga.AdminRelation, "object", object)
 	}
 
 	return nil

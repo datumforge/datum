@@ -2583,6 +2583,7 @@ func (t *CreateUser_CreateUser_User_Setting) GetSilencedAt() *time.Time {
 }
 
 type CreateUser_CreateUser_User struct {
+	ID              string                                      "json:\"id\" graphql:\"id\""
 	Email           string                                      "json:\"email\" graphql:\"email\""
 	FirstName       string                                      "json:\"firstName\" graphql:\"firstName\""
 	LastName        string                                      "json:\"lastName\" graphql:\"lastName\""
@@ -2597,6 +2598,12 @@ type CreateUser_CreateUser_User struct {
 	Setting         CreateUser_CreateUser_User_Setting          "json:\"setting\" graphql:\"setting\""
 }
 
+func (t *CreateUser_CreateUser_User) GetID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User{}
+	}
+	return t.ID
+}
 func (t *CreateUser_CreateUser_User) GetEmail() string {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
@@ -3878,6 +3885,7 @@ func (c *Client) GetAllUsers(ctx context.Context, interceptors ...clientv2.Reque
 const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 	createUser(input: $input) {
 		user {
+			id
 			email
 			firstName
 			lastName

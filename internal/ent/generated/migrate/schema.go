@@ -437,7 +437,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"ACTIVE", "INACTIVE", "DEACTIVATED", "SUSPENDED"}, Default: "ACTIVE"},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"USER", "ADMIN", "OWNER"}, Default: "USER"},
 		{Name: "permissions", Type: field.TypeJSON},
-		{Name: "email_confirmed", Type: field.TypeBool, Default: false},
+		{Name: "email_confirmed", Type: field.TypeBool, Default: true},
 		{Name: "tags", Type: field.TypeJSON},
 		{Name: "user_setting", Type: field.TypeString, Unique: true, Nullable: true},
 	}

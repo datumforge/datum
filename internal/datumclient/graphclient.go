@@ -1868,22 +1868,34 @@ func (t *DeleteOrganization_DeleteOrganization) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type GetOrganizationSetting_OrganizationSetting_Organization struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetOrganizationSetting_OrganizationSetting_Organization) GetID() string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting_Organization{}
+	}
+	return t.ID
+}
+
 type GetOrganizationSetting_OrganizationSetting struct {
-	ID             string    "json:\"id\" graphql:\"id\""
-	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
-	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
-	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
-	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
-	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
-	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
-	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
-	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
-	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
-	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
-	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID             string                                                   "json:\"id\" graphql:\"id\""
+	SsoCert        *string                                                  "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	TaxIdentifier  *string                                                  "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string                                                 "json:\"tags,omitempty\" graphql:\"tags\""
+	SsoIssuer      *string                                                  "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	SsoEntrypoint  *string                                                  "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	BillingAddress *string                                                  "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	BillingContact *string                                                  "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string                                                  "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string                                                  "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	CreatedAt      time.Time                                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string                                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Domains        []string                                                 "json:\"domains,omitempty\" graphql:\"domains\""
+	UpdatedAt      time.Time                                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Organization   *GetOrganizationSetting_OrganizationSetting_Organization "json:\"organization,omitempty\" graphql:\"organization\""
 }
 
 func (t *GetOrganizationSetting_OrganizationSetting) GetID() string {
@@ -1975,6 +1987,12 @@ func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedBy() *string {
 		t = &GetOrganizationSetting_OrganizationSetting{}
 	}
 	return t.UpdatedBy
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetOrganization() *GetOrganizationSetting_OrganizationSetting_Organization {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.Organization
 }
 
 type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner struct {
@@ -3984,6 +4002,9 @@ const GetOrganizationSettingDocument = `query GetOrganizationSetting ($organizat
 		domains
 		updatedAt
 		updatedBy
+		organization {
+			id
+		}
 	}
 }
 `

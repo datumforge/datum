@@ -39,3 +39,25 @@ func (c *Client) CheckOrgAccess(ctx context.Context, userID, orgID, relation str
 
 	return c.CheckTuple(ctx, checkReq)
 }
+
+func (c *Client) CheckGrpAccess(ctx context.Context, userID, grpID, relation string) (bool, error) {
+	sub := Entity{
+		Kind:       "user",
+		Identifier: userID,
+	}
+
+	obj := Entity{
+		Kind:       "group",
+		Identifier: grpID,
+	}
+
+	c.Logger.Infow("checking relationship tuples", "relation", relation, "object", obj.String())
+
+	checkReq := ofgaclient.ClientCheckRequest{
+		User:     sub.String(),
+		Relation: relation,
+		Object:   obj.String(),
+	}
+
+	return c.CheckTuple(ctx, checkReq)
+}

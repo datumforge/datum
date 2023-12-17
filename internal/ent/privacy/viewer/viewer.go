@@ -16,16 +16,23 @@ type ContextKey struct {
 type Viewer interface {
 	// OrganizationID returns the organization ID from the context
 	OrganizationID() string
+	GroupID() string
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
+	GrpID string
 	OrgID string
 }
 
 // OrganizationID returns the ID of the organization.
 func (u UserViewer) OrganizationID() string {
 	return u.OrgID
+}
+
+// GroupID returns the ID of the group
+func (u UserViewer) GroupID() string {
+	return u.GrpID
 }
 
 // FromContext returns the Viewer stored in a context.

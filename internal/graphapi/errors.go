@@ -11,6 +11,9 @@ var (
 
 	// ErrPermissionDenied is returned when the user is not authorized to perform the requested query or mutation
 	ErrPermissionDenied = errors.New("you are not authorized to perform this action")
+
+	// ErrCascadeDelete is returned when an error occurs while performing cascade deletes on associated objects
+	ErrCascadeDelete = errors.New("error deleting associated objects")
 )
 
 // PermissionDeniedError is returned when user is not authorized to perform the requested query or mutation
@@ -30,4 +33,8 @@ func newPermissionDeniedError(a string, o string) *PermissionDeniedError {
 		Action:     a,
 		ObjectType: o,
 	}
+}
+
+func newCascadeDeleteError(err error) error {
+	return fmt.Errorf("%w: %v", ErrCascadeDelete, err)
 }

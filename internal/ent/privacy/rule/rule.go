@@ -107,7 +107,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			return privacy.Denyf("viewer-context is missing when checking write access in org")
 		}
 
-		oID := view.OrganizationID()
+		oID := view.GetOrganizationID()
 		if oID == "" {
 			m.Logger.Debugw("missing expected organization id")
 
@@ -132,8 +132,8 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 	})
 }
 
-// HasGrpReadAccess is a rule that returns allow decision if user has view access
-func HasGrpReadAccess() privacy.GroupQueryRuleFunc {
+// HasGroupReadAccess is a rule that returns allow decision if user has view access
+func HasGroupReadAccess() privacy.GroupQueryRuleFunc {
 	return privacy.GroupQueryRuleFunc(func(ctx context.Context, q *generated.GroupQuery) error {
 		// eager load all fields
 		if _, err := q.CollectFields(ctx); err != nil {
@@ -156,7 +156,7 @@ func HasGrpReadAccess() privacy.GroupQueryRuleFunc {
 
 		q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "group_id", gID)
 
-		access, err := q.Authz.CheckGrpAccess(ctx, userID, gID, fga.CanView)
+		access, err := q.Authz.CheckGroupAccess(ctx, userID, gID, fga.CanView)
 		if err != nil {
 			return privacy.Skipf("unable to check access, %s", err.Error())
 		}
@@ -172,8 +172,8 @@ func HasGrpReadAccess() privacy.GroupQueryRuleFunc {
 	})
 }
 
-// HasGrpMutationAccess is a rule that returns allow decision if user has edit or delete access
-func HasGrpMutationAccess() privacy.GroupMutationRuleFunc {
+// HasGroupMutationAccess is a rule that returns allow decision if user has edit or delete access
+func HasGroupMutationAccess() privacy.GroupMutationRuleFunc {
 	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
 		m.Logger.Debugw("checking mutation access")
 
@@ -192,7 +192,7 @@ func HasGrpMutationAccess() privacy.GroupMutationRuleFunc {
 			return privacy.Denyf("viewer-context is missing when checking write access in group")
 		}
 
-		gID := view.GroupID()
+		gID := view.GetGroupID()
 		if gID == "" {
 			return privacy.Denyf("missing group ID information in viewer")
 		}
@@ -204,7 +204,7 @@ func HasGrpMutationAccess() privacy.GroupMutationRuleFunc {
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "group_id", gID)
 
-		access, err := m.Authz.CheckGrpAccess(ctx, userID, gID, relation)
+		access, err := m.Authz.CheckGroupAccess(ctx, userID, gID, relation)
 		if err != nil {
 			return privacy.Skipf("unable to check access, %s", err.Error())
 		}

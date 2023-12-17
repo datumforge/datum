@@ -40,7 +40,7 @@ func (c *Client) CheckOrgAccess(ctx context.Context, userID, orgID, relation str
 	return c.CheckTuple(ctx, checkReq)
 }
 
-func (c *Client) CheckGrpAccess(ctx context.Context, userID, grpID, relation string) (bool, error) {
+func (c *Client) CheckGroupAccess(ctx context.Context, userID, groupID, relation string) (bool, error) {
 	sub := Entity{
 		Kind:       "user",
 		Identifier: userID,
@@ -48,7 +48,7 @@ func (c *Client) CheckGrpAccess(ctx context.Context, userID, grpID, relation str
 
 	obj := Entity{
 		Kind:       "group",
-		Identifier: grpID,
+		Identifier: groupID,
 	}
 
 	c.Logger.Infow("checking relationship tuples", "relation", relation, "object", obj.String())

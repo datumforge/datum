@@ -58,7 +58,7 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
-			GrpID: id,
+			GroupID: id,
 		}
 
 		ctx = viewer.NewContext(ctx, v)
@@ -106,7 +106,7 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
-			GrpID: id,
+			GroupID: id,
 		}
 
 		ctx = viewer.NewContext(ctx, v)
@@ -136,7 +136,7 @@ func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group,
 	} else {
 		// setup view context
 		v := viewer.UserViewer{
-			GrpID: id,
+			GroupID: id,
 		}
 
 		ctx = viewer.NewContext(ctx, v)

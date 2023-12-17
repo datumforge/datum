@@ -45,8 +45,8 @@ func updateGroup(ctx context.Context) error {
 
 	var s []byte
 
-	oID := viper.GetString("group.update.id")
-	if oID == "" {
+	gID := viper.GetString("group.update.id")
+	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")
 	}
 
@@ -68,7 +68,7 @@ func updateGroup(ctx context.Context) error {
 		input.Description = &description
 	}
 
-	o, err := cli.Client.UpdateGroup(ctx, oID, input, cli.Interceptor)
+	o, err := cli.Client.UpdateGroup(ctx, gID, input, cli.Interceptor)
 	if err != nil {
 		return err
 	}

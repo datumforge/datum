@@ -35,12 +35,12 @@ func deleteGroup(ctx context.Context) error {
 
 	var s []byte
 
-	oID := viper.GetString("group.delete.id")
-	if oID == "" {
+	gID := viper.GetString("group.delete.id")
+	if gID == "" {
 		return datum.NewRequiredFieldMissingError("group id")
 	}
 
-	o, err := cli.Client.DeleteGroup(ctx, oID, cli.Interceptor)
+	o, err := cli.Client.DeleteGroup(ctx, gID, cli.Interceptor)
 	if err != nil {
 		return err
 	}

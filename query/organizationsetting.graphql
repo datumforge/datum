@@ -15,5 +15,8 @@ query GetOrganizationSetting($organizationSettingId: ID!) {
     domains
     updatedAt
     updatedBy
+    organization {
+      id
+    }
   }
 }

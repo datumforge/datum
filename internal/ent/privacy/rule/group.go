@@ -16,11 +16,6 @@ import (
 // HasGroupReadAccess is a rule that returns allow decision if user has view access
 func HasGroupReadAccess() privacy.GroupQueryRuleFunc {
 	return privacy.GroupQueryRuleFunc(func(ctx context.Context, q *generated.GroupQuery) error {
-		// eager load all fields
-		if _, err := q.CollectFields(ctx); err != nil {
-			return err
-		}
-
 		gCtx := graphql.GetFieldContext(ctx)
 
 		// check group id from graphql arg context
@@ -56,6 +51,12 @@ func HasGroupReadAccess() privacy.GroupQueryRuleFunc {
 // HasGroupMutationAccess is a rule that returns allow decision if user has edit or delete access
 func HasGroupMutationAccess() privacy.GroupMutationRuleFunc {
 	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
+		gCtx := graphql.GetFieldContext(ctx)
+
+		gID, ok := gCtx.Args["id"].(string)
+		if !ok {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
 		m.Logger.Debugw("checking mutation access")
 
 		relation := fga.CanEdit
@@ -66,11 +67,6 @@ func HasGroupMutationAccess() privacy.GroupMutationRuleFunc {
 		view := viewer.FromContext(ctx)
 		if view == nil {
 			return privacy.Denyf("viewer-context is missing when checking write access in group")
-		}
-
-		gID := view.GetGroupID()
-		if gID == "" {
-			return privacy.Denyf("missing group ID information in viewer")
 		}
 
 		userID, err := auth.GetUserIDFromContext(ctx)
@@ -87,6 +83,50 @@ func HasGroupMutationAccess() privacy.GroupMutationRuleFunc {
 
 		if access {
 			m.Logger.Debugw("access allowed", "relation", relation, "group_id", gID)
+
+			return privacy.Allow
+		}
+
+		// deny if it was a mutation is not allowed
+		return privacy.Deny
+	})
+}
+
+// CanCreateGroupsInOrg is a rule that returns allow decision if user has edit access in the organization
+func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
+	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
+		gCtx := graphql.GetFieldContext(ctx)
+
+		oID, ok := gCtx.Args["owner"].(string)
+		if !ok {
+			return privacy.Allowf("nil request, bypassing auth check")
+		}
+		m.Logger.Debugw("checking mutation access")
+
+		relation := fga.CanEdit
+		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
+			relation = fga.CanDelete
+		}
+
+		view := viewer.FromContext(ctx)
+		if view == nil {
+			return privacy.Denyf("viewer-context is missing when checking write access in org")
+		}
+
+		userID, err := auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)
+
+		access, err := m.Authz.CheckOrgAccess(ctx, userID, oID, relation)
+		if err != nil {
+			return privacy.Skipf("unable to check access, %s", err.Error())
+		}
+
+		if access {
+			m.Logger.Debugw("access allowed", "relation", relation, "organization_id", oID)
 
 			return privacy.Allow
 		}

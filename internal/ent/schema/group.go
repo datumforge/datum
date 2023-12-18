@@ -100,11 +100,18 @@ func (Group) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
 			rule.DenyIfNoSubject(),
-			rule.HasGroupMutationAccess(),
+			privacy.OnMutationOperation(
+				rule.CanCreateGroupsInOrg(),
+				ent.OpCreate,
+			),
+			privacy.OnMutationOperation(
+				rule.HasGroupMutationAccess(),
+				ent.OpUpdate|ent.OpUpdateOne|ent.OpDelete|ent.OpDeleteOne,
+			),
 			privacy.AlwaysDenyRule(),
 		},
 		Query: privacy.QueryPolicy{
-			rule.HasOrgReadAccess(),
+			rule.HasGroupReadAccess(),
 			privacy.AlwaysDenyRule(),
 		},
 	}

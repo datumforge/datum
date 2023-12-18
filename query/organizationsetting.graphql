@@ -1,0 +1,22 @@
+query GetOrganizationSetting($organizationSettingId: ID!) {
+  organizationSetting(id: $organizationSettingId) {
+    id
+    ssoCert
+    taxIdentifier
+    tags
+    ssoIssuer
+    ssoEntrypoint
+    billingAddress
+    billingContact
+    billingEmail
+    billingPhone
+    createdAt
+    createdBy
+    domains
+    updatedAt
+    updatedBy
+    organization {
+      id
+    }
+  }
+}

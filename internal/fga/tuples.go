@@ -14,6 +14,7 @@ const (
 	MemberRelation = "member"
 	AdminRelation  = "admin"
 	OwnerRelation  = "owner"
+	ParentRelation = "parent"
 	CanView        = "can_view"
 	CanEdit        = "can_edit"
 	CanDelete      = "can_delete"

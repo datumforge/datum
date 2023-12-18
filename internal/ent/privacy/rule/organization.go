@@ -13,23 +13,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
-// DenyIfNoSubject is a rule that returns deny decision if the subject is missing in the context.
-func DenyIfNoSubject() privacy.QueryMutationRule {
-	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
-		sub, err := auth.GetUserIDFromContext(ctx)
-		if err != nil {
-			return privacy.Denyf("cannot get subject from context")
-		}
-
-		if sub == "" {
-			return privacy.Denyf("subject is missing")
-		}
-
-		// Skip to the next privacy rule (equivalent to return nil).
-		return privacy.Skip
-	})
-}
-
 // HasOrgReadAccess is a rule that returns allow decision if user has view access
 func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 	return privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
@@ -107,7 +90,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 			return privacy.Denyf("viewer-context is missing when checking write access in org")
 		}
 
-		oID := view.OrganizationID()
+		oID := view.GetOrganizationID()
 		if oID == "" {
 			m.Logger.Debugw("missing expected organization id")
 

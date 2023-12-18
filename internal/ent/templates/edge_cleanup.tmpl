@@ -18,9 +18,11 @@
                     {{/* if the edge has our custom annotation applied */}}
                     {{- if $annotation := $edge.Annotations.DATUM_CASCADE }}
                         {{/* use the client to delete records where the edge schema has a field (provided by the annotation) containing the ID provided by the func */}}
-                        if {{ $edge.Type.Name | lower }}Count, err := r.{{ $edge.Type.Name }}.Delete().Where({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id))).Exec(ctx); err != nil {
-                            r.Logger.Debugw("deleting {{ $edge.Type.Name | lower }}", "count", {{ $edge.Type.Name | lower }}Count, "err", err)
-                            return err
+                        if exists, err := r.{{ $edge.Type.Name }}.Query().Where(({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id)))).Exist(ctx); err != nil && exists {
+                            if {{ $edge.Type.Name | lower }}Count, err := r.{{ $edge.Type.Name }}.Delete().Where({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id))).Exec(ctx); err != nil {
+                                r.Logger.Debugw("deleting {{ $edge.Type.Name | lower }}", "count", {{ $edge.Type.Name | lower }}Count, "err", err)
+                                return err
+                            }
                         }
                     {{ end }}
                {{- end }}

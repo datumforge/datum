@@ -6,9 +6,12 @@ package graphapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreateGroupSetting is the resolver for the createGroupSetting field.
@@ -28,5 +31,31 @@ func (r *mutationResolver) DeleteGroupSetting(ctx context.Context, id string) (*
 
 // GroupSetting is the resolver for the groupSetting field.
 func (r *queryResolver) GroupSetting(ctx context.Context, id string) (*generated.GroupSetting, error) {
-	panic(fmt.Errorf("not implemented: GroupSetting - groupSetting"))
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			GroupID: id,
+		}
+
+		ctx = viewer.NewContext(ctx, v)
+	}
+
+	group, err := r.client.GroupSetting.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get group settings", "error", err)
+
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "organization")
+		}
+
+		return nil, ErrInternalServerError
+	}
+
+	return group, nil
 }

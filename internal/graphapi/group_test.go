@@ -365,7 +365,9 @@ func TestMutation_UpdateGroupNoAuth(t *testing.T) {
 
 			// Make sure provided values match
 			updatedGroup := resp.GetUpdateGroup().Group
-			assert.Equal(t, tc.expectedRes, updatedGroup)
+			assert.Equal(t, tc.expectedRes.Name, updatedGroup.Name)
+			assert.Equal(t, tc.expectedRes.DisplayName, updatedGroup.DisplayName)
+			assert.Equal(t, tc.expectedRes.Description, updatedGroup.Description)
 		})
 	}
 

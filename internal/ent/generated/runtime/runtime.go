@@ -111,6 +111,8 @@ func init() {
 	group.Hooks[2] = groupMixinHooks1[0]
 
 	group.Hooks[3] = groupHooks[0]
+
+	group.Hooks[4] = groupHooks[1]
 	groupMixinInters1 := groupMixin[1].Interceptors()
 	group.Interceptors[0] = groupMixinInters1[0]
 	groupMixinFields0 := groupMixin[0].Fields()

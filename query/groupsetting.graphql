@@ -1,0 +1,17 @@
+query GetGroupSetting($groupSettingId: ID!) {
+  groupSetting(id: $groupSettingId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    visibility
+    joinPolicy
+    tags
+    syncToSlack
+    syncToGithub
+    group {
+      id
+    }
+  }
+}

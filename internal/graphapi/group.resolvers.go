@@ -6,9 +6,11 @@ package graphapi
 
 import (
 	"context"
+	"errors"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreateGroup is the resolver for the createGroup field.
@@ -20,28 +22,58 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 	group, err := r.client.Group.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
-			return nil, err
+			validationError := err.(*generated.ValidationError)
+
+			r.logger.Debugw("validation error", "field", validationError.Name, "error", validationError.Error())
+
+			return nil, validationError
 		}
 
 		if generated.IsConstraintError(err) {
-			return nil, err
+			constraintError := err.(*generated.ConstraintError)
+
+			r.logger.Debugw("constraint error", "error", constraintError.Error())
+
+			return nil, constraintError
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionCreate, "group")
 		}
 
 		r.logger.Errorw("failed to create group", "error", err)
+
 		return nil, ErrInternalServerError
 	}
 
-	return &GroupCreatePayload{Group: group}, err
+	return &GroupCreatePayload{Group: group}, nil
 }
 
 // UpdateGroup is the resolver for the updateGroup field.
 func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input generated.UpdateGroupInput) (*GroupUpdatePayload, error) {
-	// TODO - add permissions checks
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			GroupID: id,
+		}
+
+		ctx = viewer.NewContext(ctx, v)
+	}
 
 	group, err := r.client.Group.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to get group on update", "error", err)
+
+			return nil, newPermissionDeniedError(ActionGet, "group")
 		}
 
 		r.logger.Errorw("failed to get group", "error", err)
@@ -54,6 +86,12 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 			return nil, err
 		}
 
+		if errors.Is(err, privacy.Deny) {
+			r.logger.Errorw("failed to update group", "error", err)
+
+			return nil, newPermissionDeniedError(ActionUpdate, "group")
+		}
+
 		r.logger.Errorw("failed to update group", "error", err)
 		return nil, ErrInternalServerError
 	}
@@ -63,11 +101,24 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 
 // DeleteGroup is the resolver for the deleteGroup field.
 func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDeletePayload, error) {
-	// TODO - add permissions checks
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			GroupID: id,
+		}
+
+		ctx = viewer.NewContext(ctx, v)
+	}
 
 	if err := r.client.Group.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionDelete, "group")
 		}
 
 		r.logger.Errorw("failed to delete group", "error", err)
@@ -79,13 +130,30 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 
 // Group is the resolver for the group field.
 func (r *queryResolver) Group(ctx context.Context, id string) (*generated.Group, error) {
+	r.logger.Infow("auth policy", "disabled", r.authDisabled)
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			GroupID: id,
+		}
+
+		ctx = viewer.NewContext(ctx, v)
+	}
+
 	group, err := r.client.Group.Get(ctx, id)
 	if err != nil {
+		r.logger.Errorw("failed to get group", "error", err)
+
 		if generated.IsNotFound(err) {
 			return nil, err
 		}
 
-		r.logger.Errorw("failed to get group", "error", err)
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "group")
+		}
+
 		return nil, ErrInternalServerError
 	}
 

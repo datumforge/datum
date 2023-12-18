@@ -621,6 +621,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
+
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	testCases := []struct {
@@ -656,13 +657,12 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			// if access is allowed, another call to `read` happens
 			if tc.accessAllowed {
 				mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+				mockReadAny(mockCtrl, mc, reqCtx)
 
 				// additional check happens when the resource is found
 				if tc.errorMsg == "" {
 					mockListAny(mockCtrl, mc, reqCtx, listObjects)
-
-					mockReadAny(mockCtrl, mc, reqCtx)
-					mockReadAny(mockCtrl, mc, reqCtx)
+					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
 				}
 			}
 

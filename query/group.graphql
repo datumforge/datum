@@ -1,14 +1,17 @@
 query GetGroupByID($groupId: ID!) {
   group(id: $groupId) {
-    createdAt
-    createdBy
+    id
+    name
     description
     displayName
-    id
-    logoURL
-    name
     owner {
       id
+    }
+    logoURL
+    users {
+      id
+      displayName
+      email
     }
     setting {
       id
@@ -22,13 +25,10 @@ query GetGroupByID($groupId: ID!) {
       syncToGithub
       tags
     }
+    createdAt
+    createdBy
     updatedAt
     updatedBy
-    users {
-      id
-      displayName
-      email
-    }
   }
 }
 
@@ -36,15 +36,18 @@ query GroupsWhere($where: GroupWhereInput) {
   groups(where: $where) {
       edges {
       node {
-        createdAt
-        createdBy
+        id
+        name
         description
         displayName
-        id
-        logoURL
-        name
         owner {
           id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
         }
         setting {
           id
@@ -58,13 +61,10 @@ query GroupsWhere($where: GroupWhereInput) {
           syncToGithub
           tags
         }
+        createdAt
+        createdBy
         updatedAt
         updatedBy
-        users {
-          id
-        displayName
-        email
-        }
       }
     }
   }
@@ -74,15 +74,18 @@ query GetAllGroups {
   groups {
     edges {
       node {
-        createdAt
-        createdBy
+        id
+        name
         description
         displayName
-        id
-        logoURL
-        name
         owner {
           id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
         }
         setting {
           id
@@ -96,13 +99,10 @@ query GetAllGroups {
           syncToGithub
           tags
         }
+        createdAt
+        createdBy
         updatedAt
         updatedBy
-        users {
-          id
-        displayName
-        email
-        }
       }
     }
   }
@@ -111,15 +111,18 @@ query GetAllGroups {
 mutation CreateGroup($input: CreateGroupInput!) {
   createGroup(input: $input) {
     group {
-      createdAt
-      createdBy
+      id
+      name
       description
       displayName
-      id
-      logoURL
-      name
       owner {
         id
+      }
+      logoURL
+      users {
+        id
+        displayName
+        email
       }
       setting {
         id
@@ -133,13 +136,10 @@ mutation CreateGroup($input: CreateGroupInput!) {
         syncToGithub
         tags
       }
+      createdAt
+      createdBy
       updatedAt
       updatedBy
-      users {
-        id
-        displayName
-        email
-      }
     }
   }
 }
@@ -151,6 +151,8 @@ mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
       name
       displayName
       description
+      updatedAt
+      updatedBy
     }
   }
 }

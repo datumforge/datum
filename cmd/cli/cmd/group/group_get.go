@@ -55,7 +55,7 @@ func getGroup(ctx context.Context) error {
 
 		return datum.JSONPrint(s)
 	}
-
+	// TODO : https://github.com/datumforge/datum/issues/261
 	if ownerID != "" {
 		whereInput := &datumclient.GroupWhereInput{
 			HasOwnerWith: []*datumclient.OrganizationWhereInput{

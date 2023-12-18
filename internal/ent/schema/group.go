@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
 
 // Group holds the schema definition for the Group entity
@@ -97,14 +98,29 @@ func (Group) Annotations() []schema.Annotation {
 // Policy of the group
 func (Group) Policy() ent.Policy {
 	return privacy.Policy{
-		Mutation: privacy.MutationPolicy{},
-		Query:    privacy.QueryPolicy{},
+		Mutation: privacy.MutationPolicy{
+			rule.DenyIfNoSubject(),
+			privacy.OnMutationOperation(
+				rule.CanCreateGroupsInOrg(),
+				ent.OpCreate,
+			),
+			privacy.OnMutationOperation(
+				rule.HasGroupMutationAccess(),
+				ent.OpUpdate|ent.OpUpdateOne|ent.OpDelete|ent.OpDeleteOne,
+			),
+			privacy.AlwaysDenyRule(),
+		},
+		Query: privacy.QueryPolicy{
+			rule.HasGroupReadAccess(),
+			privacy.AlwaysDenyRule(),
+		},
 	}
 }
 
 // Hooks of the Group
 func (Group) Hooks() []ent.Hook {
 	return []ent.Hook{
+		hooks.HookGroupAuthz(),
 		hooks.HookGroup(),
 	}
 }

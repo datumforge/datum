@@ -15,17 +15,24 @@ type ContextKey struct {
 // Viewer describes the query/mutation viewer-context.
 type Viewer interface {
 	// OrganizationID returns the organization ID from the context
-	OrganizationID() string
+	GetOrganizationID() string
+	GetGroupID() string
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
-	OrgID string
+	GroupID string
+	OrgID   string
 }
 
-// OrganizationID returns the ID of the organization.
-func (u UserViewer) OrganizationID() string {
+// GetOrganizationID returns the ID of the organization.
+func (u UserViewer) GetOrganizationID() string {
 	return u.OrgID
+}
+
+// GetGroupID returns the ID of the group
+func (u UserViewer) GetGroupID() string {
+	return u.GroupID
 }
 
 // FromContext returns the Viewer stored in a context.

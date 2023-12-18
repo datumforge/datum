@@ -336,6 +336,9 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 			if tc.parentOrgID != "" {
 				input.ParentID = &tc.parentOrgID
+
+				// There is a check to ensure user has write access to parent org
+				mockCheckAny(mockCtrl, mc, reqCtx, true)
 			}
 
 			// When calls are expected to fail, we won't ever write tuples

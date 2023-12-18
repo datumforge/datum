@@ -33,12 +33,6 @@ func DenyIfNoSubject() privacy.QueryMutationRule {
 // HasOrgReadAccess is a rule that returns allow decision if user has view access
 func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 	return privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
-		eCtx := ent.QueryFromContext(ctx)
-
-		if contains(eCtx.Fields, "parent_organization_id") {
-			q.WithParent()
-		}
-
 		gCtx := graphql.GetFieldContext(ctx)
 
 		// check org id from graphql arg context
@@ -76,29 +70,48 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 	return privacy.OrganizationMutationRuleFunc(func(ctx context.Context, m *generated.OrganizationMutation) error {
 		m.Logger.Debugw("checking mutation access")
 
-		// No permissions checks on creation of org
-		if m.Op().Is(ent.OpCreate) {
-			return privacy.Skip
-		}
-
 		relation := fga.CanEdit
 		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
 			relation = fga.CanDelete
 		}
 
+		userID, err := auth.GetUserIDFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		// No permissions checks on creation of org except if this is not a root org
+		if m.Op().Is(ent.OpCreate) {
+			parentOrgID, ok := m.ParentID()
+
+			if ok {
+				access, err := m.Authz.CheckOrgAccess(ctx, userID, parentOrgID, relation)
+				if err != nil {
+					return privacy.Skipf("unable to check access, %s", err.Error())
+				}
+
+				if !access {
+					m.Logger.Debugw("access denied to parent org", "relation", relation, "organization_id", parentOrgID)
+
+					return privacy.Deny
+				}
+			}
+
+			return privacy.Skip
+		}
+
 		view := viewer.FromContext(ctx)
 		if view == nil {
+			m.Logger.Debugw("missing viewer context")
+
 			return privacy.Denyf("viewer-context is missing when checking write access in org")
 		}
 
 		oID := view.OrganizationID()
 		if oID == "" {
-			return privacy.Denyf("missing organization ID information in viewer")
-		}
+			m.Logger.Debugw("missing expected organization id")
 
-		userID, err := auth.GetUserIDFromContext(ctx)
-		if err != nil {
-			return err
+			return privacy.Denyf("missing organization ID information in viewer")
 		}
 
 		m.Logger.Infow("checking relationship tuples", "relation", relation, "organization_id", oID)
@@ -120,7 +133,7 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 }
 
 // contains looks for a string within a string slice
-func contains(s []string, e string) bool {
+func contains(s []string, e string) bool { //nolint:unused
 	for _, a := range s {
 		if a == e {
 			return true

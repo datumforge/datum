@@ -80,6 +80,11 @@ func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[
 
 // OrganizationSettings is the resolver for the organizationSettings field.
 func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
 	return r.client.OrganizationSetting.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationSettingFilter(where.Filter))
 }
 

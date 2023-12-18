@@ -20,6 +20,7 @@ type DatumClient interface {
 	CreateGroup(ctx context.Context, input CreateGroupInput, interceptors ...clientv2.RequestInterceptor) (*CreateGroup, error)
 	UpdateGroup(ctx context.Context, updateGroupID string, input UpdateGroupInput, interceptors ...clientv2.RequestInterceptor) (*UpdateGroup, error)
 	DeleteGroup(ctx context.Context, deleteGroupID string, interceptors ...clientv2.RequestInterceptor) (*DeleteGroup, error)
+	GetGroupSetting(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSetting, error)
 	GetOrganizationByID(ctx context.Context, organizationID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationByID, error)
 	GetAllOrganizations(ctx context.Context, interceptors ...clientv2.RequestInterceptor) (*GetAllOrganizations, error)
 	CreateOrganization(ctx context.Context, input CreateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*CreateOrganization, error)
@@ -1035,6 +1036,98 @@ func (t *DeleteGroup_DeleteGroup) GetDeletedID() string {
 		t = &DeleteGroup_DeleteGroup{}
 	}
 	return t.DeletedID
+}
+
+type GetGroupSetting_GroupSetting_Group struct {
+	ID string "json:\"id\" graphql:\"id\""
+}
+
+func (t *GetGroupSetting_GroupSetting_Group) GetID() string {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting_Group{}
+	}
+	return t.ID
+}
+
+type GetGroupSetting_GroupSetting struct {
+	ID           string                              "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time                           "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time                           "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string                             "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                             "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   groupsetting.Visibility             "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   groupsetting.JoinPolicy             "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	Tags         []string                            "json:\"tags\" graphql:\"tags\""
+	SyncToSlack  bool                                "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool                                "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Group        *GetGroupSetting_GroupSetting_Group "json:\"group,omitempty\" graphql:\"group\""
+}
+
+func (t *GetGroupSetting_GroupSetting) GetID() string {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.ID
+}
+func (t *GetGroupSetting_GroupSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetGroupSetting_GroupSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetGroupSetting_GroupSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetGroupSetting_GroupSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.UpdatedBy
+}
+func (t *GetGroupSetting_GroupSetting) GetVisibility() *groupsetting.Visibility {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return &t.Visibility
+}
+func (t *GetGroupSetting_GroupSetting) GetJoinPolicy() *groupsetting.JoinPolicy {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return &t.JoinPolicy
+}
+func (t *GetGroupSetting_GroupSetting) GetTags() []string {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.Tags
+}
+func (t *GetGroupSetting_GroupSetting) GetSyncToSlack() bool {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.SyncToSlack
+}
+func (t *GetGroupSetting_GroupSetting) GetSyncToGithub() bool {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.SyncToGithub
+}
+func (t *GetGroupSetting_GroupSetting) GetGroup() *GetGroupSetting_GroupSetting_Group {
+	if t == nil {
+		t = &GetGroupSetting_GroupSetting{}
+	}
+	return t.Group
 }
 
 type GetOrganizationByID_Organization_Parent struct {
@@ -3324,6 +3417,17 @@ func (t *DeleteGroup) GetDeleteGroup() *DeleteGroup_DeleteGroup {
 	return &t.DeleteGroup
 }
 
+type GetGroupSetting struct {
+	GroupSetting GetGroupSetting_GroupSetting "json:\"groupSetting\" graphql:\"groupSetting\""
+}
+
+func (t *GetGroupSetting) GetGroupSetting() *GetGroupSetting_GroupSetting {
+	if t == nil {
+		t = &GetGroupSetting{}
+	}
+	return &t.GroupSetting
+}
+
 type GetOrganizationByID struct {
 	Organization GetOrganizationByID_Organization "json:\"organization\" graphql:\"organization\""
 }
@@ -3751,6 +3855,42 @@ func (c *Client) DeleteGroup(ctx context.Context, deleteGroupID string, intercep
 
 	var res DeleteGroup
 	if err := c.Client.Post(ctx, "DeleteGroup", DeleteGroupDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const GetGroupSettingDocument = `query GetGroupSetting ($groupSettingId: ID!) {
+	groupSetting(id: $groupSettingId) {
+		id
+		createdAt
+		updatedAt
+		createdBy
+		updatedBy
+		visibility
+		joinPolicy
+		tags
+		syncToSlack
+		syncToGithub
+		group {
+			id
+		}
+	}
+}
+`
+
+func (c *Client) GetGroupSetting(ctx context.Context, groupSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetGroupSetting, error) {
+	vars := map[string]interface{}{
+		"groupSettingId": groupSettingID,
+	}
+
+	var res GetGroupSetting
+	if err := c.Client.Post(ctx, "GetGroupSetting", GetGroupSettingDocument, &res, vars, interceptors...); err != nil {
 		if c.Client.ParseDataWhenErrors {
 			return &res, err
 		}
@@ -4436,6 +4576,7 @@ var DocumentOperationNames = map[string]string{
 	CreateGroupDocument:                "CreateGroup",
 	UpdateGroupDocument:                "UpdateGroup",
 	DeleteGroupDocument:                "DeleteGroup",
+	GetGroupSettingDocument:            "GetGroupSetting",
 	GetOrganizationByIDDocument:        "GetOrganizationByID",
 	GetAllOrganizationsDocument:        "GetAllOrganizations",
 	CreateOrganizationDocument:         "CreateOrganization",

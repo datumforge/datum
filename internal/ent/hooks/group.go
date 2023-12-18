@@ -132,7 +132,6 @@ func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 
 			m.Logger.Infow("deleted relationship tuples", "object", object)
 		}
-
 	}
 
 	return nil

@@ -106,8 +106,6 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 				return ErrInternalServerError
 			}
 		}
-
-		m.Logger.Infow("created admin relationship tuples", "relation", fga.AdminRelation, "object", object)
 	}
 
 	return nil

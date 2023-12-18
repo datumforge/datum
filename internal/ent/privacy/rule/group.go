@@ -95,22 +95,16 @@ func HasGroupMutationAccess() privacy.GroupMutationRuleFunc {
 // CanCreateGroupsInOrg is a rule that returns allow decision if user has edit access in the organization
 func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
 	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
-		gCtx := graphql.GetFieldContext(ctx)
-
-		oID, ok := gCtx.Args["owner"].(string)
+		oID, ok := m.OwnerID()
 		if !ok {
 			return privacy.Allowf("nil request, bypassing auth check")
 		}
+
 		m.Logger.Debugw("checking mutation access")
 
 		relation := fga.CanEdit
 		if m.Op().Is(ent.OpDelete | ent.OpDeleteOne) {
 			relation = fga.CanDelete
-		}
-
-		view := viewer.FromContext(ctx)
-		if view == nil {
-			return privacy.Denyf("viewer-context is missing when checking write access in org")
 		}
 
 		userID, err := auth.GetUserIDFromContext(ctx)

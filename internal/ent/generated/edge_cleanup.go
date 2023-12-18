@@ -64,19 +64,25 @@ func OrganizationEdgeCleanup(ctx context.Context, r *Client, id string) error {
 	// TODO: pass in transaction so that all upstream
 	// deletes can be rolled back if one fails
 
-	if groupCount, err := r.Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
-		r.Logger.Debugw("deleting group", "count", groupCount, "err", err)
-		return err
+	if exists, err := r.Group.Query().Where((group.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
+		if groupCount, err := r.Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			r.Logger.Debugw("deleting group", "count", groupCount, "err", err)
+			return err
+		}
 	}
 
-	if integrationCount, err := r.Integration.Delete().Where(integration.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
-		r.Logger.Debugw("deleting integration", "count", integrationCount, "err", err)
-		return err
+	if exists, err := r.Integration.Query().Where((integration.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
+		if integrationCount, err := r.Integration.Delete().Where(integration.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			r.Logger.Debugw("deleting integration", "count", integrationCount, "err", err)
+			return err
+		}
 	}
 
-	if organizationsettingCount, err := r.OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).Exec(ctx); err != nil {
-		r.Logger.Debugw("deleting organizationsetting", "count", organizationsettingCount, "err", err)
-		return err
+	if exists, err := r.OrganizationSetting.Query().Where((organizationsetting.HasOrganizationWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
+		if organizationsettingCount, err := r.OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).Exec(ctx); err != nil {
+			r.Logger.Debugw("deleting organizationsetting", "count", organizationsettingCount, "err", err)
+			return err
+		}
 	}
 
 	return nil

@@ -663,7 +663,6 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 				if tc.errorMsg == "" {
 					mockListAny(mockCtrl, mc, reqCtx, listObjects)
 					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
-					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
 				}
 			}
 

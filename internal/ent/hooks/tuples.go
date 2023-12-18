@@ -27,10 +27,11 @@ func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([
 	return tuples, nil
 }
 
-func createOrgTuple(ctx context.Context, c *fga.Client, user, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
-
+// TODO: https://github.com/datumforge/datum/issues/262
+// Not ideal to hard code `organization` in the function but will revisit as a part of another issue
+func createOrgTuple(ctx context.Context, c *fga.Client, org, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
 	tuples := []ofgaclient.ClientTupleKey{{
-		User:     fmt.Sprintf("organization:%s", user),
+		User:     fmt.Sprintf("organization:%s", org),
 		Relation: relation,
 		Object:   object,
 	}}

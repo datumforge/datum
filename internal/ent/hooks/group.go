@@ -11,6 +11,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/fga"
+	openfga "github.com/openfga/go-sdk"
 )
 
 // HookGroup runs on group mutations to set default values that are not provided
@@ -58,11 +59,7 @@ func HookGroupAuthz() ent.Hook {
 
 			if m.Op().Is(ent.OpCreate) {
 				// create the relationship tuple for the admin
-				err = groupCreateHookMakeUserTuple(ctx, m)
-				if err != nil {
-					return retValue, err
-				}
-				err = groupCreateHookMakeOwnerTuple(ctx, m)
+				err = groupCreateHook(ctx, m)
 			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
 				// delete all relationship tuples on delete, or soft delete (Update Op)
 				err = groupDeleteHook(ctx, m)
@@ -73,24 +70,39 @@ func HookGroupAuthz() ent.Hook {
 	}
 }
 
-func groupCreateHookMakeUserTuple(ctx context.Context, m *generated.GroupMutation) error {
+func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 	if m.Authz.Ofga != nil {
 		objID, exists := m.ID()
 		objType := strings.ToLower(m.Type())
 		object := fmt.Sprintf("%s:%s", objType, objID)
+		org, orgexists := m.OwnerID()
 
-		m.Logger.Infow("creating admin relationship tuples", "relation", fga.AdminRelation, "object", object)
+		if exists && orgexists {
+			m.Logger.Infow("creating admin relationship tuples", "relation", fga.AdminRelation, "object", object)
 
-		if exists {
-			tuples, err := createTuple(ctx, &m.Authz, fga.AdminRelation, object)
+			tupleGroup := []openfga.TupleKey{}
+
+			adminTuples, err := createTuple(ctx, &m.Authz, fga.AdminRelation, object)
+
 			if err != nil {
 				return err
 			}
 
-			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
+			tupleGroup = append(tupleGroup, adminTuples...)
+
+			m.Logger.Infow("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
+
+			orgTuples, err := createOrgTuple(ctx, &m.Authz, org, fga.ParentRelation, object)
+
+			if err != nil {
+				return err
+			}
+
+			tupleGroup = append(tupleGroup, orgTuples...)
+
+			if _, err := m.Authz.CreateRelationshipTuple(ctx, tupleGroup); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-				// TODO: rollback mutation if tuple creation fails
 				return ErrInternalServerError
 			}
 		}
@@ -100,74 +112,6 @@ func groupCreateHookMakeUserTuple(ctx context.Context, m *generated.GroupMutatio
 
 	return nil
 }
-
-func groupCreateHookMakeOwnerTuple(ctx context.Context, m *generated.GroupMutation) error {
-	if m.Authz.Ofga != nil {
-		objID, exists := m.ID()
-		objType := strings.ToLower(m.Type())
-		object := fmt.Sprintf("%s:%s", objType, objID)
-		user, exists := m.OwnerID()
-
-		m.Logger.Infow("creating owner relationship tuples", "relation", fga.ParentRelation, "object", object)
-
-		if exists {
-
-			orgTuples, err := createOrgTuple(ctx, &m.Authz, user, fga.ParentRelation, object)
-			if err != nil {
-				return err
-			}
-
-			if _, err := m.Authz.CreateRelationshipTuple(ctx, orgTuples); err != nil {
-				m.Logger.Errorw("failed to create relationship tuple", "error", err)
-
-				// TODO: rollback mutation if tuple creation fails
-				return ErrInternalServerError
-			}
-		}
-
-		m.Logger.Infow("created owner relationship tuples", "relation", fga.ParentRelation, "object", object)
-	}
-
-	return nil
-}
-
-// func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
-// 	// Add relationship tuples if authz is enabled
-// 	if m.Authz.Ofga != nil {
-// 		objID, exists := m.ID()
-// 		objType := strings.ToLower(m.Type())
-// 		object := fmt.Sprintf("%s:%s", objType, objID)
-//
-// 		m.Logger.Infow("creating admin relationship tuples", "relation", fga.AdminRelation, "object", object)
-//
-// 		if exists {
-// 			adminTuples, err := createTuple(ctx, &m.Authz, fga.AdminRelation, object)
-//
-// 			if err != nil {
-// 				return err
-// 			}
-// 			orgTuples, err := createOrgTuple(ctx, &m.Authz, fga.OwnerRelation, object)
-//
-// 			if err != nil {
-// 				return err
-// 			}
-//
-// 			if _, err := m.Authz.CreateRelationshipTuple(ctx, adminTuples); err != nil {
-// 				m.Logger.Errorw("failed to create admin relationship tuple", "error", err)
-// 				return ErrInternalServerError
-// 			}
-//
-// 			if _, err := m.Authz.CreateRelationshipTuple(ctx, orgTuples); err != nil {
-// 				m.Logger.Errorw("failed to create admin relationship tuple", "error", err)
-// 				return ErrInternalServerError
-// 			}
-// 		}
-//
-// 		m.Logger.Infow("created admin relationship tuples", "relation", fga.AdminRelation, "object", object)
-// 	}
-//
-// 	return nil
-// }
 
 func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 	// Add relationship tuples if authz is enabled

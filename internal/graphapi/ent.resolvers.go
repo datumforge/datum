@@ -50,7 +50,12 @@ func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string]
 
 // GroupSettings is the resolver for the groupSettings field.
 func (r *queryResolver) GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
-	panic(fmt.Errorf("not implemented: GroupSettings - groupSettings"))
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	return r.client.GroupSetting.Query().Paginate(ctx, after, first, before, last, generated.WithGroupSettingFilter(where.Filter))
 }
 
 // Integrations is the resolver for the integrations field.

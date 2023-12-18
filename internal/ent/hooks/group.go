@@ -123,14 +123,16 @@ func groupDeleteHook(ctx context.Context, m *generated.GroupMutation) error {
 		m.Logger.Infow("deleting relationship tuples", "object", object)
 
 		// Add relationship tuples if authz is enabled
-		if m.Authz.Ofga != nil {
-			if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
-				m.Logger.Errorw("failed to delete relationship tuples", "error", err)
+		if objID != "" {
+			if m.Authz.Ofga != nil {
+				if err := m.Authz.DeleteAllObjectRelations(ctx, object); err != nil {
+					m.Logger.Errorw("failed to delete relationship tuples", "error", err)
 
-				return ErrInternalServerError
+					return ErrInternalServerError
+				}
+
+				m.Logger.Infow("deleted relationship tuples", "object", object)
 			}
-
-			m.Logger.Infow("deleted relationship tuples", "object", object)
 		}
 	}
 

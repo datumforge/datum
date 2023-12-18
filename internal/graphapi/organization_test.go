@@ -621,6 +621,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
+
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	testCases := []struct {
@@ -663,7 +664,6 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 					mockListAny(mockCtrl, mc, reqCtx, listObjects)
 					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
 					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
-					mockReadAny(mockCtrl, mc, reqCtx)
 				}
 			}
 

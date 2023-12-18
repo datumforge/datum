@@ -14,11 +14,12 @@ type organization
 type group
   relations
     define parent: [organization]
-    define admin: [user] and member from parent
-    define member: [user] and member from parent
+    define admin: [user] or admin or member from parent
+    define member: [user] or admin or member from parent
     define can_delete: admin
     define can_edit: admin
     define can_view: member or admin
+    define user_in_context: [user]
 type subscription_tier
   relations
     define subscriber: [organization]

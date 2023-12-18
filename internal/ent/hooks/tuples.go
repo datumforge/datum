@@ -26,3 +26,14 @@ func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([
 
 	return tuples, nil
 }
+
+func createOrgTuple(ctx context.Context, c *fga.Client, user, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
+
+	tuples := []ofgaclient.ClientTupleKey{{
+		User:     fmt.Sprintf("organization:%s", user),
+		Relation: relation,
+		Object:   object,
+	}}
+
+	return tuples, nil
+}

@@ -25,6 +25,7 @@ type DatumClient interface {
 	CreateOrganization(ctx context.Context, input CreateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*CreateOrganization, error)
 	UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error)
 	DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error)
+	GetOrganizationSetting(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSetting, error)
 	CreatePersonalAccessToken(ctx context.Context, input CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreatePersonalAccessToken, error)
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
@@ -1867,6 +1868,115 @@ func (t *DeleteOrganization_DeleteOrganization) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type GetOrganizationSetting_OrganizationSetting struct {
+	ID             string    "json:\"id\" graphql:\"id\""
+	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
+	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetOrganizationSetting_OrganizationSetting) GetID() string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetSsoCert() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.SsoCert
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetTaxIdentifier() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.TaxIdentifier
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetTags() []string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.Tags
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetSsoIssuer() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.SsoIssuer
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetSsoEntrypoint() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.SsoEntrypoint
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetBillingAddress() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingAddress
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetBillingContact() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingContact
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetBillingEmail() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingEmail
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetBillingPhone() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.BillingPhone
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetDomains() []string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.Domains
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetOrganizationSetting_OrganizationSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetOrganizationSetting_OrganizationSetting{}
+	}
+	return t.UpdatedBy
+}
+
 type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
@@ -3237,6 +3347,17 @@ func (t *DeleteOrganization) GetDeleteOrganization() *DeleteOrganization_DeleteO
 	return &t.DeleteOrganization
 }
 
+type GetOrganizationSetting struct {
+	OrganizationSetting GetOrganizationSetting_OrganizationSetting "json:\"organizationSetting\" graphql:\"organizationSetting\""
+}
+
+func (t *GetOrganizationSetting) GetOrganizationSetting() *GetOrganizationSetting_OrganizationSetting {
+	if t == nil {
+		t = &GetOrganizationSetting{}
+	}
+	return &t.OrganizationSetting
+}
+
 type CreatePersonalAccessToken struct {
 	CreatePersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken "json:\"createPersonalAccessToken\" graphql:\"createPersonalAccessToken\""
 }
@@ -3846,6 +3967,44 @@ func (c *Client) DeleteOrganization(ctx context.Context, deleteOrganizationID st
 	return &res, nil
 }
 
+const GetOrganizationSettingDocument = `query GetOrganizationSetting ($organizationSettingId: ID!) {
+	organizationSetting(id: $organizationSettingId) {
+		id
+		ssoCert
+		taxIdentifier
+		tags
+		ssoIssuer
+		ssoEntrypoint
+		billingAddress
+		billingContact
+		billingEmail
+		billingPhone
+		createdAt
+		createdBy
+		domains
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetOrganizationSetting(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSetting, error) {
+	vars := map[string]interface{}{
+		"organizationSettingId": organizationSettingID,
+	}
+
+	var res GetOrganizationSetting
+	if err := c.Client.Post(ctx, "GetOrganizationSetting", GetOrganizationSettingDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const CreatePersonalAccessTokenDocument = `mutation CreatePersonalAccessToken ($input: CreatePersonalAccessTokenInput!) {
 	createPersonalAccessToken(input: $input) {
 		PersonalAccessToken {
@@ -4245,6 +4404,7 @@ var DocumentOperationNames = map[string]string{
 	CreateOrganizationDocument:         "CreateOrganization",
 	UpdateOrganizationDocument:         "UpdateOrganization",
 	DeleteOrganizationDocument:         "DeleteOrganization",
+	GetOrganizationSettingDocument:     "GetOrganizationSetting",
 	CreatePersonalAccessTokenDocument:  "CreatePersonalAccessToken",
 	GetPersonalAccessTokenByIDDocument: "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:  "DeletePersonalAccessToken",

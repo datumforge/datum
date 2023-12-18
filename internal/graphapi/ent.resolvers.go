@@ -80,7 +80,7 @@ func (r *queryResolver) Organizations(ctx context.Context, after *entgql.Cursor[
 
 // OrganizationSettings is the resolver for the organizationSettings field.
 func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrganizationSettingWhereInput) (*generated.OrganizationSettingConnection, error) {
-	panic(fmt.Errorf("not implemented: OrganizationSettings - organizationSettings"))
+	return r.client.OrganizationSetting.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationSettingFilter(where.Filter))
 }
 
 // PersonalAccessTokens is the resolver for the personalAccessTokens field.

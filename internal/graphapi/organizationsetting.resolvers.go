@@ -6,9 +6,12 @@ package graphapi
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreateOrganizationSetting is the resolver for the createOrganizationSetting field.
@@ -28,5 +31,33 @@ func (r *mutationResolver) DeleteOrganizationSetting(ctx context.Context, id str
 
 // OrganizationSetting is the resolver for the organizationSetting field.
 func (r *queryResolver) OrganizationSetting(ctx context.Context, id string) (*generated.OrganizationSetting, error) {
-	panic(fmt.Errorf("not implemented: OrganizationSetting - organizationSetting"))
+	// check permissions if authz is enabled
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	} else {
+		// setup view context
+		v := viewer.UserViewer{
+			OrgID: id,
+		}
+
+		ctx = viewer.NewContext(ctx, v)
+	}
+
+	org, err := r.client.OrganizationSetting.Get(ctx, id)
+	if err != nil {
+		r.logger.Errorw("failed to get organization settings", "error", err)
+
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, newPermissionDeniedError(ActionGet, "organization")
+		}
+
+		return nil, ErrInternalServerError
+	}
+
+	return org, nil
 }

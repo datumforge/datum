@@ -656,12 +656,13 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			// if access is allowed, another call to `read` happens
 			if tc.accessAllowed {
 				mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+				mockReadAny(mockCtrl, mc, reqCtx)
 
 				// additional check happens when the resource is found
 				if tc.errorMsg == "" {
 					mockListAny(mockCtrl, mc, reqCtx, listObjects)
-
-					mockReadAny(mockCtrl, mc, reqCtx)
+					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
 					mockReadAny(mockCtrl, mc, reqCtx)
 				}
 			}

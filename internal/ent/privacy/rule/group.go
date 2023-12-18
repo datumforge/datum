@@ -97,7 +97,7 @@ func CanCreateGroupsInOrg() privacy.GroupMutationRuleFunc {
 	return privacy.GroupMutationRuleFunc(func(ctx context.Context, m *generated.GroupMutation) error {
 		oID, ok := m.OwnerID()
 		if !ok {
-			return privacy.Allowf("nil request, bypassing auth check")
+			return privacy.Skipf("no owner set on request, cannot check access")
 		}
 
 		m.Logger.Debugw("checking mutation access")

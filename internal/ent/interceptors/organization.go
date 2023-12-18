@@ -25,11 +25,6 @@ func InterceptorOrganization() ent.Interceptor {
 				}
 
 				return filterOrgsByAccess(ctx, q, v)
-			} else {
-				// eager load fields when auth is disabled
-				if _, err := q.CollectFields(ctx); err != nil {
-					return nil, err
-				}
 			}
 
 			return next.Query(ctx, q)

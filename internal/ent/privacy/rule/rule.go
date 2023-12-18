@@ -35,11 +35,6 @@ func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 	return privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
 		eCtx := ent.QueryFromContext(ctx)
 
-		// eager load all fields
-		if _, err := q.CollectFields(ctx); err != nil {
-			return err
-		}
-
 		if contains(eCtx.Fields, "parent_organization_id") {
 			q.WithParent()
 		}

@@ -1040,6 +1040,60 @@ func (t *GetOrganizationByID_Organization_Parent) GetName() string {
 	return t.Name
 }
 
+type GetOrganizationByID_Organization_Children_Edges_Node struct {
+	ID          string  "json:\"id\" graphql:\"id\""
+	Name        string  "json:\"name\" graphql:\"name\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Description *string "json:\"description,omitempty\" graphql:\"description\""
+}
+
+func (t *GetOrganizationByID_Organization_Children_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Children_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationByID_Organization_Children_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Children_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetOrganizationByID_Organization_Children_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Children_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetOrganizationByID_Organization_Children_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Children_Edges_Node{}
+	}
+	return t.Description
+}
+
+type GetOrganizationByID_Organization_Children_Edges struct {
+	Node *GetOrganizationByID_Organization_Children_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetOrganizationByID_Organization_Children_Edges) GetNode() *GetOrganizationByID_Organization_Children_Edges_Node {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Children_Edges{}
+	}
+	return t.Node
+}
+
+type GetOrganizationByID_Organization_Children struct {
+	Edges []*GetOrganizationByID_Organization_Children_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetOrganizationByID_Organization_Children) GetEdges() []*GetOrganizationByID_Organization_Children_Edges {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_Children{}
+	}
+	return t.Edges
+}
+
 type GetOrganizationByID_Organization_Setting struct {
 	ID             string    "json:\"id\" graphql:\"id\""
 	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
@@ -1155,6 +1209,7 @@ type GetOrganizationByID_Organization struct {
 	DisplayName string                                    "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                   "json:\"description,omitempty\" graphql:\"description\""
 	Parent      *GetOrganizationByID_Organization_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
+	Children    GetOrganizationByID_Organization_Children "json:\"children\" graphql:\"children\""
 	Setting     *GetOrganizationByID_Organization_Setting "json:\"setting,omitempty\" graphql:\"setting\""
 	CreatedAt   time.Time                                 "json:\"createdAt\" graphql:\"createdAt\""
 	CreatedBy   *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
@@ -1191,6 +1246,12 @@ func (t *GetOrganizationByID_Organization) GetParent() *GetOrganizationByID_Orga
 		t = &GetOrganizationByID_Organization{}
 	}
 	return t.Parent
+}
+func (t *GetOrganizationByID_Organization) GetChildren() *GetOrganizationByID_Organization_Children {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return &t.Children
 }
 func (t *GetOrganizationByID_Organization) GetSetting() *GetOrganizationByID_Organization_Setting {
 	if t == nil {
@@ -1239,6 +1300,60 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Parent) GetName() string {
 		t = &GetAllOrganizations_Organizations_Edges_Node_Parent{}
 	}
 	return t.Name
+}
+
+type GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node struct {
+	ID          string  "json:\"id\" graphql:\"id\""
+	Name        string  "json:\"name\" graphql:\"name\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Description *string "json:\"description,omitempty\" graphql:\"description\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node) GetName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node{}
+	}
+	return t.Description
+}
+
+type GetAllOrganizations_Organizations_Edges_Node_Children_Edges struct {
+	Node *GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node_Children_Edges) GetNode() *GetAllOrganizations_Organizations_Edges_Node_Children_Edges_Node {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Children_Edges{}
+	}
+	return t.Node
+}
+
+type GetAllOrganizations_Organizations_Edges_Node_Children struct {
+	Edges []*GetAllOrganizations_Organizations_Edges_Node_Children_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node_Children) GetEdges() []*GetAllOrganizations_Organizations_Edges_Node_Children_Edges {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_Children{}
+	}
+	return t.Edges
 }
 
 type GetAllOrganizations_Organizations_Edges_Node_Setting struct {
@@ -1356,6 +1471,7 @@ type GetAllOrganizations_Organizations_Edges_Node struct {
 	DisplayName string                                                "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                               "json:\"description,omitempty\" graphql:\"description\""
 	Parent      *GetAllOrganizations_Organizations_Edges_Node_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
+	Children    GetAllOrganizations_Organizations_Edges_Node_Children "json:\"children\" graphql:\"children\""
 	Setting     *GetAllOrganizations_Organizations_Edges_Node_Setting "json:\"setting,omitempty\" graphql:\"setting\""
 	CreatedAt   time.Time                                             "json:\"createdAt\" graphql:\"createdAt\""
 	UpdatedAt   time.Time                                             "json:\"updatedAt\" graphql:\"updatedAt\""
@@ -1390,6 +1506,12 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetParent() *GetAllOrgani
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
 	return t.Parent
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetChildren() *GetAllOrganizations_Organizations_Edges_Node_Children {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return &t.Children
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetSetting() *GetAllOrganizations_Organizations_Edges_Node_Setting {
 	if t == nil {
@@ -1559,6 +1681,60 @@ func (t *CreateOrganization_CreateOrganization_Organization_Parent) GetName() st
 	return t.Name
 }
 
+type CreateOrganization_CreateOrganization_Organization_Children_Edges_Node struct {
+	ID          string  "json:\"id\" graphql:\"id\""
+	Name        string  "json:\"name\" graphql:\"name\""
+	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
+	Description *string "json:\"description,omitempty\" graphql:\"description\""
+}
+
+func (t *CreateOrganization_CreateOrganization_Organization_Children_Edges_Node) GetID() string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Children_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *CreateOrganization_CreateOrganization_Organization_Children_Edges_Node) GetName() string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Children_Edges_Node{}
+	}
+	return t.Name
+}
+func (t *CreateOrganization_CreateOrganization_Organization_Children_Edges_Node) GetDisplayName() string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Children_Edges_Node{}
+	}
+	return t.DisplayName
+}
+func (t *CreateOrganization_CreateOrganization_Organization_Children_Edges_Node) GetDescription() *string {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Children_Edges_Node{}
+	}
+	return t.Description
+}
+
+type CreateOrganization_CreateOrganization_Organization_Children_Edges struct {
+	Node *CreateOrganization_CreateOrganization_Organization_Children_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *CreateOrganization_CreateOrganization_Organization_Children_Edges) GetNode() *CreateOrganization_CreateOrganization_Organization_Children_Edges_Node {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Children_Edges{}
+	}
+	return t.Node
+}
+
+type CreateOrganization_CreateOrganization_Organization_Children struct {
+	Edges []*CreateOrganization_CreateOrganization_Organization_Children_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *CreateOrganization_CreateOrganization_Organization_Children) GetEdges() []*CreateOrganization_CreateOrganization_Organization_Children_Edges {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization_Children{}
+	}
+	return t.Edges
+}
+
 type CreateOrganization_CreateOrganization_Organization struct {
 	ID          string                                                      "json:\"id\" graphql:\"id\""
 	Name        string                                                      "json:\"name\" graphql:\"name\""
@@ -1568,6 +1744,7 @@ type CreateOrganization_CreateOrganization_Organization struct {
 	UpdatedAt   time.Time                                                   "json:\"updatedAt\" graphql:\"updatedAt\""
 	Setting     *CreateOrganization_CreateOrganization_Organization_Setting "json:\"setting,omitempty\" graphql:\"setting\""
 	Parent      *CreateOrganization_CreateOrganization_Organization_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
+	Children    CreateOrganization_CreateOrganization_Organization_Children "json:\"children\" graphql:\"children\""
 }
 
 func (t *CreateOrganization_CreateOrganization_Organization) GetID() string {
@@ -1617,6 +1794,12 @@ func (t *CreateOrganization_CreateOrganization_Organization) GetParent() *Create
 		t = &CreateOrganization_CreateOrganization_Organization{}
 	}
 	return t.Parent
+}
+func (t *CreateOrganization_CreateOrganization_Organization) GetChildren() *CreateOrganization_CreateOrganization_Organization_Children {
+	if t == nil {
+		t = &CreateOrganization_CreateOrganization_Organization{}
+	}
+	return &t.Children
 }
 
 type CreateOrganization_CreateOrganization struct {
@@ -3433,6 +3616,16 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 			id
 			name
 		}
+		children {
+			edges {
+				node {
+					id
+					name
+					displayName
+					description
+				}
+			}
+		}
 		setting {
 			id
 			createdAt
@@ -3486,6 +3679,16 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 				parent {
 					id
 					name
+				}
+				children {
+					edges {
+						node {
+							id
+							name
+							displayName
+							description
+						}
+					}
 				}
 				setting {
 					id
@@ -3556,6 +3759,16 @@ const CreateOrganizationDocument = `mutation CreateOrganization ($input: CreateO
 			parent {
 				id
 				name
+			}
+			children {
+				edges {
+					node {
+						id
+						name
+						displayName
+						description
+					}
+				}
 			}
 		}
 	}

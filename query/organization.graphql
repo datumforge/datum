@@ -8,6 +8,16 @@ query GetOrganizationByID($organizationId: ID!) {
       id
       name
     }
+    children {
+      edges {
+        node {
+          id
+          name
+          displayName
+          description
+        }
+      }
+    }
     setting {
       id
       createdAt
@@ -43,6 +53,16 @@ query GetAllOrganizations {
         parent {
           id
           name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
         }
         setting {
           id
@@ -97,6 +117,16 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
       parent {
         id
         name
+      }
+      children {
+        edges {
+          node {
+            id
+            name
+            displayName
+            description
+          }
+        }
       }
     }
   }

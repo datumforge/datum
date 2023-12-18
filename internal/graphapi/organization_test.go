@@ -69,14 +69,13 @@ func TestQuery_Organization(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
 			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockListAny(mockCtrl, mc, reqCtx, listObjects)
 
 			// second check won't happen if org does not exist
 			if tc.errorMsg == "" {
-				mockCheckAny(mockCtrl, mc, reqCtx, true)
 				// we need to check list objects even on a get
 				// because a parent could be request and that access must always be
 				// checked before being returned
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 			}
@@ -178,6 +177,8 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 		// check tuple per org
 		listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", org2.ID)}
 
+		mockListAny(mockCtrl, mc, reqCtx, listObjects)
+		mockListAny(mockCtrl, mc, reqCtx, listObjects)
 		mockListAny(mockCtrl, mc, reqCtx, listObjects)
 		mockListAny(mockCtrl, mc, reqCtx, listObjects)
 		mockListAny(mockCtrl, mc, reqCtx, listObjects)
@@ -340,6 +341,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
 				mockWriteTuplesAny(mockCtrl, mc, reqCtx, nil)
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 			}
 
@@ -654,7 +656,8 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 
 				// additional check happens when the resource is found
 				if tc.errorMsg == "" {
-					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+					mockListAny(mockCtrl, mc, reqCtx, listObjects)
+
 					mockReadAny(mockCtrl, mc, reqCtx)
 					mockReadAny(mockCtrl, mc, reqCtx)
 				}

@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	openfga "github.com/openfga/go-sdk"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/fga"
-	openfga "github.com/openfga/go-sdk"
 )
 
 // HookGroup runs on group mutations to set default values that are not provided

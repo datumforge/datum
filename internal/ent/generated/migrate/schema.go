@@ -101,7 +101,7 @@ var (
 				Symbol:     "groups_organizations_groups",
 				Columns:    []*schema.Column{GroupsColumns[11]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -166,7 +166,7 @@ var (
 				Symbol:     "integrations_organizations_integrations",
 				Columns:    []*schema.Column{IntegrationsColumns[9]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -291,7 +291,7 @@ var (
 				Symbol:     "organization_settings_organizations_setting",
 				Columns:    []*schema.Column{OrganizationSettingsColumns[15]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}

@@ -131,14 +131,3 @@ func HasOrgMutationAccess() privacy.OrganizationMutationRuleFunc {
 		return privacy.Deny
 	})
 }
-
-// contains looks for a string within a string slice
-func contains(s []string, e string) bool { //nolint:unused
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-
-	return false
-}

@@ -18,29 +18,31 @@ func HasGroupReadAccess() privacy.GroupQueryRuleFunc {
 	return privacy.GroupQueryRuleFunc(func(ctx context.Context, q *generated.GroupQuery) error {
 		gCtx := graphql.GetFieldContext(ctx)
 
-		// check group id from graphql arg context
-		// when all groups are requested, the interceptor will check group access
-		gID, ok := gCtx.Args["id"].(string)
-		if !ok {
-			return privacy.Allowf("nil request, bypassing auth check")
-		}
+		if gCtx != nil {
+			// check group id from graphql arg context
+			// when all groups are requested, the interceptor will check group access
+			gID, ok := gCtx.Args["id"].(string)
+			if !ok {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
 
-		userID, err := auth.GetUserIDFromContext(ctx)
-		if err != nil {
-			return err
-		}
+			userID, err := auth.GetUserIDFromContext(ctx)
+			if err != nil {
+				return err
+			}
 
-		q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "group_id", gID)
+			q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "group_id", gID)
 
-		access, err := q.Authz.CheckGroupAccess(ctx, userID, gID, fga.CanView)
-		if err != nil {
-			return privacy.Skipf("unable to check access, %s", err.Error())
-		}
+			access, err := q.Authz.CheckGroupAccess(ctx, userID, gID, fga.CanView)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
+			}
 
-		if access {
-			q.Logger.Infow("access allowed", "relation", fga.CanView, "group_id", gID)
+			if access {
+				q.Logger.Infow("access allowed", "relation", fga.CanView, "group_id", gID)
 
-			return privacy.Allow
+				return privacy.Allow
+			}
 		}
 
 		// Skip to the next privacy rule (equivalent to return nil)

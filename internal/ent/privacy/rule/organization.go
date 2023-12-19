@@ -18,29 +18,31 @@ func HasOrgReadAccess() privacy.OrganizationQueryRuleFunc {
 	return privacy.OrganizationQueryRuleFunc(func(ctx context.Context, q *generated.OrganizationQuery) error {
 		gCtx := graphql.GetFieldContext(ctx)
 
-		// check org id from graphql arg context
-		// when all orgs are requested, the interceptor will check org access
-		oID, ok := gCtx.Args["id"].(string)
-		if !ok {
-			return privacy.Allowf("nil request, bypassing auth check")
-		}
+		if gCtx != nil {
+			// check org id from graphql arg context
+			// when all orgs are requested, the interceptor will check org access
+			oID, ok := gCtx.Args["id"].(string)
+			if !ok {
+				return privacy.Allowf("nil request, bypassing auth check")
+			}
 
-		userID, err := auth.GetUserIDFromContext(ctx)
-		if err != nil {
-			return err
-		}
+			userID, err := auth.GetUserIDFromContext(ctx)
+			if err != nil {
+				return err
+			}
 
-		q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "organization_id", oID)
+			q.Logger.Infow("checking relationship tuples", "relation", fga.CanView, "organization_id", oID)
 
-		access, err := q.Authz.CheckOrgAccess(ctx, userID, oID, fga.CanView)
-		if err != nil {
-			return privacy.Skipf("unable to check access, %s", err.Error())
-		}
+			access, err := q.Authz.CheckOrgAccess(ctx, userID, oID, fga.CanView)
+			if err != nil {
+				return privacy.Skipf("unable to check access, %s", err.Error())
+			}
 
-		if access {
-			q.Logger.Infow("access allowed", "relation", fga.CanView, "organization_id", oID)
+			if access {
+				q.Logger.Infow("access allowed", "relation", fga.CanView, "organization_id", oID)
 
-			return privacy.Allow
+				return privacy.Allow
+			}
 		}
 
 		// Skip to the next privacy rule (equivalent to return nil).

@@ -11,6 +11,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
+	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 )
@@ -120,6 +121,13 @@ func (Group) Policy() ent.Policy {
 			rule.HasGroupReadAccess(),
 			privacy.AlwaysDenyRule(),
 		},
+	}
+}
+
+// Interceptors of the Group
+func (Group) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		interceptors.InterceptorGroup(),
 	}
 }
 

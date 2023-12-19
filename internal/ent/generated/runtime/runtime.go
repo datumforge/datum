@@ -85,7 +85,9 @@ func init() {
 
 	group.Hooks[4] = groupHooks[1]
 	groupMixinInters1 := groupMixin[1].Interceptors()
+	groupInters := schema.Group{}.Interceptors()
 	group.Interceptors[0] = groupMixinInters1[0]
+	group.Interceptors[1] = groupInters[0]
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
 	groupMixinFields3 := groupMixin[3].Fields()

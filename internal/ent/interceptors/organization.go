@@ -34,7 +34,6 @@ func InterceptorOrganization() ent.Interceptor {
 
 // filterOrgsByAccess checks fga, using ListObjects, and ensure user has view access to an org before it is returned
 // this checks both the org itself and any parent org in the request
-// TODO: check child orgs (https://github.com/datumforge/datum/issues/162)
 func filterOrgsByAccess(ctx context.Context, q *generated.OrganizationQuery, v ent.Value) ([]*generated.Organization, error) {
 	q.Logger.Debugw("intercepting list organization query")
 

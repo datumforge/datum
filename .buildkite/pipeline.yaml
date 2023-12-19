@@ -3,9 +3,20 @@ env:
   IMAGE_REPO: ghcr.io/datumforge/${APP_NAME}
   IMAGE_TAG: ${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT:0:8}
 
-steps:     
+steps:
+- group: ":knife: Pre-check"
+  key: "precheck"
+  steps:
+  - label: ":golang: go generate"
+    key: "generate"
+    plugins:
+      - docker#v5.9.0:
+          image: "registry.hub.docker.com/datumforge:base@latest"
+          command: ["task", "generate"]
+
 - group: ":test_tube: Tests"
   key: "tests"
+  depends_on: "precheck"
   steps:
   - label: ":golangci-lint: lint :lint-roller:"
     key: "lint"
@@ -30,6 +41,7 @@ steps:
           command: ["model", "test", "--tests", "fga/tests/tests.yaml"]
 
 - group: ":closed_lock_with_key: Security Checks"
+  depends_on: "tests"
   key: "security"
   steps:
   - label: ":closed_lock_with_key: gosec"
@@ -71,6 +83,7 @@ steps:
             command: ["github", "upload-results", "--sarif=results.sarif", "--ref=refs/heads/${BUILDKITE_BRANCH}"]
 
 - group: ":golang: Builds"
+  depends_on: "tests"
   key: "go-builds"
   steps:
   - label: ":golang: build"

@@ -20,7 +20,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/ogen-go/ogen v0.81.0
-	github.com/openfga/go-sdk v0.3.0
+	github.com/openfga/go-sdk v0.3.1
 	github.com/openfga/language/pkg/go v0.0.0-20231214002416-cca4c4312106
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.17.0

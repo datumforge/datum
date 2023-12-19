@@ -191,6 +191,7 @@ tasks:
     cmds:
       - task: ent
       - task: gqlgen
+      - "git config --global --add safe.directory /workdir"
       - |
         status=$(git status --porcelain)
         if [ -n "$status" ]; then

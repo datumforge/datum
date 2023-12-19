@@ -10193,6 +10193,7 @@ type PersonalAccessTokenMutation struct {
 	abilities       *[]string
 	appendabilities []string
 	expiration_at   *time.Time
+	expires_at      *time.Time
 	description     *string
 	last_used_at    *time.Time
 	clearedFields   map[string]struct{}
@@ -10650,6 +10651,42 @@ func (m *PersonalAccessTokenMutation) ResetExpirationAt() {
 	m.expiration_at = nil
 }
 
+// SetExpiresAt sets the "expires_at" field.
+func (m *PersonalAccessTokenMutation) SetExpiresAt(t time.Time) {
+	m.expires_at = &t
+}
+
+// ExpiresAt returns the value of the "expires_at" field in the mutation.
+func (m *PersonalAccessTokenMutation) ExpiresAt() (r time.Time, exists bool) {
+	v := m.expires_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresAt returns the old "expires_at" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldExpiresAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresAt: %w", err)
+	}
+	return oldValue.ExpiresAt, nil
+}
+
+// ResetExpiresAt resets all changes to the "expires_at" field.
+func (m *PersonalAccessTokenMutation) ResetExpiresAt() {
+	m.expires_at = nil
+}
+
 // SetDescription sets the "description" field.
 func (m *PersonalAccessTokenMutation) SetDescription(s string) {
 	m.description = &s
@@ -10808,7 +10845,7 @@ func (m *PersonalAccessTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PersonalAccessTokenMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, personalaccesstoken.FieldCreatedAt)
 	}
@@ -10832,6 +10869,9 @@ func (m *PersonalAccessTokenMutation) Fields() []string {
 	}
 	if m.expiration_at != nil {
 		fields = append(fields, personalaccesstoken.FieldExpirationAt)
+	}
+	if m.expires_at != nil {
+		fields = append(fields, personalaccesstoken.FieldExpiresAt)
 	}
 	if m.description != nil {
 		fields = append(fields, personalaccesstoken.FieldDescription)
@@ -10863,6 +10903,8 @@ func (m *PersonalAccessTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Abilities()
 	case personalaccesstoken.FieldExpirationAt:
 		return m.ExpirationAt()
+	case personalaccesstoken.FieldExpiresAt:
+		return m.ExpiresAt()
 	case personalaccesstoken.FieldDescription:
 		return m.Description()
 	case personalaccesstoken.FieldLastUsedAt:
@@ -10892,6 +10934,8 @@ func (m *PersonalAccessTokenMutation) OldField(ctx context.Context, name string)
 		return m.OldAbilities(ctx)
 	case personalaccesstoken.FieldExpirationAt:
 		return m.OldExpirationAt(ctx)
+	case personalaccesstoken.FieldExpiresAt:
+		return m.OldExpiresAt(ctx)
 	case personalaccesstoken.FieldDescription:
 		return m.OldDescription(ctx)
 	case personalaccesstoken.FieldLastUsedAt:
@@ -10960,6 +11004,13 @@ func (m *PersonalAccessTokenMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExpirationAt(v)
+		return nil
+	case personalaccesstoken.FieldExpiresAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresAt(v)
 		return nil
 	case personalaccesstoken.FieldDescription:
 		v, ok := value.(string)
@@ -11074,6 +11125,9 @@ func (m *PersonalAccessTokenMutation) ResetField(name string) error {
 		return nil
 	case personalaccesstoken.FieldExpirationAt:
 		m.ResetExpirationAt()
+		return nil
+	case personalaccesstoken.FieldExpiresAt:
+		m.ResetExpiresAt()
 		return nil
 	case personalaccesstoken.FieldDescription:
 		m.ResetDescription()

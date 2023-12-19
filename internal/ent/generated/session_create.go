@@ -207,10 +207,7 @@ func (sc *SessionCreate) defaults() error {
 		sc.mutation.SetIssuedAt(v)
 	}
 	if _, ok := sc.mutation.ExpiresAt(); !ok {
-		if session.DefaultExpiresAt == nil {
-			return fmt.Errorf("generated: uninitialized session.DefaultExpiresAt (forgotten import generated/runtime?)")
-		}
-		v := session.DefaultExpiresAt()
+		v := session.DefaultExpiresAt
 		sc.mutation.SetExpiresAt(v)
 	}
 	if _, ok := sc.mutation.ID(); !ok {

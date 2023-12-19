@@ -87,7 +87,9 @@ func (rtc *RefreshTokenCreate) Mutation() *RefreshTokenMutation {
 
 // Save creates the RefreshToken in the database.
 func (rtc *RefreshTokenCreate) Save(ctx context.Context) (*RefreshToken, error) {
-	rtc.defaults()
+	if err := rtc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, rtc.sqlSave, rtc.mutation, rtc.hooks)
 }
 
@@ -114,19 +116,26 @@ func (rtc *RefreshTokenCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (rtc *RefreshTokenCreate) defaults() {
+func (rtc *RefreshTokenCreate) defaults() error {
 	if _, ok := rtc.mutation.ExpiresAt(); !ok {
-		v := refreshtoken.DefaultExpiresAt()
+		v := refreshtoken.DefaultExpiresAt
 		rtc.mutation.SetExpiresAt(v)
 	}
 	if _, ok := rtc.mutation.IssuedAt(); !ok {
-		v := refreshtoken.DefaultIssuedAt
+		if refreshtoken.DefaultIssuedAt == nil {
+			return fmt.Errorf("generated: uninitialized refreshtoken.DefaultIssuedAt (forgotten import generated/runtime?)")
+		}
+		v := refreshtoken.DefaultIssuedAt()
 		rtc.mutation.SetIssuedAt(v)
 	}
 	if _, ok := rtc.mutation.ID(); !ok {
+		if refreshtoken.DefaultID == nil {
+			return fmt.Errorf("generated: uninitialized refreshtoken.DefaultID (forgotten import generated/runtime?)")
+		}
 		v := refreshtoken.DefaultID()
 		rtc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

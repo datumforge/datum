@@ -139,7 +139,7 @@ var (
 				Symbol:     "group_settings_groups_setting",
 				Columns:    []*schema.Column{GroupSettingsColumns[10]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -306,6 +306,7 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
 		{Name: "expiration_at", Type: field.TypeTime},
+		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
 		{Name: "user_personal_access_tokens", Type: field.TypeString},
@@ -318,7 +319,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "personal_access_tokens_users_personal_access_tokens",
-				Columns:    []*schema.Column{PersonalAccessTokensColumns[11]},
+				Columns:    []*schema.Column{PersonalAccessTokensColumns[12]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},

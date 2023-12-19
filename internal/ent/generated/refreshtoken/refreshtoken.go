@@ -5,6 +5,7 @@ package refreshtoken
 import (
 	"time"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -58,11 +59,17 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+// Note that the variables below are initialized by the runtime
+// package on the initialization of the application. Therefore,
+// it should be imported in the main as follows:
+//
+//	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
+	Hooks [1]ent.Hook
 	// DefaultExpiresAt holds the default value on creation for the "expires_at" field.
-	DefaultExpiresAt func() time.Time
+	DefaultExpiresAt time.Time
 	// DefaultIssuedAt holds the default value on creation for the "issued_at" field.
-	DefaultIssuedAt time.Time
+	DefaultIssuedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )

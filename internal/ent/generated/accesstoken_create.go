@@ -214,14 +214,14 @@ func (atc *AccessTokenCreate) defaults() error {
 		atc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := atc.mutation.ExpiresAt(); !ok {
-		if accesstoken.DefaultExpiresAt == nil {
-			return fmt.Errorf("generated: uninitialized accesstoken.DefaultExpiresAt (forgotten import generated/runtime?)")
-		}
-		v := accesstoken.DefaultExpiresAt()
+		v := accesstoken.DefaultExpiresAt
 		atc.mutation.SetExpiresAt(v)
 	}
 	if _, ok := atc.mutation.IssuedAt(); !ok {
-		v := accesstoken.DefaultIssuedAt
+		if accesstoken.DefaultIssuedAt == nil {
+			return fmt.Errorf("generated: uninitialized accesstoken.DefaultIssuedAt (forgotten import generated/runtime?)")
+		}
+		v := accesstoken.DefaultIssuedAt()
 		atc.mutation.SetIssuedAt(v)
 	}
 	if _, ok := atc.mutation.ID(); !ok {

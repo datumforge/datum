@@ -33,6 +33,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 		field.JSON("abilities", []string{}).
 			Optional(),
 		field.Time("expiration_at"),
+		field.Time("expires_at"),
 		field.String("description").Default("").Annotations(
 			entgql.Skip(entgql.SkipWhereInput),
 		),

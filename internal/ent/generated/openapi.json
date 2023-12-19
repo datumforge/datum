@@ -4010,6 +4010,10 @@
                     "type": "string",
                     "format": "date-time"
                   },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "description": {
                     "type": "string"
                   },
@@ -4027,6 +4031,7 @@
                   "name",
                   "token",
                   "expiration_at",
+                  "expires_at",
                   "description",
                   "owner"
                 ]
@@ -4180,6 +4185,10 @@
                     }
                   },
                   "expiration_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
@@ -9763,6 +9772,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "description": {
             "type": "string"
           },
@@ -9781,6 +9794,7 @@
           "name",
           "token",
           "expiration_at",
+          "expires_at",
           "description",
           "owner"
         ]
@@ -9818,6 +9832,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "description": {
             "type": "string"
           },
@@ -9832,6 +9850,7 @@
           "updated_at",
           "name",
           "expiration_at",
+          "expires_at",
           "description"
         ]
       },
@@ -9868,6 +9887,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "description": {
             "type": "string"
           },
@@ -9882,6 +9905,7 @@
           "updated_at",
           "name",
           "expiration_at",
+          "expires_at",
           "description"
         ]
       },
@@ -9918,6 +9942,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "description": {
             "type": "string"
           },
@@ -9932,6 +9960,7 @@
           "updated_at",
           "name",
           "expiration_at",
+          "expires_at",
           "description"
         ]
       },
@@ -9968,6 +9997,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "description": {
             "type": "string"
           },
@@ -9982,6 +10015,7 @@
           "updated_at",
           "name",
           "expiration_at",
+          "expires_at",
           "description"
         ]
       },
@@ -11584,6 +11618,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
           "description": {
             "type": "string"
           },
@@ -11598,6 +11636,7 @@
           "updated_at",
           "name",
           "expiration_at",
+          "expires_at",
           "description"
         ]
       },

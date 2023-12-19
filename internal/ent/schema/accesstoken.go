@@ -10,8 +10,11 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
+
+var defaultTime time.Time
 
 // AccessToken holds the schema definition for the AccessToken entity.
 type AccessToken struct {
@@ -25,9 +28,9 @@ func (AccessToken) Fields() []ent.Field {
 			Unique().
 			Immutable(),
 		field.Time("expires_at").
-			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }), // nolint: gomnd
+			Default(defaultTime),
 		field.Time("issued_at").
-			Default(time.Now()),
+			Default(time.Now),
 		field.Time("last_used_at").
 			UpdateDefault(time.Now).
 			Optional().
@@ -72,5 +75,12 @@ func (AccessToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Hooks of the AccessToken
+func (AccessToken) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookAccessToken(),
 	}
 }

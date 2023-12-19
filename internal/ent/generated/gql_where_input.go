@@ -6005,6 +6005,16 @@ type PersonalAccessTokenWhereInput struct {
 	ExpirationAtLT    *time.Time  `json:"expirationAtLT,omitempty"`
 	ExpirationAtLTE   *time.Time  `json:"expirationAtLTE,omitempty"`
 
+	// "expires_at" field predicates.
+	ExpiresAt      *time.Time  `json:"expiresAt,omitempty"`
+	ExpiresAtNEQ   *time.Time  `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn    []time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn []time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGT    *time.Time  `json:"expiresAtGT,omitempty"`
+	ExpiresAtGTE   *time.Time  `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLT    *time.Time  `json:"expiresAtLT,omitempty"`
+	ExpiresAtLTE   *time.Time  `json:"expiresAtLTE,omitempty"`
+
 	// "last_used_at" field predicates.
 	LastUsedAt       *time.Time  `json:"lastUsedAt,omitempty"`
 	LastUsedAtNEQ    *time.Time  `json:"lastUsedAtNEQ,omitempty"`
@@ -6362,6 +6372,30 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 	}
 	if i.ExpirationAtLTE != nil {
 		predicates = append(predicates, personalaccesstoken.ExpirationAtLTE(*i.ExpirationAtLTE))
+	}
+	if i.ExpiresAt != nil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtEQ(*i.ExpiresAt))
+	}
+	if i.ExpiresAtNEQ != nil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtNEQ(*i.ExpiresAtNEQ))
+	}
+	if len(i.ExpiresAtIn) > 0 {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtIn(i.ExpiresAtIn...))
+	}
+	if len(i.ExpiresAtNotIn) > 0 {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtNotIn(i.ExpiresAtNotIn...))
+	}
+	if i.ExpiresAtGT != nil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtGT(*i.ExpiresAtGT))
+	}
+	if i.ExpiresAtGTE != nil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtGTE(*i.ExpiresAtGTE))
+	}
+	if i.ExpiresAtLT != nil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtLT(*i.ExpiresAtLT))
+	}
+	if i.ExpiresAtLTE != nil {
+		predicates = append(predicates, personalaccesstoken.ExpiresAtLTE(*i.ExpiresAtLTE))
 	}
 	if i.LastUsedAt != nil {
 		predicates = append(predicates, personalaccesstoken.LastUsedAtEQ(*i.LastUsedAt))

@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -28,7 +29,7 @@ func (Session) Fields() []ent.Field {
 		field.Time("issued_at").
 			Default(time.Now),
 		field.Time("expires_at").
-			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 1) }). // nolint: gomnd
+			Default(defaultTime).
 			Comment("projected expiration of the session token").
 			Optional(),
 		field.String("organization_id").
@@ -72,5 +73,12 @@ func (Session) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+	}
+}
+
+// Hooks of the Session
+func (Session) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookSession(),
 	}
 }

@@ -18,15 +18,29 @@ type Entitlement struct {
 // Fields of the Entitlement.
 func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("tier").Values("free", "pro", "enterprise").Default("free"),
-		field.String("external_customer_id").Optional().Comment("used to store references to external systems, e.g. Stripe"),
-		field.String("external_subscription_id").Comment("used to store references to external systems, e.g. Stripe").Optional(),
-		field.Time("expires_at").Optional(),
-		field.Time("upgraded_at").Optional(),
-		field.String("upgraded_tier").Comment("the tier the customer upgraded from").Optional(),
-		field.Time("downgraded_at").Optional(),
-		field.String("downgraded_tier").Comment("the tier the customer downgraded from").Optional(),
-		field.Bool("cancelled").Default(false),
+		field.Enum("tier").
+			Values("free", "pro", "enterprise").
+			Default("free"),
+		field.String("external_customer_id").
+			Optional().
+			Comment("used to store references to external systems, e.g. Stripe"),
+		field.String("external_subscription_id").
+			Comment("used to store references to external systems, e.g. Stripe").
+			Optional(),
+		field.Time("expires_at").
+			Optional(),
+		field.Time("upgraded_at").
+			Optional(),
+		field.String("upgraded_tier").
+			Comment("the tier the customer upgraded from").
+			Optional(),
+		field.Time("downgraded_at").
+			Optional(),
+		field.String("downgraded_tier").
+			Comment("the tier the customer downgraded from").
+			Optional(),
+		field.Bool("cancelled").
+			Default(false),
 	}
 }
 

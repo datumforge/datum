@@ -2147,7 +2147,8 @@ func (c *RefreshTokenClient) GetX(ctx context.Context, id string) *RefreshToken 
 
 // Hooks returns the client hooks.
 func (c *RefreshTokenClient) Hooks() []Hook {
-	return c.hooks.RefreshToken
+	hooks := c.hooks.RefreshToken
+	return append(hooks[:len(hooks):len(hooks)], refreshtoken.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

@@ -102,6 +102,11 @@ func ExpirationAt(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldExpirationAt, v))
 }
 
+// ExpiresAt applies equality check predicate on the "expires_at" field. It's identical to ExpiresAtEQ.
+func ExpiresAt(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldEQ(FieldExpiresAt, v))
+}
+
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldEQ(FieldDescription, v))
@@ -520,6 +525,46 @@ func ExpirationAtLT(v time.Time) predicate.PersonalAccessToken {
 // ExpirationAtLTE applies the LTE predicate on the "expiration_at" field.
 func ExpirationAtLTE(v time.Time) predicate.PersonalAccessToken {
 	return predicate.PersonalAccessToken(sql.FieldLTE(FieldExpirationAt, v))
+}
+
+// ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
+func ExpiresAtEQ(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldEQ(FieldExpiresAt, v))
+}
+
+// ExpiresAtNEQ applies the NEQ predicate on the "expires_at" field.
+func ExpiresAtNEQ(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldNEQ(FieldExpiresAt, v))
+}
+
+// ExpiresAtIn applies the In predicate on the "expires_at" field.
+func ExpiresAtIn(vs ...time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldIn(FieldExpiresAt, vs...))
+}
+
+// ExpiresAtNotIn applies the NotIn predicate on the "expires_at" field.
+func ExpiresAtNotIn(vs ...time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldNotIn(FieldExpiresAt, vs...))
+}
+
+// ExpiresAtGT applies the GT predicate on the "expires_at" field.
+func ExpiresAtGT(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldGT(FieldExpiresAt, v))
+}
+
+// ExpiresAtGTE applies the GTE predicate on the "expires_at" field.
+func ExpiresAtGTE(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldGTE(FieldExpiresAt, v))
+}
+
+// ExpiresAtLT applies the LT predicate on the "expires_at" field.
+func ExpiresAtLT(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldLT(FieldExpiresAt, v))
+}
+
+// ExpiresAtLTE applies the LTE predicate on the "expires_at" field.
+func ExpiresAtLTE(v time.Time) predicate.PersonalAccessToken {
+	return predicate.PersonalAccessToken(sql.FieldLTE(FieldExpiresAt, v))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.

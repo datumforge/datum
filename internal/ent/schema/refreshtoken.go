@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -23,9 +24,9 @@ func (RefreshToken) Fields() []ent.Field {
 			Unique().
 			Immutable(),
 		field.Time("expires_at").
-			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }), // nolint: gomnd
+			Default(defaultTime),
 		field.Time("issued_at").
-			Default(time.Now()),
+			Default(time.Now),
 		field.String("organization_id").
 			Comment("organization ID of the organization the user is accessing"),
 		field.String("user_id").
@@ -51,5 +52,12 @@ func (RefreshToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Hooks of the AccessToken
+func (RefreshToken) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookRefreshToken(),
 	}
 }

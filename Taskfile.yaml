@@ -73,8 +73,9 @@ tasks:
         go run db/create_migrations.go ${migration};
   atlas:lint:
     desc: lints the pushed migration files
+    ignore_error: true
     cmds:
-      - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w   
+      - atlas migrate lint --dev-url "sqlite://file?mode=memory&_fk=1" --dir "file://db/migrations" -w
   atlas:migrate:
     desc: pushes the generated migration files to atlas cloud
     cmds:

@@ -383,6 +383,7 @@ type CreatePersonalAccessTokenInput struct {
 	Token        *string    `json:"token,omitempty"`
 	Abilities    []string   `json:"abilities,omitempty"`
 	ExpirationAt time.Time  `json:"expirationAt"`
+	ExpiresAt    time.Time  `json:"expiresAt"`
 	Description  *string    `json:"description,omitempty"`
 	LastUsedAt   *time.Time `json:"lastUsedAt,omitempty"`
 	OwnerID      string     `json:"ownerID"`
@@ -2167,6 +2168,7 @@ type PersonalAccessToken struct {
 	Name         string     `json:"name"`
 	Abilities    []string   `json:"abilities,omitempty"`
 	ExpirationAt time.Time  `json:"expirationAt"`
+	ExpiresAt    time.Time  `json:"expiresAt"`
 	Description  string     `json:"description"`
 	LastUsedAt   *time.Time `json:"lastUsedAt,omitempty"`
 	Owner        User       `json:"owner"`
@@ -2300,6 +2302,15 @@ type PersonalAccessTokenWhereInput struct {
 	ExpirationAtGte   *time.Time   `json:"expirationAtGTE,omitempty"`
 	ExpirationAtLt    *time.Time   `json:"expirationAtLT,omitempty"`
 	ExpirationAtLte   *time.Time   `json:"expirationAtLTE,omitempty"`
+	// expires_at field predicates
+	ExpiresAt      *time.Time   `json:"expiresAt,omitempty"`
+	ExpiresAtNeq   *time.Time   `json:"expiresAtNEQ,omitempty"`
+	ExpiresAtIn    []*time.Time `json:"expiresAtIn,omitempty"`
+	ExpiresAtNotIn []*time.Time `json:"expiresAtNotIn,omitempty"`
+	ExpiresAtGt    *time.Time   `json:"expiresAtGT,omitempty"`
+	ExpiresAtGte   *time.Time   `json:"expiresAtGTE,omitempty"`
+	ExpiresAtLt    *time.Time   `json:"expiresAtLT,omitempty"`
+	ExpiresAtLte   *time.Time   `json:"expiresAtLTE,omitempty"`
 	// last_used_at field predicates
 	LastUsedAt       *time.Time   `json:"lastUsedAt,omitempty"`
 	LastUsedAtNeq    *time.Time   `json:"lastUsedAtNEQ,omitempty"`
@@ -2844,6 +2855,7 @@ type UpdatePersonalAccessTokenInput struct {
 	AppendAbilities []string   `json:"appendAbilities,omitempty"`
 	ClearAbilities  *bool      `json:"clearAbilities,omitempty"`
 	ExpirationAt    *time.Time `json:"expirationAt,omitempty"`
+	ExpiresAt       *time.Time `json:"expiresAt,omitempty"`
 	Description     *string    `json:"description,omitempty"`
 	LastUsedAt      *time.Time `json:"lastUsedAt,omitempty"`
 	ClearLastUsedAt *bool      `json:"clearLastUsedAt,omitempty"`

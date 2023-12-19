@@ -63,10 +63,7 @@ func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("setting", GroupSetting.Type).
 			Required().
-			Unique().
-			Annotations(entsql.Annotation{
-				OnDelete: entsql.Cascade,
-			}),
+			Unique(),
 		edge.To("users", User.Type),
 		edge.From("owner", Organization.Type).
 			Ref("groups").

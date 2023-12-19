@@ -359,6 +359,7 @@ input CreatePersonalAccessTokenInput {
   token: String
   abilities: [String!]
   expirationAt: Time!
+  expiresAt: Time!
   description: String
   lastUsedAt: Time
   ownerID: ID!
@@ -2041,6 +2042,7 @@ type PersonalAccessToken implements Node {
   name: String!
   abilities: [String!]
   expirationAt: Time!
+  expiresAt: Time!
   description: String!
   lastUsedAt: Time
   owner: User!
@@ -2153,6 +2155,15 @@ input PersonalAccessTokenWhereInput {
   expirationAtGTE: Time
   expirationAtLT: Time
   expirationAtLTE: Time
+  """expires_at field predicates"""
+  expiresAt: Time
+  expiresAtNEQ: Time
+  expiresAtIn: [Time!]
+  expiresAtNotIn: [Time!]
+  expiresAtGT: Time
+  expiresAtGTE: Time
+  expiresAtLT: Time
+  expiresAtLTE: Time
   """last_used_at field predicates"""
   lastUsedAt: Time
   lastUsedAtNEQ: Time
@@ -2913,6 +2924,7 @@ input UpdatePersonalAccessTokenInput {
   appendAbilities: [String!]
   clearAbilities: Boolean
   expirationAt: Time
+  expiresAt: Time
   description: String
   lastUsedAt: Time
   clearLastUsedAt: Boolean

@@ -79,7 +79,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks [1]ent.Hook
+	Hooks [2]ent.Hook
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -87,9 +87,9 @@ var (
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultExpiresAt holds the default value on creation for the "expires_at" field.
-	DefaultExpiresAt func() time.Time
+	DefaultExpiresAt time.Time
 	// DefaultIssuedAt holds the default value on creation for the "issued_at" field.
-	DefaultIssuedAt time.Time
+	DefaultIssuedAt func() time.Time
 	// UpdateDefaultLastUsedAt holds the default value on update for the "last_used_at" field.
 	UpdateDefaultLastUsedAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.

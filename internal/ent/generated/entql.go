@@ -262,8 +262,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldName:         {Type: field.TypeString, Column: personalaccesstoken.FieldName},
 			personalaccesstoken.FieldToken:        {Type: field.TypeString, Column: personalaccesstoken.FieldToken},
 			personalaccesstoken.FieldAbilities:    {Type: field.TypeJSON, Column: personalaccesstoken.FieldAbilities},
-			personalaccesstoken.FieldExpirationAt: {Type: field.TypeTime, Column: personalaccesstoken.FieldExpirationAt},
 			personalaccesstoken.FieldExpiresAt:    {Type: field.TypeTime, Column: personalaccesstoken.FieldExpiresAt},
+			personalaccesstoken.FieldExpirationAt: {Type: field.TypeTime, Column: personalaccesstoken.FieldExpirationAt},
 			personalaccesstoken.FieldDescription:  {Type: field.TypeString, Column: personalaccesstoken.FieldDescription},
 			personalaccesstoken.FieldLastUsedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
@@ -1865,14 +1865,14 @@ func (f *PersonalAccessTokenFilter) WhereAbilities(p entql.BytesP) {
 	f.Where(p.Field(personalaccesstoken.FieldAbilities))
 }
 
-// WhereExpirationAt applies the entql time.Time predicate on the expiration_at field.
-func (f *PersonalAccessTokenFilter) WhereExpirationAt(p entql.TimeP) {
-	f.Where(p.Field(personalaccesstoken.FieldExpirationAt))
-}
-
 // WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
 func (f *PersonalAccessTokenFilter) WhereExpiresAt(p entql.TimeP) {
 	f.Where(p.Field(personalaccesstoken.FieldExpiresAt))
+}
+
+// WhereExpirationAt applies the entql time.Time predicate on the expiration_at field.
+func (f *PersonalAccessTokenFilter) WhereExpirationAt(p entql.TimeP) {
+	f.Where(p.Field(personalaccesstoken.FieldExpirationAt))
 }
 
 // WhereDescription applies the entql string predicate on the description field.

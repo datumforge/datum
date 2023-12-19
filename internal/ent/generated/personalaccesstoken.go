@@ -33,10 +33,10 @@ type PersonalAccessToken struct {
 	Token string `json:"-"`
 	// Abilities holds the value of the "abilities" field.
 	Abilities []string `json:"abilities,omitempty"`
-	// ExpirationAt holds the value of the "expiration_at" field.
-	ExpirationAt time.Time `json:"expiration_at,omitempty"`
 	// ExpiresAt holds the value of the "expires_at" field.
 	ExpiresAt time.Time `json:"expires_at,omitempty"`
+	// ExpirationAt holds the value of the "expiration_at" field.
+	ExpirationAt time.Time `json:"expiration_at,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// LastUsedAt holds the value of the "last_used_at" field.
@@ -81,7 +81,7 @@ func (*PersonalAccessToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
 			values[i] = new(sql.NullString)
-		case personalaccesstoken.FieldCreatedAt, personalaccesstoken.FieldUpdatedAt, personalaccesstoken.FieldExpirationAt, personalaccesstoken.FieldExpiresAt, personalaccesstoken.FieldLastUsedAt:
+		case personalaccesstoken.FieldCreatedAt, personalaccesstoken.FieldUpdatedAt, personalaccesstoken.FieldExpiresAt, personalaccesstoken.FieldExpirationAt, personalaccesstoken.FieldLastUsedAt:
 			values[i] = new(sql.NullTime)
 		case personalaccesstoken.ForeignKeys[0]: // user_personal_access_tokens
 			values[i] = new(sql.NullString)
@@ -150,17 +150,17 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 					return fmt.Errorf("unmarshal field abilities: %w", err)
 				}
 			}
-		case personalaccesstoken.FieldExpirationAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field expiration_at", values[i])
-			} else if value.Valid {
-				pat.ExpirationAt = value.Time
-			}
 		case personalaccesstoken.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
 			} else if value.Valid {
 				pat.ExpiresAt = value.Time
+			}
+		case personalaccesstoken.FieldExpirationAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field expiration_at", values[i])
+			} else if value.Valid {
+				pat.ExpirationAt = value.Time
 			}
 		case personalaccesstoken.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -243,11 +243,11 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString("abilities=")
 	builder.WriteString(fmt.Sprintf("%v", pat.Abilities))
 	builder.WriteString(", ")
-	builder.WriteString("expiration_at=")
-	builder.WriteString(pat.ExpirationAt.Format(time.ANSIC))
-	builder.WriteString(", ")
 	builder.WriteString("expires_at=")
 	builder.WriteString(pat.ExpiresAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("expiration_at=")
+	builder.WriteString(pat.ExpirationAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(pat.Description)

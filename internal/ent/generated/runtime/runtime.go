@@ -388,6 +388,14 @@ func init() {
 	personalaccesstokenDescToken := personalaccesstokenFields[1].Descriptor()
 	// personalaccesstoken.DefaultToken holds the default value on creation for the token field.
 	personalaccesstoken.DefaultToken = personalaccesstokenDescToken.Default.(func() string)
+	// personalaccesstokenDescExpiresAt is the schema descriptor for expires_at field.
+	personalaccesstokenDescExpiresAt := personalaccesstokenFields[3].Descriptor()
+	// personalaccesstoken.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	personalaccesstoken.DefaultExpiresAt = personalaccesstokenDescExpiresAt.Default.(time.Time)
+	// personalaccesstokenDescExpirationAt is the schema descriptor for expiration_at field.
+	personalaccesstokenDescExpirationAt := personalaccesstokenFields[4].Descriptor()
+	// personalaccesstoken.DefaultExpirationAt holds the default value on creation for the expiration_at field.
+	personalaccesstoken.DefaultExpirationAt = personalaccesstokenDescExpirationAt.Default.(time.Time)
 	// personalaccesstokenDescDescription is the schema descriptor for description field.
 	personalaccesstokenDescDescription := personalaccesstokenFields[5].Descriptor()
 	// personalaccesstoken.DefaultDescription holds the default value on creation for the description field.

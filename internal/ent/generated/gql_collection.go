@@ -1455,15 +1455,15 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				selectedFields = append(selectedFields, personalaccesstoken.FieldAbilities)
 				fieldSeen[personalaccesstoken.FieldAbilities] = struct{}{}
 			}
-		case "expirationAt":
-			if _, ok := fieldSeen[personalaccesstoken.FieldExpirationAt]; !ok {
-				selectedFields = append(selectedFields, personalaccesstoken.FieldExpirationAt)
-				fieldSeen[personalaccesstoken.FieldExpirationAt] = struct{}{}
-			}
 		case "expiresAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldExpiresAt]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldExpiresAt)
 				fieldSeen[personalaccesstoken.FieldExpiresAt] = struct{}{}
+			}
+		case "expirationAt":
+			if _, ok := fieldSeen[personalaccesstoken.FieldExpirationAt]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldExpirationAt)
+				fieldSeen[personalaccesstoken.FieldExpirationAt] = struct{}{}
 			}
 		case "description":
 			if _, ok := fieldSeen[personalaccesstoken.FieldDescription]; !ok {

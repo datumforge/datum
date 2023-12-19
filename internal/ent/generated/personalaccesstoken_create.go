@@ -103,15 +103,31 @@ func (patc *PersonalAccessTokenCreate) SetAbilities(s []string) *PersonalAccessT
 	return patc
 }
 
+// SetExpiresAt sets the "expires_at" field.
+func (patc *PersonalAccessTokenCreate) SetExpiresAt(t time.Time) *PersonalAccessTokenCreate {
+	patc.mutation.SetExpiresAt(t)
+	return patc
+}
+
+// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
+func (patc *PersonalAccessTokenCreate) SetNillableExpiresAt(t *time.Time) *PersonalAccessTokenCreate {
+	if t != nil {
+		patc.SetExpiresAt(*t)
+	}
+	return patc
+}
+
 // SetExpirationAt sets the "expiration_at" field.
 func (patc *PersonalAccessTokenCreate) SetExpirationAt(t time.Time) *PersonalAccessTokenCreate {
 	patc.mutation.SetExpirationAt(t)
 	return patc
 }
 
-// SetExpiresAt sets the "expires_at" field.
-func (patc *PersonalAccessTokenCreate) SetExpiresAt(t time.Time) *PersonalAccessTokenCreate {
-	patc.mutation.SetExpiresAt(t)
+// SetNillableExpirationAt sets the "expiration_at" field if the given value is not nil.
+func (patc *PersonalAccessTokenCreate) SetNillableExpirationAt(t *time.Time) *PersonalAccessTokenCreate {
+	if t != nil {
+		patc.SetExpirationAt(*t)
+	}
 	return patc
 }
 
@@ -226,6 +242,14 @@ func (patc *PersonalAccessTokenCreate) defaults() error {
 		v := personalaccesstoken.DefaultToken()
 		patc.mutation.SetToken(v)
 	}
+	if _, ok := patc.mutation.ExpiresAt(); !ok {
+		v := personalaccesstoken.DefaultExpiresAt
+		patc.mutation.SetExpiresAt(v)
+	}
+	if _, ok := patc.mutation.ExpirationAt(); !ok {
+		v := personalaccesstoken.DefaultExpirationAt
+		patc.mutation.SetExpirationAt(v)
+	}
 	if _, ok := patc.mutation.Description(); !ok {
 		v := personalaccesstoken.DefaultDescription
 		patc.mutation.SetDescription(v)
@@ -254,11 +278,11 @@ func (patc *PersonalAccessTokenCreate) check() error {
 	if _, ok := patc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "PersonalAccessToken.token"`)}
 	}
-	if _, ok := patc.mutation.ExpirationAt(); !ok {
-		return &ValidationError{Name: "expiration_at", err: errors.New(`generated: missing required field "PersonalAccessToken.expiration_at"`)}
-	}
 	if _, ok := patc.mutation.ExpiresAt(); !ok {
 		return &ValidationError{Name: "expires_at", err: errors.New(`generated: missing required field "PersonalAccessToken.expires_at"`)}
+	}
+	if _, ok := patc.mutation.ExpirationAt(); !ok {
+		return &ValidationError{Name: "expiration_at", err: errors.New(`generated: missing required field "PersonalAccessToken.expiration_at"`)}
 	}
 	if _, ok := patc.mutation.Description(); !ok {
 		return &ValidationError{Name: "description", err: errors.New(`generated: missing required field "PersonalAccessToken.description"`)}
@@ -330,13 +354,13 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 		_spec.SetField(personalaccesstoken.FieldAbilities, field.TypeJSON, value)
 		_node.Abilities = value
 	}
-	if value, ok := patc.mutation.ExpirationAt(); ok {
-		_spec.SetField(personalaccesstoken.FieldExpirationAt, field.TypeTime, value)
-		_node.ExpirationAt = value
-	}
 	if value, ok := patc.mutation.ExpiresAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldExpiresAt, field.TypeTime, value)
 		_node.ExpiresAt = value
+	}
+	if value, ok := patc.mutation.ExpirationAt(); ok {
+		_spec.SetField(personalaccesstoken.FieldExpirationAt, field.TypeTime, value)
+		_node.ExpirationAt = value
 	}
 	if value, ok := patc.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)

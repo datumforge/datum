@@ -10,15 +10,12 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 )
 
-// HookAccessToken runs on accesstoken mutations and sets expires time
+// HookAccessToken runs on accesstoken mutations and sets expires
 func HookAccessToken() ent.Hook {
 	return hook.On(func(next ent.Mutator) ent.Mutator {
 		return hook.AccessTokenFunc(func(ctx context.Context, mutation *generated.AccessTokenMutation) (generated.Value, error) {
 			if mutation.Op().Is(ent.OpCreate) {
-				expires, _ := mutation.ExpiresAt()
-				if expires.IsZero() {
-					mutation.SetExpiresAt(time.Now().Add(time.Hour * 24 * 7)) // nolint: gomnd
-				}
+				mutation.SetExpiresAt(time.Now().Add(time.Hour * 24 * 7)) // nolint: gomnd
 			}
 
 			return next.Mutate(ctx, mutation)

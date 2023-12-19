@@ -1291,8 +1291,8 @@ type CreatePersonalAccessTokenInput struct {
 	Name         string
 	Token        *string
 	Abilities    []string
-	ExpirationAt time.Time
-	ExpiresAt    time.Time
+	ExpiresAt    *time.Time
+	ExpirationAt *time.Time
 	Description  *string
 	LastUsedAt   *time.Time
 	OwnerID      string
@@ -1319,8 +1319,12 @@ func (i *CreatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if v := i.Abilities; v != nil {
 		m.SetAbilities(v)
 	}
-	m.SetExpirationAt(i.ExpirationAt)
-	m.SetExpiresAt(i.ExpiresAt)
+	if v := i.ExpiresAt; v != nil {
+		m.SetExpiresAt(*v)
+	}
+	if v := i.ExpirationAt; v != nil {
+		m.SetExpirationAt(*v)
+	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
@@ -1345,8 +1349,8 @@ type UpdatePersonalAccessTokenInput struct {
 	ClearAbilities  bool
 	Abilities       []string
 	AppendAbilities []string
-	ExpirationAt    *time.Time
 	ExpiresAt       *time.Time
+	ExpirationAt    *time.Time
 	Description     *string
 	ClearLastUsedAt bool
 	LastUsedAt      *time.Time
@@ -1376,11 +1380,11 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	if i.AppendAbilities != nil {
 		m.AppendAbilities(i.Abilities)
 	}
-	if v := i.ExpirationAt; v != nil {
-		m.SetExpirationAt(*v)
-	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
+	}
+	if v := i.ExpirationAt; v != nil {
+		m.SetExpirationAt(*v)
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)

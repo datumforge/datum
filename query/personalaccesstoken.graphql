@@ -1,11 +1,20 @@
 mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
   createPersonalAccessToken(input: $input) {
     PersonalAccessToken {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      name
+      abilities
+      expiresAt
+      description
+      lastUsedAt
       owner {
         id
+        displayName
       }
-      abilities
-      name
     }
   }
 }
@@ -18,12 +27,14 @@ query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
     createdBy
     updatedBy
     name
+    abilities
+    expiresAt
+    description
+    lastUsedAt
     owner {
       id
+      displayName
     }
-    abilities
-    expirationAt
-    lastUsedAt
   }
 }
 

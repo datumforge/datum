@@ -12,7 +12,7 @@ steps:
     plugins:
       - docker#v5.9.0:
           image: "ghcr.io/datumforge/base-ci-image:main"
-          command: ["task", "generate"]
+          command: ["task", "ent", "task", "gqlgen"]
 
 - group: ":test_tube: Tests"
   key: "tests"

@@ -186,3 +186,8 @@ tasks:
     desc: launches an interactive terminal to the local datum db with some tasty options
     cmds:
       -  sqlite3 -column -header -box datum.db
+  ci:
+    desc: a task that runs during CI
+    cmds:
+      - task: ent
+      - task: gqlgen

@@ -20,7 +20,10 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
+	// use transactional client
+	client := WithTransactionalMutation(ctx)
+
+	org, err := client.Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			validationError := err.(*generated.ValidationError)
@@ -65,7 +68,10 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	org, err := r.client.Organization.Get(ctx, id)
+	// use transactional client
+	client := generated.FromContext(ctx)
+
+	org, err := client.Organization.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -115,7 +121,10 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
+	// use transactional client
+	client := generated.FromContext(ctx)
+
+	if err := client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}
@@ -128,7 +137,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		return nil, err
 	}
 
-	if err := generated.OrganizationEdgeCleanup(ctx, r.client, id); err != nil {
+	if err := generated.OrganizationEdgeCleanup(ctx, client, id); err != nil {
 		return nil, newCascadeDeleteError(err)
 	}
 
@@ -151,7 +160,10 @@ func (r *queryResolver) Organization(ctx context.Context, id string) (*generated
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	org, err := r.client.Organization.Get(ctx, id)
+	// use transactional client
+	client := generated.FromContext(ctx)
+
+	org, err := client.Organization.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get organization", "error", err)
 

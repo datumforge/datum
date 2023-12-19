@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	echo "github.com/datumforge/echox"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
@@ -55,7 +56,7 @@ func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 // Handler is an http handler wrapping a Resolver
 type Handler struct {
 	r              *Resolver
-	graphqlHandler http.Handler
+	graphqlHandler *handler.Server
 	playground     *playground.Playground
 	middleware     []echo.MiddlewareFunc
 }
@@ -69,6 +70,8 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 			},
 		),
 	)
+
+	srv.Use(entgql.Transactioner{TxOpener: r.client})
 
 	h := &Handler{
 		r:              r,
@@ -94,12 +97,10 @@ func (h *Handler) Handler() http.HandlerFunc {
 
 // Routes for the the server
 func (h *Handler) Routes(e *echo.Group) {
+	fmt.Print("HEREEEE")
 	e.Use(h.middleware...)
 
-	e.POST("/"+graphPath, func(c echo.Context) error {
-		h.graphqlHandler.ServeHTTP(c.Response(), c.Request())
-		return nil
-	})
+	e.POST("/"+graphPath, echo.WrapHandler(h.graphqlHandler))
 
 	if h.playground != nil {
 		handlers, err := h.playground.Handlers()

@@ -191,3 +191,4 @@ tasks:
     cmds:
       - task: ent
       - task: gqlgen
+      - bash scripts/gitdiff.sh

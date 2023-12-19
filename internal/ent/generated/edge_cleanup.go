@@ -11,13 +11,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 )
 
-func AccessTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
-
-	return nil
-}
-
 func EntitlementEdgeCleanup(ctx context.Context, r *Client, id string) error {
 	// TODO: pass in transaction so that all upstream
 	// deletes can be rolled back if one fails
@@ -96,13 +89,6 @@ func OrganizationSettingEdgeCleanup(ctx context.Context, r *Client, id string) e
 }
 
 func PersonalAccessTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
-
-	return nil
-}
-
-func RefreshTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
 	// TODO: pass in transaction so that all upstream
 	// deletes can be rolled back if one fails
 

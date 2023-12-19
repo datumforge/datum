@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -26,12 +24,8 @@ func (Session) Fields() []ent.Field {
 			Comment("token is a string token issued to users that has a limited lifetime").
 			Unique().
 			Immutable(),
-		field.Time("issued_at").
-			Default(time.Now),
-		field.Time("expires_at").
-			Default(defaultTime).
-			Comment("projected expiration of the session token").
-			Optional(),
+		field.Time("issued_at"),
+		field.Time("expires_at"),
 		field.String("organization_id").
 			Comment("organization ID of the organization the user is accessing"),
 		field.String("user_id").

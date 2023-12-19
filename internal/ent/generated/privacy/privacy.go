@@ -111,30 +111,6 @@ func DenyMutationOperationRule(op generated.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
-// The AccessTokenQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type AccessTokenQueryRuleFunc func(context.Context, *generated.AccessTokenQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f AccessTokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.AccessTokenQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.AccessTokenQuery", q)
-}
-
-// The AccessTokenMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type AccessTokenMutationRuleFunc func(context.Context, *generated.AccessTokenMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f AccessTokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.AccessTokenMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.AccessTokenMutation", m)
-}
-
 // The EntitlementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EntitlementQueryRuleFunc func(context.Context, *generated.EntitlementQuery) error
@@ -351,30 +327,6 @@ func (f PersonalAccessTokenMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.PersonalAccessTokenMutation", m)
 }
 
-// The RefreshTokenQueryRuleFunc type is an adapter to allow the use of ordinary
-// functions as a query rule.
-type RefreshTokenQueryRuleFunc func(context.Context, *generated.RefreshTokenQuery) error
-
-// EvalQuery return f(ctx, q).
-func (f RefreshTokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.RefreshTokenQuery); ok {
-		return f(ctx, q)
-	}
-	return Denyf("generated/privacy: unexpected query type %T, expect *generated.RefreshTokenQuery", q)
-}
-
-// The RefreshTokenMutationRuleFunc type is an adapter to allow the use of ordinary
-// functions as a mutation rule.
-type RefreshTokenMutationRuleFunc func(context.Context, *generated.RefreshTokenMutation) error
-
-// EvalMutation calls f(ctx, m).
-func (f RefreshTokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
-	if m, ok := m.(*generated.RefreshTokenMutation); ok {
-		return f(ctx, m)
-	}
-	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.RefreshTokenMutation", m)
-}
-
 // The SessionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SessionQueryRuleFunc func(context.Context, *generated.SessionQuery) error
@@ -482,8 +434,6 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q generated.Query) (Filter, error) {
 	switch q := q.(type) {
-	case *generated.AccessTokenQuery:
-		return q.Filter(), nil
 	case *generated.EntitlementQuery:
 		return q.Filter(), nil
 	case *generated.GroupQuery:
@@ -502,8 +452,6 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.PersonalAccessTokenQuery:
 		return q.Filter(), nil
-	case *generated.RefreshTokenQuery:
-		return q.Filter(), nil
 	case *generated.SessionQuery:
 		return q.Filter(), nil
 	case *generated.UserQuery:
@@ -517,8 +465,6 @@ func queryFilter(q generated.Query) (Filter, error) {
 
 func mutationFilter(m generated.Mutation) (Filter, error) {
 	switch m := m.(type) {
-	case *generated.AccessTokenMutation:
-		return m.Filter(), nil
 	case *generated.EntitlementMutation:
 		return m.Filter(), nil
 	case *generated.GroupMutation:
@@ -536,8 +482,6 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.OrganizationSettingMutation:
 		return m.Filter(), nil
 	case *generated.PersonalAccessTokenMutation:
-		return m.Filter(), nil
-	case *generated.RefreshTokenMutation:
 		return m.Filter(), nil
 	case *generated.SessionMutation:
 		return m.Filter(), nil

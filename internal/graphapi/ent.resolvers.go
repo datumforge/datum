@@ -28,11 +28,6 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]generated.No
 	panic(fmt.Errorf("not implemented: Nodes - nodes"))
 }
 
-// AccessTokens is the resolver for the accessTokens field.
-func (r *queryResolver) AccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.AccessTokenWhereInput) (*generated.AccessTokenConnection, error) {
-	panic(fmt.Errorf("not implemented: AccessTokens - accessTokens"))
-}
-
 // Entitlements is the resolver for the entitlements field.
 func (r *queryResolver) Entitlements(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.EntitlementWhereInput) (*generated.EntitlementConnection, error) {
 	panic(fmt.Errorf("not implemented: Entitlements - entitlements"))
@@ -96,11 +91,6 @@ func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.
 // PersonalAccessTokens is the resolver for the personalAccessTokens field.
 func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error) {
 	panic(fmt.Errorf("not implemented: PersonalAccessTokens - personalAccessTokens"))
-}
-
-// RefreshTokens is the resolver for the refreshTokens field.
-func (r *queryResolver) RefreshTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.RefreshTokenWhereInput) (*generated.RefreshTokenConnection, error) {
-	panic(fmt.Errorf("not implemented: RefreshTokens - refreshTokens"))
 }
 
 // Sessions is the resolver for the sessions field.

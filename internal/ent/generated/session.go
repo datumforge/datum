@@ -30,7 +30,7 @@ type Session struct {
 	SessionToken string `json:"session_token,omitempty"`
 	// IssuedAt holds the value of the "issued_at" field.
 	IssuedAt time.Time `json:"issued_at,omitempty"`
-	// projected expiration of the session token
+	// ExpiresAt holds the value of the "expires_at" field.
 	ExpiresAt time.Time `json:"expires_at,omitempty"`
 	// organization ID of the organization the user is accessing
 	OrganizationID string `json:"organization_id,omitempty"`

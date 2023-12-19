@@ -104,20 +104,6 @@ func (patu *PersonalAccessTokenUpdate) SetNillableExpiresAt(t *time.Time) *Perso
 	return patu
 }
 
-// SetExpirationAt sets the "expiration_at" field.
-func (patu *PersonalAccessTokenUpdate) SetExpirationAt(t time.Time) *PersonalAccessTokenUpdate {
-	patu.mutation.SetExpirationAt(t)
-	return patu
-}
-
-// SetNillableExpirationAt sets the "expiration_at" field if the given value is not nil.
-func (patu *PersonalAccessTokenUpdate) SetNillableExpirationAt(t *time.Time) *PersonalAccessTokenUpdate {
-	if t != nil {
-		patu.SetExpirationAt(*t)
-	}
-	return patu
-}
-
 // SetDescription sets the "description" field.
 func (patu *PersonalAccessTokenUpdate) SetDescription(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetDescription(s)
@@ -264,9 +250,6 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 	if value, ok := patu.mutation.ExpiresAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldExpiresAt, field.TypeTime, value)
 	}
-	if value, ok := patu.mutation.ExpirationAt(); ok {
-		_spec.SetField(personalaccesstoken.FieldExpirationAt, field.TypeTime, value)
-	}
 	if value, ok := patu.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)
 	}
@@ -397,20 +380,6 @@ func (patuo *PersonalAccessTokenUpdateOne) SetExpiresAt(t time.Time) *PersonalAc
 func (patuo *PersonalAccessTokenUpdateOne) SetNillableExpiresAt(t *time.Time) *PersonalAccessTokenUpdateOne {
 	if t != nil {
 		patuo.SetExpiresAt(*t)
-	}
-	return patuo
-}
-
-// SetExpirationAt sets the "expiration_at" field.
-func (patuo *PersonalAccessTokenUpdateOne) SetExpirationAt(t time.Time) *PersonalAccessTokenUpdateOne {
-	patuo.mutation.SetExpirationAt(t)
-	return patuo
-}
-
-// SetNillableExpirationAt sets the "expiration_at" field if the given value is not nil.
-func (patuo *PersonalAccessTokenUpdateOne) SetNillableExpirationAt(t *time.Time) *PersonalAccessTokenUpdateOne {
-	if t != nil {
-		patuo.SetExpirationAt(*t)
 	}
 	return patuo
 }
@@ -590,9 +559,6 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := patuo.mutation.ExpiresAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldExpiresAt, field.TypeTime, value)
-	}
-	if value, ok := patuo.mutation.ExpirationAt(); ok {
-		_spec.SetField(personalaccesstoken.FieldExpirationAt, field.TypeTime, value)
 	}
 	if value, ok := patuo.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)

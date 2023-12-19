@@ -9,41 +9,6 @@ import (
 )
 
 var (
-	// AccessTokensColumns holds the columns for the "access_tokens" table.
-	AccessTokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "created_by", Type: field.TypeString, Nullable: true},
-		{Name: "updated_by", Type: field.TypeString, Nullable: true},
-		{Name: "access_token", Type: field.TypeString, Unique: true},
-		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "issued_at", Type: field.TypeTime},
-		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-	}
-	// AccessTokensTable holds the schema information for the "access_tokens" table.
-	AccessTokensTable = &schema.Table{
-		Name:       "access_tokens",
-		Columns:    AccessTokensColumns,
-		PrimaryKey: []*schema.Column{AccessTokensColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "access_tokens_users_access_token",
-				Columns:    []*schema.Column{AccessTokensColumns[10]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "accesstoken_access_token",
-				Unique:  false,
-				Columns: []*schema.Column{AccessTokensColumns[5]},
-			},
-		},
-	}
 	// EntitlementsColumns holds the columns for the "entitlements" table.
 	EntitlementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -306,7 +271,6 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
 		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "expiration_at", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Default: ""},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
 		{Name: "user_personal_access_tokens", Type: field.TypeString},
@@ -319,7 +283,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "personal_access_tokens_users_personal_access_tokens",
-				Columns:    []*schema.Column{PersonalAccessTokensColumns[12]},
+				Columns:    []*schema.Column{PersonalAccessTokensColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -332,30 +296,6 @@ var (
 			},
 		},
 	}
-	// RefreshTokensColumns holds the columns for the "refresh_tokens" table.
-	RefreshTokensColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
-		{Name: "refresh_token", Type: field.TypeString, Unique: true},
-		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "issued_at", Type: field.TypeTime},
-		{Name: "organization_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-		{Name: "user_refresh_token", Type: field.TypeString, Nullable: true},
-	}
-	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
-	RefreshTokensTable = &schema.Table{
-		Name:       "refresh_tokens",
-		Columns:    RefreshTokensColumns,
-		PrimaryKey: []*schema.Column{RefreshTokensColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "refresh_tokens_users_refresh_token",
-				Columns:    []*schema.Column{RefreshTokensColumns[6]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -365,7 +305,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "session_token", Type: field.TypeString, Unique: true},
 		{Name: "issued_at", Type: field.TypeTime},
-		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "organization_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
 	}
@@ -379,7 +319,7 @@ var (
 				Symbol:     "sessions_users_sessions",
 				Columns:    []*schema.Column{SessionsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.NoAction,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -508,7 +448,6 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		AccessTokensTable,
 		EntitlementsTable,
 		GroupsTable,
 		GroupSettingsTable,
@@ -518,7 +457,6 @@ var (
 		OrganizationsTable,
 		OrganizationSettingsTable,
 		PersonalAccessTokensTable,
-		RefreshTokensTable,
 		SessionsTable,
 		UsersTable,
 		UserSettingsTable,
@@ -528,7 +466,6 @@ var (
 )
 
 func init() {
-	AccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
@@ -537,7 +474,6 @@ func init() {
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
-	RefreshTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable

@@ -1,4 +1,4 @@
-h1:SJuzTF7Sya7po91uoQUyMJIzydliuHvGWDVpbSTQHD0=
+h1:gFfTvn4FniFYxkDgrDC4IpqMtITyJkONONuuc9S33tY=
 20231120230353_init.sql h1:4/akzqpaVJdSt1Vc8ABHnSzP0LzipbcekQUZpwMShjI=
 20231121013750_addusersub.sql h1:Hl3YVTQVcCFVczbnm66eM5OAAFs467PvvGz4b0HRdBg=
 20231128021906_user.sql h1:0knfsh2z8bVMd36v04o4sDdfnWb4IAo4YD+NKJ+eOZ8=
@@ -15,3 +15,6 @@ h1:SJuzTF7Sya7po91uoQUyMJIzydliuHvGWDVpbSTQHD0=
 20231219053616_moveExpiredToHooks.sql h1:vvIRM/QznxxODcz9F5CYOulOSpXPib5kdAZsgQHsy4A=
 20231219062339_personalaccesstokenexpires.sql h1:Ep5Ar2zvx+QJAYsEWL9PAMvOYgD1BtFDhCluKILkrLE=
 20231219070248_expirationAt.sql h1:oBU1+9vYiME1jnPoOwiPMYAW1mwVVA8syOdEi5MFJEk=
+20231219153827_jeefc.sql h1:C/LeQ81Iup+P9ZROTlTMtedIRjMYCPnh92liEWNzRvI=
+20231219154947_merrrr.sql h1:hSPatFB7NWwuO7R3JCcEU+qS2bFxMhjF+5LfHqv8LrY=
+20231219220449_burnzeschemas.sql h1:te/m95pyh896A5m5m1iQ9Vfibq+GAwTuiZc2iRlu0Ww=

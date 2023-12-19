@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -18,7 +17,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -29,9 +27,6 @@ import (
 type Noder interface {
 	IsNode()
 }
-
-// IsNode implements the Node interface check for GQLGen.
-func (n *AccessToken) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Entitlement) IsNode() {}
@@ -59,9 +54,6 @@ func (n *OrganizationSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *PersonalAccessToken) IsNode() {}
-
-// IsNode implements the Node interface check for GQLGen.
-func (n *RefreshToken) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Session) IsNode() {}
@@ -130,18 +122,6 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
 	switch table {
-	case accesstoken.Table:
-		query := c.AccessToken.Query().
-			Where(accesstoken.ID(id))
-		query, err := query.CollectFields(ctx, "AccessToken")
-		if err != nil {
-			return nil, err
-		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.ID(id))
@@ -242,18 +222,6 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.ID(id))
 		query, err := query.CollectFields(ctx, "PersonalAccessToken")
-		if err != nil {
-			return nil, err
-		}
-		n, err := query.Only(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return n, nil
-	case refreshtoken.Table:
-		query := c.RefreshToken.Query().
-			Where(refreshtoken.ID(id))
-		query, err := query.CollectFields(ctx, "RefreshToken")
 		if err != nil {
 			return nil, err
 		}
@@ -371,22 +339,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
-	case accesstoken.Table:
-		query := c.AccessToken.Query().
-			Where(accesstoken.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "AccessToken")
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
 	case entitlement.Table:
 		query := c.Entitlement.Query().
 			Where(entitlement.IDIn(ids...))
@@ -519,22 +471,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "PersonalAccessToken")
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case refreshtoken.Table:
-		query := c.RefreshToken.Query().
-			Where(refreshtoken.IDIn(ids...))
-		query, err := query.CollectFields(ctx, "RefreshToken")
 		if err != nil {
 			return nil, err
 		}

@@ -9,18 +9,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
-// The AccessTokenFunc type is an adapter to allow the use of ordinary
-// function as AccessToken mutator.
-type AccessTokenFunc func(context.Context, *generated.AccessTokenMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f AccessTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.AccessTokenMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.AccessTokenMutation", m)
-}
-
 // The EntitlementFunc type is an adapter to allow the use of ordinary
 // function as Entitlement mutator.
 type EntitlementFunc func(context.Context, *generated.EntitlementMutation) (generated.Value, error)
@@ -127,18 +115,6 @@ func (f PersonalAccessTokenFunc) Mutate(ctx context.Context, m generated.Mutatio
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.PersonalAccessTokenMutation", m)
-}
-
-// The RefreshTokenFunc type is an adapter to allow the use of ordinary
-// function as RefreshToken mutator.
-type RefreshTokenFunc func(context.Context, *generated.RefreshTokenMutation) (generated.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f RefreshTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
-	if mv, ok := m.(*generated.RefreshTokenMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.RefreshTokenMutation", m)
 }
 
 // The SessionFunc type is an adapter to allow the use of ordinary

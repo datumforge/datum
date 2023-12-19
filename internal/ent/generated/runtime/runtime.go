@@ -6,7 +6,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -16,7 +15,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -30,43 +28,6 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	accesstokenMixin := schema.AccessToken{}.Mixin()
-	accesstokenMixinHooks0 := accesstokenMixin[0].Hooks()
-	accesstokenHooks := schema.AccessToken{}.Hooks()
-	accesstoken.Hooks[0] = accesstokenMixinHooks0[0]
-	accesstoken.Hooks[1] = accesstokenHooks[0]
-	accesstokenMixinFields0 := accesstokenMixin[0].Fields()
-	_ = accesstokenMixinFields0
-	accesstokenMixinFields1 := accesstokenMixin[1].Fields()
-	_ = accesstokenMixinFields1
-	accesstokenFields := schema.AccessToken{}.Fields()
-	_ = accesstokenFields
-	// accesstokenDescCreatedAt is the schema descriptor for created_at field.
-	accesstokenDescCreatedAt := accesstokenMixinFields0[0].Descriptor()
-	// accesstoken.DefaultCreatedAt holds the default value on creation for the created_at field.
-	accesstoken.DefaultCreatedAt = accesstokenDescCreatedAt.Default.(func() time.Time)
-	// accesstokenDescUpdatedAt is the schema descriptor for updated_at field.
-	accesstokenDescUpdatedAt := accesstokenMixinFields0[1].Descriptor()
-	// accesstoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	accesstoken.DefaultUpdatedAt = accesstokenDescUpdatedAt.Default.(func() time.Time)
-	// accesstoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	accesstoken.UpdateDefaultUpdatedAt = accesstokenDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// accesstokenDescExpiresAt is the schema descriptor for expires_at field.
-	accesstokenDescExpiresAt := accesstokenFields[1].Descriptor()
-	// accesstoken.DefaultExpiresAt holds the default value on creation for the expires_at field.
-	accesstoken.DefaultExpiresAt = accesstokenDescExpiresAt.Default.(time.Time)
-	// accesstokenDescIssuedAt is the schema descriptor for issued_at field.
-	accesstokenDescIssuedAt := accesstokenFields[2].Descriptor()
-	// accesstoken.DefaultIssuedAt holds the default value on creation for the issued_at field.
-	accesstoken.DefaultIssuedAt = accesstokenDescIssuedAt.Default.(func() time.Time)
-	// accesstokenDescLastUsedAt is the schema descriptor for last_used_at field.
-	accesstokenDescLastUsedAt := accesstokenFields[3].Descriptor()
-	// accesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
-	accesstoken.UpdateDefaultLastUsedAt = accesstokenDescLastUsedAt.UpdateDefault.(func() time.Time)
-	// accesstokenDescID is the schema descriptor for id field.
-	accesstokenDescID := accesstokenMixinFields1[0].Descriptor()
-	// accesstoken.DefaultID holds the default value on creation for the id field.
-	accesstoken.DefaultID = accesstokenDescID.Default.(func() string)
 	entitlementMixin := schema.Entitlement{}.Mixin()
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
 	entitlement.Hooks[0] = entitlementMixinHooks0[0]
@@ -367,7 +328,9 @@ func init() {
 	organizationsetting.DefaultID = organizationsettingDescID.Default.(func() string)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
+	personalaccesstokenHooks := schema.PersonalAccessToken{}.Hooks()
 	personalaccesstoken.Hooks[0] = personalaccesstokenMixinHooks0[0]
+	personalaccesstoken.Hooks[1] = personalaccesstokenHooks[0]
 	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
 	_ = personalaccesstokenMixinFields0
 	personalaccesstokenMixinFields1 := personalaccesstokenMixin[1].Fields()
@@ -388,45 +351,18 @@ func init() {
 	personalaccesstokenDescToken := personalaccesstokenFields[1].Descriptor()
 	// personalaccesstoken.DefaultToken holds the default value on creation for the token field.
 	personalaccesstoken.DefaultToken = personalaccesstokenDescToken.Default.(func() string)
-	// personalaccesstokenDescExpiresAt is the schema descriptor for expires_at field.
-	personalaccesstokenDescExpiresAt := personalaccesstokenFields[3].Descriptor()
-	// personalaccesstoken.DefaultExpiresAt holds the default value on creation for the expires_at field.
-	personalaccesstoken.DefaultExpiresAt = personalaccesstokenDescExpiresAt.Default.(time.Time)
-	// personalaccesstokenDescExpirationAt is the schema descriptor for expiration_at field.
-	personalaccesstokenDescExpirationAt := personalaccesstokenFields[4].Descriptor()
-	// personalaccesstoken.DefaultExpirationAt holds the default value on creation for the expiration_at field.
-	personalaccesstoken.DefaultExpirationAt = personalaccesstokenDescExpirationAt.Default.(time.Time)
 	// personalaccesstokenDescDescription is the schema descriptor for description field.
-	personalaccesstokenDescDescription := personalaccesstokenFields[5].Descriptor()
+	personalaccesstokenDescDescription := personalaccesstokenFields[4].Descriptor()
 	// personalaccesstoken.DefaultDescription holds the default value on creation for the description field.
 	personalaccesstoken.DefaultDescription = personalaccesstokenDescDescription.Default.(string)
 	// personalaccesstokenDescLastUsedAt is the schema descriptor for last_used_at field.
-	personalaccesstokenDescLastUsedAt := personalaccesstokenFields[6].Descriptor()
+	personalaccesstokenDescLastUsedAt := personalaccesstokenFields[5].Descriptor()
 	// personalaccesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
 	personalaccesstoken.UpdateDefaultLastUsedAt = personalaccesstokenDescLastUsedAt.UpdateDefault.(func() time.Time)
 	// personalaccesstokenDescID is the schema descriptor for id field.
 	personalaccesstokenDescID := personalaccesstokenMixinFields1[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
-	refreshtokenMixin := schema.RefreshToken{}.Mixin()
-	refreshtokenHooks := schema.RefreshToken{}.Hooks()
-	refreshtoken.Hooks[0] = refreshtokenHooks[0]
-	refreshtokenMixinFields0 := refreshtokenMixin[0].Fields()
-	_ = refreshtokenMixinFields0
-	refreshtokenFields := schema.RefreshToken{}.Fields()
-	_ = refreshtokenFields
-	// refreshtokenDescExpiresAt is the schema descriptor for expires_at field.
-	refreshtokenDescExpiresAt := refreshtokenFields[1].Descriptor()
-	// refreshtoken.DefaultExpiresAt holds the default value on creation for the expires_at field.
-	refreshtoken.DefaultExpiresAt = refreshtokenDescExpiresAt.Default.(time.Time)
-	// refreshtokenDescIssuedAt is the schema descriptor for issued_at field.
-	refreshtokenDescIssuedAt := refreshtokenFields[2].Descriptor()
-	// refreshtoken.DefaultIssuedAt holds the default value on creation for the issued_at field.
-	refreshtoken.DefaultIssuedAt = refreshtokenDescIssuedAt.Default.(func() time.Time)
-	// refreshtokenDescID is the schema descriptor for id field.
-	refreshtokenDescID := refreshtokenMixinFields0[0].Descriptor()
-	// refreshtoken.DefaultID holds the default value on creation for the id field.
-	refreshtoken.DefaultID = refreshtokenDescID.Default.(func() string)
 	sessionMixin := schema.Session{}.Mixin()
 	sessionMixinHooks0 := sessionMixin[0].Hooks()
 	sessionHooks := schema.Session{}.Hooks()
@@ -448,14 +384,6 @@ func init() {
 	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
 	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// sessionDescIssuedAt is the schema descriptor for issued_at field.
-	sessionDescIssuedAt := sessionFields[1].Descriptor()
-	// session.DefaultIssuedAt holds the default value on creation for the issued_at field.
-	session.DefaultIssuedAt = sessionDescIssuedAt.Default.(func() time.Time)
-	// sessionDescExpiresAt is the schema descriptor for expires_at field.
-	sessionDescExpiresAt := sessionFields[2].Descriptor()
-	// session.DefaultExpiresAt holds the default value on creation for the expires_at field.
-	session.DefaultExpiresAt = sessionDescExpiresAt.Default.(time.Time)
 	// sessionDescID is the schema descriptor for id field.
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.

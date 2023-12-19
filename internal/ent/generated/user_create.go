@@ -10,11 +10,9 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
-	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -326,36 +324,6 @@ func (uc *UserCreate) SetSetting(u *UserSetting) *UserCreate {
 	return uc.SetSettingID(u.ID)
 }
 
-// AddRefreshTokenIDs adds the "refresh_token" edge to the RefreshToken entity by IDs.
-func (uc *UserCreate) AddRefreshTokenIDs(ids ...string) *UserCreate {
-	uc.mutation.AddRefreshTokenIDs(ids...)
-	return uc
-}
-
-// AddRefreshToken adds the "refresh_token" edges to the RefreshToken entity.
-func (uc *UserCreate) AddRefreshToken(r ...*RefreshToken) *UserCreate {
-	ids := make([]string, len(r))
-	for i := range r {
-		ids[i] = r[i].ID
-	}
-	return uc.AddRefreshTokenIDs(ids...)
-}
-
-// AddAccessTokenIDs adds the "access_token" edge to the AccessToken entity by IDs.
-func (uc *UserCreate) AddAccessTokenIDs(ids ...string) *UserCreate {
-	uc.mutation.AddAccessTokenIDs(ids...)
-	return uc
-}
-
-// AddAccessToken adds the "access_token" edges to the AccessToken entity.
-func (uc *UserCreate) AddAccessToken(a ...*AccessToken) *UserCreate {
-	ids := make([]string, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
-	}
-	return uc.AddAccessTokenIDs(ids...)
-}
-
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -665,40 +633,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.UserSetting
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.RefreshTokenIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.RefreshTokenTable,
-			Columns: []string{user.RefreshTokenColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(refreshtoken.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uc.schemaConfig.RefreshToken
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := uc.mutation.AccessTokenIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.AccessTokenTable,
-			Columns: []string{user.AccessTokenColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(accesstoken.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uc.schemaConfig.AccessToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

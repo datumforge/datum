@@ -70,22 +70,16 @@ type UserEdges struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
-	// RefreshToken holds the value of the refresh_token edge.
-	RefreshToken []*RefreshToken `json:"refresh_token,omitempty"`
-	// AccessToken holds the value of the access_token edge.
-	AccessToken []*AccessToken `json:"access_token,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [5]bool
 	// totalCount holds the count of the edges above.
-	totalCount [7]map[string]int
+	totalCount [5]map[string]int
 
 	namedOrganizations        map[string][]*Organization
 	namedSessions             map[string][]*Session
 	namedGroups               map[string][]*Group
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
-	namedRefreshToken         map[string][]*RefreshToken
-	namedAccessToken          map[string][]*AccessToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -135,24 +129,6 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 		return e.Setting, nil
 	}
 	return nil, &NotLoadedError{edge: "setting"}
-}
-
-// RefreshTokenOrErr returns the RefreshToken value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) RefreshTokenOrErr() ([]*RefreshToken, error) {
-	if e.loadedTypes[5] {
-		return e.RefreshToken, nil
-	}
-	return nil, &NotLoadedError{edge: "refresh_token"}
-}
-
-// AccessTokenOrErr returns the AccessToken value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) AccessTokenOrErr() ([]*AccessToken, error) {
-	if e.loadedTypes[6] {
-		return e.AccessToken, nil
-	}
-	return nil, &NotLoadedError{edge: "access_token"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -329,16 +305,6 @@ func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 // QuerySetting queries the "setting" edge of the User entity.
 func (u *User) QuerySetting() *UserSettingQuery {
 	return NewUserClient(u.config).QuerySetting(u)
-}
-
-// QueryRefreshToken queries the "refresh_token" edge of the User entity.
-func (u *User) QueryRefreshToken() *RefreshTokenQuery {
-	return NewUserClient(u.config).QueryRefreshToken(u)
-}
-
-// QueryAccessToken queries the "access_token" edge of the User entity.
-func (u *User) QueryAccessToken() *AccessTokenQuery {
-	return NewUserClient(u.config).QueryAccessToken(u)
 }
 
 // Update returns a builder for updating this User.
@@ -519,54 +485,6 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
-	}
-}
-
-// NamedRefreshToken returns the RefreshToken named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (u *User) NamedRefreshToken(name string) ([]*RefreshToken, error) {
-	if u.Edges.namedRefreshToken == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := u.Edges.namedRefreshToken[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (u *User) appendNamedRefreshToken(name string, edges ...*RefreshToken) {
-	if u.Edges.namedRefreshToken == nil {
-		u.Edges.namedRefreshToken = make(map[string][]*RefreshToken)
-	}
-	if len(edges) == 0 {
-		u.Edges.namedRefreshToken[name] = []*RefreshToken{}
-	} else {
-		u.Edges.namedRefreshToken[name] = append(u.Edges.namedRefreshToken[name], edges...)
-	}
-}
-
-// NamedAccessToken returns the AccessToken named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (u *User) NamedAccessToken(name string) ([]*AccessToken, error) {
-	if u.Edges.namedAccessToken == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := u.Edges.namedAccessToken[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (u *User) appendNamedAccessToken(name string, edges ...*AccessToken) {
-	if u.Edges.namedAccessToken == nil {
-		u.Edges.namedAccessToken = make(map[string][]*AccessToken)
-	}
-	if len(edges) == 0 {
-		u.Edges.namedAccessToken[name] = []*AccessToken{}
-	} else {
-		u.Edges.namedAccessToken[name] = append(u.Edges.namedAccessToken[name], edges...)
 	}
 }
 

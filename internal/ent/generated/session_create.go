@@ -89,25 +89,9 @@ func (sc *SessionCreate) SetIssuedAt(t time.Time) *SessionCreate {
 	return sc
 }
 
-// SetNillableIssuedAt sets the "issued_at" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableIssuedAt(t *time.Time) *SessionCreate {
-	if t != nil {
-		sc.SetIssuedAt(*t)
-	}
-	return sc
-}
-
 // SetExpiresAt sets the "expires_at" field.
 func (sc *SessionCreate) SetExpiresAt(t time.Time) *SessionCreate {
 	sc.mutation.SetExpiresAt(t)
-	return sc
-}
-
-// SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
-func (sc *SessionCreate) SetNillableExpiresAt(t *time.Time) *SessionCreate {
-	if t != nil {
-		sc.SetExpiresAt(*t)
-	}
 	return sc
 }
 
@@ -199,17 +183,6 @@ func (sc *SessionCreate) defaults() error {
 		v := session.DefaultUpdatedAt()
 		sc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := sc.mutation.IssuedAt(); !ok {
-		if session.DefaultIssuedAt == nil {
-			return fmt.Errorf("generated: uninitialized session.DefaultIssuedAt (forgotten import generated/runtime?)")
-		}
-		v := session.DefaultIssuedAt()
-		sc.mutation.SetIssuedAt(v)
-	}
-	if _, ok := sc.mutation.ExpiresAt(); !ok {
-		v := session.DefaultExpiresAt
-		sc.mutation.SetExpiresAt(v)
-	}
 	if _, ok := sc.mutation.ID(); !ok {
 		if session.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized session.DefaultID (forgotten import generated/runtime?)")
@@ -233,6 +206,9 @@ func (sc *SessionCreate) check() error {
 	}
 	if _, ok := sc.mutation.IssuedAt(); !ok {
 		return &ValidationError{Name: "issued_at", err: errors.New(`generated: missing required field "Session.issued_at"`)}
+	}
+	if _, ok := sc.mutation.ExpiresAt(); !ok {
+		return &ValidationError{Name: "expires_at", err: errors.New(`generated: missing required field "Session.expires_at"`)}
 	}
 	if _, ok := sc.mutation.OrganizationID(); !ok {
 		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Session.organization_id"`)}

@@ -6,9 +6,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// AccessToken is the predicate function for accesstoken builders.
-type AccessToken func(*sql.Selector)
-
 // Entitlement is the predicate function for entitlement builders.
 type Entitlement func(*sql.Selector)
 
@@ -35,9 +32,6 @@ type OrganizationSetting func(*sql.Selector)
 
 // PersonalAccessToken is the predicate function for personalaccesstoken builders.
 type PersonalAccessToken func(*sql.Selector)
-
-// RefreshToken is the predicate function for refreshtoken builders.
-type RefreshToken func(*sql.Selector)
 
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)

@@ -85,12 +85,6 @@ func (su *SessionUpdate) SetNillableExpiresAt(t *time.Time) *SessionUpdate {
 	return su
 }
 
-// ClearExpiresAt clears the value of the "expires_at" field.
-func (su *SessionUpdate) ClearExpiresAt() *SessionUpdate {
-	su.mutation.ClearExpiresAt()
-	return su
-}
-
 // SetOrganizationID sets the "organization_id" field.
 func (su *SessionUpdate) SetOrganizationID(s string) *SessionUpdate {
 	su.mutation.SetOrganizationID(s)
@@ -221,9 +215,6 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := su.mutation.ExpiresAt(); ok {
 		_spec.SetField(session.FieldExpiresAt, field.TypeTime, value)
 	}
-	if su.mutation.ExpiresAtCleared() {
-		_spec.ClearField(session.FieldExpiresAt, field.TypeTime)
-	}
 	if value, ok := su.mutation.OrganizationID(); ok {
 		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)
 	}
@@ -331,12 +322,6 @@ func (suo *SessionUpdateOne) SetNillableExpiresAt(t *time.Time) *SessionUpdateOn
 	if t != nil {
 		suo.SetExpiresAt(*t)
 	}
-	return suo
-}
-
-// ClearExpiresAt clears the value of the "expires_at" field.
-func (suo *SessionUpdateOne) ClearExpiresAt() *SessionUpdateOne {
-	suo.mutation.ClearExpiresAt()
 	return suo
 }
 
@@ -499,9 +484,6 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 	}
 	if value, ok := suo.mutation.ExpiresAt(); ok {
 		_spec.SetField(session.FieldExpiresAt, field.TypeTime, value)
-	}
-	if suo.mutation.ExpiresAtCleared() {
-		_spec.ClearField(session.FieldExpiresAt, field.TypeTime)
 	}
 	if value, ok := suo.mutation.OrganizationID(); ok {
 		_spec.SetField(session.FieldOrganizationID, field.TypeString, value)

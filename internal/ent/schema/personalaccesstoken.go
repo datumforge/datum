@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/keygen"
 )
@@ -33,9 +34,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 		field.JSON("abilities", []string{}).
 			Optional(),
 		field.Time("expires_at").
-			Default(defaultTime),
-		field.Time("expiration_at").
-			Default(defaultTime),
+			Nillable(),
 		field.String("description").
 			Default("").
 			Annotations(
@@ -80,5 +79,12 @@ func (PersonalAccessToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+// Hooks of the AccessToken
+func (PersonalAccessToken) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookPersonalAccessToken(),
 	}
 }

@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/accesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -19,7 +18,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/refreshtoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -79,33 +77,6 @@ func (f TraverseFunc) Traverse(ctx context.Context, q generated.Query) error {
 		return err
 	}
 	return f(ctx, query)
-}
-
-// The AccessTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
-type AccessTokenFunc func(context.Context, *generated.AccessTokenQuery) (generated.Value, error)
-
-// Query calls f(ctx, q).
-func (f AccessTokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.AccessTokenQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.AccessTokenQuery", q)
-}
-
-// The TraverseAccessToken type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseAccessToken func(context.Context, *generated.AccessTokenQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseAccessToken) Intercept(next generated.Querier) generated.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseAccessToken) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.AccessTokenQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.AccessTokenQuery", q)
 }
 
 // The EntitlementFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -351,33 +322,6 @@ func (f TraversePersonalAccessToken) Traverse(ctx context.Context, q generated.Q
 	return fmt.Errorf("unexpected query type %T. expect *generated.PersonalAccessTokenQuery", q)
 }
 
-// The RefreshTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
-type RefreshTokenFunc func(context.Context, *generated.RefreshTokenQuery) (generated.Value, error)
-
-// Query calls f(ctx, q).
-func (f RefreshTokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
-	if q, ok := q.(*generated.RefreshTokenQuery); ok {
-		return f(ctx, q)
-	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *generated.RefreshTokenQuery", q)
-}
-
-// The TraverseRefreshToken type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseRefreshToken func(context.Context, *generated.RefreshTokenQuery) error
-
-// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseRefreshToken) Intercept(next generated.Querier) generated.Querier {
-	return next
-}
-
-// Traverse calls f(ctx, q).
-func (f TraverseRefreshToken) Traverse(ctx context.Context, q generated.Query) error {
-	if q, ok := q.(*generated.RefreshTokenQuery); ok {
-		return f(ctx, q)
-	}
-	return fmt.Errorf("unexpected query type %T. expect *generated.RefreshTokenQuery", q)
-}
-
 // The SessionFunc type is an adapter to allow the use of ordinary function as a Querier.
 type SessionFunc func(context.Context, *generated.SessionQuery) (generated.Value, error)
 
@@ -462,8 +406,6 @@ func (f TraverseUserSetting) Traverse(ctx context.Context, q generated.Query) er
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
-	case *generated.AccessTokenQuery:
-		return &query[*generated.AccessTokenQuery, predicate.AccessToken, accesstoken.OrderOption]{typ: generated.TypeAccessToken, tq: q}, nil
 	case *generated.EntitlementQuery:
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.GroupQuery:
@@ -482,8 +424,6 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.OrganizationSettingQuery, predicate.OrganizationSetting, organizationsetting.OrderOption]{typ: generated.TypeOrganizationSetting, tq: q}, nil
 	case *generated.PersonalAccessTokenQuery:
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
-	case *generated.RefreshTokenQuery:
-		return &query[*generated.RefreshTokenQuery, predicate.RefreshToken, refreshtoken.OrderOption]{typ: generated.TypeRefreshToken, tq: q}, nil
 	case *generated.SessionQuery:
 		return &query[*generated.SessionQuery, predicate.Session, session.OrderOption]{typ: generated.TypeSession, tq: q}, nil
 	case *generated.UserQuery:

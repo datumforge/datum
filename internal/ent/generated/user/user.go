@@ -59,10 +59,6 @@ const (
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
-	// EdgeRefreshToken holds the string denoting the refresh_token edge name in mutations.
-	EdgeRefreshToken = "refresh_token"
-	// EdgeAccessToken holds the string denoting the access_token edge name in mutations.
-	EdgeAccessToken = "access_token"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -96,20 +92,6 @@ const (
 	SettingInverseTable = "user_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "user_setting"
-	// RefreshTokenTable is the table that holds the refresh_token relation/edge.
-	RefreshTokenTable = "refresh_tokens"
-	// RefreshTokenInverseTable is the table name for the RefreshToken entity.
-	// It exists in this package in order to avoid circular dependency with the "refreshtoken" package.
-	RefreshTokenInverseTable = "refresh_tokens"
-	// RefreshTokenColumn is the table column denoting the refresh_token relation/edge.
-	RefreshTokenColumn = "user_refresh_token"
-	// AccessTokenTable is the table that holds the access_token relation/edge.
-	AccessTokenTable = "access_tokens"
-	// AccessTokenInverseTable is the table name for the AccessToken entity.
-	// It exists in this package in order to avoid circular dependency with the "accesstoken" package.
-	AccessTokenInverseTable = "access_tokens"
-	// AccessTokenColumn is the table column denoting the access_token relation/edge.
-	AccessTokenColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -347,34 +329,6 @@ func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSettingStep(), sql.OrderByField(field, opts...))
 	}
 }
-
-// ByRefreshTokenCount orders the results by refresh_token count.
-func ByRefreshTokenCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newRefreshTokenStep(), opts...)
-	}
-}
-
-// ByRefreshToken orders the results by refresh_token terms.
-func ByRefreshToken(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newRefreshTokenStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByAccessTokenCount orders the results by access_token count.
-func ByAccessTokenCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newAccessTokenStep(), opts...)
-	}
-}
-
-// ByAccessToken orders the results by access_token terms.
-func ByAccessToken(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newAccessTokenStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -408,19 +362,5 @@ func newSettingStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SettingInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
-	)
-}
-func newRefreshTokenStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(RefreshTokenInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, RefreshTokenTable, RefreshTokenColumn),
-	)
-}
-func newAccessTokenStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(AccessTokenInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, AccessTokenTable, AccessTokenColumn),
 	)
 }

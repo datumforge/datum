@@ -8,14 +8,6 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
-func (at *AccessToken) Owner(ctx context.Context) (*User, error) {
-	result, err := at.Edges.OwnerOrErr()
-	if IsNotLoaded(err) {
-		result, err = at.QueryOwner().Only(ctx)
-	}
-	return result, err
-}
-
 func (e *Entitlement) Owner(ctx context.Context) (*Organization, error) {
 	result, err := e.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
@@ -249,30 +241,6 @@ func (u *User) Setting(ctx context.Context) (*UserSetting, error) {
 	result, err := u.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QuerySetting().Only(ctx)
-	}
-	return result, err
-}
-
-func (u *User) RefreshToken(ctx context.Context) (result []*RefreshToken, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedRefreshToken(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = u.Edges.RefreshTokenOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = u.QueryRefreshToken().All(ctx)
-	}
-	return result, err
-}
-
-func (u *User) AccessToken(ctx context.Context) (result []*AccessToken, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedAccessToken(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = u.Edges.AccessTokenOrErr()
-	}
-	if IsNotLoaded(err) {
-		result, err = u.QueryAccessToken().All(ctx)
 	}
 	return result, err
 }

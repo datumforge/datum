@@ -31,8 +31,6 @@ const (
 	FieldAbilities = "abilities"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
 	FieldExpiresAt = "expires_at"
-	// FieldExpirationAt holds the string denoting the expiration_at field in the database.
-	FieldExpirationAt = "expiration_at"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldLastUsedAt holds the string denoting the last_used_at field in the database.
@@ -61,7 +59,6 @@ var Columns = []string{
 	FieldToken,
 	FieldAbilities,
 	FieldExpiresAt,
-	FieldExpirationAt,
 	FieldDescription,
 	FieldLastUsedAt,
 }
@@ -93,7 +90,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks [1]ent.Hook
+	Hooks [2]ent.Hook
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -102,10 +99,6 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultToken holds the default value on creation for the "token" field.
 	DefaultToken func() string
-	// DefaultExpiresAt holds the default value on creation for the "expires_at" field.
-	DefaultExpiresAt time.Time
-	// DefaultExpirationAt holds the default value on creation for the "expiration_at" field.
-	DefaultExpirationAt time.Time
 	// DefaultDescription holds the default value on creation for the "description" field.
 	DefaultDescription string
 	// UpdateDefaultLastUsedAt holds the default value on update for the "last_used_at" field.
@@ -155,11 +148,6 @@ func ByToken(opts ...sql.OrderTermOption) OrderOption {
 // ByExpiresAt orders the results by the expires_at field.
 func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiresAt, opts...).ToFunc()
-}
-
-// ByExpirationAt orders the results by the expiration_at field.
-func ByExpirationAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldExpirationAt, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

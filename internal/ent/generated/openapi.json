@@ -77,54 +77,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_by": {
-                    "type": "string"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
                   "access_token": {
-                    "type": "string"
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "issued_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "last_used_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "owner": {
                     "type": "string"
                   }
                 },
                 "required": [
-                  "created_at",
-                  "updated_at",
-                  "access_token",
-                  "expires_at",
-                  "issued_at",
-                  "organization_id",
-                  "user_id",
-                  "owner"
+                  "access_token"
                 ]
               }
             }
@@ -256,39 +214,7 @@
           "description": "AccessToken properties to update",
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_by": {
-                    "type": "string"
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "issued_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "last_used_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  },
-                  "owner": {
-                    "type": "string"
-                  }
-                }
-              }
+              "schema": {}
             }
           },
           "required": true
@@ -300,51 +226,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AccessTokenUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/access-tokens/{id}/owner": {
-      "get": {
-        "tags": [
-          "AccessToken"
-        ],
-        "summary": "Find the attached User",
-        "description": "Find the attached User of the AccessToken with the given ID",
-        "operationId": "readAccessTokenOwner",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the AccessToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User attached to AccessToken with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccessToken_OwnerRead"
                 }
               }
             }
@@ -4010,10 +3891,6 @@
                     "type": "string",
                     "format": "date-time"
                   },
-                  "expiration_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
                   "description": {
                     "type": "string"
                   },
@@ -4031,7 +3908,6 @@
                   "name",
                   "token",
                   "expires_at",
-                  "expiration_at",
                   "description",
                   "owner"
                 ]
@@ -4185,10 +4061,6 @@
                     }
                   },
                   "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "expiration_at": {
                     "type": "string",
                     "format": "date-time"
                   },
@@ -4352,28 +4224,10 @@
                 "properties": {
                   "refresh_token": {
                     "type": "string"
-                  },
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "issued_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
                   }
                 },
                 "required": [
-                  "refresh_token",
-                  "expires_at",
-                  "issued_at",
-                  "organization_id",
-                  "user_id"
+                  "refresh_token"
                 ]
               }
             }
@@ -4505,25 +4359,7 @@
           "description": "RefreshToken properties to update",
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "expires_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "issued_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "organization_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  }
-                }
-              }
+              "schema": {}
             }
           },
           "required": true
@@ -4665,6 +4501,7 @@
                   "updated_at",
                   "session_token",
                   "issued_at",
+                  "expires_at",
                   "organization_id",
                   "user_id",
                   "owner"
@@ -5471,18 +5308,6 @@
                   },
                   "setting": {
                     "type": "string"
-                  },
-                  "refresh_token": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "access_token": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   }
                 },
                 "required": [
@@ -5703,18 +5528,6 @@
                   },
                   "setting": {
                     "type": "string"
-                  },
-                  "refresh_token": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "access_token": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
                   }
                 }
               }
@@ -5729,70 +5542,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/users/{id}/access-token": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List attached AccessTokens",
-        "description": "List attached AccessTokens.",
-        "operationId": "listUserAccessToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the User",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Users list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User_AccessTokenList"
-                  }
                 }
               }
             }
@@ -6004,70 +5753,6 @@
         }
       }
     },
-    "/users/{id}/refresh-token": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List attached RefreshTokens",
-        "description": "List attached RefreshTokens.",
-        "operationId": "listUserRefreshToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the User",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Users list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User_RefreshTokenList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/users/{id}/sessions": {
       "get": {
         "tags": [
@@ -6186,55 +5871,13 @@
           "id": {
             "type": "string"
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
           "access_token": {
             "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
-            "type": "string"
-          },
-          "owner": {
-            "$ref": "#/components/schemas/User"
           }
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
-          "access_token",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id",
-          "owner"
+          "access_token"
         ]
       },
       "AccessTokenCreate": {
@@ -6243,47 +5886,13 @@
           "id": {
             "type": "string"
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "access_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "access_token"
         ]
       },
       "AccessTokenList": {
@@ -6292,47 +5901,13 @@
           "id": {
             "type": "string"
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "access_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "access_token"
         ]
       },
       "AccessTokenRead": {
@@ -6341,47 +5916,13 @@
           "id": {
             "type": "string"
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "access_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "access_token"
         ]
       },
       "AccessTokenUpdate": {
@@ -6390,121 +5931,13 @@
           "id": {
             "type": "string"
           },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "access_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "created_at",
-          "updated_at",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
-        ]
-      },
-      "AccessToken_OwnerRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "password": {
-            "type": "string"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
+          "access_token"
         ]
       },
       "Entitlement": {
@@ -9772,10 +9205,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiration_at": {
-            "type": "string",
-            "format": "date-time"
-          },
           "description": {
             "type": "string"
           },
@@ -9793,8 +9222,6 @@
           "updated_at",
           "name",
           "token",
-          "expires_at",
-          "expiration_at",
           "description",
           "owner"
         ]
@@ -9832,10 +9259,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiration_at": {
-            "type": "string",
-            "format": "date-time"
-          },
           "description": {
             "type": "string"
           },
@@ -9849,8 +9272,6 @@
           "created_at",
           "updated_at",
           "name",
-          "expires_at",
-          "expiration_at",
           "description"
         ]
       },
@@ -9887,10 +9308,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiration_at": {
-            "type": "string",
-            "format": "date-time"
-          },
           "description": {
             "type": "string"
           },
@@ -9904,8 +9321,6 @@
           "created_at",
           "updated_at",
           "name",
-          "expires_at",
-          "expiration_at",
           "description"
         ]
       },
@@ -9942,10 +9357,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiration_at": {
-            "type": "string",
-            "format": "date-time"
-          },
           "description": {
             "type": "string"
           },
@@ -9959,8 +9370,6 @@
           "created_at",
           "updated_at",
           "name",
-          "expires_at",
-          "expiration_at",
           "description"
         ]
       },
@@ -9997,10 +9406,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiration_at": {
-            "type": "string",
-            "format": "date-time"
-          },
           "description": {
             "type": "string"
           },
@@ -10014,8 +9419,6 @@
           "created_at",
           "updated_at",
           "name",
-          "expires_at",
-          "expiration_at",
           "description"
         ]
       },
@@ -10101,29 +9504,11 @@
           },
           "refresh_token": {
             "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
-            "type": "string"
           }
         },
         "required": [
           "id",
-          "refresh_token",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "refresh_token"
         ]
       },
       "RefreshTokenCreate": {
@@ -10132,27 +9517,13 @@
           "id": {
             "type": "string"
           },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "refresh_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "refresh_token"
         ]
       },
       "RefreshTokenList": {
@@ -10161,27 +9532,13 @@
           "id": {
             "type": "string"
           },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "refresh_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "refresh_token"
         ]
       },
       "RefreshTokenRead": {
@@ -10190,27 +9547,13 @@
           "id": {
             "type": "string"
           },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "refresh_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "refresh_token"
         ]
       },
       "RefreshTokenUpdate": {
@@ -10219,27 +9562,13 @@
           "id": {
             "type": "string"
           },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
+          "refresh_token": {
             "type": "string"
           }
         },
         "required": [
           "id",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
+          "refresh_token"
         ]
       },
       "Session": {
@@ -10289,6 +9618,7 @@
           "updated_at",
           "session_token",
           "issued_at",
+          "expires_at",
           "organization_id",
           "user_id",
           "owner"
@@ -10338,6 +9668,7 @@
           "updated_at",
           "session_token",
           "issued_at",
+          "expires_at",
           "organization_id",
           "user_id"
         ]
@@ -10386,6 +9717,7 @@
           "updated_at",
           "session_token",
           "issued_at",
+          "expires_at",
           "organization_id",
           "user_id"
         ]
@@ -10434,6 +9766,7 @@
           "updated_at",
           "session_token",
           "issued_at",
+          "expires_at",
           "organization_id",
           "user_id"
         ]
@@ -10482,6 +9815,7 @@
           "updated_at",
           "session_token",
           "issued_at",
+          "expires_at",
           "organization_id",
           "user_id"
         ]
@@ -10648,18 +9982,6 @@
           },
           "setting": {
             "$ref": "#/components/schemas/UserSetting"
-          },
-          "refresh_token": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RefreshToken"
-            }
-          },
-          "access_token": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AccessToken"
-            }
           }
         },
         "required": [
@@ -11440,55 +10762,6 @@
           "oauth"
         ]
       },
-      "User_AccessTokenList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
-        ]
-      },
       "User_GroupsList": {
         "type": "object",
         "properties": {
@@ -11618,10 +10891,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "expiration_at": {
-            "type": "string",
-            "format": "date-time"
-          },
           "description": {
             "type": "string"
           },
@@ -11635,38 +10904,7 @@
           "created_at",
           "updated_at",
           "name",
-          "expires_at",
-          "expiration_at",
           "description"
-        ]
-      },
-      "User_RefreshTokenList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          },
-          "user_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "expires_at",
-          "issued_at",
-          "organization_id",
-          "user_id"
         ]
       },
       "User_SessionsList": {
@@ -11713,6 +10951,7 @@
           "updated_at",
           "session_token",
           "issued_at",
+          "expires_at",
           "organization_id",
           "user_id"
         ]

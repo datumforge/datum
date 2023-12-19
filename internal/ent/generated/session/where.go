@@ -487,16 +487,6 @@ func ExpiresAtLTE(v time.Time) predicate.Session {
 	return predicate.Session(sql.FieldLTE(FieldExpiresAt, v))
 }
 
-// ExpiresAtIsNil applies the IsNil predicate on the "expires_at" field.
-func ExpiresAtIsNil() predicate.Session {
-	return predicate.Session(sql.FieldIsNull(FieldExpiresAt))
-}
-
-// ExpiresAtNotNil applies the NotNil predicate on the "expires_at" field.
-func ExpiresAtNotNil() predicate.Session {
-	return predicate.Session(sql.FieldNotNull(FieldExpiresAt))
-}
-
 // OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
 func OrganizationIDEQ(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldOrganizationID, v))

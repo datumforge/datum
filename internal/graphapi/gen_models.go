@@ -6,24 +6,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
-// Return response for createAccessToken mutation
-type AccessTokenCreatePayload struct {
-	// Created accessToken
-	AccessToken *generated.AccessToken `json:"accessToken"`
-}
-
-// Return response for deleteAccessToken mutation
-type AccessTokenDeletePayload struct {
-	// Deleted accessToken ID
-	DeletedID string `json:"deletedID"`
-}
-
-// Return response for updateAccessToken mutation
-type AccessTokenUpdatePayload struct {
-	// Updated accessToken
-	AccessToken *generated.AccessToken `json:"accessToken"`
-}
-
 // Return response for createEntitlement mutation
 type EntitlementCreatePayload struct {
 	// Created entitlement
@@ -184,24 +166,6 @@ type PersonalAccessTokenDeletePayload struct {
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
 	PersonalAccessToken *generated.PersonalAccessToken `json:"PersonalAccessToken"`
-}
-
-// Return response for createRefreshToken mutation
-type RefreshTokenCreatePayload struct {
-	// Created refreshToken
-	RefreshToken *generated.RefreshToken `json:"refreshToken"`
-}
-
-// Return response for deleteRefreshToken mutation
-type RefreshTokenDeletePayload struct {
-	// Deleted refreshToken ID
-	DeletedID string `json:"deletedID"`
-}
-
-// Return response for updateRefreshToken mutation
-type RefreshTokenUpdatePayload struct {
-	// Updated refreshToken
-	RefreshToken *generated.RefreshToken `json:"refreshToken"`
 }
 
 // Return response for createSession mutation

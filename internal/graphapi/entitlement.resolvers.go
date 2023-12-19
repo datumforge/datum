@@ -30,3 +30,8 @@ func (r *mutationResolver) DeleteEntitlement(ctx context.Context, id string) (*E
 func (r *queryResolver) Entitlement(ctx context.Context, id string) (*generated.Entitlement, error) {
 	panic(fmt.Errorf("not implemented: Entitlement - entitlement"))
 }
+
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
+type mutationResolver struct{ *Resolver }

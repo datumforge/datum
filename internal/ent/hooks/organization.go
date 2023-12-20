@@ -86,7 +86,6 @@ func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutati
 			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
-				// TODO: rollback mutation if tuple creation fails
 				return ErrInternalServerError
 			}
 		}

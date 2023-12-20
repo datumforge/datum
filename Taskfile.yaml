@@ -192,6 +192,7 @@ tasks:
     cmds:
       - task: ent
       - task: gqlgen
+      - task: tidy
       - "git config --global --add safe.directory /workdir"
       - |
         status=$(git status --porcelain)

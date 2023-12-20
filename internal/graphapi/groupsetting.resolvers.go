@@ -42,7 +42,7 @@ func (r *queryResolver) GroupSetting(ctx context.Context, id string) (*generated
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	group, err := WithTransactionalMutation(ctx).GroupSetting.Get(ctx, id)
+	group, err := r.client.GroupSetting.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get group settings", "error", err)
 

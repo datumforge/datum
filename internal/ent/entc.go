@@ -13,7 +13,6 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
-	"github.com/hedwigz/entviz"
 	"github.com/ogen-go/ogen"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
@@ -83,7 +82,6 @@ func main() {
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(
-			entviz.Extension{},
 			gqlExt,
 			oas,
 		)); err != nil {

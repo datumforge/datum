@@ -823,9 +823,10 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 		fgaErr := errors.New("unable to create relationship") //nolint:goerr113
 		mockWriteTuplesAny(mockCtrl, mc, reqCtx, fgaErr)
 
-		_, err := client.CreateOrganization(reqCtx, input)
+		resp, err := client.CreateOrganization(reqCtx, input)
 
 		require.Error(t, err)
+		require.Empty(t, resp)
 
 		// Make sure the org was not added to the database (check without auth)
 		clientNoAuth := graphTestClientNoAuth(EntClient)
@@ -842,6 +843,5 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 				t.Errorf("org found that should not have been created due to FGA error")
 			}
 		}
-
 	})
 }

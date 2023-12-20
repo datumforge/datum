@@ -101,8 +101,8 @@ func TestQuery_Group(t *testing.T) {
 	}
 
 	// delete created org and group
-	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
 	(&GroupCleanup{GroupID: group1.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
 }
 
 func TestQuery_GroupsNoAuth(t *testing.T) {
@@ -395,11 +395,11 @@ func TestQuery_Groups(t *testing.T) {
 	})
 
 	// delete created orgs and groups
-	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
-	(&OrganizationCleanup{OrgID: org2.ID}).MustDelete(reqCtx)
 	(&GroupCleanup{GroupID: group1.ID}).MustDelete(reqCtx)
 	(&GroupCleanup{GroupID: group2.ID}).MustDelete(reqCtx)
 	(&GroupCleanup{GroupID: group3.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{OrgID: org1.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{OrgID: org2.ID}).MustDelete(reqCtx)
 }
 
 func TestQuery_GroupNoAuth(t *testing.T) {
@@ -494,7 +494,6 @@ func TestMutation_CreateGroup(t *testing.T) {
 		groupName   string
 		description string
 		displayName string
-		logoURL     string
 		owner       string
 		allowed     bool
 		errorMsg    string
@@ -504,7 +503,6 @@ func TestMutation_CreateGroup(t *testing.T) {
 			groupName:   gofakeit.Name(),
 			displayName: gofakeit.LetterN(50),
 			description: gofakeit.HipsterSentence(10),
-			logoURL:     "http://mitb.net/logo.png",
 			owner:       owner1.ID,
 			allowed:     true,
 		},
@@ -513,7 +511,6 @@ func TestMutation_CreateGroup(t *testing.T) {
 			groupName:   gofakeit.Name(),
 			displayName: gofakeit.LetterN(50),
 			description: gofakeit.HipsterSentence(10),
-			logoURL:     "http://mitb.net/logo.png",
 			owner:       owner2.ID,
 			allowed:     false,
 			errorMsg:    "not authorized",
@@ -527,7 +524,6 @@ func TestMutation_CreateGroup(t *testing.T) {
 				Name:        tc.groupName,
 				Description: &tc.description,
 				DisplayName: &tc.displayName,
-				LogoURL:     &tc.logoURL,
 				OwnerID:     tc.owner,
 			}
 
@@ -560,7 +556,6 @@ func TestMutation_CreateGroup(t *testing.T) {
 			// Make sure provided values match
 			assert.Equal(t, tc.groupName, resp.CreateGroup.Group.Name)
 			assert.Equal(t, tc.description, *resp.CreateGroup.Group.Description)
-			assert.Equal(t, tc.logoURL, *resp.CreateGroup.Group.LogoURL)
 			assert.Equal(t, tc.owner, resp.CreateGroup.Group.Owner.ID)
 
 			if tc.displayName != "" {
@@ -595,7 +590,6 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 		groupName   string
 		description string
 		displayName string
-		logoURL     string
 		owner       string
 		errorMsg    string
 	}{
@@ -604,7 +598,6 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 			groupName:   gofakeit.Name(),
 			displayName: gofakeit.LetterN(50),
 			description: gofakeit.HipsterSentence(10),
-			logoURL:     "http://mitb.net/logo.png",
 			owner:       org.ID,
 		},
 		{
@@ -631,7 +624,6 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 				Name:        tc.groupName,
 				Description: &tc.description,
 				DisplayName: &tc.displayName,
-				LogoURL:     &tc.logoURL,
 				OwnerID:     tc.owner,
 			}
 
@@ -656,7 +648,6 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 			// Make sure provided values match
 			assert.Equal(t, tc.groupName, resp.CreateGroup.Group.Name)
 			assert.Equal(t, tc.description, *resp.CreateGroup.Group.Description)
-			assert.Equal(t, tc.logoURL, *resp.CreateGroup.Group.LogoURL)
 			assert.Equal(t, tc.owner, resp.CreateGroup.Group.Owner.ID)
 
 			if tc.displayName != "" {
@@ -780,8 +771,8 @@ func TestMutation_UpdateGroup(t *testing.T) {
 		})
 	}
 
-	(&OrganizationCleanup{OrgID: org.ID}).MustDelete(reqCtx)
 	(&GroupCleanup{GroupID: group.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{OrgID: org.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_UpdateGroupNoAuth(t *testing.T) {
@@ -888,8 +879,9 @@ func TestMutation_UpdateGroupNoAuth(t *testing.T) {
 	}
 
 	owner, _ := group.Owner(reqCtx)
-	(&OrganizationCleanup{OrgID: owner.ID}).MustDelete(reqCtx)
+
 	(&GroupCleanup{GroupID: group.ID}).MustDelete(reqCtx)
+	(&OrganizationCleanup{OrgID: owner.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_DeleteGroup(t *testing.T) {

@@ -14,7 +14,7 @@ import (
 // CreateSession is the resolver for the createSession field.
 func (r *mutationResolver) CreateSession(ctx context.Context, input generated.CreateSessionInput) (*SessionCreatePayload, error) {
 	// TODO - add permissions checks
-	sess, err := r.client.Session.Create().SetInput(input).Save(ctx)
+	sess, err := withTransactionalMutation(ctx).Session.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			return nil, err
@@ -31,7 +31,7 @@ func (r *mutationResolver) CreateSession(ctx context.Context, input generated.Cr
 func (r *mutationResolver) UpdateSession(ctx context.Context, id string, input generated.UpdateSessionInput) (*SessionUpdatePayload, error) {
 	// TODO - add permissions checks
 
-	sess, err := r.client.Session.Get(ctx, id)
+	sess, err := withTransactionalMutation(ctx).Session.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -58,7 +58,7 @@ func (r *mutationResolver) UpdateSession(ctx context.Context, id string, input g
 func (r *mutationResolver) DeleteSession(ctx context.Context, id string) (*SessionDeletePayload, error) {
 	// TODO - add permissions checks
 
-	if err := r.client.Session.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).Session.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

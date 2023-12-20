@@ -134,6 +134,9 @@ func TestMutation_CreateUser(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	displayName := gofakeit.LetterN(50)
@@ -259,6 +262,9 @@ func TestMutation_UpdateUser(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -390,6 +396,9 @@ func TestMutation_DeleteUser(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 

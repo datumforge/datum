@@ -11,69 +11,55 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 )
 
-func EntitlementEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func EntitlementEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func GroupEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func GroupEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func GroupSettingEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func GroupSettingEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func IntegrationEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func IntegrationEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func OauthProviderEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func OhAuthTooTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func OhAuthTooTokenEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func OrganizationEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 
-	if exists, err := r.Group.Query().Where((group.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
-		if groupCount, err := r.Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
-			r.Logger.Debugw("deleting group", "count", groupCount, "err", err)
+	if exists, err := FromContext(ctx).Group.Query().Where((group.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
+		if groupCount, err := FromContext(ctx).Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting group", "count", groupCount, "err", err)
 			return err
 		}
 	}
 
-	if exists, err := r.Integration.Query().Where((integration.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
-		if integrationCount, err := r.Integration.Delete().Where(integration.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
-			r.Logger.Debugw("deleting integration", "count", integrationCount, "err", err)
+	if exists, err := FromContext(ctx).Integration.Query().Where((integration.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
+		if integrationCount, err := FromContext(ctx).Integration.Delete().Where(integration.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting integration", "count", integrationCount, "err", err)
 			return err
 		}
 	}
 
-	if exists, err := r.OrganizationSetting.Query().Where((organizationsetting.HasOrganizationWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
-		if organizationsettingCount, err := r.OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).Exec(ctx); err != nil {
-			r.Logger.Debugw("deleting organizationsetting", "count", organizationsettingCount, "err", err)
+	if exists, err := FromContext(ctx).OrganizationSetting.Query().Where((organizationsetting.HasOrganizationWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
+		if organizationsettingCount, err := FromContext(ctx).OrganizationSetting.Delete().Where(organizationsetting.HasOrganizationWith(organization.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting organizationsetting", "count", organizationsettingCount, "err", err)
 			return err
 		}
 	}
@@ -81,37 +67,27 @@ func OrganizationEdgeCleanup(ctx context.Context, r *Client, id string) error {
 	return nil
 }
 
-func OrganizationSettingEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func PersonalAccessTokenEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func SessionEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func SessionEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func UserEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func UserEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
-func UserSettingEdgeCleanup(ctx context.Context, r *Client, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
+func UserSettingEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

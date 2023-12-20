@@ -20,7 +20,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	user, err := r.client.User.Create().SetInput(input).Save(ctx)
+	user, err := withTransactionalMutation(ctx).User.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			return nil, err
@@ -47,7 +47,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
 	// TODO - add permissions checks
 
-	user, err := r.client.User.Get(ctx, id)
+	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -80,7 +80,7 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
 	// TODO - add permissions checks
 
-	if err := r.client.User.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).User.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

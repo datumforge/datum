@@ -13,7 +13,7 @@ import (
 
 // CreatePersonalAccessToken is the resolver for the createPersonalAccessToken field.
 func (r *mutationResolver) CreatePersonalAccessToken(ctx context.Context, input generated.CreatePersonalAccessTokenInput) (*PersonalAccessTokenCreatePayload, error) {
-	pat, err := r.client.PersonalAccessToken.Create().SetInput(input).Save(ctx)
+	pat, err := withTransactionalMutation(ctx).PersonalAccessToken.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			return nil, err
@@ -37,7 +37,7 @@ func (r *mutationResolver) UpdatePersonalAccessToken(ctx context.Context, id str
 
 // DeletePersonalAccessToken is the resolver for the deletePersonalAccessToken field.
 func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id string) (*PersonalAccessTokenDeletePayload, error) {
-	if err := r.client.PersonalAccessToken.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).PersonalAccessToken.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

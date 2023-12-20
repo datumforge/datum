@@ -9,18 +9,16 @@
 
     {{/* For each schema */}}
 	{{- range $node := $.Nodes }}
-            {{/* create an EdgeCleanup function accepting a client and an ID */}}
-			func {{ $node.Name }}EdgeCleanup(ctx context.Context, r *Client, id string) error {
-                // TODO: pass in transaction so that all upstream
-                // deletes can be rolled back if one fails
+            {{/* create an EdgeCleanup function accepting an ID */}}
+			func {{ $node.Name }}EdgeCleanup(ctx context.Context, id string) error {
                {{/* For each edge */}}
                {{- range $edge := $node.Edges }}
                     {{/* if the edge has our custom annotation applied */}}
                     {{- if $annotation := $edge.Annotations.DATUM_CASCADE }}
                         {{/* use the client to delete records where the edge schema has a field (provided by the annotation) containing the ID provided by the func */}}
-                        if exists, err := r.{{ $edge.Type.Name }}.Query().Where(({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id)))).Exist(ctx); err != nil && exists {
-                            if {{ $edge.Type.Name | lower }}Count, err := r.{{ $edge.Type.Name }}.Delete().Where({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id))).Exec(ctx); err != nil {
-                                r.Logger.Debugw("deleting {{ $edge.Type.Name | lower }}", "count", {{ $edge.Type.Name | lower }}Count, "err", err)
+                        if exists, err := FromContext(ctx).{{ $edge.Type.Name }}.Query().Where(({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id)))).Exist(ctx); err != nil && exists {
+                            if {{ $edge.Type.Name | lower }}Count, err := FromContext(ctx).{{ $edge.Type.Name }}.Delete().Where({{ $edge.Type.Name | lower }}.Has{{ $annotation.Field }}With({{ $node.Name | lower }}.ID(id))).Exec(ctx); err != nil {
+                                FromContext(ctx).Logger.Debugw("deleting {{ $edge.Type.Name | lower }}", "count", {{ $edge.Type.Name | lower }}Count, "err", err)
                                 return err
                             }
                         }

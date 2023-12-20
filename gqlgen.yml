@@ -7,10 +7,10 @@ exec:
   filename: internal/graphapi/gen_server.go
   package: graphapi
 
-# Uncomment to enable federation
-federation:
-  filename: internal/graphapi/federation.go
-  package: graphapi
+# # Uncomment to enable federation
+# federation:
+#   filename: internal/graphapi/federation.go
+#   package: graphapi
 
 # Where should any generated models go?
 model:

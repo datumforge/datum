@@ -43,6 +43,9 @@ func TestQuery_Organization(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -108,6 +111,9 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -167,6 +173,9 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -245,6 +254,9 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -395,6 +407,9 @@ func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -496,6 +511,9 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -618,6 +636,9 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -717,6 +738,9 @@ func TestMutation_CascadeDelete(t *testing.T) {
 	ec := echocontext.NewTestEchoContext()
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 

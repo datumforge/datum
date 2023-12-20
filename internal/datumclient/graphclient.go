@@ -73,7 +73,6 @@ type Query struct {
 	Session              Session                       "json:\"session\" graphql:\"session\""
 	User                 User                          "json:\"user\" graphql:\"user\""
 	UserSetting          UserSetting                   "json:\"userSetting\" graphql:\"userSetting\""
-	Service              Service                       "json:\"_service\" graphql:\"_service\""
 }
 type Mutation struct {
 	CreateEntitlement         EntitlementCreatePayload         "json:\"createEntitlement\" graphql:\"createEntitlement\""

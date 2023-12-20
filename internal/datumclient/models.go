@@ -3259,10 +3259,6 @@ type UserWhereInput struct {
 	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
 }
 
-type Service struct {
-	Sdl *string `json:"sdl,omitempty"`
-}
-
 // Properties by which Group connections can be ordered.
 type GroupOrderField string
 

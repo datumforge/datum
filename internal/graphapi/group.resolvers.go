@@ -19,7 +19,7 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, input generated.Crea
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	group, err := WithTransactionalMutation(ctx).Group.Create().SetInput(input).Save(ctx)
+	group, err := withTransactionalMutation(ctx).Group.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			validationError := err.(*generated.ValidationError)
@@ -64,7 +64,7 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	group, err := WithTransactionalMutation(ctx).Group.Get(ctx, id)
+	group, err := withTransactionalMutation(ctx).Group.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -112,7 +112,7 @@ func (r *mutationResolver) DeleteGroup(ctx context.Context, id string) (*GroupDe
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	if err := WithTransactionalMutation(ctx).Group.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).Group.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

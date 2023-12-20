@@ -6,7 +6,6 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/handler/debug"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	echo "github.com/datumforge/echox"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
@@ -73,10 +72,10 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 		),
 	)
 
+	// setup transactional db client
 	srv.AroundOperations(injectClient(r.client))
-	srv.Use(&debug.Tracer{})
-
 	srv.Use(entgql.Transactioner{TxOpener: r.client})
+
 	srv.Use(extension.Introspection{})
 
 	h := &Handler{

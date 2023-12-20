@@ -20,7 +20,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	org, err := WithTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
+	org, err := withTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			validationError := err.(*generated.ValidationError)
@@ -65,7 +65,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	org, err := WithTransactionalMutation(ctx).Organization.Get(ctx, id)
+	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -115,7 +115,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	if err := WithTransactionalMutation(ctx).Organization.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

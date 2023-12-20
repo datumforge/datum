@@ -12,50 +12,36 @@ import (
 )
 
 func EntitlementEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func GroupEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func GroupSettingEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func IntegrationEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func OhAuthTooTokenEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func OrganizationEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	if exists, err := FromContext(ctx).Group.Query().Where((group.HasOwnerWith(organization.ID(id)))).Exist(ctx); err != nil && exists {
 		if groupCount, err := FromContext(ctx).Group.Delete().Where(group.HasOwnerWith(organization.ID(id))).Exec(ctx); err != nil {
@@ -82,36 +68,26 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 }
 
 func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func SessionEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func UserEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }
 
 func UserSettingEdgeCleanup(ctx context.Context, id string) error {
-	// TODO: pass in transaction so that all upstream
-	// deletes can be rolled back if one fails
 
 	return nil
 }

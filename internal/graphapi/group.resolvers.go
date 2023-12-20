@@ -54,7 +54,7 @@ func (r *mutationResolver) UpdateGroup(ctx context.Context, id string, input gen
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
 	if r.authDisabled {
-		ctx = privacy.DecisionContext(context.Background(), privacy.Allow)
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	} else {
 		// setup view context
 		v := viewer.UserViewer{

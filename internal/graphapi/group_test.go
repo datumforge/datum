@@ -867,9 +867,6 @@ func TestMutation_UpdateGroupNoAuth(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Update "+tc.name, func(t *testing.T) {
-			// add client to context for transactional client
-			reqCtx = ent.NewContext(reqCtx, EntClient)
-
 			// update group
 			resp, err := client.UpdateGroup(reqCtx, group.ID, tc.updateInput)
 

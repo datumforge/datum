@@ -99,9 +99,10 @@ func (User) Fields() []ent.Field {
 		field.Time("last_seen").
 			Comment("the time the user was last seen").
 			UpdateDefault(time.Now).
-			Optional(),
+			Optional().
+			Nillable(),
 		field.String("password").
-			Comment("user bcrypt password hash").
+			Comment("user password hash").
 			Nillable().
 			Optional(),
 		field.String("sub").

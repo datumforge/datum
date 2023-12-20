@@ -18,15 +18,24 @@ type OauthProvider struct {
 // Fields of the OauthProvider
 func (OauthProvider) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Comment("the provider's name"),
-		field.String("client_id").Comment("the client id"),
-		field.String("client_secret").Sensitive().Comment("the client secret"),
-		field.String("redirect_url").Comment("the redirect url"),
-		field.String("scopes").Comment("the scopes"),
-		field.String("auth_url").Comment("the auth url of the provider"),
-		field.String("token_url").Comment("the token url of the provider"),
-		field.Uint8("auth_style").Comment("the auth style, 0: auto detect 1: third party log in 2: log in with username and password"),
-		field.String("info_url").Comment("the URL to request user information by token"),
+		field.String("name").
+			Comment("the oauth provider's name"),
+		field.String("client_id").
+			Comment("the client id for the oauth provider"),
+		field.String("client_secret").
+			Comment("the client secret"),
+		field.String("redirect_url").
+			Comment("the redirect url"),
+		field.String("scopes").
+			Comment("the scopes"),
+		field.String("auth_url").
+			Comment("the auth url of the provider"),
+		field.String("token_url").
+			Comment("the token url of the provider"),
+		field.Uint8("auth_style").
+			Comment("the auth style, 0: auto detect 1: third party log in 2: log in with username and password"),
+		field.String("info_url").
+			Comment("the URL to request user information by token"),
 	}
 }
 
@@ -51,5 +60,6 @@ func (OauthProvider) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+		mixin.SoftDeleteMixin{},
 	}
 }

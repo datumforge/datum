@@ -31,10 +31,14 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
+	// FieldGravatarLogoURL holds the string denoting the gravatar_logo_url field in the database.
+	FieldGravatarLogoURL = "gravatar_logo_url"
 	// FieldLogoURL holds the string denoting the logo_url field in the database.
 	FieldLogoURL = "logo_url"
 	// FieldDisplayName holds the string denoting the display_name field in the database.
 	FieldDisplayName = "display_name"
+	// FieldOrganizationID holds the string denoting the organization_id field in the database.
+	FieldOrganizationID = "organization_id"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -75,8 +79,10 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldName,
 	FieldDescription,
+	FieldGravatarLogoURL,
 	FieldLogoURL,
 	FieldDisplayName,
+	FieldOrganizationID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "groups"
@@ -179,6 +185,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
+// ByGravatarLogoURL orders the results by the gravatar_logo_url field.
+func ByGravatarLogoURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGravatarLogoURL, opts...).ToFunc()
+}
+
 // ByLogoURL orders the results by the logo_url field.
 func ByLogoURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLogoURL, opts...).ToFunc()
@@ -187,6 +198,11 @@ func ByLogoURL(opts ...sql.OrderTermOption) OrderOption {
 // ByDisplayName orders the results by the display_name field.
 func ByDisplayName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDisplayName, opts...).ToFunc()
+}
+
+// ByOrganizationID orders the results by the organization_id field.
+func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // BySettingField orders the results by setting field.

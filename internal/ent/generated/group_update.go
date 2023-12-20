@@ -133,6 +133,26 @@ func (gu *GroupUpdate) ClearDescription() *GroupUpdate {
 	return gu
 }
 
+// SetGravatarLogoURL sets the "gravatar_logo_url" field.
+func (gu *GroupUpdate) SetGravatarLogoURL(s string) *GroupUpdate {
+	gu.mutation.SetGravatarLogoURL(s)
+	return gu
+}
+
+// SetNillableGravatarLogoURL sets the "gravatar_logo_url" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableGravatarLogoURL(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetGravatarLogoURL(*s)
+	}
+	return gu
+}
+
+// ClearGravatarLogoURL clears the value of the "gravatar_logo_url" field.
+func (gu *GroupUpdate) ClearGravatarLogoURL() *GroupUpdate {
+	gu.mutation.ClearGravatarLogoURL()
+	return gu
+}
+
 // SetLogoURL sets the "logo_url" field.
 func (gu *GroupUpdate) SetLogoURL(s string) *GroupUpdate {
 	gu.mutation.SetLogoURL(s)
@@ -164,6 +184,26 @@ func (gu *GroupUpdate) SetNillableDisplayName(s *string) *GroupUpdate {
 	if s != nil {
 		gu.SetDisplayName(*s)
 	}
+	return gu
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (gu *GroupUpdate) SetOrganizationID(s string) *GroupUpdate {
+	gu.mutation.SetOrganizationID(s)
+	return gu
+}
+
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (gu *GroupUpdate) SetNillableOrganizationID(s *string) *GroupUpdate {
+	if s != nil {
+		gu.SetOrganizationID(*s)
+	}
+	return gu
+}
+
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (gu *GroupUpdate) ClearOrganizationID() *GroupUpdate {
+	gu.mutation.ClearOrganizationID()
 	return gu
 }
 
@@ -350,6 +390,12 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if gu.mutation.DescriptionCleared() {
 		_spec.ClearField(group.FieldDescription, field.TypeString)
 	}
+	if value, ok := gu.mutation.GravatarLogoURL(); ok {
+		_spec.SetField(group.FieldGravatarLogoURL, field.TypeString, value)
+	}
+	if gu.mutation.GravatarLogoURLCleared() {
+		_spec.ClearField(group.FieldGravatarLogoURL, field.TypeString)
+	}
 	if value, ok := gu.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
 	}
@@ -358,6 +404,12 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
+	}
+	if value, ok := gu.mutation.OrganizationID(); ok {
+		_spec.SetField(group.FieldOrganizationID, field.TypeString, value)
+	}
+	if gu.mutation.OrganizationIDCleared() {
+		_spec.ClearField(group.FieldOrganizationID, field.TypeString)
 	}
 	if gu.mutation.SettingCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -591,6 +643,26 @@ func (guo *GroupUpdateOne) ClearDescription() *GroupUpdateOne {
 	return guo
 }
 
+// SetGravatarLogoURL sets the "gravatar_logo_url" field.
+func (guo *GroupUpdateOne) SetGravatarLogoURL(s string) *GroupUpdateOne {
+	guo.mutation.SetGravatarLogoURL(s)
+	return guo
+}
+
+// SetNillableGravatarLogoURL sets the "gravatar_logo_url" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableGravatarLogoURL(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetGravatarLogoURL(*s)
+	}
+	return guo
+}
+
+// ClearGravatarLogoURL clears the value of the "gravatar_logo_url" field.
+func (guo *GroupUpdateOne) ClearGravatarLogoURL() *GroupUpdateOne {
+	guo.mutation.ClearGravatarLogoURL()
+	return guo
+}
+
 // SetLogoURL sets the "logo_url" field.
 func (guo *GroupUpdateOne) SetLogoURL(s string) *GroupUpdateOne {
 	guo.mutation.SetLogoURL(s)
@@ -622,6 +694,26 @@ func (guo *GroupUpdateOne) SetNillableDisplayName(s *string) *GroupUpdateOne {
 	if s != nil {
 		guo.SetDisplayName(*s)
 	}
+	return guo
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (guo *GroupUpdateOne) SetOrganizationID(s string) *GroupUpdateOne {
+	guo.mutation.SetOrganizationID(s)
+	return guo
+}
+
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (guo *GroupUpdateOne) SetNillableOrganizationID(s *string) *GroupUpdateOne {
+	if s != nil {
+		guo.SetOrganizationID(*s)
+	}
+	return guo
+}
+
+// ClearOrganizationID clears the value of the "organization_id" field.
+func (guo *GroupUpdateOne) ClearOrganizationID() *GroupUpdateOne {
+	guo.mutation.ClearOrganizationID()
 	return guo
 }
 
@@ -838,6 +930,12 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	if guo.mutation.DescriptionCleared() {
 		_spec.ClearField(group.FieldDescription, field.TypeString)
 	}
+	if value, ok := guo.mutation.GravatarLogoURL(); ok {
+		_spec.SetField(group.FieldGravatarLogoURL, field.TypeString, value)
+	}
+	if guo.mutation.GravatarLogoURLCleared() {
+		_spec.ClearField(group.FieldGravatarLogoURL, field.TypeString)
+	}
 	if value, ok := guo.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
 	}
@@ -846,6 +944,12 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
+	}
+	if value, ok := guo.mutation.OrganizationID(); ok {
+		_spec.SetField(group.FieldOrganizationID, field.TypeString, value)
+	}
+	if guo.mutation.OrganizationIDCleared() {
+		_spec.ClearField(group.FieldOrganizationID, field.TypeString)
 	}
 	if guo.mutation.SettingCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -14,14 +14,14 @@ input CreateEntitlementInput {
   externalCustomerID: String
   """used to store references to external systems, e.g. Stripe"""
   externalSubscriptionID: String
+  """whether or not the customers entitlement expires - expires_at will show the time"""
+  expires: Boolean
+  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
   expiresAt: Time
-  upgradedAt: Time
-  """the tier the customer upgraded from"""
-  upgradedTier: String
-  downgradedAt: Time
-  """the tier the customer downgraded from"""
-  downgradedTier: String
+  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean
+  """the ID of the organization associated with the entitlement"""
+  organizationID: String!
   ownerID: ID
 }
 """
@@ -33,11 +33,18 @@ input CreateGroupInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name of the group - must be unique within the organization"""
   name: String!
+  """the groups description"""
   description: String
+  """the URL to an auto generated gravatar image for the group"""
+  gravatarLogoURL: String
+  """the URL to an image uploaded by the customer for the groups avatar image"""
   logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String
+  """the ID of the organization the group belongs to"""
+  organizationID: String
   settingID: ID!
   userIDs: [ID!]
   ownerID: ID!
@@ -51,7 +58,9 @@ input CreateGroupSettingInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
   visibility: GroupSettingVisibility
+  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
   joinPolicy: GroupSettingJoinPolicy
   """tags associated with the object"""
   tags: [String!]
@@ -68,9 +77,11 @@ input CreateIntegrationInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name of the integration - must be unique within the organization"""
   name: String!
-  kind: String!
+  """a description of the integration"""
   description: String
+  kind: String
   secretName: String!
   ownerID: ID
 }
@@ -83,9 +94,9 @@ input CreateOauthProviderInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the provider's name"""
+  """the oauth provider's name"""
   name: String!
-  """the client id"""
+  """the client id for the oauth provider"""
   clientID: String!
   """the client secret"""
   clientSecret: String!
@@ -130,6 +141,7 @@ input CreateOrganizationInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name of the organization"""
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String
@@ -177,10 +189,14 @@ input CreatePersonalAccessTokenInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name associated with the token"""
   name: String!
   token: String
+  """what abilites the token should have"""
   abilities: [String!]
+  """when the token expires"""
   expiresAt: Time!
+  """a description of the token's purpose"""
   description: String
   lastUsedAt: Time
   ownerID: ID!
@@ -224,7 +240,7 @@ input CreateUserInput {
   avatarUpdatedAt: Time
   """the time the user was last seen"""
   lastSeen: Time
-  """user bcrypt password hash"""
+  """user password hash"""
   password: String
   """the Subject of the user JWT"""
   sub: String
@@ -272,19 +288,21 @@ type Entitlement implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   tier: EntitlementTier!
   """used to store references to external systems, e.g. Stripe"""
   externalCustomerID: String
   """used to store references to external systems, e.g. Stripe"""
   externalSubscriptionID: String
+  """whether or not the customers entitlement expires - expires_at will show the time"""
+  expires: Boolean!
+  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
   expiresAt: Time
-  upgradedAt: Time
-  """the tier the customer upgraded from"""
-  upgradedTier: String
-  downgradedAt: Time
-  """the tier the customer downgraded from"""
-  downgradedTier: String
+  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean!
+  """the ID of the organization associated with the entitlement"""
+  organizationID: String!
   owner: Organization
 }
 """A connection to a list of items."""
@@ -378,6 +396,33 @@ input EntitlementWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """tier field predicates"""
   tier: EntitlementTier
   tierNEQ: EntitlementTier
@@ -415,6 +460,9 @@ input EntitlementWhereInput {
   externalSubscriptionIDNotNil: Boolean
   externalSubscriptionIDEqualFold: String
   externalSubscriptionIDContainsFold: String
+  """expires field predicates"""
+  expires: Boolean
+  expiresNEQ: Boolean
   """expires_at field predicates"""
   expiresAt: Time
   expiresAtNEQ: Time
@@ -426,63 +474,23 @@ input EntitlementWhereInput {
   expiresAtLTE: Time
   expiresAtIsNil: Boolean
   expiresAtNotNil: Boolean
-  """upgraded_at field predicates"""
-  upgradedAt: Time
-  upgradedAtNEQ: Time
-  upgradedAtIn: [Time!]
-  upgradedAtNotIn: [Time!]
-  upgradedAtGT: Time
-  upgradedAtGTE: Time
-  upgradedAtLT: Time
-  upgradedAtLTE: Time
-  upgradedAtIsNil: Boolean
-  upgradedAtNotNil: Boolean
-  """upgraded_tier field predicates"""
-  upgradedTier: String
-  upgradedTierNEQ: String
-  upgradedTierIn: [String!]
-  upgradedTierNotIn: [String!]
-  upgradedTierGT: String
-  upgradedTierGTE: String
-  upgradedTierLT: String
-  upgradedTierLTE: String
-  upgradedTierContains: String
-  upgradedTierHasPrefix: String
-  upgradedTierHasSuffix: String
-  upgradedTierIsNil: Boolean
-  upgradedTierNotNil: Boolean
-  upgradedTierEqualFold: String
-  upgradedTierContainsFold: String
-  """downgraded_at field predicates"""
-  downgradedAt: Time
-  downgradedAtNEQ: Time
-  downgradedAtIn: [Time!]
-  downgradedAtNotIn: [Time!]
-  downgradedAtGT: Time
-  downgradedAtGTE: Time
-  downgradedAtLT: Time
-  downgradedAtLTE: Time
-  downgradedAtIsNil: Boolean
-  downgradedAtNotNil: Boolean
-  """downgraded_tier field predicates"""
-  downgradedTier: String
-  downgradedTierNEQ: String
-  downgradedTierIn: [String!]
-  downgradedTierNotIn: [String!]
-  downgradedTierGT: String
-  downgradedTierGTE: String
-  downgradedTierLT: String
-  downgradedTierLTE: String
-  downgradedTierContains: String
-  downgradedTierHasPrefix: String
-  downgradedTierHasSuffix: String
-  downgradedTierIsNil: Boolean
-  downgradedTierNotNil: Boolean
-  downgradedTierEqualFold: String
-  downgradedTierContainsFold: String
   """cancelled field predicates"""
   cancelled: Boolean
   cancelledNEQ: Boolean
+  """organization_id field predicates"""
+  organizationID: String
+  organizationIDNEQ: String
+  organizationIDIn: [String!]
+  organizationIDNotIn: [String!]
+  organizationIDGT: String
+  organizationIDGTE: String
+  organizationIDLT: String
+  organizationIDLTE: String
+  organizationIDContains: String
+  organizationIDHasPrefix: String
+  organizationIDHasSuffix: String
+  organizationIDEqualFold: String
+  organizationIDContainsFold: String
   """owner edge predicates"""
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
@@ -495,11 +503,18 @@ type Group implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  """the name of the group - must be unique within the organization"""
   name: String!
+  """the groups description"""
   description: String
+  """the URL to an auto generated gravatar image for the group"""
+  gravatarLogoURL: String
+  """the URL to an image uploaded by the customer for the groups avatar image"""
   logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String!
+  """the ID of the organization the group belongs to"""
+  organizationID: String
   setting: GroupSetting!
   users: [User!]
   owner: Organization!
@@ -538,7 +553,11 @@ type GroupSetting implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
+  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
   visibility: GroupSettingVisibility!
+  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
   joinPolicy: GroupSettingJoinPolicy!
   """tags associated with the object"""
   tags: [String!]!
@@ -643,6 +662,33 @@ input GroupSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """visibility field predicates"""
   visibility: GroupSettingVisibility
   visibilityNEQ: GroupSettingVisibility
@@ -787,6 +833,22 @@ input GroupWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
+  """organization_id field predicates"""
+  organizationID: String
+  organizationIDNEQ: String
+  organizationIDIn: [String!]
+  organizationIDNotIn: [String!]
+  organizationIDGT: String
+  organizationIDGTE: String
+  organizationIDLT: String
+  organizationIDLTE: String
+  organizationIDContains: String
+  organizationIDHasPrefix: String
+  organizationIDHasSuffix: String
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
+  organizationIDEqualFold: String
+  organizationIDContainsFold: String
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [GroupSettingWhereInput!]
@@ -803,9 +865,13 @@ type Integration implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
+  """the name of the integration - must be unique within the organization"""
   name: String!
-  kind: String!
+  """a description of the integration"""
   description: String
+  kind: String
   secretName: String!
   owner: Organization
 }
@@ -906,6 +972,33 @@ input IntegrationWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """name field predicates"""
   name: String
   nameNEQ: String
@@ -932,24 +1025,10 @@ input IntegrationWhereInput {
   kindContains: String
   kindHasPrefix: String
   kindHasSuffix: String
+  kindIsNil: Boolean
+  kindNotNil: Boolean
   kindEqualFold: String
   kindContainsFold: String
-  """description field predicates"""
-  description: String
-  descriptionNEQ: String
-  descriptionIn: [String!]
-  descriptionNotIn: [String!]
-  descriptionGT: String
-  descriptionGTE: String
-  descriptionLT: String
-  descriptionLTE: String
-  descriptionContains: String
-  descriptionHasPrefix: String
-  descriptionHasSuffix: String
-  descriptionIsNil: Boolean
-  descriptionNotNil: Boolean
-  descriptionEqualFold: String
-  descriptionContainsFold: String
   """secret_name field predicates"""
   secretName: String
   secretNameNEQ: String
@@ -984,10 +1063,14 @@ type OauthProvider implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
-  """the provider's name"""
+  deletedAt: Time
+  deletedBy: String
+  """the oauth provider's name"""
   name: String!
-  """the client id"""
+  """the client id for the oauth provider"""
   clientID: String!
+  """the client secret"""
+  clientSecret: String!
   """the redirect url"""
   redirectURL: String!
   """the scopes"""
@@ -1087,6 +1170,33 @@ input OauthProviderWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """name field predicates"""
   name: String
   nameNEQ: String
@@ -1115,6 +1225,20 @@ input OauthProviderWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
+  """client_secret field predicates"""
+  clientSecret: String
+  clientSecretNEQ: String
+  clientSecretIn: [String!]
+  clientSecretNotIn: [String!]
+  clientSecretGT: String
+  clientSecretGTE: String
+  clientSecretLT: String
+  clientSecretLTE: String
+  clientSecretContains: String
+  clientSecretHasPrefix: String
+  clientSecretHasSuffix: String
+  clientSecretEqualFold: String
+  clientSecretContainsFold: String
   """redirect_url field predicates"""
   redirectURL: String
   redirectURLNEQ: String
@@ -1374,6 +1498,7 @@ type Organization implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  """the name of the organization"""
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String!
@@ -1440,6 +1565,8 @@ type OrganizationSetting implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   """domains associated with the organization"""
   domains: [String!]
   ssoCert: String
@@ -1541,6 +1668,33 @@ input OrganizationSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """sso_cert field predicates"""
   ssoCert: String
   ssoCertNEQ: String
@@ -1844,10 +1998,14 @@ type PersonalAccessToken implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  """the name associated with the token"""
   name: String!
+  """what abilites the token should have"""
   abilities: [String!]
+  """when the token expires"""
   expiresAt: Time!
-  description: String!
+  """a description of the token's purpose"""
+  description: String
   lastUsedAt: Time
   owner: User!
 }
@@ -2373,19 +2531,15 @@ input UpdateEntitlementInput {
   """used to store references to external systems, e.g. Stripe"""
   externalSubscriptionID: String
   clearExternalSubscriptionID: Boolean
+  """whether or not the customers entitlement expires - expires_at will show the time"""
+  expires: Boolean
+  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
   expiresAt: Time
   clearExpiresAt: Boolean
-  upgradedAt: Time
-  clearUpgradedAt: Boolean
-  """the tier the customer upgraded from"""
-  upgradedTier: String
-  clearUpgradedTier: Boolean
-  downgradedAt: Time
-  clearDowngradedAt: Boolean
-  """the tier the customer downgraded from"""
-  downgradedTier: String
-  clearDowngradedTier: Boolean
+  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean
+  """the ID of the organization associated with the entitlement"""
+  organizationID: String
   ownerID: ID
   clearOwner: Boolean
 }
@@ -2397,13 +2551,22 @@ input UpdateGroupInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name of the group - must be unique within the organization"""
   name: String
+  """the groups description"""
   description: String
   clearDescription: Boolean
+  """the URL to an auto generated gravatar image for the group"""
+  gravatarLogoURL: String
+  clearGravatarLogoURL: Boolean
+  """the URL to an image uploaded by the customer for the groups avatar image"""
   logoURL: String
   clearLogoURL: Boolean
   """The group's displayed 'friendly' name"""
   displayName: String
+  """the ID of the organization the group belongs to"""
+  organizationID: String
+  clearOrganizationID: Boolean
   settingID: ID
   addUserIDs: [ID!]
   removeUserIDs: [ID!]
@@ -2418,7 +2581,9 @@ input UpdateGroupSettingInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
   visibility: GroupSettingVisibility
+  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
   joinPolicy: GroupSettingJoinPolicy
   """tags associated with the object"""
   tags: [String!]
@@ -2436,9 +2601,13 @@ input UpdateIntegrationInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name of the integration - must be unique within the organization"""
   name: String
+  """a description of the integration"""
   description: String
   clearDescription: Boolean
+  kind: String
+  clearKind: Boolean
   ownerID: ID
   clearOwner: Boolean
 }
@@ -2450,9 +2619,9 @@ input UpdateOauthProviderInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the provider's name"""
+  """the oauth provider's name"""
   name: String
-  """the client id"""
+  """the client id for the oauth provider"""
   clientID: String
   """the client secret"""
   clientSecret: String
@@ -2503,6 +2672,7 @@ input UpdateOrganizationInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name of the organization"""
   name: String
   """The organization's displayed 'friendly' name"""
   displayName: String
@@ -2572,12 +2742,17 @@ input UpdatePersonalAccessTokenInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name associated with the token"""
   name: String
+  """what abilites the token should have"""
   abilities: [String!]
   appendAbilities: [String!]
   clearAbilities: Boolean
+  """when the token expires"""
   expiresAt: Time
+  """a description of the token's purpose"""
   description: String
+  clearDescription: Boolean
   lastUsedAt: Time
   clearLastUsedAt: Boolean
   ownerID: ID
@@ -2621,7 +2796,7 @@ input UpdateUserInput {
   """the time the user was last seen"""
   lastSeen: Time
   clearLastSeen: Boolean
-  """user bcrypt password hash"""
+  """user password hash"""
   password: String
   clearPassword: Boolean
   """the Subject of the user JWT"""
@@ -2694,7 +2869,7 @@ type User implements Node {
   avatarUpdatedAt: Time
   """the time the user was last seen"""
   lastSeen: Time
-  """user bcrypt password hash"""
+  """user password hash"""
   password: String
   """the Subject of the user JWT"""
   sub: String
@@ -2741,6 +2916,8 @@ type UserSetting implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   """user account is locked if unconfirmed or explicitly locked"""
   locked: Boolean!
   """The time notifications regarding the user were silenced"""
@@ -2853,6 +3030,33 @@ input UserSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """locked field predicates"""
   locked: Boolean
   lockedNEQ: Boolean

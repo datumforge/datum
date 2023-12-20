@@ -539,7 +539,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := uc.mutation.LastSeen(); ok {
 		_spec.SetField(user.FieldLastSeen, field.TypeTime, value)
-		_node.LastSeen = value
+		_node.LastSeen = &value
 	}
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)

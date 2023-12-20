@@ -63,14 +63,6 @@ func (su *SessionUpdate) SetIssuedAt(t time.Time) *SessionUpdate {
 	return su
 }
 
-// SetNillableIssuedAt sets the "issued_at" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableIssuedAt(t *time.Time) *SessionUpdate {
-	if t != nil {
-		su.SetIssuedAt(*t)
-	}
-	return su
-}
-
 // SetExpiresAt sets the "expires_at" field.
 func (su *SessionUpdate) SetExpiresAt(t time.Time) *SessionUpdate {
 	su.mutation.SetExpiresAt(t)
@@ -173,6 +165,13 @@ func (su *SessionUpdate) defaults() error {
 		}
 		v := session.UpdateDefaultUpdatedAt()
 		su.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := su.mutation.IssuedAt(); !ok {
+		if session.UpdateDefaultIssuedAt == nil {
+			return fmt.Errorf("generated: uninitialized session.UpdateDefaultIssuedAt (forgotten import generated/runtime?)")
+		}
+		v := session.UpdateDefaultIssuedAt()
+		su.mutation.SetIssuedAt(v)
 	}
 	return nil
 }
@@ -303,14 +302,6 @@ func (suo *SessionUpdateOne) SetIssuedAt(t time.Time) *SessionUpdateOne {
 	return suo
 }
 
-// SetNillableIssuedAt sets the "issued_at" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableIssuedAt(t *time.Time) *SessionUpdateOne {
-	if t != nil {
-		suo.SetIssuedAt(*t)
-	}
-	return suo
-}
-
 // SetExpiresAt sets the "expires_at" field.
 func (suo *SessionUpdateOne) SetExpiresAt(t time.Time) *SessionUpdateOne {
 	suo.mutation.SetExpiresAt(t)
@@ -426,6 +417,13 @@ func (suo *SessionUpdateOne) defaults() error {
 		}
 		v := session.UpdateDefaultUpdatedAt()
 		suo.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := suo.mutation.IssuedAt(); !ok {
+		if session.UpdateDefaultIssuedAt == nil {
+			return fmt.Errorf("generated: uninitialized session.UpdateDefaultIssuedAt (forgotten import generated/runtime?)")
+		}
+		v := session.UpdateDefaultIssuedAt()
+		suo.mutation.SetIssuedAt(v)
 	}
 	return nil
 }

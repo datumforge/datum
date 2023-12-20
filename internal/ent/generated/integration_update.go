@@ -57,6 +57,46 @@ func (iu *IntegrationUpdate) ClearUpdatedBy() *IntegrationUpdate {
 	return iu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (iu *IntegrationUpdate) SetDeletedAt(t time.Time) *IntegrationUpdate {
+	iu.mutation.SetDeletedAt(t)
+	return iu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (iu *IntegrationUpdate) SetNillableDeletedAt(t *time.Time) *IntegrationUpdate {
+	if t != nil {
+		iu.SetDeletedAt(*t)
+	}
+	return iu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (iu *IntegrationUpdate) ClearDeletedAt() *IntegrationUpdate {
+	iu.mutation.ClearDeletedAt()
+	return iu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (iu *IntegrationUpdate) SetDeletedBy(s string) *IntegrationUpdate {
+	iu.mutation.SetDeletedBy(s)
+	return iu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (iu *IntegrationUpdate) SetNillableDeletedBy(s *string) *IntegrationUpdate {
+	if s != nil {
+		iu.SetDeletedBy(*s)
+	}
+	return iu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (iu *IntegrationUpdate) ClearDeletedBy() *IntegrationUpdate {
+	iu.mutation.ClearDeletedBy()
+	return iu
+}
+
 // SetName sets the "name" field.
 func (iu *IntegrationUpdate) SetName(s string) *IntegrationUpdate {
 	iu.mutation.SetName(s)
@@ -88,6 +128,26 @@ func (iu *IntegrationUpdate) SetNillableDescription(s *string) *IntegrationUpdat
 // ClearDescription clears the value of the "description" field.
 func (iu *IntegrationUpdate) ClearDescription() *IntegrationUpdate {
 	iu.mutation.ClearDescription()
+	return iu
+}
+
+// SetKind sets the "kind" field.
+func (iu *IntegrationUpdate) SetKind(s string) *IntegrationUpdate {
+	iu.mutation.SetKind(s)
+	return iu
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (iu *IntegrationUpdate) SetNillableKind(s *string) *IntegrationUpdate {
+	if s != nil {
+		iu.SetKind(*s)
+	}
+	return iu
+}
+
+// ClearKind clears the value of the "kind" field.
+func (iu *IntegrationUpdate) ClearKind() *IntegrationUpdate {
+	iu.mutation.ClearKind()
 	return iu
 }
 
@@ -197,6 +257,18 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if iu.mutation.UpdatedByCleared() {
 		_spec.ClearField(integration.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := iu.mutation.DeletedAt(); ok {
+		_spec.SetField(integration.FieldDeletedAt, field.TypeTime, value)
+	}
+	if iu.mutation.DeletedAtCleared() {
+		_spec.ClearField(integration.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := iu.mutation.DeletedBy(); ok {
+		_spec.SetField(integration.FieldDeletedBy, field.TypeString, value)
+	}
+	if iu.mutation.DeletedByCleared() {
+		_spec.ClearField(integration.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := iu.mutation.Name(); ok {
 		_spec.SetField(integration.FieldName, field.TypeString, value)
 	}
@@ -205,6 +277,12 @@ func (iu *IntegrationUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if iu.mutation.DescriptionCleared() {
 		_spec.ClearField(integration.FieldDescription, field.TypeString)
+	}
+	if value, ok := iu.mutation.Kind(); ok {
+		_spec.SetField(integration.FieldKind, field.TypeString, value)
+	}
+	if iu.mutation.KindCleared() {
+		_spec.ClearField(integration.FieldKind, field.TypeString)
 	}
 	if iu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -285,6 +363,46 @@ func (iuo *IntegrationUpdateOne) ClearUpdatedBy() *IntegrationUpdateOne {
 	return iuo
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (iuo *IntegrationUpdateOne) SetDeletedAt(t time.Time) *IntegrationUpdateOne {
+	iuo.mutation.SetDeletedAt(t)
+	return iuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (iuo *IntegrationUpdateOne) SetNillableDeletedAt(t *time.Time) *IntegrationUpdateOne {
+	if t != nil {
+		iuo.SetDeletedAt(*t)
+	}
+	return iuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (iuo *IntegrationUpdateOne) ClearDeletedAt() *IntegrationUpdateOne {
+	iuo.mutation.ClearDeletedAt()
+	return iuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (iuo *IntegrationUpdateOne) SetDeletedBy(s string) *IntegrationUpdateOne {
+	iuo.mutation.SetDeletedBy(s)
+	return iuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (iuo *IntegrationUpdateOne) SetNillableDeletedBy(s *string) *IntegrationUpdateOne {
+	if s != nil {
+		iuo.SetDeletedBy(*s)
+	}
+	return iuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (iuo *IntegrationUpdateOne) ClearDeletedBy() *IntegrationUpdateOne {
+	iuo.mutation.ClearDeletedBy()
+	return iuo
+}
+
 // SetName sets the "name" field.
 func (iuo *IntegrationUpdateOne) SetName(s string) *IntegrationUpdateOne {
 	iuo.mutation.SetName(s)
@@ -316,6 +434,26 @@ func (iuo *IntegrationUpdateOne) SetNillableDescription(s *string) *IntegrationU
 // ClearDescription clears the value of the "description" field.
 func (iuo *IntegrationUpdateOne) ClearDescription() *IntegrationUpdateOne {
 	iuo.mutation.ClearDescription()
+	return iuo
+}
+
+// SetKind sets the "kind" field.
+func (iuo *IntegrationUpdateOne) SetKind(s string) *IntegrationUpdateOne {
+	iuo.mutation.SetKind(s)
+	return iuo
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (iuo *IntegrationUpdateOne) SetNillableKind(s *string) *IntegrationUpdateOne {
+	if s != nil {
+		iuo.SetKind(*s)
+	}
+	return iuo
+}
+
+// ClearKind clears the value of the "kind" field.
+func (iuo *IntegrationUpdateOne) ClearKind() *IntegrationUpdateOne {
+	iuo.mutation.ClearKind()
 	return iuo
 }
 
@@ -455,6 +593,18 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 	if iuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(integration.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := iuo.mutation.DeletedAt(); ok {
+		_spec.SetField(integration.FieldDeletedAt, field.TypeTime, value)
+	}
+	if iuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(integration.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := iuo.mutation.DeletedBy(); ok {
+		_spec.SetField(integration.FieldDeletedBy, field.TypeString, value)
+	}
+	if iuo.mutation.DeletedByCleared() {
+		_spec.ClearField(integration.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := iuo.mutation.Name(); ok {
 		_spec.SetField(integration.FieldName, field.TypeString, value)
 	}
@@ -463,6 +613,12 @@ func (iuo *IntegrationUpdateOne) sqlSave(ctx context.Context) (_node *Integratio
 	}
 	if iuo.mutation.DescriptionCleared() {
 		_spec.ClearField(integration.FieldDescription, field.TypeString)
+	}
+	if value, ok := iuo.mutation.Kind(); ok {
+		_spec.SetField(integration.FieldKind, field.TypeString, value)
+	}
+	if iuo.mutation.KindCleared() {
+		_spec.ClearField(integration.FieldKind, field.TypeString)
 	}
 	if iuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

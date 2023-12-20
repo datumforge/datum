@@ -27,9 +27,13 @@ type GroupSetting struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
-	// Visibility holds the value of the "visibility" field.
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
+	// whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization
 	Visibility groupsetting.Visibility `json:"visibility,omitempty"`
-	// JoinPolicy holds the value of the "join_policy" field.
+	// the policy governing ability to freely join a group, whether it requires an invitation, application, or either
 	JoinPolicy groupsetting.JoinPolicy `json:"join_policy,omitempty"`
 	// tags associated with the object
 	Tags []string `json:"tags,omitempty"`
@@ -77,9 +81,9 @@ func (*GroupSetting) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case groupsetting.FieldSyncToSlack, groupsetting.FieldSyncToGithub:
 			values[i] = new(sql.NullBool)
-		case groupsetting.FieldID, groupsetting.FieldCreatedBy, groupsetting.FieldUpdatedBy, groupsetting.FieldVisibility, groupsetting.FieldJoinPolicy:
+		case groupsetting.FieldID, groupsetting.FieldCreatedBy, groupsetting.FieldUpdatedBy, groupsetting.FieldDeletedBy, groupsetting.FieldVisibility, groupsetting.FieldJoinPolicy:
 			values[i] = new(sql.NullString)
-		case groupsetting.FieldCreatedAt, groupsetting.FieldUpdatedAt:
+		case groupsetting.FieldCreatedAt, groupsetting.FieldUpdatedAt, groupsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		case groupsetting.ForeignKeys[0]: // group_setting
 			values[i] = new(sql.NullString)
@@ -127,6 +131,18 @@ func (gs *GroupSetting) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				gs.UpdatedBy = value.String
+			}
+		case groupsetting.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				gs.DeletedAt = value.Time
+			}
+		case groupsetting.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				gs.DeletedBy = value.String
 			}
 		case groupsetting.FieldVisibility:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -219,6 +235,12 @@ func (gs *GroupSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(gs.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(gs.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(gs.DeletedBy)
 	builder.WriteString(", ")
 	builder.WriteString("visibility=")
 	builder.WriteString(fmt.Sprintf("%v", gs.Visibility))

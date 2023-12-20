@@ -77,6 +77,34 @@ func (osc *OrganizationSettingCreate) SetNillableUpdatedBy(s *string) *Organizat
 	return osc
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (osc *OrganizationSettingCreate) SetDeletedAt(t time.Time) *OrganizationSettingCreate {
+	osc.mutation.SetDeletedAt(t)
+	return osc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableDeletedAt(t *time.Time) *OrganizationSettingCreate {
+	if t != nil {
+		osc.SetDeletedAt(*t)
+	}
+	return osc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (osc *OrganizationSettingCreate) SetDeletedBy(s string) *OrganizationSettingCreate {
+	osc.mutation.SetDeletedBy(s)
+	return osc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (osc *OrganizationSettingCreate) SetNillableDeletedBy(s *string) *OrganizationSettingCreate {
+	if s != nil {
+		osc.SetDeletedBy(*s)
+	}
+	return osc
+}
+
 // SetDomains sets the "domains" field.
 func (osc *OrganizationSettingCreate) SetDomains(s []string) *OrganizationSettingCreate {
 	osc.mutation.SetDomains(s)
@@ -358,6 +386,14 @@ func (osc *OrganizationSettingCreate) createSpec() (*OrganizationSetting, *sqlgr
 	if value, ok := osc.mutation.UpdatedBy(); ok {
 		_spec.SetField(organizationsetting.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := osc.mutation.DeletedAt(); ok {
+		_spec.SetField(organizationsetting.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := osc.mutation.DeletedBy(); ok {
+		_spec.SetField(organizationsetting.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := osc.mutation.Domains(); ok {
 		_spec.SetField(organizationsetting.FieldDomains, field.TypeJSON, value)

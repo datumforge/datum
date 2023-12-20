@@ -23,7 +23,8 @@ type PersonalAccessToken struct {
 // Fields of the PersonalAccessToken
 func (PersonalAccessToken) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name"),
+		field.String("name").
+			Comment("the name associated with the token"),
 		field.String("token").Sensitive().
 			Unique().
 			Immutable().
@@ -32,10 +33,14 @@ func (PersonalAccessToken) Fields() []ent.Field {
 				return token
 			}),
 		field.JSON("abilities", []string{}).
+			Comment("what abilites the token should have").
 			Optional(),
 		field.Time("expires_at").
+			Comment("when the token expires").
 			Nillable(),
 		field.String("description").
+			Comment("a description of the token's purpose").
+			Optional().
 			Default("").
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),

@@ -20,6 +20,7 @@ func (UserSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+		mixin.SoftDeleteMixin{},
 	}
 }
 

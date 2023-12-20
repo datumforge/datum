@@ -31,14 +31,18 @@ type Group struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
-	// Name holds the value of the "name" field.
+	// the name of the group - must be unique within the organization
 	Name string `json:"name,omitempty"`
-	// Description holds the value of the "description" field.
+	// the groups description
 	Description string `json:"description,omitempty"`
-	// LogoURL holds the value of the "logo_url" field.
+	// the URL to an auto generated gravatar image for the group
+	GravatarLogoURL string `json:"gravatar_logo_url,omitempty"`
+	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL string `json:"logo_url,omitempty"`
 	// The group's displayed 'friendly' name
 	DisplayName string `json:"display_name,omitempty"`
+	// the ID of the organization the group belongs to
+	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
 	Edges               GroupEdges `json:"edges"`
@@ -103,7 +107,7 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldDeletedBy, group.FieldName, group.FieldDescription, group.FieldLogoURL, group.FieldDisplayName:
+		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldDeletedBy, group.FieldName, group.FieldDescription, group.FieldGravatarLogoURL, group.FieldLogoURL, group.FieldDisplayName, group.FieldOrganizationID:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt, group.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -178,6 +182,12 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gr.Description = value.String
 			}
+		case group.FieldGravatarLogoURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gravatar_logo_url", values[i])
+			} else if value.Valid {
+				gr.GravatarLogoURL = value.String
+			}
 		case group.FieldLogoURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field logo_url", values[i])
@@ -189,6 +199,12 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field display_name", values[i])
 			} else if value.Valid {
 				gr.DisplayName = value.String
+			}
+		case group.FieldOrganizationID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
+			} else if value.Valid {
+				gr.OrganizationID = value.String
 			}
 		case group.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -272,11 +288,17 @@ func (gr *Group) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(gr.Description)
 	builder.WriteString(", ")
+	builder.WriteString("gravatar_logo_url=")
+	builder.WriteString(gr.GravatarLogoURL)
+	builder.WriteString(", ")
 	builder.WriteString("logo_url=")
 	builder.WriteString(gr.LogoURL)
 	builder.WriteString(", ")
 	builder.WriteString("display_name=")
 	builder.WriteString(gr.DisplayName)
+	builder.WriteString(", ")
+	builder.WriteString("organization_id=")
+	builder.WriteString(gr.OrganizationID)
 	builder.WriteByte(')')
 	return builder.String()
 }

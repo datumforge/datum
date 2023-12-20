@@ -77,6 +77,34 @@ func (usc *UserSettingCreate) SetNillableUpdatedBy(s *string) *UserSettingCreate
 	return usc
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (usc *UserSettingCreate) SetDeletedAt(t time.Time) *UserSettingCreate {
+	usc.mutation.SetDeletedAt(t)
+	return usc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableDeletedAt(t *time.Time) *UserSettingCreate {
+	if t != nil {
+		usc.SetDeletedAt(*t)
+	}
+	return usc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (usc *UserSettingCreate) SetDeletedBy(s string) *UserSettingCreate {
+	usc.mutation.SetDeletedBy(s)
+	return usc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (usc *UserSettingCreate) SetNillableDeletedBy(s *string) *UserSettingCreate {
+	if s != nil {
+		usc.SetDeletedBy(*s)
+	}
+	return usc
+}
+
 // SetLocked sets the "locked" field.
 func (usc *UserSettingCreate) SetLocked(b bool) *UserSettingCreate {
 	usc.mutation.SetLocked(b)
@@ -392,6 +420,14 @@ func (usc *UserSettingCreate) createSpec() (*UserSetting, *sqlgraph.CreateSpec) 
 	if value, ok := usc.mutation.UpdatedBy(); ok {
 		_spec.SetField(usersetting.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := usc.mutation.DeletedAt(); ok {
+		_spec.SetField(usersetting.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := usc.mutation.DeletedBy(); ok {
+		_spec.SetField(usersetting.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := usc.mutation.Locked(); ok {
 		_spec.SetField(usersetting.FieldLocked, field.TypeBool, value)

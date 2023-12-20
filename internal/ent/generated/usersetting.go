@@ -27,6 +27,10 @@ type UserSetting struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
 	// user account is locked if unconfirmed or explicitly locked
 	Locked bool `json:"locked,omitempty"`
 	// The time notifications regarding the user were silenced
@@ -85,9 +89,9 @@ func (*UserSetting) scanValues(columns []string) ([]any, error) {
 			values[i] = new([]byte)
 		case usersetting.FieldLocked, usersetting.FieldEmailConfirmed:
 			values[i] = new(sql.NullBool)
-		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldRecoveryCode, usersetting.FieldStatus, usersetting.FieldRole:
+		case usersetting.FieldID, usersetting.FieldCreatedBy, usersetting.FieldUpdatedBy, usersetting.FieldDeletedBy, usersetting.FieldRecoveryCode, usersetting.FieldStatus, usersetting.FieldRole:
 			values[i] = new(sql.NullString)
-		case usersetting.FieldCreatedAt, usersetting.FieldUpdatedAt, usersetting.FieldSilencedAt, usersetting.FieldSuspendedAt:
+		case usersetting.FieldCreatedAt, usersetting.FieldUpdatedAt, usersetting.FieldDeletedAt, usersetting.FieldSilencedAt, usersetting.FieldSuspendedAt:
 			values[i] = new(sql.NullTime)
 		case usersetting.ForeignKeys[0]: // user_setting
 			values[i] = new(sql.NullString)
@@ -135,6 +139,18 @@ func (us *UserSetting) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				us.UpdatedBy = value.String
+			}
+		case usersetting.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				us.DeletedAt = value.Time
+			}
+		case usersetting.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				us.DeletedBy = value.String
 			}
 		case usersetting.FieldLocked:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -256,6 +272,12 @@ func (us *UserSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(us.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(us.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(us.DeletedBy)
 	builder.WriteString(", ")
 	builder.WriteString("locked=")
 	builder.WriteString(fmt.Sprintf("%v", us.Locked))

@@ -60,18 +60,18 @@ type ComplexityRoot struct {
 		Cancelled              func(childComplexity int) int
 		CreatedAt              func(childComplexity int) int
 		CreatedBy              func(childComplexity int) int
-		DowngradedAt           func(childComplexity int) int
-		DowngradedTier         func(childComplexity int) int
+		DeletedAt              func(childComplexity int) int
+		DeletedBy              func(childComplexity int) int
+		Expires                func(childComplexity int) int
 		ExpiresAt              func(childComplexity int) int
 		ExternalCustomerID     func(childComplexity int) int
 		ExternalSubscriptionID func(childComplexity int) int
 		ID                     func(childComplexity int) int
+		OrganizationID         func(childComplexity int) int
 		Owner                  func(childComplexity int) int
 		Tier                   func(childComplexity int) int
 		UpdatedAt              func(childComplexity int) int
 		UpdatedBy              func(childComplexity int) int
-		UpgradedAt             func(childComplexity int) int
-		UpgradedTier           func(childComplexity int) int
 	}
 
 	EntitlementConnection struct {
@@ -98,20 +98,22 @@ type ComplexityRoot struct {
 	}
 
 	Group struct {
-		CreatedAt   func(childComplexity int) int
-		CreatedBy   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		DeletedBy   func(childComplexity int) int
-		Description func(childComplexity int) int
-		DisplayName func(childComplexity int) int
-		ID          func(childComplexity int) int
-		LogoURL     func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Owner       func(childComplexity int) int
-		Setting     func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UpdatedBy   func(childComplexity int) int
-		Users       func(childComplexity int) int
+		CreatedAt       func(childComplexity int) int
+		CreatedBy       func(childComplexity int) int
+		DeletedAt       func(childComplexity int) int
+		DeletedBy       func(childComplexity int) int
+		Description     func(childComplexity int) int
+		DisplayName     func(childComplexity int) int
+		GravatarLogoURL func(childComplexity int) int
+		ID              func(childComplexity int) int
+		LogoURL         func(childComplexity int) int
+		Name            func(childComplexity int) int
+		OrganizationID  func(childComplexity int) int
+		Owner           func(childComplexity int) int
+		Setting         func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		UpdatedBy       func(childComplexity int) int
+		Users           func(childComplexity int) int
 	}
 
 	GroupConnection struct {
@@ -136,6 +138,8 @@ type ComplexityRoot struct {
 	GroupSetting struct {
 		CreatedAt    func(childComplexity int) int
 		CreatedBy    func(childComplexity int) int
+		DeletedAt    func(childComplexity int) int
+		DeletedBy    func(childComplexity int) int
 		Group        func(childComplexity int) int
 		ID           func(childComplexity int) int
 		JoinPolicy   func(childComplexity int) int
@@ -177,6 +181,8 @@ type ComplexityRoot struct {
 	Integration struct {
 		CreatedAt   func(childComplexity int) int
 		CreatedBy   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		DeletedBy   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Kind        func(childComplexity int) int
@@ -250,20 +256,23 @@ type ComplexityRoot struct {
 	}
 
 	OauthProvider struct {
-		AuthStyle   func(childComplexity int) int
-		AuthURL     func(childComplexity int) int
-		ClientID    func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		CreatedBy   func(childComplexity int) int
-		ID          func(childComplexity int) int
-		InfoURL     func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Owner       func(childComplexity int) int
-		RedirectURL func(childComplexity int) int
-		Scopes      func(childComplexity int) int
-		TokenURL    func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UpdatedBy   func(childComplexity int) int
+		AuthStyle    func(childComplexity int) int
+		AuthURL      func(childComplexity int) int
+		ClientID     func(childComplexity int) int
+		ClientSecret func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		CreatedBy    func(childComplexity int) int
+		DeletedAt    func(childComplexity int) int
+		DeletedBy    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		InfoURL      func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Owner        func(childComplexity int) int
+		RedirectURL  func(childComplexity int) int
+		Scopes       func(childComplexity int) int
+		TokenURL     func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		UpdatedBy    func(childComplexity int) int
 	}
 
 	OauthProviderConnection struct {
@@ -375,6 +384,8 @@ type ComplexityRoot struct {
 		BillingPhone   func(childComplexity int) int
 		CreatedAt      func(childComplexity int) int
 		CreatedBy      func(childComplexity int) int
+		DeletedAt      func(childComplexity int) int
+		DeletedBy      func(childComplexity int) int
 		Domains        func(childComplexity int) int
 		ID             func(childComplexity int) int
 		Organization   func(childComplexity int) int
@@ -573,6 +584,8 @@ type ComplexityRoot struct {
 	UserSetting struct {
 		CreatedAt      func(childComplexity int) int
 		CreatedBy      func(childComplexity int) int
+		DeletedAt      func(childComplexity int) int
+		DeletedBy      func(childComplexity int) int
 		EmailConfirmed func(childComplexity int) int
 		ID             func(childComplexity int) int
 		Locked         func(childComplexity int) int
@@ -746,19 +759,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Entitlement.CreatedBy(childComplexity), true
 
-	case "Entitlement.downgradedAt":
-		if e.complexity.Entitlement.DowngradedAt == nil {
+	case "Entitlement.deletedAt":
+		if e.complexity.Entitlement.DeletedAt == nil {
 			break
 		}
 
-		return e.complexity.Entitlement.DowngradedAt(childComplexity), true
+		return e.complexity.Entitlement.DeletedAt(childComplexity), true
 
-	case "Entitlement.downgradedTier":
-		if e.complexity.Entitlement.DowngradedTier == nil {
+	case "Entitlement.deletedBy":
+		if e.complexity.Entitlement.DeletedBy == nil {
 			break
 		}
 
-		return e.complexity.Entitlement.DowngradedTier(childComplexity), true
+		return e.complexity.Entitlement.DeletedBy(childComplexity), true
+
+	case "Entitlement.expires":
+		if e.complexity.Entitlement.Expires == nil {
+			break
+		}
+
+		return e.complexity.Entitlement.Expires(childComplexity), true
 
 	case "Entitlement.expiresAt":
 		if e.complexity.Entitlement.ExpiresAt == nil {
@@ -788,6 +808,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Entitlement.ID(childComplexity), true
 
+	case "Entitlement.organizationID":
+		if e.complexity.Entitlement.OrganizationID == nil {
+			break
+		}
+
+		return e.complexity.Entitlement.OrganizationID(childComplexity), true
+
 	case "Entitlement.owner":
 		if e.complexity.Entitlement.Owner == nil {
 			break
@@ -815,20 +842,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Entitlement.UpdatedBy(childComplexity), true
-
-	case "Entitlement.upgradedAt":
-		if e.complexity.Entitlement.UpgradedAt == nil {
-			break
-		}
-
-		return e.complexity.Entitlement.UpgradedAt(childComplexity), true
-
-	case "Entitlement.upgradedTier":
-		if e.complexity.Entitlement.UpgradedTier == nil {
-			break
-		}
-
-		return e.complexity.Entitlement.UpgradedTier(childComplexity), true
 
 	case "EntitlementConnection.edges":
 		if e.complexity.EntitlementConnection.Edges == nil {
@@ -928,6 +941,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.DisplayName(childComplexity), true
 
+	case "Group.gravatarLogoURL":
+		if e.complexity.Group.GravatarLogoURL == nil {
+			break
+		}
+
+		return e.complexity.Group.GravatarLogoURL(childComplexity), true
+
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
 			break
@@ -948,6 +968,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.Name(childComplexity), true
+
+	case "Group.organizationID":
+		if e.complexity.Group.OrganizationID == nil {
+			break
+		}
+
+		return e.complexity.Group.OrganizationID(childComplexity), true
 
 	case "Group.owner":
 		if e.complexity.Group.Owner == nil {
@@ -1046,6 +1073,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GroupSetting.CreatedBy(childComplexity), true
+
+	case "GroupSetting.deletedAt":
+		if e.complexity.GroupSetting.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.GroupSetting.DeletedAt(childComplexity), true
+
+	case "GroupSetting.deletedBy":
+		if e.complexity.GroupSetting.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.GroupSetting.DeletedBy(childComplexity), true
 
 	case "GroupSetting.group":
 		if e.complexity.GroupSetting.Group == nil {
@@ -1186,6 +1227,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Integration.CreatedBy(childComplexity), true
+
+	case "Integration.deletedAt":
+		if e.complexity.Integration.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Integration.DeletedAt(childComplexity), true
+
+	case "Integration.deletedBy":
+		if e.complexity.Integration.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.Integration.DeletedBy(childComplexity), true
 
 	case "Integration.description":
 		if e.complexity.Integration.Description == nil {
@@ -1752,6 +1807,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OauthProvider.ClientID(childComplexity), true
 
+	case "OauthProvider.clientSecret":
+		if e.complexity.OauthProvider.ClientSecret == nil {
+			break
+		}
+
+		return e.complexity.OauthProvider.ClientSecret(childComplexity), true
+
 	case "OauthProvider.createdAt":
 		if e.complexity.OauthProvider.CreatedAt == nil {
 			break
@@ -1765,6 +1827,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OauthProvider.CreatedBy(childComplexity), true
+
+	case "OauthProvider.deletedAt":
+		if e.complexity.OauthProvider.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.OauthProvider.DeletedAt(childComplexity), true
+
+	case "OauthProvider.deletedBy":
+		if e.complexity.OauthProvider.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.OauthProvider.DeletedBy(childComplexity), true
 
 	case "OauthProvider.id":
 		if e.complexity.OauthProvider.ID == nil {
@@ -2253,6 +2329,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrganizationSetting.CreatedBy(childComplexity), true
+
+	case "OrganizationSetting.deletedAt":
+		if e.complexity.OrganizationSetting.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetting.DeletedAt(childComplexity), true
+
+	case "OrganizationSetting.deletedBy":
+		if e.complexity.OrganizationSetting.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.OrganizationSetting.DeletedBy(childComplexity), true
 
 	case "OrganizationSetting.domains":
 		if e.complexity.OrganizationSetting.Domains == nil {
@@ -3224,6 +3314,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSetting.CreatedBy(childComplexity), true
 
+	case "UserSetting.deletedAt":
+		if e.complexity.UserSetting.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.DeletedAt(childComplexity), true
+
+	case "UserSetting.deletedBy":
+		if e.complexity.UserSetting.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.UserSetting.DeletedBy(childComplexity), true
+
 	case "UserSetting.emailConfirmed":
 		if e.complexity.UserSetting.EmailConfirmed == nil {
 			break
@@ -3539,14 +3643,14 @@ input CreateEntitlementInput {
   externalCustomerID: String
   """used to store references to external systems, e.g. Stripe"""
   externalSubscriptionID: String
+  """whether or not the customers entitlement expires - expires_at will show the time"""
+  expires: Boolean
+  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
   expiresAt: Time
-  upgradedAt: Time
-  """the tier the customer upgraded from"""
-  upgradedTier: String
-  downgradedAt: Time
-  """the tier the customer downgraded from"""
-  downgradedTier: String
+  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean
+  """the ID of the organization associated with the entitlement"""
+  organizationID: String!
   ownerID: ID
 }
 """
@@ -3558,11 +3662,18 @@ input CreateGroupInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name of the group - must be unique within the organization"""
   name: String!
+  """the groups description"""
   description: String
+  """the URL to an auto generated gravatar image for the group"""
+  gravatarLogoURL: String
+  """the URL to an image uploaded by the customer for the groups avatar image"""
   logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String
+  """the ID of the organization the group belongs to"""
+  organizationID: String
   settingID: ID!
   userIDs: [ID!]
   ownerID: ID!
@@ -3576,7 +3687,9 @@ input CreateGroupSettingInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
   visibility: GroupSettingVisibility
+  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
   joinPolicy: GroupSettingJoinPolicy
   """tags associated with the object"""
   tags: [String!]
@@ -3593,9 +3706,11 @@ input CreateIntegrationInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name of the integration - must be unique within the organization"""
   name: String!
-  kind: String!
+  """a description of the integration"""
   description: String
+  kind: String
   secretName: String!
   ownerID: ID
 }
@@ -3608,9 +3723,9 @@ input CreateOauthProviderInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
-  """the provider's name"""
+  """the oauth provider's name"""
   name: String!
-  """the client id"""
+  """the client id for the oauth provider"""
   clientID: String!
   """the client secret"""
   clientSecret: String!
@@ -3655,6 +3770,7 @@ input CreateOrganizationInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name of the organization"""
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String
@@ -3702,10 +3818,14 @@ input CreatePersonalAccessTokenInput {
   updatedAt: Time
   createdBy: String
   updatedBy: String
+  """the name associated with the token"""
   name: String!
   token: String
+  """what abilites the token should have"""
   abilities: [String!]
+  """when the token expires"""
   expiresAt: Time!
+  """a description of the token's purpose"""
   description: String
   lastUsedAt: Time
   ownerID: ID!
@@ -3749,7 +3869,7 @@ input CreateUserInput {
   avatarUpdatedAt: Time
   """the time the user was last seen"""
   lastSeen: Time
-  """user bcrypt password hash"""
+  """user password hash"""
   password: String
   """the Subject of the user JWT"""
   sub: String
@@ -3797,19 +3917,21 @@ type Entitlement implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   tier: EntitlementTier!
   """used to store references to external systems, e.g. Stripe"""
   externalCustomerID: String
   """used to store references to external systems, e.g. Stripe"""
   externalSubscriptionID: String
+  """whether or not the customers entitlement expires - expires_at will show the time"""
+  expires: Boolean!
+  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
   expiresAt: Time
-  upgradedAt: Time
-  """the tier the customer upgraded from"""
-  upgradedTier: String
-  downgradedAt: Time
-  """the tier the customer downgraded from"""
-  downgradedTier: String
+  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean!
+  """the ID of the organization associated with the entitlement"""
+  organizationID: String!
   owner: Organization
 }
 """A connection to a list of items."""
@@ -3903,6 +4025,33 @@ input EntitlementWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """tier field predicates"""
   tier: EntitlementTier
   tierNEQ: EntitlementTier
@@ -3940,6 +4089,9 @@ input EntitlementWhereInput {
   externalSubscriptionIDNotNil: Boolean
   externalSubscriptionIDEqualFold: String
   externalSubscriptionIDContainsFold: String
+  """expires field predicates"""
+  expires: Boolean
+  expiresNEQ: Boolean
   """expires_at field predicates"""
   expiresAt: Time
   expiresAtNEQ: Time
@@ -3951,63 +4103,23 @@ input EntitlementWhereInput {
   expiresAtLTE: Time
   expiresAtIsNil: Boolean
   expiresAtNotNil: Boolean
-  """upgraded_at field predicates"""
-  upgradedAt: Time
-  upgradedAtNEQ: Time
-  upgradedAtIn: [Time!]
-  upgradedAtNotIn: [Time!]
-  upgradedAtGT: Time
-  upgradedAtGTE: Time
-  upgradedAtLT: Time
-  upgradedAtLTE: Time
-  upgradedAtIsNil: Boolean
-  upgradedAtNotNil: Boolean
-  """upgraded_tier field predicates"""
-  upgradedTier: String
-  upgradedTierNEQ: String
-  upgradedTierIn: [String!]
-  upgradedTierNotIn: [String!]
-  upgradedTierGT: String
-  upgradedTierGTE: String
-  upgradedTierLT: String
-  upgradedTierLTE: String
-  upgradedTierContains: String
-  upgradedTierHasPrefix: String
-  upgradedTierHasSuffix: String
-  upgradedTierIsNil: Boolean
-  upgradedTierNotNil: Boolean
-  upgradedTierEqualFold: String
-  upgradedTierContainsFold: String
-  """downgraded_at field predicates"""
-  downgradedAt: Time
-  downgradedAtNEQ: Time
-  downgradedAtIn: [Time!]
-  downgradedAtNotIn: [Time!]
-  downgradedAtGT: Time
-  downgradedAtGTE: Time
-  downgradedAtLT: Time
-  downgradedAtLTE: Time
-  downgradedAtIsNil: Boolean
-  downgradedAtNotNil: Boolean
-  """downgraded_tier field predicates"""
-  downgradedTier: String
-  downgradedTierNEQ: String
-  downgradedTierIn: [String!]
-  downgradedTierNotIn: [String!]
-  downgradedTierGT: String
-  downgradedTierGTE: String
-  downgradedTierLT: String
-  downgradedTierLTE: String
-  downgradedTierContains: String
-  downgradedTierHasPrefix: String
-  downgradedTierHasSuffix: String
-  downgradedTierIsNil: Boolean
-  downgradedTierNotNil: Boolean
-  downgradedTierEqualFold: String
-  downgradedTierContainsFold: String
   """cancelled field predicates"""
   cancelled: Boolean
   cancelledNEQ: Boolean
+  """organization_id field predicates"""
+  organizationID: String
+  organizationIDNEQ: String
+  organizationIDIn: [String!]
+  organizationIDNotIn: [String!]
+  organizationIDGT: String
+  organizationIDGTE: String
+  organizationIDLT: String
+  organizationIDLTE: String
+  organizationIDContains: String
+  organizationIDHasPrefix: String
+  organizationIDHasSuffix: String
+  organizationIDEqualFold: String
+  organizationIDContainsFold: String
   """owner edge predicates"""
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
@@ -4020,11 +4132,18 @@ type Group implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  """the name of the group - must be unique within the organization"""
   name: String!
+  """the groups description"""
   description: String
+  """the URL to an auto generated gravatar image for the group"""
+  gravatarLogoURL: String
+  """the URL to an image uploaded by the customer for the groups avatar image"""
   logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String!
+  """the ID of the organization the group belongs to"""
+  organizationID: String
   setting: GroupSetting!
   users: [User!]
   owner: Organization!
@@ -4063,7 +4182,11 @@ type GroupSetting implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
+  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
   visibility: GroupSettingVisibility!
+  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
   joinPolicy: GroupSettingJoinPolicy!
   """tags associated with the object"""
   tags: [String!]!
@@ -4168,6 +4291,33 @@ input GroupSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """visibility field predicates"""
   visibility: GroupSettingVisibility
   visibilityNEQ: GroupSettingVisibility
@@ -4312,6 +4462,22 @@ input GroupWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
+  """organization_id field predicates"""
+  organizationID: String
+  organizationIDNEQ: String
+  organizationIDIn: [String!]
+  organizationIDNotIn: [String!]
+  organizationIDGT: String
+  organizationIDGTE: String
+  organizationIDLT: String
+  organizationIDLTE: String
+  organizationIDContains: String
+  organizationIDHasPrefix: String
+  organizationIDHasSuffix: String
+  organizationIDIsNil: Boolean
+  organizationIDNotNil: Boolean
+  organizationIDEqualFold: String
+  organizationIDContainsFold: String
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [GroupSettingWhereInput!]
@@ -4328,9 +4494,13 @@ type Integration implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
+  """the name of the integration - must be unique within the organization"""
   name: String!
-  kind: String!
+  """a description of the integration"""
   description: String
+  kind: String
   secretName: String!
   owner: Organization
 }
@@ -4431,6 +4601,33 @@ input IntegrationWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """name field predicates"""
   name: String
   nameNEQ: String
@@ -4457,24 +4654,10 @@ input IntegrationWhereInput {
   kindContains: String
   kindHasPrefix: String
   kindHasSuffix: String
+  kindIsNil: Boolean
+  kindNotNil: Boolean
   kindEqualFold: String
   kindContainsFold: String
-  """description field predicates"""
-  description: String
-  descriptionNEQ: String
-  descriptionIn: [String!]
-  descriptionNotIn: [String!]
-  descriptionGT: String
-  descriptionGTE: String
-  descriptionLT: String
-  descriptionLTE: String
-  descriptionContains: String
-  descriptionHasPrefix: String
-  descriptionHasSuffix: String
-  descriptionIsNil: Boolean
-  descriptionNotNil: Boolean
-  descriptionEqualFold: String
-  descriptionContainsFold: String
   """secret_name field predicates"""
   secretName: String
   secretNameNEQ: String
@@ -4509,10 +4692,14 @@ type OauthProvider implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
-  """the provider's name"""
+  deletedAt: Time
+  deletedBy: String
+  """the oauth provider's name"""
   name: String!
-  """the client id"""
+  """the client id for the oauth provider"""
   clientID: String!
+  """the client secret"""
+  clientSecret: String!
   """the redirect url"""
   redirectURL: String!
   """the scopes"""
@@ -4612,6 +4799,33 @@ input OauthProviderWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """name field predicates"""
   name: String
   nameNEQ: String
@@ -4640,6 +4854,20 @@ input OauthProviderWhereInput {
   clientIDHasSuffix: String
   clientIDEqualFold: String
   clientIDContainsFold: String
+  """client_secret field predicates"""
+  clientSecret: String
+  clientSecretNEQ: String
+  clientSecretIn: [String!]
+  clientSecretNotIn: [String!]
+  clientSecretGT: String
+  clientSecretGTE: String
+  clientSecretLT: String
+  clientSecretLTE: String
+  clientSecretContains: String
+  clientSecretHasPrefix: String
+  clientSecretHasSuffix: String
+  clientSecretEqualFold: String
+  clientSecretContainsFold: String
   """redirect_url field predicates"""
   redirectURL: String
   redirectURLNEQ: String
@@ -4899,6 +5127,7 @@ type Organization implements Node {
   updatedBy: String
   deletedAt: Time
   deletedBy: String
+  """the name of the organization"""
   name: String!
   """The organization's displayed 'friendly' name"""
   displayName: String!
@@ -4965,6 +5194,8 @@ type OrganizationSetting implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   """domains associated with the organization"""
   domains: [String!]
   ssoCert: String
@@ -5066,6 +5297,33 @@ input OrganizationSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """sso_cert field predicates"""
   ssoCert: String
   ssoCertNEQ: String
@@ -5369,10 +5627,14 @@ type PersonalAccessToken implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  """the name associated with the token"""
   name: String!
+  """what abilites the token should have"""
   abilities: [String!]
+  """when the token expires"""
   expiresAt: Time!
-  description: String!
+  """a description of the token's purpose"""
+  description: String
   lastUsedAt: Time
   owner: User!
 }
@@ -5898,19 +6160,15 @@ input UpdateEntitlementInput {
   """used to store references to external systems, e.g. Stripe"""
   externalSubscriptionID: String
   clearExternalSubscriptionID: Boolean
+  """whether or not the customers entitlement expires - expires_at will show the time"""
+  expires: Boolean
+  """the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month"""
   expiresAt: Time
   clearExpiresAt: Boolean
-  upgradedAt: Time
-  clearUpgradedAt: Boolean
-  """the tier the customer upgraded from"""
-  upgradedTier: String
-  clearUpgradedTier: Boolean
-  downgradedAt: Time
-  clearDowngradedAt: Boolean
-  """the tier the customer downgraded from"""
-  downgradedTier: String
-  clearDowngradedTier: Boolean
+  """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean
+  """the ID of the organization associated with the entitlement"""
+  organizationID: String
   ownerID: ID
   clearOwner: Boolean
 }
@@ -5922,13 +6180,22 @@ input UpdateGroupInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name of the group - must be unique within the organization"""
   name: String
+  """the groups description"""
   description: String
   clearDescription: Boolean
+  """the URL to an auto generated gravatar image for the group"""
+  gravatarLogoURL: String
+  clearGravatarLogoURL: Boolean
+  """the URL to an image uploaded by the customer for the groups avatar image"""
   logoURL: String
   clearLogoURL: Boolean
   """The group's displayed 'friendly' name"""
   displayName: String
+  """the ID of the organization the group belongs to"""
+  organizationID: String
+  clearOrganizationID: Boolean
   settingID: ID
   addUserIDs: [ID!]
   removeUserIDs: [ID!]
@@ -5943,7 +6210,9 @@ input UpdateGroupSettingInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization"""
   visibility: GroupSettingVisibility
+  """the policy governing ability to freely join a group, whether it requires an invitation, application, or either"""
   joinPolicy: GroupSettingJoinPolicy
   """tags associated with the object"""
   tags: [String!]
@@ -5961,9 +6230,13 @@ input UpdateIntegrationInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name of the integration - must be unique within the organization"""
   name: String
+  """a description of the integration"""
   description: String
   clearDescription: Boolean
+  kind: String
+  clearKind: Boolean
   ownerID: ID
   clearOwner: Boolean
 }
@@ -5975,9 +6248,9 @@ input UpdateOauthProviderInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
-  """the provider's name"""
+  """the oauth provider's name"""
   name: String
-  """the client id"""
+  """the client id for the oauth provider"""
   clientID: String
   """the client secret"""
   clientSecret: String
@@ -6028,6 +6301,7 @@ input UpdateOrganizationInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name of the organization"""
   name: String
   """The organization's displayed 'friendly' name"""
   displayName: String
@@ -6097,12 +6371,17 @@ input UpdatePersonalAccessTokenInput {
   updatedAt: Time
   updatedBy: String
   clearUpdatedBy: Boolean
+  """the name associated with the token"""
   name: String
+  """what abilites the token should have"""
   abilities: [String!]
   appendAbilities: [String!]
   clearAbilities: Boolean
+  """when the token expires"""
   expiresAt: Time
+  """a description of the token's purpose"""
   description: String
+  clearDescription: Boolean
   lastUsedAt: Time
   clearLastUsedAt: Boolean
   ownerID: ID
@@ -6146,7 +6425,7 @@ input UpdateUserInput {
   """the time the user was last seen"""
   lastSeen: Time
   clearLastSeen: Boolean
-  """user bcrypt password hash"""
+  """user password hash"""
   password: String
   clearPassword: Boolean
   """the Subject of the user JWT"""
@@ -6219,7 +6498,7 @@ type User implements Node {
   avatarUpdatedAt: Time
   """the time the user was last seen"""
   lastSeen: Time
-  """user bcrypt password hash"""
+  """user password hash"""
   password: String
   """the Subject of the user JWT"""
   sub: String
@@ -6266,6 +6545,8 @@ type UserSetting implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   """user account is locked if unconfirmed or explicitly locked"""
   locked: Boolean!
   """The time notifications regarding the user were silenced"""
@@ -6378,6 +6659,33 @@ input UserSettingWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """locked field predicates"""
   locked: Boolean
   lockedNEQ: Boolean
@@ -9436,6 +9744,88 @@ func (ec *executionContext) fieldContext_Entitlement_updatedBy(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Entitlement_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entitlement_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Entitlement_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Entitlement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Entitlement_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entitlement_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Entitlement_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Entitlement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Entitlement_tier(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Entitlement_tier(ctx, field)
 	if err != nil {
@@ -9562,6 +9952,50 @@ func (ec *executionContext) fieldContext_Entitlement_externalSubscriptionID(ctx 
 	return fc, nil
 }
 
+func (ec *executionContext) _Entitlement_expires(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entitlement_expires(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Expires, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Entitlement_expires(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Entitlement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Entitlement_expiresAt(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Entitlement_expiresAt(ctx, field)
 	if err != nil {
@@ -9585,9 +10019,9 @@ func (ec *executionContext) _Entitlement_expiresAt(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Entitlement_expiresAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -9598,170 +10032,6 @@ func (ec *executionContext) fieldContext_Entitlement_expiresAt(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Entitlement_upgradedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entitlement_upgradedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpgradedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Entitlement_upgradedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Entitlement",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Entitlement_upgradedTier(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entitlement_upgradedTier(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpgradedTier, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Entitlement_upgradedTier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Entitlement",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Entitlement_downgradedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entitlement_downgradedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DowngradedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Entitlement_downgradedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Entitlement",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Entitlement_downgradedTier(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Entitlement_downgradedTier(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DowngradedTier, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Entitlement_downgradedTier(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Entitlement",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9806,6 +10076,50 @@ func (ec *executionContext) fieldContext_Entitlement_cancelled(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Entitlement_organizationID(ctx context.Context, field graphql.CollectedField, obj *generated.Entitlement) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Entitlement_organizationID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Entitlement_organizationID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Entitlement",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -10084,24 +10398,24 @@ func (ec *executionContext) fieldContext_EntitlementCreatePayload_entitlement(ct
 				return ec.fieldContext_Entitlement_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Entitlement_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Entitlement_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Entitlement_deletedBy(ctx, field)
 			case "tier":
 				return ec.fieldContext_Entitlement_tier(ctx, field)
 			case "externalCustomerID":
 				return ec.fieldContext_Entitlement_externalCustomerID(ctx, field)
 			case "externalSubscriptionID":
 				return ec.fieldContext_Entitlement_externalSubscriptionID(ctx, field)
+			case "expires":
+				return ec.fieldContext_Entitlement_expires(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Entitlement_expiresAt(ctx, field)
-			case "upgradedAt":
-				return ec.fieldContext_Entitlement_upgradedAt(ctx, field)
-			case "upgradedTier":
-				return ec.fieldContext_Entitlement_upgradedTier(ctx, field)
-			case "downgradedAt":
-				return ec.fieldContext_Entitlement_downgradedAt(ctx, field)
-			case "downgradedTier":
-				return ec.fieldContext_Entitlement_downgradedTier(ctx, field)
 			case "cancelled":
 				return ec.fieldContext_Entitlement_cancelled(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Entitlement_organizationID(ctx, field)
 			case "owner":
 				return ec.fieldContext_Entitlement_owner(ctx, field)
 			}
@@ -10201,24 +10515,24 @@ func (ec *executionContext) fieldContext_EntitlementEdge_node(ctx context.Contex
 				return ec.fieldContext_Entitlement_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Entitlement_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Entitlement_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Entitlement_deletedBy(ctx, field)
 			case "tier":
 				return ec.fieldContext_Entitlement_tier(ctx, field)
 			case "externalCustomerID":
 				return ec.fieldContext_Entitlement_externalCustomerID(ctx, field)
 			case "externalSubscriptionID":
 				return ec.fieldContext_Entitlement_externalSubscriptionID(ctx, field)
+			case "expires":
+				return ec.fieldContext_Entitlement_expires(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Entitlement_expiresAt(ctx, field)
-			case "upgradedAt":
-				return ec.fieldContext_Entitlement_upgradedAt(ctx, field)
-			case "upgradedTier":
-				return ec.fieldContext_Entitlement_upgradedTier(ctx, field)
-			case "downgradedAt":
-				return ec.fieldContext_Entitlement_downgradedAt(ctx, field)
-			case "downgradedTier":
-				return ec.fieldContext_Entitlement_downgradedTier(ctx, field)
 			case "cancelled":
 				return ec.fieldContext_Entitlement_cancelled(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Entitlement_organizationID(ctx, field)
 			case "owner":
 				return ec.fieldContext_Entitlement_owner(ctx, field)
 			}
@@ -10321,24 +10635,24 @@ func (ec *executionContext) fieldContext_EntitlementUpdatePayload_entitlement(ct
 				return ec.fieldContext_Entitlement_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Entitlement_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Entitlement_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Entitlement_deletedBy(ctx, field)
 			case "tier":
 				return ec.fieldContext_Entitlement_tier(ctx, field)
 			case "externalCustomerID":
 				return ec.fieldContext_Entitlement_externalCustomerID(ctx, field)
 			case "externalSubscriptionID":
 				return ec.fieldContext_Entitlement_externalSubscriptionID(ctx, field)
+			case "expires":
+				return ec.fieldContext_Entitlement_expires(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Entitlement_expiresAt(ctx, field)
-			case "upgradedAt":
-				return ec.fieldContext_Entitlement_upgradedAt(ctx, field)
-			case "upgradedTier":
-				return ec.fieldContext_Entitlement_upgradedTier(ctx, field)
-			case "downgradedAt":
-				return ec.fieldContext_Entitlement_downgradedAt(ctx, field)
-			case "downgradedTier":
-				return ec.fieldContext_Entitlement_downgradedTier(ctx, field)
 			case "cancelled":
 				return ec.fieldContext_Entitlement_cancelled(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Entitlement_organizationID(ctx, field)
 			case "owner":
 				return ec.fieldContext_Entitlement_owner(ctx, field)
 			}
@@ -10729,6 +11043,47 @@ func (ec *executionContext) fieldContext_Group_description(ctx context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Group_gravatarLogoURL(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Group_gravatarLogoURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GravatarLogoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Group_gravatarLogoURL(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Group_logoURL(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_logoURL(ctx, field)
 	if err != nil {
@@ -10814,6 +11169,47 @@ func (ec *executionContext) fieldContext_Group_displayName(ctx context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Group_organizationID(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Group_organizationID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrganizationID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Group_organizationID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Group_setting(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Group_setting(ctx, field)
 	if err != nil {
@@ -10863,6 +11259,10 @@ func (ec *executionContext) fieldContext_Group_setting(ctx context.Context, fiel
 				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupSetting_deletedBy(ctx, field)
 			case "visibility":
 				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
@@ -11255,10 +11655,14 @@ func (ec *executionContext) fieldContext_GroupCreatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -11370,10 +11774,14 @@ func (ec *executionContext) fieldContext_GroupEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -11633,6 +12041,88 @@ func (ec *executionContext) _GroupSetting_updatedBy(ctx context.Context, field g
 }
 
 func (ec *executionContext) fieldContext_GroupSetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSetting_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSetting_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GroupSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GroupSetting_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.GroupSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GroupSetting_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GroupSetting_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "GroupSetting",
 		Field:      field,
@@ -11919,10 +12409,14 @@ func (ec *executionContext) fieldContext_GroupSetting_group(ctx context.Context,
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -12130,6 +12624,10 @@ func (ec *executionContext) fieldContext_GroupSettingCreatePayload_groupSetting(
 				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupSetting_deletedBy(ctx, field)
 			case "visibility":
 				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
@@ -12239,6 +12737,10 @@ func (ec *executionContext) fieldContext_GroupSettingEdge_node(ctx context.Conte
 				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupSetting_deletedBy(ctx, field)
 			case "visibility":
 				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
@@ -12351,6 +12853,10 @@ func (ec *executionContext) fieldContext_GroupSettingUpdatePayload_groupSetting(
 				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupSetting_deletedBy(ctx, field)
 			case "visibility":
 				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
@@ -12427,10 +12933,14 @@ func (ec *executionContext) fieldContext_GroupUpdatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -12658,6 +13168,88 @@ func (ec *executionContext) fieldContext_Integration_updatedBy(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Integration_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Integration_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Integration_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Integration",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Integration_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Integration_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Integration_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Integration",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Integration_name(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Integration_name(ctx, field)
 	if err != nil {
@@ -12702,50 +13294,6 @@ func (ec *executionContext) fieldContext_Integration_name(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Integration_kind(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Integration_kind(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Kind, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Integration_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Integration",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Integration_description(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Integration_description(ctx, field)
 	if err != nil {
@@ -12775,6 +13323,47 @@ func (ec *executionContext) _Integration_description(ctx context.Context, field 
 }
 
 func (ec *executionContext) fieldContext_Integration_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Integration",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Integration_kind(ctx context.Context, field graphql.CollectedField, obj *generated.Integration) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Integration_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Integration_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Integration",
 		Field:      field,
@@ -13104,12 +13693,16 @@ func (ec *executionContext) fieldContext_IntegrationCreatePayload_integration(ct
 				return ec.fieldContext_Integration_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Integration_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Integration_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Integration_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
-			case "kind":
-				return ec.fieldContext_Integration_kind(ctx, field)
 			case "description":
 				return ec.fieldContext_Integration_description(ctx, field)
+			case "kind":
+				return ec.fieldContext_Integration_kind(ctx, field)
 			case "secretName":
 				return ec.fieldContext_Integration_secretName(ctx, field)
 			case "owner":
@@ -13211,12 +13804,16 @@ func (ec *executionContext) fieldContext_IntegrationEdge_node(ctx context.Contex
 				return ec.fieldContext_Integration_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Integration_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Integration_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Integration_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
-			case "kind":
-				return ec.fieldContext_Integration_kind(ctx, field)
 			case "description":
 				return ec.fieldContext_Integration_description(ctx, field)
+			case "kind":
+				return ec.fieldContext_Integration_kind(ctx, field)
 			case "secretName":
 				return ec.fieldContext_Integration_secretName(ctx, field)
 			case "owner":
@@ -13321,12 +13918,16 @@ func (ec *executionContext) fieldContext_IntegrationUpdatePayload_integration(ct
 				return ec.fieldContext_Integration_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Integration_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Integration_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Integration_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
-			case "kind":
-				return ec.fieldContext_Integration_kind(ctx, field)
 			case "description":
 				return ec.fieldContext_Integration_description(ctx, field)
+			case "kind":
+				return ec.fieldContext_Integration_kind(ctx, field)
 			case "secretName":
 				return ec.fieldContext_Integration_secretName(ctx, field)
 			case "owner":
@@ -15676,6 +16277,88 @@ func (ec *executionContext) fieldContext_OauthProvider_updatedBy(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _OauthProvider_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProvider_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProvider_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProvider",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthProvider_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProvider_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProvider_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProvider",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _OauthProvider_name(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_OauthProvider_name(ctx, field)
 	if err != nil {
@@ -15752,6 +16435,50 @@ func (ec *executionContext) _OauthProvider_clientID(ctx context.Context, field g
 }
 
 func (ec *executionContext) fieldContext_OauthProvider_clientID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthProvider",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthProvider_clientSecret(ctx context.Context, field graphql.CollectedField, obj *generated.OauthProvider) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProvider_clientSecret(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClientSecret, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthProvider_clientSecret(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OauthProvider",
 		Field:      field,
@@ -16301,10 +17028,16 @@ func (ec *executionContext) fieldContext_OauthProviderCreatePayload_OauthProvide
 				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OauthProvider_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OauthProvider_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthProvider_name(ctx, field)
 			case "clientID":
 				return ec.fieldContext_OauthProvider_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthProvider_clientSecret(ctx, field)
 			case "redirectURL":
 				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
 			case "scopes":
@@ -16416,10 +17149,16 @@ func (ec *executionContext) fieldContext_OauthProviderEdge_node(ctx context.Cont
 				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OauthProvider_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OauthProvider_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthProvider_name(ctx, field)
 			case "clientID":
 				return ec.fieldContext_OauthProvider_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthProvider_clientSecret(ctx, field)
 			case "redirectURL":
 				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
 			case "scopes":
@@ -16534,10 +17273,16 @@ func (ec *executionContext) fieldContext_OauthProviderUpdatePayload_OauthProvide
 				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OauthProvider_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OauthProvider_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthProvider_name(ctx, field)
 			case "clientID":
 				return ec.fieldContext_OauthProvider_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthProvider_clientSecret(ctx, field)
 			case "redirectURL":
 				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
 			case "scopes":
@@ -18278,10 +19023,14 @@ func (ec *executionContext) fieldContext_Organization_groups(ctx context.Context
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -18341,12 +19090,16 @@ func (ec *executionContext) fieldContext_Organization_integrations(ctx context.C
 				return ec.fieldContext_Integration_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Integration_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Integration_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Integration_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
-			case "kind":
-				return ec.fieldContext_Integration_kind(ctx, field)
 			case "description":
 				return ec.fieldContext_Integration_description(ctx, field)
+			case "kind":
+				return ec.fieldContext_Integration_kind(ctx, field)
 			case "secretName":
 				return ec.fieldContext_Integration_secretName(ctx, field)
 			case "owner":
@@ -18404,6 +19157,10 @@ func (ec *executionContext) fieldContext_Organization_setting(ctx context.Contex
 				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
 			case "domains":
 				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
@@ -18479,24 +19236,24 @@ func (ec *executionContext) fieldContext_Organization_entitlements(ctx context.C
 				return ec.fieldContext_Entitlement_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Entitlement_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Entitlement_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Entitlement_deletedBy(ctx, field)
 			case "tier":
 				return ec.fieldContext_Entitlement_tier(ctx, field)
 			case "externalCustomerID":
 				return ec.fieldContext_Entitlement_externalCustomerID(ctx, field)
 			case "externalSubscriptionID":
 				return ec.fieldContext_Entitlement_externalSubscriptionID(ctx, field)
+			case "expires":
+				return ec.fieldContext_Entitlement_expires(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Entitlement_expiresAt(ctx, field)
-			case "upgradedAt":
-				return ec.fieldContext_Entitlement_upgradedAt(ctx, field)
-			case "upgradedTier":
-				return ec.fieldContext_Entitlement_upgradedTier(ctx, field)
-			case "downgradedAt":
-				return ec.fieldContext_Entitlement_downgradedAt(ctx, field)
-			case "downgradedTier":
-				return ec.fieldContext_Entitlement_downgradedTier(ctx, field)
 			case "cancelled":
 				return ec.fieldContext_Entitlement_cancelled(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Entitlement_organizationID(ctx, field)
 			case "owner":
 				return ec.fieldContext_Entitlement_owner(ctx, field)
 			}
@@ -18552,10 +19309,16 @@ func (ec *executionContext) fieldContext_Organization_oauthprovider(ctx context.
 				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OauthProvider_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OauthProvider_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthProvider_name(ctx, field)
 			case "clientID":
 				return ec.fieldContext_OauthProvider_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthProvider_clientSecret(ctx, field)
 			case "redirectURL":
 				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
 			case "scopes":
@@ -19173,6 +19936,88 @@ func (ec *executionContext) _OrganizationSetting_updatedBy(ctx context.Context, 
 }
 
 func (ec *executionContext) fieldContext_OrganizationSetting_updatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetting_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetting_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OrganizationSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OrganizationSetting_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.OrganizationSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OrganizationSetting_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OrganizationSetting",
 		Field:      field,
@@ -19868,6 +20713,10 @@ func (ec *executionContext) fieldContext_OrganizationSettingCreatePayload_organi
 				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
 			case "domains":
 				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
@@ -19987,6 +20836,10 @@ func (ec *executionContext) fieldContext_OrganizationSettingEdge_node(ctx contex
 				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
 			case "domains":
 				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
@@ -20109,6 +20962,10 @@ func (ec *executionContext) fieldContext_OrganizationSettingUpdatePayload_organi
 				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
 			case "domains":
 				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
@@ -20754,14 +21611,11 @@ func (ec *executionContext) _PersonalAccessToken_description(ctx context.Context
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_PersonalAccessToken_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -22256,24 +23110,24 @@ func (ec *executionContext) fieldContext_Query_entitlement(ctx context.Context, 
 				return ec.fieldContext_Entitlement_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Entitlement_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Entitlement_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Entitlement_deletedBy(ctx, field)
 			case "tier":
 				return ec.fieldContext_Entitlement_tier(ctx, field)
 			case "externalCustomerID":
 				return ec.fieldContext_Entitlement_externalCustomerID(ctx, field)
 			case "externalSubscriptionID":
 				return ec.fieldContext_Entitlement_externalSubscriptionID(ctx, field)
+			case "expires":
+				return ec.fieldContext_Entitlement_expires(ctx, field)
 			case "expiresAt":
 				return ec.fieldContext_Entitlement_expiresAt(ctx, field)
-			case "upgradedAt":
-				return ec.fieldContext_Entitlement_upgradedAt(ctx, field)
-			case "upgradedTier":
-				return ec.fieldContext_Entitlement_upgradedTier(ctx, field)
-			case "downgradedAt":
-				return ec.fieldContext_Entitlement_downgradedAt(ctx, field)
-			case "downgradedTier":
-				return ec.fieldContext_Entitlement_downgradedTier(ctx, field)
 			case "cancelled":
 				return ec.fieldContext_Entitlement_cancelled(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Entitlement_organizationID(ctx, field)
 			case "owner":
 				return ec.fieldContext_Entitlement_owner(ctx, field)
 			}
@@ -22351,10 +23205,14 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -22428,6 +23286,10 @@ func (ec *executionContext) fieldContext_Query_groupSetting(ctx context.Context,
 				return ec.fieldContext_GroupSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_GroupSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GroupSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_GroupSetting_deletedBy(ctx, field)
 			case "visibility":
 				return ec.fieldContext_GroupSetting_visibility(ctx, field)
 			case "joinPolicy":
@@ -22507,12 +23369,16 @@ func (ec *executionContext) fieldContext_Query_integration(ctx context.Context, 
 				return ec.fieldContext_Integration_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_Integration_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Integration_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_Integration_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_Integration_name(ctx, field)
-			case "kind":
-				return ec.fieldContext_Integration_kind(ctx, field)
 			case "description":
 				return ec.fieldContext_Integration_description(ctx, field)
+			case "kind":
+				return ec.fieldContext_Integration_kind(ctx, field)
 			case "secretName":
 				return ec.fieldContext_Integration_secretName(ctx, field)
 			case "owner":
@@ -22584,10 +23450,16 @@ func (ec *executionContext) fieldContext_Query_oauthProvider(ctx context.Context
 				return ec.fieldContext_OauthProvider_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OauthProvider_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OauthProvider_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OauthProvider_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthProvider_name(ctx, field)
 			case "clientID":
 				return ec.fieldContext_OauthProvider_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthProvider_clientSecret(ctx, field)
 			case "redirectURL":
 				return ec.fieldContext_OauthProvider_redirectURL(ctx, field)
 			case "scopes":
@@ -22845,6 +23717,10 @@ func (ec *executionContext) fieldContext_Query_organizationSetting(ctx context.C
 				return ec.fieldContext_OrganizationSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_OrganizationSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_OrganizationSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_OrganizationSetting_deletedBy(ctx, field)
 			case "domains":
 				return ec.fieldContext_OrganizationSetting_domains(ctx, field)
 			case "ssoCert":
@@ -23195,6 +24071,10 @@ func (ec *executionContext) fieldContext_Query_userSetting(ctx context.Context, 
 				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -24986,9 +25866,9 @@ func (ec *executionContext) _User_lastSeen(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_lastSeen(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -25328,10 +26208,14 @@ func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field 
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "gravatarLogoURL":
+				return ec.fieldContext_Group_gravatarLogoURL(ctx, field)
 			case "logoURL":
 				return ec.fieldContext_Group_logoURL(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Group_displayName(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Group_organizationID(ctx, field)
 			case "setting":
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
@@ -25459,6 +26343,10 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -26112,6 +27000,88 @@ func (ec *executionContext) fieldContext_UserSetting_updatedBy(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _UserSetting_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserSetting_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSetting_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserSetting_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserSetting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserSetting_locked(ctx context.Context, field graphql.CollectedField, obj *generated.UserSetting) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserSetting_locked(ctx, field)
 	if err != nil {
@@ -26741,6 +27711,10 @@ func (ec *executionContext) fieldContext_UserSettingCreatePayload_UserSetting(ct
 				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -26856,6 +27830,10 @@ func (ec *executionContext) fieldContext_UserSettingEdge_node(ctx context.Contex
 				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -26974,6 +27952,10 @@ func (ec *executionContext) fieldContext_UserSettingUpdatePayload_UserSetting(ct
 				return ec.fieldContext_UserSetting_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_UserSetting_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_UserSetting_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_UserSetting_deletedBy(ctx, field)
 			case "locked":
 				return ec.fieldContext_UserSetting_locked(ctx, field)
 			case "silencedAt":
@@ -28912,7 +29894,7 @@ func (ec *executionContext) unmarshalInputCreateEntitlementInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "tier", "externalCustomerID", "externalSubscriptionID", "expiresAt", "upgradedAt", "upgradedTier", "downgradedAt", "downgradedTier", "cancelled", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "tier", "externalCustomerID", "externalSubscriptionID", "expires", "expiresAt", "cancelled", "organizationID", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -28968,6 +29950,13 @@ func (ec *executionContext) unmarshalInputCreateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.ExternalSubscriptionID = data
+		case "expires":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expires"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Expires = data
 		case "expiresAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expiresAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -28975,34 +29964,6 @@ func (ec *executionContext) unmarshalInputCreateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.ExpiresAt = data
-		case "upgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAt = data
-		case "upgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTier"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTier = data
-		case "downgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAt = data
-		case "downgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTier"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTier = data
 		case "cancelled":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cancelled"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -29010,6 +29971,13 @@ func (ec *executionContext) unmarshalInputCreateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.Cancelled = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -29030,7 +29998,7 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "logoURL", "displayName", "settingID", "userIDs", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "gravatarLogoURL", "logoURL", "displayName", "organizationID", "settingID", "userIDs", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -29079,6 +30047,13 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.Description = data
+		case "gravatarLogoURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gravatarLogoURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GravatarLogoURL = data
 		case "logoURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -29093,6 +30068,13 @@ func (ec *executionContext) unmarshalInputCreateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.DisplayName = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
 		case "settingID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
 			data, err := ec.unmarshalNID2string(ctx, v)
@@ -29217,7 +30199,7 @@ func (ec *executionContext) unmarshalInputCreateIntegrationInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "kind", "description", "secretName", "ownerID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "description", "kind", "secretName", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -29259,13 +30241,6 @@ func (ec *executionContext) unmarshalInputCreateIntegrationInput(ctx context.Con
 				return it, err
 			}
 			it.Name = data
-		case "kind":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Kind = data
 		case "description":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -29273,6 +30248,13 @@ func (ec *executionContext) unmarshalInputCreateIntegrationInput(ctx context.Con
 				return it, err
 			}
 			it.Description = data
+		case "kind":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Kind = data
 		case "secretName":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secretName"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -30225,7 +31207,7 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "tier", "tierNEQ", "tierIn", "tierNotIn", "externalCustomerID", "externalCustomerIDNEQ", "externalCustomerIDIn", "externalCustomerIDNotIn", "externalCustomerIDGT", "externalCustomerIDGTE", "externalCustomerIDLT", "externalCustomerIDLTE", "externalCustomerIDContains", "externalCustomerIDHasPrefix", "externalCustomerIDHasSuffix", "externalCustomerIDIsNil", "externalCustomerIDNotNil", "externalCustomerIDEqualFold", "externalCustomerIDContainsFold", "externalSubscriptionID", "externalSubscriptionIDNEQ", "externalSubscriptionIDIn", "externalSubscriptionIDNotIn", "externalSubscriptionIDGT", "externalSubscriptionIDGTE", "externalSubscriptionIDLT", "externalSubscriptionIDLTE", "externalSubscriptionIDContains", "externalSubscriptionIDHasPrefix", "externalSubscriptionIDHasSuffix", "externalSubscriptionIDIsNil", "externalSubscriptionIDNotNil", "externalSubscriptionIDEqualFold", "externalSubscriptionIDContainsFold", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "expiresAtIsNil", "expiresAtNotNil", "upgradedAt", "upgradedAtNEQ", "upgradedAtIn", "upgradedAtNotIn", "upgradedAtGT", "upgradedAtGTE", "upgradedAtLT", "upgradedAtLTE", "upgradedAtIsNil", "upgradedAtNotNil", "upgradedTier", "upgradedTierNEQ", "upgradedTierIn", "upgradedTierNotIn", "upgradedTierGT", "upgradedTierGTE", "upgradedTierLT", "upgradedTierLTE", "upgradedTierContains", "upgradedTierHasPrefix", "upgradedTierHasSuffix", "upgradedTierIsNil", "upgradedTierNotNil", "upgradedTierEqualFold", "upgradedTierContainsFold", "downgradedAt", "downgradedAtNEQ", "downgradedAtIn", "downgradedAtNotIn", "downgradedAtGT", "downgradedAtGTE", "downgradedAtLT", "downgradedAtLTE", "downgradedAtIsNil", "downgradedAtNotNil", "downgradedTier", "downgradedTierNEQ", "downgradedTierIn", "downgradedTierNotIn", "downgradedTierGT", "downgradedTierGTE", "downgradedTierLT", "downgradedTierLTE", "downgradedTierContains", "downgradedTierHasPrefix", "downgradedTierHasSuffix", "downgradedTierIsNil", "downgradedTierNotNil", "downgradedTierEqualFold", "downgradedTierContainsFold", "cancelled", "cancelledNEQ", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "tier", "tierNEQ", "tierIn", "tierNotIn", "externalCustomerID", "externalCustomerIDNEQ", "externalCustomerIDIn", "externalCustomerIDNotIn", "externalCustomerIDGT", "externalCustomerIDGTE", "externalCustomerIDLT", "externalCustomerIDLTE", "externalCustomerIDContains", "externalCustomerIDHasPrefix", "externalCustomerIDHasSuffix", "externalCustomerIDIsNil", "externalCustomerIDNotNil", "externalCustomerIDEqualFold", "externalCustomerIDContainsFold", "externalSubscriptionID", "externalSubscriptionIDNEQ", "externalSubscriptionIDIn", "externalSubscriptionIDNotIn", "externalSubscriptionIDGT", "externalSubscriptionIDGTE", "externalSubscriptionIDLT", "externalSubscriptionIDLTE", "externalSubscriptionIDContains", "externalSubscriptionIDHasPrefix", "externalSubscriptionIDHasSuffix", "externalSubscriptionIDIsNil", "externalSubscriptionIDNotNil", "externalSubscriptionIDEqualFold", "externalSubscriptionIDContainsFold", "expires", "expiresNEQ", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "expiresAtIsNil", "expiresAtNotNil", "cancelled", "cancelledNEQ", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDEqualFold", "organizationIDContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30645,6 +31627,181 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "tier":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tier"))
 			data, err := ec.unmarshalOEntitlementTier2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋentitlementᚐTier(ctx, v)
@@ -30883,6 +32040,20 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.ExternalSubscriptionIDContainsFold = data
+		case "expires":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expires"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Expires = data
+		case "expiresNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expiresNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ExpiresNEQ = data
 		case "expiresAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expiresAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -30953,356 +32124,6 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.ExpiresAtNotNil = data
-		case "upgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAt = data
-		case "upgradedAtNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtNEQ"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtNEQ = data
-		case "upgradedAtIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtIn = data
-		case "upgradedAtNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtNotIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtNotIn = data
-		case "upgradedAtGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtGT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtGT = data
-		case "upgradedAtGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtGTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtGTE = data
-		case "upgradedAtLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtLT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtLT = data
-		case "upgradedAtLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtLTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtLTE = data
-		case "upgradedAtIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtIsNil = data
-		case "upgradedAtNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAtNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAtNotNil = data
-		case "upgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTier"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTier = data
-		case "upgradedTierNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierNEQ = data
-		case "upgradedTierIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierIn = data
-		case "upgradedTierNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierNotIn = data
-		case "upgradedTierGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierGT = data
-		case "upgradedTierGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierGTE = data
-		case "upgradedTierLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierLT = data
-		case "upgradedTierLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierLTE = data
-		case "upgradedTierContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierContains = data
-		case "upgradedTierHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierHasPrefix = data
-		case "upgradedTierHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierHasSuffix = data
-		case "upgradedTierIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierIsNil = data
-		case "upgradedTierNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierNotNil = data
-		case "upgradedTierEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierEqualFold = data
-		case "upgradedTierContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTierContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTierContainsFold = data
-		case "downgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAt = data
-		case "downgradedAtNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtNEQ"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtNEQ = data
-		case "downgradedAtIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtIn = data
-		case "downgradedAtNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtNotIn"))
-			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtNotIn = data
-		case "downgradedAtGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtGT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtGT = data
-		case "downgradedAtGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtGTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtGTE = data
-		case "downgradedAtLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtLT"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtLT = data
-		case "downgradedAtLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtLTE"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtLTE = data
-		case "downgradedAtIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtIsNil = data
-		case "downgradedAtNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAtNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAtNotNil = data
-		case "downgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTier"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTier = data
-		case "downgradedTierNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierNEQ = data
-		case "downgradedTierIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierIn = data
-		case "downgradedTierNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierNotIn = data
-		case "downgradedTierGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierGT = data
-		case "downgradedTierGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierGTE = data
-		case "downgradedTierLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierLT = data
-		case "downgradedTierLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierLTE = data
-		case "downgradedTierContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierContains = data
-		case "downgradedTierHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierHasPrefix = data
-		case "downgradedTierHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierHasSuffix = data
-		case "downgradedTierIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierIsNil = data
-		case "downgradedTierNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierNotNil = data
-		case "downgradedTierEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierEqualFold = data
-		case "downgradedTierContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTierContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTierContainsFold = data
 		case "cancelled":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cancelled"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -31317,6 +32138,97 @@ func (ec *executionContext) unmarshalInputEntitlementWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.CancelledNEQ = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
+		case "organizationIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNEQ = data
+		case "organizationIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDIn = data
+		case "organizationIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNotIn = data
+		case "organizationIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDGT = data
+		case "organizationIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDGTE = data
+		case "organizationIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDLT = data
+		case "organizationIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDLTE = data
+		case "organizationIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDContains = data
+		case "organizationIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDHasPrefix = data
+		case "organizationIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDHasSuffix = data
+		case "organizationIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDEqualFold = data
+		case "organizationIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDContainsFold = data
 		case "hasOwner":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOwner"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -31382,7 +32294,7 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ", "hasGroup", "hasGroupWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "visibility", "visibilityNEQ", "visibilityIn", "visibilityNotIn", "joinPolicy", "joinPolicyNEQ", "joinPolicyIn", "joinPolicyNotIn", "syncToSlack", "syncToSlackNEQ", "syncToGithub", "syncToGithubNEQ", "hasGroup", "hasGroupWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -31802,6 +32714,181 @@ func (ec *executionContext) unmarshalInputGroupSettingWhereInput(ctx context.Con
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "visibility":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
 			data, err := ec.unmarshalOGroupSettingVisibility2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚋgroupsettingᚐVisibility(ctx, v)
@@ -31913,7 +33000,7 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "organizationID", "organizationIDNEQ", "organizationIDIn", "organizationIDNotIn", "organizationIDGT", "organizationIDGTE", "organizationIDLT", "organizationIDLTE", "organizationIDContains", "organizationIDHasPrefix", "organizationIDHasSuffix", "organizationIDIsNil", "organizationIDNotNil", "organizationIDEqualFold", "organizationIDContainsFold", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -32690,6 +33777,111 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 				return it, err
 			}
 			it.DisplayNameContainsFold = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
+		case "organizationIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNEQ = data
+		case "organizationIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDIn = data
+		case "organizationIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNotIn = data
+		case "organizationIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDGT = data
+		case "organizationIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDGTE = data
+		case "organizationIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDLT = data
+		case "organizationIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDLTE = data
+		case "organizationIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDContains = data
+		case "organizationIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDHasPrefix = data
+		case "organizationIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDHasSuffix = data
+		case "organizationIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDIsNil = data
+		case "organizationIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDNotNil = data
+		case "organizationIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDEqualFold = data
+		case "organizationIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationIDContainsFold = data
 		case "hasSetting":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSetting"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -32783,7 +33975,7 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "kind", "kindNEQ", "kindIn", "kindNotIn", "kindGT", "kindGTE", "kindLT", "kindLTE", "kindContains", "kindHasPrefix", "kindHasSuffix", "kindEqualFold", "kindContainsFold", "description", "descriptionNEQ", "descriptionIn", "descriptionNotIn", "descriptionGT", "descriptionGTE", "descriptionLT", "descriptionLTE", "descriptionContains", "descriptionHasPrefix", "descriptionHasSuffix", "descriptionIsNil", "descriptionNotNil", "descriptionEqualFold", "descriptionContainsFold", "secretName", "secretNameNEQ", "secretNameIn", "secretNameNotIn", "secretNameGT", "secretNameGTE", "secretNameLT", "secretNameLTE", "secretNameContains", "secretNameHasPrefix", "secretNameHasSuffix", "secretNameEqualFold", "secretNameContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "kind", "kindNEQ", "kindIn", "kindNotIn", "kindGT", "kindGTE", "kindLT", "kindLTE", "kindContains", "kindHasPrefix", "kindHasSuffix", "kindIsNil", "kindNotNil", "kindEqualFold", "kindContainsFold", "secretName", "secretNameNEQ", "secretNameIn", "secretNameNotIn", "secretNameGT", "secretNameGTE", "secretNameLT", "secretNameLTE", "secretNameContains", "secretNameHasPrefix", "secretNameHasSuffix", "secretNameEqualFold", "secretNameContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -33203,6 +34395,181 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33371,6 +34738,20 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.KindHasSuffix = data
+		case "kindIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kindIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KindIsNil = data
+		case "kindNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kindNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KindNotNil = data
 		case "kindEqualFold":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kindEqualFold"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33385,111 +34766,6 @@ func (ec *executionContext) unmarshalInputIntegrationWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.KindContainsFold = data
-		case "description":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Description = data
-		case "descriptionNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionNEQ = data
-		case "descriptionIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionIn = data
-		case "descriptionNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionNotIn = data
-		case "descriptionGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionGT = data
-		case "descriptionGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionGTE = data
-		case "descriptionLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionLT = data
-		case "descriptionLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionLTE = data
-		case "descriptionContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionContains = data
-		case "descriptionHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionHasPrefix = data
-		case "descriptionHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionHasSuffix = data
-		case "descriptionIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionIsNil = data
-		case "descriptionNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionNotNil = data
-		case "descriptionEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionEqualFold = data
-		case "descriptionContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("descriptionContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DescriptionContainsFold = data
 		case "secretName":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secretName"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33608,7 +34884,7 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "redirectURL", "redirectURLNEQ", "redirectURLIn", "redirectURLNotIn", "redirectURLGT", "redirectURLGTE", "redirectURLLT", "redirectURLLTE", "redirectURLContains", "redirectURLHasPrefix", "redirectURLHasSuffix", "redirectURLEqualFold", "redirectURLContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesEqualFold", "scopesContainsFold", "authURL", "authURLNEQ", "authURLIn", "authURLNotIn", "authURLGT", "authURLGTE", "authURLLT", "authURLLTE", "authURLContains", "authURLHasPrefix", "authURLHasSuffix", "authURLEqualFold", "authURLContainsFold", "tokenURL", "tokenURLNEQ", "tokenURLIn", "tokenURLNotIn", "tokenURLGT", "tokenURLGTE", "tokenURLLT", "tokenURLLTE", "tokenURLContains", "tokenURLHasPrefix", "tokenURLHasSuffix", "tokenURLEqualFold", "tokenURLContainsFold", "authStyle", "authStyleNEQ", "authStyleIn", "authStyleNotIn", "authStyleGT", "authStyleGTE", "authStyleLT", "authStyleLTE", "infoURL", "infoURLNEQ", "infoURLIn", "infoURLNotIn", "infoURLGT", "infoURLGTE", "infoURLLT", "infoURLLTE", "infoURLContains", "infoURLHasPrefix", "infoURLHasSuffix", "infoURLEqualFold", "infoURLContainsFold", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "clientID", "clientIDNEQ", "clientIDIn", "clientIDNotIn", "clientIDGT", "clientIDGTE", "clientIDLT", "clientIDLTE", "clientIDContains", "clientIDHasPrefix", "clientIDHasSuffix", "clientIDEqualFold", "clientIDContainsFold", "clientSecret", "clientSecretNEQ", "clientSecretIn", "clientSecretNotIn", "clientSecretGT", "clientSecretGTE", "clientSecretLT", "clientSecretLTE", "clientSecretContains", "clientSecretHasPrefix", "clientSecretHasSuffix", "clientSecretEqualFold", "clientSecretContainsFold", "redirectURL", "redirectURLNEQ", "redirectURLIn", "redirectURLNotIn", "redirectURLGT", "redirectURLGTE", "redirectURLLT", "redirectURLLTE", "redirectURLContains", "redirectURLHasPrefix", "redirectURLHasSuffix", "redirectURLEqualFold", "redirectURLContainsFold", "scopes", "scopesNEQ", "scopesIn", "scopesNotIn", "scopesGT", "scopesGTE", "scopesLT", "scopesLTE", "scopesContains", "scopesHasPrefix", "scopesHasSuffix", "scopesEqualFold", "scopesContainsFold", "authURL", "authURLNEQ", "authURLIn", "authURLNotIn", "authURLGT", "authURLGTE", "authURLLT", "authURLLTE", "authURLContains", "authURLHasPrefix", "authURLHasSuffix", "authURLEqualFold", "authURLContainsFold", "tokenURL", "tokenURLNEQ", "tokenURLIn", "tokenURLNotIn", "tokenURLGT", "tokenURLGTE", "tokenURLLT", "tokenURLLTE", "tokenURLContains", "tokenURLHasPrefix", "tokenURLHasSuffix", "tokenURLEqualFold", "tokenURLContainsFold", "authStyle", "authStyleNEQ", "authStyleIn", "authStyleNotIn", "authStyleGT", "authStyleGTE", "authStyleLT", "authStyleLTE", "infoURL", "infoURLNEQ", "infoURLIn", "infoURLNotIn", "infoURLGT", "infoURLGTE", "infoURLLT", "infoURLLTE", "infoURLContains", "infoURLHasPrefix", "infoURLHasSuffix", "infoURLEqualFold", "infoURLContainsFold", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34028,6 +35304,181 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -34210,6 +35661,97 @@ func (ec *executionContext) unmarshalInputOauthProviderWhereInput(ctx context.Co
 				return it, err
 			}
 			it.ClientIDContainsFold = data
+		case "clientSecret":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecret"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecret = data
+		case "clientSecretNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretNEQ = data
+		case "clientSecretIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretIn = data
+		case "clientSecretNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretNotIn = data
+		case "clientSecretGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretGT = data
+		case "clientSecretGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretGTE = data
+		case "clientSecretLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretLT = data
+		case "clientSecretLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretLTE = data
+		case "clientSecretContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretContains = data
+		case "clientSecretHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretHasPrefix = data
+		case "clientSecretHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretHasSuffix = data
+		case "clientSecretEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretEqualFold = data
+		case "clientSecretContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clientSecretContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClientSecretContainsFold = data
 		case "redirectURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("redirectURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -35620,7 +37162,7 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertIsNil", "ssoCertNotNil", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointIsNil", "ssoEntrypointNotNil", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerIsNil", "ssoIssuerNotNil", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "ssoCert", "ssoCertNEQ", "ssoCertIn", "ssoCertNotIn", "ssoCertGT", "ssoCertGTE", "ssoCertLT", "ssoCertLTE", "ssoCertContains", "ssoCertHasPrefix", "ssoCertHasSuffix", "ssoCertIsNil", "ssoCertNotNil", "ssoCertEqualFold", "ssoCertContainsFold", "ssoEntrypoint", "ssoEntrypointNEQ", "ssoEntrypointIn", "ssoEntrypointNotIn", "ssoEntrypointGT", "ssoEntrypointGTE", "ssoEntrypointLT", "ssoEntrypointLTE", "ssoEntrypointContains", "ssoEntrypointHasPrefix", "ssoEntrypointHasSuffix", "ssoEntrypointIsNil", "ssoEntrypointNotNil", "ssoEntrypointEqualFold", "ssoEntrypointContainsFold", "ssoIssuer", "ssoIssuerNEQ", "ssoIssuerIn", "ssoIssuerNotIn", "ssoIssuerGT", "ssoIssuerGTE", "ssoIssuerLT", "ssoIssuerLTE", "ssoIssuerContains", "ssoIssuerHasPrefix", "ssoIssuerHasSuffix", "ssoIssuerIsNil", "ssoIssuerNotNil", "ssoIssuerEqualFold", "ssoIssuerContainsFold", "billingContact", "billingContactNEQ", "billingContactIn", "billingContactNotIn", "billingContactGT", "billingContactGTE", "billingContactLT", "billingContactLTE", "billingContactContains", "billingContactHasPrefix", "billingContactHasSuffix", "billingContactIsNil", "billingContactNotNil", "billingContactEqualFold", "billingContactContainsFold", "billingEmail", "billingEmailNEQ", "billingEmailIn", "billingEmailNotIn", "billingEmailGT", "billingEmailGTE", "billingEmailLT", "billingEmailLTE", "billingEmailContains", "billingEmailHasPrefix", "billingEmailHasSuffix", "billingEmailIsNil", "billingEmailNotNil", "billingEmailEqualFold", "billingEmailContainsFold", "billingPhone", "billingPhoneNEQ", "billingPhoneIn", "billingPhoneNotIn", "billingPhoneGT", "billingPhoneGTE", "billingPhoneLT", "billingPhoneLTE", "billingPhoneContains", "billingPhoneHasPrefix", "billingPhoneHasSuffix", "billingPhoneIsNil", "billingPhoneNotNil", "billingPhoneEqualFold", "billingPhoneContainsFold", "billingAddress", "billingAddressNEQ", "billingAddressIn", "billingAddressNotIn", "billingAddressGT", "billingAddressGTE", "billingAddressLT", "billingAddressLTE", "billingAddressContains", "billingAddressHasPrefix", "billingAddressHasSuffix", "billingAddressIsNil", "billingAddressNotNil", "billingAddressEqualFold", "billingAddressContainsFold", "taxIdentifier", "taxIdentifierNEQ", "taxIdentifierIn", "taxIdentifierNotIn", "taxIdentifierGT", "taxIdentifierGTE", "taxIdentifierLT", "taxIdentifierLTE", "taxIdentifierContains", "taxIdentifierHasPrefix", "taxIdentifierHasSuffix", "taxIdentifierIsNil", "taxIdentifierNotNil", "taxIdentifierEqualFold", "taxIdentifierContainsFold", "hasOrganization", "hasOrganizationWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36040,6 +37582,181 @@ func (ec *executionContext) unmarshalInputOrganizationSettingWhereInput(ctx cont
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "ssoCert":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ssoCert"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -39319,7 +41036,7 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "tier", "externalCustomerID", "clearExternalCustomerID", "externalSubscriptionID", "clearExternalSubscriptionID", "expiresAt", "clearExpiresAt", "upgradedAt", "clearUpgradedAt", "upgradedTier", "clearUpgradedTier", "downgradedAt", "clearDowngradedAt", "downgradedTier", "clearDowngradedTier", "cancelled", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "tier", "externalCustomerID", "clearExternalCustomerID", "externalSubscriptionID", "clearExternalSubscriptionID", "expires", "expiresAt", "clearExpiresAt", "cancelled", "organizationID", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39382,6 +41099,13 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.ClearExternalSubscriptionID = data
+		case "expires":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expires"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Expires = data
 		case "expiresAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("expiresAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -39396,62 +41120,6 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.ClearExpiresAt = data
-		case "upgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedAt = data
-		case "clearUpgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpgradedAt"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearUpgradedAt = data
-		case "upgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("upgradedTier"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UpgradedTier = data
-		case "clearUpgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpgradedTier"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearUpgradedTier = data
-		case "downgradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedAt"))
-			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedAt = data
-		case "clearDowngradedAt":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDowngradedAt"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearDowngradedAt = data
-		case "downgradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("downgradedTier"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DowngradedTier = data
-		case "clearDowngradedTier":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDowngradedTier"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearDowngradedTier = data
 		case "cancelled":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cancelled"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -39459,6 +41127,13 @@ func (ec *executionContext) unmarshalInputUpdateEntitlementInput(ctx context.Con
 				return it, err
 			}
 			it.Cancelled = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -39486,7 +41161,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "logoURL", "clearLogoURL", "displayName", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "gravatarLogoURL", "clearGravatarLogoURL", "logoURL", "clearLogoURL", "displayName", "organizationID", "clearOrganizationID", "settingID", "addUserIDs", "removeUserIDs", "clearUsers", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39535,6 +41210,20 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.ClearDescription = data
+		case "gravatarLogoURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gravatarLogoURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GravatarLogoURL = data
+		case "clearGravatarLogoURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearGravatarLogoURL"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearGravatarLogoURL = data
 		case "logoURL":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("logoURL"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -39556,6 +41245,20 @@ func (ec *executionContext) unmarshalInputUpdateGroupInput(ctx context.Context, 
 				return it, err
 			}
 			it.DisplayName = data
+		case "organizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrganizationID = data
+		case "clearOrganizationID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOrganizationID"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearOrganizationID = data
 		case "settingID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settingID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -39701,7 +41404,7 @@ func (ec *executionContext) unmarshalInputUpdateIntegrationInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "ownerID", "clearOwner"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "description", "clearDescription", "kind", "clearKind", "ownerID", "clearOwner"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39750,6 +41453,20 @@ func (ec *executionContext) unmarshalInputUpdateIntegrationInput(ctx context.Con
 				return it, err
 			}
 			it.ClearDescription = data
+		case "kind":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Kind = data
+		case "clearKind":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearKind"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearKind = data
 		case "ownerID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownerID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -40440,7 +42157,7 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "abilities", "appendAbilities", "clearAbilities", "expiresAt", "description", "lastUsedAt", "clearLastUsedAt", "ownerID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "abilities", "appendAbilities", "clearAbilities", "expiresAt", "description", "clearDescription", "lastUsedAt", "clearLastUsedAt", "ownerID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -40510,6 +42227,13 @@ func (ec *executionContext) unmarshalInputUpdatePersonalAccessTokenInput(ctx con
 				return it, err
 			}
 			it.Description = data
+		case "clearDescription":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearDescription"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearDescription = data
 		case "lastUsedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastUsedAt"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -41055,7 +42779,7 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "locked", "lockedNEQ", "silencedAt", "silencedAtNEQ", "silencedAtIn", "silencedAtNotIn", "silencedAtGT", "silencedAtGTE", "silencedAtLT", "silencedAtLTE", "silencedAtIsNil", "silencedAtNotNil", "suspendedAt", "suspendedAtNEQ", "suspendedAtIn", "suspendedAtNotIn", "suspendedAtGT", "suspendedAtGTE", "suspendedAtLT", "suspendedAtLTE", "suspendedAtIsNil", "suspendedAtNotNil", "status", "statusNEQ", "statusIn", "statusNotIn", "role", "roleNEQ", "roleIn", "roleNotIn", "emailConfirmed", "emailConfirmedNEQ", "hasUser", "hasUserWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41475,6 +43199,181 @@ func (ec *executionContext) unmarshalInputUserSettingWhereInput(ctx context.Cont
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "locked":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("locked"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -43442,6 +45341,10 @@ func (ec *executionContext) _Entitlement(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Entitlement_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._Entitlement_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._Entitlement_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._Entitlement_deletedBy(ctx, field, obj)
 		case "tier":
 			out.Values[i] = ec._Entitlement_tier(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -43451,18 +45354,20 @@ func (ec *executionContext) _Entitlement(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Entitlement_externalCustomerID(ctx, field, obj)
 		case "externalSubscriptionID":
 			out.Values[i] = ec._Entitlement_externalSubscriptionID(ctx, field, obj)
+		case "expires":
+			out.Values[i] = ec._Entitlement_expires(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "expiresAt":
 			out.Values[i] = ec._Entitlement_expiresAt(ctx, field, obj)
-		case "upgradedAt":
-			out.Values[i] = ec._Entitlement_upgradedAt(ctx, field, obj)
-		case "upgradedTier":
-			out.Values[i] = ec._Entitlement_upgradedTier(ctx, field, obj)
-		case "downgradedAt":
-			out.Values[i] = ec._Entitlement_downgradedAt(ctx, field, obj)
-		case "downgradedTier":
-			out.Values[i] = ec._Entitlement_downgradedTier(ctx, field, obj)
 		case "cancelled":
 			out.Values[i] = ec._Entitlement_cancelled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "organizationID":
+			out.Values[i] = ec._Entitlement_organizationID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -43767,6 +45672,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "description":
 			out.Values[i] = ec._Group_description(ctx, field, obj)
+		case "gravatarLogoURL":
+			out.Values[i] = ec._Group_gravatarLogoURL(ctx, field, obj)
 		case "logoURL":
 			out.Values[i] = ec._Group_logoURL(ctx, field, obj)
 		case "displayName":
@@ -43774,6 +45681,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "organizationID":
+			out.Values[i] = ec._Group_organizationID(ctx, field, obj)
 		case "setting":
 			field := field
 
@@ -44097,6 +46006,10 @@ func (ec *executionContext) _GroupSetting(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._GroupSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._GroupSetting_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._GroupSetting_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._GroupSetting_deletedBy(ctx, field, obj)
 		case "visibility":
 			out.Values[i] = ec._GroupSetting_visibility(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -44451,18 +46364,19 @@ func (ec *executionContext) _Integration(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._Integration_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._Integration_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._Integration_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._Integration_deletedBy(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._Integration_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "kind":
-			out.Values[i] = ec._Integration_kind(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "description":
 			out.Values[i] = ec._Integration_description(ctx, field, obj)
+		case "kind":
+			out.Values[i] = ec._Integration_kind(ctx, field, obj)
 		case "secretName":
 			out.Values[i] = ec._Integration_secretName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -45052,6 +46966,10 @@ func (ec *executionContext) _OauthProvider(ctx context.Context, sel ast.Selectio
 			out.Values[i] = ec._OauthProvider_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._OauthProvider_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._OauthProvider_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._OauthProvider_deletedBy(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._OauthProvider_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -45059,6 +46977,11 @@ func (ec *executionContext) _OauthProvider(ctx context.Context, sel ast.Selectio
 			}
 		case "clientID":
 			out.Values[i] = ec._OauthProvider_clientID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "clientSecret":
+			out.Values[i] = ec._OauthProvider_clientSecret(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -46208,6 +48131,10 @@ func (ec *executionContext) _OrganizationSetting(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._OrganizationSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._OrganizationSetting_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._OrganizationSetting_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._OrganizationSetting_deletedBy(ctx, field, obj)
 		case "domains":
 			out.Values[i] = ec._OrganizationSetting_domains(ctx, field, obj)
 		case "ssoCert":
@@ -46619,9 +48546,6 @@ func (ec *executionContext) _PersonalAccessToken(ctx context.Context, sel ast.Se
 			}
 		case "description":
 			out.Values[i] = ec._PersonalAccessToken_description(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "lastUsedAt":
 			out.Values[i] = ec._PersonalAccessToken_lastUsedAt(ctx, field, obj)
 		case "owner":
@@ -48303,6 +50227,10 @@ func (ec *executionContext) _UserSetting(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._UserSetting_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._UserSetting_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._UserSetting_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._UserSetting_deletedBy(ctx, field, obj)
 		case "locked":
 			out.Values[i] = ec._UserSetting_locked(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

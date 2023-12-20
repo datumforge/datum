@@ -2119,7 +2119,7 @@ type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken str
 	Name        string                                                                        "json:\"name\" graphql:\"name\""
 	Abilities   []string                                                                      "json:\"abilities,omitempty\" graphql:\"abilities\""
 	ExpiresAt   time.Time                                                                     "json:\"expiresAt\" graphql:\"expiresAt\""
-	Description string                                                                        "json:\"description\" graphql:\"description\""
+	Description *string                                                                       "json:\"description,omitempty\" graphql:\"description\""
 	LastUsedAt  *time.Time                                                                    "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Owner       CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner "json:\"owner\" graphql:\"owner\""
 }
@@ -2172,7 +2172,7 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 	}
 	return &t.ExpiresAt
 }
-func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetDescription() string {
+func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken) GetDescription() *string {
 	if t == nil {
 		t = &CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken{}
 	}
@@ -2229,7 +2229,7 @@ type GetPersonalAccessTokenByID_PersonalAccessToken struct {
 	Name        string                                               "json:\"name\" graphql:\"name\""
 	Abilities   []string                                             "json:\"abilities,omitempty\" graphql:\"abilities\""
 	ExpiresAt   time.Time                                            "json:\"expiresAt\" graphql:\"expiresAt\""
-	Description string                                               "json:\"description\" graphql:\"description\""
+	Description *string                                              "json:\"description,omitempty\" graphql:\"description\""
 	LastUsedAt  *time.Time                                           "json:\"lastUsedAt,omitempty\" graphql:\"lastUsedAt\""
 	Owner       GetPersonalAccessTokenByID_PersonalAccessToken_Owner "json:\"owner\" graphql:\"owner\""
 }
@@ -2282,7 +2282,7 @@ func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetExpiresAt() *time.Ti
 	}
 	return &t.ExpiresAt
 }
-func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetDescription() string {
+func (t *GetPersonalAccessTokenByID_PersonalAccessToken) GetDescription() *string {
 	if t == nil {
 		t = &GetPersonalAccessTokenByID_PersonalAccessToken{}
 	}

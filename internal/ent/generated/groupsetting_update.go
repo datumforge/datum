@@ -58,6 +58,46 @@ func (gsu *GroupSettingUpdate) ClearUpdatedBy() *GroupSettingUpdate {
 	return gsu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (gsu *GroupSettingUpdate) SetDeletedAt(t time.Time) *GroupSettingUpdate {
+	gsu.mutation.SetDeletedAt(t)
+	return gsu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gsu *GroupSettingUpdate) SetNillableDeletedAt(t *time.Time) *GroupSettingUpdate {
+	if t != nil {
+		gsu.SetDeletedAt(*t)
+	}
+	return gsu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (gsu *GroupSettingUpdate) ClearDeletedAt() *GroupSettingUpdate {
+	gsu.mutation.ClearDeletedAt()
+	return gsu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gsu *GroupSettingUpdate) SetDeletedBy(s string) *GroupSettingUpdate {
+	gsu.mutation.SetDeletedBy(s)
+	return gsu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gsu *GroupSettingUpdate) SetNillableDeletedBy(s *string) *GroupSettingUpdate {
+	if s != nil {
+		gsu.SetDeletedBy(*s)
+	}
+	return gsu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (gsu *GroupSettingUpdate) ClearDeletedBy() *GroupSettingUpdate {
+	gsu.mutation.ClearDeletedBy()
+	return gsu
+}
+
 // SetVisibility sets the "visibility" field.
 func (gsu *GroupSettingUpdate) SetVisibility(gr groupsetting.Visibility) *GroupSettingUpdate {
 	gsu.mutation.SetVisibility(gr)
@@ -237,6 +277,18 @@ func (gsu *GroupSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if gsu.mutation.UpdatedByCleared() {
 		_spec.ClearField(groupsetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := gsu.mutation.DeletedAt(); ok {
+		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)
+	}
+	if gsu.mutation.DeletedAtCleared() {
+		_spec.ClearField(groupsetting.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := gsu.mutation.DeletedBy(); ok {
+		_spec.SetField(groupsetting.FieldDeletedBy, field.TypeString, value)
+	}
+	if gsu.mutation.DeletedByCleared() {
+		_spec.ClearField(groupsetting.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := gsu.mutation.Visibility(); ok {
 		_spec.SetField(groupsetting.FieldVisibility, field.TypeEnum, value)
 	}
@@ -333,6 +385,46 @@ func (gsuo *GroupSettingUpdateOne) SetNillableUpdatedBy(s *string) *GroupSetting
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (gsuo *GroupSettingUpdateOne) ClearUpdatedBy() *GroupSettingUpdateOne {
 	gsuo.mutation.ClearUpdatedBy()
+	return gsuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (gsuo *GroupSettingUpdateOne) SetDeletedAt(t time.Time) *GroupSettingUpdateOne {
+	gsuo.mutation.SetDeletedAt(t)
+	return gsuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gsuo *GroupSettingUpdateOne) SetNillableDeletedAt(t *time.Time) *GroupSettingUpdateOne {
+	if t != nil {
+		gsuo.SetDeletedAt(*t)
+	}
+	return gsuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (gsuo *GroupSettingUpdateOne) ClearDeletedAt() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearDeletedAt()
+	return gsuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gsuo *GroupSettingUpdateOne) SetDeletedBy(s string) *GroupSettingUpdateOne {
+	gsuo.mutation.SetDeletedBy(s)
+	return gsuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gsuo *GroupSettingUpdateOne) SetNillableDeletedBy(s *string) *GroupSettingUpdateOne {
+	if s != nil {
+		gsuo.SetDeletedBy(*s)
+	}
+	return gsuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (gsuo *GroupSettingUpdateOne) ClearDeletedBy() *GroupSettingUpdateOne {
+	gsuo.mutation.ClearDeletedBy()
 	return gsuo
 }
 
@@ -544,6 +636,18 @@ func (gsuo *GroupSettingUpdateOne) sqlSave(ctx context.Context) (_node *GroupSet
 	}
 	if gsuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(groupsetting.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := gsuo.mutation.DeletedAt(); ok {
+		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)
+	}
+	if gsuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(groupsetting.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := gsuo.mutation.DeletedBy(); ok {
+		_spec.SetField(groupsetting.FieldDeletedBy, field.TypeString, value)
+	}
+	if gsuo.mutation.DeletedByCleared() {
+		_spec.ClearField(groupsetting.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := gsuo.mutation.Visibility(); ok {
 		_spec.SetField(groupsetting.FieldVisibility, field.TypeEnum, value)

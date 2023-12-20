@@ -45,8 +45,8 @@ type User struct {
 	// The time the user's (local) avatar was last updated
 	AvatarUpdatedAt *time.Time `json:"avatar_updated_at,omitempty"`
 	// the time the user was last seen
-	LastSeen time.Time `json:"last_seen,omitempty"`
-	// user bcrypt password hash
+	LastSeen *time.Time `json:"last_seen,omitempty"`
+	// user password hash
 	Password *string `json:"password,omitempty"`
 	// the Subject of the user JWT
 	Sub string `json:"sub,omitempty"`
@@ -248,7 +248,8 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field last_seen", values[i])
 			} else if value.Valid {
-				u.LastSeen = value.Time
+				u.LastSeen = new(time.Time)
+				*u.LastSeen = value.Time
 			}
 		case user.FieldPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -375,8 +376,10 @@ func (u *User) String() string {
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	builder.WriteString("last_seen=")
-	builder.WriteString(u.LastSeen.Format(time.ANSIC))
+	if v := u.LastSeen; v != nil {
+		builder.WriteString("last_seen=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := u.Password; v != nil {
 		builder.WriteString("password=")

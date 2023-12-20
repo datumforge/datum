@@ -75,6 +75,16 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				selectedFields = append(selectedFields, entitlement.FieldUpdatedBy)
 				fieldSeen[entitlement.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[entitlement.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldDeletedAt)
+				fieldSeen[entitlement.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[entitlement.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldDeletedBy)
+				fieldSeen[entitlement.FieldDeletedBy] = struct{}{}
+			}
 		case "tier":
 			if _, ok := fieldSeen[entitlement.FieldTier]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldTier)
@@ -90,35 +100,25 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				selectedFields = append(selectedFields, entitlement.FieldExternalSubscriptionID)
 				fieldSeen[entitlement.FieldExternalSubscriptionID] = struct{}{}
 			}
+		case "expires":
+			if _, ok := fieldSeen[entitlement.FieldExpires]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldExpires)
+				fieldSeen[entitlement.FieldExpires] = struct{}{}
+			}
 		case "expiresAt":
 			if _, ok := fieldSeen[entitlement.FieldExpiresAt]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldExpiresAt)
 				fieldSeen[entitlement.FieldExpiresAt] = struct{}{}
 			}
-		case "upgradedAt":
-			if _, ok := fieldSeen[entitlement.FieldUpgradedAt]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldUpgradedAt)
-				fieldSeen[entitlement.FieldUpgradedAt] = struct{}{}
-			}
-		case "upgradedTier":
-			if _, ok := fieldSeen[entitlement.FieldUpgradedTier]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldUpgradedTier)
-				fieldSeen[entitlement.FieldUpgradedTier] = struct{}{}
-			}
-		case "downgradedAt":
-			if _, ok := fieldSeen[entitlement.FieldDowngradedAt]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldDowngradedAt)
-				fieldSeen[entitlement.FieldDowngradedAt] = struct{}{}
-			}
-		case "downgradedTier":
-			if _, ok := fieldSeen[entitlement.FieldDowngradedTier]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldDowngradedTier)
-				fieldSeen[entitlement.FieldDowngradedTier] = struct{}{}
-			}
 		case "cancelled":
 			if _, ok := fieldSeen[entitlement.FieldCancelled]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldCancelled)
 				fieldSeen[entitlement.FieldCancelled] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[entitlement.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldOrganizationID)
+				fieldSeen[entitlement.FieldOrganizationID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -254,6 +254,11 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 				selectedFields = append(selectedFields, group.FieldDescription)
 				fieldSeen[group.FieldDescription] = struct{}{}
 			}
+		case "gravatarLogoURL":
+			if _, ok := fieldSeen[group.FieldGravatarLogoURL]; !ok {
+				selectedFields = append(selectedFields, group.FieldGravatarLogoURL)
+				fieldSeen[group.FieldGravatarLogoURL] = struct{}{}
+			}
 		case "logoURL":
 			if _, ok := fieldSeen[group.FieldLogoURL]; !ok {
 				selectedFields = append(selectedFields, group.FieldLogoURL)
@@ -263,6 +268,11 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			if _, ok := fieldSeen[group.FieldDisplayName]; !ok {
 				selectedFields = append(selectedFields, group.FieldDisplayName)
 				fieldSeen[group.FieldDisplayName] = struct{}{}
+			}
+		case "organizationID":
+			if _, ok := fieldSeen[group.FieldOrganizationID]; !ok {
+				selectedFields = append(selectedFields, group.FieldOrganizationID)
+				fieldSeen[group.FieldOrganizationID] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -377,6 +387,16 @@ func (gs *GroupSettingQuery) collectField(ctx context.Context, opCtx *graphql.Op
 			if _, ok := fieldSeen[groupsetting.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, groupsetting.FieldUpdatedBy)
 				fieldSeen[groupsetting.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[groupsetting.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, groupsetting.FieldDeletedAt)
+				fieldSeen[groupsetting.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[groupsetting.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, groupsetting.FieldDeletedBy)
+				fieldSeen[groupsetting.FieldDeletedBy] = struct{}{}
 			}
 		case "visibility":
 			if _, ok := fieldSeen[groupsetting.FieldVisibility]; !ok {
@@ -495,20 +515,30 @@ func (i *IntegrationQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				selectedFields = append(selectedFields, integration.FieldUpdatedBy)
 				fieldSeen[integration.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[integration.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, integration.FieldDeletedAt)
+				fieldSeen[integration.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[integration.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, integration.FieldDeletedBy)
+				fieldSeen[integration.FieldDeletedBy] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[integration.FieldName]; !ok {
 				selectedFields = append(selectedFields, integration.FieldName)
 				fieldSeen[integration.FieldName] = struct{}{}
 			}
-		case "kind":
-			if _, ok := fieldSeen[integration.FieldKind]; !ok {
-				selectedFields = append(selectedFields, integration.FieldKind)
-				fieldSeen[integration.FieldKind] = struct{}{}
-			}
 		case "description":
 			if _, ok := fieldSeen[integration.FieldDescription]; !ok {
 				selectedFields = append(selectedFields, integration.FieldDescription)
 				fieldSeen[integration.FieldDescription] = struct{}{}
+			}
+		case "kind":
+			if _, ok := fieldSeen[integration.FieldKind]; !ok {
+				selectedFields = append(selectedFields, integration.FieldKind)
+				fieldSeen[integration.FieldKind] = struct{}{}
 			}
 		case "secretName":
 			if _, ok := fieldSeen[integration.FieldSecretName]; !ok {
@@ -629,6 +659,16 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.O
 				selectedFields = append(selectedFields, oauthprovider.FieldUpdatedBy)
 				fieldSeen[oauthprovider.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[oauthprovider.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldDeletedAt)
+				fieldSeen[oauthprovider.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[oauthprovider.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldDeletedBy)
+				fieldSeen[oauthprovider.FieldDeletedBy] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[oauthprovider.FieldName]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldName)
@@ -638,6 +678,11 @@ func (op *OauthProviderQuery) collectField(ctx context.Context, opCtx *graphql.O
 			if _, ok := fieldSeen[oauthprovider.FieldClientID]; !ok {
 				selectedFields = append(selectedFields, oauthprovider.FieldClientID)
 				fieldSeen[oauthprovider.FieldClientID] = struct{}{}
+			}
+		case "clientSecret":
+			if _, ok := fieldSeen[oauthprovider.FieldClientSecret]; !ok {
+				selectedFields = append(selectedFields, oauthprovider.FieldClientSecret)
+				fieldSeen[oauthprovider.FieldClientSecret] = struct{}{}
 			}
 		case "redirectURL":
 			if _, ok := fieldSeen[oauthprovider.FieldRedirectURL]; !ok {
@@ -1179,6 +1224,16 @@ func (os *OrganizationSettingQuery) collectField(ctx context.Context, opCtx *gra
 			if _, ok := fieldSeen[organizationsetting.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, organizationsetting.FieldUpdatedBy)
 				fieldSeen[organizationsetting.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[organizationsetting.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldDeletedAt)
+				fieldSeen[organizationsetting.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[organizationsetting.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, organizationsetting.FieldDeletedBy)
+				fieldSeen[organizationsetting.FieldDeletedBy] = struct{}{}
 			}
 		case "domains":
 			if _, ok := fieldSeen[organizationsetting.FieldDomains]; !ok {
@@ -1786,6 +1841,16 @@ func (us *UserSettingQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if _, ok := fieldSeen[usersetting.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, usersetting.FieldUpdatedBy)
 				fieldSeen[usersetting.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[usersetting.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldDeletedAt)
+				fieldSeen[usersetting.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[usersetting.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, usersetting.FieldDeletedBy)
+				fieldSeen[usersetting.FieldDeletedBy] = struct{}{}
 			}
 		case "locked":
 			if _, ok := fieldSeen[usersetting.FieldLocked]; !ok {

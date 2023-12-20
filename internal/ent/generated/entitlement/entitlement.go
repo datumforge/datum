@@ -26,24 +26,24 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
+	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
+	FieldDeletedAt = "deleted_at"
+	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
+	FieldDeletedBy = "deleted_by"
 	// FieldTier holds the string denoting the tier field in the database.
 	FieldTier = "tier"
 	// FieldExternalCustomerID holds the string denoting the external_customer_id field in the database.
 	FieldExternalCustomerID = "external_customer_id"
 	// FieldExternalSubscriptionID holds the string denoting the external_subscription_id field in the database.
 	FieldExternalSubscriptionID = "external_subscription_id"
+	// FieldExpires holds the string denoting the expires field in the database.
+	FieldExpires = "expires"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
 	FieldExpiresAt = "expires_at"
-	// FieldUpgradedAt holds the string denoting the upgraded_at field in the database.
-	FieldUpgradedAt = "upgraded_at"
-	// FieldUpgradedTier holds the string denoting the upgraded_tier field in the database.
-	FieldUpgradedTier = "upgraded_tier"
-	// FieldDowngradedAt holds the string denoting the downgraded_at field in the database.
-	FieldDowngradedAt = "downgraded_at"
-	// FieldDowngradedTier holds the string denoting the downgraded_tier field in the database.
-	FieldDowngradedTier = "downgraded_tier"
 	// FieldCancelled holds the string denoting the cancelled field in the database.
 	FieldCancelled = "cancelled"
+	// FieldOrganizationID holds the string denoting the organization_id field in the database.
+	FieldOrganizationID = "organization_id"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// Table holds the table name of the entitlement in the database.
@@ -64,15 +64,15 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
+	FieldDeletedAt,
+	FieldDeletedBy,
 	FieldTier,
 	FieldExternalCustomerID,
 	FieldExternalSubscriptionID,
+	FieldExpires,
 	FieldExpiresAt,
-	FieldUpgradedAt,
-	FieldUpgradedTier,
-	FieldDowngradedAt,
-	FieldDowngradedTier,
 	FieldCancelled,
+	FieldOrganizationID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "entitlements"
@@ -102,13 +102,16 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/datumforge/datum/internal/ent/generated/runtime"
 var (
-	Hooks [1]ent.Hook
+	Hooks        [2]ent.Hook
+	Interceptors [1]ent.Interceptor
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultExpires holds the default value on creation for the "expires" field.
+	DefaultExpires bool
 	// DefaultCancelled holds the default value on creation for the "cancelled" field.
 	DefaultCancelled bool
 	// DefaultID holds the default value on creation for the "id" field.
@@ -170,6 +173,16 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
+// ByDeletedAt orders the results by the deleted_at field.
+func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByDeletedBy orders the results by the deleted_by field.
+func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
 // ByTier orders the results by the tier field.
 func ByTier(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTier, opts...).ToFunc()
@@ -185,34 +198,24 @@ func ByExternalSubscriptionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExternalSubscriptionID, opts...).ToFunc()
 }
 
+// ByExpires orders the results by the expires field.
+func ByExpires(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExpires, opts...).ToFunc()
+}
+
 // ByExpiresAt orders the results by the expires_at field.
 func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExpiresAt, opts...).ToFunc()
 }
 
-// ByUpgradedAt orders the results by the upgraded_at field.
-func ByUpgradedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpgradedAt, opts...).ToFunc()
-}
-
-// ByUpgradedTier orders the results by the upgraded_tier field.
-func ByUpgradedTier(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpgradedTier, opts...).ToFunc()
-}
-
-// ByDowngradedAt orders the results by the downgraded_at field.
-func ByDowngradedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDowngradedAt, opts...).ToFunc()
-}
-
-// ByDowngradedTier orders the results by the downgraded_tier field.
-func ByDowngradedTier(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDowngradedTier, opts...).ToFunc()
-}
-
 // ByCancelled orders the results by the cancelled field.
 func ByCancelled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCancelled, opts...).ToFunc()
+}
+
+// ByOrganizationID orders the results by the organization_id field.
+func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

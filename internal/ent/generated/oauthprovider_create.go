@@ -77,6 +77,34 @@ func (opc *OauthProviderCreate) SetNillableUpdatedBy(s *string) *OauthProviderCr
 	return opc
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (opc *OauthProviderCreate) SetDeletedAt(t time.Time) *OauthProviderCreate {
+	opc.mutation.SetDeletedAt(t)
+	return opc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (opc *OauthProviderCreate) SetNillableDeletedAt(t *time.Time) *OauthProviderCreate {
+	if t != nil {
+		opc.SetDeletedAt(*t)
+	}
+	return opc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (opc *OauthProviderCreate) SetDeletedBy(s string) *OauthProviderCreate {
+	opc.mutation.SetDeletedBy(s)
+	return opc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (opc *OauthProviderCreate) SetNillableDeletedBy(s *string) *OauthProviderCreate {
+	if s != nil {
+		opc.SetDeletedBy(*s)
+	}
+	return opc
+}
+
 // SetName sets the "name" field.
 func (opc *OauthProviderCreate) SetName(s string) *OauthProviderCreate {
 	opc.mutation.SetName(s)
@@ -311,6 +339,14 @@ func (opc *OauthProviderCreate) createSpec() (*OauthProvider, *sqlgraph.CreateSp
 	if value, ok := opc.mutation.UpdatedBy(); ok {
 		_spec.SetField(oauthprovider.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := opc.mutation.DeletedAt(); ok {
+		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := opc.mutation.DeletedBy(); ok {
+		_spec.SetField(oauthprovider.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := opc.mutation.Name(); ok {
 		_spec.SetField(oauthprovider.FieldName, field.TypeString, value)

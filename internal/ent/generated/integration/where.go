@@ -87,19 +87,29 @@ func UpdatedBy(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldEQ(FieldDeletedBy, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldName, v))
 }
 
-// Kind applies equality check predicate on the "kind" field. It's identical to KindEQ.
-func Kind(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldEQ(FieldKind, v))
-}
-
 // Description applies equality check predicate on the "description" field. It's identical to DescriptionEQ.
 func Description(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldDescription, v))
+}
+
+// Kind applies equality check predicate on the "kind" field. It's identical to KindEQ.
+func Kind(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldEQ(FieldKind, v))
 }
 
 // SecretName applies equality check predicate on the "secret_name" field. It's identical to SecretNameEQ.
@@ -337,6 +347,131 @@ func UpdatedByContainsFold(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldContainsFold(FieldUpdatedBy, v))
 }
 
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Integration {
+	return predicate.Integration(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldNEQ(FieldDeletedBy, v))
+}
+
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...string) predicate.Integration {
+	return predicate.Integration(sql.FieldIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...string) predicate.Integration {
+	return predicate.Integration(sql.FieldNotIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldGT(FieldDeletedBy, v))
+}
+
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldGTE(FieldDeletedBy, v))
+}
+
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldLT(FieldDeletedBy, v))
+}
+
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldLTE(FieldDeletedBy, v))
+}
+
+// DeletedByContains applies the Contains predicate on the "deleted_by" field.
+func DeletedByContains(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldContains(FieldDeletedBy, v))
+}
+
+// DeletedByHasPrefix applies the HasPrefix predicate on the "deleted_by" field.
+func DeletedByHasPrefix(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldHasPrefix(FieldDeletedBy, v))
+}
+
+// DeletedByHasSuffix applies the HasSuffix predicate on the "deleted_by" field.
+func DeletedByHasSuffix(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldHasSuffix(FieldDeletedBy, v))
+}
+
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldDeletedBy))
+}
+
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// DeletedByEqualFold applies the EqualFold predicate on the "deleted_by" field.
+func DeletedByEqualFold(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldEqualFold(FieldDeletedBy, v))
+}
+
+// DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
+func DeletedByContainsFold(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldEQ(FieldName, v))
@@ -400,71 +535,6 @@ func NameEqualFold(v string) predicate.Integration {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldContainsFold(FieldName, v))
-}
-
-// KindEQ applies the EQ predicate on the "kind" field.
-func KindEQ(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldEQ(FieldKind, v))
-}
-
-// KindNEQ applies the NEQ predicate on the "kind" field.
-func KindNEQ(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldNEQ(FieldKind, v))
-}
-
-// KindIn applies the In predicate on the "kind" field.
-func KindIn(vs ...string) predicate.Integration {
-	return predicate.Integration(sql.FieldIn(FieldKind, vs...))
-}
-
-// KindNotIn applies the NotIn predicate on the "kind" field.
-func KindNotIn(vs ...string) predicate.Integration {
-	return predicate.Integration(sql.FieldNotIn(FieldKind, vs...))
-}
-
-// KindGT applies the GT predicate on the "kind" field.
-func KindGT(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldGT(FieldKind, v))
-}
-
-// KindGTE applies the GTE predicate on the "kind" field.
-func KindGTE(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldGTE(FieldKind, v))
-}
-
-// KindLT applies the LT predicate on the "kind" field.
-func KindLT(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldLT(FieldKind, v))
-}
-
-// KindLTE applies the LTE predicate on the "kind" field.
-func KindLTE(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldLTE(FieldKind, v))
-}
-
-// KindContains applies the Contains predicate on the "kind" field.
-func KindContains(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldContains(FieldKind, v))
-}
-
-// KindHasPrefix applies the HasPrefix predicate on the "kind" field.
-func KindHasPrefix(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldHasPrefix(FieldKind, v))
-}
-
-// KindHasSuffix applies the HasSuffix predicate on the "kind" field.
-func KindHasSuffix(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldHasSuffix(FieldKind, v))
-}
-
-// KindEqualFold applies the EqualFold predicate on the "kind" field.
-func KindEqualFold(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldEqualFold(FieldKind, v))
-}
-
-// KindContainsFold applies the ContainsFold predicate on the "kind" field.
-func KindContainsFold(v string) predicate.Integration {
-	return predicate.Integration(sql.FieldContainsFold(FieldKind, v))
 }
 
 // DescriptionEQ applies the EQ predicate on the "description" field.
@@ -540,6 +610,81 @@ func DescriptionEqualFold(v string) predicate.Integration {
 // DescriptionContainsFold applies the ContainsFold predicate on the "description" field.
 func DescriptionContainsFold(v string) predicate.Integration {
 	return predicate.Integration(sql.FieldContainsFold(FieldDescription, v))
+}
+
+// KindEQ applies the EQ predicate on the "kind" field.
+func KindEQ(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldEQ(FieldKind, v))
+}
+
+// KindNEQ applies the NEQ predicate on the "kind" field.
+func KindNEQ(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldNEQ(FieldKind, v))
+}
+
+// KindIn applies the In predicate on the "kind" field.
+func KindIn(vs ...string) predicate.Integration {
+	return predicate.Integration(sql.FieldIn(FieldKind, vs...))
+}
+
+// KindNotIn applies the NotIn predicate on the "kind" field.
+func KindNotIn(vs ...string) predicate.Integration {
+	return predicate.Integration(sql.FieldNotIn(FieldKind, vs...))
+}
+
+// KindGT applies the GT predicate on the "kind" field.
+func KindGT(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldGT(FieldKind, v))
+}
+
+// KindGTE applies the GTE predicate on the "kind" field.
+func KindGTE(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldGTE(FieldKind, v))
+}
+
+// KindLT applies the LT predicate on the "kind" field.
+func KindLT(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldLT(FieldKind, v))
+}
+
+// KindLTE applies the LTE predicate on the "kind" field.
+func KindLTE(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldLTE(FieldKind, v))
+}
+
+// KindContains applies the Contains predicate on the "kind" field.
+func KindContains(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldContains(FieldKind, v))
+}
+
+// KindHasPrefix applies the HasPrefix predicate on the "kind" field.
+func KindHasPrefix(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldHasPrefix(FieldKind, v))
+}
+
+// KindHasSuffix applies the HasSuffix predicate on the "kind" field.
+func KindHasSuffix(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldHasSuffix(FieldKind, v))
+}
+
+// KindIsNil applies the IsNil predicate on the "kind" field.
+func KindIsNil() predicate.Integration {
+	return predicate.Integration(sql.FieldIsNull(FieldKind))
+}
+
+// KindNotNil applies the NotNil predicate on the "kind" field.
+func KindNotNil() predicate.Integration {
+	return predicate.Integration(sql.FieldNotNull(FieldKind))
+}
+
+// KindEqualFold applies the EqualFold predicate on the "kind" field.
+func KindEqualFold(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldEqualFold(FieldKind, v))
+}
+
+// KindContainsFold applies the ContainsFold predicate on the "kind" field.
+func KindContainsFold(v string) predicate.Integration {
+	return predicate.Integration(sql.FieldContainsFold(FieldKind, v))
 }
 
 // SecretNameEQ applies the EQ predicate on the "secret_name" field.

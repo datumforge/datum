@@ -34,16 +34,25 @@ func (Group) Mixin() []ent.Mixin {
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
+			Comment("the name of the group - must be unique within the organization").
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
 			),
 		field.String("description").
+			Comment("the groups description").
+			Optional().
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
+		field.String("gravatar_logo_url").
+			Comment("the URL to an auto generated gravatar image for the group").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
 			),
 		field.String("logo_url").
+			Comment("the URL to an image uploaded by the customer for the groups avatar image").
 			Optional().
 			Annotations(
 				entgql.Skip(entgql.SkipWhereInput),
@@ -55,6 +64,9 @@ func (Group) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("display_name"),
 			),
+		field.String("organization_id").
+			Comment("the ID of the organization the group belongs to").
+			Optional(),
 	}
 }
 

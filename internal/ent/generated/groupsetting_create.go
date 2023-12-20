@@ -77,6 +77,34 @@ func (gsc *GroupSettingCreate) SetNillableUpdatedBy(s *string) *GroupSettingCrea
 	return gsc
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (gsc *GroupSettingCreate) SetDeletedAt(t time.Time) *GroupSettingCreate {
+	gsc.mutation.SetDeletedAt(t)
+	return gsc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (gsc *GroupSettingCreate) SetNillableDeletedAt(t *time.Time) *GroupSettingCreate {
+	if t != nil {
+		gsc.SetDeletedAt(*t)
+	}
+	return gsc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (gsc *GroupSettingCreate) SetDeletedBy(s string) *GroupSettingCreate {
+	gsc.mutation.SetDeletedBy(s)
+	return gsc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (gsc *GroupSettingCreate) SetNillableDeletedBy(s *string) *GroupSettingCreate {
+	if s != nil {
+		gsc.SetDeletedBy(*s)
+	}
+	return gsc
+}
+
 // SetVisibility sets the "visibility" field.
 func (gsc *GroupSettingCreate) SetVisibility(gr groupsetting.Visibility) *GroupSettingCreate {
 	gsc.mutation.SetVisibility(gr)
@@ -337,6 +365,14 @@ func (gsc *GroupSettingCreate) createSpec() (*GroupSetting, *sqlgraph.CreateSpec
 	if value, ok := gsc.mutation.UpdatedBy(); ok {
 		_spec.SetField(groupsetting.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := gsc.mutation.DeletedAt(); ok {
+		_spec.SetField(groupsetting.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := gsc.mutation.DeletedBy(); ok {
+		_spec.SetField(groupsetting.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := gsc.mutation.Visibility(); ok {
 		_spec.SetField(groupsetting.FieldVisibility, field.TypeEnum, value)

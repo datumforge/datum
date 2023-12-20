@@ -16,15 +16,15 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "tier", Type: field.TypeEnum, Enums: []string{"free", "pro", "enterprise"}, Default: "free"},
 		{Name: "external_customer_id", Type: field.TypeString, Nullable: true},
 		{Name: "external_subscription_id", Type: field.TypeString, Nullable: true},
+		{Name: "expires", Type: field.TypeBool, Default: false},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
-		{Name: "upgraded_at", Type: field.TypeTime, Nullable: true},
-		{Name: "upgraded_tier", Type: field.TypeString, Nullable: true},
-		{Name: "downgraded_at", Type: field.TypeTime, Nullable: true},
-		{Name: "downgraded_tier", Type: field.TypeString, Nullable: true},
 		{Name: "cancelled", Type: field.TypeBool, Default: false},
+		{Name: "organization_id", Type: field.TypeString},
 		{Name: "organization_entitlements", Type: field.TypeString, Nullable: true},
 	}
 	// EntitlementsTable holds the schema information for the "entitlements" table.
@@ -52,8 +52,10 @@ var (
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
+		{Name: "organization_id", Type: field.TypeString, Nullable: true},
 		{Name: "organization_groups", Type: field.TypeString},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
@@ -64,7 +66,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "groups_organizations_groups",
-				Columns:    []*schema.Column{GroupsColumns[11]},
+				Columns:    []*schema.Column{GroupsColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -73,7 +75,7 @@ var (
 			{
 				Name:    "group_name_organization_groups",
 				Unique:  true,
-				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[11]},
+				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[13]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
@@ -87,8 +89,10 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "visibility", Type: field.TypeEnum, Enums: []string{"PUBLIC", "PRIVATE"}, Default: "PUBLIC"},
-		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "OPEN"},
+		{Name: "join_policy", Type: field.TypeEnum, Enums: []string{"OPEN", "INVITE_ONLY", "APPLICATION_ONLY", "INVITE_OR_APPLICATION"}, Default: "INVITE_OR_APPLICATION"},
 		{Name: "tags", Type: field.TypeJSON},
 		{Name: "sync_to_slack", Type: field.TypeBool, Default: false},
 		{Name: "sync_to_github", Type: field.TypeBool, Default: false},
@@ -102,7 +106,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "group_settings_groups_setting",
-				Columns:    []*schema.Column{GroupSettingsColumns[10]},
+				Columns:    []*schema.Column{GroupSettingsColumns[12]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -115,9 +119,11 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
-		{Name: "kind", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "kind", Type: field.TypeString, Nullable: true},
 		{Name: "secret_name", Type: field.TypeString},
 		{Name: "organization_integrations", Type: field.TypeString, Nullable: true},
 	}
@@ -129,7 +135,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "integrations_organizations_integrations",
-				Columns:    []*schema.Column{IntegrationsColumns[9]},
+				Columns:    []*schema.Column{IntegrationsColumns[11]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -142,6 +148,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "client_id", Type: field.TypeString},
 		{Name: "client_secret", Type: field.TypeString},
@@ -161,7 +169,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "oauth_providers_organizations_oauthprovider",
-				Columns:    []*schema.Column{OauthProvidersColumns[14]},
+				Columns:    []*schema.Column{OauthProvidersColumns[16]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -234,6 +242,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "domains", Type: field.TypeJSON, Nullable: true},
 		{Name: "sso_cert", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "sso_entrypoint", Type: field.TypeString, Nullable: true},
@@ -254,7 +264,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organization_settings_organizations_setting",
-				Columns:    []*schema.Column{OrganizationSettingsColumns[15]},
+				Columns:    []*schema.Column{OrganizationSettingsColumns[17]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -271,7 +281,7 @@ var (
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
 		{Name: "expires_at", Type: field.TypeTime},
-		{Name: "description", Type: field.TypeString, Default: ""},
+		{Name: "description", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
 		{Name: "user_personal_access_tokens", Type: field.TypeString},
 	}
@@ -371,6 +381,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "locked", Type: field.TypeBool, Default: false},
 		{Name: "silenced_at", Type: field.TypeTime, Nullable: true},
 		{Name: "suspended_at", Type: field.TypeTime, Nullable: true},
@@ -390,7 +402,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "user_settings_users_setting",
-				Columns:    []*schema.Column{UserSettingsColumns[14]},
+				Columns:    []*schema.Column{UserSettingsColumns[16]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

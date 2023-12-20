@@ -118,6 +118,12 @@ func (patu *PersonalAccessTokenUpdate) SetNillableDescription(s *string) *Person
 	return patu
 }
 
+// ClearDescription clears the value of the "description" field.
+func (patu *PersonalAccessTokenUpdate) ClearDescription() *PersonalAccessTokenUpdate {
+	patu.mutation.ClearDescription()
+	return patu
+}
+
 // SetLastUsedAt sets the "last_used_at" field.
 func (patu *PersonalAccessTokenUpdate) SetLastUsedAt(t time.Time) *PersonalAccessTokenUpdate {
 	patu.mutation.SetLastUsedAt(t)
@@ -252,6 +258,9 @@ func (patu *PersonalAccessTokenUpdate) sqlSave(ctx context.Context) (n int, err 
 	}
 	if value, ok := patu.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)
+	}
+	if patu.mutation.DescriptionCleared() {
+		_spec.ClearField(personalaccesstoken.FieldDescription, field.TypeString)
 	}
 	if value, ok := patu.mutation.LastUsedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldLastUsedAt, field.TypeTime, value)
@@ -395,6 +404,12 @@ func (patuo *PersonalAccessTokenUpdateOne) SetNillableDescription(s *string) *Pe
 	if s != nil {
 		patuo.SetDescription(*s)
 	}
+	return patuo
+}
+
+// ClearDescription clears the value of the "description" field.
+func (patuo *PersonalAccessTokenUpdateOne) ClearDescription() *PersonalAccessTokenUpdateOne {
+	patuo.mutation.ClearDescription()
 	return patuo
 }
 
@@ -562,6 +577,9 @@ func (patuo *PersonalAccessTokenUpdateOne) sqlSave(ctx context.Context) (_node *
 	}
 	if value, ok := patuo.mutation.Description(); ok {
 		_spec.SetField(personalaccesstoken.FieldDescription, field.TypeString, value)
+	}
+	if patuo.mutation.DescriptionCleared() {
+		_spec.ClearField(personalaccesstoken.FieldDescription, field.TypeString)
 	}
 	if value, ok := patuo.mutation.LastUsedAt(); ok {
 		_spec.SetField(personalaccesstoken.FieldLastUsedAt, field.TypeTime, value)

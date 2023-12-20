@@ -30,7 +30,11 @@ import (
 func init() {
 	entitlementMixin := schema.Entitlement{}.Mixin()
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
+	entitlementMixinHooks2 := entitlementMixin[2].Hooks()
 	entitlement.Hooks[0] = entitlementMixinHooks0[0]
+	entitlement.Hooks[1] = entitlementMixinHooks2[0]
+	entitlementMixinInters2 := entitlementMixin[2].Interceptors()
+	entitlement.Interceptors[0] = entitlementMixinInters2[0]
 	entitlementMixinFields0 := entitlementMixin[0].Fields()
 	_ = entitlementMixinFields0
 	entitlementMixinFields1 := entitlementMixin[1].Fields()
@@ -47,8 +51,12 @@ func init() {
 	entitlement.DefaultUpdatedAt = entitlementDescUpdatedAt.Default.(func() time.Time)
 	// entitlement.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	entitlement.UpdateDefaultUpdatedAt = entitlementDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// entitlementDescExpires is the schema descriptor for expires field.
+	entitlementDescExpires := entitlementFields[3].Descriptor()
+	// entitlement.DefaultExpires holds the default value on creation for the expires field.
+	entitlement.DefaultExpires = entitlementDescExpires.Default.(bool)
 	// entitlementDescCancelled is the schema descriptor for cancelled field.
-	entitlementDescCancelled := entitlementFields[8].Descriptor()
+	entitlementDescCancelled := entitlementFields[5].Descriptor()
 	// entitlement.DefaultCancelled holds the default value on creation for the cancelled field.
 	entitlement.DefaultCancelled = entitlementDescCancelled.Default.(bool)
 	// entitlementDescID is the schema descriptor for id field.
@@ -99,7 +107,7 @@ func init() {
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
 	// groupDescDisplayName is the schema descriptor for display_name field.
-	groupDescDisplayName := groupFields[3].Descriptor()
+	groupDescDisplayName := groupFields[4].Descriptor()
 	// group.DefaultDisplayName holds the default value on creation for the display_name field.
 	group.DefaultDisplayName = groupDescDisplayName.Default.(string)
 	// group.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
@@ -110,7 +118,11 @@ func init() {
 	group.DefaultID = groupDescID.Default.(func() string)
 	groupsettingMixin := schema.GroupSetting{}.Mixin()
 	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
+	groupsettingMixinHooks2 := groupsettingMixin[2].Hooks()
 	groupsetting.Hooks[0] = groupsettingMixinHooks0[0]
+	groupsetting.Hooks[1] = groupsettingMixinHooks2[0]
+	groupsettingMixinInters2 := groupsettingMixin[2].Interceptors()
+	groupsetting.Interceptors[0] = groupsettingMixinInters2[0]
 	groupsettingMixinFields0 := groupsettingMixin[0].Fields()
 	_ = groupsettingMixinFields0
 	groupsettingMixinFields1 := groupsettingMixin[1].Fields()
@@ -145,7 +157,11 @@ func init() {
 	groupsetting.DefaultID = groupsettingDescID.Default.(func() string)
 	integrationMixin := schema.Integration{}.Mixin()
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
+	integrationMixinHooks2 := integrationMixin[2].Hooks()
 	integration.Hooks[0] = integrationMixinHooks0[0]
+	integration.Hooks[1] = integrationMixinHooks2[0]
+	integrationMixinInters2 := integrationMixin[2].Interceptors()
+	integration.Interceptors[0] = integrationMixinInters2[0]
 	integrationMixinFields0 := integrationMixin[0].Fields()
 	_ = integrationMixinFields0
 	integrationMixinFields1 := integrationMixin[1].Fields()
@@ -172,7 +188,11 @@ func init() {
 	integration.DefaultID = integrationDescID.Default.(func() string)
 	oauthproviderMixin := schema.OauthProvider{}.Mixin()
 	oauthproviderMixinHooks0 := oauthproviderMixin[0].Hooks()
+	oauthproviderMixinHooks2 := oauthproviderMixin[2].Hooks()
 	oauthprovider.Hooks[0] = oauthproviderMixinHooks0[0]
+	oauthprovider.Hooks[1] = oauthproviderMixinHooks2[0]
+	oauthproviderMixinInters2 := oauthproviderMixin[2].Interceptors()
+	oauthprovider.Interceptors[0] = oauthproviderMixinInters2[0]
 	oauthproviderMixinFields0 := oauthproviderMixin[0].Fields()
 	_ = oauthproviderMixinFields0
 	oauthproviderMixinFields1 := oauthproviderMixin[1].Fields()
@@ -301,7 +321,11 @@ func init() {
 	organization.DefaultID = organizationDescID.Default.(func() string)
 	organizationsettingMixin := schema.OrganizationSetting{}.Mixin()
 	organizationsettingMixinHooks0 := organizationsettingMixin[0].Hooks()
+	organizationsettingMixinHooks2 := organizationsettingMixin[2].Hooks()
 	organizationsetting.Hooks[0] = organizationsettingMixinHooks0[0]
+	organizationsetting.Hooks[1] = organizationsettingMixinHooks2[0]
+	organizationsettingMixinInters2 := organizationsettingMixin[2].Interceptors()
+	organizationsetting.Interceptors[0] = organizationsettingMixinInters2[0]
 	organizationsettingMixinFields0 := organizationsettingMixin[0].Fields()
 	_ = organizationsettingMixinFields0
 	organizationsettingMixinFields1 := organizationsettingMixin[1].Fields()
@@ -384,6 +408,10 @@ func init() {
 	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
 	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// sessionDescIssuedAt is the schema descriptor for issued_at field.
+	sessionDescIssuedAt := sessionFields[1].Descriptor()
+	// session.UpdateDefaultIssuedAt holds the default value on update for the issued_at field.
+	session.UpdateDefaultIssuedAt = sessionDescIssuedAt.UpdateDefault.(func() time.Time)
 	// sessionDescID is the schema descriptor for id field.
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.
@@ -526,7 +554,11 @@ func init() {
 	user.DefaultID = userDescID.Default.(func() string)
 	usersettingMixin := schema.UserSetting{}.Mixin()
 	usersettingMixinHooks0 := usersettingMixin[0].Hooks()
+	usersettingMixinHooks2 := usersettingMixin[2].Hooks()
 	usersetting.Hooks[0] = usersettingMixinHooks0[0]
+	usersetting.Hooks[1] = usersettingMixinHooks2[0]
+	usersettingMixinInters2 := usersettingMixin[2].Interceptors()
+	usersetting.Interceptors[0] = usersettingMixinInters2[0]
 	usersettingMixinFields0 := usersettingMixin[0].Fields()
 	_ = usersettingMixinFields0
 	usersettingMixinFields1 := usersettingMixin[1].Fields()

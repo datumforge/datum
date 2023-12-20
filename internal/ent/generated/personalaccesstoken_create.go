@@ -251,9 +251,6 @@ func (patc *PersonalAccessTokenCreate) check() error {
 	if _, ok := patc.mutation.ExpiresAt(); !ok {
 		return &ValidationError{Name: "expires_at", err: errors.New(`generated: missing required field "PersonalAccessToken.expires_at"`)}
 	}
-	if _, ok := patc.mutation.Description(); !ok {
-		return &ValidationError{Name: "description", err: errors.New(`generated: missing required field "PersonalAccessToken.description"`)}
-	}
 	if _, ok := patc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "PersonalAccessToken.owner"`)}
 	}

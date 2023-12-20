@@ -87,6 +87,16 @@ func UpdatedBy(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
+// DeletedAt applies equality check predicate on the "deleted_at" field. It's identical to DeletedAtEQ.
+func DeletedAt(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
+func DeletedBy(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDeletedBy, v))
+}
+
 // ExternalCustomerID applies equality check predicate on the "external_customer_id" field. It's identical to ExternalCustomerIDEQ.
 func ExternalCustomerID(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldExternalCustomerID, v))
@@ -97,34 +107,24 @@ func ExternalSubscriptionID(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldExternalSubscriptionID, v))
 }
 
+// Expires applies equality check predicate on the "expires" field. It's identical to ExpiresEQ.
+func Expires(v bool) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldExpires, v))
+}
+
 // ExpiresAt applies equality check predicate on the "expires_at" field. It's identical to ExpiresAtEQ.
 func ExpiresAt(v time.Time) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldExpiresAt, v))
 }
 
-// UpgradedAt applies equality check predicate on the "upgraded_at" field. It's identical to UpgradedAtEQ.
-func UpgradedAt(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedAt, v))
-}
-
-// UpgradedTier applies equality check predicate on the "upgraded_tier" field. It's identical to UpgradedTierEQ.
-func UpgradedTier(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedTier, v))
-}
-
-// DowngradedAt applies equality check predicate on the "downgraded_at" field. It's identical to DowngradedAtEQ.
-func DowngradedAt(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedAt, v))
-}
-
-// DowngradedTier applies equality check predicate on the "downgraded_tier" field. It's identical to DowngradedTierEQ.
-func DowngradedTier(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedTier, v))
-}
-
 // Cancelled applies equality check predicate on the "cancelled" field. It's identical to CancelledEQ.
 func Cancelled(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldCancelled, v))
+}
+
+// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
+func OrganizationID(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldOrganizationID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -357,6 +357,131 @@ func UpdatedByContainsFold(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldContainsFold(FieldUpdatedBy, v))
 }
 
+// DeletedAtEQ applies the EQ predicate on the "deleted_at" field.
+func DeletedAtEQ(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtNEQ applies the NEQ predicate on the "deleted_at" field.
+func DeletedAtNEQ(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldDeletedAt, v))
+}
+
+// DeletedAtIn applies the In predicate on the "deleted_at" field.
+func DeletedAtIn(vs ...time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtNotIn applies the NotIn predicate on the "deleted_at" field.
+func DeletedAtNotIn(vs ...time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldDeletedAt, vs...))
+}
+
+// DeletedAtGT applies the GT predicate on the "deleted_at" field.
+func DeletedAtGT(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldDeletedAt, v))
+}
+
+// DeletedAtGTE applies the GTE predicate on the "deleted_at" field.
+func DeletedAtGTE(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldDeletedAt, v))
+}
+
+// DeletedAtLT applies the LT predicate on the "deleted_at" field.
+func DeletedAtLT(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldDeletedAt, v))
+}
+
+// DeletedAtLTE applies the LTE predicate on the "deleted_at" field.
+func DeletedAtLTE(v time.Time) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldDeletedAt, v))
+}
+
+// DeletedAtIsNil applies the IsNil predicate on the "deleted_at" field.
+func DeletedAtIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldDeletedAt))
+}
+
+// DeletedAtNotNil applies the NotNil predicate on the "deleted_at" field.
+func DeletedAtNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldDeletedAt))
+}
+
+// DeletedByEQ applies the EQ predicate on the "deleted_by" field.
+func DeletedByEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldDeletedBy, v))
+}
+
+// DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
+func DeletedByNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldDeletedBy, v))
+}
+
+// DeletedByIn applies the In predicate on the "deleted_by" field.
+func DeletedByIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
+func DeletedByNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldDeletedBy, vs...))
+}
+
+// DeletedByGT applies the GT predicate on the "deleted_by" field.
+func DeletedByGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldDeletedBy, v))
+}
+
+// DeletedByGTE applies the GTE predicate on the "deleted_by" field.
+func DeletedByGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldDeletedBy, v))
+}
+
+// DeletedByLT applies the LT predicate on the "deleted_by" field.
+func DeletedByLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldDeletedBy, v))
+}
+
+// DeletedByLTE applies the LTE predicate on the "deleted_by" field.
+func DeletedByLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldDeletedBy, v))
+}
+
+// DeletedByContains applies the Contains predicate on the "deleted_by" field.
+func DeletedByContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldDeletedBy, v))
+}
+
+// DeletedByHasPrefix applies the HasPrefix predicate on the "deleted_by" field.
+func DeletedByHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldDeletedBy, v))
+}
+
+// DeletedByHasSuffix applies the HasSuffix predicate on the "deleted_by" field.
+func DeletedByHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldDeletedBy, v))
+}
+
+// DeletedByIsNil applies the IsNil predicate on the "deleted_by" field.
+func DeletedByIsNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIsNull(FieldDeletedBy))
+}
+
+// DeletedByNotNil applies the NotNil predicate on the "deleted_by" field.
+func DeletedByNotNil() predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotNull(FieldDeletedBy))
+}
+
+// DeletedByEqualFold applies the EqualFold predicate on the "deleted_by" field.
+func DeletedByEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldDeletedBy, v))
+}
+
+// DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
+func DeletedByContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
 // TierEQ applies the EQ predicate on the "tier" field.
 func TierEQ(v Tier) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldTier, v))
@@ -527,6 +652,16 @@ func ExternalSubscriptionIDContainsFold(v string) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldContainsFold(FieldExternalSubscriptionID, v))
 }
 
+// ExpiresEQ applies the EQ predicate on the "expires" field.
+func ExpiresEQ(v bool) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldExpires, v))
+}
+
+// ExpiresNEQ applies the NEQ predicate on the "expires" field.
+func ExpiresNEQ(v bool) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldExpires, v))
+}
+
 // ExpiresAtEQ applies the EQ predicate on the "expires_at" field.
 func ExpiresAtEQ(v time.Time) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldExpiresAt, v))
@@ -577,256 +712,6 @@ func ExpiresAtNotNil() predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldNotNull(FieldExpiresAt))
 }
 
-// UpgradedAtEQ applies the EQ predicate on the "upgraded_at" field.
-func UpgradedAtEQ(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedAt, v))
-}
-
-// UpgradedAtNEQ applies the NEQ predicate on the "upgraded_at" field.
-func UpgradedAtNEQ(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldUpgradedAt, v))
-}
-
-// UpgradedAtIn applies the In predicate on the "upgraded_at" field.
-func UpgradedAtIn(vs ...time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldUpgradedAt, vs...))
-}
-
-// UpgradedAtNotIn applies the NotIn predicate on the "upgraded_at" field.
-func UpgradedAtNotIn(vs ...time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldUpgradedAt, vs...))
-}
-
-// UpgradedAtGT applies the GT predicate on the "upgraded_at" field.
-func UpgradedAtGT(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldUpgradedAt, v))
-}
-
-// UpgradedAtGTE applies the GTE predicate on the "upgraded_at" field.
-func UpgradedAtGTE(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldUpgradedAt, v))
-}
-
-// UpgradedAtLT applies the LT predicate on the "upgraded_at" field.
-func UpgradedAtLT(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldUpgradedAt, v))
-}
-
-// UpgradedAtLTE applies the LTE predicate on the "upgraded_at" field.
-func UpgradedAtLTE(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldUpgradedAt, v))
-}
-
-// UpgradedAtIsNil applies the IsNil predicate on the "upgraded_at" field.
-func UpgradedAtIsNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIsNull(FieldUpgradedAt))
-}
-
-// UpgradedAtNotNil applies the NotNil predicate on the "upgraded_at" field.
-func UpgradedAtNotNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotNull(FieldUpgradedAt))
-}
-
-// UpgradedTierEQ applies the EQ predicate on the "upgraded_tier" field.
-func UpgradedTierEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldUpgradedTier, v))
-}
-
-// UpgradedTierNEQ applies the NEQ predicate on the "upgraded_tier" field.
-func UpgradedTierNEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldUpgradedTier, v))
-}
-
-// UpgradedTierIn applies the In predicate on the "upgraded_tier" field.
-func UpgradedTierIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldUpgradedTier, vs...))
-}
-
-// UpgradedTierNotIn applies the NotIn predicate on the "upgraded_tier" field.
-func UpgradedTierNotIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldUpgradedTier, vs...))
-}
-
-// UpgradedTierGT applies the GT predicate on the "upgraded_tier" field.
-func UpgradedTierGT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldUpgradedTier, v))
-}
-
-// UpgradedTierGTE applies the GTE predicate on the "upgraded_tier" field.
-func UpgradedTierGTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldUpgradedTier, v))
-}
-
-// UpgradedTierLT applies the LT predicate on the "upgraded_tier" field.
-func UpgradedTierLT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldUpgradedTier, v))
-}
-
-// UpgradedTierLTE applies the LTE predicate on the "upgraded_tier" field.
-func UpgradedTierLTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldUpgradedTier, v))
-}
-
-// UpgradedTierContains applies the Contains predicate on the "upgraded_tier" field.
-func UpgradedTierContains(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContains(FieldUpgradedTier, v))
-}
-
-// UpgradedTierHasPrefix applies the HasPrefix predicate on the "upgraded_tier" field.
-func UpgradedTierHasPrefix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasPrefix(FieldUpgradedTier, v))
-}
-
-// UpgradedTierHasSuffix applies the HasSuffix predicate on the "upgraded_tier" field.
-func UpgradedTierHasSuffix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasSuffix(FieldUpgradedTier, v))
-}
-
-// UpgradedTierIsNil applies the IsNil predicate on the "upgraded_tier" field.
-func UpgradedTierIsNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIsNull(FieldUpgradedTier))
-}
-
-// UpgradedTierNotNil applies the NotNil predicate on the "upgraded_tier" field.
-func UpgradedTierNotNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotNull(FieldUpgradedTier))
-}
-
-// UpgradedTierEqualFold applies the EqualFold predicate on the "upgraded_tier" field.
-func UpgradedTierEqualFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEqualFold(FieldUpgradedTier, v))
-}
-
-// UpgradedTierContainsFold applies the ContainsFold predicate on the "upgraded_tier" field.
-func UpgradedTierContainsFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContainsFold(FieldUpgradedTier, v))
-}
-
-// DowngradedAtEQ applies the EQ predicate on the "downgraded_at" field.
-func DowngradedAtEQ(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedAt, v))
-}
-
-// DowngradedAtNEQ applies the NEQ predicate on the "downgraded_at" field.
-func DowngradedAtNEQ(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldDowngradedAt, v))
-}
-
-// DowngradedAtIn applies the In predicate on the "downgraded_at" field.
-func DowngradedAtIn(vs ...time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldDowngradedAt, vs...))
-}
-
-// DowngradedAtNotIn applies the NotIn predicate on the "downgraded_at" field.
-func DowngradedAtNotIn(vs ...time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldDowngradedAt, vs...))
-}
-
-// DowngradedAtGT applies the GT predicate on the "downgraded_at" field.
-func DowngradedAtGT(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldDowngradedAt, v))
-}
-
-// DowngradedAtGTE applies the GTE predicate on the "downgraded_at" field.
-func DowngradedAtGTE(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldDowngradedAt, v))
-}
-
-// DowngradedAtLT applies the LT predicate on the "downgraded_at" field.
-func DowngradedAtLT(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldDowngradedAt, v))
-}
-
-// DowngradedAtLTE applies the LTE predicate on the "downgraded_at" field.
-func DowngradedAtLTE(v time.Time) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldDowngradedAt, v))
-}
-
-// DowngradedAtIsNil applies the IsNil predicate on the "downgraded_at" field.
-func DowngradedAtIsNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIsNull(FieldDowngradedAt))
-}
-
-// DowngradedAtNotNil applies the NotNil predicate on the "downgraded_at" field.
-func DowngradedAtNotNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotNull(FieldDowngradedAt))
-}
-
-// DowngradedTierEQ applies the EQ predicate on the "downgraded_tier" field.
-func DowngradedTierEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldDowngradedTier, v))
-}
-
-// DowngradedTierNEQ applies the NEQ predicate on the "downgraded_tier" field.
-func DowngradedTierNEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldDowngradedTier, v))
-}
-
-// DowngradedTierIn applies the In predicate on the "downgraded_tier" field.
-func DowngradedTierIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldDowngradedTier, vs...))
-}
-
-// DowngradedTierNotIn applies the NotIn predicate on the "downgraded_tier" field.
-func DowngradedTierNotIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldDowngradedTier, vs...))
-}
-
-// DowngradedTierGT applies the GT predicate on the "downgraded_tier" field.
-func DowngradedTierGT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldDowngradedTier, v))
-}
-
-// DowngradedTierGTE applies the GTE predicate on the "downgraded_tier" field.
-func DowngradedTierGTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldDowngradedTier, v))
-}
-
-// DowngradedTierLT applies the LT predicate on the "downgraded_tier" field.
-func DowngradedTierLT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldDowngradedTier, v))
-}
-
-// DowngradedTierLTE applies the LTE predicate on the "downgraded_tier" field.
-func DowngradedTierLTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldDowngradedTier, v))
-}
-
-// DowngradedTierContains applies the Contains predicate on the "downgraded_tier" field.
-func DowngradedTierContains(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContains(FieldDowngradedTier, v))
-}
-
-// DowngradedTierHasPrefix applies the HasPrefix predicate on the "downgraded_tier" field.
-func DowngradedTierHasPrefix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasPrefix(FieldDowngradedTier, v))
-}
-
-// DowngradedTierHasSuffix applies the HasSuffix predicate on the "downgraded_tier" field.
-func DowngradedTierHasSuffix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasSuffix(FieldDowngradedTier, v))
-}
-
-// DowngradedTierIsNil applies the IsNil predicate on the "downgraded_tier" field.
-func DowngradedTierIsNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIsNull(FieldDowngradedTier))
-}
-
-// DowngradedTierNotNil applies the NotNil predicate on the "downgraded_tier" field.
-func DowngradedTierNotNil() predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotNull(FieldDowngradedTier))
-}
-
-// DowngradedTierEqualFold applies the EqualFold predicate on the "downgraded_tier" field.
-func DowngradedTierEqualFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEqualFold(FieldDowngradedTier, v))
-}
-
-// DowngradedTierContainsFold applies the ContainsFold predicate on the "downgraded_tier" field.
-func DowngradedTierContainsFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContainsFold(FieldDowngradedTier, v))
-}
-
 // CancelledEQ applies the EQ predicate on the "cancelled" field.
 func CancelledEQ(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldCancelled, v))
@@ -835,6 +720,71 @@ func CancelledEQ(v bool) predicate.Entitlement {
 // CancelledNEQ applies the NEQ predicate on the "cancelled" field.
 func CancelledNEQ(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldNEQ(FieldCancelled, v))
+}
+
+// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
+func OrganizationIDEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
+func OrganizationIDNEQ(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDIn applies the In predicate on the "organization_id" field.
+func OrganizationIDIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
+func OrganizationIDNotIn(vs ...string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldNotIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDGT applies the GT predicate on the "organization_id" field.
+func OrganizationIDGT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGT(FieldOrganizationID, v))
+}
+
+// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
+func OrganizationIDGTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldGTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDLT applies the LT predicate on the "organization_id" field.
+func OrganizationIDLT(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLT(FieldOrganizationID, v))
+}
+
+// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
+func OrganizationIDLTE(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldLTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
+func OrganizationIDContains(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContains(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
+func OrganizationIDHasPrefix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasPrefix(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
+func OrganizationIDHasSuffix(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldHasSuffix(FieldOrganizationID, v))
+}
+
+// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
+func OrganizationIDEqualFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldEqualFold(FieldOrganizationID, v))
+}
+
+// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
+func OrganizationIDContainsFold(v string) predicate.Entitlement {
+	return predicate.Entitlement(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

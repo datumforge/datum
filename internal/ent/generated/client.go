@@ -473,7 +473,8 @@ func (c *EntitlementClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *EntitlementClient) Interceptors() []Interceptor {
-	return c.inters.Entitlement
+	inters := c.inters.Entitlement
+	return append(inters[:len(inters):len(inters)], entitlement.Interceptors[:]...)
 }
 
 func (c *EntitlementClient) mutate(ctx context.Context, m *EntitlementMutation) (Value, error) {
@@ -818,7 +819,8 @@ func (c *GroupSettingClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *GroupSettingClient) Interceptors() []Interceptor {
-	return c.inters.GroupSetting
+	inters := c.inters.GroupSetting
+	return append(inters[:len(inters):len(inters)], groupsetting.Interceptors[:]...)
 }
 
 func (c *GroupSettingClient) mutate(ctx context.Context, m *GroupSettingMutation) (Value, error) {
@@ -971,7 +973,8 @@ func (c *IntegrationClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *IntegrationClient) Interceptors() []Interceptor {
-	return c.inters.Integration
+	inters := c.inters.Integration
+	return append(inters[:len(inters):len(inters)], integration.Interceptors[:]...)
 }
 
 func (c *IntegrationClient) mutate(ctx context.Context, m *IntegrationMutation) (Value, error) {
@@ -1124,7 +1127,8 @@ func (c *OauthProviderClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *OauthProviderClient) Interceptors() []Interceptor {
-	return c.inters.OauthProvider
+	inters := c.inters.OauthProvider
+	return append(inters[:len(inters):len(inters)], oauthprovider.Interceptors[:]...)
 }
 
 func (c *OauthProviderClient) mutate(ctx context.Context, m *OauthProviderMutation) (Value, error) {
@@ -1697,7 +1701,8 @@ func (c *OrganizationSettingClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *OrganizationSettingClient) Interceptors() []Interceptor {
-	return c.inters.OrganizationSetting
+	inters := c.inters.OrganizationSetting
+	return append(inters[:len(inters):len(inters)], organizationsetting.Interceptors[:]...)
 }
 
 func (c *OrganizationSettingClient) mutate(ctx context.Context, m *OrganizationSettingMutation) (Value, error) {
@@ -2386,7 +2391,8 @@ func (c *UserSettingClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *UserSettingClient) Interceptors() []Interceptor {
-	return c.inters.UserSetting
+	inters := c.inters.UserSetting
+	return append(inters[:len(inters):len(inters)], usersetting.Interceptors[:]...)
 }
 
 func (c *UserSettingClient) mutate(ctx context.Context, m *UserSettingMutation) (Value, error) {

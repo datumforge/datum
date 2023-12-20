@@ -6,245 +6,6 @@
     "version": "0.1.0"
   },
   "paths": {
-    "/access-tokens": {
-      "get": {
-        "tags": [
-          "AccessToken"
-        ],
-        "summary": "List AccessTokens",
-        "description": "List AccessTokens.",
-        "operationId": "listAccessToken",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result AccessToken list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AccessTokenList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "AccessToken"
-        ],
-        "summary": "Create a new AccessToken",
-        "description": "Creates a new AccessToken and persists it to storage.",
-        "operationId": "createAccessToken",
-        "requestBody": {
-          "description": "AccessToken to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "access_token": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "access_token"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "AccessToken created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccessTokenCreate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/access-tokens/{id}": {
-      "get": {
-        "tags": [
-          "AccessToken"
-        ],
-        "summary": "Find a AccessToken by ID",
-        "description": "Finds the AccessToken with the requested ID and returns it.",
-        "operationId": "readAccessToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the AccessToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "AccessToken with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccessTokenRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "AccessToken"
-        ],
-        "summary": "Deletes a AccessToken by ID",
-        "description": "Deletes the AccessToken with the requested ID.",
-        "operationId": "deleteAccessToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the AccessToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "AccessToken with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "AccessToken"
-        ],
-        "summary": "Updates a AccessToken",
-        "description": "Updates a AccessToken and persists changes to storage.",
-        "operationId": "updateAccessToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the AccessToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "AccessToken properties to update",
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "AccessToken updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AccessTokenUpdate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
     "/entitlements": {
       "get": {
         "tags": [
@@ -330,6 +91,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -345,26 +113,18 @@
                   "external_subscription_id": {
                     "type": "string"
                   },
+                  "expires": {
+                    "type": "boolean"
+                  },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "upgraded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "upgraded_tier": {
-                    "type": "string"
-                  },
-                  "downgraded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "downgraded_tier": {
-                    "type": "string"
-                  },
                   "cancelled": {
                     "type": "boolean"
+                  },
+                  "organization_id": {
+                    "type": "string"
                   },
                   "owner": {
                     "type": "string"
@@ -374,7 +134,9 @@
                   "created_at",
                   "updated_at",
                   "tier",
-                  "cancelled"
+                  "expires",
+                  "cancelled",
+                  "organization_id"
                 ]
               }
             }
@@ -516,6 +278,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -531,26 +300,18 @@
                   "external_subscription_id": {
                     "type": "string"
                   },
+                  "expires": {
+                    "type": "boolean"
+                  },
                   "expires_at": {
                     "type": "string",
                     "format": "date-time"
                   },
-                  "upgraded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "upgraded_tier": {
-                    "type": "string"
-                  },
-                  "downgraded_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "downgraded_tier": {
-                    "type": "string"
-                  },
                   "cancelled": {
                     "type": "boolean"
+                  },
+                  "organization_id": {
+                    "type": "string"
                   },
                   "owner": {
                     "type": "string"
@@ -717,6 +478,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -733,7 +501,7 @@
                       "APPLICATION_ONLY",
                       "INVITE_OR_APPLICATION"
                     ],
-                    "default": "OPEN"
+                    "default": "INVITE_OR_APPLICATION"
                   },
                   "tags": {
                     "type": "array",
@@ -900,6 +668,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "visibility": {
                     "type": "string",
                     "enum": [
@@ -916,7 +691,7 @@
                       "APPLICATION_ONLY",
                       "INVITE_OR_APPLICATION"
                     ],
-                    "default": "OPEN"
+                    "default": "INVITE_OR_APPLICATION"
                   },
                   "tags": {
                     "type": "array",
@@ -1108,10 +883,16 @@
                   "description": {
                     "type": "string"
                   },
+                  "gravatar_logo_url": {
+                    "type": "string"
+                  },
                   "logo_url": {
                     "type": "string"
                   },
                   "display_name": {
+                    "type": "string"
+                  },
+                  "organization_id": {
                     "type": "string"
                   },
                   "setting": {
@@ -1288,10 +1069,16 @@
                   "description": {
                     "type": "string"
                   },
+                  "gravatar_logo_url": {
+                    "type": "string"
+                  },
                   "logo_url": {
                     "type": "string"
                   },
                   "display_name": {
+                    "type": "string"
+                  },
+                  "organization_id": {
                     "type": "string"
                   },
                   "setting": {
@@ -1577,13 +1364,20 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
-                  "kind": {
+                  "description": {
                     "type": "string"
                   },
-                  "description": {
+                  "kind": {
                     "type": "string"
                   },
                   "secret_name": {
@@ -1597,7 +1391,6 @@
                   "created_at",
                   "updated_at",
                   "name",
-                  "kind",
                   "secret_name"
                 ]
               }
@@ -1740,10 +1533,20 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
                   "description": {
+                    "type": "string"
+                  },
+                  "kind": {
                     "type": "string"
                   },
                   "owner": {
@@ -1909,6 +1712,13 @@
                     "type": "string"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "name": {
@@ -2096,6 +1906,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "name": {
@@ -2633,6 +2450,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "domains": {
                     "type": "array",
                     "items": {
@@ -2815,6 +2639,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "domains": {
@@ -3908,7 +3739,6 @@
                   "name",
                   "token",
                   "expires_at",
-                  "description",
                   "owner"
                 ]
               }
@@ -4132,245 +3962,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PersonalAccessToken_OwnerRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/refresh-tokens": {
-      "get": {
-        "tags": [
-          "RefreshToken"
-        ],
-        "summary": "List RefreshTokens",
-        "description": "List RefreshTokens.",
-        "operationId": "listRefreshToken",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer",
-              "maximum": 255,
-              "minimum": 1
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result RefreshToken list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RefreshTokenList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "RefreshToken"
-        ],
-        "summary": "Create a new RefreshToken",
-        "description": "Creates a new RefreshToken and persists it to storage.",
-        "operationId": "createRefreshToken",
-        "requestBody": {
-          "description": "RefreshToken to create",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "refresh_token": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "refresh_token"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "RefreshToken created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RefreshTokenCreate"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/refresh-tokens/{id}": {
-      "get": {
-        "tags": [
-          "RefreshToken"
-        ],
-        "summary": "Find a RefreshToken by ID",
-        "description": "Finds the RefreshToken with the requested ID and returns it.",
-        "operationId": "readRefreshToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the RefreshToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "RefreshToken with requested ID was found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RefreshTokenRead"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "RefreshToken"
-        ],
-        "summary": "Deletes a RefreshToken by ID",
-        "description": "Deletes the RefreshToken with the requested ID.",
-        "operationId": "deleteRefreshToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the RefreshToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "RefreshToken with requested ID was deleted"
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "RefreshToken"
-        ],
-        "summary": "Updates a RefreshToken",
-        "description": "Updates a RefreshToken and persists changes to storage.",
-        "operationId": "updateRefreshToken",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the RefreshToken",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "RefreshToken properties to update",
-          "content": {
-            "application/json": {
-              "schema": {}
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "RefreshToken updated",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RefreshTokenUpdate"
                 }
               }
             }
@@ -4825,6 +4416,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "locked": {
                     "type": "boolean"
                   },
@@ -5025,6 +4623,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "locked": {
@@ -5865,81 +5470,6 @@
   },
   "components": {
     "schemas": {
-      "AccessToken": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "access_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "access_token"
-        ]
-      },
-      "AccessTokenCreate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "access_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "access_token"
-        ]
-      },
-      "AccessTokenList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "access_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "access_token"
-        ]
-      },
-      "AccessTokenRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "access_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "access_token"
-        ]
-      },
-      "AccessTokenUpdate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "access_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "access_token"
-        ]
-      },
       "Entitlement": {
         "type": "object",
         "properties": {
@@ -5960,6 +5490,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -5975,26 +5512,18 @@
           "external_subscription_id": {
             "type": "string"
           },
+          "expires": {
+            "type": "boolean"
+          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "upgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "upgraded_tier": {
-            "type": "string"
-          },
-          "downgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downgraded_tier": {
-            "type": "string"
-          },
           "cancelled": {
             "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
           },
           "owner": {
             "$ref": "#/components/schemas/Organization"
@@ -6005,7 +5534,9 @@
           "created_at",
           "updated_at",
           "tier",
-          "cancelled"
+          "expires",
+          "cancelled",
+          "organization_id"
         ]
       },
       "EntitlementCreate": {
@@ -6028,6 +5559,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6043,26 +5581,18 @@
           "external_subscription_id": {
             "type": "string"
           },
+          "expires": {
+            "type": "boolean"
+          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "upgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "upgraded_tier": {
-            "type": "string"
-          },
-          "downgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downgraded_tier": {
-            "type": "string"
-          },
           "cancelled": {
             "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
           }
         },
         "required": [
@@ -6070,7 +5600,9 @@
           "created_at",
           "updated_at",
           "tier",
-          "cancelled"
+          "expires",
+          "cancelled",
+          "organization_id"
         ]
       },
       "EntitlementList": {
@@ -6093,6 +5625,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6108,26 +5647,18 @@
           "external_subscription_id": {
             "type": "string"
           },
+          "expires": {
+            "type": "boolean"
+          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "upgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "upgraded_tier": {
-            "type": "string"
-          },
-          "downgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downgraded_tier": {
-            "type": "string"
-          },
           "cancelled": {
             "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
           }
         },
         "required": [
@@ -6135,7 +5666,9 @@
           "created_at",
           "updated_at",
           "tier",
-          "cancelled"
+          "expires",
+          "cancelled",
+          "organization_id"
         ]
       },
       "EntitlementRead": {
@@ -6158,6 +5691,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6173,26 +5713,18 @@
           "external_subscription_id": {
             "type": "string"
           },
+          "expires": {
+            "type": "boolean"
+          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "upgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "upgraded_tier": {
-            "type": "string"
-          },
-          "downgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downgraded_tier": {
-            "type": "string"
-          },
           "cancelled": {
             "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
           }
         },
         "required": [
@@ -6200,7 +5732,9 @@
           "created_at",
           "updated_at",
           "tier",
-          "cancelled"
+          "expires",
+          "cancelled",
+          "organization_id"
         ]
       },
       "EntitlementUpdate": {
@@ -6223,6 +5757,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6238,26 +5779,18 @@
           "external_subscription_id": {
             "type": "string"
           },
+          "expires": {
+            "type": "boolean"
+          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "upgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "upgraded_tier": {
-            "type": "string"
-          },
-          "downgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downgraded_tier": {
-            "type": "string"
-          },
           "cancelled": {
             "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
           }
         },
         "required": [
@@ -6265,7 +5798,9 @@
           "created_at",
           "updated_at",
           "tier",
-          "cancelled"
+          "expires",
+          "cancelled",
+          "organization_id"
         ]
       },
       "Entitlement_OwnerRead": {
@@ -6349,10 +5884,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           },
           "setting": {
@@ -6411,10 +5952,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -6459,10 +6006,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -6507,10 +6060,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -6542,6 +6101,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -6558,7 +6124,7 @@
               "APPLICATION_ONLY",
               "INVITE_OR_APPLICATION"
             ],
-            "default": "OPEN"
+            "default": "INVITE_OR_APPLICATION"
           },
           "tags": {
             "type": "array",
@@ -6607,6 +6173,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -6623,7 +6196,7 @@
               "APPLICATION_ONLY",
               "INVITE_OR_APPLICATION"
             ],
-            "default": "OPEN"
+            "default": "INVITE_OR_APPLICATION"
           },
           "tags": {
             "type": "array",
@@ -6669,6 +6242,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -6685,7 +6265,7 @@
               "APPLICATION_ONLY",
               "INVITE_OR_APPLICATION"
             ],
-            "default": "OPEN"
+            "default": "INVITE_OR_APPLICATION"
           },
           "tags": {
             "type": "array",
@@ -6731,6 +6311,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -6747,7 +6334,7 @@
               "APPLICATION_ONLY",
               "INVITE_OR_APPLICATION"
             ],
-            "default": "OPEN"
+            "default": "INVITE_OR_APPLICATION"
           },
           "tags": {
             "type": "array",
@@ -6793,6 +6380,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -6809,7 +6403,7 @@
               "APPLICATION_ONLY",
               "INVITE_OR_APPLICATION"
             ],
-            "default": "OPEN"
+            "default": "INVITE_OR_APPLICATION"
           },
           "tags": {
             "type": "array",
@@ -6868,10 +6462,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -6916,10 +6516,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -6999,6 +6605,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -7015,7 +6628,7 @@
               "APPLICATION_ONLY",
               "INVITE_OR_APPLICATION"
             ],
-            "default": "OPEN"
+            "default": "INVITE_OR_APPLICATION"
           },
           "tags": {
             "type": "array",
@@ -7135,13 +6748,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
-          "kind": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "kind": {
             "type": "string"
           },
           "secret_name": {
@@ -7156,7 +6776,6 @@
           "created_at",
           "updated_at",
           "name",
-          "kind",
           "secret_name"
         ]
       },
@@ -7180,13 +6799,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
-          "kind": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "kind": {
             "type": "string"
           },
           "secret_name": {
@@ -7198,7 +6824,6 @@
           "created_at",
           "updated_at",
           "name",
-          "kind",
           "secret_name"
         ]
       },
@@ -7222,13 +6847,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
-          "kind": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "kind": {
             "type": "string"
           },
           "secret_name": {
@@ -7240,7 +6872,6 @@
           "created_at",
           "updated_at",
           "name",
-          "kind",
           "secret_name"
         ]
       },
@@ -7264,13 +6895,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
-          "kind": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "kind": {
             "type": "string"
           },
           "secret_name": {
@@ -7282,7 +6920,6 @@
           "created_at",
           "updated_at",
           "name",
-          "kind",
           "secret_name"
         ]
       },
@@ -7306,13 +6943,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
-          "kind": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "kind": {
             "type": "string"
           },
           "secret_name": {
@@ -7324,7 +6968,6 @@
           "created_at",
           "updated_at",
           "name",
-          "kind",
           "secret_name"
         ]
       },
@@ -7396,6 +7039,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7465,10 +7115,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
             "type": "string"
           },
           "redirect_url": {
@@ -7499,6 +7159,7 @@
           "updated_at",
           "name",
           "client_id",
+          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -7527,10 +7188,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
             "type": "string"
           },
           "redirect_url": {
@@ -7561,6 +7232,7 @@
           "updated_at",
           "name",
           "client_id",
+          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -7589,10 +7261,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
             "type": "string"
           },
           "redirect_url": {
@@ -7623,6 +7305,7 @@
           "updated_at",
           "name",
           "client_id",
+          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -7651,10 +7334,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
             "type": "string"
           },
           "redirect_url": {
@@ -7685,6 +7378,7 @@
           "updated_at",
           "name",
           "client_id",
+          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -8325,6 +8019,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "domains": {
             "type": "array",
             "items": {
@@ -8391,6 +8092,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "domains": {
             "type": "array",
             "items": {
@@ -8452,6 +8160,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "domains": {
@@ -8517,6 +8232,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "domains": {
             "type": "array",
             "items": {
@@ -8578,6 +8300,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "domains": {
@@ -8787,6 +8516,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -8802,26 +8538,18 @@
           "external_subscription_id": {
             "type": "string"
           },
+          "expires": {
+            "type": "boolean"
+          },
           "expires_at": {
             "type": "string",
             "format": "date-time"
           },
-          "upgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "upgraded_tier": {
-            "type": "string"
-          },
-          "downgraded_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "downgraded_tier": {
-            "type": "string"
-          },
           "cancelled": {
             "type": "boolean"
+          },
+          "organization_id": {
+            "type": "string"
           }
         },
         "required": [
@@ -8829,7 +8557,9 @@
           "created_at",
           "updated_at",
           "tier",
-          "cancelled"
+          "expires",
+          "cancelled",
+          "organization_id"
         ]
       },
       "Organization_GroupsList": {
@@ -8865,10 +8595,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -8900,13 +8636,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
-          "kind": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "kind": {
             "type": "string"
           },
           "secret_name": {
@@ -8918,7 +8661,6 @@
           "created_at",
           "updated_at",
           "name",
-          "kind",
           "secret_name"
         ]
       },
@@ -8942,10 +8684,20 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
           "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
             "type": "string"
           },
           "redirect_url": {
@@ -8976,6 +8728,7 @@
           "updated_at",
           "name",
           "client_id",
+          "client_secret",
           "redirect_url",
           "scopes",
           "auth_url",
@@ -9050,6 +8803,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "domains": {
@@ -9222,7 +8982,6 @@
           "updated_at",
           "name",
           "token",
-          "description",
           "owner"
         ]
       },
@@ -9271,8 +9030,7 @@
           "id",
           "created_at",
           "updated_at",
-          "name",
-          "description"
+          "name"
         ]
       },
       "PersonalAccessTokenList": {
@@ -9320,8 +9078,7 @@
           "id",
           "created_at",
           "updated_at",
-          "name",
-          "description"
+          "name"
         ]
       },
       "PersonalAccessTokenRead": {
@@ -9369,8 +9126,7 @@
           "id",
           "created_at",
           "updated_at",
-          "name",
-          "description"
+          "name"
         ]
       },
       "PersonalAccessTokenUpdate": {
@@ -9418,8 +9174,7 @@
           "id",
           "created_at",
           "updated_at",
-          "name",
-          "description"
+          "name"
         ]
       },
       "PersonalAccessToken_OwnerRead": {
@@ -9494,81 +9249,6 @@
           "last_name",
           "display_name",
           "oauth"
-        ]
-      },
-      "RefreshToken": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "refresh_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "refresh_token"
-        ]
-      },
-      "RefreshTokenCreate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "refresh_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "refresh_token"
-        ]
-      },
-      "RefreshTokenList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "refresh_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "refresh_token"
-        ]
-      },
-      "RefreshTokenRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "refresh_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "refresh_token"
-        ]
-      },
-      "RefreshTokenUpdate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "refresh_token": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "refresh_token"
         ]
       },
       "Session": {
@@ -10238,6 +9918,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "locked": {
             "type": "boolean"
           },
@@ -10322,6 +10009,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "locked": {
             "type": "boolean"
           },
@@ -10398,6 +10092,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "locked": {
@@ -10478,6 +10179,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "locked": {
             "type": "boolean"
           },
@@ -10554,6 +10262,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "locked": {
@@ -10795,10 +10510,16 @@
           "description": {
             "type": "string"
           },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
           "logo_url": {
             "type": "string"
           },
           "display_name": {
+            "type": "string"
+          },
+          "organization_id": {
             "type": "string"
           }
         },
@@ -10903,8 +10624,7 @@
           "id",
           "created_at",
           "updated_at",
-          "name",
-          "description"
+          "name"
         ]
       },
       "User_SessionsList": {
@@ -10974,6 +10694,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "locked": {

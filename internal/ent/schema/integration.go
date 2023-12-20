@@ -19,16 +19,22 @@ type Integration struct {
 func (Integration) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
+			Comment("the name of the integration - must be unique within the organization").
 			NotEmpty().
 			Annotations(
 				entgql.OrderField("name"),
 			),
+		field.String("description").
+			Comment("a description of the integration").
+			Optional().
+			Annotations(
+				entgql.Skip(entgql.SkipWhereInput),
+			),
 		field.String("kind").
-			Immutable().
+			Optional().
 			Annotations(
 				entgql.OrderField("kind"),
 			),
-		field.String("description").Optional(),
 		field.String("secret_name").Immutable(),
 	}
 }
@@ -54,5 +60,6 @@ func (Integration) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+		mixin.SoftDeleteMixin{},
 	}
 }

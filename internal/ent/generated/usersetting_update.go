@@ -58,6 +58,46 @@ func (usu *UserSettingUpdate) ClearUpdatedBy() *UserSettingUpdate {
 	return usu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (usu *UserSettingUpdate) SetDeletedAt(t time.Time) *UserSettingUpdate {
+	usu.mutation.SetDeletedAt(t)
+	return usu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableDeletedAt(t *time.Time) *UserSettingUpdate {
+	if t != nil {
+		usu.SetDeletedAt(*t)
+	}
+	return usu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (usu *UserSettingUpdate) ClearDeletedAt() *UserSettingUpdate {
+	usu.mutation.ClearDeletedAt()
+	return usu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (usu *UserSettingUpdate) SetDeletedBy(s string) *UserSettingUpdate {
+	usu.mutation.SetDeletedBy(s)
+	return usu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (usu *UserSettingUpdate) SetNillableDeletedBy(s *string) *UserSettingUpdate {
+	if s != nil {
+		usu.SetDeletedBy(*s)
+	}
+	return usu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (usu *UserSettingUpdate) ClearDeletedBy() *UserSettingUpdate {
+	usu.mutation.ClearDeletedBy()
+	return usu
+}
+
 // SetLocked sets the "locked" field.
 func (usu *UserSettingUpdate) SetLocked(b bool) *UserSettingUpdate {
 	usu.mutation.SetLocked(b)
@@ -309,6 +349,18 @@ func (usu *UserSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if usu.mutation.UpdatedByCleared() {
 		_spec.ClearField(usersetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := usu.mutation.DeletedAt(); ok {
+		_spec.SetField(usersetting.FieldDeletedAt, field.TypeTime, value)
+	}
+	if usu.mutation.DeletedAtCleared() {
+		_spec.ClearField(usersetting.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := usu.mutation.DeletedBy(); ok {
+		_spec.SetField(usersetting.FieldDeletedBy, field.TypeString, value)
+	}
+	if usu.mutation.DeletedByCleared() {
+		_spec.ClearField(usersetting.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := usu.mutation.Locked(); ok {
 		_spec.SetField(usersetting.FieldLocked, field.TypeBool, value)
 	}
@@ -431,6 +483,46 @@ func (usuo *UserSettingUpdateOne) SetNillableUpdatedBy(s *string) *UserSettingUp
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (usuo *UserSettingUpdateOne) ClearUpdatedBy() *UserSettingUpdateOne {
 	usuo.mutation.ClearUpdatedBy()
+	return usuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (usuo *UserSettingUpdateOne) SetDeletedAt(t time.Time) *UserSettingUpdateOne {
+	usuo.mutation.SetDeletedAt(t)
+	return usuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableDeletedAt(t *time.Time) *UserSettingUpdateOne {
+	if t != nil {
+		usuo.SetDeletedAt(*t)
+	}
+	return usuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (usuo *UserSettingUpdateOne) ClearDeletedAt() *UserSettingUpdateOne {
+	usuo.mutation.ClearDeletedAt()
+	return usuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (usuo *UserSettingUpdateOne) SetDeletedBy(s string) *UserSettingUpdateOne {
+	usuo.mutation.SetDeletedBy(s)
+	return usuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (usuo *UserSettingUpdateOne) SetNillableDeletedBy(s *string) *UserSettingUpdateOne {
+	if s != nil {
+		usuo.SetDeletedBy(*s)
+	}
+	return usuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (usuo *UserSettingUpdateOne) ClearDeletedBy() *UserSettingUpdateOne {
+	usuo.mutation.ClearDeletedBy()
 	return usuo
 }
 
@@ -714,6 +806,18 @@ func (usuo *UserSettingUpdateOne) sqlSave(ctx context.Context) (_node *UserSetti
 	}
 	if usuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(usersetting.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := usuo.mutation.DeletedAt(); ok {
+		_spec.SetField(usersetting.FieldDeletedAt, field.TypeTime, value)
+	}
+	if usuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(usersetting.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := usuo.mutation.DeletedBy(); ok {
+		_spec.SetField(usersetting.FieldDeletedBy, field.TypeString, value)
+	}
+	if usuo.mutation.DeletedByCleared() {
+		_spec.ClearField(usersetting.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := usuo.mutation.Locked(); ok {
 		_spec.SetField(usersetting.FieldLocked, field.TypeBool, value)

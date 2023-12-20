@@ -77,15 +77,37 @@ func (ic *IntegrationCreate) SetNillableUpdatedBy(s *string) *IntegrationCreate 
 	return ic
 }
 
-// SetName sets the "name" field.
-func (ic *IntegrationCreate) SetName(s string) *IntegrationCreate {
-	ic.mutation.SetName(s)
+// SetDeletedAt sets the "deleted_at" field.
+func (ic *IntegrationCreate) SetDeletedAt(t time.Time) *IntegrationCreate {
+	ic.mutation.SetDeletedAt(t)
 	return ic
 }
 
-// SetKind sets the "kind" field.
-func (ic *IntegrationCreate) SetKind(s string) *IntegrationCreate {
-	ic.mutation.SetKind(s)
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableDeletedAt(t *time.Time) *IntegrationCreate {
+	if t != nil {
+		ic.SetDeletedAt(*t)
+	}
+	return ic
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (ic *IntegrationCreate) SetDeletedBy(s string) *IntegrationCreate {
+	ic.mutation.SetDeletedBy(s)
+	return ic
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableDeletedBy(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetDeletedBy(*s)
+	}
+	return ic
+}
+
+// SetName sets the "name" field.
+func (ic *IntegrationCreate) SetName(s string) *IntegrationCreate {
+	ic.mutation.SetName(s)
 	return ic
 }
 
@@ -99,6 +121,20 @@ func (ic *IntegrationCreate) SetDescription(s string) *IntegrationCreate {
 func (ic *IntegrationCreate) SetNillableDescription(s *string) *IntegrationCreate {
 	if s != nil {
 		ic.SetDescription(*s)
+	}
+	return ic
+}
+
+// SetKind sets the "kind" field.
+func (ic *IntegrationCreate) SetKind(s string) *IntegrationCreate {
+	ic.mutation.SetKind(s)
+	return ic
+}
+
+// SetNillableKind sets the "kind" field if the given value is not nil.
+func (ic *IntegrationCreate) SetNillableKind(s *string) *IntegrationCreate {
+	if s != nil {
+		ic.SetKind(*s)
 	}
 	return ic
 }
@@ -219,9 +255,6 @@ func (ic *IntegrationCreate) check() error {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`generated: validator failed for field "Integration.name": %w`, err)}
 		}
 	}
-	if _, ok := ic.mutation.Kind(); !ok {
-		return &ValidationError{Name: "kind", err: errors.New(`generated: missing required field "Integration.kind"`)}
-	}
 	if _, ok := ic.mutation.SecretName(); !ok {
 		return &ValidationError{Name: "secret_name", err: errors.New(`generated: missing required field "Integration.secret_name"`)}
 	}
@@ -277,17 +310,25 @@ func (ic *IntegrationCreate) createSpec() (*Integration, *sqlgraph.CreateSpec) {
 		_spec.SetField(integration.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
+	if value, ok := ic.mutation.DeletedAt(); ok {
+		_spec.SetField(integration.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := ic.mutation.DeletedBy(); ok {
+		_spec.SetField(integration.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
 	if value, ok := ic.mutation.Name(); ok {
 		_spec.SetField(integration.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := ic.mutation.Kind(); ok {
-		_spec.SetField(integration.FieldKind, field.TypeString, value)
-		_node.Kind = value
-	}
 	if value, ok := ic.mutation.Description(); ok {
 		_spec.SetField(integration.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := ic.mutation.Kind(); ok {
+		_spec.SetField(integration.FieldKind, field.TypeString, value)
+		_node.Kind = value
 	}
 	if value, ok := ic.mutation.SecretName(); ok {
 		_spec.SetField(integration.FieldSecretName, field.TypeString, value)

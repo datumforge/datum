@@ -57,6 +57,46 @@ func (opu *OauthProviderUpdate) ClearUpdatedBy() *OauthProviderUpdate {
 	return opu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (opu *OauthProviderUpdate) SetDeletedAt(t time.Time) *OauthProviderUpdate {
+	opu.mutation.SetDeletedAt(t)
+	return opu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (opu *OauthProviderUpdate) SetNillableDeletedAt(t *time.Time) *OauthProviderUpdate {
+	if t != nil {
+		opu.SetDeletedAt(*t)
+	}
+	return opu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (opu *OauthProviderUpdate) ClearDeletedAt() *OauthProviderUpdate {
+	opu.mutation.ClearDeletedAt()
+	return opu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (opu *OauthProviderUpdate) SetDeletedBy(s string) *OauthProviderUpdate {
+	opu.mutation.SetDeletedBy(s)
+	return opu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (opu *OauthProviderUpdate) SetNillableDeletedBy(s *string) *OauthProviderUpdate {
+	if s != nil {
+		opu.SetDeletedBy(*s)
+	}
+	return opu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (opu *OauthProviderUpdate) ClearDeletedBy() *OauthProviderUpdate {
+	opu.mutation.ClearDeletedBy()
+	return opu
+}
+
 // SetName sets the "name" field.
 func (opu *OauthProviderUpdate) SetName(s string) *OauthProviderUpdate {
 	opu.mutation.SetName(s)
@@ -283,6 +323,18 @@ func (opu *OauthProviderUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	if opu.mutation.UpdatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := opu.mutation.DeletedAt(); ok {
+		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)
+	}
+	if opu.mutation.DeletedAtCleared() {
+		_spec.ClearField(oauthprovider.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := opu.mutation.DeletedBy(); ok {
+		_spec.SetField(oauthprovider.FieldDeletedBy, field.TypeString, value)
+	}
+	if opu.mutation.DeletedByCleared() {
+		_spec.ClearField(oauthprovider.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := opu.mutation.Name(); ok {
 		_spec.SetField(oauthprovider.FieldName, field.TypeString, value)
 	}
@@ -389,6 +441,46 @@ func (opuo *OauthProviderUpdateOne) SetNillableUpdatedBy(s *string) *OauthProvid
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (opuo *OauthProviderUpdateOne) ClearUpdatedBy() *OauthProviderUpdateOne {
 	opuo.mutation.ClearUpdatedBy()
+	return opuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (opuo *OauthProviderUpdateOne) SetDeletedAt(t time.Time) *OauthProviderUpdateOne {
+	opuo.mutation.SetDeletedAt(t)
+	return opuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (opuo *OauthProviderUpdateOne) SetNillableDeletedAt(t *time.Time) *OauthProviderUpdateOne {
+	if t != nil {
+		opuo.SetDeletedAt(*t)
+	}
+	return opuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (opuo *OauthProviderUpdateOne) ClearDeletedAt() *OauthProviderUpdateOne {
+	opuo.mutation.ClearDeletedAt()
+	return opuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (opuo *OauthProviderUpdateOne) SetDeletedBy(s string) *OauthProviderUpdateOne {
+	opuo.mutation.SetDeletedBy(s)
+	return opuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (opuo *OauthProviderUpdateOne) SetNillableDeletedBy(s *string) *OauthProviderUpdateOne {
+	if s != nil {
+		opuo.SetDeletedBy(*s)
+	}
+	return opuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (opuo *OauthProviderUpdateOne) ClearDeletedBy() *OauthProviderUpdateOne {
+	opuo.mutation.ClearDeletedBy()
 	return opuo
 }
 
@@ -647,6 +739,18 @@ func (opuo *OauthProviderUpdateOne) sqlSave(ctx context.Context) (_node *OauthPr
 	}
 	if opuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(oauthprovider.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := opuo.mutation.DeletedAt(); ok {
+		_spec.SetField(oauthprovider.FieldDeletedAt, field.TypeTime, value)
+	}
+	if opuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(oauthprovider.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := opuo.mutation.DeletedBy(); ok {
+		_spec.SetField(oauthprovider.FieldDeletedBy, field.TypeString, value)
+	}
+	if opuo.mutation.DeletedByCleared() {
+		_spec.ClearField(oauthprovider.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := opuo.mutation.Name(); ok {
 		_spec.SetField(oauthprovider.FieldName, field.TypeString, value)

@@ -27,15 +27,15 @@ type PersonalAccessToken struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
-	// Name holds the value of the "name" field.
+	// the name associated with the token
 	Name string `json:"name,omitempty"`
 	// Token holds the value of the "token" field.
 	Token string `json:"-"`
-	// Abilities holds the value of the "abilities" field.
+	// what abilites the token should have
 	Abilities []string `json:"abilities,omitempty"`
-	// ExpiresAt holds the value of the "expires_at" field.
+	// when the token expires
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
-	// Description holds the value of the "description" field.
+	// a description of the token's purpose
 	Description string `json:"description,omitempty"`
 	// LastUsedAt holds the value of the "last_used_at" field.
 	LastUsedAt *time.Time `json:"last_used_at,omitempty"`

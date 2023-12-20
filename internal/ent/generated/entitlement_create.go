@@ -77,6 +77,34 @@ func (ec *EntitlementCreate) SetNillableUpdatedBy(s *string) *EntitlementCreate 
 	return ec
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (ec *EntitlementCreate) SetDeletedAt(t time.Time) *EntitlementCreate {
+	ec.mutation.SetDeletedAt(t)
+	return ec
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableDeletedAt(t *time.Time) *EntitlementCreate {
+	if t != nil {
+		ec.SetDeletedAt(*t)
+	}
+	return ec
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (ec *EntitlementCreate) SetDeletedBy(s string) *EntitlementCreate {
+	ec.mutation.SetDeletedBy(s)
+	return ec
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableDeletedBy(s *string) *EntitlementCreate {
+	if s != nil {
+		ec.SetDeletedBy(*s)
+	}
+	return ec
+}
+
 // SetTier sets the "tier" field.
 func (ec *EntitlementCreate) SetTier(e entitlement.Tier) *EntitlementCreate {
 	ec.mutation.SetTier(e)
@@ -119,6 +147,20 @@ func (ec *EntitlementCreate) SetNillableExternalSubscriptionID(s *string) *Entit
 	return ec
 }
 
+// SetExpires sets the "expires" field.
+func (ec *EntitlementCreate) SetExpires(b bool) *EntitlementCreate {
+	ec.mutation.SetExpires(b)
+	return ec
+}
+
+// SetNillableExpires sets the "expires" field if the given value is not nil.
+func (ec *EntitlementCreate) SetNillableExpires(b *bool) *EntitlementCreate {
+	if b != nil {
+		ec.SetExpires(*b)
+	}
+	return ec
+}
+
 // SetExpiresAt sets the "expires_at" field.
 func (ec *EntitlementCreate) SetExpiresAt(t time.Time) *EntitlementCreate {
 	ec.mutation.SetExpiresAt(t)
@@ -129,62 +171,6 @@ func (ec *EntitlementCreate) SetExpiresAt(t time.Time) *EntitlementCreate {
 func (ec *EntitlementCreate) SetNillableExpiresAt(t *time.Time) *EntitlementCreate {
 	if t != nil {
 		ec.SetExpiresAt(*t)
-	}
-	return ec
-}
-
-// SetUpgradedAt sets the "upgraded_at" field.
-func (ec *EntitlementCreate) SetUpgradedAt(t time.Time) *EntitlementCreate {
-	ec.mutation.SetUpgradedAt(t)
-	return ec
-}
-
-// SetNillableUpgradedAt sets the "upgraded_at" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableUpgradedAt(t *time.Time) *EntitlementCreate {
-	if t != nil {
-		ec.SetUpgradedAt(*t)
-	}
-	return ec
-}
-
-// SetUpgradedTier sets the "upgraded_tier" field.
-func (ec *EntitlementCreate) SetUpgradedTier(s string) *EntitlementCreate {
-	ec.mutation.SetUpgradedTier(s)
-	return ec
-}
-
-// SetNillableUpgradedTier sets the "upgraded_tier" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableUpgradedTier(s *string) *EntitlementCreate {
-	if s != nil {
-		ec.SetUpgradedTier(*s)
-	}
-	return ec
-}
-
-// SetDowngradedAt sets the "downgraded_at" field.
-func (ec *EntitlementCreate) SetDowngradedAt(t time.Time) *EntitlementCreate {
-	ec.mutation.SetDowngradedAt(t)
-	return ec
-}
-
-// SetNillableDowngradedAt sets the "downgraded_at" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableDowngradedAt(t *time.Time) *EntitlementCreate {
-	if t != nil {
-		ec.SetDowngradedAt(*t)
-	}
-	return ec
-}
-
-// SetDowngradedTier sets the "downgraded_tier" field.
-func (ec *EntitlementCreate) SetDowngradedTier(s string) *EntitlementCreate {
-	ec.mutation.SetDowngradedTier(s)
-	return ec
-}
-
-// SetNillableDowngradedTier sets the "downgraded_tier" field if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableDowngradedTier(s *string) *EntitlementCreate {
-	if s != nil {
-		ec.SetDowngradedTier(*s)
 	}
 	return ec
 }
@@ -200,6 +186,12 @@ func (ec *EntitlementCreate) SetNillableCancelled(b *bool) *EntitlementCreate {
 	if b != nil {
 		ec.SetCancelled(*b)
 	}
+	return ec
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (ec *EntitlementCreate) SetOrganizationID(s string) *EntitlementCreate {
+	ec.mutation.SetOrganizationID(s)
 	return ec
 }
 
@@ -291,6 +283,10 @@ func (ec *EntitlementCreate) defaults() error {
 		v := entitlement.DefaultTier
 		ec.mutation.SetTier(v)
 	}
+	if _, ok := ec.mutation.Expires(); !ok {
+		v := entitlement.DefaultExpires
+		ec.mutation.SetExpires(v)
+	}
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		v := entitlement.DefaultCancelled
 		ec.mutation.SetCancelled(v)
@@ -321,8 +317,14 @@ func (ec *EntitlementCreate) check() error {
 			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
 		}
 	}
+	if _, ok := ec.mutation.Expires(); !ok {
+		return &ValidationError{Name: "expires", err: errors.New(`generated: missing required field "Entitlement.expires"`)}
+	}
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		return &ValidationError{Name: "cancelled", err: errors.New(`generated: missing required field "Entitlement.cancelled"`)}
+	}
+	if _, ok := ec.mutation.OrganizationID(); !ok {
+		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Entitlement.organization_id"`)}
 	}
 	return nil
 }
@@ -376,6 +378,14 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 		_spec.SetField(entitlement.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
 	}
+	if value, ok := ec.mutation.DeletedAt(); ok {
+		_spec.SetField(entitlement.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := ec.mutation.DeletedBy(); ok {
+		_spec.SetField(entitlement.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
+	}
 	if value, ok := ec.mutation.Tier(); ok {
 		_spec.SetField(entitlement.FieldTier, field.TypeEnum, value)
 		_node.Tier = value
@@ -388,29 +398,21 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 		_spec.SetField(entitlement.FieldExternalSubscriptionID, field.TypeString, value)
 		_node.ExternalSubscriptionID = value
 	}
+	if value, ok := ec.mutation.Expires(); ok {
+		_spec.SetField(entitlement.FieldExpires, field.TypeBool, value)
+		_node.Expires = value
+	}
 	if value, ok := ec.mutation.ExpiresAt(); ok {
 		_spec.SetField(entitlement.FieldExpiresAt, field.TypeTime, value)
-		_node.ExpiresAt = value
-	}
-	if value, ok := ec.mutation.UpgradedAt(); ok {
-		_spec.SetField(entitlement.FieldUpgradedAt, field.TypeTime, value)
-		_node.UpgradedAt = value
-	}
-	if value, ok := ec.mutation.UpgradedTier(); ok {
-		_spec.SetField(entitlement.FieldUpgradedTier, field.TypeString, value)
-		_node.UpgradedTier = value
-	}
-	if value, ok := ec.mutation.DowngradedAt(); ok {
-		_spec.SetField(entitlement.FieldDowngradedAt, field.TypeTime, value)
-		_node.DowngradedAt = value
-	}
-	if value, ok := ec.mutation.DowngradedTier(); ok {
-		_spec.SetField(entitlement.FieldDowngradedTier, field.TypeString, value)
-		_node.DowngradedTier = value
+		_node.ExpiresAt = &value
 	}
 	if value, ok := ec.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
 		_node.Cancelled = value
+	}
+	if value, ok := ec.mutation.OrganizationID(); ok {
+		_spec.SetField(entitlement.FieldOrganizationID, field.TypeString, value)
+		_node.OrganizationID = value
 	}
 	if nodes := ec.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

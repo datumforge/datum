@@ -32,6 +32,7 @@ type Organization struct {
 func (Organization) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").
+			Comment("the name of the organization").
 			MaxLen(orgNameMaxLen).
 			NotEmpty().
 			Annotations(
@@ -74,10 +75,15 @@ func (Organization) Edges() []ent.Edge {
 			Immutable().
 			Unique(),
 		// an org can have and belong to many users
-		edge.From("users", User.Type).Ref("organizations"),
-		edge.To("groups", Group.Type).Annotations(entx.CascadeAnnotationField("Owner")),
-		edge.To("integrations", Integration.Type).Annotations(entx.CascadeAnnotationField("Owner")),
-		edge.To("setting", OrganizationSetting.Type).Unique().Annotations(entx.CascadeAnnotationField("Organization")),
+		edge.From("users", User.Type).
+			Ref("organizations"),
+		edge.To("groups", Group.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("integrations", Integration.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("setting", OrganizationSetting.Type).
+			Unique().
+			Annotations(entx.CascadeAnnotationField("Organization")),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
 	}

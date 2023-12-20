@@ -19,12 +19,10 @@ type CreateEntitlementInput struct {
 	Tier                   *entitlement.Tier
 	ExternalCustomerID     *string
 	ExternalSubscriptionID *string
+	Expires                *bool
 	ExpiresAt              *time.Time
-	UpgradedAt             *time.Time
-	UpgradedTier           *string
-	DowngradedAt           *time.Time
-	DowngradedTier         *string
 	Cancelled              *bool
+	OrganizationID         string
 	OwnerID                *string
 }
 
@@ -51,24 +49,16 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.ExternalSubscriptionID; v != nil {
 		m.SetExternalSubscriptionID(*v)
 	}
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
+	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
-	}
-	if v := i.UpgradedAt; v != nil {
-		m.SetUpgradedAt(*v)
-	}
-	if v := i.UpgradedTier; v != nil {
-		m.SetUpgradedTier(*v)
-	}
-	if v := i.DowngradedAt; v != nil {
-		m.SetDowngradedAt(*v)
-	}
-	if v := i.DowngradedTier; v != nil {
-		m.SetDowngradedTier(*v)
 	}
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
 	}
+	m.SetOrganizationID(i.OrganizationID)
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -90,17 +80,11 @@ type UpdateEntitlementInput struct {
 	ExternalCustomerID          *string
 	ClearExternalSubscriptionID bool
 	ExternalSubscriptionID      *string
+	Expires                     *bool
 	ClearExpiresAt              bool
 	ExpiresAt                   *time.Time
-	ClearUpgradedAt             bool
-	UpgradedAt                  *time.Time
-	ClearUpgradedTier           bool
-	UpgradedTier                *string
-	ClearDowngradedAt           bool
-	DowngradedAt                *time.Time
-	ClearDowngradedTier         bool
-	DowngradedTier              *string
 	Cancelled                   *bool
+	OrganizationID              *string
 	ClearOwner                  bool
 	OwnerID                     *string
 }
@@ -131,38 +115,20 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.ExternalSubscriptionID; v != nil {
 		m.SetExternalSubscriptionID(*v)
 	}
+	if v := i.Expires; v != nil {
+		m.SetExpires(*v)
+	}
 	if i.ClearExpiresAt {
 		m.ClearExpiresAt()
 	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
 	}
-	if i.ClearUpgradedAt {
-		m.ClearUpgradedAt()
-	}
-	if v := i.UpgradedAt; v != nil {
-		m.SetUpgradedAt(*v)
-	}
-	if i.ClearUpgradedTier {
-		m.ClearUpgradedTier()
-	}
-	if v := i.UpgradedTier; v != nil {
-		m.SetUpgradedTier(*v)
-	}
-	if i.ClearDowngradedAt {
-		m.ClearDowngradedAt()
-	}
-	if v := i.DowngradedAt; v != nil {
-		m.SetDowngradedAt(*v)
-	}
-	if i.ClearDowngradedTier {
-		m.ClearDowngradedTier()
-	}
-	if v := i.DowngradedTier; v != nil {
-		m.SetDowngradedTier(*v)
-	}
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()
@@ -186,17 +152,19 @@ func (c *EntitlementUpdateOne) SetInput(i UpdateEntitlementInput) *EntitlementUp
 
 // CreateGroupInput represents a mutation input for creating groups.
 type CreateGroupInput struct {
-	CreatedAt   *time.Time
-	UpdatedAt   *time.Time
-	CreatedBy   *string
-	UpdatedBy   *string
-	Name        string
-	Description *string
-	LogoURL     *string
-	DisplayName *string
-	SettingID   string
-	UserIDs     []string
-	OwnerID     string
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
+	CreatedBy       *string
+	UpdatedBy       *string
+	Name            string
+	Description     *string
+	GravatarLogoURL *string
+	LogoURL         *string
+	DisplayName     *string
+	OrganizationID  *string
+	SettingID       string
+	UserIDs         []string
+	OwnerID         string
 }
 
 // Mutate applies the CreateGroupInput on the GroupMutation builder.
@@ -217,11 +185,17 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
+	if v := i.GravatarLogoURL; v != nil {
+		m.SetGravatarLogoURL(*v)
+	}
 	if v := i.LogoURL; v != nil {
 		m.SetLogoURL(*v)
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
 	}
 	m.SetSettingID(i.SettingID)
 	if v := i.UserIDs; len(v) > 0 {
@@ -238,20 +212,24 @@ func (c *GroupCreate) SetInput(i CreateGroupInput) *GroupCreate {
 
 // UpdateGroupInput represents a mutation input for updating groups.
 type UpdateGroupInput struct {
-	UpdatedAt        *time.Time
-	ClearUpdatedBy   bool
-	UpdatedBy        *string
-	Name             *string
-	ClearDescription bool
-	Description      *string
-	ClearLogoURL     bool
-	LogoURL          *string
-	DisplayName      *string
-	SettingID        *string
-	ClearUsers       bool
-	AddUserIDs       []string
-	RemoveUserIDs    []string
-	OwnerID          *string
+	UpdatedAt            *time.Time
+	ClearUpdatedBy       bool
+	UpdatedBy            *string
+	Name                 *string
+	ClearDescription     bool
+	Description          *string
+	ClearGravatarLogoURL bool
+	GravatarLogoURL      *string
+	ClearLogoURL         bool
+	LogoURL              *string
+	DisplayName          *string
+	ClearOrganizationID  bool
+	OrganizationID       *string
+	SettingID            *string
+	ClearUsers           bool
+	AddUserIDs           []string
+	RemoveUserIDs        []string
+	OwnerID              *string
 }
 
 // Mutate applies the UpdateGroupInput on the GroupMutation builder.
@@ -274,6 +252,12 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
 	}
+	if i.ClearGravatarLogoURL {
+		m.ClearGravatarLogoURL()
+	}
+	if v := i.GravatarLogoURL; v != nil {
+		m.SetGravatarLogoURL(*v)
+	}
 	if i.ClearLogoURL {
 		m.ClearLogoURL()
 	}
@@ -282,6 +266,12 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
+	}
+	if i.ClearOrganizationID {
+		m.ClearOrganizationID()
+	}
+	if v := i.OrganizationID; v != nil {
+		m.SetOrganizationID(*v)
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
@@ -437,8 +427,8 @@ type CreateIntegrationInput struct {
 	CreatedBy   *string
 	UpdatedBy   *string
 	Name        string
-	Kind        string
 	Description *string
+	Kind        *string
 	SecretName  string
 	OwnerID     *string
 }
@@ -458,9 +448,11 @@ func (i *CreateIntegrationInput) Mutate(m *IntegrationMutation) {
 		m.SetUpdatedBy(*v)
 	}
 	m.SetName(i.Name)
-	m.SetKind(i.Kind)
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
 	}
 	m.SetSecretName(i.SecretName)
 	if v := i.OwnerID; v != nil {
@@ -482,6 +474,8 @@ type UpdateIntegrationInput struct {
 	Name             *string
 	ClearDescription bool
 	Description      *string
+	ClearKind        bool
+	Kind             *string
 	ClearOwner       bool
 	OwnerID          *string
 }
@@ -505,6 +499,12 @@ func (i *UpdateIntegrationInput) Mutate(m *IntegrationMutation) {
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if i.ClearKind {
+		m.ClearKind()
+	}
+	if v := i.Kind; v != nil {
+		m.SetKind(*v)
 	}
 	if i.ClearOwner {
 		m.ClearOwner()
@@ -1232,18 +1232,19 @@ func (c *PersonalAccessTokenCreate) SetInput(i CreatePersonalAccessTokenInput) *
 
 // UpdatePersonalAccessTokenInput represents a mutation input for updating personalaccesstokens.
 type UpdatePersonalAccessTokenInput struct {
-	UpdatedAt       *time.Time
-	ClearUpdatedBy  bool
-	UpdatedBy       *string
-	Name            *string
-	ClearAbilities  bool
-	Abilities       []string
-	AppendAbilities []string
-	ExpiresAt       *time.Time
-	Description     *string
-	ClearLastUsedAt bool
-	LastUsedAt      *time.Time
-	OwnerID         *string
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Name             *string
+	ClearAbilities   bool
+	Abilities        []string
+	AppendAbilities  []string
+	ExpiresAt        *time.Time
+	ClearDescription bool
+	Description      *string
+	ClearLastUsedAt  bool
+	LastUsedAt       *time.Time
+	OwnerID          *string
 }
 
 // Mutate applies the UpdatePersonalAccessTokenInput on the PersonalAccessTokenMutation builder.
@@ -1271,6 +1272,9 @@ func (i *UpdatePersonalAccessTokenInput) Mutate(m *PersonalAccessTokenMutation) 
 	}
 	if v := i.ExpiresAt; v != nil {
 		m.SetExpiresAt(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)

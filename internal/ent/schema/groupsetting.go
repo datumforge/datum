@@ -18,13 +18,18 @@ type GroupSetting struct {
 // Fields of the GroupSetting.
 func (GroupSetting) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("visibility").NamedValues("public", "PUBLIC", "private", "PRIVATE").Default("PUBLIC"),
-		field.Enum("join_policy").NamedValues(
-			"open", "OPEN",
-			"invite_only", "INVITE_ONLY",
-			"application_only", "APPLICATION_ONLY",
-			"invite_or_application", "INVITE_OR_APPLICATION",
-		).Default("OPEN"),
+		field.Enum("visibility").
+			Comment("whether the group is visible to it's members / owners only or if it's searchable by anyone within the organization").
+			NamedValues("public", "PUBLIC", "private", "PRIVATE").
+			Default("PUBLIC"),
+		field.Enum("join_policy").
+			Comment("the policy governing ability to freely join a group, whether it requires an invitation, application, or either").
+			NamedValues(
+				"open", "OPEN",
+				"invite_only", "INVITE_ONLY",
+				"application_only", "APPLICATION_ONLY",
+				"invite_or_application", "INVITE_OR_APPLICATION",
+			).Default("INVITE_OR_APPLICATION"),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").
 			Default([]string{}),
@@ -54,5 +59,6 @@ func (GroupSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+		mixin.SoftDeleteMixin{},
 	}
 }

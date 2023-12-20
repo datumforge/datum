@@ -58,6 +58,46 @@ func (osu *OrganizationSettingUpdate) ClearUpdatedBy() *OrganizationSettingUpdat
 	return osu
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (osu *OrganizationSettingUpdate) SetDeletedAt(t time.Time) *OrganizationSettingUpdate {
+	osu.mutation.SetDeletedAt(t)
+	return osu
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (osu *OrganizationSettingUpdate) SetNillableDeletedAt(t *time.Time) *OrganizationSettingUpdate {
+	if t != nil {
+		osu.SetDeletedAt(*t)
+	}
+	return osu
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (osu *OrganizationSettingUpdate) ClearDeletedAt() *OrganizationSettingUpdate {
+	osu.mutation.ClearDeletedAt()
+	return osu
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (osu *OrganizationSettingUpdate) SetDeletedBy(s string) *OrganizationSettingUpdate {
+	osu.mutation.SetDeletedBy(s)
+	return osu
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (osu *OrganizationSettingUpdate) SetNillableDeletedBy(s *string) *OrganizationSettingUpdate {
+	if s != nil {
+		osu.SetDeletedBy(*s)
+	}
+	return osu
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (osu *OrganizationSettingUpdate) ClearDeletedBy() *OrganizationSettingUpdate {
+	osu.mutation.ClearDeletedBy()
+	return osu
+}
+
 // SetDomains sets the "domains" field.
 func (osu *OrganizationSettingUpdate) SetDomains(s []string) *OrganizationSettingUpdate {
 	osu.mutation.SetDomains(s)
@@ -347,6 +387,18 @@ func (osu *OrganizationSettingUpdate) sqlSave(ctx context.Context) (n int, err e
 	if osu.mutation.UpdatedByCleared() {
 		_spec.ClearField(organizationsetting.FieldUpdatedBy, field.TypeString)
 	}
+	if value, ok := osu.mutation.DeletedAt(); ok {
+		_spec.SetField(organizationsetting.FieldDeletedAt, field.TypeTime, value)
+	}
+	if osu.mutation.DeletedAtCleared() {
+		_spec.ClearField(organizationsetting.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := osu.mutation.DeletedBy(); ok {
+		_spec.SetField(organizationsetting.FieldDeletedBy, field.TypeString, value)
+	}
+	if osu.mutation.DeletedByCleared() {
+		_spec.ClearField(organizationsetting.FieldDeletedBy, field.TypeString)
+	}
 	if value, ok := osu.mutation.Domains(); ok {
 		_spec.SetField(organizationsetting.FieldDomains, field.TypeJSON, value)
 	}
@@ -493,6 +545,46 @@ func (osuo *OrganizationSettingUpdateOne) SetNillableUpdatedBy(s *string) *Organ
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (osuo *OrganizationSettingUpdateOne) ClearUpdatedBy() *OrganizationSettingUpdateOne {
 	osuo.mutation.ClearUpdatedBy()
+	return osuo
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (osuo *OrganizationSettingUpdateOne) SetDeletedAt(t time.Time) *OrganizationSettingUpdateOne {
+	osuo.mutation.SetDeletedAt(t)
+	return osuo
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (osuo *OrganizationSettingUpdateOne) SetNillableDeletedAt(t *time.Time) *OrganizationSettingUpdateOne {
+	if t != nil {
+		osuo.SetDeletedAt(*t)
+	}
+	return osuo
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (osuo *OrganizationSettingUpdateOne) ClearDeletedAt() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearDeletedAt()
+	return osuo
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (osuo *OrganizationSettingUpdateOne) SetDeletedBy(s string) *OrganizationSettingUpdateOne {
+	osuo.mutation.SetDeletedBy(s)
+	return osuo
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (osuo *OrganizationSettingUpdateOne) SetNillableDeletedBy(s *string) *OrganizationSettingUpdateOne {
+	if s != nil {
+		osuo.SetDeletedBy(*s)
+	}
+	return osuo
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (osuo *OrganizationSettingUpdateOne) ClearDeletedBy() *OrganizationSettingUpdateOne {
+	osuo.mutation.ClearDeletedBy()
 	return osuo
 }
 
@@ -814,6 +906,18 @@ func (osuo *OrganizationSettingUpdateOne) sqlSave(ctx context.Context) (_node *O
 	}
 	if osuo.mutation.UpdatedByCleared() {
 		_spec.ClearField(organizationsetting.FieldUpdatedBy, field.TypeString)
+	}
+	if value, ok := osuo.mutation.DeletedAt(); ok {
+		_spec.SetField(organizationsetting.FieldDeletedAt, field.TypeTime, value)
+	}
+	if osuo.mutation.DeletedAtCleared() {
+		_spec.ClearField(organizationsetting.FieldDeletedAt, field.TypeTime)
+	}
+	if value, ok := osuo.mutation.DeletedBy(); ok {
+		_spec.SetField(organizationsetting.FieldDeletedBy, field.TypeString, value)
+	}
+	if osuo.mutation.DeletedByCleared() {
+		_spec.ClearField(organizationsetting.FieldDeletedBy, field.TypeString)
 	}
 	if value, ok := osuo.mutation.Domains(); ok {
 		_spec.SetField(organizationsetting.FieldDomains, field.TypeJSON, value)

@@ -41,15 +41,15 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entitlement.FieldUpdatedAt:              {Type: field.TypeTime, Column: entitlement.FieldUpdatedAt},
 			entitlement.FieldCreatedBy:              {Type: field.TypeString, Column: entitlement.FieldCreatedBy},
 			entitlement.FieldUpdatedBy:              {Type: field.TypeString, Column: entitlement.FieldUpdatedBy},
+			entitlement.FieldDeletedAt:              {Type: field.TypeTime, Column: entitlement.FieldDeletedAt},
+			entitlement.FieldDeletedBy:              {Type: field.TypeString, Column: entitlement.FieldDeletedBy},
 			entitlement.FieldTier:                   {Type: field.TypeEnum, Column: entitlement.FieldTier},
 			entitlement.FieldExternalCustomerID:     {Type: field.TypeString, Column: entitlement.FieldExternalCustomerID},
 			entitlement.FieldExternalSubscriptionID: {Type: field.TypeString, Column: entitlement.FieldExternalSubscriptionID},
+			entitlement.FieldExpires:                {Type: field.TypeBool, Column: entitlement.FieldExpires},
 			entitlement.FieldExpiresAt:              {Type: field.TypeTime, Column: entitlement.FieldExpiresAt},
-			entitlement.FieldUpgradedAt:             {Type: field.TypeTime, Column: entitlement.FieldUpgradedAt},
-			entitlement.FieldUpgradedTier:           {Type: field.TypeString, Column: entitlement.FieldUpgradedTier},
-			entitlement.FieldDowngradedAt:           {Type: field.TypeTime, Column: entitlement.FieldDowngradedAt},
-			entitlement.FieldDowngradedTier:         {Type: field.TypeString, Column: entitlement.FieldDowngradedTier},
 			entitlement.FieldCancelled:              {Type: field.TypeBool, Column: entitlement.FieldCancelled},
+			entitlement.FieldOrganizationID:         {Type: field.TypeString, Column: entitlement.FieldOrganizationID},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -63,16 +63,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Group",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			group.FieldCreatedAt:   {Type: field.TypeTime, Column: group.FieldCreatedAt},
-			group.FieldUpdatedAt:   {Type: field.TypeTime, Column: group.FieldUpdatedAt},
-			group.FieldCreatedBy:   {Type: field.TypeString, Column: group.FieldCreatedBy},
-			group.FieldUpdatedBy:   {Type: field.TypeString, Column: group.FieldUpdatedBy},
-			group.FieldDeletedAt:   {Type: field.TypeTime, Column: group.FieldDeletedAt},
-			group.FieldDeletedBy:   {Type: field.TypeString, Column: group.FieldDeletedBy},
-			group.FieldName:        {Type: field.TypeString, Column: group.FieldName},
-			group.FieldDescription: {Type: field.TypeString, Column: group.FieldDescription},
-			group.FieldLogoURL:     {Type: field.TypeString, Column: group.FieldLogoURL},
-			group.FieldDisplayName: {Type: field.TypeString, Column: group.FieldDisplayName},
+			group.FieldCreatedAt:       {Type: field.TypeTime, Column: group.FieldCreatedAt},
+			group.FieldUpdatedAt:       {Type: field.TypeTime, Column: group.FieldUpdatedAt},
+			group.FieldCreatedBy:       {Type: field.TypeString, Column: group.FieldCreatedBy},
+			group.FieldUpdatedBy:       {Type: field.TypeString, Column: group.FieldUpdatedBy},
+			group.FieldDeletedAt:       {Type: field.TypeTime, Column: group.FieldDeletedAt},
+			group.FieldDeletedBy:       {Type: field.TypeString, Column: group.FieldDeletedBy},
+			group.FieldName:            {Type: field.TypeString, Column: group.FieldName},
+			group.FieldDescription:     {Type: field.TypeString, Column: group.FieldDescription},
+			group.FieldGravatarLogoURL: {Type: field.TypeString, Column: group.FieldGravatarLogoURL},
+			group.FieldLogoURL:         {Type: field.TypeString, Column: group.FieldLogoURL},
+			group.FieldDisplayName:     {Type: field.TypeString, Column: group.FieldDisplayName},
+			group.FieldOrganizationID:  {Type: field.TypeString, Column: group.FieldOrganizationID},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -90,6 +92,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupsetting.FieldUpdatedAt:    {Type: field.TypeTime, Column: groupsetting.FieldUpdatedAt},
 			groupsetting.FieldCreatedBy:    {Type: field.TypeString, Column: groupsetting.FieldCreatedBy},
 			groupsetting.FieldUpdatedBy:    {Type: field.TypeString, Column: groupsetting.FieldUpdatedBy},
+			groupsetting.FieldDeletedAt:    {Type: field.TypeTime, Column: groupsetting.FieldDeletedAt},
+			groupsetting.FieldDeletedBy:    {Type: field.TypeString, Column: groupsetting.FieldDeletedBy},
 			groupsetting.FieldVisibility:   {Type: field.TypeEnum, Column: groupsetting.FieldVisibility},
 			groupsetting.FieldJoinPolicy:   {Type: field.TypeEnum, Column: groupsetting.FieldJoinPolicy},
 			groupsetting.FieldTags:         {Type: field.TypeJSON, Column: groupsetting.FieldTags},
@@ -112,9 +116,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 			integration.FieldUpdatedAt:   {Type: field.TypeTime, Column: integration.FieldUpdatedAt},
 			integration.FieldCreatedBy:   {Type: field.TypeString, Column: integration.FieldCreatedBy},
 			integration.FieldUpdatedBy:   {Type: field.TypeString, Column: integration.FieldUpdatedBy},
+			integration.FieldDeletedAt:   {Type: field.TypeTime, Column: integration.FieldDeletedAt},
+			integration.FieldDeletedBy:   {Type: field.TypeString, Column: integration.FieldDeletedBy},
 			integration.FieldName:        {Type: field.TypeString, Column: integration.FieldName},
-			integration.FieldKind:        {Type: field.TypeString, Column: integration.FieldKind},
 			integration.FieldDescription: {Type: field.TypeString, Column: integration.FieldDescription},
+			integration.FieldKind:        {Type: field.TypeString, Column: integration.FieldKind},
 			integration.FieldSecretName:  {Type: field.TypeString, Column: integration.FieldSecretName},
 		},
 	}
@@ -133,6 +139,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			oauthprovider.FieldUpdatedAt:    {Type: field.TypeTime, Column: oauthprovider.FieldUpdatedAt},
 			oauthprovider.FieldCreatedBy:    {Type: field.TypeString, Column: oauthprovider.FieldCreatedBy},
 			oauthprovider.FieldUpdatedBy:    {Type: field.TypeString, Column: oauthprovider.FieldUpdatedBy},
+			oauthprovider.FieldDeletedAt:    {Type: field.TypeTime, Column: oauthprovider.FieldDeletedAt},
+			oauthprovider.FieldDeletedBy:    {Type: field.TypeString, Column: oauthprovider.FieldDeletedBy},
 			oauthprovider.FieldName:         {Type: field.TypeString, Column: oauthprovider.FieldName},
 			oauthprovider.FieldClientID:     {Type: field.TypeString, Column: oauthprovider.FieldClientID},
 			oauthprovider.FieldClientSecret: {Type: field.TypeString, Column: oauthprovider.FieldClientSecret},
@@ -207,6 +215,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldUpdatedAt},
 			organizationsetting.FieldCreatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldCreatedBy},
 			organizationsetting.FieldUpdatedBy:      {Type: field.TypeString, Column: organizationsetting.FieldUpdatedBy},
+			organizationsetting.FieldDeletedAt:      {Type: field.TypeTime, Column: organizationsetting.FieldDeletedAt},
+			organizationsetting.FieldDeletedBy:      {Type: field.TypeString, Column: organizationsetting.FieldDeletedBy},
 			organizationsetting.FieldDomains:        {Type: field.TypeJSON, Column: organizationsetting.FieldDomains},
 			organizationsetting.FieldSSOCert:        {Type: field.TypeString, Column: organizationsetting.FieldSSOCert},
 			organizationsetting.FieldSSOEntrypoint:  {Type: field.TypeString, Column: organizationsetting.FieldSSOEntrypoint},
@@ -309,6 +319,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldUpdatedAt:      {Type: field.TypeTime, Column: usersetting.FieldUpdatedAt},
 			usersetting.FieldCreatedBy:      {Type: field.TypeString, Column: usersetting.FieldCreatedBy},
 			usersetting.FieldUpdatedBy:      {Type: field.TypeString, Column: usersetting.FieldUpdatedBy},
+			usersetting.FieldDeletedAt:      {Type: field.TypeTime, Column: usersetting.FieldDeletedAt},
+			usersetting.FieldDeletedBy:      {Type: field.TypeString, Column: usersetting.FieldDeletedBy},
 			usersetting.FieldLocked:         {Type: field.TypeBool, Column: usersetting.FieldLocked},
 			usersetting.FieldSilencedAt:     {Type: field.TypeTime, Column: usersetting.FieldSilencedAt},
 			usersetting.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersetting.FieldSuspendedAt},
@@ -677,6 +689,16 @@ func (f *EntitlementFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(entitlement.FieldUpdatedBy))
 }
 
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *EntitlementFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(entitlement.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *EntitlementFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldDeletedBy))
+}
+
 // WhereTier applies the entql string predicate on the tier field.
 func (f *EntitlementFilter) WhereTier(p entql.StringP) {
 	f.Where(p.Field(entitlement.FieldTier))
@@ -692,34 +714,24 @@ func (f *EntitlementFilter) WhereExternalSubscriptionID(p entql.StringP) {
 	f.Where(p.Field(entitlement.FieldExternalSubscriptionID))
 }
 
+// WhereExpires applies the entql bool predicate on the expires field.
+func (f *EntitlementFilter) WhereExpires(p entql.BoolP) {
+	f.Where(p.Field(entitlement.FieldExpires))
+}
+
 // WhereExpiresAt applies the entql time.Time predicate on the expires_at field.
 func (f *EntitlementFilter) WhereExpiresAt(p entql.TimeP) {
 	f.Where(p.Field(entitlement.FieldExpiresAt))
 }
 
-// WhereUpgradedAt applies the entql time.Time predicate on the upgraded_at field.
-func (f *EntitlementFilter) WhereUpgradedAt(p entql.TimeP) {
-	f.Where(p.Field(entitlement.FieldUpgradedAt))
-}
-
-// WhereUpgradedTier applies the entql string predicate on the upgraded_tier field.
-func (f *EntitlementFilter) WhereUpgradedTier(p entql.StringP) {
-	f.Where(p.Field(entitlement.FieldUpgradedTier))
-}
-
-// WhereDowngradedAt applies the entql time.Time predicate on the downgraded_at field.
-func (f *EntitlementFilter) WhereDowngradedAt(p entql.TimeP) {
-	f.Where(p.Field(entitlement.FieldDowngradedAt))
-}
-
-// WhereDowngradedTier applies the entql string predicate on the downgraded_tier field.
-func (f *EntitlementFilter) WhereDowngradedTier(p entql.StringP) {
-	f.Where(p.Field(entitlement.FieldDowngradedTier))
-}
-
 // WhereCancelled applies the entql bool predicate on the cancelled field.
 func (f *EntitlementFilter) WhereCancelled(p entql.BoolP) {
 	f.Where(p.Field(entitlement.FieldCancelled))
+}
+
+// WhereOrganizationID applies the entql string predicate on the organization_id field.
+func (f *EntitlementFilter) WhereOrganizationID(p entql.StringP) {
+	f.Where(p.Field(entitlement.FieldOrganizationID))
 }
 
 // WhereHasOwner applies a predicate to check if query has an edge owner.
@@ -816,6 +828,11 @@ func (f *GroupFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(group.FieldDescription))
 }
 
+// WhereGravatarLogoURL applies the entql string predicate on the gravatar_logo_url field.
+func (f *GroupFilter) WhereGravatarLogoURL(p entql.StringP) {
+	f.Where(p.Field(group.FieldGravatarLogoURL))
+}
+
 // WhereLogoURL applies the entql string predicate on the logo_url field.
 func (f *GroupFilter) WhereLogoURL(p entql.StringP) {
 	f.Where(p.Field(group.FieldLogoURL))
@@ -824,6 +841,11 @@ func (f *GroupFilter) WhereLogoURL(p entql.StringP) {
 // WhereDisplayName applies the entql string predicate on the display_name field.
 func (f *GroupFilter) WhereDisplayName(p entql.StringP) {
 	f.Where(p.Field(group.FieldDisplayName))
+}
+
+// WhereOrganizationID applies the entql string predicate on the organization_id field.
+func (f *GroupFilter) WhereOrganizationID(p entql.StringP) {
+	f.Where(p.Field(group.FieldOrganizationID))
 }
 
 // WhereHasSetting applies a predicate to check if query has an edge setting.
@@ -928,6 +950,16 @@ func (f *GroupSettingFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(groupsetting.FieldUpdatedBy))
 }
 
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupSettingFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(groupsetting.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupSettingFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(groupsetting.FieldDeletedBy))
+}
+
 // WhereVisibility applies the entql string predicate on the visibility field.
 func (f *GroupSettingFilter) WhereVisibility(p entql.StringP) {
 	f.Where(p.Field(groupsetting.FieldVisibility))
@@ -1027,19 +1059,29 @@ func (f *IntegrationFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(integration.FieldUpdatedBy))
 }
 
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *IntegrationFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(integration.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *IntegrationFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(integration.FieldDeletedBy))
+}
+
 // WhereName applies the entql string predicate on the name field.
 func (f *IntegrationFilter) WhereName(p entql.StringP) {
 	f.Where(p.Field(integration.FieldName))
 }
 
-// WhereKind applies the entql string predicate on the kind field.
-func (f *IntegrationFilter) WhereKind(p entql.StringP) {
-	f.Where(p.Field(integration.FieldKind))
-}
-
 // WhereDescription applies the entql string predicate on the description field.
 func (f *IntegrationFilter) WhereDescription(p entql.StringP) {
 	f.Where(p.Field(integration.FieldDescription))
+}
+
+// WhereKind applies the entql string predicate on the kind field.
+func (f *IntegrationFilter) WhereKind(p entql.StringP) {
+	f.Where(p.Field(integration.FieldKind))
 }
 
 // WhereSecretName applies the entql string predicate on the secret_name field.
@@ -1119,6 +1161,16 @@ func (f *OauthProviderFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *OauthProviderFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(oauthprovider.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OauthProviderFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(oauthprovider.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OauthProviderFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(oauthprovider.FieldDeletedBy))
 }
 
 // WhereName applies the entql string predicate on the name field.
@@ -1540,6 +1592,16 @@ func (f *OrganizationSettingFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *OrganizationSettingFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(organizationsetting.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OrganizationSettingFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(organizationsetting.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OrganizationSettingFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(organizationsetting.FieldDeletedBy))
 }
 
 // WhereDomains applies the entql json.RawMessage predicate on the domains field.
@@ -2062,6 +2124,16 @@ func (f *UserSettingFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *UserSettingFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(usersetting.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *UserSettingFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(usersetting.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *UserSettingFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldDeletedBy))
 }
 
 // WhereLocked applies the entql bool predicate on the locked field.

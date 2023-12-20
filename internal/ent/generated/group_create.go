@@ -127,6 +127,20 @@ func (gc *GroupCreate) SetNillableDescription(s *string) *GroupCreate {
 	return gc
 }
 
+// SetGravatarLogoURL sets the "gravatar_logo_url" field.
+func (gc *GroupCreate) SetGravatarLogoURL(s string) *GroupCreate {
+	gc.mutation.SetGravatarLogoURL(s)
+	return gc
+}
+
+// SetNillableGravatarLogoURL sets the "gravatar_logo_url" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableGravatarLogoURL(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetGravatarLogoURL(*s)
+	}
+	return gc
+}
+
 // SetLogoURL sets the "logo_url" field.
 func (gc *GroupCreate) SetLogoURL(s string) *GroupCreate {
 	gc.mutation.SetLogoURL(s)
@@ -151,6 +165,20 @@ func (gc *GroupCreate) SetDisplayName(s string) *GroupCreate {
 func (gc *GroupCreate) SetNillableDisplayName(s *string) *GroupCreate {
 	if s != nil {
 		gc.SetDisplayName(*s)
+	}
+	return gc
+}
+
+// SetOrganizationID sets the "organization_id" field.
+func (gc *GroupCreate) SetOrganizationID(s string) *GroupCreate {
+	gc.mutation.SetOrganizationID(s)
+	return gc
+}
+
+// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
+func (gc *GroupCreate) SetNillableOrganizationID(s *string) *GroupCreate {
+	if s != nil {
+		gc.SetOrganizationID(*s)
 	}
 	return gc
 }
@@ -369,6 +397,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		_spec.SetField(group.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
+	if value, ok := gc.mutation.GravatarLogoURL(); ok {
+		_spec.SetField(group.FieldGravatarLogoURL, field.TypeString, value)
+		_node.GravatarLogoURL = value
+	}
 	if value, ok := gc.mutation.LogoURL(); ok {
 		_spec.SetField(group.FieldLogoURL, field.TypeString, value)
 		_node.LogoURL = value
@@ -376,6 +408,10 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
 		_node.DisplayName = value
+	}
+	if value, ok := gc.mutation.OrganizationID(); ok {
+		_spec.SetField(group.FieldOrganizationID, field.TypeString, value)
+		_node.OrganizationID = value
 	}
 	if nodes := gc.mutation.SettingIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

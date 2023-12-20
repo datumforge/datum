@@ -30,7 +30,7 @@ type Organization struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
-	// Name holds the value of the "name" field.
+	// the name of the organization
 	Name string `json:"name,omitempty"`
 	// The organization's displayed 'friendly' name
 	DisplayName string `json:"display_name,omitempty"`

@@ -27,6 +27,10 @@ type OrganizationSetting struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
 	// domains associated with the organization
 	Domains []string `json:"domains,omitempty"`
 	// SSOCert holds the value of the "sso_cert" field.
@@ -85,9 +89,9 @@ func (*OrganizationSetting) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case organizationsetting.FieldDomains, organizationsetting.FieldTags:
 			values[i] = new([]byte)
-		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldSSOCert, organizationsetting.FieldSSOEntrypoint, organizationsetting.FieldSSOIssuer, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier:
+		case organizationsetting.FieldID, organizationsetting.FieldCreatedBy, organizationsetting.FieldUpdatedBy, organizationsetting.FieldDeletedBy, organizationsetting.FieldSSOCert, organizationsetting.FieldSSOEntrypoint, organizationsetting.FieldSSOIssuer, organizationsetting.FieldBillingContact, organizationsetting.FieldBillingEmail, organizationsetting.FieldBillingPhone, organizationsetting.FieldBillingAddress, organizationsetting.FieldTaxIdentifier:
 			values[i] = new(sql.NullString)
-		case organizationsetting.FieldCreatedAt, organizationsetting.FieldUpdatedAt:
+		case organizationsetting.FieldCreatedAt, organizationsetting.FieldUpdatedAt, organizationsetting.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		case organizationsetting.ForeignKeys[0]: // organization_setting
 			values[i] = new(sql.NullString)
@@ -135,6 +139,18 @@ func (os *OrganizationSetting) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				os.UpdatedBy = value.String
+			}
+		case organizationsetting.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				os.DeletedAt = value.Time
+			}
+		case organizationsetting.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				os.DeletedBy = value.String
 			}
 		case organizationsetting.FieldDomains:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -259,6 +275,12 @@ func (os *OrganizationSetting) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(os.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(os.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(os.DeletedBy)
 	builder.WriteString(", ")
 	builder.WriteString("domains=")
 	builder.WriteString(fmt.Sprintf("%v", os.Domains))

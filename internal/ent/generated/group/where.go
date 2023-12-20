@@ -107,6 +107,11 @@ func Description(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldDescription, v))
 }
 
+// GravatarLogoURL applies equality check predicate on the "gravatar_logo_url" field. It's identical to GravatarLogoURLEQ.
+func GravatarLogoURL(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldGravatarLogoURL, v))
+}
+
 // LogoURL applies equality check predicate on the "logo_url" field. It's identical to LogoURLEQ.
 func LogoURL(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldLogoURL, v))
@@ -115,6 +120,11 @@ func LogoURL(v string) predicate.Group {
 // DisplayName applies equality check predicate on the "display_name" field. It's identical to DisplayNameEQ.
 func DisplayName(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldDisplayName, v))
+}
+
+// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
+func OrganizationID(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldOrganizationID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -612,6 +622,81 @@ func DescriptionContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldDescription, v))
 }
 
+// GravatarLogoURLEQ applies the EQ predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLNEQ applies the NEQ predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLNEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLIn applies the In predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldGravatarLogoURL, vs...))
+}
+
+// GravatarLogoURLNotIn applies the NotIn predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLNotIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldGravatarLogoURL, vs...))
+}
+
+// GravatarLogoURLGT applies the GT predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLGT(v string) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLGTE applies the GTE predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLGTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLLT applies the LT predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLLT(v string) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLLTE applies the LTE predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLLTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLContains applies the Contains predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLContains(v string) predicate.Group {
+	return predicate.Group(sql.FieldContains(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLHasPrefix applies the HasPrefix predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLHasPrefix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasPrefix(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLHasSuffix applies the HasSuffix predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLHasSuffix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasSuffix(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLIsNil applies the IsNil predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldGravatarLogoURL))
+}
+
+// GravatarLogoURLNotNil applies the NotNil predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldGravatarLogoURL))
+}
+
+// GravatarLogoURLEqualFold applies the EqualFold predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLEqualFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldEqualFold(FieldGravatarLogoURL, v))
+}
+
+// GravatarLogoURLContainsFold applies the ContainsFold predicate on the "gravatar_logo_url" field.
+func GravatarLogoURLContainsFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldContainsFold(FieldGravatarLogoURL, v))
+}
+
 // LogoURLEQ applies the EQ predicate on the "logo_url" field.
 func LogoURLEQ(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldLogoURL, v))
@@ -750,6 +835,81 @@ func DisplayNameEqualFold(v string) predicate.Group {
 // DisplayNameContainsFold applies the ContainsFold predicate on the "display_name" field.
 func DisplayNameContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldDisplayName, v))
+}
+
+// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
+func OrganizationIDEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
+func OrganizationIDNEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldOrganizationID, v))
+}
+
+// OrganizationIDIn applies the In predicate on the "organization_id" field.
+func OrganizationIDIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
+func OrganizationIDNotIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldOrganizationID, vs...))
+}
+
+// OrganizationIDGT applies the GT predicate on the "organization_id" field.
+func OrganizationIDGT(v string) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldOrganizationID, v))
+}
+
+// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
+func OrganizationIDGTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDLT applies the LT predicate on the "organization_id" field.
+func OrganizationIDLT(v string) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldOrganizationID, v))
+}
+
+// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
+func OrganizationIDLTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldOrganizationID, v))
+}
+
+// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
+func OrganizationIDContains(v string) predicate.Group {
+	return predicate.Group(sql.FieldContains(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
+func OrganizationIDHasPrefix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasPrefix(FieldOrganizationID, v))
+}
+
+// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
+func OrganizationIDHasSuffix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasSuffix(FieldOrganizationID, v))
+}
+
+// OrganizationIDIsNil applies the IsNil predicate on the "organization_id" field.
+func OrganizationIDIsNil() predicate.Group {
+	return predicate.Group(sql.FieldIsNull(FieldOrganizationID))
+}
+
+// OrganizationIDNotNil applies the NotNil predicate on the "organization_id" field.
+func OrganizationIDNotNil() predicate.Group {
+	return predicate.Group(sql.FieldNotNull(FieldOrganizationID))
+}
+
+// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
+func OrganizationIDEqualFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldEqualFold(FieldOrganizationID, v))
+}
+
+// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
+func OrganizationIDContainsFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // HasSetting applies the HasEdge predicate on the "setting" edge.

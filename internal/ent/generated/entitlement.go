@@ -26,24 +26,24 @@ type Entitlement struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
 	// Tier holds the value of the "tier" field.
 	Tier entitlement.Tier `json:"tier,omitempty"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 	// used to store references to external systems, e.g. Stripe
 	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
-	// ExpiresAt holds the value of the "expires_at" field.
-	ExpiresAt time.Time `json:"expires_at,omitempty"`
-	// UpgradedAt holds the value of the "upgraded_at" field.
-	UpgradedAt time.Time `json:"upgraded_at,omitempty"`
-	// the tier the customer upgraded from
-	UpgradedTier string `json:"upgraded_tier,omitempty"`
-	// DowngradedAt holds the value of the "downgraded_at" field.
-	DowngradedAt time.Time `json:"downgraded_at,omitempty"`
-	// the tier the customer downgraded from
-	DowngradedTier string `json:"downgraded_tier,omitempty"`
-	// Cancelled holds the value of the "cancelled" field.
+	// whether or not the customers entitlement expires - expires_at will show the time
+	Expires bool `json:"expires,omitempty"`
+	// the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	Cancelled bool `json:"cancelled,omitempty"`
+	// the ID of the organization associated with the entitlement
+	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntitlementQuery when eager-loading is set.
 	Edges                     EntitlementEdges `json:"edges"`
@@ -80,11 +80,11 @@ func (*Entitlement) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entitlement.FieldCancelled:
+		case entitlement.FieldExpires, entitlement.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID, entitlement.FieldUpgradedTier, entitlement.FieldDowngradedTier:
+		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldDeletedBy, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID, entitlement.FieldOrganizationID:
 			values[i] = new(sql.NullString)
-		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldExpiresAt, entitlement.FieldUpgradedAt, entitlement.FieldDowngradedAt:
+		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldDeletedAt, entitlement.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
 		case entitlement.ForeignKeys[0]: // organization_entitlements
 			values[i] = new(sql.NullString)
@@ -133,6 +133,18 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.UpdatedBy = value.String
 			}
+		case entitlement.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				e.DeletedAt = value.Time
+			}
+		case entitlement.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				e.DeletedBy = value.String
+			}
 		case entitlement.FieldTier:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tier", values[i])
@@ -151,41 +163,30 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.ExternalSubscriptionID = value.String
 			}
+		case entitlement.FieldExpires:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field expires", values[i])
+			} else if value.Valid {
+				e.Expires = value.Bool
+			}
 		case entitlement.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
 			} else if value.Valid {
-				e.ExpiresAt = value.Time
-			}
-		case entitlement.FieldUpgradedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field upgraded_at", values[i])
-			} else if value.Valid {
-				e.UpgradedAt = value.Time
-			}
-		case entitlement.FieldUpgradedTier:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field upgraded_tier", values[i])
-			} else if value.Valid {
-				e.UpgradedTier = value.String
-			}
-		case entitlement.FieldDowngradedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field downgraded_at", values[i])
-			} else if value.Valid {
-				e.DowngradedAt = value.Time
-			}
-		case entitlement.FieldDowngradedTier:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field downgraded_tier", values[i])
-			} else if value.Valid {
-				e.DowngradedTier = value.String
+				e.ExpiresAt = new(time.Time)
+				*e.ExpiresAt = value.Time
 			}
 		case entitlement.FieldCancelled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field cancelled", values[i])
 			} else if value.Valid {
 				e.Cancelled = value.Bool
+			}
+		case entitlement.FieldOrganizationID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
+			} else if value.Valid {
+				e.OrganizationID = value.String
 			}
 		case entitlement.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -247,6 +248,12 @@ func (e *Entitlement) String() string {
 	builder.WriteString("updated_by=")
 	builder.WriteString(e.UpdatedBy)
 	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(e.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(e.DeletedBy)
+	builder.WriteString(", ")
 	builder.WriteString("tier=")
 	builder.WriteString(fmt.Sprintf("%v", e.Tier))
 	builder.WriteString(", ")
@@ -256,23 +263,19 @@ func (e *Entitlement) String() string {
 	builder.WriteString("external_subscription_id=")
 	builder.WriteString(e.ExternalSubscriptionID)
 	builder.WriteString(", ")
-	builder.WriteString("expires_at=")
-	builder.WriteString(e.ExpiresAt.Format(time.ANSIC))
+	builder.WriteString("expires=")
+	builder.WriteString(fmt.Sprintf("%v", e.Expires))
 	builder.WriteString(", ")
-	builder.WriteString("upgraded_at=")
-	builder.WriteString(e.UpgradedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("upgraded_tier=")
-	builder.WriteString(e.UpgradedTier)
-	builder.WriteString(", ")
-	builder.WriteString("downgraded_at=")
-	builder.WriteString(e.DowngradedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("downgraded_tier=")
-	builder.WriteString(e.DowngradedTier)
+	if v := e.ExpiresAt; v != nil {
+		builder.WriteString("expires_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	builder.WriteString("cancelled=")
 	builder.WriteString(fmt.Sprintf("%v", e.Cancelled))
+	builder.WriteString(", ")
+	builder.WriteString("organization_id=")
+	builder.WriteString(e.OrganizationID)
 	builder.WriteByte(')')
 	return builder.String()
 }

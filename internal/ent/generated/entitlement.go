@@ -42,8 +42,6 @@ type Entitlement struct {
 	ExpiresAt *time.Time `json:"expires_at,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
 	Cancelled bool `json:"cancelled,omitempty"`
-	// the ID of the organization associated with the entitlement
-	OrganizationID string `json:"organization_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntitlementQuery when eager-loading is set.
 	Edges                     EntitlementEdges `json:"edges"`
@@ -82,7 +80,7 @@ func (*Entitlement) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case entitlement.FieldExpires, entitlement.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldDeletedBy, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID, entitlement.FieldOrganizationID:
+		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldDeletedBy, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID:
 			values[i] = new(sql.NullString)
 		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldDeletedAt, entitlement.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
@@ -182,12 +180,6 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.Cancelled = value.Bool
 			}
-		case entitlement.FieldOrganizationID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_id", values[i])
-			} else if value.Valid {
-				e.OrganizationID = value.String
-			}
 		case entitlement.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field organization_entitlements", values[i])
@@ -273,9 +265,6 @@ func (e *Entitlement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("cancelled=")
 	builder.WriteString(fmt.Sprintf("%v", e.Cancelled))
-	builder.WriteString(", ")
-	builder.WriteString("organization_id=")
-	builder.WriteString(e.OrganizationID)
 	builder.WriteByte(')')
 	return builder.String()
 }

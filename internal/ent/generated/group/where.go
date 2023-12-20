@@ -122,11 +122,6 @@ func DisplayName(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldDisplayName, v))
 }
 
-// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
-func OrganizationID(v string) predicate.Group {
-	return predicate.Group(sql.FieldEQ(FieldOrganizationID, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldCreatedAt, v))
@@ -835,81 +830,6 @@ func DisplayNameEqualFold(v string) predicate.Group {
 // DisplayNameContainsFold applies the ContainsFold predicate on the "display_name" field.
 func DisplayNameContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldDisplayName, v))
-}
-
-// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
-func OrganizationIDEQ(v string) predicate.Group {
-	return predicate.Group(sql.FieldEQ(FieldOrganizationID, v))
-}
-
-// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
-func OrganizationIDNEQ(v string) predicate.Group {
-	return predicate.Group(sql.FieldNEQ(FieldOrganizationID, v))
-}
-
-// OrganizationIDIn applies the In predicate on the "organization_id" field.
-func OrganizationIDIn(vs ...string) predicate.Group {
-	return predicate.Group(sql.FieldIn(FieldOrganizationID, vs...))
-}
-
-// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
-func OrganizationIDNotIn(vs ...string) predicate.Group {
-	return predicate.Group(sql.FieldNotIn(FieldOrganizationID, vs...))
-}
-
-// OrganizationIDGT applies the GT predicate on the "organization_id" field.
-func OrganizationIDGT(v string) predicate.Group {
-	return predicate.Group(sql.FieldGT(FieldOrganizationID, v))
-}
-
-// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
-func OrganizationIDGTE(v string) predicate.Group {
-	return predicate.Group(sql.FieldGTE(FieldOrganizationID, v))
-}
-
-// OrganizationIDLT applies the LT predicate on the "organization_id" field.
-func OrganizationIDLT(v string) predicate.Group {
-	return predicate.Group(sql.FieldLT(FieldOrganizationID, v))
-}
-
-// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
-func OrganizationIDLTE(v string) predicate.Group {
-	return predicate.Group(sql.FieldLTE(FieldOrganizationID, v))
-}
-
-// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
-func OrganizationIDContains(v string) predicate.Group {
-	return predicate.Group(sql.FieldContains(FieldOrganizationID, v))
-}
-
-// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
-func OrganizationIDHasPrefix(v string) predicate.Group {
-	return predicate.Group(sql.FieldHasPrefix(FieldOrganizationID, v))
-}
-
-// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
-func OrganizationIDHasSuffix(v string) predicate.Group {
-	return predicate.Group(sql.FieldHasSuffix(FieldOrganizationID, v))
-}
-
-// OrganizationIDIsNil applies the IsNil predicate on the "organization_id" field.
-func OrganizationIDIsNil() predicate.Group {
-	return predicate.Group(sql.FieldIsNull(FieldOrganizationID))
-}
-
-// OrganizationIDNotNil applies the NotNil predicate on the "organization_id" field.
-func OrganizationIDNotNil() predicate.Group {
-	return predicate.Group(sql.FieldNotNull(FieldOrganizationID))
-}
-
-// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
-func OrganizationIDEqualFold(v string) predicate.Group {
-	return predicate.Group(sql.FieldEqualFold(FieldOrganizationID, v))
-}
-
-// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
-func OrganizationIDContainsFold(v string) predicate.Group {
-	return predicate.Group(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // HasSetting applies the HasEdge predicate on the "setting" edge.

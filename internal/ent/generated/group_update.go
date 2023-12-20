@@ -187,26 +187,6 @@ func (gu *GroupUpdate) SetNillableDisplayName(s *string) *GroupUpdate {
 	return gu
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (gu *GroupUpdate) SetOrganizationID(s string) *GroupUpdate {
-	gu.mutation.SetOrganizationID(s)
-	return gu
-}
-
-// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
-func (gu *GroupUpdate) SetNillableOrganizationID(s *string) *GroupUpdate {
-	if s != nil {
-		gu.SetOrganizationID(*s)
-	}
-	return gu
-}
-
-// ClearOrganizationID clears the value of the "organization_id" field.
-func (gu *GroupUpdate) ClearOrganizationID() *GroupUpdate {
-	gu.mutation.ClearOrganizationID()
-	return gu
-}
-
 // SetSettingID sets the "setting" edge to the GroupSetting entity by ID.
 func (gu *GroupUpdate) SetSettingID(id string) *GroupUpdate {
 	gu.mutation.SetSettingID(id)
@@ -404,12 +384,6 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := gu.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
-	}
-	if value, ok := gu.mutation.OrganizationID(); ok {
-		_spec.SetField(group.FieldOrganizationID, field.TypeString, value)
-	}
-	if gu.mutation.OrganizationIDCleared() {
-		_spec.ClearField(group.FieldOrganizationID, field.TypeString)
 	}
 	if gu.mutation.SettingCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -697,26 +671,6 @@ func (guo *GroupUpdateOne) SetNillableDisplayName(s *string) *GroupUpdateOne {
 	return guo
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (guo *GroupUpdateOne) SetOrganizationID(s string) *GroupUpdateOne {
-	guo.mutation.SetOrganizationID(s)
-	return guo
-}
-
-// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
-func (guo *GroupUpdateOne) SetNillableOrganizationID(s *string) *GroupUpdateOne {
-	if s != nil {
-		guo.SetOrganizationID(*s)
-	}
-	return guo
-}
-
-// ClearOrganizationID clears the value of the "organization_id" field.
-func (guo *GroupUpdateOne) ClearOrganizationID() *GroupUpdateOne {
-	guo.mutation.ClearOrganizationID()
-	return guo
-}
-
 // SetSettingID sets the "setting" edge to the GroupSetting entity by ID.
 func (guo *GroupUpdateOne) SetSettingID(id string) *GroupUpdateOne {
 	guo.mutation.SetSettingID(id)
@@ -944,12 +898,6 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	if value, ok := guo.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
-	}
-	if value, ok := guo.mutation.OrganizationID(); ok {
-		_spec.SetField(group.FieldOrganizationID, field.TypeString, value)
-	}
-	if guo.mutation.OrganizationIDCleared() {
-		_spec.ClearField(group.FieldOrganizationID, field.TypeString)
 	}
 	if guo.mutation.SettingCleared() {
 		edge := &sqlgraph.EdgeSpec{

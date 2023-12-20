@@ -169,20 +169,6 @@ func (gc *GroupCreate) SetNillableDisplayName(s *string) *GroupCreate {
 	return gc
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (gc *GroupCreate) SetOrganizationID(s string) *GroupCreate {
-	gc.mutation.SetOrganizationID(s)
-	return gc
-}
-
-// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
-func (gc *GroupCreate) SetNillableOrganizationID(s *string) *GroupCreate {
-	if s != nil {
-		gc.SetOrganizationID(*s)
-	}
-	return gc
-}
-
 // SetID sets the "id" field.
 func (gc *GroupCreate) SetID(s string) *GroupCreate {
 	gc.mutation.SetID(s)
@@ -408,10 +394,6 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if value, ok := gc.mutation.DisplayName(); ok {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
 		_node.DisplayName = value
-	}
-	if value, ok := gc.mutation.OrganizationID(); ok {
-		_spec.SetField(group.FieldOrganizationID, field.TypeString, value)
-		_node.OrganizationID = value
 	}
 	if nodes := gc.mutation.SettingIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

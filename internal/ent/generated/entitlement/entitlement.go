@@ -42,8 +42,6 @@ const (
 	FieldExpiresAt = "expires_at"
 	// FieldCancelled holds the string denoting the cancelled field in the database.
 	FieldCancelled = "cancelled"
-	// FieldOrganizationID holds the string denoting the organization_id field in the database.
-	FieldOrganizationID = "organization_id"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// Table holds the table name of the entitlement in the database.
@@ -72,7 +70,6 @@ var Columns = []string{
 	FieldExpires,
 	FieldExpiresAt,
 	FieldCancelled,
-	FieldOrganizationID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "entitlements"
@@ -211,11 +208,6 @@ func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
 // ByCancelled orders the results by the cancelled field.
 func ByCancelled(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCancelled, opts...).ToFunc()
-}
-
-// ByOrganizationID orders the results by the organization_id field.
-func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

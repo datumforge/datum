@@ -24,7 +24,6 @@ var (
 		{Name: "expires", Type: field.TypeBool, Default: false},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
 		{Name: "cancelled", Type: field.TypeBool, Default: false},
-		{Name: "organization_id", Type: field.TypeString},
 		{Name: "organization_entitlements", Type: field.TypeString, Nullable: true},
 	}
 	// EntitlementsTable holds the schema information for the "entitlements" table.
@@ -35,7 +34,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entitlements_organizations_entitlements",
-				Columns:    []*schema.Column{EntitlementsColumns[14]},
+				Columns:    []*schema.Column{EntitlementsColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -55,7 +54,6 @@ var (
 		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
-		{Name: "organization_id", Type: field.TypeString, Nullable: true},
 		{Name: "organization_groups", Type: field.TypeString},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
@@ -66,7 +64,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "groups_organizations_groups",
-				Columns:    []*schema.Column{GroupsColumns[13]},
+				Columns:    []*schema.Column{GroupsColumns[12]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -75,7 +73,7 @@ var (
 			{
 				Name:    "group_name_organization_groups",
 				Unique:  true,
-				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[13]},
+				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[12]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},

@@ -189,12 +189,6 @@ func (ec *EntitlementCreate) SetNillableCancelled(b *bool) *EntitlementCreate {
 	return ec
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (ec *EntitlementCreate) SetOrganizationID(s string) *EntitlementCreate {
-	ec.mutation.SetOrganizationID(s)
-	return ec
-}
-
 // SetID sets the "id" field.
 func (ec *EntitlementCreate) SetID(s string) *EntitlementCreate {
 	ec.mutation.SetID(s)
@@ -323,9 +317,6 @@ func (ec *EntitlementCreate) check() error {
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		return &ValidationError{Name: "cancelled", err: errors.New(`generated: missing required field "Entitlement.cancelled"`)}
 	}
-	if _, ok := ec.mutation.OrganizationID(); !ok {
-		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Entitlement.organization_id"`)}
-	}
 	return nil
 }
 
@@ -409,10 +400,6 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
 		_node.Cancelled = value
-	}
-	if value, ok := ec.mutation.OrganizationID(); ok {
-		_spec.SetField(entitlement.FieldOrganizationID, field.TypeString, value)
-		_node.OrganizationID = value
 	}
 	if nodes := ec.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

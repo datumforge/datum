@@ -122,11 +122,6 @@ func Cancelled(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldCancelled, v))
 }
 
-// OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
-func OrganizationID(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldOrganizationID, v))
-}
-
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldEQ(FieldCreatedAt, v))
@@ -720,71 +715,6 @@ func CancelledEQ(v bool) predicate.Entitlement {
 // CancelledNEQ applies the NEQ predicate on the "cancelled" field.
 func CancelledNEQ(v bool) predicate.Entitlement {
 	return predicate.Entitlement(sql.FieldNEQ(FieldCancelled, v))
-}
-
-// OrganizationIDEQ applies the EQ predicate on the "organization_id" field.
-func OrganizationIDEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEQ(FieldOrganizationID, v))
-}
-
-// OrganizationIDNEQ applies the NEQ predicate on the "organization_id" field.
-func OrganizationIDNEQ(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNEQ(FieldOrganizationID, v))
-}
-
-// OrganizationIDIn applies the In predicate on the "organization_id" field.
-func OrganizationIDIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldIn(FieldOrganizationID, vs...))
-}
-
-// OrganizationIDNotIn applies the NotIn predicate on the "organization_id" field.
-func OrganizationIDNotIn(vs ...string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldNotIn(FieldOrganizationID, vs...))
-}
-
-// OrganizationIDGT applies the GT predicate on the "organization_id" field.
-func OrganizationIDGT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGT(FieldOrganizationID, v))
-}
-
-// OrganizationIDGTE applies the GTE predicate on the "organization_id" field.
-func OrganizationIDGTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldGTE(FieldOrganizationID, v))
-}
-
-// OrganizationIDLT applies the LT predicate on the "organization_id" field.
-func OrganizationIDLT(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLT(FieldOrganizationID, v))
-}
-
-// OrganizationIDLTE applies the LTE predicate on the "organization_id" field.
-func OrganizationIDLTE(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldLTE(FieldOrganizationID, v))
-}
-
-// OrganizationIDContains applies the Contains predicate on the "organization_id" field.
-func OrganizationIDContains(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContains(FieldOrganizationID, v))
-}
-
-// OrganizationIDHasPrefix applies the HasPrefix predicate on the "organization_id" field.
-func OrganizationIDHasPrefix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasPrefix(FieldOrganizationID, v))
-}
-
-// OrganizationIDHasSuffix applies the HasSuffix predicate on the "organization_id" field.
-func OrganizationIDHasSuffix(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldHasSuffix(FieldOrganizationID, v))
-}
-
-// OrganizationIDEqualFold applies the EqualFold predicate on the "organization_id" field.
-func OrganizationIDEqualFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldEqualFold(FieldOrganizationID, v))
-}
-
-// OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
-func OrganizationIDContainsFold(v string) predicate.Entitlement {
-	return predicate.Entitlement(sql.FieldContainsFold(FieldOrganizationID, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

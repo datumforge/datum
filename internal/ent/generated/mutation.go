@@ -67,7 +67,6 @@ type EntitlementMutation struct {
 	expires                  *bool
 	expires_at               *time.Time
 	cancelled                *bool
-	organization_id          *string
 	clearedFields            map[string]struct{}
 	owner                    *string
 	clearedowner             bool
@@ -703,42 +702,6 @@ func (m *EntitlementMutation) ResetCancelled() {
 	m.cancelled = nil
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (m *EntitlementMutation) SetOrganizationID(s string) {
-	m.organization_id = &s
-}
-
-// OrganizationID returns the value of the "organization_id" field in the mutation.
-func (m *EntitlementMutation) OrganizationID() (r string, exists bool) {
-	v := m.organization_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOrganizationID returns the old "organization_id" field's value of the Entitlement entity.
-// If the Entitlement object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntitlementMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
-	}
-	return oldValue.OrganizationID, nil
-}
-
-// ResetOrganizationID resets all changes to the "organization_id" field.
-func (m *EntitlementMutation) ResetOrganizationID() {
-	m.organization_id = nil
-}
-
 // SetOwnerID sets the "owner" edge to the Organization entity by id.
 func (m *EntitlementMutation) SetOwnerID(id string) {
 	m.owner = &id
@@ -812,7 +775,7 @@ func (m *EntitlementMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EntitlementMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, entitlement.FieldCreatedAt)
 	}
@@ -849,9 +812,6 @@ func (m *EntitlementMutation) Fields() []string {
 	if m.cancelled != nil {
 		fields = append(fields, entitlement.FieldCancelled)
 	}
-	if m.organization_id != nil {
-		fields = append(fields, entitlement.FieldOrganizationID)
-	}
 	return fields
 }
 
@@ -884,8 +844,6 @@ func (m *EntitlementMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiresAt()
 	case entitlement.FieldCancelled:
 		return m.Cancelled()
-	case entitlement.FieldOrganizationID:
-		return m.OrganizationID()
 	}
 	return nil, false
 }
@@ -919,8 +877,6 @@ func (m *EntitlementMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldExpiresAt(ctx)
 	case entitlement.FieldCancelled:
 		return m.OldCancelled(ctx)
-	case entitlement.FieldOrganizationID:
-		return m.OldOrganizationID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Entitlement field %s", name)
 }
@@ -1013,13 +969,6 @@ func (m *EntitlementMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCancelled(v)
-		return nil
-	case entitlement.FieldOrganizationID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOrganizationID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Entitlement field %s", name)
@@ -1151,9 +1100,6 @@ func (m *EntitlementMutation) ResetField(name string) error {
 	case entitlement.FieldCancelled:
 		m.ResetCancelled()
 		return nil
-	case entitlement.FieldOrganizationID:
-		m.ResetOrganizationID()
-		return nil
 	}
 	return fmt.Errorf("unknown Entitlement field %s", name)
 }
@@ -1249,7 +1195,6 @@ type GroupMutation struct {
 	gravatar_logo_url *string
 	logo_url          *string
 	display_name      *string
-	organization_id   *string
 	clearedFields     map[string]struct{}
 	setting           *string
 	clearedsetting    bool
@@ -1854,55 +1799,6 @@ func (m *GroupMutation) ResetDisplayName() {
 	m.display_name = nil
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (m *GroupMutation) SetOrganizationID(s string) {
-	m.organization_id = &s
-}
-
-// OrganizationID returns the value of the "organization_id" field in the mutation.
-func (m *GroupMutation) OrganizationID() (r string, exists bool) {
-	v := m.organization_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldOrganizationID returns the old "organization_id" field's value of the Group entity.
-// If the Group object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *GroupMutation) OldOrganizationID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrganizationID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrganizationID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrganizationID: %w", err)
-	}
-	return oldValue.OrganizationID, nil
-}
-
-// ClearOrganizationID clears the value of the "organization_id" field.
-func (m *GroupMutation) ClearOrganizationID() {
-	m.organization_id = nil
-	m.clearedFields[group.FieldOrganizationID] = struct{}{}
-}
-
-// OrganizationIDCleared returns if the "organization_id" field was cleared in this mutation.
-func (m *GroupMutation) OrganizationIDCleared() bool {
-	_, ok := m.clearedFields[group.FieldOrganizationID]
-	return ok
-}
-
-// ResetOrganizationID resets all changes to the "organization_id" field.
-func (m *GroupMutation) ResetOrganizationID() {
-	m.organization_id = nil
-	delete(m.clearedFields, group.FieldOrganizationID)
-}
-
 // SetSettingID sets the "setting" edge to the GroupSetting entity by id.
 func (m *GroupMutation) SetSettingID(id string) {
 	m.setting = &id
@@ -2069,7 +1965,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, group.FieldCreatedAt)
 	}
@@ -2103,9 +1999,6 @@ func (m *GroupMutation) Fields() []string {
 	if m.display_name != nil {
 		fields = append(fields, group.FieldDisplayName)
 	}
-	if m.organization_id != nil {
-		fields = append(fields, group.FieldOrganizationID)
-	}
 	return fields
 }
 
@@ -2136,8 +2029,6 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.LogoURL()
 	case group.FieldDisplayName:
 		return m.DisplayName()
-	case group.FieldOrganizationID:
-		return m.OrganizationID()
 	}
 	return nil, false
 }
@@ -2169,8 +2060,6 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldLogoURL(ctx)
 	case group.FieldDisplayName:
 		return m.OldDisplayName(ctx)
-	case group.FieldOrganizationID:
-		return m.OldOrganizationID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Group field %s", name)
 }
@@ -2257,13 +2146,6 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDisplayName(v)
 		return nil
-	case group.FieldOrganizationID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetOrganizationID(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
 }
@@ -2315,9 +2197,6 @@ func (m *GroupMutation) ClearedFields() []string {
 	if m.FieldCleared(group.FieldLogoURL) {
 		fields = append(fields, group.FieldLogoURL)
 	}
-	if m.FieldCleared(group.FieldOrganizationID) {
-		fields = append(fields, group.FieldOrganizationID)
-	}
 	return fields
 }
 
@@ -2352,9 +2231,6 @@ func (m *GroupMutation) ClearField(name string) error {
 		return nil
 	case group.FieldLogoURL:
 		m.ClearLogoURL()
-		return nil
-	case group.FieldOrganizationID:
-		m.ClearOrganizationID()
 		return nil
 	}
 	return fmt.Errorf("unknown Group nullable field %s", name)
@@ -2396,9 +2272,6 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldDisplayName:
 		m.ResetDisplayName()
-		return nil
-	case group.FieldOrganizationID:
-		m.ResetOrganizationID()
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)

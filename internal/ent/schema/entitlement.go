@@ -37,8 +37,6 @@ func (Entitlement) Fields() []ent.Field {
 		field.Bool("cancelled").
 			Comment("whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at").
 			Default(false),
-		field.String("organization_id").
-			Comment("the ID of the organization associated with the entitlement"),
 	}
 }
 

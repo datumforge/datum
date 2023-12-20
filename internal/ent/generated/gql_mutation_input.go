@@ -22,7 +22,6 @@ type CreateEntitlementInput struct {
 	Expires                *bool
 	ExpiresAt              *time.Time
 	Cancelled              *bool
-	OrganizationID         string
 	OwnerID                *string
 }
 
@@ -58,7 +57,6 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
 	}
-	m.SetOrganizationID(i.OrganizationID)
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -84,7 +82,6 @@ type UpdateEntitlementInput struct {
 	ClearExpiresAt              bool
 	ExpiresAt                   *time.Time
 	Cancelled                   *bool
-	OrganizationID              *string
 	ClearOwner                  bool
 	OwnerID                     *string
 }
@@ -127,9 +124,6 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
 	}
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
-	}
 	if i.ClearOwner {
 		m.ClearOwner()
 	}
@@ -161,7 +155,6 @@ type CreateGroupInput struct {
 	GravatarLogoURL *string
 	LogoURL         *string
 	DisplayName     *string
-	OrganizationID  *string
 	SettingID       string
 	UserIDs         []string
 	OwnerID         string
@@ -194,9 +187,6 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
-	}
 	m.SetSettingID(i.SettingID)
 	if v := i.UserIDs; len(v) > 0 {
 		m.AddUserIDs(v...)
@@ -223,8 +213,6 @@ type UpdateGroupInput struct {
 	ClearLogoURL         bool
 	LogoURL              *string
 	DisplayName          *string
-	ClearOrganizationID  bool
-	OrganizationID       *string
 	SettingID            *string
 	ClearUsers           bool
 	AddUserIDs           []string
@@ -266,12 +254,6 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
-	}
-	if i.ClearOrganizationID {
-		m.ClearOrganizationID()
-	}
-	if v := i.OrganizationID; v != nil {
-		m.SetOrganizationID(*v)
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)

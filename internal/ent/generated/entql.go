@@ -49,7 +49,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entitlement.FieldExpires:                {Type: field.TypeBool, Column: entitlement.FieldExpires},
 			entitlement.FieldExpiresAt:              {Type: field.TypeTime, Column: entitlement.FieldExpiresAt},
 			entitlement.FieldCancelled:              {Type: field.TypeBool, Column: entitlement.FieldCancelled},
-			entitlement.FieldOrganizationID:         {Type: field.TypeString, Column: entitlement.FieldOrganizationID},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -74,7 +73,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldGravatarLogoURL: {Type: field.TypeString, Column: group.FieldGravatarLogoURL},
 			group.FieldLogoURL:         {Type: field.TypeString, Column: group.FieldLogoURL},
 			group.FieldDisplayName:     {Type: field.TypeString, Column: group.FieldDisplayName},
-			group.FieldOrganizationID:  {Type: field.TypeString, Column: group.FieldOrganizationID},
 		},
 	}
 	graph.Nodes[2] = &sqlgraph.Node{
@@ -729,11 +727,6 @@ func (f *EntitlementFilter) WhereCancelled(p entql.BoolP) {
 	f.Where(p.Field(entitlement.FieldCancelled))
 }
 
-// WhereOrganizationID applies the entql string predicate on the organization_id field.
-func (f *EntitlementFilter) WhereOrganizationID(p entql.StringP) {
-	f.Where(p.Field(entitlement.FieldOrganizationID))
-}
-
 // WhereHasOwner applies a predicate to check if query has an edge owner.
 func (f *EntitlementFilter) WhereHasOwner() {
 	f.Where(entql.HasEdge("owner"))
@@ -841,11 +834,6 @@ func (f *GroupFilter) WhereLogoURL(p entql.StringP) {
 // WhereDisplayName applies the entql string predicate on the display_name field.
 func (f *GroupFilter) WhereDisplayName(p entql.StringP) {
 	f.Where(p.Field(group.FieldDisplayName))
-}
-
-// WhereOrganizationID applies the entql string predicate on the organization_id field.
-func (f *GroupFilter) WhereOrganizationID(p entql.StringP) {
-	f.Where(p.Field(group.FieldOrganizationID))
 }
 
 // WhereHasSetting applies a predicate to check if query has an edge setting.

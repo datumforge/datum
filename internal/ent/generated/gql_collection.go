@@ -115,11 +115,6 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				selectedFields = append(selectedFields, entitlement.FieldCancelled)
 				fieldSeen[entitlement.FieldCancelled] = struct{}{}
 			}
-		case "organizationID":
-			if _, ok := fieldSeen[entitlement.FieldOrganizationID]; !ok {
-				selectedFields = append(selectedFields, entitlement.FieldOrganizationID)
-				fieldSeen[entitlement.FieldOrganizationID] = struct{}{}
-			}
 		case "id":
 		case "__typename":
 		default:
@@ -268,11 +263,6 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			if _, ok := fieldSeen[group.FieldDisplayName]; !ok {
 				selectedFields = append(selectedFields, group.FieldDisplayName)
 				fieldSeen[group.FieldDisplayName] = struct{}{}
-			}
-		case "organizationID":
-			if _, ok := fieldSeen[group.FieldOrganizationID]; !ok {
-				selectedFields = append(selectedFields, group.FieldOrganizationID)
-				fieldSeen[group.FieldOrganizationID] = struct{}{}
 			}
 		case "id":
 		case "__typename":

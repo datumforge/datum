@@ -64,9 +64,6 @@ func (Group) Fields() []ent.Field {
 			Annotations(
 				entgql.OrderField("display_name"),
 			),
-		field.String("organization_id").
-			Comment("the ID of the organization the group belongs to").
-			Optional(),
 	}
 }
 

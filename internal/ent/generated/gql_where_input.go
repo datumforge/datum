@@ -184,21 +184,6 @@ type EntitlementWhereInput struct {
 	Cancelled    *bool `json:"cancelled,omitempty"`
 	CancelledNEQ *bool `json:"cancelledNEQ,omitempty"`
 
-	// "organization_id" field predicates.
-	OrganizationID             *string  `json:"organizationID,omitempty"`
-	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
-	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
-	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
-	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
-	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
-	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
-	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
-	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
-	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
-	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
-	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
-	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
-
 	// "owner" edge predicates.
 	HasOwner     *bool                     `json:"hasOwner,omitempty"`
 	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
@@ -662,45 +647,6 @@ func (i *EntitlementWhereInput) P() (predicate.Entitlement, error) {
 	if i.CancelledNEQ != nil {
 		predicates = append(predicates, entitlement.CancelledNEQ(*i.CancelledNEQ))
 	}
-	if i.OrganizationID != nil {
-		predicates = append(predicates, entitlement.OrganizationIDEQ(*i.OrganizationID))
-	}
-	if i.OrganizationIDNEQ != nil {
-		predicates = append(predicates, entitlement.OrganizationIDNEQ(*i.OrganizationIDNEQ))
-	}
-	if len(i.OrganizationIDIn) > 0 {
-		predicates = append(predicates, entitlement.OrganizationIDIn(i.OrganizationIDIn...))
-	}
-	if len(i.OrganizationIDNotIn) > 0 {
-		predicates = append(predicates, entitlement.OrganizationIDNotIn(i.OrganizationIDNotIn...))
-	}
-	if i.OrganizationIDGT != nil {
-		predicates = append(predicates, entitlement.OrganizationIDGT(*i.OrganizationIDGT))
-	}
-	if i.OrganizationIDGTE != nil {
-		predicates = append(predicates, entitlement.OrganizationIDGTE(*i.OrganizationIDGTE))
-	}
-	if i.OrganizationIDLT != nil {
-		predicates = append(predicates, entitlement.OrganizationIDLT(*i.OrganizationIDLT))
-	}
-	if i.OrganizationIDLTE != nil {
-		predicates = append(predicates, entitlement.OrganizationIDLTE(*i.OrganizationIDLTE))
-	}
-	if i.OrganizationIDContains != nil {
-		predicates = append(predicates, entitlement.OrganizationIDContains(*i.OrganizationIDContains))
-	}
-	if i.OrganizationIDHasPrefix != nil {
-		predicates = append(predicates, entitlement.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
-	}
-	if i.OrganizationIDHasSuffix != nil {
-		predicates = append(predicates, entitlement.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
-	}
-	if i.OrganizationIDEqualFold != nil {
-		predicates = append(predicates, entitlement.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
-	}
-	if i.OrganizationIDContainsFold != nil {
-		predicates = append(predicates, entitlement.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
-	}
 
 	if i.HasOwner != nil {
 		p := entitlement.HasOwner()
@@ -861,23 +807,6 @@ type GroupWhereInput struct {
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
-
-	// "organization_id" field predicates.
-	OrganizationID             *string  `json:"organizationID,omitempty"`
-	OrganizationIDNEQ          *string  `json:"organizationIDNEQ,omitempty"`
-	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
-	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
-	OrganizationIDGT           *string  `json:"organizationIDGT,omitempty"`
-	OrganizationIDGTE          *string  `json:"organizationIDGTE,omitempty"`
-	OrganizationIDLT           *string  `json:"organizationIDLT,omitempty"`
-	OrganizationIDLTE          *string  `json:"organizationIDLTE,omitempty"`
-	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
-	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
-	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
-	OrganizationIDIsNil        bool     `json:"organizationIDIsNil,omitempty"`
-	OrganizationIDNotNil       bool     `json:"organizationIDNotNil,omitempty"`
-	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
-	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 
 	// "setting" edge predicates.
 	HasSetting     *bool                     `json:"hasSetting,omitempty"`
@@ -1283,51 +1212,6 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 	}
 	if i.DisplayNameContainsFold != nil {
 		predicates = append(predicates, group.DisplayNameContainsFold(*i.DisplayNameContainsFold))
-	}
-	if i.OrganizationID != nil {
-		predicates = append(predicates, group.OrganizationIDEQ(*i.OrganizationID))
-	}
-	if i.OrganizationIDNEQ != nil {
-		predicates = append(predicates, group.OrganizationIDNEQ(*i.OrganizationIDNEQ))
-	}
-	if len(i.OrganizationIDIn) > 0 {
-		predicates = append(predicates, group.OrganizationIDIn(i.OrganizationIDIn...))
-	}
-	if len(i.OrganizationIDNotIn) > 0 {
-		predicates = append(predicates, group.OrganizationIDNotIn(i.OrganizationIDNotIn...))
-	}
-	if i.OrganizationIDGT != nil {
-		predicates = append(predicates, group.OrganizationIDGT(*i.OrganizationIDGT))
-	}
-	if i.OrganizationIDGTE != nil {
-		predicates = append(predicates, group.OrganizationIDGTE(*i.OrganizationIDGTE))
-	}
-	if i.OrganizationIDLT != nil {
-		predicates = append(predicates, group.OrganizationIDLT(*i.OrganizationIDLT))
-	}
-	if i.OrganizationIDLTE != nil {
-		predicates = append(predicates, group.OrganizationIDLTE(*i.OrganizationIDLTE))
-	}
-	if i.OrganizationIDContains != nil {
-		predicates = append(predicates, group.OrganizationIDContains(*i.OrganizationIDContains))
-	}
-	if i.OrganizationIDHasPrefix != nil {
-		predicates = append(predicates, group.OrganizationIDHasPrefix(*i.OrganizationIDHasPrefix))
-	}
-	if i.OrganizationIDHasSuffix != nil {
-		predicates = append(predicates, group.OrganizationIDHasSuffix(*i.OrganizationIDHasSuffix))
-	}
-	if i.OrganizationIDIsNil {
-		predicates = append(predicates, group.OrganizationIDIsNil())
-	}
-	if i.OrganizationIDNotNil {
-		predicates = append(predicates, group.OrganizationIDNotNil())
-	}
-	if i.OrganizationIDEqualFold != nil {
-		predicates = append(predicates, group.OrganizationIDEqualFold(*i.OrganizationIDEqualFold))
-	}
-	if i.OrganizationIDContainsFold != nil {
-		predicates = append(predicates, group.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
 
 	if i.HasSetting != nil {

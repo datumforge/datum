@@ -123,9 +123,6 @@
                   "cancelled": {
                     "type": "boolean"
                   },
-                  "organization_id": {
-                    "type": "string"
-                  },
                   "owner": {
                     "type": "string"
                   }
@@ -135,8 +132,7 @@
                   "updated_at",
                   "tier",
                   "expires",
-                  "cancelled",
-                  "organization_id"
+                  "cancelled"
                 ]
               }
             }
@@ -309,9 +305,6 @@
                   },
                   "cancelled": {
                     "type": "boolean"
-                  },
-                  "organization_id": {
-                    "type": "string"
                   },
                   "owner": {
                     "type": "string"
@@ -892,9 +885,6 @@
                   "display_name": {
                     "type": "string"
                   },
-                  "organization_id": {
-                    "type": "string"
-                  },
                   "setting": {
                     "type": "string"
                   },
@@ -1076,9 +1066,6 @@
                     "type": "string"
                   },
                   "display_name": {
-                    "type": "string"
-                  },
-                  "organization_id": {
                     "type": "string"
                   },
                   "setting": {
@@ -5522,9 +5509,6 @@
           "cancelled": {
             "type": "boolean"
           },
-          "organization_id": {
-            "type": "string"
-          },
           "owner": {
             "$ref": "#/components/schemas/Organization"
           }
@@ -5535,8 +5519,7 @@
           "updated_at",
           "tier",
           "expires",
-          "cancelled",
-          "organization_id"
+          "cancelled"
         ]
       },
       "EntitlementCreate": {
@@ -5590,9 +5573,6 @@
           },
           "cancelled": {
             "type": "boolean"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -5601,8 +5581,7 @@
           "updated_at",
           "tier",
           "expires",
-          "cancelled",
-          "organization_id"
+          "cancelled"
         ]
       },
       "EntitlementList": {
@@ -5656,9 +5635,6 @@
           },
           "cancelled": {
             "type": "boolean"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -5667,8 +5643,7 @@
           "updated_at",
           "tier",
           "expires",
-          "cancelled",
-          "organization_id"
+          "cancelled"
         ]
       },
       "EntitlementRead": {
@@ -5722,9 +5697,6 @@
           },
           "cancelled": {
             "type": "boolean"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -5733,8 +5705,7 @@
           "updated_at",
           "tier",
           "expires",
-          "cancelled",
-          "organization_id"
+          "cancelled"
         ]
       },
       "EntitlementUpdate": {
@@ -5788,9 +5759,6 @@
           },
           "cancelled": {
             "type": "boolean"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -5799,8 +5767,7 @@
           "updated_at",
           "tier",
           "expires",
-          "cancelled",
-          "organization_id"
+          "cancelled"
         ]
       },
       "Entitlement_OwnerRead": {
@@ -5893,9 +5860,6 @@
           "display_name": {
             "type": "string"
           },
-          "organization_id": {
-            "type": "string"
-          },
           "setting": {
             "$ref": "#/components/schemas/GroupSetting"
           },
@@ -5960,9 +5924,6 @@
           },
           "display_name": {
             "type": "string"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -6014,9 +5975,6 @@
           },
           "display_name": {
             "type": "string"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -6067,9 +6025,6 @@
             "type": "string"
           },
           "display_name": {
-            "type": "string"
-          },
-          "organization_id": {
             "type": "string"
           }
         },
@@ -6470,9 +6425,6 @@
           },
           "display_name": {
             "type": "string"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -6523,9 +6475,6 @@
             "type": "string"
           },
           "display_name": {
-            "type": "string"
-          },
-          "organization_id": {
             "type": "string"
           }
         },
@@ -8547,9 +8496,6 @@
           },
           "cancelled": {
             "type": "boolean"
-          },
-          "organization_id": {
-            "type": "string"
           }
         },
         "required": [
@@ -8558,8 +8504,7 @@
           "updated_at",
           "tier",
           "expires",
-          "cancelled",
-          "organization_id"
+          "cancelled"
         ]
       },
       "Organization_GroupsList": {
@@ -8602,9 +8547,6 @@
             "type": "string"
           },
           "display_name": {
-            "type": "string"
-          },
-          "organization_id": {
             "type": "string"
           }
         },
@@ -10517,9 +10459,6 @@
             "type": "string"
           },
           "display_name": {
-            "type": "string"
-          },
-          "organization_id": {
             "type": "string"
           }
         },

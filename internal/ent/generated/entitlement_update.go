@@ -199,20 +199,6 @@ func (eu *EntitlementUpdate) SetNillableCancelled(b *bool) *EntitlementUpdate {
 	return eu
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (eu *EntitlementUpdate) SetOrganizationID(s string) *EntitlementUpdate {
-	eu.mutation.SetOrganizationID(s)
-	return eu
-}
-
-// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableOrganizationID(s *string) *EntitlementUpdate {
-	if s != nil {
-		eu.SetOrganizationID(*s)
-	}
-	return eu
-}
-
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
 func (eu *EntitlementUpdate) SetOwnerID(id string) *EntitlementUpdate {
 	eu.mutation.SetOwnerID(id)
@@ -357,9 +343,6 @@ func (eu *EntitlementUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := eu.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
-	}
-	if value, ok := eu.mutation.OrganizationID(); ok {
-		_spec.SetField(entitlement.FieldOrganizationID, field.TypeString, value)
 	}
 	if eu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -582,20 +565,6 @@ func (euo *EntitlementUpdateOne) SetNillableCancelled(b *bool) *EntitlementUpdat
 	return euo
 }
 
-// SetOrganizationID sets the "organization_id" field.
-func (euo *EntitlementUpdateOne) SetOrganizationID(s string) *EntitlementUpdateOne {
-	euo.mutation.SetOrganizationID(s)
-	return euo
-}
-
-// SetNillableOrganizationID sets the "organization_id" field if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableOrganizationID(s *string) *EntitlementUpdateOne {
-	if s != nil {
-		euo.SetOrganizationID(*s)
-	}
-	return euo
-}
-
 // SetOwnerID sets the "owner" edge to the Organization entity by ID.
 func (euo *EntitlementUpdateOne) SetOwnerID(id string) *EntitlementUpdateOne {
 	euo.mutation.SetOwnerID(id)
@@ -770,9 +739,6 @@ func (euo *EntitlementUpdateOne) sqlSave(ctx context.Context) (_node *Entitlemen
 	}
 	if value, ok := euo.mutation.Cancelled(); ok {
 		_spec.SetField(entitlement.FieldCancelled, field.TypeBool, value)
-	}
-	if value, ok := euo.mutation.OrganizationID(); ok {
-		_spec.SetField(entitlement.FieldOrganizationID, field.TypeString, value)
 	}
 	if euo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

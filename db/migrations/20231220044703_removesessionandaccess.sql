@@ -1,7 +1,7 @@
 -- Disable the enforcement of foreign-keys constraints
 PRAGMA foreign_keys = off;
 -- Create "new_entitlements" table
-CREATE TABLE `new_entitlements` (`id` text NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `created_by` text NULL, `updated_by` text NULL, `deleted_at` datetime NULL, `deleted_by` text NULL, `tier` text NOT NULL DEFAULT ('free'), `external_customer_id` text NULL, `external_subscription_id` text NULL, `expires` bool NOT NULL DEFAULT (false), `expires_at` datetime NULL, `cancelled` bool NOT NULL DEFAULT (false), `organization_id` text NOT NULL, `organization_entitlements` text NULL, PRIMARY KEY (`id`), CONSTRAINT `entitlements_organizations_entitlements` FOREIGN KEY (`organization_entitlements`) REFERENCES `organizations` (`id`) ON DELETE SET NULL);
+CREATE TABLE `new_entitlements` (`id` text NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `created_by` text NULL, `updated_by` text NULL, `deleted_at` datetime NULL, `deleted_by` text NULL, `tier` text NOT NULL DEFAULT ('free'), `external_customer_id` text NULL, `external_subscription_id` text NULL, `expires` bool NOT NULL DEFAULT (false), `expires_at` datetime NULL, `cancelled` bool NOT NULL DEFAULT (false), `organization_entitlements` text NULL, PRIMARY KEY (`id`), CONSTRAINT `entitlements_organizations_entitlements` FOREIGN KEY (`organization_entitlements`) REFERENCES `organizations` (`id`) ON DELETE SET NULL);
 -- Copy rows from old table "entitlements" to new temporary table "new_entitlements"
 INSERT INTO `new_entitlements` (`id`, `created_at`, `updated_at`, `created_by`, `updated_by`, `tier`, `external_customer_id`, `external_subscription_id`, `expires_at`, `cancelled`, `organization_entitlements`) SELECT `id`, `created_at`, `updated_at`, `created_by`, `updated_by`, `tier`, `external_customer_id`, `external_subscription_id`, `expires_at`, `cancelled`, `organization_entitlements` FROM `entitlements`;
 -- Drop "entitlements" table after copying rows
@@ -64,7 +64,5 @@ ALTER TABLE `organization_settings` ADD COLUMN `deleted_at` datetime NULL;
 ALTER TABLE `organization_settings` ADD COLUMN `deleted_by` text NULL;
 -- Add column "gravatar_logo_url" to table: "groups"
 ALTER TABLE `groups` ADD COLUMN `gravatar_logo_url` text NULL;
--- Add column "organization_id" to table: "groups"
-ALTER TABLE `groups` ADD COLUMN `organization_id` text NULL;
 -- Enable back the enforcement of foreign-keys constraints
 PRAGMA foreign_keys = on;

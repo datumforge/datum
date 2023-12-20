@@ -30,10 +30,8 @@ type CreateEntitlementInput struct {
 	// the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
-	Cancelled *bool `json:"cancelled,omitempty"`
-	// the ID of the organization associated with the entitlement
-	OrganizationID string  `json:"organizationID"`
-	OwnerID        *string `json:"ownerID,omitempty"`
+	Cancelled *bool   `json:"cancelled,omitempty"`
+	OwnerID   *string `json:"ownerID,omitempty"`
 }
 
 // CreateGroupInput is used for create Group object.
@@ -52,12 +50,10 @@ type CreateGroupInput struct {
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName *string `json:"displayName,omitempty"`
-	// the ID of the organization the group belongs to
-	OrganizationID *string  `json:"organizationID,omitempty"`
-	SettingID      string   `json:"settingID"`
-	UserIDs        []string `json:"userIDs,omitempty"`
-	OwnerID        string   `json:"ownerID"`
+	DisplayName *string  `json:"displayName,omitempty"`
+	SettingID   string   `json:"settingID"`
+	UserIDs     []string `json:"userIDs,omitempty"`
+	OwnerID     string   `json:"ownerID"`
 }
 
 // CreateGroupSettingInput is used for create GroupSetting object.
@@ -296,10 +292,8 @@ type Entitlement struct {
 	// the time at which a customer's entitlement will expire, e.g. they've cancelled but paid through the end of the month
 	ExpiresAt *time.Time `json:"expiresAt,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
-	Cancelled bool `json:"cancelled"`
-	// the ID of the organization associated with the entitlement
-	OrganizationID string        `json:"organizationID"`
-	Owner          *Organization `json:"owner,omitempty"`
+	Cancelled bool          `json:"cancelled"`
+	Owner     *Organization `json:"owner,omitempty"`
 }
 
 func (Entitlement) IsNode() {}
@@ -488,20 +482,6 @@ type EntitlementWhereInput struct {
 	// cancelled field predicates
 	Cancelled    *bool `json:"cancelled,omitempty"`
 	CancelledNeq *bool `json:"cancelledNEQ,omitempty"`
-	// organization_id field predicates
-	OrganizationID             *string  `json:"organizationID,omitempty"`
-	OrganizationIDNeq          *string  `json:"organizationIDNEQ,omitempty"`
-	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
-	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
-	OrganizationIDGt           *string  `json:"organizationIDGT,omitempty"`
-	OrganizationIDGte          *string  `json:"organizationIDGTE,omitempty"`
-	OrganizationIDLt           *string  `json:"organizationIDLT,omitempty"`
-	OrganizationIDLte          *string  `json:"organizationIDLTE,omitempty"`
-	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
-	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
-	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
-	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
-	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 	// owner edge predicates
 	HasOwner     *bool                     `json:"hasOwner,omitempty"`
 	HasOwnerWith []*OrganizationWhereInput `json:"hasOwnerWith,omitempty"`
@@ -524,12 +504,10 @@ type Group struct {
 	// the URL to an image uploaded by the customer for the groups avatar image
 	LogoURL *string `json:"logoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName string `json:"displayName"`
-	// the ID of the organization the group belongs to
-	OrganizationID *string      `json:"organizationID,omitempty"`
-	Setting        GroupSetting `json:"setting"`
-	Users          []*User      `json:"users,omitempty"`
-	Owner          Organization `json:"owner"`
+	DisplayName string       `json:"displayName"`
+	Setting     GroupSetting `json:"setting"`
+	Users       []*User      `json:"users,omitempty"`
+	Owner       Organization `json:"owner"`
 }
 
 func (Group) IsNode() {}
@@ -872,22 +850,6 @@ type GroupWhereInput struct {
 	DisplayNameHasSuffix    *string  `json:"displayNameHasSuffix,omitempty"`
 	DisplayNameEqualFold    *string  `json:"displayNameEqualFold,omitempty"`
 	DisplayNameContainsFold *string  `json:"displayNameContainsFold,omitempty"`
-	// organization_id field predicates
-	OrganizationID             *string  `json:"organizationID,omitempty"`
-	OrganizationIDNeq          *string  `json:"organizationIDNEQ,omitempty"`
-	OrganizationIDIn           []string `json:"organizationIDIn,omitempty"`
-	OrganizationIDNotIn        []string `json:"organizationIDNotIn,omitempty"`
-	OrganizationIDGt           *string  `json:"organizationIDGT,omitempty"`
-	OrganizationIDGte          *string  `json:"organizationIDGTE,omitempty"`
-	OrganizationIDLt           *string  `json:"organizationIDLT,omitempty"`
-	OrganizationIDLte          *string  `json:"organizationIDLTE,omitempty"`
-	OrganizationIDContains     *string  `json:"organizationIDContains,omitempty"`
-	OrganizationIDHasPrefix    *string  `json:"organizationIDHasPrefix,omitempty"`
-	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
-	OrganizationIDIsNil        *bool    `json:"organizationIDIsNil,omitempty"`
-	OrganizationIDNotNil       *bool    `json:"organizationIDNotNil,omitempty"`
-	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
-	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 	// setting edge predicates
 	HasSetting     *bool                     `json:"hasSetting,omitempty"`
 	HasSettingWith []*GroupSettingWhereInput `json:"hasSettingWith,omitempty"`
@@ -2467,11 +2429,9 @@ type UpdateEntitlementInput struct {
 	ExpiresAt      *time.Time `json:"expiresAt,omitempty"`
 	ClearExpiresAt *bool      `json:"clearExpiresAt,omitempty"`
 	// whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at
-	Cancelled *bool `json:"cancelled,omitempty"`
-	// the ID of the organization associated with the entitlement
-	OrganizationID *string `json:"organizationID,omitempty"`
-	OwnerID        *string `json:"ownerID,omitempty"`
-	ClearOwner     *bool   `json:"clearOwner,omitempty"`
+	Cancelled  *bool   `json:"cancelled,omitempty"`
+	OwnerID    *string `json:"ownerID,omitempty"`
+	ClearOwner *bool   `json:"clearOwner,omitempty"`
 }
 
 // UpdateGroupInput is used for update Group object.
@@ -2492,15 +2452,12 @@ type UpdateGroupInput struct {
 	LogoURL      *string `json:"logoURL,omitempty"`
 	ClearLogoURL *bool   `json:"clearLogoURL,omitempty"`
 	// The group's displayed 'friendly' name
-	DisplayName *string `json:"displayName,omitempty"`
-	// the ID of the organization the group belongs to
-	OrganizationID      *string  `json:"organizationID,omitempty"`
-	ClearOrganizationID *bool    `json:"clearOrganizationID,omitempty"`
-	SettingID           *string  `json:"settingID,omitempty"`
-	AddUserIDs          []string `json:"addUserIDs,omitempty"`
-	RemoveUserIDs       []string `json:"removeUserIDs,omitempty"`
-	ClearUsers          *bool    `json:"clearUsers,omitempty"`
-	OwnerID             *string  `json:"ownerID,omitempty"`
+	DisplayName   *string  `json:"displayName,omitempty"`
+	SettingID     *string  `json:"settingID,omitempty"`
+	AddUserIDs    []string `json:"addUserIDs,omitempty"`
+	RemoveUserIDs []string `json:"removeUserIDs,omitempty"`
+	ClearUsers    *bool    `json:"clearUsers,omitempty"`
+	OwnerID       *string  `json:"ownerID,omitempty"`
 }
 
 // UpdateGroupSettingInput is used for update GroupSetting object.

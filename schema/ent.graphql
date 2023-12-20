@@ -20,8 +20,6 @@ input CreateEntitlementInput {
   expiresAt: Time
   """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean
-  """the ID of the organization associated with the entitlement"""
-  organizationID: String!
   ownerID: ID
 }
 """
@@ -43,8 +41,6 @@ input CreateGroupInput {
   logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String
-  """the ID of the organization the group belongs to"""
-  organizationID: String
   settingID: ID!
   userIDs: [ID!]
   ownerID: ID!
@@ -301,8 +297,6 @@ type Entitlement implements Node {
   expiresAt: Time
   """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean!
-  """the ID of the organization associated with the entitlement"""
-  organizationID: String!
   owner: Organization
 }
 """A connection to a list of items."""
@@ -477,20 +471,6 @@ input EntitlementWhereInput {
   """cancelled field predicates"""
   cancelled: Boolean
   cancelledNEQ: Boolean
-  """organization_id field predicates"""
-  organizationID: String
-  organizationIDNEQ: String
-  organizationIDIn: [String!]
-  organizationIDNotIn: [String!]
-  organizationIDGT: String
-  organizationIDGTE: String
-  organizationIDLT: String
-  organizationIDLTE: String
-  organizationIDContains: String
-  organizationIDHasPrefix: String
-  organizationIDHasSuffix: String
-  organizationIDEqualFold: String
-  organizationIDContainsFold: String
   """owner edge predicates"""
   hasOwner: Boolean
   hasOwnerWith: [OrganizationWhereInput!]
@@ -513,8 +493,6 @@ type Group implements Node {
   logoURL: String
   """The group's displayed 'friendly' name"""
   displayName: String!
-  """the ID of the organization the group belongs to"""
-  organizationID: String
   setting: GroupSetting!
   users: [User!]
   owner: Organization!
@@ -833,22 +811,6 @@ input GroupWhereInput {
   displayNameHasSuffix: String
   displayNameEqualFold: String
   displayNameContainsFold: String
-  """organization_id field predicates"""
-  organizationID: String
-  organizationIDNEQ: String
-  organizationIDIn: [String!]
-  organizationIDNotIn: [String!]
-  organizationIDGT: String
-  organizationIDGTE: String
-  organizationIDLT: String
-  organizationIDLTE: String
-  organizationIDContains: String
-  organizationIDHasPrefix: String
-  organizationIDHasSuffix: String
-  organizationIDIsNil: Boolean
-  organizationIDNotNil: Boolean
-  organizationIDEqualFold: String
-  organizationIDContainsFold: String
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [GroupSettingWhereInput!]
@@ -2538,8 +2500,6 @@ input UpdateEntitlementInput {
   clearExpiresAt: Boolean
   """whether or not the customer has cancelled their entitlement - usually used in conjunction with expires and expires at"""
   cancelled: Boolean
-  """the ID of the organization associated with the entitlement"""
-  organizationID: String
   ownerID: ID
   clearOwner: Boolean
 }
@@ -2564,9 +2524,6 @@ input UpdateGroupInput {
   clearLogoURL: Boolean
   """The group's displayed 'friendly' name"""
   displayName: String
-  """the ID of the organization the group belongs to"""
-  organizationID: String
-  clearOrganizationID: Boolean
   settingID: ID
   addUserIDs: [ID!]
   removeUserIDs: [ID!]

@@ -1072,7 +1072,7 @@ func (m *MockSdkClientWriteAuthorizationModelRequestInterface) EXPECT() *MockSdk
 }
 
 // Body mocks base method.
-func (m *MockSdkClientWriteAuthorizationModelRequestInterface) Body(arg0 client.ClientWriteAuthorizationModelRequest) client.SdkClientWriteAuthorizationModelRequestInterface {
+func (m *MockSdkClientWriteAuthorizationModelRequestInterface) Body(arg0 openfga.WriteAuthorizationModelRequest) client.SdkClientWriteAuthorizationModelRequestInterface {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Body", arg0)
 	ret0, _ := ret[0].(client.SdkClientWriteAuthorizationModelRequestInterface)
@@ -1101,10 +1101,10 @@ func (mr *MockSdkClientWriteAuthorizationModelRequestInterfaceMockRecorder) Exec
 }
 
 // GetBody mocks base method.
-func (m *MockSdkClientWriteAuthorizationModelRequestInterface) GetBody() *client.ClientWriteAuthorizationModelRequest {
+func (m *MockSdkClientWriteAuthorizationModelRequestInterface) GetBody() *openfga.WriteAuthorizationModelRequest {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBody")
-	ret0, _ := ret[0].(*client.ClientWriteAuthorizationModelRequest)
+	ret0, _ := ret[0].(*openfga.WriteAuthorizationModelRequest)
 	return ret0
 }
 

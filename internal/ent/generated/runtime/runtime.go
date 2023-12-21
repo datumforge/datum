@@ -90,8 +90,8 @@ func init() {
 	group.Interceptors[1] = groupInters[0]
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0
-	groupMixinFields3 := groupMixin[3].Fields()
-	_ = groupMixinFields3
+	groupMixinFields2 := groupMixin[2].Fields()
+	_ = groupMixinFields2
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
 	// groupDescCreatedAt is the schema descriptor for created_at field.
@@ -115,7 +115,7 @@ func init() {
 	// group.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	group.DisplayNameValidator = groupDescDisplayName.Validators[0].(func(string) error)
 	// groupDescID is the schema descriptor for id field.
-	groupDescID := groupMixinFields3[0].Descriptor()
+	groupDescID := groupMixinFields2[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
 	group.DefaultID = groupDescID.Default.(func() string)
 	groupsettingMixin := schema.GroupSetting{}.Mixin()
@@ -441,8 +441,8 @@ func init() {
 	user.Interceptors[0] = userMixinInters1[0]
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
-	userMixinFields3 := userMixin[3].Fields()
-	_ = userMixinFields3
+	userMixinFields2 := userMixin[2].Fields()
+	_ = userMixinFields2
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
@@ -551,7 +551,7 @@ func init() {
 	// user.DefaultOauth holds the default value on creation for the oauth field.
 	user.DefaultOauth = userDescOauth.Default.(bool)
 	// userDescID is the schema descriptor for id field.
-	userDescID := userMixinFields3[0].Descriptor()
+	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
 	usersettingMixin := schema.UserSetting{}.Mixin()

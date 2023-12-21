@@ -7,17 +7,20 @@ import (
 	"github.com/datumforge/echox/middleware"
 )
 
+// Config contains the types used in executing redirects via the redirect middleware
 type Config struct {
 	// Skipper defines a function to skip middleware.
 	Skipper   middleware.Skipper
 	Redirects map[string]string
 }
 
+// DefaultConfig is the default configuration of the redirect middleware
 var DefaultConfig = Config{
 	Skipper:   middleware.DefaultSkipper,
 	Redirects: map[string]string{},
 }
 
+// New creates a new middleware function with the default config
 func New() echo.MiddlewareFunc {
 	return NewWithConfig(DefaultConfig)
 }

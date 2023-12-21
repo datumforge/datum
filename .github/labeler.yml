@@ -28,3 +28,34 @@ local-development:
   - any-glob-to-any-file: scripts/**
   - any-glob-to-any-file: Taskfile.yaml
   - any-glob-to-any-file: docker/**
+
+cli:
+- changed-files:
+  - any-glob-to-any-file: cmd/cli/**
+
+authorization:
+- changed-files:
+  - any-glob-to-any-file: fga/**
+  - any-glob-to-any-file: internal/fga/**
+
+httpserve:
+- changed-files:
+  - any-glob-to-any-file: internal/httpserve/**
+
+graphapi:
+- changed-files:
+  - any-glob-to-any-file: internal/graphapi/**
+
+codegenerators:
+- changed-files:
+  - any-glob-to-any-file: gen_schema.go
+  - any-glob-to-any-file: generate.go
+  - any-glob-to-any-file: gqlgen.yml
+  - any-glob-to-any-file: gqlgenc.yml
+  - any-glob-to-any-file: internal/ent/entc.go
+  - any-glob-to-any-file: internal/ent/templates/**
+
+datumclient:
+- changed-files:
+  - any-glob-to-any-file: internal/datumclient/**
+  - any-glob-to-any-file: query/**

@@ -1,13 +1,29 @@
 coverage:
   round: nearest
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
   status:
     project:
       default:
-        informational: true
-        threshold: 0.05%
+        target: auto
+        threshold: 5%
+        base: auto
+        informational: true # this will always allow the status check to pass
+        branches:
+          - main
+        if_ci_failed: error
+        flags:
+          - unit
     patch:
       default:
-        informational: true
+        target: auto
+        threshold: 0%
+        base: auto
+        if_ci_failed: error
+        flags:
+          - unit
+        informational: true # this will always allow the status check to pass
 ignore:
   - internal/ent/generated/**
   - internal/datumclient/**
@@ -21,3 +37,4 @@ ignore:
   - db/**
 comment:
   layout: diff, files
+  require_changes: true

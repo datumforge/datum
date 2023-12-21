@@ -2,6 +2,7 @@ package graphapi_test
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -42,6 +43,9 @@ func TestQuery_Organization(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -108,6 +112,9 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -167,6 +174,9 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -245,6 +255,9 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -395,6 +408,9 @@ func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -496,6 +512,9 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	echoContext := *ec
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
 
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
@@ -618,6 +637,9 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -718,6 +740,9 @@ func TestMutation_CascadeDelete(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -757,4 +782,66 @@ func TestMutation_CascadeDelete(t *testing.T) {
 
 	require.Equal(t, g.Group.ID, group1.ID)
 	require.NoError(t, err)
+}
+
+func TestMutation_CreateOrganizationTransaction(t *testing.T) {
+	// Add Authz Client Mock
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
+
+	mc := mock_client.NewMockSdkClient(mockCtrl)
+
+	// setup entdb with authz
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
+
+	// Setup Test Graph Client
+	client := graphTestClient(entClient)
+
+	// Setup echo context
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
+	if err != nil {
+		t.Fatal()
+	}
+
+	echoContext := *ec
+
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
+	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+
+	t.Run("Create should not write if FGA transaction fails", func(t *testing.T) {
+		input := datumclient.CreateOrganizationInput{
+			Name: gofakeit.Name(),
+		}
+
+		fgaErr := errors.New("unable to create relationship") //nolint:goerr113
+		mockWriteTuplesAny(mockCtrl, mc, reqCtx, fgaErr)
+
+		resp, err := client.CreateOrganization(reqCtx, input)
+
+		require.Error(t, err)
+		require.Empty(t, resp)
+
+		// Make sure the org was not added to the database (check without auth)
+		clientNoAuth := graphTestClientNoAuth(EntClient)
+
+		ec := echocontext.NewTestEchoContext()
+
+		reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+		orgs, err := clientNoAuth.GetAllOrganizations(reqCtx)
+		require.NoError(t, err)
+
+		for _, o := range orgs.Organizations.Edges {
+			if o.Node.Name == input.Name {
+				t.Errorf("org found that should not have been created due to FGA error")
+			}
+		}
+	})
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
@@ -17,6 +18,7 @@ func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err e
 		Handler: func(c echo.Context) error {
 			return h.JWKSWellKnownHandler(c)
 		},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return

@@ -25,5 +25,7 @@ type Handler struct {
 }
 
 type Response struct {
-	Message string `json:"message"`
+	StatusCode int         `json:"status,omitempty"`
+	Message    string      `json:"message,omitempty"`
+	Data       interface{} `json:"data,omitempty"`
 }

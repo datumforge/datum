@@ -8,9 +8,12 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/middleware/cachecontrol"
 	"github.com/datumforge/datum/internal/httpserve/middleware/cors"
+	echodebug "github.com/datumforge/datum/internal/httpserve/middleware/debug"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
+	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -64,14 +67,20 @@ func (s *Server) StartEchoServer() error {
 		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 		echozap.ZapLogger(s.logger),                  // add zap logger
 		echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-		cors.New(), // add cors middleware
-		mime.New(), // add mime middleware
+		cors.New(),              // add cors middleware
+		mime.New(),              // add mime middleware
+		cachecontrol.New(),      // add cache control middleware
+		ratelimit.RateLimiter(), // add ratelimit middleware
+		middleware.Secure(),     // add XSS middleware
 	)
+
+	if srv.Debug {
+		defaultMW = append(defaultMW, echodebug.BodyDump(s.logger.Sugar()))
+	}
 
 	for _, m := range defaultMW {
 		srv.Use(m)
 	}
-
 	// add all configured middleware
 	for _, m := range s.config.Middleware {
 		srv.Use(m)

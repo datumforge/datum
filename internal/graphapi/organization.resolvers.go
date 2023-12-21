@@ -20,7 +20,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	}
 
-	org, err := r.client.Organization.Create().SetInput(input).Save(ctx)
+	org, err := withTransactionalMutation(ctx).Organization.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			validationError := err.(*generated.ValidationError)
@@ -65,7 +65,7 @@ func (r *mutationResolver) UpdateOrganization(ctx context.Context, id string, in
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	org, err := r.client.Organization.Get(ctx, id)
+	org, err := withTransactionalMutation(ctx).Organization.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -115,7 +115,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	if err := r.client.Organization.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).Organization.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}
@@ -128,7 +128,7 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 		return nil, err
 	}
 
-	if err := generated.OrganizationEdgeCleanup(ctx, r.client, id); err != nil {
+	if err := generated.OrganizationEdgeCleanup(ctx, id); err != nil {
 		return nil, newCascadeDeleteError(err)
 	}
 
@@ -139,7 +139,6 @@ func (r *mutationResolver) DeleteOrganization(ctx context.Context, id string) (*
 func (r *queryResolver) Organization(ctx context.Context, id string) (*generated.Organization, error) {
 	// check permissions if authz is enabled
 	// if auth is disabled, policy decisions will be skipped
-	r.logger.Infow("auth policy", "disabled", r.authDisabled)
 	if r.authDisabled {
 		ctx = privacy.DecisionContext(ctx, privacy.Allow)
 	} else {

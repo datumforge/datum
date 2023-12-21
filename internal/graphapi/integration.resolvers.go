@@ -14,7 +14,7 @@ import (
 // CreateIntegration is the resolver for the createIntegration field.
 func (r *mutationResolver) CreateIntegration(ctx context.Context, input generated.CreateIntegrationInput) (*IntegrationCreatePayload, error) {
 	// TODO - add permissions checks
-	i, err := r.client.Integration.Create().SetInput(input).Save(ctx)
+	i, err := withTransactionalMutation(ctx).Integration.Create().SetInput(input).Save(ctx)
 	if err != nil {
 		if generated.IsValidationError(err) {
 			return nil, err
@@ -31,7 +31,7 @@ func (r *mutationResolver) CreateIntegration(ctx context.Context, input generate
 func (r *mutationResolver) UpdateIntegration(ctx context.Context, id string, input generated.UpdateIntegrationInput) (*IntegrationUpdatePayload, error) {
 	// TODO - add permissions checks
 
-	i, err := r.client.Integration.Get(ctx, id)
+	i, err := withTransactionalMutation(ctx).Integration.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
@@ -58,7 +58,7 @@ func (r *mutationResolver) UpdateIntegration(ctx context.Context, id string, inp
 func (r *mutationResolver) DeleteIntegration(ctx context.Context, id string) (*IntegrationDeletePayload, error) {
 	// TODO - add permissions checks
 
-	if err := r.client.Integration.DeleteOneID(id).Exec(ctx); err != nil {
+	if err := withTransactionalMutation(ctx).Integration.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
 		}

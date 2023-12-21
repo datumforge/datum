@@ -482,6 +482,9 @@ func TestMutation_CreateGroup(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	owner1 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -580,6 +583,9 @@ func TestMutation_CreateGroupNoAuth(t *testing.T) {
 	ec := echocontext.NewTestEchoContext()
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
@@ -691,6 +697,9 @@ func TestMutation_UpdateGroup(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	nameUpdate := gofakeit.Name()
@@ -783,11 +792,14 @@ func TestMutation_UpdateGroupNoAuth(t *testing.T) {
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
+	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	group := (&GroupBuilder{}).MustNew(reqCtx)
-
-	reqCtx = privacy.DecisionContext(reqCtx, privacy.Allow)
 
 	nameUpdate := gofakeit.Name()
 	nameUpdate2 := gofakeit.Name()
@@ -910,6 +922,9 @@ func TestMutation_DeleteGroup(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	group := (&GroupBuilder{}).MustNew(reqCtx)
@@ -982,6 +997,9 @@ func TestMutation_DeleteGroupNoAuth(t *testing.T) {
 	ec := echocontext.NewTestEchoContext()
 
 	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
 
 	ec.SetRequest(ec.Request().WithContext(reqCtx))
 

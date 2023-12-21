@@ -26,7 +26,6 @@ func (Group) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
-		mixin.BaseMixin{},
 		mixin.IDMixin{},
 	}
 }

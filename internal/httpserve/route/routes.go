@@ -7,9 +7,12 @@ import (
 )
 
 type Route struct {
-	Method  string
-	Path    string
-	Handler echo.HandlerFunc
+	Method      string
+	Path        string
+	Handler     echo.HandlerFunc
+	Middlewares []echo.MiddlewareFunc
+
+	Name string
 }
 
 // RegisterRoutes with the echo routers
@@ -69,9 +72,12 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 // RegisterRoute with the echo server given a method, path, and handler definition
 func (r *Route) RegisterRoute(router *echo.Echo) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method:  r.Method,
-		Path:    r.Path,
-		Handler: r.Handler,
+		Method:      r.Method,
+		Path:        r.Path,
+		Handler:     r.Handler,
+		Middlewares: r.Middlewares,
+
+		Name: r.Name,
 	})
 
 	return

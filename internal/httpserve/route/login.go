@@ -5,8 +5,13 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
+	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/middleware/cachecontrol"
+	dump "github.com/datumforge/datum/internal/httpserve/middleware/debug"
+	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
+	"github.com/datumforge/datum/internal/httpserve/middleware/secure"
 )
 
 // Login is oriented towards human users who use their email and password for
@@ -20,6 +25,8 @@ import (
 // without the user having to log in again. The refresh token overlaps with the access
 // token to provide a seamless authentication experience and the user can refresh their
 // access token so long as the refresh token is valid.
+var logger *zap.Logger
+
 func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
 		Method: http.MethodPost,
@@ -27,7 +34,7 @@ func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Handler: func(c echo.Context) error {
 			return h.LoginHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger), secure.Secure(), ratelimit.RateLimiter(), cachecontrol.New()},
 	})
 
 	return

@@ -34,7 +34,7 @@ func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Handler: func(c echo.Context) error {
 			return h.LoginHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger), secure.Secure(), ratelimit.RateLimiter(), cachecontrol.New()},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return

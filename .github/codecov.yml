@@ -1,0 +1,23 @@
+coverage:
+  round: nearest
+  status:
+    project:
+      default:
+        informational: true
+        threshold: 0.05%
+    patch:
+      default:
+        informational: true
+ignore:
+  - internal/ent/generated/**
+  - internal/datumclient/**
+  - query/**
+  - schema/**
+  - scripts/**
+  - gen_schema.go
+  - generate.go
+  - tools.go
+  - docker/**
+  - db/**
+comment:
+  layout: diff, files

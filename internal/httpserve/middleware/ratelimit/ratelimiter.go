@@ -14,8 +14,8 @@ func RateLimiter() echo.MiddlewareFunc {
 		Skipper: middleware.DefaultSkipper,
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
 			middleware.RateLimiterMemoryStoreConfig{
-				Rate:      1,               // nolint: gomnd
-				Burst:     3,               // nolint: gomnd
+				Rate:      10,              // nolint: gomnd
+				Burst:     30,              // nolint: gomnd
 				ExpiresIn: 1 * time.Minute, // nolint: gomnd
 			},
 		),

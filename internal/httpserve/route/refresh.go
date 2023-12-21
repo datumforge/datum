@@ -7,7 +7,6 @@ import (
 	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	dump "github.com/datumforge/datum/internal/httpserve/middleware/debug"
 )
 
 // registerRefreshHandler re-authenticates users and api keys using a refresh token rather than
@@ -24,7 +23,7 @@ func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) 
 		Handler: func(c echo.Context) error {
 			return h.RefreshHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger)},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return

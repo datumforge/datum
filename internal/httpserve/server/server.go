@@ -67,18 +67,20 @@ func (s *Server) StartEchoServer() error {
 		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
 		echozap.ZapLogger(s.logger),                  // add zap logger
 		echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
-		cors.New(),                   // add cors middleware
-		mime.New(),                   // add mime middleware
-		cachecontrol.New(),           // add cache control middleware
-		ratelimit.RateLimiter(),      // add ratelimit middleware
-		middleware.Secure(),          // add XSS middleware
-		echodebug.BodyDump(s.logger), // adds debugging body dump middleware
+		cors.New(),              // add cors middleware
+		mime.New(),              // add mime middleware
+		cachecontrol.New(),      // add cache control middleware
+		ratelimit.RateLimiter(), // add ratelimit middleware
+		middleware.Secure(),     // add XSS middleware
 	)
+
+	if srv.Debug {
+		defaultMW = append(defaultMW, echodebug.BodyDump(s.logger.Sugar()))
+	}
 
 	for _, m := range defaultMW {
 		srv.Use(m)
 	}
-
 	// add all configured middleware
 	for _, m := range s.config.Middleware {
 		srv.Use(m)

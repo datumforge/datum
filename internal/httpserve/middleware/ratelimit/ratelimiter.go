@@ -12,15 +12,6 @@ import (
 func RateLimiter() echo.MiddlewareFunc {
 	rateLimitConfig := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,
-		//		Skipper: func(c echo.Context) bool {
-		//			for _, path := range protectedPaths[c.Request().Method] {
-		//				if c.Path() == path {
-		//					return false
-		//				}
-		//			}
-		//
-		//			return true
-		//		},
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
 			middleware.RateLimiterMemoryStoreConfig{
 				Rate:      1,               // nolint: gomnd

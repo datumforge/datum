@@ -7,7 +7,6 @@ import (
 	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	dump "github.com/datumforge/datum/internal/httpserve/middleware/debug"
 )
 
 // registerJwksWellKnownHandler supplies the JWKS endpoint.
@@ -19,7 +18,7 @@ func registerJwksWellKnownHandler(router *echo.Echo, h *handlers.Handler) (err e
 		Handler: func(c echo.Context) error {
 			return h.JWKSWellKnownHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger)},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return

@@ -12,7 +12,7 @@ import (
 )
 
 // BodyDump prints out the request body for debugging purpose but attempts to obfuscate sensitive fields within the requests
-func BodyDump(l *zap.Logger) echo.MiddlewareFunc {
+func BodyDump(l *zap.SugaredLogger) echo.MiddlewareFunc {
 	return middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
 		secretFields := []string{"new_password", "old_password", "password", "access_token", "refresh_token"}
 		if len(reqBody) > 0 {
@@ -60,7 +60,7 @@ func BodyDump(l *zap.Logger) echo.MiddlewareFunc {
 					req.URL, // request URI (path)
 				)
 			}
-			l.Sugar().Infof("Request Body: %v\n", string(reqBody))
+			l.Infof("Request Body: %v\n", string(reqBody))
 		}
 
 		if (c.Request().Method == "PATCH" || c.Request().Method == "POST") && len(resBody) > 0 {
@@ -97,7 +97,7 @@ func BodyDump(l *zap.Logger) echo.MiddlewareFunc {
 					res.Header(),
 				)
 			}
-			l.Sugar().Infof("Response Body: %v\n", string(resBody))
+			l.Infof("Response Body: %v\n", string(resBody))
 		}
 	})
 }

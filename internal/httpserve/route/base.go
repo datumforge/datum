@@ -8,8 +8,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	dump "github.com/datumforge/datum/internal/httpserve/middleware/debug"
-	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 )
 
 func registerLivenessHandler(router *echo.Echo) (err error) {
@@ -21,7 +19,7 @@ func registerLivenessHandler(router *echo.Echo) (err error) {
 				"status": "UP",
 			})
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger)},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return
@@ -34,7 +32,7 @@ func registerReadinessHandler(router *echo.Echo, h *handlers.Handler) (err error
 		Handler: func(c echo.Context) error {
 			return h.ReadyChecks.ReadyHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger), ratelimit.RateLimiter()},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return
@@ -45,7 +43,7 @@ func registerMetricsHandler(router *echo.Echo) (err error) {
 		Method:      http.MethodGet,
 		Path:        "/metrics",
 		Handler:     echo.WrapHandler(promhttp.Handler()),
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover(), dump.BodyDump(logger)},
+		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
 	})
 
 	return

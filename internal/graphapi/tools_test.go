@@ -66,7 +66,7 @@ func setupDB() {
 		Debug:           true,
 		DriverName:      dialect.SQLite,
 		PrimaryDBSource: testDBURI,
-		CacheTTL:        1 * time.Second, // do not cache results in tests
+		CacheTTL:        -1 * time.Second, // do not cache results in tests
 	}
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
@@ -103,7 +103,7 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 		Debug:           true,
 		DriverName:      dialect.SQLite,
 		PrimaryDBSource: testDBURI,
-		CacheTTL:        1 * time.Second, // do not cache results in tests
+		CacheTTL:        -1 * time.Second, // do not cache results in tests
 	}
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)

@@ -30,6 +30,20 @@ func HookOrganization() ent.Hook {
 					// add the org setting ID to the input
 					mutation.SetSettingID(orgSettingID)
 				}
+
+				// check if this is a child org, error if parent org is a personal org
+				parentOrgID, ok := mutation.ParentID()
+				if ok {
+					// check if parent org is a personal org
+					parentOrg, err := mutation.Client().Organization.Get(ctx, parentOrgID)
+					if err != nil {
+						return nil, err
+					}
+
+					if parentOrg.PersonalOrg {
+						return nil, ErrPersonalOrgsNoChildren
+					}
+				}
 			}
 
 			if name, ok := mutation.Name(); ok {

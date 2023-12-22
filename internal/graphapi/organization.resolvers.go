@@ -44,7 +44,7 @@ func (r *mutationResolver) CreateOrganization(ctx context.Context, input generat
 
 		r.logger.Errorw("failed to create organization", "error", err)
 
-		return nil, ErrInternalServerError
+		return nil, err
 	}
 
 	return &OrganizationCreatePayload{Organization: org}, nil

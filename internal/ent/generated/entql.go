@@ -196,6 +196,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldDisplayName:          {Type: field.TypeString, Column: organization.FieldDisplayName},
 			organization.FieldDescription:          {Type: field.TypeString, Column: organization.FieldDescription},
 			organization.FieldParentOrganizationID: {Type: field.TypeString, Column: organization.FieldParentOrganizationID},
+			organization.FieldPersonalOrg:          {Type: field.TypeBool, Column: organization.FieldPersonalOrg},
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
@@ -1408,6 +1409,11 @@ func (f *OrganizationFilter) WhereDescription(p entql.StringP) {
 // WhereParentOrganizationID applies the entql string predicate on the parent_organization_id field.
 func (f *OrganizationFilter) WhereParentOrganizationID(p entql.StringP) {
 	f.Where(p.Field(organization.FieldParentOrganizationID))
+}
+
+// WherePersonalOrg applies the entql bool predicate on the personal_org field.
+func (f *OrganizationFilter) WherePersonalOrg(p entql.BoolP) {
+	f.Where(p.Field(organization.FieldPersonalOrg))
 }
 
 // WhereHasParent applies a predicate to check if query has an edge parent.

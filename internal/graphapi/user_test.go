@@ -2,6 +2,7 @@ package graphapi_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
@@ -240,7 +241,24 @@ func TestMutation_CreateUser(t *testing.T) {
 			// ensure a user setting was created
 			assert.NotNil(t, resp.CreateUser.User.Setting)
 
-			// TODO: make sure an org was created, requires auth checks first
+			// ensure personal org is created
+			personalOrg := true
+			whereInput := &datumclient.OrganizationWhereInput{
+				PersonalOrg: &personalOrg,
+			}
+
+			// TODO: update to pull by user once https://github.com/datumforge/datum/issues/293 is complete
+			orgs, err := client.OrganizationsWhere(reqCtx, whereInput)
+			require.NoError(t, err)
+
+			orgCreated := false
+			for _, o := range orgs.Organizations.GetEdges() {
+				if *o.Node.Description == fmt.Sprintf("Personal Organization - %s %s", resp.CreateUser.User.FirstName, resp.CreateUser.User.LastName) {
+					orgCreated = true
+				}
+			}
+
+			assert.True(t, orgCreated, "personal org expected to be created")
 		})
 	}
 }

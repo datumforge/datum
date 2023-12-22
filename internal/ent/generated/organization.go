@@ -38,6 +38,8 @@ type Organization struct {
 	Description string `json:"description,omitempty"`
 	// The ID of the parent organization for the organization.
 	ParentOrganizationID string `json:"parent_organization_id,omitempty"`
+	// orgs directly associated with a user
+	PersonalOrg bool `json:"personal_org,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrganizationQuery when eager-loading is set.
 	Edges        OrganizationEdges `json:"edges"`
@@ -161,6 +163,8 @@ func (*Organization) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case organization.FieldPersonalOrg:
+			values[i] = new(sql.NullBool)
 		case organization.FieldID, organization.FieldCreatedBy, organization.FieldUpdatedBy, organization.FieldDeletedBy, organization.FieldName, organization.FieldDisplayName, organization.FieldDescription, organization.FieldParentOrganizationID:
 			values[i] = new(sql.NullString)
 		case organization.FieldCreatedAt, organization.FieldUpdatedAt, organization.FieldDeletedAt:
@@ -245,6 +249,12 @@ func (o *Organization) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field parent_organization_id", values[i])
 			} else if value.Valid {
 				o.ParentOrganizationID = value.String
+			}
+		case organization.FieldPersonalOrg:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field personal_org", values[i])
+			} else if value.Valid {
+				o.PersonalOrg = value.Bool
 			}
 		default:
 			o.selectValues.Set(columns[i], values[i])
@@ -351,6 +361,9 @@ func (o *Organization) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("parent_organization_id=")
 	builder.WriteString(o.ParentOrganizationID)
+	builder.WriteString(", ")
+	builder.WriteString("personal_org=")
+	builder.WriteString(fmt.Sprintf("%v", o.PersonalOrg))
 	builder.WriteByte(')')
 	return builder.String()
 }

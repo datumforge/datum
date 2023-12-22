@@ -143,6 +143,8 @@ input CreateOrganizationInput {
   displayName: String
   """An optional description of the organization"""
   description: String
+  """orgs directly associated with a user"""
+  personalOrg: Boolean
   parentID: ID
   userIDs: [ID!]
   groupIDs: [ID!]
@@ -1466,6 +1468,8 @@ type Organization implements Node {
   displayName: String!
   """An optional description of the organization"""
   description: String
+  """orgs directly associated with a user"""
+  personalOrg: Boolean!
   parent: Organization
   children(
     """Returns the elements in the list that come after the specified cursor."""
@@ -1915,6 +1919,9 @@ input OrganizationWhereInput {
   parentOrganizationIDNotNil: Boolean
   parentOrganizationIDEqualFold: ID
   parentOrganizationIDContainsFold: ID
+  """personal_org field predicates"""
+  personalOrg: Boolean
+  personalOrgNEQ: Boolean
   """parent edge predicates"""
   hasParent: Boolean
   hasParentWith: [OrganizationWhereInput!]

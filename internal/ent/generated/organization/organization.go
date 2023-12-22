@@ -35,6 +35,8 @@ const (
 	FieldDescription = "description"
 	// FieldParentOrganizationID holds the string denoting the parent_organization_id field in the database.
 	FieldParentOrganizationID = "parent_organization_id"
+	// FieldPersonalOrg holds the string denoting the personal_org field in the database.
+	FieldPersonalOrg = "personal_org"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
@@ -116,6 +118,7 @@ var Columns = []string{
 	FieldDisplayName,
 	FieldDescription,
 	FieldParentOrganizationID,
+	FieldPersonalOrg,
 }
 
 var (
@@ -155,6 +158,8 @@ var (
 	DefaultDisplayName string
 	// DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	DisplayNameValidator func(string) error
+	// DefaultPersonalOrg holds the default value on creation for the "personal_org" field.
+	DefaultPersonalOrg bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -215,6 +220,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByParentOrganizationID orders the results by the parent_organization_id field.
 func ByParentOrganizationID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldParentOrganizationID, opts...).ToFunc()
+}
+
+// ByPersonalOrg orders the results by the personal_org field.
+func ByPersonalOrg(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPersonalOrg, opts...).ToFunc()
 }
 
 // ByParentField orders the results by parent field.

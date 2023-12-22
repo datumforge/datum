@@ -1101,6 +1101,11 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				selectedFields = append(selectedFields, organization.FieldDescription)
 				fieldSeen[organization.FieldDescription] = struct{}{}
 			}
+		case "personalOrg":
+			if _, ok := fieldSeen[organization.FieldPersonalOrg]; !ok {
+				selectedFields = append(selectedFields, organization.FieldPersonalOrg)
+				fieldSeen[organization.FieldPersonalOrg] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

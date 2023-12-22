@@ -207,6 +207,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 160},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "personal_org", Type: field.TypeBool, Default: false},
 		{Name: "parent_organization_id", Type: field.TypeString, Nullable: true},
 	}
 	// OrganizationsTable holds the schema information for the "organizations" table.
@@ -217,7 +218,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "organizations_organizations_children",
-				Columns:    []*schema.Column{OrganizationsColumns[10]},
+				Columns:    []*schema.Column{OrganizationsColumns[11]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

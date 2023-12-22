@@ -117,6 +117,11 @@ func ParentOrganizationID(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldParentOrganizationID, v))
 }
 
+// PersonalOrg applies equality check predicate on the "personal_org" field. It's identical to PersonalOrgEQ.
+func PersonalOrg(v bool) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldPersonalOrg, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Organization {
 	return predicate.Organization(sql.FieldEQ(FieldCreatedAt, v))
@@ -750,6 +755,16 @@ func ParentOrganizationIDEqualFold(v string) predicate.Organization {
 // ParentOrganizationIDContainsFold applies the ContainsFold predicate on the "parent_organization_id" field.
 func ParentOrganizationIDContainsFold(v string) predicate.Organization {
 	return predicate.Organization(sql.FieldContainsFold(FieldParentOrganizationID, v))
+}
+
+// PersonalOrgEQ applies the EQ predicate on the "personal_org" field.
+func PersonalOrgEQ(v bool) predicate.Organization {
+	return predicate.Organization(sql.FieldEQ(FieldPersonalOrg, v))
+}
+
+// PersonalOrgNEQ applies the NEQ predicate on the "personal_org" field.
+func PersonalOrgNEQ(v bool) predicate.Organization {
+	return predicate.Organization(sql.FieldNEQ(FieldPersonalOrg, v))
 }
 
 // HasParent applies the HasEdge predicate on the "parent" edge.

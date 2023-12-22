@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	cacheTTL = 1 * time.Second
+	DefaultCacheTTL = 1 * time.Second
 )
 
 // EntClientConfig configures the entsql drivers
@@ -76,7 +76,7 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 	// Decorates the sql.Driver with entcache.Driver on the primaryDB
 	drvPrimary := entcache.NewDriver(
 		c.primaryDB,
-		entcache.TTL(cacheTTL), // set the TTL on the cache
+		entcache.TTL(c.config.CacheTTL), // set the TTL on the cache
 	)
 
 	if err := c.createSchema(ctx, c.primaryDB); err != nil {
@@ -96,7 +96,7 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 		// Decorates the sql.Driver with entcache.Driver on the primaryDB
 		drvSecondary := entcache.NewDriver(
 			c.secondaryDB,
-			entcache.TTL(cacheTTL), // set the TTL on the cache
+			entcache.TTL(c.config.CacheTTL), // set the TTL on the cache
 		)
 
 		if err := c.createSchema(ctx, c.secondaryDB); err != nil {

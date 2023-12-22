@@ -158,6 +158,20 @@ func (oc *OrganizationCreate) SetNillableParentOrganizationID(s *string) *Organi
 	return oc
 }
 
+// SetPersonalOrg sets the "personal_org" field.
+func (oc *OrganizationCreate) SetPersonalOrg(b bool) *OrganizationCreate {
+	oc.mutation.SetPersonalOrg(b)
+	return oc
+}
+
+// SetNillablePersonalOrg sets the "personal_org" field if the given value is not nil.
+func (oc *OrganizationCreate) SetNillablePersonalOrg(b *bool) *OrganizationCreate {
+	if b != nil {
+		oc.SetPersonalOrg(*b)
+	}
+	return oc
+}
+
 // SetID sets the "id" field.
 func (oc *OrganizationCreate) SetID(s string) *OrganizationCreate {
 	oc.mutation.SetID(s)
@@ -355,6 +369,10 @@ func (oc *OrganizationCreate) defaults() error {
 		v := organization.DefaultDisplayName
 		oc.mutation.SetDisplayName(v)
 	}
+	if _, ok := oc.mutation.PersonalOrg(); !ok {
+		v := organization.DefaultPersonalOrg
+		oc.mutation.SetPersonalOrg(v)
+	}
 	if _, ok := oc.mutation.ID(); !ok {
 		if organization.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized organization.DefaultID (forgotten import generated/runtime?)")
@@ -388,6 +406,9 @@ func (oc *OrganizationCreate) check() error {
 		if err := organization.DisplayNameValidator(v); err != nil {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Organization.display_name": %w`, err)}
 		}
+	}
+	if _, ok := oc.mutation.PersonalOrg(); !ok {
+		return &ValidationError{Name: "personal_org", err: errors.New(`generated: missing required field "Organization.personal_org"`)}
 	}
 	return nil
 }
@@ -460,6 +481,10 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 	if value, ok := oc.mutation.Description(); ok {
 		_spec.SetField(organization.FieldDescription, field.TypeString, value)
 		_node.Description = value
+	}
+	if value, ok := oc.mutation.PersonalOrg(); ok {
+		_spec.SetField(organization.FieldPersonalOrg, field.TypeBool, value)
+		_node.PersonalOrg = value
 	}
 	if nodes := oc.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

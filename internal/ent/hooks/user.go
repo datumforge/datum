@@ -109,13 +109,14 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 	// generate random name for personal orgs
 	name := caser.String(petname.Generate(2, " ")) //nolint:gomnd
 	displayName := name
-
+	personalOrg := true
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
 	return generated.CreateOrganizationInput{
 		Name:        name,
 		DisplayName: &displayName,
 		Description: &desc,
+		PersonalOrg: &personalOrg,
 	}
 }
 

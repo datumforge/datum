@@ -59,6 +59,10 @@ func (Organization) Fields() []ent.Field {
 				entgql.Skip(entgql.SkipMutationUpdateInput, entgql.SkipType),
 				entoas.Schema(ogen.String()),
 			),
+		field.Bool("personal_org").
+			Comment("orgs directly associated with a user").
+			Default(false).
+			Immutable(),
 	}
 }
 

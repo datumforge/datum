@@ -4,6 +4,7 @@ query GetOrganizationByID($organizationId: ID!) {
     name
     displayName
     description
+    personalOrg
     parent {
       id
       name
@@ -50,6 +51,54 @@ query GetAllOrganizations {
         name
         displayName
         description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+
+query OrganizationsWhere($where: OrganizationWhereInput) {
+  organizations(where: $where) {
+      edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
         parent {
           id
           name
@@ -95,6 +144,7 @@ mutation CreateOrganization($input: CreateOrganizationInput!) {
       name
       displayName
       description
+      personalOrg
       createdAt
       updatedAt
       setting {

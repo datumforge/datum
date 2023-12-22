@@ -81,6 +81,8 @@ type (
 		PrimaryDBSource string
 		// Secondary write databsae source (optional)
 		SecondaryDBSource string
+		// CacheTTL to have results cached for subsequent requests
+		CacheTTL time.Duration
 	}
 
 	// Auth settings including providers and the ability to enable/disable auth all together

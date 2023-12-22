@@ -317,6 +317,10 @@ func init() {
 	organization.DefaultDisplayName = organizationDescDisplayName.Default.(string)
 	// organization.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
 	organization.DisplayNameValidator = organizationDescDisplayName.Validators[0].(func(string) error)
+	// organizationDescPersonalOrg is the schema descriptor for personal_org field.
+	organizationDescPersonalOrg := organizationFields[4].Descriptor()
+	// organization.DefaultPersonalOrg holds the default value on creation for the personal_org field.
+	organization.DefaultPersonalOrg = organizationDescPersonalOrg.Default.(bool)
 	// organizationDescID is the schema descriptor for id field.
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.

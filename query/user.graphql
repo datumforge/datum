@@ -33,7 +33,7 @@ query GetUserByID($userId: ID!) {
 
 query GetUserByIDWithOrgs($userId: ID!) {
   user(id: $userId) {
-id
+    id
     firstName
     lastName
     displayName

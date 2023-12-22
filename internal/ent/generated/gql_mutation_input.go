@@ -783,6 +783,7 @@ type CreateOrganizationInput struct {
 	Name             string
 	DisplayName      *string
 	Description      *string
+	PersonalOrg      *bool
 	ParentID         *string
 	UserIDs          []string
 	GroupIDs         []string
@@ -812,6 +813,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
+	}
+	if v := i.PersonalOrg; v != nil {
+		m.SetPersonalOrg(*v)
 	}
 	if v := i.ParentID; v != nil {
 		m.SetParentID(*v)

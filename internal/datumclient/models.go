@@ -147,7 +147,9 @@ type CreateOrganizationInput struct {
 	// The organization's displayed 'friendly' name
 	DisplayName *string `json:"displayName,omitempty"`
 	// An optional description of the organization
-	Description      *string  `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
+	// orgs directly associated with a user
+	PersonalOrg      *bool    `json:"personalOrg,omitempty"`
 	ParentID         *string  `json:"parentID,omitempty"`
 	UserIDs          []string `json:"userIDs,omitempty"`
 	GroupIDs         []string `json:"groupIDs,omitempty"`
@@ -1550,7 +1552,9 @@ type Organization struct {
 	// The organization's displayed 'friendly' name
 	DisplayName string `json:"displayName"`
 	// An optional description of the organization
-	Description   *string                `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
+	// orgs directly associated with a user
+	PersonalOrg   bool                   `json:"personalOrg"`
 	Parent        *Organization          `json:"parent,omitempty"`
 	Children      OrganizationConnection `json:"children"`
 	Users         []*User                `json:"users,omitempty"`
@@ -2021,6 +2025,9 @@ type OrganizationWhereInput struct {
 	ParentOrganizationIDNotNil       *bool    `json:"parentOrganizationIDNotNil,omitempty"`
 	ParentOrganizationIDEqualFold    *string  `json:"parentOrganizationIDEqualFold,omitempty"`
 	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
+	// personal_org field predicates
+	PersonalOrg    *bool `json:"personalOrg,omitempty"`
+	PersonalOrgNeq *bool `json:"personalOrgNEQ,omitempty"`
 	// parent edge predicates
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`

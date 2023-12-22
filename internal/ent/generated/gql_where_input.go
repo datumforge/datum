@@ -4008,6 +4008,10 @@ type OrganizationWhereInput struct {
 	ParentOrganizationIDEqualFold    *string  `json:"parentOrganizationIDEqualFold,omitempty"`
 	ParentOrganizationIDContainsFold *string  `json:"parentOrganizationIDContainsFold,omitempty"`
 
+	// "personal_org" field predicates.
+	PersonalOrg    *bool `json:"personalOrg,omitempty"`
+	PersonalOrgNEQ *bool `json:"personalOrgNEQ,omitempty"`
+
 	// "parent" edge predicates.
 	HasParent     *bool                     `json:"hasParent,omitempty"`
 	HasParentWith []*OrganizationWhereInput `json:"hasParentWith,omitempty"`
@@ -4438,6 +4442,12 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 	}
 	if i.ParentOrganizationIDContainsFold != nil {
 		predicates = append(predicates, organization.ParentOrganizationIDContainsFold(*i.ParentOrganizationIDContainsFold))
+	}
+	if i.PersonalOrg != nil {
+		predicates = append(predicates, organization.PersonalOrgEQ(*i.PersonalOrg))
+	}
+	if i.PersonalOrgNEQ != nil {
+		predicates = append(predicates, organization.PersonalOrgNEQ(*i.PersonalOrgNEQ))
 	}
 
 	if i.HasParent != nil {

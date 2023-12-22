@@ -6755,6 +6755,7 @@ type OrganizationMutation struct {
 	name                 *string
 	display_name         *string
 	description          *string
+	personal_org         *bool
 	clearedFields        map[string]struct{}
 	parent               *string
 	clearedparent        bool
@@ -7325,6 +7326,42 @@ func (m *OrganizationMutation) ResetParentOrganizationID() {
 	delete(m.clearedFields, organization.FieldParentOrganizationID)
 }
 
+// SetPersonalOrg sets the "personal_org" field.
+func (m *OrganizationMutation) SetPersonalOrg(b bool) {
+	m.personal_org = &b
+}
+
+// PersonalOrg returns the value of the "personal_org" field in the mutation.
+func (m *OrganizationMutation) PersonalOrg() (r bool, exists bool) {
+	v := m.personal_org
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPersonalOrg returns the old "personal_org" field's value of the Organization entity.
+// If the Organization object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrganizationMutation) OldPersonalOrg(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPersonalOrg is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPersonalOrg requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPersonalOrg: %w", err)
+	}
+	return oldValue.PersonalOrg, nil
+}
+
+// ResetPersonalOrg resets all changes to the "personal_org" field.
+func (m *OrganizationMutation) ResetPersonalOrg() {
+	m.personal_org = nil
+}
+
 // SetParentID sets the "parent" edge to the Organization entity by id.
 func (m *OrganizationMutation) SetParentID(id string) {
 	m.parent = &id
@@ -7762,7 +7799,7 @@ func (m *OrganizationMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrganizationMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, organization.FieldCreatedAt)
 	}
@@ -7793,6 +7830,9 @@ func (m *OrganizationMutation) Fields() []string {
 	if m.parent != nil {
 		fields = append(fields, organization.FieldParentOrganizationID)
 	}
+	if m.personal_org != nil {
+		fields = append(fields, organization.FieldPersonalOrg)
+	}
 	return fields
 }
 
@@ -7821,6 +7861,8 @@ func (m *OrganizationMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case organization.FieldParentOrganizationID:
 		return m.ParentOrganizationID()
+	case organization.FieldPersonalOrg:
+		return m.PersonalOrg()
 	}
 	return nil, false
 }
@@ -7850,6 +7892,8 @@ func (m *OrganizationMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDescription(ctx)
 	case organization.FieldParentOrganizationID:
 		return m.OldParentOrganizationID(ctx)
+	case organization.FieldPersonalOrg:
+		return m.OldPersonalOrg(ctx)
 	}
 	return nil, fmt.Errorf("unknown Organization field %s", name)
 }
@@ -7928,6 +7972,13 @@ func (m *OrganizationMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetParentOrganizationID(v)
+		return nil
+	case organization.FieldPersonalOrg:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPersonalOrg(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)
@@ -8046,6 +8097,9 @@ func (m *OrganizationMutation) ResetField(name string) error {
 		return nil
 	case organization.FieldParentOrganizationID:
 		m.ResetParentOrganizationID()
+		return nil
+	case organization.FieldPersonalOrg:
+		m.ResetPersonalOrg()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization field %s", name)

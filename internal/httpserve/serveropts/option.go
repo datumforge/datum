@@ -118,6 +118,7 @@ func WithSQLiteDB(settings map[string]any) ServerOption {
 			MultiWrite:      dbSettings["multi-write"].(bool),
 			DriverName:      dialect.SQLite,
 			PrimaryDBSource: dbSettings["primary"].(string),
+			CacheTTL:        entdb.DefaultCacheTTL,
 		}
 
 		if dbConfig.MultiWrite {

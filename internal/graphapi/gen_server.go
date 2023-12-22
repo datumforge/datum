@@ -349,6 +349,7 @@ type ComplexityRoot struct {
 		Name          func(childComplexity int) int
 		Oauthprovider func(childComplexity int) int
 		Parent        func(childComplexity int) int
+		PersonalOrg   func(childComplexity int) int
 		Setting       func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 		UpdatedBy     func(childComplexity int) int
@@ -2189,6 +2190,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organization.Parent(childComplexity), true
 
+	case "Organization.personalOrg":
+		if e.complexity.Organization.PersonalOrg == nil {
+			break
+		}
+
+		return e.complexity.Organization.PersonalOrg(childComplexity), true
+
 	case "Organization.setting":
 		if e.complexity.Organization.Setting == nil {
 			break
@@ -3736,6 +3744,8 @@ input CreateOrganizationInput {
   displayName: String
   """An optional description of the organization"""
   description: String
+  """orgs directly associated with a user"""
+  personalOrg: Boolean
   parentID: ID
   userIDs: [ID!]
   groupIDs: [ID!]
@@ -5059,6 +5069,8 @@ type Organization implements Node {
   displayName: String!
   """An optional description of the organization"""
   description: String
+  """orgs directly associated with a user"""
+  personalOrg: Boolean!
   parent: Organization
   children(
     """Returns the elements in the list that come after the specified cursor."""
@@ -5508,6 +5520,9 @@ input OrganizationWhereInput {
   parentOrganizationIDNotNil: Boolean
   parentOrganizationIDEqualFold: ID
   parentOrganizationIDContainsFold: ID
+  """personal_org field predicates"""
+  personalOrg: Boolean
+  personalOrgNEQ: Boolean
   """parent edge predicates"""
   hasParent: Boolean
   hasParentWith: [OrganizationWhereInput!]
@@ -10040,6 +10055,8 @@ func (ec *executionContext) fieldContext_Entitlement_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -11242,6 +11259,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -13280,6 +13299,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -16615,6 +16636,8 @@ func (ec *executionContext) fieldContext_OauthProvider_owner(ctx context.Context
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -18542,6 +18565,50 @@ func (ec *executionContext) fieldContext_Organization_description(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _Organization_personalOrg(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_personalOrg(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PersonalOrg, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Organization_personalOrg(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Organization_parent(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Organization_parent(ctx, field)
 	if err != nil {
@@ -18598,6 +18665,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -19344,6 +19413,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -19467,6 +19538,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -20296,6 +20369,8 @@ func (ec *executionContext) fieldContext_OrganizationSetting_organization(ctx co
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -20854,6 +20929,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -23430,6 +23507,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -25814,6 +25893,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_displayName(ctx, field)
 			case "description":
 				return ec.fieldContext_Organization_description(ctx, field)
+			case "personalOrg":
+				return ec.fieldContext_Organization_personalOrg(ctx, field)
 			case "parent":
 				return ec.fieldContext_Organization_parent(ctx, field)
 			case "children":
@@ -30197,7 +30278,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "parentID", "userIDs", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "parentID", "userIDs", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30253,6 +30334,13 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.Description = data
+		case "personalOrg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalOrg"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PersonalOrg = data
 		case "parentID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -38119,7 +38207,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasUsers", "hasUsersWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasOauthprovider", "hasOauthproviderWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasUsers", "hasUsersWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasOauthprovider", "hasOauthproviderWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38910,6 +38998,20 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.ParentOrganizationIDContainsFold = data
+		case "personalOrg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalOrg"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PersonalOrg = data
+		case "personalOrgNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalOrgNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PersonalOrgNEQ = data
 		case "hasParent":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasParent"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -47113,6 +47215,11 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			}
 		case "description":
 			out.Values[i] = ec._Organization_description(ctx, field, obj)
+		case "personalOrg":
+			out.Values[i] = ec._Organization_personalOrg(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "parent":
 			field := field
 

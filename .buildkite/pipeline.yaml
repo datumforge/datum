@@ -119,11 +119,7 @@ steps:
       BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
     commands: |
       #!/bin/bash
-      echo --- Retrieve Artifacts
-      buildkite-agent artifact download "bin/${APP_NAME}" .
-      # move it to where we expect and make sure it is executable
-      cp bin/${APP_NAME} ${APP_NAME}
-      chmod +x ${APP_NAME}
+      ls -la
     plugins:
       - docker-login#v2.1.0:
           username: datum-buildkite
@@ -135,6 +131,7 @@ steps:
           extra_tags:
           - "${IMAGE_TAG}"
       - equinixmetal-buildkite/docker-build#v1.1.0:
+          dockerfile: docker/Dockerfile
           push: true
           build-args:
             - NAME=${APP_NAME}

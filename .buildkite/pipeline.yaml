@@ -115,11 +115,16 @@ steps:
   steps:
   - label: ":docker: docker pr build"
     key: "docker-pr-build"
-    if: build.branch != "buildkite-push-test"
+    if: build.branch != "main"
     commands: |
       #!/bin/bash
       ls
     plugins:
+      - equinixmetal-buildkite/docker-metadata#v1.0.0:
+          images:
+          - "${IMAGE_REPO}"
+          extra_tags:
+          - "${IMAGE_TAG}"
       - equinixmetal-buildkite/docker-build#v1.1.0:
           dockerfile: docker/Dockerfile
           push: false
@@ -132,7 +137,7 @@ steps:
           skip-files: 'cosign.key,Dockerfile.dev'
   - label: ":docker: docker build and publish"
     key: "docker-build"
-    if: build.branch == "buildkite-push-test"
+    if: build.branch == "main"
     commands: |
       #!/bin/bash
       ls

@@ -9,6 +9,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
 func EntitlementEdgeCleanup(ctx context.Context, id string) error {
@@ -83,6 +87,27 @@ func SessionEdgeCleanup(ctx context.Context, id string) error {
 }
 
 func UserEdgeCleanup(ctx context.Context, id string) error {
+
+	if exists, err := FromContext(ctx).Session.Query().Where((session.HasOwnerWith(user.ID(id)))).Exist(ctx); err != nil && exists {
+		if sessionCount, err := FromContext(ctx).Session.Delete().Where(session.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting session", "count", sessionCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).PersonalAccessToken.Query().Where((personalaccesstoken.HasOwnerWith(user.ID(id)))).Exist(ctx); err != nil && exists {
+		if personalaccesstokenCount, err := FromContext(ctx).PersonalAccessToken.Delete().Where(personalaccesstoken.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting personalaccesstoken", "count", personalaccesstokenCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).UserSetting.Query().Where((usersetting.HasUserWith(user.ID(id)))).Exist(ctx); err != nil && exists {
+		if usersettingCount, err := FromContext(ctx).UserSetting.Delete().Where(usersetting.HasUserWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting usersetting", "count", usersettingCount, "err", err)
+			return err
+		}
+	}
 
 	return nil
 }

@@ -2,6 +2,7 @@ package graphapi_test
 
 import (
 	"context"
+	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 
@@ -35,6 +36,15 @@ type UserBuilder struct {
 	LastName  string
 	Email     string
 	Password  string
+}
+
+type PersonalAccessTokenBuilder struct {
+	Name        string
+	Token       string
+	Abilities   []string
+	Description string
+	ExpiresAt   time.Time
+	OwnerID     string
 }
 
 // MustNew organization builder is used to create, without authz checks, orgs in the database
@@ -126,4 +136,29 @@ func (g *GroupCleanup) MustDelete(ctx context.Context) {
 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	EntClient.Group.DeleteOneID(g.GroupID).ExecX(ctx)
+}
+
+func (t *PersonalAccessTokenBuilder) MustNew(ctx context.Context) *generated.PersonalAccessToken {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	if t.Name == "" {
+		t.Name = gofakeit.AppName()
+	}
+
+	if t.Description == "" {
+		t.Description = gofakeit.HipsterSentence(5)
+	}
+
+	if t.OwnerID == "" {
+		owner := (&UserBuilder{}).MustNew(ctx)
+		t.OwnerID = owner.ID
+	}
+
+	return EntClient.PersonalAccessToken.Create().
+		SetName(t.Name).
+		SetOwnerID(t.OwnerID).
+		SetToken(t.Token).
+		SetDescription(t.Description).
+		SetExpiresAt(t.ExpiresAt).
+		SaveX(ctx)
 }

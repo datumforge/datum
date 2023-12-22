@@ -18,7 +18,18 @@ Datum's core server operates with the following utilities:
 
 ### Dependencies
 
-Setup [Taskfile](https://taskfile.dev/installation/) by following the instructions and using one of the various convenient package managers or installation scripts. You can then simply run `task install` to load the associated dependencies. Nearly everything in this repository assumes you already have a local golang environment setup so this is not included. Please see the associated documentation.
+Setup [Taskfile](https://taskfile.dev/installation/) by following the instructions and using one of the various convenient package managers or installation scripts. Two of the more common installation methods are below for your convenience:
+
+```
+brew install go-task
+```
+
+```
+sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+```
+(by default, this installs on the ``./bin`` directory relative to the working directory)
+
+After installation, you can then simply run `task install` to load the associated dependencies. Nearly everything in this repository assumes you already have a local golang environment setup so this is not included. Please see the associated documentation.
 
 To include Taskfile's created in other directories / to call the respective tasks, you would add an `includes` per the Taskfile documentation and then reference it by name, e.g. `task cli:createorg`
 

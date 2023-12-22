@@ -31,7 +31,6 @@ tasks:
   install:
     desc: installs tools and packages needed to develop against the datum repo
     cmds:
-      - "go install github.com/go-task/task/v3/cmd/task@latest"
       - "go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@latest"
       - "go install entgo.io/ent/cmd/ent@latest"
       - "go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"

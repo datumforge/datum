@@ -11,7 +11,7 @@ steps:
     key: "generate"
     plugins:
       - docker#v5.9.0:
-          image: "ghcr.io/datumforge/base-ci-image:main"
+          image: "ghcr.io/datumforge/base-ci-image:sha256:5cba4a9a23b429c3650ac25da805104455fa696efc3eb6d367461230c028f77a"
           command: ["task", "ci"]
 
 - group: ":test_tube: Tests"

@@ -36,10 +36,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
 	viperBindFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 
-	// Logging flags
-	rootCmd.PersistentFlags().Bool("debug", false, "enable debug logging")
-	viperBindFlag("logging.debug", rootCmd.PersistentFlags().Lookup("debug"))
-
 	rootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
 	viperBindFlag("logging.pretty", rootCmd.PersistentFlags().Lookup("pretty"))
 }
@@ -78,7 +74,7 @@ func setupLogging() {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if viper.GetBool("logging.debug") {
+	if viper.GetBool("server.debug") {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)

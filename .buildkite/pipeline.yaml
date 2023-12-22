@@ -120,9 +120,9 @@ steps:
       BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
     commands: |
       #!/bin/bash
-      PUSH_IMAGE=false
+      BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH=false
       if [[ "${BUILDKITE_BRANCH}" == "test-main" ]]; then
-          PUSH_IMAGE=true
+          BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH=true
       fi
     plugins:
       - docker-login#v2.1.0:
@@ -136,7 +136,6 @@ steps:
           - "${IMAGE_TAG}"
       - equinixmetal-buildkite/docker-build#v1.1.0:
           dockerfile: docker/Dockerfile
-          push: \${PUSH_IMAGE}
           build-args:
             - NAME=${APP_NAME}
       - equinixmetal-buildkite/trivy#v1.18.3:

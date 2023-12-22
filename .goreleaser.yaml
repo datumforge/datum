@@ -26,8 +26,7 @@ builds:
     main: ./cmd/cli
 
 dockers:
-  -
-    image_templates:
+  - image_templates:
       - "ghcr.io/datumforget/{{.ProjectName}}:{{ .Tag }}"-amd64
     dockerfile: docker/Dockerfile
     use: buildx
@@ -40,8 +39,7 @@ dockers:
       - "--label=org.opencontainers.image.source=https://github.com/datumforge/{{.ProjectName}}"
       - "--label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}"
       - "--label=org.opencontainers.image.licenses=Apache-2.0"
-  -
-    image_templates:
+  - image_templates:
       - "ghcr.io/datumforget/{{.ProjectName}}:{{ .Tag }}"-arm64
     dockerfile: docker/Dockerfile
     use: buildx

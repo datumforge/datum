@@ -142,7 +142,7 @@ steps:
       #!/bin/bash
       ls
     plugins:
-      - docker-login#v2.1.0:
+      - docker-login#v3.0.0:
           username: datum-bender
           password-env: SECRET_GHCR_PUBLISH_TOKEN
           server: ghcr.io

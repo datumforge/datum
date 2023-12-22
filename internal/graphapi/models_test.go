@@ -152,7 +152,7 @@ func (t *PersonalAccessTokenBuilder) MustNew(ctx context.Context) *generated.Per
 	if t.OwnerID == "" {
 		owner := (&UserBuilder{}).MustNew(ctx)
 		t.OwnerID = owner.ID
-	} 
+	}
 
 	return EntClient.PersonalAccessToken.Create().
 		SetName(t.Name).

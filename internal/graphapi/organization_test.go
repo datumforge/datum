@@ -786,6 +786,9 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 
 	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
 
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, entClient)
+
 	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
 
 	t.Run("Create should not write if FGA transaction fails", func(t *testing.T) {

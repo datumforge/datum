@@ -43,6 +43,42 @@ brews:
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     test: |
       system "#{bin}/datum --help"
+
+dockers:
+  - image_templates:
+      - ghcr.io/datumforge/{{ .ProjectName }}:{{ .Tag }}-amd64
+    dockerfile: docker/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/amd64
+      - --label=org.opencontainers.image.created={{ .Date }}
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.source=https://github.com/datumforge/{{.ProjectName}}
+      - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+      - --label=org.opencontainers.image.licenses=Apache-2.0
+
+  - image_templates:
+      - ghcr.io/datumforge/{{ .ProjectName }}:{{ .Tag }}-arm64
+    dockerfile: docker/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm64
+      - --label=org.opencontainers.image.created={{ .Date }}
+      - --label=org.opencontainers.image.title={{ .ProjectName }}
+      - --label=org.opencontainers.image.revision={{ .FullCommit }}
+      - --label=org.opencontainers.image.version={{ .Version }}
+      - --label=org.opencontainers.image.source=https://github.com/datumforge/{{ .ProjectName }}
+      - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+      - --label=org.opencontainers.image.licenses=Apache-2.0
+
+docker_manifests:
+- name_template: ghcr.io/datumforge/{{ .ProjectName }}:{{ .Tag }}
+  image_templates:
+  - ghcr.io/datumforge/{{ .ProjectName }}:{{ .Tag }}-amd64
+  - ghcr.io/datumforge/{{ .ProjectName }}:{{ .Tag }}-arm64
+
 source:
   enabled: true
 changelog:
@@ -58,12 +94,12 @@ release:
     owner: datumforge
     name: datum
 # This section defines how and which artifacts we want to sign for the release.
-signs:
-  - cmd: cosign
-    args:
-      - "sign-blob"
-      - "--output-signature=${signature}"
-      - "${artifact}"
-      - "--yes" # needed on cosign 2.0.0+
-    artifacts: archive
-    output: true
+# signs:
+#   - cmd: cosign
+#     args:
+#       - "sign-blob"
+#       - "--output-signature=${signature}"
+#       - "${artifact}"
+#       - "--yes" # needed on cosign 2.0.0+
+#     artifacts: archive
+#     output: true

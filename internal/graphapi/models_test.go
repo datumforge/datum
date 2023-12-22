@@ -149,18 +149,14 @@ func (t *PersonalAccessTokenBuilder) MustNew(ctx context.Context) *generated.Per
 		t.Description = gofakeit.HipsterSentence(5)
 	}
 
-	owner := (&UserBuilder{}).MustNew(ctx)
-
 	if t.OwnerID == "" {
+		owner := (&UserBuilder{}).MustNew(ctx)
 		t.OwnerID = owner.ID
-	} else {
-		owner.ID = t.OwnerID
-	}
+	} 
 
 	return EntClient.PersonalAccessToken.Create().
 		SetName(t.Name).
 		SetOwnerID(t.OwnerID).
-		SetOwner(owner).
 		SetToken(t.Token).
 		SetDescription(t.Description).
 		SetExpiresAt(t.ExpiresAt).

@@ -121,7 +121,7 @@ steps:
     commands: |
       #!/bin/bash
       PUSH_IMAGE=false
-      if ${BUILDKITE_BRANCH} == "main"; then
+      if "${BUILDKITE_BRANCH}" == "main"; then
           PUSH_IMAGE=true
       fi
     plugins:

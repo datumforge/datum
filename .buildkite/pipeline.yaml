@@ -115,7 +115,7 @@ steps:
   steps:
   - label: ":docker: docker pr build"
     key: "docker-pr-build"
-    if: build.branch != "main"
+    if: build.branch != "buildkite-push-test"
     commands: |
       #!/bin/bash
       ls
@@ -132,7 +132,7 @@ steps:
           skip-files: 'cosign.key,Dockerfile.dev'
   - label: ":docker: docker build and publish"
     key: "docker-build"
-    if: build.branch == "main"
+    if: build.branch == "buildkite-push-test"
     commands: |
       #!/bin/bash
       ls

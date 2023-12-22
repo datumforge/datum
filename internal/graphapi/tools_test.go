@@ -137,12 +137,16 @@ type graphClient struct {
 }
 
 func graphTestClient(c *ent.Client) datumclient.DatumClient {
+	srv := handler.NewDefaultServer(
+		graphapi.NewExecutableSchema(
+			graphapi.Config{Resolvers: graphapi.NewResolver(c, true).WithLogger(zap.NewNop().Sugar())},
+		))
+
+	graphapi.WithTransactions(srv, c)
+
 	g := &graphClient{
-		srvURL: "query",
-		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
-			graphapi.NewExecutableSchema(
-				graphapi.Config{Resolvers: graphapi.NewResolver(c, true).WithLogger(zap.NewNop().Sugar())},
-			))}},
+		srvURL:     "query",
+		httpClient: &http.Client{Transport: localRoundTripper{handler: srv}},
 	}
 
 	// set options
@@ -157,12 +161,16 @@ func graphTestClient(c *ent.Client) datumclient.DatumClient {
 }
 
 func graphTestClientNoAuth(c *ent.Client) datumclient.DatumClient {
+	srv := handler.NewDefaultServer(
+		graphapi.NewExecutableSchema(
+			graphapi.Config{Resolvers: graphapi.NewResolver(c, false).WithLogger(zap.NewNop().Sugar())},
+		))
+
+	graphapi.WithTransactions(srv, c)
+
 	g := &graphClient{
-		srvURL: "query",
-		httpClient: &http.Client{Transport: localRoundTripper{handler: handler.NewDefaultServer(
-			graphapi.NewExecutableSchema(
-				graphapi.Config{Resolvers: graphapi.NewResolver(c, false).WithLogger(zap.NewNop().Sugar())},
-			))}},
+		srvURL:     "query",
+		httpClient: &http.Client{Transport: localRoundTripper{handler: srv}},
 	}
 
 	// set options

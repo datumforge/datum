@@ -57,7 +57,7 @@ func (r Resolver) WithLogger(l *zap.SugaredLogger) *Resolver {
 // Handler is an http handler wrapping a Resolver
 type Handler struct {
 	r              *Resolver
-	graphqlHandler http.Handler
+	graphqlHandler *handler.Server
 	playground     *playground.Playground
 	middleware     []echo.MiddlewareFunc
 }
@@ -72,9 +72,8 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 		),
 	)
 
-	// setup transactional db client
-	srv.AroundOperations(injectClient(r.client))
-	srv.Use(entgql.Transactioner{TxOpener: r.client})
+	// add transactional db client
+	WithTransactions(srv, r.client)
 
 	srv.Use(extension.Introspection{})
 
@@ -93,6 +92,13 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 	}
 
 	return h
+}
+
+// WithTransactions adds the transactioner to the ent db client
+func WithTransactions(h *handler.Server, c *ent.Client) {
+	// setup transactional db client
+	h.AroundOperations(injectClient(c))
+	h.Use(entgql.Transactioner{TxOpener: c})
 }
 
 // Handler returns the http.HandlerFunc for the GraphAPI

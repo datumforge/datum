@@ -112,15 +112,18 @@ steps:
 
 - group: ":docker: Image Build"
   depends_on: "go-builds"
-  key: "docker-build"
+  key: "image-build"
   steps:
   - label: ":docker: docker build and publish"
-    key: "build"
+    key: "docker-build"
     env:
       BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
     commands: |
       #!/bin/bash
-      ls -la
+      PUSH_IMAGE=false
+      if ${BUILDKITE_BRANCH} == "main"; then
+          PUSH_IMAGE=true
+      fi
     plugins:
       - docker-login#v2.1.0:
           username: datum-buildkite
@@ -133,7 +136,7 @@ steps:
           - "${IMAGE_TAG}"
       - equinixmetal-buildkite/docker-build#v1.1.0:
           dockerfile: docker/Dockerfile
-          push: true
+          push: \${PUSH_IMAGE}
           build-args:
             - NAME=${APP_NAME}
       - equinixmetal-buildkite/trivy#v1.18.3:

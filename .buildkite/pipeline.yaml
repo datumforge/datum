@@ -109,7 +109,6 @@ steps:
             - GOARCH=arm64
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
 
-
 - group: ":docker: Image Build"
   depends_on: "go-builds"
   key: "image-build"

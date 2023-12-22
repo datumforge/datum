@@ -733,7 +733,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	}
 }
 
-func TestMutation_CascadeDelete(t *testing.T) {
+func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 	client := graphTestClientNoAuth(EntClient)
 
 	ec := echocontext.NewTestEchoContext()

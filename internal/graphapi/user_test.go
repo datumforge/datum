@@ -10,6 +10,7 @@ import (
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/mixin"
 	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/ulids"
@@ -410,11 +411,11 @@ func TestMutation_DeleteUser(t *testing.T) {
 		errorMsg string
 	}{
 		{
-			name:   "delete org, happy path",
+			name:   "delete user, happy path",
 			userID: user.ID,
 		},
 		{
-			name:     "delete org, not found",
+			name:     "delete user, not found",
 			userID:   "tacos-tuesday",
 			errorMsg: "not found",
 		},
@@ -422,7 +423,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
-			// delete org
+			// delete user
 			resp, err := client.DeleteUser(reqCtx, tc.userID)
 
 			if tc.errorMsg != "" {
@@ -445,4 +446,55 @@ func TestMutation_DeleteUser(t *testing.T) {
 			// TODO: make sure user settings was deleted on user delete once user-setting resolvers are completed
 		})
 	}
+}
+
+func TestMutation_UserCascadeDelete(t *testing.T) {
+	client := graphTestClientNoAuth(EntClient)
+
+	ec := echocontext.NewTestEchoContext()
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	// add client to context for transactional client
+	reqCtx = ent.NewContext(reqCtx, EntClient)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	usr := (&UserBuilder{}).MustNew(reqCtx)
+
+	token1 := (&PersonalAccessTokenBuilder{OwnerID: usr.ID}).MustNew(reqCtx)
+
+	// delete user
+	resp, err := client.DeleteUser(reqCtx, usr.ID)
+
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.NotNil(t, resp.DeleteUser.DeletedID)
+
+	// make sure the deletedID matches the ID we wanted to delete
+	assert.Equal(t, usr.ID, resp.DeleteUser.DeletedID)
+
+	o, err := client.GetUserByID(reqCtx, usr.ID)
+
+	require.Nil(t, o)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "not found")
+
+	g, err := client.GetPersonalAccessTokenByID(reqCtx, token1.ID)
+
+	require.Nil(t, g)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "not found")
+
+	ctx := mixin.SkipSoftDelete(reqCtx)
+
+	o, err = client.GetUserByID(ctx, usr.ID)
+
+	require.Equal(t, o.User.ID, usr.ID)
+	require.NoError(t, err)
+
+	g, err = client.GetPersonalAccessTokenByID(ctx, token1.ID)
+
+	require.Equal(t, g.PersonalAccessToken.ID, token1.ID)
+	require.NoError(t, err)
 }

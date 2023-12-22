@@ -24,6 +24,37 @@ builds:
       - amd64
       - arm64
     main: ./cmd/cli
+
+dockers:
+  -
+    image_templates:
+      - "ghcr.io/datumforget/{{.ProjectName}}:{{ .Tag }}"-amd64
+    dockerfile: docker/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source=https://github.com/datumforge/{{.ProjectName}}"
+      - "--label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}"
+      - "--label=org.opencontainers.image.licenses=Apache-2.0"
+  -
+    image_templates:
+      - "ghcr.io/datumforget/{{.ProjectName}}:{{ .Tag }}"-arm64
+    dockerfile: docker/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--label=org.opencontainers.image.source=https://github.com/datumforge/{{.ProjectName}}"
+      - "--label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}"
+      - "--label=org.opencontainers.image.licenses=Apache-2.0"
+
 archives:
   - format: tar.gz # we can use binary, but it seems there's an issue where goreleaser skips the sboms
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"

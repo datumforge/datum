@@ -16,6 +16,7 @@ type OrganizationBuilder struct {
 	Description *string
 	OrgID       string
 	ParentOrgID string
+	PersonalOrg bool
 }
 
 type OrganizationCleanup struct {
@@ -64,7 +65,7 @@ func (o *OrganizationBuilder) MustNew(ctx context.Context) *generated.Organizati
 		o.Description = &desc
 	}
 
-	m := EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName)
+	m := EntClient.Organization.Create().SetName(o.Name).SetDescription(*o.Description).SetDisplayName(o.DisplayName).SetPersonalOrg(o.PersonalOrg)
 
 	if o.ParentOrgID != "" {
 		m.SetParentID(o.ParentOrgID)

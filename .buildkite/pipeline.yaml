@@ -108,3 +108,38 @@ steps:
             - GOOS=darwin
             - GOARCH=arm64
           command: ["go", "build", "-buildvcs=false", "-mod=mod", "-a", "-o", "bin/${APP_NAME}-cli", "./cmd/cli"]
+
+
+- group: ":docker: Image Build"
+  depends_on: "go-builds"
+  key: "docker-build"
+  - label: ":docker: docker build and publish"
+    key: "build"
+    env:
+      BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
+    commands: |
+      #!/bin/bash
+      echo --- Retrieve Artifacts
+      buildkite-agent artifact download "bin/${APP_NAME}" .
+      # move it to where we expect and make sure it is executable
+      cp bin/${APP_NAME} ${APP_NAME}
+      chmod +x ${APP_NAME}
+    plugins:
+      - docker-login#v2.1.0:
+          username: datum-buildkite
+          password-env: SECRET_GHCR_PUBLISH_TOKEN
+          server: ghcr.io
+      - equinixmetal-buildkite/docker-metadata#v1.0.0:
+          images:
+          - "${IMAGE_REPO}"
+          extra_tags:
+          - "${IMAGE_TAG}"
+      - equinixmetal-buildkite/docker-build#v1.1.0:
+          push: true
+          build-args:
+            - NAME=${APP_NAME}
+      - equinixmetal-buildkite/trivy#v1.18.3:
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          security-checks: config,secret,vuln
+          skip-files: 'cosign.key,Dockerfile.dev'

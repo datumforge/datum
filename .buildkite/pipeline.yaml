@@ -116,15 +116,12 @@ steps:
   steps:
   - label: ":docker: docker build and publish"
     key: "docker-build"
-    env:
-      BUILDKITE_PLUGINS_ALWAYS_CLONE_FRESH: "true"
     commands: |
       #!/bin/bash
       BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH=false
       if [[ "${BUILDKITE_BRANCH}" == "test-main" ]]; then
-          BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH=true
+          export BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH=true
       fi
-      echo ${BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH}
     plugins:
       - docker-login#v2.1.0:
           username: datum-bender

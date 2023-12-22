@@ -124,9 +124,10 @@ steps:
       if [[ "${BUILDKITE_BRANCH}" == "test-main" ]]; then
           BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH=true
       fi
+      echo ${BUILDKITE_PLUGIN_DOCKER_BUILD_PUSH}
     plugins:
       - docker-login#v2.1.0:
-          username: datum-buildkite
+          username: datum-bender
           password-env: SECRET_GHCR_PUBLISH_TOKEN
           server: ghcr.io
       - equinixmetal-buildkite/docker-metadata#v1.0.0:

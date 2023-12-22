@@ -340,6 +340,8 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 				// There is a check to ensure user has write access to parent org
 				mockCheckAny(mockCtrl, mc, reqCtx, true)
+				// There is a check to ensure the parent org is not a parent org
+				mockListAny(mockCtrl, mc, reqCtx, listObjects)
 			}
 
 			// When calls are expected to fail, we won't ever write tuples

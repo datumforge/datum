@@ -34,7 +34,6 @@ public_key.pem
 *.jar
 *.rar
 *.tar
-*.zip
 
 # Logs 
 *.log

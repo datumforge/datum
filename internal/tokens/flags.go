@@ -1,8 +1,6 @@
 package tokens
 
 import (
-	"time"
-
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
@@ -10,10 +8,10 @@ import (
 )
 
 const (
-	defaultJWKSRemoteTimeout = 5 * time.Second
-	defaultAccessDuration    = 1 * time.Hour
-	defaultRefreshDuration   = 2 * time.Hour
-	defaultRefreshOverlap    = -15 * time.Minute
+	defaultJWKSRemoteTimeout = "5s"
+	defaultAccessDuration    = "1h"
+	defaultRefreshDuration   = "2h"
+	defaultRefreshOverlap    = "-15m"
 )
 
 // RegisterAuthFlags registers the flags for the authentication configuration
@@ -25,7 +23,7 @@ func RegisterAuthFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 	}
 
 	// OIDC Flags
-	err = viperconfig.BindConfigFlag(v, flags, "jwt.audience", "jwt-audience", "", "expected audience on datum JWT", flags.String)
+	err = viperconfig.BindConfigFlag(v, flags, "jwt.audience", "jwt-audience", "", "expected audience of datum JWT", flags.String)
 	if err != nil {
 		return err
 	}
@@ -45,22 +43,22 @@ func RegisterAuthFlags(v *viper.Viper, flags *pflag.FlagSet) error {
 		return err
 	}
 
-	err = viperconfig.BindConfigFlag(v, flags, "jwks.remote-timeout", "jwks-remote-timeout", defaultJWKSRemoteTimeout, "timeout for remote JWKS fetching", flags.Duration)
+	err = viperconfig.BindConfigFlag(v, flags, "jwks.remote-timeout", "jwks-remote-timeout", defaultJWKSRemoteTimeout, "timeout for remote JWKS fetching", flags.String)
 	if err != nil {
 		return err
 	}
 
-	err = viperconfig.BindConfigFlag(v, flags, "jwt.access-duration", "jwks-access-duration", defaultAccessDuration, "length of time the access token is valid", flags.Duration)
+	err = viperconfig.BindConfigFlag(v, flags, "jwt.access-duration", "jwks-access-duration", defaultAccessDuration, "length of time the access token is valid", flags.String)
 	if err != nil {
 		return err
 	}
 
-	err = viperconfig.BindConfigFlag(v, flags, "jwt.refresh-duration", "jwks-refresh-duration", defaultRefreshDuration, "length of time the refresh token is valid", flags.Duration)
+	err = viperconfig.BindConfigFlag(v, flags, "jwt.refresh-duration", "jwks-refresh-duration", defaultRefreshDuration, "length of time the refresh token is valid", flags.String)
 	if err != nil {
 		return err
 	}
 
-	err = viperconfig.BindConfigFlag(v, flags, "jwt.refresh-overlap", "jwks-refresh-overlap", defaultRefreshOverlap, "overlap duration between refresh and access token expiration", flags.Duration)
+	err = viperconfig.BindConfigFlag(v, flags, "jwt.refresh-overlap", "jwks-refresh-overlap", defaultRefreshOverlap, "overlap duration between refresh and access token expiration", flags.String)
 	if err != nil {
 		return err
 	}

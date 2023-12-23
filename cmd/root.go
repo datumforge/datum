@@ -33,11 +33,11 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/."+appName+".yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/config/."+appName+".yaml)")
 	viperBindFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 
 	rootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
-	viperBindFlag("logging.pretty", rootCmd.PersistentFlags().Lookup("pretty"))
+	viperBindFlag("server.logging.pretty", rootCmd.PersistentFlags().Lookup("pretty"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -74,7 +74,7 @@ func setupLogging() {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if viper.GetBool("server.debug") {
+	if viper.GetBool("server.logging.debug") {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)

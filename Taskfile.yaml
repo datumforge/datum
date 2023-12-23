@@ -92,7 +92,7 @@ tasks:
     desc: runs the datum server with oidc enabled
     cmds:
     - task: compose:fga
-    - go run main.go serve  --debug --pretty --dev --fga-host=localhost:8080 --fga-scheme=http --jwt-audience=http://localhost:17608 --jwt-issuer=http://localhost:17608 --jwt-kid=01HHAS67AM73778S0QEZ3CEAGE --jwt-cookie-domain=localhost:17608
+    - go run main.go serve  --config="config/.datum.dev.yml"
   run-dev:
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:

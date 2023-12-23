@@ -61,14 +61,20 @@ func WithLogger(l *zap.SugaredLogger) ServerOption {
 func WithServer(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		serverSettings := settings["server"].(map[string]any)
+		logSettings := serverSettings["logging"].(map[string]any)
+
+		shutdown, err := time.ParseDuration(serverSettings["shutdown-grace-period"].(string))
+		if err != nil {
+			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
+		}
 
 		serverConfig := config.NewConfig().
-			WithListen(serverSettings["listen"].(string)).                                    // set custom port
-			WithHTTPS(serverSettings["https"].(bool)).                                        // enable https
-			WithShutdownGracePeriod(serverSettings["shutdown-grace-period"].(time.Duration)). // override default grace period shutdown
-			WithDebug(serverSettings["debug"].(bool)).                                        // enable debug mode
-			WithDev(serverSettings["dev"].(bool)).                                            // enable dev mode
-			SetDefaults()                                                                     // set defaults if not already set
+			WithListen(serverSettings["listen"].(string)). // set custom port
+			WithHTTPS(serverSettings["https"].(bool)).     // enable https
+			WithShutdownGracePeriod(shutdown).             // override default grace period shutdown
+			WithDebug(logSettings["debug"].(bool)).        // enable debug mode
+			WithDev(serverSettings["dev"].(bool)).         // enable dev mode
+			SetDefaults()                                  // set defaults if not already set
 
 		s.Config = *serverConfig
 	})
@@ -110,11 +116,12 @@ func WithHTTPS(settings map[string]any) ServerOption {
 func WithSQLiteDB(settings map[string]any) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		serverSettings := settings["server"].(map[string]any)
+		logSettings := serverSettings["logging"].(map[string]any)
 		dbSettings := settings["db"].(map[string]any)
 
 		// Database Settings
 		dbConfig := config.DB{
-			Debug:           serverSettings["debug"].(bool),
+			Debug:           logSettings["debug"].(bool),
 			MultiWrite:      dbSettings["multi-write"].(bool),
 			DriverName:      dialect.SQLite,
 			PrimaryDBSource: dbSettings["primary"].(string),
@@ -228,9 +235,24 @@ func WithAuth(settings map[string]any) ServerOption {
 		s.Config.Server.Token.CookieDomain = jwtSettings["cookie-domain"].(string)
 
 		// Set durations, flags have defaults values set
-		s.Config.Server.Token.AccessDuration = jwtSettings["access-duration"].(time.Duration)
-		s.Config.Server.Token.RefreshDuration = jwtSettings["refresh-duration"].(time.Duration)
-		s.Config.Server.Token.RefreshOverlap = jwtSettings["refresh-overlap"].(time.Duration)
+		accessDuration, err := time.ParseDuration(jwtSettings["access-duration"].(string))
+		if err != nil {
+			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
+		}
+
+		refreshDuration, err := time.ParseDuration(jwtSettings["refresh-duration"].(string))
+		if err != nil {
+			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
+		}
+
+		refreshOverlap, err := time.ParseDuration(jwtSettings["refresh-overlap"].(string))
+		if err != nil {
+			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
+		}
+
+		s.Config.Server.Token.AccessDuration = accessDuration
+		s.Config.Server.Token.RefreshDuration = refreshDuration
+		s.Config.Server.Token.RefreshOverlap = refreshOverlap
 	})
 }
 

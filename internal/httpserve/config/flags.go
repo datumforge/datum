@@ -9,7 +9,7 @@ import (
 
 // RegisterServerFlags registers the flags for the server configuration
 func RegisterServerFlags(v *viper.Viper, flags *pflag.FlagSet) error {
-	err := viperconfig.BindConfigFlag(v, flags, "server.debug", "debug", false, "enable server debug", flags.Bool)
+	err := viperconfig.BindConfigFlag(v, flags, "server.logging.debug", "debug", false, "enable server debug", flags.Bool)
 	if err != nil {
 		return err
 	}

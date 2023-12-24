@@ -24,7 +24,7 @@ type Server struct {
 	// config contains the base server settings
 	config config.Server
 	// logger contains the zap logger
-	logger *zap.Logger
+	logger *zap.SugaredLogger
 	// handlers contains additional handlers to register with the echo server
 	handlers []handler
 }
@@ -41,7 +41,7 @@ func (s *Server) AddHandler(r handler) {
 }
 
 // NewServer returns a new Server configuration
-func NewServer(c config.Server, l *zap.Logger) *Server {
+func NewServer(c config.Server, l *zap.SugaredLogger) *Server {
 	return &Server{
 		config: c,
 		logger: l,
@@ -68,7 +68,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		middleware.RequestID(),                       // add request id
 		middleware.Recover(),                         // recover server from any panic/fatal error gracefully
 		echoprometheus.MetricsMiddleware(),           // add prometheus metrics
-		echozap.ZapLogger(s.logger),                  // add zap logger
+		echozap.ZapLogger(s.logger.Desugar()),        // add zap logger, middleware requires the "regular" zap logger
 		echocontext.EchoContextToContextMiddleware(), // adds echo context to parent
 		cors.New(),              // add cors middleware
 		mime.New(),              // add mime middleware
@@ -78,7 +78,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	)
 
 	if srv.Debug {
-		defaultMW = append(defaultMW, echodebug.BodyDump(s.logger.Sugar()))
+		defaultMW = append(defaultMW, echodebug.BodyDump(s.logger))
 	}
 
 	for _, m := range defaultMW {
@@ -118,12 +118,12 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	// Print routes on startup
 	routes := srv.Router().Routes()
 	for _, r := range routes {
-		s.logger.Sugar().Infow("registered route", "route", r.Path(), "method", r.Method())
+		s.logger.Infow("registered route", "route", r.Path(), "method", r.Method())
 	}
 
 	// if TLS is enabled, start new echo server with TLS
 	if s.config.TLS.Enabled {
-		s.logger.Sugar().Infow("starting in https mode")
+		s.logger.Infow("starting in https mode")
 
 		return sc.StartTLS(srv, s.config.TLS.CertFile, s.config.TLS.CertKey)
 	}

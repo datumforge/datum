@@ -29,6 +29,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	if err = in.Validate(); err != nil {
 		ctx.Error(err)
 		ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		return err
 	}
 
 	//	u := &User{}
@@ -69,7 +70,7 @@ type RegisterRequest struct {
 	LastName  string `json:"last_name"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	PwCheck   string `json:"pwcheck"`
+	// PwCheck   string `json:"pwcheck"`
 	// Organization string `json:"organization"`
 	// Domain       string `json:"domain"`
 	// AgreeToS     bool   `json:"terms_agreement"`
@@ -84,7 +85,7 @@ func (r *RegisterRequest) Validate() error {
 	r.LastName = strings.TrimSpace(r.LastName)
 	r.Email = strings.TrimSpace(r.Email)
 	r.Password = strings.TrimSpace(r.Password)
-	r.PwCheck = strings.TrimSpace(r.PwCheck)
+	// r.PwCheck = strings.TrimSpace(r.PwCheck)
 	//	r.Organization = strings.TrimSpace(r.Organization)
 	//	r.Domain = strings.ToLower(strings.TrimSpace(r.Domain))
 
@@ -94,8 +95,8 @@ func (r *RegisterRequest) Validate() error {
 		return auth.MissingField("email")
 	case r.Password == "":
 		return auth.MissingField("password")
-	case r.Password != r.PwCheck:
-		return auth.ErrPasswordMismatch
+	// case r.Password != r.PwCheck:
+	// 	return auth.ErrPasswordMismatch
 	case passwd.Strength(r.Password) < passwd.Moderate:
 		return auth.ErrPasswordTooWeak
 		//	case !r.AgreeToS:

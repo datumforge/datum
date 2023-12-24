@@ -115,9 +115,11 @@ tasks:
     cmds:
       - go build -mod=mod -o datum
   go:build-cli:
+    aliases: [buildcli]
     desc: Runs go build for the datum cli
     cmds:
-      - go build -mod=mod -o datum-cli ./cmd/cli 
+      - rm -f datum-cli
+      - go build -mod=mod -o datum-cli ./cmd/cli
   go:all:
     aliases: [go]
     desc: Runs all go test and lint related tasks

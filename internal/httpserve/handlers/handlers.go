@@ -7,6 +7,7 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 // Handler contains configuration options for handlers
@@ -30,6 +31,10 @@ type Handler struct {
 	sendgrid *emails.EmailManager
 
 	EmailURL URLConfig
+
+	EmailManager *emails.EmailManager
+
+	tasks *marionette.TaskManager
 }
 
 type Response struct {

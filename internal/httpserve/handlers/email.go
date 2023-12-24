@@ -10,7 +10,55 @@ import (
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
+func (h *Handler) SendVerificationNoContact() (err error) {
+	sender := sendgrid.Contact{
+		Email: "no-reply@datum.net",
+	}
+	recipient := sendgrid.Contact{
+		FirstName: "Matt",
+		LastName:  "Anderson",
+		Email:     "manderson@datum.net",
+	}
+	//	data := emails.EmailData{
+	//		Sender:    sender,
+	//		Recipient: recipient,
+	//	}
+
+	data := emails.VerifyEmailData{
+		EmailData: emails.EmailData{
+			Sender:    sender,
+			Recipient: recipient,
+		},
+		FullName:  "Matt Anderson",
+		VerifyURL: "https://datum.net/token",
+	}
+	// data.Recipient.ParseName(user.FirstName)
+
+	//	token, err := tokens.NewVerificationToken(recipient.Email)
+	//	if err != nil {
+	//		return fmt.Errorf("HERE XXXXXXXX", token)
+	//	}
+	//
+	//	signature, secret, err := token.Sign()
+	//	if err != nil {
+	//		return fmt.Errorf("HEREHEREHEREHERE", signature, secret)
+	//	}
+
+	var msg *mail.SGMailV3
+
+	if msg, err = emails.VerifyEmail(data); err != nil {
+		return fmt.Errorf("SHITBROKEHERE", err)
+	}
+
+	// Send the email
+	return h.sendgrid.Send(msg)
+}
+
 func (h *Handler) SendVerificationEmail(user *User) (err error) {
+	if err := h.createSendgridContact(user); err != nil {
+		return fmt.Errorf("shit went bad")
+	}
+
 	data := emails.VerifyEmailData{
 		EmailData: emails.EmailData{
 			Sender: h.SendGrid.MustFromContact(),
@@ -18,9 +66,9 @@ func (h *Handler) SendVerificationEmail(user *User) (err error) {
 				Email: user.Email,
 			},
 		},
-		FullName: user.Name,
+		FullName: user.FirstName,
 	}
-	data.Recipient.ParseName(user.Name)
+	data.Recipient.ParseName(user.FirstName)
 
 	if data.VerifyURL, err = h.EmailURL.VerifyURL(user.GetVerificationToken()); err != nil {
 		return err
@@ -145,4 +193,18 @@ func (c URLConfig) ResetURL(token string) (string, error) {
 	url := base.ResolveReference(&url.URL{Path: c.Reset, RawQuery: url.Values{"token": []string{token}}.Encode()})
 
 	return url.String(), nil
+}
+
+func (h *Handler) createSendgridContact(user *User) error {
+	contact := &sendgrid.Contact{
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+	}
+
+	if err := h.sendgrid.AddContact(contact); err != nil {
+		return fmt.Errorf("could not add contact to sendgrid: %w", err)
+	}
+
+	return nil
 }

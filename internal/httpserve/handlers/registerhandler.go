@@ -2,15 +2,19 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
@@ -29,6 +33,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	if err = in.Validate(); err != nil {
 		ctx.Error(err)
 		ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+
 		return err
 	}
 
@@ -54,6 +59,28 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
 		Message: "Welcome to Datum!",
+	}
+
+	//	user := &User{
+	//		Email:     input.Email,
+	//		FirstName: input.FirstName,
+	//		LastName:  input.LastName,
+	//	}
+
+	//	if err := SendVerificationNoContact(); err != nil {
+	//		return fmt.Errorf("it's your shitty code man")
+	//	}
+
+	//h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+	//	return h.SendVerificationEmail(user)
+	//}), marionette.WithRetries(3),
+	//	marionette.WithBackoff(backoff.NewExponentialBackOff()),
+	//	marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
+	//)
+
+	err = SendVerificationNoContact()
+	if err != nil {
+		return fmt.Errorf("still your shit code ")
 	}
 
 	return ctx.JSON(http.StatusCreated, out)
@@ -111,4 +138,60 @@ func (r *RegisterRequest) Validate() error {
 func (u *User) SetAgreement(agreeTos, agreePrivacy bool) {
 	u.AgreeToS = sql.NullBool{Valid: true, Bool: agreeTos}
 	u.AgreePrivacy = sql.NullBool{Valid: true, Bool: agreePrivacy}
+}
+
+func SendVerificationNoContact() (err error) {
+	sender := sendgrid.Contact{
+		Email: "no-reply@datum.net",
+	}
+	recipient := sendgrid.Contact{
+		FirstName: "Matt",
+		LastName:  "Anderson",
+		Email:     "manderson@datum.net",
+	}
+	//	data := emails.EmailData{
+	//		Sender:    sender,
+	//		Recipient: recipient,
+	//	}
+
+	data := emails.VerifyEmailData{
+		EmailData: emails.EmailData{
+			Sender:    sender,
+			Recipient: recipient,
+		},
+		FullName:  "Matt Anderson",
+		VerifyURL: "https://datum.net/token",
+	}
+
+	fmt.Sprintf("message data", data)
+	// data.Recipient.ParseName(user.FirstName)
+
+	//	token, err := tokens.NewVerificationToken(recipient.Email)
+	//	if err != nil {
+	//		return fmt.Errorf("HERE XXXXXXXX", token)
+	//	}
+	//
+	//	signature, secret, err := token.Sign()
+	//	if err != nil {
+	//		return fmt.Errorf("HEREHEREHEREHERE", signature, secret)
+	//	}
+
+	var msg *mail.SGMailV3
+
+	fmt.Sprintf("msg var", msg)
+
+	if msg, err = emails.VerifyEmail(data); err != nil {
+		return fmt.Errorf("SHITBROKEHERE", err)
+	}
+
+	fmt.Sprintf("email", msg)
+
+	// Send the email
+	var em *emails.EmailManager
+
+	if err := em.Send(msg); err != nil {
+		return fmt.Errorf("HEREHREHRHEHREHR", err)
+	}
+
+	return err
 }

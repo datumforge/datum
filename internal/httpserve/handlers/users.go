@@ -35,7 +35,7 @@ func (u *User) CreateVerificationToken() (err error) {
 		return err
 	}
 
-	// Sign the token to ensure that Quarterdeck can verify it later
+	// Sign the token to ensure that we can verify it later
 	if token, secret, err = verify.Sign(); err != nil {
 		return err
 	}

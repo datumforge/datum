@@ -13,9 +13,9 @@ type Config struct {
 	// FromEmail is the default email we'll send from and is safe to configure by default as our emails and domain are signed
 	FromEmail string `split_words:"true" default:"no-reply@datum.net"`
 	// Testing is a bool flag to indicate we shouldn't be sending live emails and defaults to true so needs to be specifically changed to send live emails
-	Testing bool `split_words:"true" default:"true"`
+	Testing bool `split_words:"true" default:"false"`
 	// Archive is only supported in testing mode and is what is tied through the mock to write out fixtures
-	Archive string `split_words:"true" default:"true"`
+	Archive string `split_words:"true" default:"false"`
 	// DatumListID is the UUID sendgrid spits out when you create marketing lists
 	DatumListID string `split_words:"true" required:"false" default:"f5459563-8a46-44ef-9066-e96124d30e52"`
 	// AdminEmail is an internal group email configured within datum for email testing and visibility

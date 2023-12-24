@@ -26,7 +26,7 @@ func registerAuthenticateHandler(router *echo.Echo) (err error) { //nolint:unuse
 				"error": "Not implemented",
 			})
 		},
-	})
+	}.ForGroup(V1Version, mw))
 
 	return
 }

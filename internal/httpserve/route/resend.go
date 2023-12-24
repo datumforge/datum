@@ -23,7 +23,7 @@ func registerResendEmailHandler(router *echo.Echo) (err error) { //nolint:unused
 				"error": "Not implemented",
 			})
 		},
-	})
+	}.ForGroup(V1Version, mw))
 
 	return
 }

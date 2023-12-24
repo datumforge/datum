@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
-	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
@@ -23,8 +22,7 @@ func registerRefreshHandler(router *echo.Echo, h *handlers.Handler) (err error) 
 		Handler: func(c echo.Context) error {
 			return h.RefreshHandler(c)
 		},
-		Middlewares: []echo.MiddlewareFunc{middleware.Recover()},
-	})
+	}.ForGroup(V1Version, mw))
 
 	return
 }

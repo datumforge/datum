@@ -2,8 +2,18 @@ package route
 
 import (
 	echo "github.com/datumforge/echox"
+	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+)
+
+const (
+	V1Version   = "v1"
+	unversioned = ""
+)
+
+var (
+	mw = []echo.MiddlewareFunc{middleware.Recover()}
 )
 
 type Route struct {

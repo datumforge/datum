@@ -21,7 +21,7 @@ func registerForgotPasswordHandler(router *echo.Echo) (err error) { //nolint:unu
 				"error": "Not implemented",
 			})
 		},
-	})
+	}.ForGroup(V1Version, mw))
 
 	return
 }

@@ -20,7 +20,7 @@ func registerResetPasswordHandler(router *echo.Echo) (err error) { //nolint:unus
 				"error": "Not implemented",
 			})
 		},
-	})
+	}.ForGroup(V1Version, mw))
 
 	return
 }

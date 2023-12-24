@@ -13,6 +13,7 @@ import (
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
 // Login creates a login request to the Datum API
@@ -20,7 +21,7 @@ func Login(c *Client, ctx context.Context, user handlers.User) (*oauth2.Token, e
 	method := http.MethodPost
 	endpoint := "login"
 
-	u := fmt.Sprintf("%s%s", c.Client.BaseURL, endpoint)
+	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
 
 	queryURL, err := url.Parse(u)
 	if err != nil {

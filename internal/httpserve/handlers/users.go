@@ -30,7 +30,7 @@ func (u *User) CreateVerificationToken() (err error) {
 		secret []byte
 	)
 
-	// Create a unqiue token from the user's email address
+	// Create a unique token from the user's email address
 	if verify, err = tokens.NewVerificationToken(u.Email); err != nil {
 		return err
 	}

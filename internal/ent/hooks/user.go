@@ -11,6 +11,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/gravatar"
@@ -122,6 +123,9 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 
 // createPersonalOrg creates an org for a user with a unique random name
 func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *generated.User) error {
+	// this prevents a privacy check that would be required for regular orgs, but not a personal org
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
 	orgInput := getPersonalOrgInput(user)
 
 	_, err := dbClient.Organization.Create().SetInput(orgInput).Save(ctx)

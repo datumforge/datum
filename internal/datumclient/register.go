@@ -10,6 +10,7 @@ import (
 	"net/url"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
 // Register a new user within Datum
@@ -17,7 +18,7 @@ func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*hand
 	method := http.MethodPost
 	endpoint := "register"
 
-	u := fmt.Sprintf("%s%s", c.Client.BaseURL, endpoint)
+	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
 
 	queryURL, err := url.Parse(u)
 	if err != nil {

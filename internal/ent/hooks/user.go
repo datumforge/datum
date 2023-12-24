@@ -131,7 +131,7 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 			return createPersonalOrg(ctx, dbClient, user)
 		}
 
-		user.Logger.Errorw("unable to create personal org")
+		user.Logger.Errorw("unable to create personal org", "error", err.Error())
 	}
 
 	return err

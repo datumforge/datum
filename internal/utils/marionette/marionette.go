@@ -73,6 +73,8 @@ func (tm *TaskManager) Schedule(at time.Time, task Task, opts ...Option) error {
 
 // Start the task manager and scheduler in their own go routines (no-op if already started)
 func (tm *TaskManager) Start() {
+	tm.logger.Debugw("starting task manager")
+
 	tm.Lock()
 	defer tm.Unlock()
 

@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var serveCmd = &cobra.Command{
@@ -127,6 +128,13 @@ func serve(ctx context.Context) error {
 
 	// Setup Graph API Handlers
 	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient, settings, mw))
+
+	// Start task manager
+	tmConfig := marionette.Config{
+		Logger: logger,
+	}
+
+	marionette.New(tmConfig).Start()
 
 	if err := srv.StartEchoServer(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))

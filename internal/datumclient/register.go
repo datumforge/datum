@@ -49,7 +49,7 @@ func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*hand
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusCreated {
 		return nil, newAuthenticationError(resp.StatusCode, out.Message)
 	}
 

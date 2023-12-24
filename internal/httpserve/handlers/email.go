@@ -14,7 +14,6 @@ func (h *Handler) SendVerificationEmail(user *User) (err error) {
 	data := emails.VerifyEmailData{
 		EmailData: emails.EmailData{
 			Sender: h.SendGrid.MustFromContact(),
-			//			emails.Config.MustFromContact(emails.Config{}),
 			Recipient: sendgrid.Contact{
 				Email: user.Email,
 			},

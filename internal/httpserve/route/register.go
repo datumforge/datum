@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // Register creates a new user in the database with the specified password, allowing the
@@ -16,14 +18,12 @@ import (
 // in the register request and the user is assigned the Owner role.
 
 // TODO: implement register handler
-func registerRegisterHandler(router *echo.Echo) (err error) { //nolint:unused
+func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error) { //nolint:unused
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
+		Method: http.MethodPost,
 		Path:   "/register",
 		Handler: func(c echo.Context) error {
-			return c.JSON(http.StatusNotImplemented, echo.Map{
-				"error": "Not implemented",
-			})
+			return h.RegisterHandler(c)
 		},
 	}.ForGroup(V1Version, mw))
 

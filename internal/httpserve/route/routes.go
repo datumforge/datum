@@ -60,7 +60,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
-	if err := registerRegisterHandler(router); err != nil {
+	if err := registerRegisterHandler(router, h); err != nil {
 		return err
 	}
 

@@ -19,12 +19,16 @@ type User struct {
 	Password                 string `json:"password"`
 	userID                   string
 	ID                       ulid.ULID
+	FirstName                string
+	LastName                 string
 	Name                     string
 	Email                    string
 	EmailVerified            bool
 	EmailVerificationExpires sql.NullString
 	EmailVerificationToken   sql.NullString
 	EmailVerificationSecret  []byte
+	AgreeToS                 sql.NullBool
+	AgreePrivacy             sql.NullBool
 }
 
 // LoginHandler validates the user credentials and returns a valid cookie

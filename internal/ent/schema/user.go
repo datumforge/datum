@@ -111,6 +111,12 @@ func (User) Fields() []ent.Field {
 		field.Bool("oauth").
 			Comment("whether the user uses oauth for login or not").
 			Default(false),
+		field.Bool("agree_tos").
+			Comment("whether the user has accepted the terms of service or not").
+			Default(false),
+		field.Bool("agree_privacy").
+			Comment("whether the user has accepted the privacy agreement or not").
+			Default(false),
 	}
 }
 

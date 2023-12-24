@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+
 	echoprometheus "github.com/datumforge/echo-prometheus/v5"
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
@@ -47,7 +49,7 @@ func NewServer(c config.Server, l *zap.Logger) *Server {
 }
 
 // StartEchoServer creates and starts the echo server with configured middleware and handlers
-func (s *Server) StartEchoServer() error {
+func (s *Server) StartEchoServer(ctx context.Context) error {
 	srv := echo.New()
 
 	sc := echo.StartConfig{
@@ -55,6 +57,7 @@ func (s *Server) StartEchoServer() error {
 		HidePort:        true,
 		Address:         s.config.Listen,
 		GracefulTimeout: s.config.ShutdownGracePeriod,
+		GracefulContext: ctx,
 	}
 
 	srv.Debug = s.config.Debug

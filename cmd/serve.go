@@ -128,7 +128,7 @@ func serve(ctx context.Context) error {
 	// Setup Graph API Handlers
 	so.AddServerOptions(serveropts.WithGraphRoute(srv, entdbClient, settings, mw))
 
-	if err := srv.StartEchoServer(); err != nil {
+	if err := srv.StartEchoServer(ctx); err != nil {
 		logger.Error("failed to run server", zap.Error(err))
 	}
 

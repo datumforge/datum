@@ -45,8 +45,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	}
 
 	meowuser, err := h.DBClient.User.Create().SetInput(input).Save(ctx.Request().Context())
-
-	if meowuser != nil {
+	if err != nil {
 		return err
 	}
 

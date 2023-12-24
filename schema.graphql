@@ -244,6 +244,10 @@ input CreateUserInput {
 	sub: String
 	"""whether the user uses oauth for login or not"""
 	oauth: Boolean
+	"""whether the user has accepted the terms of service or not"""
+	agreeTos: Boolean
+	"""whether the user has accepted the privacy agreement or not"""
+	agreePrivacy: Boolean
 	organizationIDs: [ID!]
 	sessionIDs: [ID!]
 	groupIDs: [ID!]
@@ -3196,6 +3200,10 @@ input UpdateUserInput {
 	clearSub: Boolean
 	"""whether the user uses oauth for login or not"""
 	oauth: Boolean
+	"""whether the user has accepted the terms of service or not"""
+	agreeTos: Boolean
+	"""whether the user has accepted the privacy agreement or not"""
+	agreePrivacy: Boolean
 	addOrganizationIDs: [ID!]
 	removeOrganizationIDs: [ID!]
 	clearOrganizations: Boolean
@@ -3267,6 +3275,10 @@ type User implements Node {
 	sub: String
 	"""whether the user uses oauth for login or not"""
 	oauth: Boolean!
+	"""whether the user has accepted the terms of service or not"""
+	agreeTos: Boolean!
+	"""whether the user has accepted the privacy agreement or not"""
+	agreePrivacy: Boolean!
 	organizations: [Organization!]
 	sessions: [Session!]
 	groups: [Group!]
@@ -3762,6 +3774,12 @@ input UserWhereInput {
 	"""oauth field predicates"""
 	oauth: Boolean
 	oauthNEQ: Boolean
+	"""agree_tos field predicates"""
+	agreeTos: Boolean
+	agreeTosNEQ: Boolean
+	"""agree_privacy field predicates"""
+	agreePrivacy: Boolean
+	agreePrivacyNEQ: Boolean
 	"""organizations edge predicates"""
 	hasOrganizations: Boolean
 	hasOrganizationsWith: [OrganizationWhereInput!]

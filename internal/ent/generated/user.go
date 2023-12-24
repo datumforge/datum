@@ -52,6 +52,10 @@ type User struct {
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth bool `json:"oauth,omitempty"`
+	// whether the user has accepted the terms of service or not
+	AgreeTos bool `json:"agree_tos,omitempty"`
+	// whether the user has accepted the privacy agreement or not
+	AgreePrivacy bool `json:"agree_privacy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -136,7 +140,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldOauth:
+		case user.FieldOauth, user.FieldAgreeTos, user.FieldAgreePrivacy:
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldDisplayName, user.FieldAvatarRemoteURL, user.FieldAvatarLocalFile, user.FieldPassword, user.FieldSub:
 			values[i] = new(sql.NullString)
@@ -270,6 +274,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Oauth = value.Bool
 			}
+		case user.FieldAgreeTos:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field agree_tos", values[i])
+			} else if value.Valid {
+				u.AgreeTos = value.Bool
+			}
+		case user.FieldAgreePrivacy:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field agree_privacy", values[i])
+			} else if value.Valid {
+				u.AgreePrivacy = value.Bool
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -391,6 +407,12 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("oauth=")
 	builder.WriteString(fmt.Sprintf("%v", u.Oauth))
+	builder.WriteString(", ")
+	builder.WriteString("agree_tos=")
+	builder.WriteString(fmt.Sprintf("%v", u.AgreeTos))
+	builder.WriteString(", ")
+	builder.WriteString("agree_privacy=")
+	builder.WriteString(fmt.Sprintf("%v", u.AgreePrivacy))
 	builder.WriteByte(')')
 	return builder.String()
 }

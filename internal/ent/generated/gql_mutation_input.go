@@ -1393,6 +1393,8 @@ type CreateUserInput struct {
 	Password               *string
 	Sub                    *string
 	Oauth                  *bool
+	AgreeTos               *bool
+	AgreePrivacy           *bool
 	OrganizationIDs        []string
 	SessionIDs             []string
 	GroupIDs               []string
@@ -1441,6 +1443,12 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.Oauth; v != nil {
 		m.SetOauth(*v)
 	}
+	if v := i.AgreeTos; v != nil {
+		m.SetAgreeTos(*v)
+	}
+	if v := i.AgreePrivacy; v != nil {
+		m.SetAgreePrivacy(*v)
+	}
 	if v := i.OrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
 	}
@@ -1484,6 +1492,8 @@ type UpdateUserInput struct {
 	ClearSub                     bool
 	Sub                          *string
 	Oauth                        *bool
+	AgreeTos                     *bool
+	AgreePrivacy                 *bool
 	ClearOrganizations           bool
 	AddOrganizationIDs           []string
 	RemoveOrganizationIDs        []string
@@ -1560,6 +1570,12 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.Oauth; v != nil {
 		m.SetOauth(*v)
+	}
+	if v := i.AgreeTos; v != nil {
+		m.SetAgreeTos(*v)
+	}
+	if v := i.AgreePrivacy; v != nil {
+		m.SetAgreePrivacy(*v)
 	}
 	if i.ClearOrganizations {
 		m.ClearOrganizations()

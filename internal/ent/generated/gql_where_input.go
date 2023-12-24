@@ -6914,6 +6914,14 @@ type UserWhereInput struct {
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNEQ *bool `json:"oauthNEQ,omitempty"`
 
+	// "agree_tos" field predicates.
+	AgreeTos    *bool `json:"agreeTos,omitempty"`
+	AgreeTosNEQ *bool `json:"agreeTosNEQ,omitempty"`
+
+	// "agree_privacy" field predicates.
+	AgreePrivacy    *bool `json:"agreePrivacy,omitempty"`
+	AgreePrivacyNEQ *bool `json:"agreePrivacyNEQ,omitempty"`
+
 	// "organizations" edge predicates.
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
@@ -7650,6 +7658,18 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 	}
 	if i.OauthNEQ != nil {
 		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
+	}
+	if i.AgreeTos != nil {
+		predicates = append(predicates, user.AgreeTosEQ(*i.AgreeTos))
+	}
+	if i.AgreeTosNEQ != nil {
+		predicates = append(predicates, user.AgreeTosNEQ(*i.AgreeTosNEQ))
+	}
+	if i.AgreePrivacy != nil {
+		predicates = append(predicates, user.AgreePrivacyEQ(*i.AgreePrivacy))
+	}
+	if i.AgreePrivacyNEQ != nil {
+		predicates = append(predicates, user.AgreePrivacyNEQ(*i.AgreePrivacyNEQ))
 	}
 
 	if i.HasOrganizations != nil {

@@ -359,6 +359,8 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Default: false},
+		{Name: "agree_tos", Type: field.TypeBool, Default: false},
+		{Name: "agree_privacy", Type: field.TypeBool, Default: false},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

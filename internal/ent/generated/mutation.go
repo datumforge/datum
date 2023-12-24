@@ -11762,6 +11762,8 @@ type UserMutation struct {
 	password                      *string
 	sub                           *string
 	oauth                         *bool
+	agree_tos                     *bool
+	agree_privacy                 *bool
 	clearedFields                 map[string]struct{}
 	organizations                 map[string]struct{}
 	removedorganizations          map[string]struct{}
@@ -12628,6 +12630,78 @@ func (m *UserMutation) ResetOauth() {
 	m.oauth = nil
 }
 
+// SetAgreeTos sets the "agree_tos" field.
+func (m *UserMutation) SetAgreeTos(b bool) {
+	m.agree_tos = &b
+}
+
+// AgreeTos returns the value of the "agree_tos" field in the mutation.
+func (m *UserMutation) AgreeTos() (r bool, exists bool) {
+	v := m.agree_tos
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAgreeTos returns the old "agree_tos" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAgreeTos(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAgreeTos is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAgreeTos requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAgreeTos: %w", err)
+	}
+	return oldValue.AgreeTos, nil
+}
+
+// ResetAgreeTos resets all changes to the "agree_tos" field.
+func (m *UserMutation) ResetAgreeTos() {
+	m.agree_tos = nil
+}
+
+// SetAgreePrivacy sets the "agree_privacy" field.
+func (m *UserMutation) SetAgreePrivacy(b bool) {
+	m.agree_privacy = &b
+}
+
+// AgreePrivacy returns the value of the "agree_privacy" field in the mutation.
+func (m *UserMutation) AgreePrivacy() (r bool, exists bool) {
+	v := m.agree_privacy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAgreePrivacy returns the old "agree_privacy" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAgreePrivacy(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAgreePrivacy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAgreePrivacy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAgreePrivacy: %w", err)
+	}
+	return oldValue.AgreePrivacy, nil
+}
+
+// ResetAgreePrivacy resets all changes to the "agree_privacy" field.
+func (m *UserMutation) ResetAgreePrivacy() {
+	m.agree_privacy = nil
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by ids.
 func (m *UserMutation) AddOrganizationIDs(ids ...string) {
 	if m.organizations == nil {
@@ -12917,7 +12991,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -12969,6 +13043,12 @@ func (m *UserMutation) Fields() []string {
 	if m.oauth != nil {
 		fields = append(fields, user.FieldOauth)
 	}
+	if m.agree_tos != nil {
+		fields = append(fields, user.FieldAgreeTos)
+	}
+	if m.agree_privacy != nil {
+		fields = append(fields, user.FieldAgreePrivacy)
+	}
 	return fields
 }
 
@@ -13011,6 +13091,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Sub()
 	case user.FieldOauth:
 		return m.Oauth()
+	case user.FieldAgreeTos:
+		return m.AgreeTos()
+	case user.FieldAgreePrivacy:
+		return m.AgreePrivacy()
 	}
 	return nil, false
 }
@@ -13054,6 +13138,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldSub(ctx)
 	case user.FieldOauth:
 		return m.OldOauth(ctx)
+	case user.FieldAgreeTos:
+		return m.OldAgreeTos(ctx)
+	case user.FieldAgreePrivacy:
+		return m.OldAgreePrivacy(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -13181,6 +13269,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOauth(v)
+		return nil
+	case user.FieldAgreeTos:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAgreeTos(v)
+		return nil
+	case user.FieldAgreePrivacy:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAgreePrivacy(v)
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
@@ -13344,6 +13446,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldOauth:
 		m.ResetOauth()
+		return nil
+	case user.FieldAgreeTos:
+		m.ResetAgreeTos()
+		return nil
+	case user.FieldAgreePrivacy:
+		m.ResetAgreePrivacy()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

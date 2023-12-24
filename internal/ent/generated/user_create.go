@@ -239,6 +239,34 @@ func (uc *UserCreate) SetNillableOauth(b *bool) *UserCreate {
 	return uc
 }
 
+// SetAgreeTos sets the "agree_tos" field.
+func (uc *UserCreate) SetAgreeTos(b bool) *UserCreate {
+	uc.mutation.SetAgreeTos(b)
+	return uc
+}
+
+// SetNillableAgreeTos sets the "agree_tos" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAgreeTos(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetAgreeTos(*b)
+	}
+	return uc
+}
+
+// SetAgreePrivacy sets the "agree_privacy" field.
+func (uc *UserCreate) SetAgreePrivacy(b bool) *UserCreate {
+	uc.mutation.SetAgreePrivacy(b)
+	return uc
+}
+
+// SetNillableAgreePrivacy sets the "agree_privacy" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAgreePrivacy(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetAgreePrivacy(*b)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -383,6 +411,14 @@ func (uc *UserCreate) defaults() error {
 		v := user.DefaultOauth
 		uc.mutation.SetOauth(v)
 	}
+	if _, ok := uc.mutation.AgreeTos(); !ok {
+		v := user.DefaultAgreeTos
+		uc.mutation.SetAgreeTos(v)
+	}
+	if _, ok := uc.mutation.AgreePrivacy(); !ok {
+		v := user.DefaultAgreePrivacy
+		uc.mutation.SetAgreePrivacy(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		if user.DefaultID == nil {
 			return fmt.Errorf("generated: uninitialized user.DefaultID (forgotten import generated/runtime?)")
@@ -445,6 +481,12 @@ func (uc *UserCreate) check() error {
 	}
 	if _, ok := uc.mutation.Oauth(); !ok {
 		return &ValidationError{Name: "oauth", err: errors.New(`generated: missing required field "User.oauth"`)}
+	}
+	if _, ok := uc.mutation.AgreeTos(); !ok {
+		return &ValidationError{Name: "agree_tos", err: errors.New(`generated: missing required field "User.agree_tos"`)}
+	}
+	if _, ok := uc.mutation.AgreePrivacy(); !ok {
+		return &ValidationError{Name: "agree_privacy", err: errors.New(`generated: missing required field "User.agree_privacy"`)}
 	}
 	if _, ok := uc.mutation.SettingID(); !ok {
 		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "User.setting"`)}
@@ -552,6 +594,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 		_node.Oauth = value
+	}
+	if value, ok := uc.mutation.AgreeTos(); ok {
+		_spec.SetField(user.FieldAgreeTos, field.TypeBool, value)
+		_node.AgreeTos = value
+	}
+	if value, ok := uc.mutation.AgreePrivacy(); ok {
+		_spec.SetField(user.FieldAgreePrivacy, field.TypeBool, value)
+		_node.AgreePrivacy = value
 	}
 	if nodes := uc.mutation.OrganizationsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

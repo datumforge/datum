@@ -534,6 +534,8 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
+		AgreePrivacy         func(childComplexity int) int
+		AgreeTos             func(childComplexity int) int
 		AvatarLocalFile      func(childComplexity int) int
 		AvatarRemoteURL      func(childComplexity int) int
 		AvatarUpdatedAt      func(childComplexity int) int
@@ -3069,6 +3071,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SessionUpdatePayload.Session(childComplexity), true
 
+	case "User.agreePrivacy":
+		if e.complexity.User.AgreePrivacy == nil {
+			break
+		}
+
+		return e.complexity.User.AgreePrivacy(childComplexity), true
+
+	case "User.agreeTos":
+		if e.complexity.User.AgreeTos == nil {
+			break
+		}
+
+		return e.complexity.User.AgreeTos(childComplexity), true
+
 	case "User.avatarLocalFile":
 		if e.complexity.User.AvatarLocalFile == nil {
 			break
@@ -3845,6 +3861,10 @@ input CreateUserInput {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean
+  """whether the user has accepted the terms of service or not"""
+  agreeTos: Boolean
+  """whether the user has accepted the privacy agreement or not"""
+  agreePrivacy: Boolean
   organizationIDs: [ID!]
   sessionIDs: [ID!]
   groupIDs: [ID!]
@@ -6369,6 +6389,10 @@ input UpdateUserInput {
   clearSub: Boolean
   """whether the user uses oauth for login or not"""
   oauth: Boolean
+  """whether the user has accepted the terms of service or not"""
+  agreeTos: Boolean
+  """whether the user has accepted the privacy agreement or not"""
+  agreePrivacy: Boolean
   addOrganizationIDs: [ID!]
   removeOrganizationIDs: [ID!]
   clearOrganizations: Boolean
@@ -6440,6 +6464,10 @@ type User implements Node {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean!
+  """whether the user has accepted the terms of service or not"""
+  agreeTos: Boolean!
+  """whether the user has accepted the privacy agreement or not"""
+  agreePrivacy: Boolean!
   organizations: [Organization!]
   sessions: [Session!]
   groups: [Group!]
@@ -6905,6 +6933,12 @@ input UserWhereInput {
   """oauth field predicates"""
   oauth: Boolean
   oauthNEQ: Boolean
+  """agree_tos field predicates"""
+  agreeTos: Boolean
+  agreeTosNEQ: Boolean
+  """agree_privacy field predicates"""
+  agreePrivacy: Boolean
+  agreePrivacyNEQ: Boolean
   """organizations edge predicates"""
   hasOrganizations: Boolean
   hasOrganizationsWith: [OrganizationWhereInput!]
@@ -11183,6 +11217,10 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -18825,6 +18863,10 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -21624,6 +21666,10 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_owner(ctx context.C
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -23869,6 +23915,10 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -24624,6 +24674,10 @@ func (ec *executionContext) fieldContext_Session_owner(ctx context.Context, fiel
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -25837,6 +25891,94 @@ func (ec *executionContext) fieldContext_User_oauth(ctx context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _User_agreeTos(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_agreeTos(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AgreeTos, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_agreeTos(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_agreePrivacy(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_agreePrivacy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AgreePrivacy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_agreePrivacy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_organizations(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_organizations(ctx, field)
 	if err != nil {
@@ -26419,6 +26561,10 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -26552,6 +26698,10 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -27327,6 +27477,10 @@ func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, f
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -27883,6 +28037,10 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
+			case "agreeTos":
+				return ec.fieldContext_User_agreeTos(ctx, field)
+			case "agreePrivacy":
+				return ec.fieldContext_User_agreePrivacy(ctx, field)
 			case "organizations":
 				return ec.fieldContext_User_organizations(ctx, field)
 			case "sessions":
@@ -30708,7 +30866,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "agreeTos", "agreePrivacy", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30820,6 +30978,20 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Oauth = data
+		case "agreeTos":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreeTos"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreeTos = data
+		case "agreePrivacy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreePrivacy"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreePrivacy = data
 		case "organizationIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -41913,7 +42085,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "agreeTos", "agreePrivacy", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42060,6 +42232,20 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Oauth = data
+		case "agreeTos":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreeTos"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreeTos = data
+		case "agreePrivacy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreePrivacy"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreePrivacy = data
 		case "addOrganizationIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addOrganizationIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -43201,7 +43387,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "password", "passwordNEQ", "passwordIn", "passwordNotIn", "passwordGT", "passwordGTE", "passwordLT", "passwordLTE", "passwordContains", "passwordHasPrefix", "passwordHasSuffix", "passwordIsNil", "passwordNotNil", "passwordEqualFold", "passwordContainsFold", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "hasOrganizations", "hasOrganizationsWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "password", "passwordNEQ", "passwordIn", "passwordNotIn", "passwordGT", "passwordGTE", "passwordLT", "passwordLTE", "passwordContains", "passwordHasPrefix", "passwordHasSuffix", "passwordIsNil", "passwordNotNil", "passwordEqualFold", "passwordContainsFold", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "agreeTos", "agreeTosNEQ", "agreePrivacy", "agreePrivacyNEQ", "hasOrganizations", "hasOrganizationsWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44734,6 +44920,34 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.OauthNEQ = data
+		case "agreeTos":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreeTos"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreeTos = data
+		case "agreeTosNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreeTosNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreeTosNEQ = data
+		case "agreePrivacy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreePrivacy"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreePrivacy = data
+		case "agreePrivacyNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("agreePrivacyNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AgreePrivacyNEQ = data
 		case "hasOrganizations":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrganizations"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -49390,6 +49604,16 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_sub(ctx, field, obj)
 		case "oauth":
 			out.Values[i] = ec._User_oauth(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "agreeTos":
+			out.Values[i] = ec._User_agreeTos(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "agreePrivacy":
+			out.Values[i] = ec._User_agreePrivacy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

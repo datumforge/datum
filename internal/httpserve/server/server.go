@@ -27,8 +27,6 @@ type Server struct {
 	logger *zap.SugaredLogger
 	// handlers contains additional handlers to register with the echo server
 	handlers []handler
-
-	// tasks *marionette.TaskManager
 }
 
 type handler interface {
@@ -91,7 +89,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		srv.Use(m)
 	}
 
-	// Setup token manager (TODO: should this go elsewhere?)
+	// Setup token manager
 	tm, err := tokens.New(s.config.Token)
 	if err != nil {
 		return err

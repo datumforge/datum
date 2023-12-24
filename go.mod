@@ -24,6 +24,7 @@ require (
 	github.com/openfga/language/pkg/go v0.0.0-20231220180656-9f0ec45883f3
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.17.0
+	github.com/sendgrid/rest v2.6.9+incompatible
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
@@ -86,7 +87,6 @@ require (
 	github.com/prometheus/common v0.45.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/rs/zerolog v1.29.1 // indirect
-	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect

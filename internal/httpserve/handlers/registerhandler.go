@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
-	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -17,7 +17,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	var (
 		err error
 		in  *RegisterRequest
-		// out *RegisterReply
+		out *RegisterReply
 	)
 
 	// parse request body
@@ -31,45 +31,50 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
 	}
 
-	user := generated.CreateUserInput{
+	//	u := &User{}
+
+	//	u.SetAgreement(in.AgreeToS, in.AgreePrivacy)
+
+	input := generated.CreateUserInput{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Email:     in.Email,
 		Password:  &in.Password,
-		// AgreePrivacy: in.AgreePrivacy,
-		// AgreeToS:     in.AgreeToS,
+		//		AgreeTos:     &in.AgreeToS,
+		//		AgreePrivacy: &in.AgreePrivacy,
 	}
 
-	meowerr := h.DBClient.User.Create().SetInput(user).Exec(ctx.Request().Context())
+	meowuser, err := h.DBClient.User.Create().SetInput(input).Save(ctx.Request().Context())
 
-	if meowerr != nil {
-		return meowerr
+	if meowuser != nil {
+		return err
 	}
 
-	return ctx.JSON(http.StatusOK, Response{Message: "success"})
+	out = &RegisterReply{
+		ID:      meowuser.ID,
+		Email:   meowuser.Email,
+		Message: "Welcome to Datum!",
+	}
+
+	return ctx.JSON(http.StatusCreated, out)
 }
 
 type RegisterReply struct {
-	ID        ulid.ULID `json:"user_id"`
-	OrgID     ulid.ULID `json:"org_id"`
-	Email     string    `json:"email"`
-	OrgName   string    `json:"org_name"`
-	OrgDomain string    `json:"org_domain"`
-	Message   string    `json:"message"`
-	Role      string    `json:"role"`
-	Created   string    `json:"created"`
+	ID      string `json:"user_id"`
+	Email   string `json:"email"`
+	Message string `json:"message"`
 }
 
 type RegisterRequest struct {
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	Email        string `json:"email"`
-	Password     string `json:"password"`
-	PwCheck      string `json:"pwcheck"`
-	Organization string `json:"organization"`
-	Domain       string `json:"domain"`
-	AgreeToS     bool   `json:"terms_agreement"`
-	AgreePrivacy bool   `json:"privacy_agreement"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	PwCheck   string `json:"pwcheck"`
+	// Organization string `json:"organization"`
+	// Domain       string `json:"domain"`
+	// AgreeToS     bool   `json:"terms_agreement"`
+	// AgreePrivacy bool   `json:"privacy_agreement"`
 }
 
 // Validate the register request ensuring that the required fields are available and
@@ -81,8 +86,8 @@ func (r *RegisterRequest) Validate() error {
 	r.Email = strings.TrimSpace(r.Email)
 	r.Password = strings.TrimSpace(r.Password)
 	r.PwCheck = strings.TrimSpace(r.PwCheck)
-	r.Organization = strings.TrimSpace(r.Organization)
-	r.Domain = strings.ToLower(strings.TrimSpace(r.Domain))
+	//	r.Organization = strings.TrimSpace(r.Organization)
+	//	r.Domain = strings.ToLower(strings.TrimSpace(r.Domain))
 
 	// Required for all requests
 	switch {
@@ -94,11 +99,16 @@ func (r *RegisterRequest) Validate() error {
 		return auth.ErrPasswordMismatch
 	case passwd.Strength(r.Password) < passwd.Moderate:
 		return auth.ErrPasswordTooWeak
-	case !r.AgreeToS:
-		return auth.MissingField("terms_agreement")
-	case !r.AgreePrivacy:
-		return auth.MissingField("privacy_agreement")
+		//	case !r.AgreeToS:
+		//		return auth.MissingField("terms_agreement")
+		//	case !r.AgreePrivacy:
+		//		return auth.MissingField("privacy_agreement")
 	}
 
 	return nil
+}
+
+func (u *User) SetAgreement(agreeTos, agreePrivacy bool) {
+	u.AgreeToS = sql.NullBool{Valid: true, Bool: agreeTos}
+	u.AgreePrivacy = sql.NullBool{Valid: true, Bool: agreePrivacy}
 }

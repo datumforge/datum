@@ -301,6 +301,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldPassword:        {Type: field.TypeString, Column: user.FieldPassword},
 			user.FieldSub:             {Type: field.TypeString, Column: user.FieldSub},
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
+			user.FieldAgreeTos:        {Type: field.TypeBool, Column: user.FieldAgreeTos},
+			user.FieldAgreePrivacy:    {Type: field.TypeBool, Column: user.FieldAgreePrivacy},
 		},
 	}
 	graph.Nodes[11] = &sqlgraph.Node{
@@ -1988,6 +1990,16 @@ func (f *UserFilter) WhereSub(p entql.StringP) {
 // WhereOauth applies the entql bool predicate on the oauth field.
 func (f *UserFilter) WhereOauth(p entql.BoolP) {
 	f.Where(p.Field(user.FieldOauth))
+}
+
+// WhereAgreeTos applies the entql bool predicate on the agree_tos field.
+func (f *UserFilter) WhereAgreeTos(p entql.BoolP) {
+	f.Where(p.Field(user.FieldAgreeTos))
+}
+
+// WhereAgreePrivacy applies the entql bool predicate on the agree_privacy field.
+func (f *UserFilter) WhereAgreePrivacy(p entql.BoolP) {
+	f.Where(p.Field(user.FieldAgreePrivacy))
 }
 
 // WhereHasOrganizations applies a predicate to check if query has an edge organizations.

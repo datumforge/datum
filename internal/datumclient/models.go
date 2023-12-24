@@ -244,7 +244,11 @@ type CreateUserInput struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                  *bool    `json:"oauth,omitempty"`
+	Oauth *bool `json:"oauth,omitempty"`
+	// whether the user has accepted the terms of service or not
+	AgreeTos *bool `json:"agreeTos,omitempty"`
+	// whether the user has accepted the privacy agreement or not
+	AgreePrivacy           *bool    `json:"agreePrivacy,omitempty"`
 	OrganizationIDs        []string `json:"organizationIDs,omitempty"`
 	SessionIDs             []string `json:"sessionIDs,omitempty"`
 	GroupIDs               []string `json:"groupIDs,omitempty"`
@@ -2687,7 +2691,11 @@ type UpdateUserInput struct {
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                        *bool    `json:"oauth,omitempty"`
+	Oauth *bool `json:"oauth,omitempty"`
+	// whether the user has accepted the terms of service or not
+	AgreeTos *bool `json:"agreeTos,omitempty"`
+	// whether the user has accepted the privacy agreement or not
+	AgreePrivacy                 *bool    `json:"agreePrivacy,omitempty"`
 	AddOrganizationIDs           []string `json:"addOrganizationIDs,omitempty"`
 	RemoveOrganizationIDs        []string `json:"removeOrganizationIDs,omitempty"`
 	ClearOrganizations           *bool    `json:"clearOrganizations,omitempty"`
@@ -2758,7 +2766,11 @@ type User struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                bool                   `json:"oauth"`
+	Oauth bool `json:"oauth"`
+	// whether the user has accepted the terms of service or not
+	AgreeTos bool `json:"agreeTos"`
+	// whether the user has accepted the privacy agreement or not
+	AgreePrivacy         bool                   `json:"agreePrivacy"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`
 	Sessions             []*Session             `json:"sessions,omitempty"`
 	Groups               []*Group               `json:"groups,omitempty"`
@@ -3249,6 +3261,12 @@ type UserWhereInput struct {
 	// oauth field predicates
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNeq *bool `json:"oauthNEQ,omitempty"`
+	// agree_tos field predicates
+	AgreeTos    *bool `json:"agreeTos,omitempty"`
+	AgreeTosNeq *bool `json:"agreeTosNEQ,omitempty"`
+	// agree_privacy field predicates
+	AgreePrivacy    *bool `json:"agreePrivacy,omitempty"`
+	AgreePrivacyNeq *bool `json:"agreePrivacyNEQ,omitempty"`
 	// organizations edge predicates
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`

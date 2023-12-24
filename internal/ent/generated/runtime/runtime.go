@@ -554,6 +554,14 @@ func init() {
 	userDescOauth := userFields[10].Descriptor()
 	// user.DefaultOauth holds the default value on creation for the oauth field.
 	user.DefaultOauth = userDescOauth.Default.(bool)
+	// userDescAgreeTos is the schema descriptor for agree_tos field.
+	userDescAgreeTos := userFields[11].Descriptor()
+	// user.DefaultAgreeTos holds the default value on creation for the agree_tos field.
+	user.DefaultAgreeTos = userDescAgreeTos.Default.(bool)
+	// userDescAgreePrivacy is the schema descriptor for agree_privacy field.
+	userDescAgreePrivacy := userFields[12].Descriptor()
+	// user.DefaultAgreePrivacy holds the default value on creation for the agree_privacy field.
+	user.DefaultAgreePrivacy = userDescAgreePrivacy.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

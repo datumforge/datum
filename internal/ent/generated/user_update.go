@@ -275,6 +275,34 @@ func (uu *UserUpdate) SetNillableOauth(b *bool) *UserUpdate {
 	return uu
 }
 
+// SetAgreeTos sets the "agree_tos" field.
+func (uu *UserUpdate) SetAgreeTos(b bool) *UserUpdate {
+	uu.mutation.SetAgreeTos(b)
+	return uu
+}
+
+// SetNillableAgreeTos sets the "agree_tos" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAgreeTos(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetAgreeTos(*b)
+	}
+	return uu
+}
+
+// SetAgreePrivacy sets the "agree_privacy" field.
+func (uu *UserUpdate) SetAgreePrivacy(b bool) *UserUpdate {
+	uu.mutation.SetAgreePrivacy(b)
+	return uu
+}
+
+// SetNillableAgreePrivacy sets the "agree_privacy" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAgreePrivacy(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetAgreePrivacy(*b)
+	}
+	return uu
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uu *UserUpdate) AddOrganizationIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddOrganizationIDs(ids...)
@@ -621,6 +649,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.AgreeTos(); ok {
+		_spec.SetField(user.FieldAgreeTos, field.TypeBool, value)
+	}
+	if value, ok := uu.mutation.AgreePrivacy(); ok {
+		_spec.SetField(user.FieldAgreePrivacy, field.TypeBool, value)
 	}
 	if uu.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -1107,6 +1141,34 @@ func (uuo *UserUpdateOne) SetNillableOauth(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// SetAgreeTos sets the "agree_tos" field.
+func (uuo *UserUpdateOne) SetAgreeTos(b bool) *UserUpdateOne {
+	uuo.mutation.SetAgreeTos(b)
+	return uuo
+}
+
+// SetNillableAgreeTos sets the "agree_tos" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAgreeTos(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetAgreeTos(*b)
+	}
+	return uuo
+}
+
+// SetAgreePrivacy sets the "agree_privacy" field.
+func (uuo *UserUpdateOne) SetAgreePrivacy(b bool) *UserUpdateOne {
+	uuo.mutation.SetAgreePrivacy(b)
+	return uuo
+}
+
+// SetNillableAgreePrivacy sets the "agree_privacy" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAgreePrivacy(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetAgreePrivacy(*b)
+	}
+	return uuo
+}
+
 // AddOrganizationIDs adds the "organizations" edge to the Organization entity by IDs.
 func (uuo *UserUpdateOne) AddOrganizationIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddOrganizationIDs(ids...)
@@ -1483,6 +1545,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.AgreeTos(); ok {
+		_spec.SetField(user.FieldAgreeTos, field.TypeBool, value)
+	}
+	if value, ok := uuo.mutation.AgreePrivacy(); ok {
+		_spec.SetField(user.FieldAgreePrivacy, field.TypeBool, value)
 	}
 	if uuo.mutation.OrganizationsCleared() {
 		edge := &sqlgraph.EdgeSpec{

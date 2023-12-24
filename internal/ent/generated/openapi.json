@@ -4878,6 +4878,12 @@
                   "oauth": {
                     "type": "boolean"
                   },
+                  "agree_tos": {
+                    "type": "boolean"
+                  },
+                  "agree_privacy": {
+                    "type": "boolean"
+                  },
                   "organizations": {
                     "type": "array",
                     "items": {
@@ -4914,6 +4920,8 @@
                   "last_name",
                   "display_name",
                   "oauth",
+                  "agree_tos",
+                  "agree_privacy",
                   "setting"
                 ]
               }
@@ -5096,6 +5104,12 @@
                     "type": "string"
                   },
                   "oauth": {
+                    "type": "boolean"
+                  },
+                  "agree_tos": {
+                    "type": "boolean"
+                  },
+                  "agree_privacy": {
                     "type": "boolean"
                   },
                   "organizations": {
@@ -6676,6 +6690,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -6686,7 +6706,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "Integration": {
@@ -8910,6 +8932,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -8920,7 +8948,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "PersonalAccessToken": {
@@ -9232,6 +9262,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9242,7 +9278,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "Session": {
@@ -9555,6 +9593,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9565,7 +9609,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "User": {
@@ -9630,6 +9676,12 @@
           "oauth": {
             "type": "boolean"
           },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
+          },
           "organizations": {
             "type": "array",
             "items": {
@@ -9667,6 +9719,8 @@
           "last_name",
           "display_name",
           "oauth",
+          "agree_tos",
+          "agree_privacy",
           "setting"
         ]
       },
@@ -9731,6 +9785,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9741,7 +9801,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "UserList": {
@@ -9805,6 +9867,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9815,7 +9883,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "UserRead": {
@@ -9879,6 +9949,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -9889,7 +9965,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "UserSetting": {
@@ -10384,6 +10462,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -10394,7 +10478,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "UserUpdate": {
@@ -10458,6 +10544,12 @@
           },
           "oauth": {
             "type": "boolean"
+          },
+          "agree_tos": {
+            "type": "boolean"
+          },
+          "agree_privacy": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -10468,7 +10560,9 @@
           "first_name",
           "last_name",
           "display_name",
-          "oauth"
+          "oauth",
+          "agree_tos",
+          "agree_privacy"
         ]
       },
       "User_GroupsList": {

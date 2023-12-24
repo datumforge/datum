@@ -49,6 +49,10 @@ const (
 	FieldSub = "sub"
 	// FieldOauth holds the string denoting the oauth field in the database.
 	FieldOauth = "oauth"
+	// FieldAgreeTos holds the string denoting the agree_tos field in the database.
+	FieldAgreeTos = "agree_tos"
+	// FieldAgreePrivacy holds the string denoting the agree_privacy field in the database.
+	FieldAgreePrivacy = "agree_privacy"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
@@ -114,6 +118,8 @@ var Columns = []string{
 	FieldPassword,
 	FieldSub,
 	FieldOauth,
+	FieldAgreeTos,
+	FieldAgreePrivacy,
 }
 
 var (
@@ -170,6 +176,10 @@ var (
 	UpdateDefaultLastSeen func() time.Time
 	// DefaultOauth holds the default value on creation for the "oauth" field.
 	DefaultOauth bool
+	// DefaultAgreeTos holds the default value on creation for the "agree_tos" field.
+	DefaultAgreeTos bool
+	// DefaultAgreePrivacy holds the default value on creation for the "agree_privacy" field.
+	DefaultAgreePrivacy bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -265,6 +275,16 @@ func BySub(opts ...sql.OrderTermOption) OrderOption {
 // ByOauth orders the results by the oauth field.
 func ByOauth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOauth, opts...).ToFunc()
+}
+
+// ByAgreeTos orders the results by the agree_tos field.
+func ByAgreeTos(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAgreeTos, opts...).ToFunc()
+}
+
+// ByAgreePrivacy orders the results by the agree_privacy field.
+func ByAgreePrivacy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAgreePrivacy, opts...).ToFunc()
 }
 
 // ByOrganizationsCount orders the results by organizations count.

@@ -1723,6 +1723,16 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldOauth)
 				fieldSeen[user.FieldOauth] = struct{}{}
 			}
+		case "agreeTos":
+			if _, ok := fieldSeen[user.FieldAgreeTos]; !ok {
+				selectedFields = append(selectedFields, user.FieldAgreeTos)
+				fieldSeen[user.FieldAgreeTos] = struct{}{}
+			}
+		case "agreePrivacy":
+			if _, ok := fieldSeen[user.FieldAgreePrivacy]; !ok {
+				selectedFields = append(selectedFields, user.FieldAgreePrivacy)
+				fieldSeen[user.FieldAgreePrivacy] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:

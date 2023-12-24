@@ -152,6 +152,16 @@ func Oauth(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldOauth, v))
 }
 
+// AgreeTos applies equality check predicate on the "agree_tos" field. It's identical to AgreeTosEQ.
+func AgreeTos(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAgreeTos, v))
+}
+
+// AgreePrivacy applies equality check predicate on the "agree_privacy" field. It's identical to AgreePrivacyEQ.
+func AgreePrivacy(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAgreePrivacy, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -1175,6 +1185,26 @@ func OauthEQ(v bool) predicate.User {
 // OauthNEQ applies the NEQ predicate on the "oauth" field.
 func OauthNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldOauth, v))
+}
+
+// AgreeTosEQ applies the EQ predicate on the "agree_tos" field.
+func AgreeTosEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAgreeTos, v))
+}
+
+// AgreeTosNEQ applies the NEQ predicate on the "agree_tos" field.
+func AgreeTosNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldAgreeTos, v))
+}
+
+// AgreePrivacyEQ applies the EQ predicate on the "agree_privacy" field.
+func AgreePrivacyEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAgreePrivacy, v))
+}
+
+// AgreePrivacyNEQ applies the NEQ predicate on the "agree_privacy" field.
+func AgreePrivacyNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldAgreePrivacy, v))
 }
 
 // HasOrganizations applies the HasEdge predicate on the "organizations" edge.

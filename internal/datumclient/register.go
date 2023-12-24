@@ -13,7 +13,7 @@ import (
 )
 
 // Register a new user within Datum
-func Register(c *Client, ctx context.Context, r handlers.RegisterHandler) (*handlers.RegisterReply, error) {
+func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*handlers.RegisterReply, error) {
 	method := http.MethodPost
 	endpoint := "register"
 

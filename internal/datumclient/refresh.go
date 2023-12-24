@@ -12,6 +12,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
 // Refresh the access + refresh token pair to the Datum API
@@ -19,7 +20,7 @@ func Refresh(c *Client, ctx context.Context, r handlers.RefreshRequest) (*oauth2
 	method := http.MethodPost
 	endpoint := "refresh"
 
-	u := fmt.Sprintf("%s%s", c.Client.BaseURL, endpoint)
+	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
 
 	queryURL, err := url.Parse(u)
 	if err != nil {

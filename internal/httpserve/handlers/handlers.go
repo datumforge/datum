@@ -6,6 +6,7 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/emails"
 )
 
 // Handler contains configuration options for handlers
@@ -22,6 +23,13 @@ type Handler struct {
 	ReadyChecks Checks
 	// JWTKeys contains the set of valid JWT authentication key
 	JWTKeys jwk.Set
+
+	// not sure why this import is being weird?
+	SendGrid emails.Config `split_words:"false"`
+
+	sendgrid *emails.EmailManager
+
+	EmailURL URLConfig
 }
 
 type Response struct {

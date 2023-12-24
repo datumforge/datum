@@ -27,6 +27,8 @@ type Server struct {
 	logger *zap.SugaredLogger
 	// handlers contains additional handlers to register with the echo server
 	handlers []handler
+
+	// tasks *marionette.TaskManager
 }
 
 type handler interface {
@@ -94,6 +96,9 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	//	s.tasks = marionette.New(s.config.Martionette)
+	//	s.tasks.Start()
 
 	keys, err := tm.Keys()
 	if err != nil {

@@ -21,7 +21,7 @@ server:
   auto-cert:
   # host to use to generate tls cert
   cert-host:
-  # server shutdown grace period in seconds before forcefully killing
+  # server shutdown grace period in seconds before forcefully killing, defaults to 10 seconds
   shutdown-grace-period: 10s
   # interval to refresh the server config, defaults to 10 minutes
   config-refresh:

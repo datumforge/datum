@@ -141,6 +141,13 @@ func (u *User) SetAgreement(agreeTos, agreePrivacy bool) {
 }
 
 func SendVerificationNoContact() (err error) {
+	conf := emails.Config{}
+	em, err := emails.New(conf)
+
+	if err != nil {
+		return err
+	}
+
 	sender := sendgrid.Contact{
 		Email: "no-reply@datum.net",
 	}
@@ -178,16 +185,9 @@ func SendVerificationNoContact() (err error) {
 
 	var msg *mail.SGMailV3
 
-	fmt.Sprintf("msg var", msg)
-
 	if msg, err = emails.VerifyEmail(data); err != nil {
 		return fmt.Errorf("SHITBROKEHERE", err)
 	}
-
-	fmt.Sprintf("email", msg)
-
-	// Send the email
-	var em *emails.EmailManager
 
 	if err := em.Send(msg); err != nil {
 		return fmt.Errorf("HEREHREHRHEHREHR", err)

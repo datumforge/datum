@@ -7,20 +7,17 @@ import (
 	"github.com/sendgrid/rest"
 	"github.com/sendgrid/sendgrid-go"
 	sgmail "github.com/sendgrid/sendgrid-go/helpers/mail"
-	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
-
-var logger zap.SugaredLogger
 
 // New email manager with the specified configuration
 func New(conf Config) (m *EmailManager, err error) {
 	m = &EmailManager{conf: conf}
 
 	if conf.Testing {
-		logger.Infow("using mock email client")
+		//		logger.Infow("using mock email client")
 
 		// there's an additional Storage field in the SendGridClient within mock
 		m.client = &mock.SendGridClient{

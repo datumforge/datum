@@ -17,8 +17,6 @@ func New(conf Config) (m *EmailManager, err error) {
 	m = &EmailManager{conf: conf}
 
 	if conf.Testing {
-		//		logger.Infow("using mock email client")
-
 		// there's an additional Storage field in the SendGridClient within mock
 		m.client = &mock.SendGridClient{
 			Storage: conf.Archive,

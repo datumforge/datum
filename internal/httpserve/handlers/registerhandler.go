@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
+	"github.com/mcuadros/go-defaults"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -80,7 +81,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	err = SendVerificationNoContact()
 	if err != nil {
-		return fmt.Errorf("still your shit code ")
+		return err
 	}
 
 	return ctx.JSON(http.StatusCreated, out)
@@ -141,13 +142,6 @@ func (u *User) SetAgreement(agreeTos, agreePrivacy bool) {
 }
 
 func SendVerificationNoContact() (err error) {
-	conf := emails.Config{}
-	em, err := emails.New(conf)
-
-	if err != nil {
-		return err
-	}
-
 	sender := sendgrid.Contact{
 		Email: "no-reply@datum.net",
 	}
@@ -189,9 +183,16 @@ func SendVerificationNoContact() (err error) {
 		return fmt.Errorf("SHITBROKEHERE", err)
 	}
 
-	if err := em.Send(msg); err != nil {
-		return fmt.Errorf("HEREHREHRHEHREHR", err)
+	fmt.Sprintf("email", msg)
+
+	// Send the email
+	conf := &emails.Config{}
+	defaults.SetDefaults(conf)
+
+	em, err := emails.New(*conf)
+	if err != nil {
+		return err
 	}
 
-	return err
+	return em.Send(msg)
 }

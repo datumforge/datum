@@ -8,14 +8,10 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
-	"github.com/mcuadros/go-defaults"
-	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
-	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
@@ -38,39 +34,36 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
-	//	u := &User{}
-
-	//	u.SetAgreement(in.AgreeToS, in.AgreePrivacy)
+	user := &User{
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Email:     in.Email,
+		Password:  in.Password,
+	}
 
 	input := generated.CreateUserInput{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
 		Email:     in.Email,
 		Password:  &in.Password,
-		//		AgreeTos:     &in.AgreeToS,
-		//		AgreePrivacy: &in.AgreePrivacy,
+	}
+
+	if err = user.CreateVerificationToken(); err != nil {
+		return fmt.Errorf("verification token is busted")
 	}
 
 	meowuser, err := h.DBClient.User.Create().SetInput(input).Save(ctx.Request().Context())
 	if err != nil {
+		if generated.IsConstraintError(err) {
+			return fmt.Errorf("user already exists")
+		}
+
 		return err
 	}
 
-	out = &RegisterReply{
-		ID:      meowuser.ID,
-		Email:   meowuser.Email,
-		Message: "Welcome to Datum!",
+	if err = h.SendVerificationEmail(user); err != nil {
+		return err
 	}
-
-	//	user := &User{
-	//		Email:     input.Email,
-	//		FirstName: input.FirstName,
-	//		LastName:  input.LastName,
-	//	}
-
-	//	if err := SendVerificationNoContact(); err != nil {
-	//		return fmt.Errorf("it's your shitty code man")
-	//	}
 
 	//h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 	//	return h.SendVerificationEmail(user)
@@ -79,9 +72,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	//	marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
 	//)
 
-	err = SendVerificationNoContact()
-	if err != nil {
-		return err
+	out = &RegisterReply{
+		ID:      meowuser.ID,
+		Email:   meowuser.Email,
+		Message: "Welcome to Datum!",
 	}
 
 	return ctx.JSON(http.StatusCreated, out)
@@ -139,60 +133,4 @@ func (r *RegisterRequest) Validate() error {
 func (u *User) SetAgreement(agreeTos, agreePrivacy bool) {
 	u.AgreeToS = sql.NullBool{Valid: true, Bool: agreeTos}
 	u.AgreePrivacy = sql.NullBool{Valid: true, Bool: agreePrivacy}
-}
-
-func SendVerificationNoContact() (err error) {
-	sender := sendgrid.Contact{
-		Email: "no-reply@datum.net",
-	}
-	recipient := sendgrid.Contact{
-		FirstName: "Matt",
-		LastName:  "Anderson",
-		Email:     "manderson@datum.net",
-	}
-	//	data := emails.EmailData{
-	//		Sender:    sender,
-	//		Recipient: recipient,
-	//	}
-
-	data := emails.VerifyEmailData{
-		EmailData: emails.EmailData{
-			Sender:    sender,
-			Recipient: recipient,
-		},
-		FullName:  "Matt Anderson",
-		VerifyURL: "https://datum.net/token",
-	}
-
-	fmt.Sprintf("message data", data)
-	// data.Recipient.ParseName(user.FirstName)
-
-	//	token, err := tokens.NewVerificationToken(recipient.Email)
-	//	if err != nil {
-	//		return fmt.Errorf("HERE XXXXXXXX", token)
-	//	}
-	//
-	//	signature, secret, err := token.Sign()
-	//	if err != nil {
-	//		return fmt.Errorf("HEREHEREHEREHERE", signature, secret)
-	//	}
-
-	var msg *mail.SGMailV3
-
-	if msg, err = emails.VerifyEmail(data); err != nil {
-		return fmt.Errorf("SHITBROKEHERE", err)
-	}
-
-	fmt.Sprintf("email", msg)
-
-	// Send the email
-	conf := &emails.Config{}
-	defaults.SetDefaults(conf)
-
-	em, err := emails.New(*conf)
-	if err != nil {
-		return err
-	}
-
-	return em.Send(msg)
 }

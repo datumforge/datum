@@ -21,6 +21,7 @@ tasks:
       - "rm -rf internal/datumclient/"
   clean:local:
     desc: cleans up datum.db and datum-cli local
+    aliases: [cleanlocal]
     cmds:
       - "rm -f datum.db"
       - "rm -f datum-cli"
@@ -95,6 +96,7 @@ tasks:
     - go run main.go serve  --config="config/.datum.dev.yml"
   run-dev:
     desc: runs the datum server with oidc disabled for easy local testing / querying
+    aliases: [rundev]
     cmds:
       - go run main.go serve  --debug --pretty --dev --auth=false
   go:lint:
@@ -202,3 +204,18 @@ tasks:
         echo "$status"
         exit 1
         fi
+  email:
+    deps: [shell]
+    desc: a task to burn local db and bring stack back up and re-test
+    cmds:
+      - task: buildcli
+      - ./datum-cli register create --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234"
+  shell:
+    desc: open a new shell to launch server as a dep
+    cmds:
+      - rm -f datum.db
+      - rm -f datum-cli
+      - osascript -e 'tell app "Terminal" to do script "cd {{.PWD}} && task run-dev"'
+    vars:
+      PWD:
+        sh: pwd

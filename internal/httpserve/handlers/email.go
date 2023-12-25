@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/mcuadros/go-defaults"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -32,6 +33,7 @@ func (h *Handler) SendVerificationNoContact() (err error) {
 		FullName:  "Matt Anderson",
 		VerifyURL: "https://datum.net/token",
 	}
+
 	// data.Recipient.ParseName(user.FirstName)
 
 	//	token, err := tokens.NewVerificationToken(recipient.Email)
@@ -51,26 +53,52 @@ func (h *Handler) SendVerificationNoContact() (err error) {
 	}
 
 	// Send the email
-	return h.sendgrid.Send(msg)
+	conf := &emails.Config{}
+	defaults.SetDefaults(conf)
+
+	em, err := emails.New(*conf)
+	if err != nil {
+		return err
+	}
+
+	return em.Send(msg)
 }
 
 func (h *Handler) SendVerificationEmail(user *User) (err error) {
-	if err := h.createSendgridContact(user); err != nil {
-		return fmt.Errorf("shit went bad")
+	//	if err := h.createSendgridContact(user); err != nil {
+	//		return fmt.Errorf("shit went bad")
+	//	}
+
+	conf := &emails.Config{}
+	defaults.SetDefaults(conf)
+
+	em, err := emails.New(*conf)
+	if err != nil {
+		return err
+	}
+
+	contact := &sendgrid.Contact{
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
 	}
 
 	data := emails.VerifyEmailData{
 		EmailData: emails.EmailData{
-			Sender: h.SendGrid.MustFromContact(),
+			Sender: conf.MustFromContact(),
 			Recipient: sendgrid.Contact{
-				Email: user.Email,
+				Email:     user.Email,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
 			},
 		},
-		FullName: user.FirstName,
+		FullName: contact.FullName(),
 	}
-	data.Recipient.ParseName(user.FirstName)
 
-	if data.VerifyURL, err = h.EmailURL.VerifyURL(user.GetVerificationToken()); err != nil {
+	urlConf := &URLConfig{}
+	defaults.SetDefaults(urlConf)
+
+	if data.VerifyURL, err = urlConf.VerifyURL(user.GetVerificationToken()); err != nil {
 		return err
 	}
 
@@ -81,7 +109,7 @@ func (h *Handler) SendVerificationEmail(user *User) (err error) {
 	}
 
 	// Send the email
-	return h.sendgrid.Send(msg)
+	return em.Send(msg)
 }
 
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
@@ -132,7 +160,7 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) (err error) {
 
 // URLConfig is there a better way to do this?
 type URLConfig struct {
-	Base   string `split_words:"true" default:"https://api.datum.net"`
+	Base   string `split_words:"true" default:"https://app.datum.net"`
 	Verify string `split_words:"true" default:"/verify"`
 	Invite string `split_words:"true" default:"/invite"`
 	Reset  string `split_words:"true" default:"/reset"`

@@ -11,6 +11,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated/migrate"
 
+	"io"
 	"net/http"
 
 	"entgo.io/ent"
@@ -111,6 +112,7 @@ type (
 		Authz         fga.Client
 		Logger        zap.SugaredLogger
 		HTTPClient    *http.Client
+		Writer        io.Writer
 		// schemaConfig contains alternative names for all tables.
 		schemaConfig SchemaConfig
 	}
@@ -181,6 +183,13 @@ func Logger(v zap.SugaredLogger) Option {
 func HTTPClient(v *http.Client) Option {
 	return func(c *config) {
 		c.HTTPClient = v
+	}
+}
+
+// Writer configures the Writer.
+func Writer(v io.Writer) Option {
+	return func(c *config) {
+		c.Writer = v
 	}
 }
 

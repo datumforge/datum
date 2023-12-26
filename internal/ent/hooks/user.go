@@ -113,11 +113,15 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 	personalOrg := true
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
+	// add user to the users of the personal organization
+	users := []string{user.ID}
+
 	return generated.CreateOrganizationInput{
 		Name:        name,
 		DisplayName: &displayName,
 		Description: &desc,
 		PersonalOrg: &personalOrg,
+		UserIDs:     users,
 	}
 }
 

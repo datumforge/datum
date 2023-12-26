@@ -82,7 +82,7 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 
 			tupleGroup := []openfga.TupleKey{}
 
-			adminTuples, err := createTuple(ctx, &m.Authz, fga.AdminRelation, object)
+			adminTuples, err := createTupleFromUserContext(ctx, &m.Authz, fga.AdminRelation, object)
 
 			if err != nil {
 				return err

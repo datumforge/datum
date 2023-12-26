@@ -255,6 +255,16 @@ func TestMutation_CreateUser(t *testing.T) {
 			for _, o := range orgs.Organizations.GetEdges() {
 				if *o.Node.Description == fmt.Sprintf("Personal Organization - %s %s", resp.CreateUser.User.FirstName, resp.CreateUser.User.LastName) {
 					orgCreated = true
+					users := o.Node.Users
+
+					if len(users) == 0 {
+						t.Errorf("user expected to be added to org")
+					}
+
+					if users[0].ID != resp.CreateUser.User.ID {
+						t.Errorf("user id does not user expected to be added to personal org")
+					}
+
 				}
 			}
 

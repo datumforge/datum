@@ -73,7 +73,7 @@ func (u *User) CreateResetToken() (err error) {
 	return nil
 }
 
-func GetUserByToken(ctx echo.Context, token string, orgID any) (u *User, err error) {
+func (u *User) GetUserByToken(ctx echo.Context, token string, orgID any) (u *User, err error) {
 	u = &User{
 		EmailVerificationToken: sql.NullString{String: token, Valid: true},
 	}

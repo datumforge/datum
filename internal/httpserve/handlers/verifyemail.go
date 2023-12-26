@@ -9,7 +9,9 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
 	echo "github.com/datumforge/echox"
+	"github.com/hashicorp/vault/api"
 	"github.com/oklog/ulid/v2"
+	"github.com/trisacrypto/directory/pkg/utils/sentry"
 )
 
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
@@ -28,15 +30,18 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return nil
 	}
 
-	user := &User{}
+	// Look up the user by the token
+	var user *models.User
+	if user, err = models.GetUserByToken(c, req.Token, req.OrgID); err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			c.Error(err)
+			c.JSON(http.StatusBadRequest, api.ErrorResponse("invalid token"))
+			return
+		}
 
-	// check user in the database, username == email and ensure only one record is returned
-	queryUser, err := h.DBClient.User.Query().WithSetting().Where(func(s *sql.Selector) {
-		s.Where(sql.EQ("token", user.Username))
-	}).Only(ctx.Request().Context())
-	if err != nil {
-		auth.Unauthorized(ctx) //nolint:errcheck
-		return err
+		sentry.Error(c).Err(err).Msg("could not retrieve user by email verification token")
+		c.JSON(http.StatusInternalServerError, api.ErrorResponse("could not verify email"))
+		return
 	}
 
 	if user.Edges.Setting.EmailConfirmed {
@@ -50,6 +55,17 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	}
 	if token.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, "could not verify email")
+		return err
+	}
+
+	user := &User{}
+
+	// check user in the database, username == email and ensure only one record is returned
+	queryUser, err := h.DBClient.User.Query().WithSetting().Where(func(s *sql.Selector) {
+		s.Where(sql.EQ("token", user.Username))
+	}).Only(ctx.Request().Context())
+	if err != nil {
+		auth.Unauthorized(ctx) //nolint:errcheck
 		return err
 	}
 

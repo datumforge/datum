@@ -13,6 +13,7 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	"entgo.io/ent/schema/field"
 	"github.com/ogen-go/ogen"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
@@ -79,6 +80,13 @@ func main() {
 		),
 		entc.Dependency(
 			entc.DependencyType(&http.Client{}),
+		),
+		entc.Dependency(
+			entc.DependencyName("Writer"),
+			entc.DependencyTypeInfo(&field.TypeInfo{
+				Ident:   "io.Writer",
+				PkgPath: "io",
+			}),
 		),
 		entc.TemplateDir("./internal/ent/templates"),
 		entc.Extensions(

@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
@@ -74,9 +75,11 @@ type UserEdges struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
+	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
+	EmailVerificationTokens *EmailVerificationToken `json:"email_verification_tokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 	// totalCount holds the count of the edges above.
 	totalCount [5]map[string]int
 
@@ -133,6 +136,19 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 		return e.Setting, nil
 	}
 	return nil, &NotLoadedError{edge: "setting"}
+}
+
+// EmailVerificationTokensOrErr returns the EmailVerificationTokens value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) EmailVerificationTokensOrErr() (*EmailVerificationToken, error) {
+	if e.loadedTypes[5] {
+		if e.EmailVerificationTokens == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: emailverificationtoken.Label}
+		}
+		return e.EmailVerificationTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "email_verification_tokens"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -322,6 +338,11 @@ func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 // QuerySetting queries the "setting" edge of the User entity.
 func (u *User) QuerySetting() *UserSettingQuery {
 	return NewUserClient(u.config).QuerySetting(u)
+}
+
+// QueryEmailVerificationTokens queries the "email_verification_tokens" edge of the User entity.
+func (u *User) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
+	return NewUserClient(u.config).QueryEmailVerificationTokens(u)
 }
 
 // Update returns a builder for updating this User.

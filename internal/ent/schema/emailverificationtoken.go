@@ -3,8 +3,10 @@ package schema
 import (
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -59,5 +61,12 @@ func (EmailVerificationToken) Indexes() []ent.Index {
 		// EmailVerificationTokens should be unique, but ignore deleted EmailVerificationTokens
 		index.Fields("token").
 			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
+	}
+}
+
+// Annotations of the EmailVerificationToken
+func (EmailVerificationToken) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll),
 	}
 }

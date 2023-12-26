@@ -9,6 +9,45 @@ import (
 )
 
 var (
+	// EmailVerificationTokensColumns holds the columns for the "email_verification_tokens" table.
+	EmailVerificationTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
+		{Name: "token", Type: field.TypeString, Nullable: true},
+		{Name: "ttl", Type: field.TypeTime},
+		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "secret", Type: field.TypeString, Unique: true},
+		{Name: "user_email_verification_tokens", Type: field.TypeString, Unique: true, Nullable: true},
+	}
+	// EmailVerificationTokensTable holds the schema information for the "email_verification_tokens" table.
+	EmailVerificationTokensTable = &schema.Table{
+		Name:       "email_verification_tokens",
+		Columns:    EmailVerificationTokensColumns,
+		PrimaryKey: []*schema.Column{EmailVerificationTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "email_verification_tokens_users_email_verification_tokens",
+				Columns:    []*schema.Column{EmailVerificationTokensColumns[11]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "emailverificationtoken_token",
+				Unique:  true,
+				Columns: []*schema.Column{EmailVerificationTokensColumns[7]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
+			},
+		},
+	}
 	// EntitlementsColumns holds the columns for the "entitlements" table.
 	EntitlementsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -461,6 +500,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		EmailVerificationTokensTable,
 		EntitlementsTable,
 		GroupsTable,
 		GroupSettingsTable,
@@ -479,6 +519,7 @@ var (
 )
 
 func init() {
+	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable

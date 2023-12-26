@@ -5,6 +5,7 @@ package generated
 import (
 	"context"
 
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
@@ -14,6 +15,11 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
+
+func EmailVerificationTokenEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
 
 func EntitlementEdgeCleanup(ctx context.Context, id string) error {
 
@@ -105,6 +111,13 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).UserSetting.Query().Where((usersetting.HasUserWith(user.ID(id)))).Exist(ctx); err != nil && exists {
 		if usersettingCount, err := FromContext(ctx).UserSetting.Delete().Where(usersetting.HasUserWith(user.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting usersetting", "count", usersettingCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).EmailVerificationToken.Query().Where((emailverificationtoken.HasOwnerWith(user.ID(id)))).Exist(ctx); err != nil && exists {
+		if emailverificationtokenCount, err := FromContext(ctx).EmailVerificationToken.Delete().Where(emailverificationtoken.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting emailverificationtoken", "count", emailverificationtokenCount, "err", err)
 			return err
 		}
 	}

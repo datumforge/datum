@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -352,6 +353,25 @@ func (uc *UserCreate) SetSetting(u *UserSetting) *UserCreate {
 	return uc.SetSettingID(u.ID)
 }
 
+// SetEmailVerificationTokensID sets the "email_verification_tokens" edge to the EmailVerificationToken entity by ID.
+func (uc *UserCreate) SetEmailVerificationTokensID(id string) *UserCreate {
+	uc.mutation.SetEmailVerificationTokensID(id)
+	return uc
+}
+
+// SetNillableEmailVerificationTokensID sets the "email_verification_tokens" edge to the EmailVerificationToken entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableEmailVerificationTokensID(id *string) *UserCreate {
+	if id != nil {
+		uc = uc.SetEmailVerificationTokensID(*id)
+	}
+	return uc
+}
+
+// SetEmailVerificationTokens sets the "email_verification_tokens" edge to the EmailVerificationToken entity.
+func (uc *UserCreate) SetEmailVerificationTokens(e *EmailVerificationToken) *UserCreate {
+	return uc.SetEmailVerificationTokensID(e.ID)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -683,6 +703,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

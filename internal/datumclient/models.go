@@ -248,12 +248,13 @@ type CreateUserInput struct {
 	// whether the user has accepted the terms of service or not
 	AgreeTos *bool `json:"agreeTos,omitempty"`
 	// whether the user has accepted the privacy agreement or not
-	AgreePrivacy           *bool    `json:"agreePrivacy,omitempty"`
-	OrganizationIDs        []string `json:"organizationIDs,omitempty"`
-	SessionIDs             []string `json:"sessionIDs,omitempty"`
-	GroupIDs               []string `json:"groupIDs,omitempty"`
-	PersonalAccessTokenIDs []string `json:"personalAccessTokenIDs,omitempty"`
-	SettingID              string   `json:"settingID"`
+	AgreePrivacy              *bool    `json:"agreePrivacy,omitempty"`
+	OrganizationIDs           []string `json:"organizationIDs,omitempty"`
+	SessionIDs                []string `json:"sessionIDs,omitempty"`
+	GroupIDs                  []string `json:"groupIDs,omitempty"`
+	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
+	SettingID                 string   `json:"settingID"`
+	EmailVerificationTokensID *string  `json:"emailVerificationTokensID,omitempty"`
 }
 
 // CreateUserSettingInput is used for create UserSetting object.
@@ -2709,6 +2710,8 @@ type UpdateUserInput struct {
 	RemovePersonalAccessTokenIDs []string `json:"removePersonalAccessTokenIDs,omitempty"`
 	ClearPersonalAccessTokens    *bool    `json:"clearPersonalAccessTokens,omitempty"`
 	SettingID                    *string  `json:"settingID,omitempty"`
+	EmailVerificationTokensID    *string  `json:"emailVerificationTokensID,omitempty"`
+	ClearEmailVerificationTokens *bool    `json:"clearEmailVerificationTokens,omitempty"`
 }
 
 // UpdateUserSettingInput is used for update UserSetting object.

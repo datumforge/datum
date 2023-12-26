@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op generated.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The EmailVerificationTokenQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EmailVerificationTokenQueryRuleFunc func(context.Context, *generated.EmailVerificationTokenQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EmailVerificationTokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EmailVerificationTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.EmailVerificationTokenQuery", q)
+}
+
+// The EmailVerificationTokenMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EmailVerificationTokenMutationRuleFunc func(context.Context, *generated.EmailVerificationTokenMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EmailVerificationTokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.EmailVerificationTokenMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.EmailVerificationTokenMutation", m)
+}
+
 // The EntitlementQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type EntitlementQueryRuleFunc func(context.Context, *generated.EntitlementQuery) error
@@ -434,6 +458,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q generated.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *generated.EmailVerificationTokenQuery:
+		return q.Filter(), nil
 	case *generated.EntitlementQuery:
 		return q.Filter(), nil
 	case *generated.GroupQuery:
@@ -465,6 +491,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 
 func mutationFilter(m generated.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *generated.EmailVerificationTokenMutation:
+		return m.Filter(), nil
 	case *generated.EntitlementMutation:
 		return m.Filter(), nil
 	case *generated.GroupMutation:

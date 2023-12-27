@@ -1,0 +1,10 @@
+Hello {{ .FullName }},
+
+Thank you for registering for the Datum platform - in order to ensure the security of your account, please verify your email address by clicking the button below, or copy and paste the linked URL into your browser:
+
+{{ .VerifyURL }}
+
+If you are having trouble verifying your email address, please contact us at support@datum.net.
+
+Thank you,
+The Datum Team

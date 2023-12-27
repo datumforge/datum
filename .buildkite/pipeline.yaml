@@ -2,6 +2,7 @@ env:
   APP_NAME: ${BUILDKITE_PIPELINE_SLUG}
   IMAGE_REPO: ghcr.io/datumforge/${APP_NAME}
   IMAGE_TAG: ${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT:0:8}
+  SONAR_HOST: "https://sonarcloud.io"
 
 steps:
 - group: ":knife: Pre-check"
@@ -31,7 +32,9 @@ steps:
     plugins:
       - docker#v5.9.0:
           image: golang:1.21.5
-          command: ["go", "test", "./..."]
+          command: ["go", "test", "-coverprofile=coverage.out","./..."]
+    artifact_paths: ["coverage.out"]
+
 
   - label: ":auth0: fga model test"
     key: "fga_test"
@@ -49,38 +52,41 @@ steps:
     plugins:
       - docker#v5.9.0:
           image: "registry.hub.docker.com/securego/gosec:2.18.2"
-          command: ["-no-fail", "-exclude-generated", "-fmt sarif", "-out", "results.sarif", "./..."]
-    artifact_paths: ["results.sarif"]
+          command: ["-no-fail", "-exclude-generated", "-fmt sonarqube", "-out", "results.txt", "./..."]
+          environment:
+            - "GOTOOLCHAIN=auto"
+    artifact_paths: ["results.txt"]
 
-  - label: ":github: upload fork PR sarif report"
-    key: "gosec-upload-pr"
+  - label: ":github: upload fork PR reports"
+    key: "scan-upload-pr"
     if: (build.pull_request.labels includes "run-ci" ) 
-    depends_on: ["gosec"]
+    depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:
-          download: results.sarif
+          download: "results.txt"
+      - artifacts#v1.9.2:
+          download: "coverage.out"    
       - docker#v5.9.0:
-            image: "j3ssie/codeql-docker"
-            entrypoint: codeql
+            image: "sonarsource/sonar-scanner-cli:4"
             environment:
-              - "GITHUB_TOKEN"
-              - "BUILDKITE_PULL_REQUEST"
-            command: ["github", "upload-results", "--sarif=results.sarif", "--ref=refs/pull/${BUILDKITE_PULL_REQUEST}/head"]
+              - "SONAR_TOKEN"
+              - "SONAR_HOST_URL=$SONAR_HOST"
+              - "SONAR_SCANNER_OPTS=-Dsonar.pullrequest.branch=$BUILDKITE_BRANCH -Dsonar.pullrequest.base=$BUILDKITE_PULL_REQUEST_BASE_BRANCH -Dsonar.pullrequest.key=$BUILDKITE_PULL_REQUEST"
 
-  - label: ":github: upload sarif report"
-    key: "gosec-upload"
+  - label: ":github: upload reports"
+    key: "scan-upload"
     if: (build.branch == "main") || (build.branch !~ /:/i)
-    depends_on: ["gosec"]
+    depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:
-          download: results.sarif
+          download: results.txt
+      - artifacts#v1.9.2:
+          download: coverage.out
       - docker#v5.9.0:
-            image: "j3ssie/codeql-docker"
-            entrypoint: codeql
+            image: "sonarsource/sonar-scanner-cli:4"
             environment:
-              - "GITHUB_TOKEN"
-              - "BUILDKITE_BRANCH"
-            command: ["github", "upload-results", "--sarif=results.sarif", "--ref=refs/heads/${BUILDKITE_BRANCH}"]
+              - "SONAR_TOKEN"
+              - "SONAR_HOST_URL=$SONAR_HOST"
 
 - group: ":golang: Builds"
   depends_on: "tests"

@@ -1,0 +1,32 @@
+{{ template "base.html" . }}
+
+{{ define "title" }}Join your team on Datum{{ end }}
+{{ define "preheader" }}You have been invited to join an Organization with your team on Datum!{{ end }}
+
+{{ define "content" }}
+<div class="header">
+  <h1>Join your team on Datum!</h1>
+</div>
+
+<div class="content">
+  <p>{{ .InviterName }} has invited you to use Datum with them, in an Organization called {{ .OrgName }}.</p>
+
+  <p>Accept the invitation by clicking on the following button:</p>
+
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" class="button">
+        <a rel="noopener" target="_blank" href="{{ .InviteURL }}">Join Now</a>
+      </td>
+    </tr>
+  </table>
+
+  <p>Or you can copy and paste the following URL into your browser:</p>
+
+  <p><a rel="noopener" target="_blank" href="{{ .InviteURL }}">{{ .InviteURL }}</a>
+
+  <p>If you have any questions, please contact <a href="mailto:support@datum.net">support@datum.net</a>.</p>
+
+  <p><br />The Datum Team<br /></p>
+</div>
+{{ end }}

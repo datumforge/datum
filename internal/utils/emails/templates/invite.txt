@@ -1,0 +1,13 @@
+Join your team on Datum
+
+{{ .InviterName }} has invited you to use Datum with them, in an Organization called {{ .OrgName }}.
+
+Accept the invitation by clicking this link.
+
+{{ .InviteURL }}
+
+If you have any questions, please contact support@datum.net
+
+Thank you,
+
+The Datum Team

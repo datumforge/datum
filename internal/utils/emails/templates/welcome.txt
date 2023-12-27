@@ -1,0 +1,11 @@
+Hello {{ .FirstName }},
+
+Welcome to the Datum platform - you can now log in to your account at https://console.datum.net.
+
+What Next?
+
+We've created a personal Organization just for you to help you get started - you can create additional Organizations for your businesses, or just jump right in to see all the amazing features we've cooked up for you.  Check out the starter guide https://docs.datum.net/getting-started for more information, or our examples https://docs.datum.net/examples for ideas and inspiration.
+
+If you have any questions, please reach out to us at support@datum.net.
+
+The Datum Team

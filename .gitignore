@@ -48,3 +48,8 @@ public_key.pem
 ehthumbs.db
 Icon?
 Thumbs.db
+
+.scannerwork/**
+results.txt
+
+*.mime

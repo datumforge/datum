@@ -1,0 +1,32 @@
+{{ template "base.html" . }}
+
+{{ define "title" }}Verify your email address{{ end }}
+{{ define "preheader" }}Please verify your email to complete the Datum registration process{{ end }}
+
+{{ define "content" }}
+<div class="content">
+  <p>Welcome to Datum, {{ .FullName }},</p>
+
+  <p>
+    Thank you for registering for the Datum platform - in order to ensure the
+    security of your account, please verify your email address by clicking the button
+    below, or copy and paste the linked URL into your browser:
+  </p>
+
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" class="button">
+        <a rel="noopener" target="_blank" href="{{ .VerifyURL }}">Verify Email</a>
+      </td>
+    </tr>
+  </table>
+
+  <p><a href="{{ .VerifyURL }}">{{ .VerifyURL }}</a></p>
+
+  <p>If you are having trouble verifying your email address, please contact us at
+    <a href="mailto:support@datum.net">support@datum.net</a>.
+  <p>
+
+  <p><br />The Datum Team<br /></p>
+</div>
+{{ end }}

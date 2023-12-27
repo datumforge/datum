@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -26,21 +27,23 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                           *QueryContext
-	order                         []user.OrderOption
-	inters                        []Interceptor
-	predicates                    []predicate.User
-	withOrganizations             *OrganizationQuery
-	withSessions                  *SessionQuery
-	withGroups                    *GroupQuery
-	withPersonalAccessTokens      *PersonalAccessTokenQuery
-	withSetting                   *UserSettingQuery
-	modifiers                     []func(*sql.Selector)
-	loadTotal                     []func(context.Context, []*User) error
-	withNamedOrganizations        map[string]*OrganizationQuery
-	withNamedSessions             map[string]*SessionQuery
-	withNamedGroups               map[string]*GroupQuery
-	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
+	ctx                              *QueryContext
+	order                            []user.OrderOption
+	inters                           []Interceptor
+	predicates                       []predicate.User
+	withOrganizations                *OrganizationQuery
+	withSessions                     *SessionQuery
+	withGroups                       *GroupQuery
+	withPersonalAccessTokens         *PersonalAccessTokenQuery
+	withSetting                      *UserSettingQuery
+	withEmailVerificationTokens      *EmailVerificationTokenQuery
+	modifiers                        []func(*sql.Selector)
+	loadTotal                        []func(context.Context, []*User) error
+	withNamedOrganizations           map[string]*OrganizationQuery
+	withNamedSessions                map[string]*SessionQuery
+	withNamedGroups                  map[string]*GroupQuery
+	withNamedPersonalAccessTokens    map[string]*PersonalAccessTokenQuery
+	withNamedEmailVerificationTokens map[string]*EmailVerificationTokenQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -196,6 +199,31 @@ func (uq *UserQuery) QuerySetting() *UserSettingQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.UserSetting
 		step.Edge.Schema = schemaConfig.UserSetting
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEmailVerificationTokens chains the current query on the "email_verification_tokens" edge.
+func (uq *UserQuery) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
+	query := (&EmailVerificationTokenClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -389,16 +417,17 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:                   uq.config,
-		ctx:                      uq.ctx.Clone(),
-		order:                    append([]user.OrderOption{}, uq.order...),
-		inters:                   append([]Interceptor{}, uq.inters...),
-		predicates:               append([]predicate.User{}, uq.predicates...),
-		withOrganizations:        uq.withOrganizations.Clone(),
-		withSessions:             uq.withSessions.Clone(),
-		withGroups:               uq.withGroups.Clone(),
-		withPersonalAccessTokens: uq.withPersonalAccessTokens.Clone(),
-		withSetting:              uq.withSetting.Clone(),
+		config:                      uq.config,
+		ctx:                         uq.ctx.Clone(),
+		order:                       append([]user.OrderOption{}, uq.order...),
+		inters:                      append([]Interceptor{}, uq.inters...),
+		predicates:                  append([]predicate.User{}, uq.predicates...),
+		withOrganizations:           uq.withOrganizations.Clone(),
+		withSessions:                uq.withSessions.Clone(),
+		withGroups:                  uq.withGroups.Clone(),
+		withPersonalAccessTokens:    uq.withPersonalAccessTokens.Clone(),
+		withSetting:                 uq.withSetting.Clone(),
+		withEmailVerificationTokens: uq.withEmailVerificationTokens.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -457,6 +486,17 @@ func (uq *UserQuery) WithSetting(opts ...func(*UserSettingQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withSetting = query
+	return uq
+}
+
+// WithEmailVerificationTokens tells the query-builder to eager-load the nodes that are connected to
+// the "email_verification_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithEmailVerificationTokens(opts ...func(*EmailVerificationTokenQuery)) *UserQuery {
+	query := (&EmailVerificationTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withEmailVerificationTokens = query
 	return uq
 }
 
@@ -544,12 +584,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			uq.withOrganizations != nil,
 			uq.withSessions != nil,
 			uq.withGroups != nil,
 			uq.withPersonalAccessTokens != nil,
 			uq.withSetting != nil,
+			uq.withEmailVerificationTokens != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -611,6 +652,15 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := uq.withEmailVerificationTokens; query != nil {
+		if err := uq.loadEmailVerificationTokens(ctx, query, nodes,
+			func(n *User) { n.Edges.EmailVerificationTokens = []*EmailVerificationToken{} },
+			func(n *User, e *EmailVerificationToken) {
+				n.Edges.EmailVerificationTokens = append(n.Edges.EmailVerificationTokens, e)
+			}); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range uq.withNamedOrganizations {
 		if err := uq.loadOrganizations(ctx, query, nodes,
 			func(n *User) { n.appendNamedOrganizations(name) },
@@ -636,6 +686,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
 			func(n *User) { n.appendNamedPersonalAccessTokens(name) },
 			func(n *User, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedEmailVerificationTokens {
+		if err := uq.loadEmailVerificationTokens(ctx, query, nodes,
+			func(n *User) { n.appendNamedEmailVerificationTokens(name) },
+			func(n *User, e *EmailVerificationToken) { n.appendNamedEmailVerificationTokens(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -860,6 +917,37 @@ func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingQuery, n
 	}
 	return nil
 }
+func (uq *UserQuery) loadEmailVerificationTokens(ctx context.Context, query *EmailVerificationTokenQuery, nodes []*User, init func(*User), assign func(*User, *EmailVerificationToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.EmailVerificationToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.EmailVerificationTokensColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_email_verification_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_email_verification_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_email_verification_tokens" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := uq.querySpec()
@@ -1003,6 +1091,20 @@ func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*Pe
 		uq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
 	}
 	uq.withNamedPersonalAccessTokens[name] = query
+	return uq
+}
+
+// WithNamedEmailVerificationTokens tells the query-builder to eager-load the nodes that are connected to the "email_verification_tokens"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedEmailVerificationTokens(name string, opts ...func(*EmailVerificationTokenQuery)) *UserQuery {
+	query := (&EmailVerificationTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedEmailVerificationTokens == nil {
+		uq.withNamedEmailVerificationTokens = make(map[string]*EmailVerificationTokenQuery)
+	}
+	uq.withNamedEmailVerificationTokens[name] = query
 	return uq
 }
 

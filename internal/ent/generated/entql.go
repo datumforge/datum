@@ -3,6 +3,7 @@
 package generated
 
 import (
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -25,8 +26,31 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 12)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 13)}
 	graph.Nodes[0] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   emailverificationtoken.Table,
+			Columns: emailverificationtoken.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: emailverificationtoken.FieldID,
+			},
+		},
+		Type: "EmailVerificationToken",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			emailverificationtoken.FieldCreatedAt: {Type: field.TypeTime, Column: emailverificationtoken.FieldCreatedAt},
+			emailverificationtoken.FieldUpdatedAt: {Type: field.TypeTime, Column: emailverificationtoken.FieldUpdatedAt},
+			emailverificationtoken.FieldCreatedBy: {Type: field.TypeString, Column: emailverificationtoken.FieldCreatedBy},
+			emailverificationtoken.FieldUpdatedBy: {Type: field.TypeString, Column: emailverificationtoken.FieldUpdatedBy},
+			emailverificationtoken.FieldDeletedAt: {Type: field.TypeTime, Column: emailverificationtoken.FieldDeletedAt},
+			emailverificationtoken.FieldDeletedBy: {Type: field.TypeString, Column: emailverificationtoken.FieldDeletedBy},
+			emailverificationtoken.FieldToken:     {Type: field.TypeString, Column: emailverificationtoken.FieldToken},
+			emailverificationtoken.FieldTTL:       {Type: field.TypeTime, Column: emailverificationtoken.FieldTTL},
+			emailverificationtoken.FieldEmail:     {Type: field.TypeString, Column: emailverificationtoken.FieldEmail},
+			emailverificationtoken.FieldSecret:    {Type: field.TypeBytes, Column: emailverificationtoken.FieldSecret},
+		},
+	}
+	graph.Nodes[1] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   entitlement.Table,
 			Columns: entitlement.Columns,
@@ -51,7 +75,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			entitlement.FieldCancelled:              {Type: field.TypeBool, Column: entitlement.FieldCancelled},
 		},
 	}
-	graph.Nodes[1] = &sqlgraph.Node{
+	graph.Nodes[2] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   group.Table,
 			Columns: group.Columns,
@@ -75,7 +99,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			group.FieldDisplayName:     {Type: field.TypeString, Column: group.FieldDisplayName},
 		},
 	}
-	graph.Nodes[2] = &sqlgraph.Node{
+	graph.Nodes[3] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   groupsetting.Table,
 			Columns: groupsetting.Columns,
@@ -99,7 +123,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupsetting.FieldSyncToGithub: {Type: field.TypeBool, Column: groupsetting.FieldSyncToGithub},
 		},
 	}
-	graph.Nodes[3] = &sqlgraph.Node{
+	graph.Nodes[4] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   integration.Table,
 			Columns: integration.Columns,
@@ -122,7 +146,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			integration.FieldSecretName:  {Type: field.TypeString, Column: integration.FieldSecretName},
 		},
 	}
-	graph.Nodes[4] = &sqlgraph.Node{
+	graph.Nodes[5] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   oauthprovider.Table,
 			Columns: oauthprovider.Columns,
@@ -150,7 +174,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			oauthprovider.FieldInfoURL:      {Type: field.TypeString, Column: oauthprovider.FieldInfoURL},
 		},
 	}
-	graph.Nodes[5] = &sqlgraph.Node{
+	graph.Nodes[6] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   ohauthtootoken.Table,
 			Columns: ohauthtootoken.Columns,
@@ -175,7 +199,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			ohauthtootoken.FieldLastUsed:                {Type: field.TypeTime, Column: ohauthtootoken.FieldLastUsed},
 		},
 	}
-	graph.Nodes[6] = &sqlgraph.Node{
+	graph.Nodes[7] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organization.Table,
 			Columns: organization.Columns,
@@ -199,7 +223,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organization.FieldPersonalOrg:          {Type: field.TypeBool, Column: organization.FieldPersonalOrg},
 		},
 	}
-	graph.Nodes[7] = &sqlgraph.Node{
+	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   organizationsetting.Table,
 			Columns: organizationsetting.Columns,
@@ -228,7 +252,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			organizationsetting.FieldTags:           {Type: field.TypeJSON, Column: organizationsetting.FieldTags},
 		},
 	}
-	graph.Nodes[8] = &sqlgraph.Node{
+	graph.Nodes[9] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   personalaccesstoken.Table,
 			Columns: personalaccesstoken.Columns,
@@ -251,7 +275,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldLastUsedAt:  {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -273,7 +297,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldUserID:         {Type: field.TypeString, Column: session.FieldUserID},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[11] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -303,7 +327,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -331,6 +355,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
 		},
 	}
+	graph.MustAddE(
+		"owner",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   emailverificationtoken.OwnerTable,
+			Columns: []string{emailverificationtoken.OwnerColumn},
+			Bidi:    false,
+		},
+		"EmailVerificationToken",
+		"User",
+	)
 	graph.MustAddE(
 		"owner",
 		&sqlgraph.EdgeSpec{
@@ -608,6 +644,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"UserSetting",
 	)
 	graph.MustAddE(
+		"email_verification_tokens",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+		},
+		"User",
+		"EmailVerificationToken",
+	)
+	graph.MustAddE(
 		"user",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -626,6 +674,110 @@ var schemaGraph = func() *sqlgraph.Schema {
 // All update, update-one and query builders implement this interface.
 type predicateAdder interface {
 	addPredicate(func(s *sql.Selector))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (evtq *EmailVerificationTokenQuery) addPredicate(pred func(s *sql.Selector)) {
+	evtq.predicates = append(evtq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the EmailVerificationTokenQuery builder.
+func (evtq *EmailVerificationTokenQuery) Filter() *EmailVerificationTokenFilter {
+	return &EmailVerificationTokenFilter{config: evtq.config, predicateAdder: evtq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *EmailVerificationTokenMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the EmailVerificationTokenMutation builder.
+func (m *EmailVerificationTokenMutation) Filter() *EmailVerificationTokenFilter {
+	return &EmailVerificationTokenFilter{config: m.config, predicateAdder: m}
+}
+
+// EmailVerificationTokenFilter provides a generic filtering capability at runtime for EmailVerificationTokenQuery.
+type EmailVerificationTokenFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *EmailVerificationTokenFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *EmailVerificationTokenFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *EmailVerificationTokenFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(emailverificationtoken.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *EmailVerificationTokenFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(emailverificationtoken.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *EmailVerificationTokenFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *EmailVerificationTokenFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *EmailVerificationTokenFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(emailverificationtoken.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *EmailVerificationTokenFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldDeletedBy))
+}
+
+// WhereToken applies the entql string predicate on the token field.
+func (f *EmailVerificationTokenFilter) WhereToken(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldToken))
+}
+
+// WhereTTL applies the entql time.Time predicate on the ttl field.
+func (f *EmailVerificationTokenFilter) WhereTTL(p entql.TimeP) {
+	f.Where(p.Field(emailverificationtoken.FieldTTL))
+}
+
+// WhereEmail applies the entql string predicate on the email field.
+func (f *EmailVerificationTokenFilter) WhereEmail(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldEmail))
+}
+
+// WhereSecret applies the entql []byte predicate on the secret field.
+func (f *EmailVerificationTokenFilter) WhereSecret(p entql.BytesP) {
+	f.Where(p.Field(emailverificationtoken.FieldSecret))
+}
+
+// WhereHasOwner applies a predicate to check if query has an edge owner.
+func (f *EmailVerificationTokenFilter) WhereHasOwner() {
+	f.Where(entql.HasEdge("owner"))
+}
+
+// WhereHasOwnerWith applies a predicate to check if query has an edge owner with a given conditions (other predicates).
+func (f *EmailVerificationTokenFilter) WhereHasOwnerWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("owner", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -657,7 +809,7 @@ type EntitlementFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *EntitlementFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[0].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -771,7 +923,7 @@ type GroupFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GroupFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[1].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -908,7 +1060,7 @@ type GroupSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *GroupSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[2].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1017,7 +1169,7 @@ type IntegrationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *IntegrationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[3].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1121,7 +1273,7 @@ type OauthProviderFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OauthProviderFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[4].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1250,7 +1402,7 @@ type OhAuthTooTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OhAuthTooTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1350,7 +1502,7 @@ type OrganizationFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1557,7 +1709,7 @@ type OrganizationSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *OrganizationSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1691,7 +1843,7 @@ type PersonalAccessTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PersonalAccessTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1795,7 +1947,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1894,7 +2046,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2060,6 +2212,20 @@ func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSetting) {
 	})))
 }
 
+// WhereHasEmailVerificationTokens applies a predicate to check if query has an edge email_verification_tokens.
+func (f *UserFilter) WhereHasEmailVerificationTokens() {
+	f.Where(entql.HasEdge("email_verification_tokens"))
+}
+
+// WhereHasEmailVerificationTokensWith applies a predicate to check if query has an edge email_verification_tokens with a given conditions (other predicates).
+func (f *UserFilter) WhereHasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) {
+	f.Where(entql.HasEdgeWith("email_verification_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (usq *UserSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	usq.predicates = append(usq.predicates, pred)
@@ -2089,7 +2255,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

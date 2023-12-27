@@ -59,6 +59,8 @@ const (
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
+	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
+	EdgeEmailVerificationTokens = "email_verification_tokens"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -92,6 +94,13 @@ const (
 	SettingInverseTable = "user_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "user_setting"
+	// EmailVerificationTokensTable is the table that holds the email_verification_tokens relation/edge.
+	EmailVerificationTokensTable = "email_verification_tokens"
+	// EmailVerificationTokensInverseTable is the table name for the EmailVerificationToken entity.
+	// It exists in this package in order to avoid circular dependency with the "emailverificationtoken" package.
+	EmailVerificationTokensInverseTable = "email_verification_tokens"
+	// EmailVerificationTokensColumn is the table column denoting the email_verification_tokens relation/edge.
+	EmailVerificationTokensColumn = "user_email_verification_tokens"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -329,6 +338,20 @@ func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSettingStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByEmailVerificationTokensCount orders the results by email_verification_tokens count.
+func ByEmailVerificationTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEmailVerificationTokensStep(), opts...)
+	}
+}
+
+// ByEmailVerificationTokens orders the results by email_verification_tokens terms.
+func ByEmailVerificationTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEmailVerificationTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -362,5 +385,12 @@ func newSettingStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SettingInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
+	)
+}
+func newEmailVerificationTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EmailVerificationTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
 	)
 }

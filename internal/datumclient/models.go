@@ -244,12 +244,13 @@ type CreateUserInput struct {
 	// the Subject of the user JWT
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                  *bool    `json:"oauth,omitempty"`
-	OrganizationIDs        []string `json:"organizationIDs,omitempty"`
-	SessionIDs             []string `json:"sessionIDs,omitempty"`
-	GroupIDs               []string `json:"groupIDs,omitempty"`
-	PersonalAccessTokenIDs []string `json:"personalAccessTokenIDs,omitempty"`
-	SettingID              string   `json:"settingID"`
+	Oauth                     *bool    `json:"oauth,omitempty"`
+	OrganizationIDs           []string `json:"organizationIDs,omitempty"`
+	SessionIDs                []string `json:"sessionIDs,omitempty"`
+	GroupIDs                  []string `json:"groupIDs,omitempty"`
+	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
+	SettingID                 string   `json:"settingID"`
+	EmailVerificationTokenIDs []string `json:"emailVerificationTokenIDs,omitempty"`
 }
 
 // CreateUserSettingInput is used for create UserSetting object.
@@ -2687,20 +2688,23 @@ type UpdateUserInput struct {
 	Sub      *string `json:"sub,omitempty"`
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// whether the user uses oauth for login or not
-	Oauth                        *bool    `json:"oauth,omitempty"`
-	AddOrganizationIDs           []string `json:"addOrganizationIDs,omitempty"`
-	RemoveOrganizationIDs        []string `json:"removeOrganizationIDs,omitempty"`
-	ClearOrganizations           *bool    `json:"clearOrganizations,omitempty"`
-	AddSessionIDs                []string `json:"addSessionIDs,omitempty"`
-	RemoveSessionIDs             []string `json:"removeSessionIDs,omitempty"`
-	ClearSessions                *bool    `json:"clearSessions,omitempty"`
-	AddGroupIDs                  []string `json:"addGroupIDs,omitempty"`
-	RemoveGroupIDs               []string `json:"removeGroupIDs,omitempty"`
-	ClearGroups                  *bool    `json:"clearGroups,omitempty"`
-	AddPersonalAccessTokenIDs    []string `json:"addPersonalAccessTokenIDs,omitempty"`
-	RemovePersonalAccessTokenIDs []string `json:"removePersonalAccessTokenIDs,omitempty"`
-	ClearPersonalAccessTokens    *bool    `json:"clearPersonalAccessTokens,omitempty"`
-	SettingID                    *string  `json:"settingID,omitempty"`
+	Oauth                           *bool    `json:"oauth,omitempty"`
+	AddOrganizationIDs              []string `json:"addOrganizationIDs,omitempty"`
+	RemoveOrganizationIDs           []string `json:"removeOrganizationIDs,omitempty"`
+	ClearOrganizations              *bool    `json:"clearOrganizations,omitempty"`
+	AddSessionIDs                   []string `json:"addSessionIDs,omitempty"`
+	RemoveSessionIDs                []string `json:"removeSessionIDs,omitempty"`
+	ClearSessions                   *bool    `json:"clearSessions,omitempty"`
+	AddGroupIDs                     []string `json:"addGroupIDs,omitempty"`
+	RemoveGroupIDs                  []string `json:"removeGroupIDs,omitempty"`
+	ClearGroups                     *bool    `json:"clearGroups,omitempty"`
+	AddPersonalAccessTokenIDs       []string `json:"addPersonalAccessTokenIDs,omitempty"`
+	RemovePersonalAccessTokenIDs    []string `json:"removePersonalAccessTokenIDs,omitempty"`
+	ClearPersonalAccessTokens       *bool    `json:"clearPersonalAccessTokens,omitempty"`
+	SettingID                       *string  `json:"settingID,omitempty"`
+	AddEmailVerificationTokenIDs    []string `json:"addEmailVerificationTokenIDs,omitempty"`
+	RemoveEmailVerificationTokenIDs []string `json:"removeEmailVerificationTokenIDs,omitempty"`
+	ClearEmailVerificationTokens    *bool    `json:"clearEmailVerificationTokens,omitempty"`
 }
 
 // UpdateUserSettingInput is used for update UserSetting object.

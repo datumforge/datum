@@ -17,6 +17,7 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -41,6 +42,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// EmailVerificationToken is the client for interacting with the EmailVerificationToken builders.
+	EmailVerificationToken *EmailVerificationTokenClient
 	// Entitlement is the client for interacting with the Entitlement builders.
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
@@ -76,6 +79,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.EmailVerificationToken = NewEmailVerificationTokenClient(c.config)
 	c.Entitlement = NewEntitlementClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupSetting = NewGroupSettingClient(c.config)
@@ -212,20 +216,21 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		Entitlement:         NewEntitlementClient(cfg),
-		Group:               NewGroupClient(cfg),
-		GroupSetting:        NewGroupSettingClient(cfg),
-		Integration:         NewIntegrationClient(cfg),
-		OauthProvider:       NewOauthProviderClient(cfg),
-		OhAuthTooToken:      NewOhAuthTooTokenClient(cfg),
-		Organization:        NewOrganizationClient(cfg),
-		OrganizationSetting: NewOrganizationSettingClient(cfg),
-		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
-		Session:             NewSessionClient(cfg),
-		User:                NewUserClient(cfg),
-		UserSetting:         NewUserSettingClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		EmailVerificationToken: NewEmailVerificationTokenClient(cfg),
+		Entitlement:            NewEntitlementClient(cfg),
+		Group:                  NewGroupClient(cfg),
+		GroupSetting:           NewGroupSettingClient(cfg),
+		Integration:            NewIntegrationClient(cfg),
+		OauthProvider:          NewOauthProviderClient(cfg),
+		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
+		Organization:           NewOrganizationClient(cfg),
+		OrganizationSetting:    NewOrganizationSettingClient(cfg),
+		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
+		Session:                NewSessionClient(cfg),
+		User:                   NewUserClient(cfg),
+		UserSetting:            NewUserSettingClient(cfg),
 	}, nil
 }
 
@@ -243,27 +248,28 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:                 ctx,
-		config:              cfg,
-		Entitlement:         NewEntitlementClient(cfg),
-		Group:               NewGroupClient(cfg),
-		GroupSetting:        NewGroupSettingClient(cfg),
-		Integration:         NewIntegrationClient(cfg),
-		OauthProvider:       NewOauthProviderClient(cfg),
-		OhAuthTooToken:      NewOhAuthTooTokenClient(cfg),
-		Organization:        NewOrganizationClient(cfg),
-		OrganizationSetting: NewOrganizationSettingClient(cfg),
-		PersonalAccessToken: NewPersonalAccessTokenClient(cfg),
-		Session:             NewSessionClient(cfg),
-		User:                NewUserClient(cfg),
-		UserSetting:         NewUserSettingClient(cfg),
+		ctx:                    ctx,
+		config:                 cfg,
+		EmailVerificationToken: NewEmailVerificationTokenClient(cfg),
+		Entitlement:            NewEntitlementClient(cfg),
+		Group:                  NewGroupClient(cfg),
+		GroupSetting:           NewGroupSettingClient(cfg),
+		Integration:            NewIntegrationClient(cfg),
+		OauthProvider:          NewOauthProviderClient(cfg),
+		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
+		Organization:           NewOrganizationClient(cfg),
+		OrganizationSetting:    NewOrganizationSettingClient(cfg),
+		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
+		Session:                NewSessionClient(cfg),
+		User:                   NewUserClient(cfg),
+		UserSetting:            NewUserSettingClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Entitlement.
+//		EmailVerificationToken.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -286,9 +292,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Entitlement, c.Group, c.GroupSetting, c.Integration, c.OauthProvider,
-		c.OhAuthTooToken, c.Organization, c.OrganizationSetting, c.PersonalAccessToken,
-		c.Session, c.User, c.UserSetting,
+		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupSetting, c.Integration,
+		c.OauthProvider, c.OhAuthTooToken, c.Organization, c.OrganizationSetting,
+		c.PersonalAccessToken, c.Session, c.User, c.UserSetting,
 	} {
 		n.Use(hooks...)
 	}
@@ -298,9 +304,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Entitlement, c.Group, c.GroupSetting, c.Integration, c.OauthProvider,
-		c.OhAuthTooToken, c.Organization, c.OrganizationSetting, c.PersonalAccessToken,
-		c.Session, c.User, c.UserSetting,
+		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupSetting, c.Integration,
+		c.OauthProvider, c.OhAuthTooToken, c.Organization, c.OrganizationSetting,
+		c.PersonalAccessToken, c.Session, c.User, c.UserSetting,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -309,6 +315,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *EmailVerificationTokenMutation:
+		return c.EmailVerificationToken.mutate(ctx, m)
 	case *EntitlementMutation:
 		return c.Entitlement.mutate(ctx, m)
 	case *GroupMutation:
@@ -335,6 +343,160 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserSetting.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("generated: unknown mutation type %T", m)
+	}
+}
+
+// EmailVerificationTokenClient is a client for the EmailVerificationToken schema.
+type EmailVerificationTokenClient struct {
+	config
+}
+
+// NewEmailVerificationTokenClient returns a client for the EmailVerificationToken from the given config.
+func NewEmailVerificationTokenClient(c config) *EmailVerificationTokenClient {
+	return &EmailVerificationTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `emailverificationtoken.Hooks(f(g(h())))`.
+func (c *EmailVerificationTokenClient) Use(hooks ...Hook) {
+	c.hooks.EmailVerificationToken = append(c.hooks.EmailVerificationToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `emailverificationtoken.Intercept(f(g(h())))`.
+func (c *EmailVerificationTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EmailVerificationToken = append(c.inters.EmailVerificationToken, interceptors...)
+}
+
+// Create returns a builder for creating a EmailVerificationToken entity.
+func (c *EmailVerificationTokenClient) Create() *EmailVerificationTokenCreate {
+	mutation := newEmailVerificationTokenMutation(c.config, OpCreate)
+	return &EmailVerificationTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EmailVerificationToken entities.
+func (c *EmailVerificationTokenClient) CreateBulk(builders ...*EmailVerificationTokenCreate) *EmailVerificationTokenCreateBulk {
+	return &EmailVerificationTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EmailVerificationTokenClient) MapCreateBulk(slice any, setFunc func(*EmailVerificationTokenCreate, int)) *EmailVerificationTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EmailVerificationTokenCreateBulk{err: fmt.Errorf("calling to EmailVerificationTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EmailVerificationTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EmailVerificationTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EmailVerificationToken.
+func (c *EmailVerificationTokenClient) Update() *EmailVerificationTokenUpdate {
+	mutation := newEmailVerificationTokenMutation(c.config, OpUpdate)
+	return &EmailVerificationTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EmailVerificationTokenClient) UpdateOne(evt *EmailVerificationToken) *EmailVerificationTokenUpdateOne {
+	mutation := newEmailVerificationTokenMutation(c.config, OpUpdateOne, withEmailVerificationToken(evt))
+	return &EmailVerificationTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EmailVerificationTokenClient) UpdateOneID(id string) *EmailVerificationTokenUpdateOne {
+	mutation := newEmailVerificationTokenMutation(c.config, OpUpdateOne, withEmailVerificationTokenID(id))
+	return &EmailVerificationTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EmailVerificationToken.
+func (c *EmailVerificationTokenClient) Delete() *EmailVerificationTokenDelete {
+	mutation := newEmailVerificationTokenMutation(c.config, OpDelete)
+	return &EmailVerificationTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EmailVerificationTokenClient) DeleteOne(evt *EmailVerificationToken) *EmailVerificationTokenDeleteOne {
+	return c.DeleteOneID(evt.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EmailVerificationTokenClient) DeleteOneID(id string) *EmailVerificationTokenDeleteOne {
+	builder := c.Delete().Where(emailverificationtoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EmailVerificationTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for EmailVerificationToken.
+func (c *EmailVerificationTokenClient) Query() *EmailVerificationTokenQuery {
+	return &EmailVerificationTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEmailVerificationToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EmailVerificationToken entity by its id.
+func (c *EmailVerificationTokenClient) Get(ctx context.Context, id string) (*EmailVerificationToken, error) {
+	return c.Query().Where(emailverificationtoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EmailVerificationTokenClient) GetX(ctx context.Context, id string) *EmailVerificationToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a EmailVerificationToken.
+func (c *EmailVerificationTokenClient) QueryOwner(evt *EmailVerificationToken) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := evt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(emailverificationtoken.Table, emailverificationtoken.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, emailverificationtoken.OwnerTable, emailverificationtoken.OwnerColumn),
+		)
+		schemaConfig := evt.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		fromV = sqlgraph.Neighbors(evt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EmailVerificationTokenClient) Hooks() []Hook {
+	hooks := c.hooks.EmailVerificationToken
+	return append(hooks[:len(hooks):len(hooks)], emailverificationtoken.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *EmailVerificationTokenClient) Interceptors() []Interceptor {
+	inters := c.inters.EmailVerificationToken
+	return append(inters[:len(inters):len(inters)], emailverificationtoken.Interceptors[:]...)
+}
+
+func (c *EmailVerificationTokenClient) mutate(ctx context.Context, m *EmailVerificationTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EmailVerificationTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EmailVerificationTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EmailVerificationTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EmailVerificationTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown EmailVerificationToken mutation op: %q", m.Op())
 	}
 }
 
@@ -2229,6 +2391,25 @@ func (c *UserClient) QuerySetting(u *User) *UserSettingQuery {
 	return query
 }
 
+// QueryEmailVerificationTokens queries the email_verification_tokens edge of a User.
+func (c *UserClient) QueryEmailVerificationTokens(u *User) *EmailVerificationTokenQuery {
+	query := (&EmailVerificationTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -2413,14 +2594,14 @@ func (c *UserSettingClient) mutate(ctx context.Context, m *UserSettingMutation) 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Entitlement, Group, GroupSetting, Integration, OauthProvider, OhAuthTooToken,
-		Organization, OrganizationSetting, PersonalAccessToken, Session, User,
-		UserSetting []ent.Hook
+		EmailVerificationToken, Entitlement, Group, GroupSetting, Integration,
+		OauthProvider, OhAuthTooToken, Organization, OrganizationSetting,
+		PersonalAccessToken, Session, User, UserSetting []ent.Hook
 	}
 	inters struct {
-		Entitlement, Group, GroupSetting, Integration, OauthProvider, OhAuthTooToken,
-		Organization, OrganizationSetting, PersonalAccessToken, Session, User,
-		UserSetting []ent.Interceptor
+		EmailVerificationToken, Entitlement, Group, GroupSetting, Integration,
+		OauthProvider, OhAuthTooToken, Organization, OrganizationSetting,
+		PersonalAccessToken, Session, User, UserSetting []ent.Interceptor
 	}
 )
 

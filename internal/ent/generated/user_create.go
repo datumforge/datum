@@ -10,6 +10,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -324,6 +325,21 @@ func (uc *UserCreate) SetSetting(u *UserSetting) *UserCreate {
 	return uc.SetSettingID(u.ID)
 }
 
+// AddEmailVerificationTokenIDs adds the "email_verification_tokens" edge to the EmailVerificationToken entity by IDs.
+func (uc *UserCreate) AddEmailVerificationTokenIDs(ids ...string) *UserCreate {
+	uc.mutation.AddEmailVerificationTokenIDs(ids...)
+	return uc
+}
+
+// AddEmailVerificationTokens adds the "email_verification_tokens" edges to the EmailVerificationToken entity.
+func (uc *UserCreate) AddEmailVerificationTokens(e ...*EmailVerificationToken) *UserCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uc.AddEmailVerificationTokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -633,6 +649,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

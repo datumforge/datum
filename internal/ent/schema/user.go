@@ -126,13 +126,18 @@ func (User) Indexes() []ent.Index {
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("organizations", Organization.Type),
-		edge.To("sessions", Session.Type).Annotations(entx.CascadeAnnotationField("Owner")),
-		edge.From("groups", Group.Type).Ref("users"),
-		edge.To("personal_access_tokens", PersonalAccessToken.Type).Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("sessions", Session.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.From("groups", Group.Type).
+			Ref("users"),
+		edge.To("personal_access_tokens", PersonalAccessToken.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("setting", UserSetting.Type).
 			Required().
 			Unique().
 			Annotations(entx.CascadeAnnotationField("User")),
+		edge.To("email_verification_tokens", EmailVerificationToken.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

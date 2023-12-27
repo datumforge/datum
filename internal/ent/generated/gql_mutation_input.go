@@ -1378,26 +1378,27 @@ func (c *SessionUpdateOne) SetInput(i UpdateSessionInput) *SessionUpdateOne {
 
 // CreateUserInput represents a mutation input for creating users.
 type CreateUserInput struct {
-	CreatedAt              *time.Time
-	UpdatedAt              *time.Time
-	CreatedBy              *string
-	UpdatedBy              *string
-	Email                  string
-	FirstName              string
-	LastName               string
-	DisplayName            *string
-	AvatarRemoteURL        *string
-	AvatarLocalFile        *string
-	AvatarUpdatedAt        *time.Time
-	LastSeen               *time.Time
-	Password               *string
-	Sub                    *string
-	Oauth                  *bool
-	OrganizationIDs        []string
-	SessionIDs             []string
-	GroupIDs               []string
-	PersonalAccessTokenIDs []string
-	SettingID              string
+	CreatedAt                 *time.Time
+	UpdatedAt                 *time.Time
+	CreatedBy                 *string
+	UpdatedBy                 *string
+	Email                     string
+	FirstName                 string
+	LastName                  string
+	DisplayName               *string
+	AvatarRemoteURL           *string
+	AvatarLocalFile           *string
+	AvatarUpdatedAt           *time.Time
+	LastSeen                  *time.Time
+	Password                  *string
+	Sub                       *string
+	Oauth                     *bool
+	OrganizationIDs           []string
+	SessionIDs                []string
+	GroupIDs                  []string
+	PersonalAccessTokenIDs    []string
+	SettingID                 string
+	EmailVerificationTokenIDs []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1454,6 +1455,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
+	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
+		m.AddEmailVerificationTokenIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -1464,39 +1468,42 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 
 // UpdateUserInput represents a mutation input for updating users.
 type UpdateUserInput struct {
-	UpdatedAt                    *time.Time
-	ClearUpdatedBy               bool
-	UpdatedBy                    *string
-	Email                        *string
-	FirstName                    *string
-	LastName                     *string
-	DisplayName                  *string
-	ClearAvatarRemoteURL         bool
-	AvatarRemoteURL              *string
-	ClearAvatarLocalFile         bool
-	AvatarLocalFile              *string
-	ClearAvatarUpdatedAt         bool
-	AvatarUpdatedAt              *time.Time
-	ClearLastSeen                bool
-	LastSeen                     *time.Time
-	ClearPassword                bool
-	Password                     *string
-	ClearSub                     bool
-	Sub                          *string
-	Oauth                        *bool
-	ClearOrganizations           bool
-	AddOrganizationIDs           []string
-	RemoveOrganizationIDs        []string
-	ClearSessions                bool
-	AddSessionIDs                []string
-	RemoveSessionIDs             []string
-	ClearGroups                  bool
-	AddGroupIDs                  []string
-	RemoveGroupIDs               []string
-	ClearPersonalAccessTokens    bool
-	AddPersonalAccessTokenIDs    []string
-	RemovePersonalAccessTokenIDs []string
-	SettingID                    *string
+	UpdatedAt                       *time.Time
+	ClearUpdatedBy                  bool
+	UpdatedBy                       *string
+	Email                           *string
+	FirstName                       *string
+	LastName                        *string
+	DisplayName                     *string
+	ClearAvatarRemoteURL            bool
+	AvatarRemoteURL                 *string
+	ClearAvatarLocalFile            bool
+	AvatarLocalFile                 *string
+	ClearAvatarUpdatedAt            bool
+	AvatarUpdatedAt                 *time.Time
+	ClearLastSeen                   bool
+	LastSeen                        *time.Time
+	ClearPassword                   bool
+	Password                        *string
+	ClearSub                        bool
+	Sub                             *string
+	Oauth                           *bool
+	ClearOrganizations              bool
+	AddOrganizationIDs              []string
+	RemoveOrganizationIDs           []string
+	ClearSessions                   bool
+	AddSessionIDs                   []string
+	RemoveSessionIDs                []string
+	ClearGroups                     bool
+	AddGroupIDs                     []string
+	RemoveGroupIDs                  []string
+	ClearPersonalAccessTokens       bool
+	AddPersonalAccessTokenIDs       []string
+	RemovePersonalAccessTokenIDs    []string
+	SettingID                       *string
+	ClearEmailVerificationTokens    bool
+	AddEmailVerificationTokenIDs    []string
+	RemoveEmailVerificationTokenIDs []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1599,6 +1606,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if i.ClearEmailVerificationTokens {
+		m.ClearEmailVerificationTokens()
+	}
+	if v := i.AddEmailVerificationTokenIDs; len(v) > 0 {
+		m.AddEmailVerificationTokenIDs(v...)
+	}
+	if v := i.RemoveEmailVerificationTokenIDs; len(v) > 0 {
+		m.RemoveEmailVerificationTokenIDs(v...)
 	}
 }
 

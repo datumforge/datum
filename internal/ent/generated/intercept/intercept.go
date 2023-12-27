@@ -8,6 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
@@ -77,6 +78,33 @@ func (f TraverseFunc) Traverse(ctx context.Context, q generated.Query) error {
 		return err
 	}
 	return f(ctx, query)
+}
+
+// The EmailVerificationTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
+type EmailVerificationTokenFunc func(context.Context, *generated.EmailVerificationTokenQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f EmailVerificationTokenFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.EmailVerificationTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.EmailVerificationTokenQuery", q)
+}
+
+// The TraverseEmailVerificationToken type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseEmailVerificationToken func(context.Context, *generated.EmailVerificationTokenQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseEmailVerificationToken) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseEmailVerificationToken) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.EmailVerificationTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.EmailVerificationTokenQuery", q)
 }
 
 // The EntitlementFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -406,6 +434,8 @@ func (f TraverseUserSetting) Traverse(ctx context.Context, q generated.Query) er
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q generated.Query) (Query, error) {
 	switch q := q.(type) {
+	case *generated.EmailVerificationTokenQuery:
+		return &query[*generated.EmailVerificationTokenQuery, predicate.EmailVerificationToken, emailverificationtoken.OrderOption]{typ: generated.TypeEmailVerificationToken, tq: q}, nil
 	case *generated.EntitlementQuery:
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.GroupQuery:

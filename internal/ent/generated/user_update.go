@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
@@ -346,6 +347,21 @@ func (uu *UserUpdate) SetSetting(u *UserSetting) *UserUpdate {
 	return uu.SetSettingID(u.ID)
 }
 
+// AddEmailVerificationTokenIDs adds the "email_verification_tokens" edge to the EmailVerificationToken entity by IDs.
+func (uu *UserUpdate) AddEmailVerificationTokenIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddEmailVerificationTokenIDs(ids...)
+	return uu
+}
+
+// AddEmailVerificationTokens adds the "email_verification_tokens" edges to the EmailVerificationToken entity.
+func (uu *UserUpdate) AddEmailVerificationTokens(e ...*EmailVerificationToken) *UserUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.AddEmailVerificationTokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -439,6 +455,27 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 func (uu *UserUpdate) ClearSetting() *UserUpdate {
 	uu.mutation.ClearSetting()
 	return uu
+}
+
+// ClearEmailVerificationTokens clears all "email_verification_tokens" edges to the EmailVerificationToken entity.
+func (uu *UserUpdate) ClearEmailVerificationTokens() *UserUpdate {
+	uu.mutation.ClearEmailVerificationTokens()
+	return uu
+}
+
+// RemoveEmailVerificationTokenIDs removes the "email_verification_tokens" edge to EmailVerificationToken entities by IDs.
+func (uu *UserUpdate) RemoveEmailVerificationTokenIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveEmailVerificationTokenIDs(ids...)
+	return uu
+}
+
+// RemoveEmailVerificationTokens removes "email_verification_tokens" edges to EmailVerificationToken entities.
+func (uu *UserUpdate) RemoveEmailVerificationTokens(e ...*EmailVerificationToken) *UserUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.RemoveEmailVerificationTokenIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -845,6 +882,54 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.EmailVerificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedEmailVerificationTokensIDs(); len(nodes) > 0 && !uu.mutation.EmailVerificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.Node.Schema = uu.schemaConfig.User
 	ctx = internal.NewSchemaConfigContext(ctx, uu.schemaConfig)
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
@@ -1178,6 +1263,21 @@ func (uuo *UserUpdateOne) SetSetting(u *UserSetting) *UserUpdateOne {
 	return uuo.SetSettingID(u.ID)
 }
 
+// AddEmailVerificationTokenIDs adds the "email_verification_tokens" edge to the EmailVerificationToken entity by IDs.
+func (uuo *UserUpdateOne) AddEmailVerificationTokenIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddEmailVerificationTokenIDs(ids...)
+	return uuo
+}
+
+// AddEmailVerificationTokens adds the "email_verification_tokens" edges to the EmailVerificationToken entity.
+func (uuo *UserUpdateOne) AddEmailVerificationTokens(e ...*EmailVerificationToken) *UserUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.AddEmailVerificationTokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1271,6 +1371,27 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
 	uuo.mutation.ClearSetting()
 	return uuo
+}
+
+// ClearEmailVerificationTokens clears all "email_verification_tokens" edges to the EmailVerificationToken entity.
+func (uuo *UserUpdateOne) ClearEmailVerificationTokens() *UserUpdateOne {
+	uuo.mutation.ClearEmailVerificationTokens()
+	return uuo
+}
+
+// RemoveEmailVerificationTokenIDs removes the "email_verification_tokens" edge to EmailVerificationToken entities by IDs.
+func (uuo *UserUpdateOne) RemoveEmailVerificationTokenIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveEmailVerificationTokenIDs(ids...)
+	return uuo
+}
+
+// RemoveEmailVerificationTokens removes "email_verification_tokens" edges to EmailVerificationToken entities.
+func (uuo *UserUpdateOne) RemoveEmailVerificationTokens(e ...*EmailVerificationToken) *UserUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.RemoveEmailVerificationTokenIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1702,6 +1823,54 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.EmailVerificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedEmailVerificationTokensIDs(); len(nodes) > 0 && !uuo.mutation.EmailVerificationTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.EmailVerificationTokensTable,
+			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

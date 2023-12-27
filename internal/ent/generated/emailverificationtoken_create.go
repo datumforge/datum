@@ -148,16 +148,8 @@ func (evtc *EmailVerificationTokenCreate) SetNillableEmail(s *string) *EmailVeri
 }
 
 // SetSecret sets the "secret" field.
-func (evtc *EmailVerificationTokenCreate) SetSecret(s string) *EmailVerificationTokenCreate {
-	evtc.mutation.SetSecret(s)
-	return evtc
-}
-
-// SetNillableSecret sets the "secret" field if the given value is not nil.
-func (evtc *EmailVerificationTokenCreate) SetNillableSecret(s *string) *EmailVerificationTokenCreate {
-	if s != nil {
-		evtc.SetSecret(*s)
-	}
+func (evtc *EmailVerificationTokenCreate) SetSecret(b []byte) *EmailVerificationTokenCreate {
+	evtc.mutation.SetSecret(b)
 	return evtc
 }
 
@@ -335,7 +327,7 @@ func (evtc *EmailVerificationTokenCreate) createSpec() (*EmailVerificationToken,
 		_node.Email = value
 	}
 	if value, ok := evtc.mutation.Secret(); ok {
-		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeString, value)
+		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeBytes, value)
 		_node.Secret = value
 	}
 	if nodes := evtc.mutation.OwnerIDs(); len(nodes) > 0 {

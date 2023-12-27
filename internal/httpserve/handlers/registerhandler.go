@@ -79,7 +79,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		SetToken(user.EmailVerificationToken.String).
 		SetTTL(ttl).
 		SetEmail(user.Email).
-		SetSecret(string(user.EmailVerificationSecret)).
+		SetSecret(user.EmailVerificationSecret).
 		Save(ctx.Request().Context())
 	if err != nil {
 		if err := tx.Rollback(); err != nil {

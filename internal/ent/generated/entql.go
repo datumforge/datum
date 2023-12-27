@@ -47,7 +47,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			emailverificationtoken.FieldToken:     {Type: field.TypeString, Column: emailverificationtoken.FieldToken},
 			emailverificationtoken.FieldTTL:       {Type: field.TypeTime, Column: emailverificationtoken.FieldTTL},
 			emailverificationtoken.FieldEmail:     {Type: field.TypeString, Column: emailverificationtoken.FieldEmail},
-			emailverificationtoken.FieldSecret:    {Type: field.TypeString, Column: emailverificationtoken.FieldSecret},
+			emailverificationtoken.FieldSecret:    {Type: field.TypeBytes, Column: emailverificationtoken.FieldSecret},
 		},
 	}
 	graph.Nodes[1] = &sqlgraph.Node{
@@ -775,8 +775,8 @@ func (f *EmailVerificationTokenFilter) WhereEmail(p entql.StringP) {
 	f.Where(p.Field(emailverificationtoken.FieldEmail))
 }
 
-// WhereSecret applies the entql string predicate on the secret field.
-func (f *EmailVerificationTokenFilter) WhereSecret(p entql.StringP) {
+// WhereSecret applies the entql []byte predicate on the secret field.
+func (f *EmailVerificationTokenFilter) WhereSecret(p entql.BytesP) {
 	f.Where(p.Field(emailverificationtoken.FieldSecret))
 }
 

@@ -158,16 +158,8 @@ func (evtu *EmailVerificationTokenUpdate) ClearEmail() *EmailVerificationTokenUp
 }
 
 // SetSecret sets the "secret" field.
-func (evtu *EmailVerificationTokenUpdate) SetSecret(s string) *EmailVerificationTokenUpdate {
-	evtu.mutation.SetSecret(s)
-	return evtu
-}
-
-// SetNillableSecret sets the "secret" field if the given value is not nil.
-func (evtu *EmailVerificationTokenUpdate) SetNillableSecret(s *string) *EmailVerificationTokenUpdate {
-	if s != nil {
-		evtu.SetSecret(*s)
-	}
+func (evtu *EmailVerificationTokenUpdate) SetSecret(b []byte) *EmailVerificationTokenUpdate {
+	evtu.mutation.SetSecret(b)
 	return evtu
 }
 
@@ -304,10 +296,10 @@ func (evtu *EmailVerificationTokenUpdate) sqlSave(ctx context.Context) (n int, e
 		_spec.ClearField(emailverificationtoken.FieldEmail, field.TypeString)
 	}
 	if value, ok := evtu.mutation.Secret(); ok {
-		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeString, value)
+		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeBytes, value)
 	}
 	if evtu.mutation.SecretCleared() {
-		_spec.ClearField(emailverificationtoken.FieldSecret, field.TypeString)
+		_spec.ClearField(emailverificationtoken.FieldSecret, field.TypeBytes)
 	}
 	if evtu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -489,16 +481,8 @@ func (evtuo *EmailVerificationTokenUpdateOne) ClearEmail() *EmailVerificationTok
 }
 
 // SetSecret sets the "secret" field.
-func (evtuo *EmailVerificationTokenUpdateOne) SetSecret(s string) *EmailVerificationTokenUpdateOne {
-	evtuo.mutation.SetSecret(s)
-	return evtuo
-}
-
-// SetNillableSecret sets the "secret" field if the given value is not nil.
-func (evtuo *EmailVerificationTokenUpdateOne) SetNillableSecret(s *string) *EmailVerificationTokenUpdateOne {
-	if s != nil {
-		evtuo.SetSecret(*s)
-	}
+func (evtuo *EmailVerificationTokenUpdateOne) SetSecret(b []byte) *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.SetSecret(b)
 	return evtuo
 }
 
@@ -665,10 +649,10 @@ func (evtuo *EmailVerificationTokenUpdateOne) sqlSave(ctx context.Context) (_nod
 		_spec.ClearField(emailverificationtoken.FieldEmail, field.TypeString)
 	}
 	if value, ok := evtuo.mutation.Secret(); ok {
-		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeString, value)
+		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeBytes, value)
 	}
 	if evtuo.mutation.SecretCleared() {
-		_spec.ClearField(emailverificationtoken.FieldSecret, field.TypeString)
+		_spec.ClearField(emailverificationtoken.FieldSecret, field.TypeBytes)
 	}
 	if evtuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{

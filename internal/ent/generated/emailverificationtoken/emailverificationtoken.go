@@ -158,11 +158,6 @@ func ByEmail(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEmail, opts...).ToFunc()
 }
 
-// BySecret orders the results by the secret field.
-func BySecret(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldSecret, opts...).ToFunc()
-}
-
 // ByOwnerField orders the results by owner field.
 func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {

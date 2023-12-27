@@ -113,7 +113,7 @@ func Email(v string) predicate.EmailVerificationToken {
 }
 
 // Secret applies equality check predicate on the "secret" field. It's identical to SecretEQ.
-func Secret(v string) predicate.EmailVerificationToken {
+func Secret(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldEQ(FieldSecret, v))
 }
 
@@ -673,58 +673,43 @@ func EmailContainsFold(v string) predicate.EmailVerificationToken {
 }
 
 // SecretEQ applies the EQ predicate on the "secret" field.
-func SecretEQ(v string) predicate.EmailVerificationToken {
+func SecretEQ(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldEQ(FieldSecret, v))
 }
 
 // SecretNEQ applies the NEQ predicate on the "secret" field.
-func SecretNEQ(v string) predicate.EmailVerificationToken {
+func SecretNEQ(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldNEQ(FieldSecret, v))
 }
 
 // SecretIn applies the In predicate on the "secret" field.
-func SecretIn(vs ...string) predicate.EmailVerificationToken {
+func SecretIn(vs ...[]byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldIn(FieldSecret, vs...))
 }
 
 // SecretNotIn applies the NotIn predicate on the "secret" field.
-func SecretNotIn(vs ...string) predicate.EmailVerificationToken {
+func SecretNotIn(vs ...[]byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldNotIn(FieldSecret, vs...))
 }
 
 // SecretGT applies the GT predicate on the "secret" field.
-func SecretGT(v string) predicate.EmailVerificationToken {
+func SecretGT(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldGT(FieldSecret, v))
 }
 
 // SecretGTE applies the GTE predicate on the "secret" field.
-func SecretGTE(v string) predicate.EmailVerificationToken {
+func SecretGTE(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldGTE(FieldSecret, v))
 }
 
 // SecretLT applies the LT predicate on the "secret" field.
-func SecretLT(v string) predicate.EmailVerificationToken {
+func SecretLT(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldLT(FieldSecret, v))
 }
 
 // SecretLTE applies the LTE predicate on the "secret" field.
-func SecretLTE(v string) predicate.EmailVerificationToken {
+func SecretLTE(v []byte) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldLTE(FieldSecret, v))
-}
-
-// SecretContains applies the Contains predicate on the "secret" field.
-func SecretContains(v string) predicate.EmailVerificationToken {
-	return predicate.EmailVerificationToken(sql.FieldContains(FieldSecret, v))
-}
-
-// SecretHasPrefix applies the HasPrefix predicate on the "secret" field.
-func SecretHasPrefix(v string) predicate.EmailVerificationToken {
-	return predicate.EmailVerificationToken(sql.FieldHasPrefix(FieldSecret, v))
-}
-
-// SecretHasSuffix applies the HasSuffix predicate on the "secret" field.
-func SecretHasSuffix(v string) predicate.EmailVerificationToken {
-	return predicate.EmailVerificationToken(sql.FieldHasSuffix(FieldSecret, v))
 }
 
 // SecretIsNil applies the IsNil predicate on the "secret" field.
@@ -735,16 +720,6 @@ func SecretIsNil() predicate.EmailVerificationToken {
 // SecretNotNil applies the NotNil predicate on the "secret" field.
 func SecretNotNil() predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldNotNull(FieldSecret))
-}
-
-// SecretEqualFold applies the EqualFold predicate on the "secret" field.
-func SecretEqualFold(v string) predicate.EmailVerificationToken {
-	return predicate.EmailVerificationToken(sql.FieldEqualFold(FieldSecret, v))
-}
-
-// SecretContainsFold applies the ContainsFold predicate on the "secret" field.
-func SecretContainsFold(v string) predicate.EmailVerificationToken {
-	return predicate.EmailVerificationToken(sql.FieldContainsFold(FieldSecret, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

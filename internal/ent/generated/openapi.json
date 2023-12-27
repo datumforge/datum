@@ -109,7 +109,8 @@
                     "type": "string"
                   },
                   "secret": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "byte"
                   },
                   "owner": {
                     "type": "string"
@@ -278,7 +279,8 @@
                     "type": "string"
                   },
                   "secret": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "byte"
                   },
                   "owner": {
                     "type": "string"
@@ -5994,7 +5996,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           },
           "owner": {
             "$ref": "#/components/schemas/User"
@@ -6045,7 +6048,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         },
         "required": [
@@ -6092,7 +6096,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         },
         "required": [
@@ -6139,7 +6144,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         },
         "required": [
@@ -6186,7 +6192,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         },
         "required": [
@@ -11414,7 +11421,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         },
         "required": [
@@ -11461,7 +11469,8 @@
             "type": "string"
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "format": "byte"
           }
         },
         "required": [

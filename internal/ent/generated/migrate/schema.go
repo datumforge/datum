@@ -21,7 +21,7 @@ var (
 		{Name: "token", Type: field.TypeString, Nullable: true},
 		{Name: "ttl", Type: field.TypeTime, Nullable: true},
 		{Name: "email", Type: field.TypeString, Nullable: true},
-		{Name: "secret", Type: field.TypeString, Nullable: true},
+		{Name: "secret", Type: field.TypeBytes, Nullable: true},
 		{Name: "user_email_verification_tokens", Type: field.TypeString, Unique: true},
 		{Name: "user_children", Type: field.TypeString, Nullable: true},
 	}

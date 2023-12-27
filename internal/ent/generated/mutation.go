@@ -66,7 +66,7 @@ type EmailVerificationTokenMutation struct {
 	token         *string
 	ttl           *time.Time
 	email         *string
-	secret        *string
+	secret        *[]byte
 	clearedFields map[string]struct{}
 	owner         *string
 	clearedowner  bool
@@ -595,12 +595,12 @@ func (m *EmailVerificationTokenMutation) ResetEmail() {
 }
 
 // SetSecret sets the "secret" field.
-func (m *EmailVerificationTokenMutation) SetSecret(s string) {
-	m.secret = &s
+func (m *EmailVerificationTokenMutation) SetSecret(b []byte) {
+	m.secret = &b
 }
 
 // Secret returns the value of the "secret" field in the mutation.
-func (m *EmailVerificationTokenMutation) Secret() (r string, exists bool) {
+func (m *EmailVerificationTokenMutation) Secret() (r []byte, exists bool) {
 	v := m.secret
 	if v == nil {
 		return
@@ -611,7 +611,7 @@ func (m *EmailVerificationTokenMutation) Secret() (r string, exists bool) {
 // OldSecret returns the old "secret" field's value of the EmailVerificationToken entity.
 // If the EmailVerificationToken object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EmailVerificationTokenMutation) OldSecret(ctx context.Context) (v string, err error) {
+func (m *EmailVerificationTokenMutation) OldSecret(ctx context.Context) (v []byte, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSecret is only allowed on UpdateOne operations")
 	}
@@ -877,7 +877,7 @@ func (m *EmailVerificationTokenMutation) SetField(name string, value ent.Value) 
 		m.SetEmail(v)
 		return nil
 	case emailverificationtoken.FieldSecret:
-		v, ok := value.(string)
+		v, ok := value.([]byte)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

@@ -37,7 +37,7 @@ type EmailVerificationToken struct {
 	// the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed
 	Email string `json:"email,omitempty"`
 	// the comparison secret to verify the token's signature
-	Secret string `json:"secret,omitempty"`
+	Secret []byte `json:"secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EmailVerificationTokenQuery when eager-loading is set.
 	Edges                          EmailVerificationTokenEdges `json:"edges"`
@@ -75,7 +75,9 @@ func (*EmailVerificationToken) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case emailverificationtoken.FieldID, emailverificationtoken.FieldCreatedBy, emailverificationtoken.FieldUpdatedBy, emailverificationtoken.FieldDeletedBy, emailverificationtoken.FieldToken, emailverificationtoken.FieldEmail, emailverificationtoken.FieldSecret:
+		case emailverificationtoken.FieldSecret:
+			values[i] = new([]byte)
+		case emailverificationtoken.FieldID, emailverificationtoken.FieldCreatedBy, emailverificationtoken.FieldUpdatedBy, emailverificationtoken.FieldDeletedBy, emailverificationtoken.FieldToken, emailverificationtoken.FieldEmail:
 			values[i] = new(sql.NullString)
 		case emailverificationtoken.FieldCreatedAt, emailverificationtoken.FieldUpdatedAt, emailverificationtoken.FieldDeletedAt, emailverificationtoken.FieldTTL:
 			values[i] = new(sql.NullTime)
@@ -159,10 +161,10 @@ func (evt *EmailVerificationToken) assignValues(columns []string, values []any) 
 				evt.Email = value.String
 			}
 		case emailverificationtoken.FieldSecret:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field secret", values[i])
-			} else if value.Valid {
-				evt.Secret = value.String
+			} else if value != nil {
+				evt.Secret = *value
 			}
 		case emailverificationtoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -247,7 +249,7 @@ func (evt *EmailVerificationToken) String() string {
 	builder.WriteString(evt.Email)
 	builder.WriteString(", ")
 	builder.WriteString("secret=")
-	builder.WriteString(evt.Secret)
+	builder.WriteString(fmt.Sprintf("%v", evt.Secret))
 	builder.WriteByte(')')
 	return builder.String()
 }

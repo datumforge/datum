@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
@@ -34,13 +35,6 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
-	user := &User{
-		FirstName: in.FirstName,
-		LastName:  in.LastName,
-		Email:     in.Email,
-		Password:  in.Password,
-	}
-
 	input := generated.CreateUserInput{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
@@ -48,9 +42,18 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		Password:  &in.Password,
 	}
 
+	user := &User{
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Email:     in.Email,
+		Password:  in.Password,
+	}
+
 	if err = user.CreateVerificationToken(); err != nil {
 		return fmt.Errorf("verification token is busted")
 	}
+
+	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 
 	meowuser, err := h.DBClient.User.Create().SetInput(input).Save(ctx.Request().Context())
 	if err != nil {
@@ -61,10 +64,11 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
+	meowtoken, err := h.DBClient.EmailVerificationToken.Create().SetToken(user.EmailVerificationToken.String).SetTTL(ttl).SetEmail(user.Email).SetSecret(string(user.EmailVerificationSecret)).Save(ctx.Request().Context())
+
 	if err = h.SendVerificationEmail(user); err != nil {
 		return err
 	}
-
 	//h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 	//	return h.SendVerificationEmail(user)
 	//}), marionette.WithRetries(3),
@@ -76,6 +80,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
 		Message: "Welcome to Datum!",
+		Token:   meowtoken.Token,
 	}
 
 	return ctx.JSON(http.StatusCreated, out)
@@ -85,6 +90,7 @@ type RegisterReply struct {
 	ID      string `json:"user_id"`
 	Email   string `json:"email"`
 	Message string `json:"message"`
+	Token   string `json:"token"`
 }
 
 type RegisterRequest struct {

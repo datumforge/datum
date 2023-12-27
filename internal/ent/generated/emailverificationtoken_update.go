@@ -131,6 +131,12 @@ func (evtu *EmailVerificationTokenUpdate) SetNillableTTL(t *time.Time) *EmailVer
 	return evtu
 }
 
+// ClearTTL clears the value of the "ttl" field.
+func (evtu *EmailVerificationTokenUpdate) ClearTTL() *EmailVerificationTokenUpdate {
+	evtu.mutation.ClearTTL()
+	return evtu
+}
+
 // SetEmail sets the "email" field.
 func (evtu *EmailVerificationTokenUpdate) SetEmail(s string) *EmailVerificationTokenUpdate {
 	evtu.mutation.SetEmail(s)
@@ -142,6 +148,12 @@ func (evtu *EmailVerificationTokenUpdate) SetNillableEmail(s *string) *EmailVeri
 	if s != nil {
 		evtu.SetEmail(*s)
 	}
+	return evtu
+}
+
+// ClearEmail clears the value of the "email" field.
+func (evtu *EmailVerificationTokenUpdate) ClearEmail() *EmailVerificationTokenUpdate {
+	evtu.mutation.ClearEmail()
 	return evtu
 }
 
@@ -159,23 +171,25 @@ func (evtu *EmailVerificationTokenUpdate) SetNillableSecret(s *string) *EmailVer
 	return evtu
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (evtu *EmailVerificationTokenUpdate) SetOwnerID(id string) *EmailVerificationTokenUpdate {
-	evtu.mutation.SetOwnerID(id)
+// ClearSecret clears the value of the "secret" field.
+func (evtu *EmailVerificationTokenUpdate) ClearSecret() *EmailVerificationTokenUpdate {
+	evtu.mutation.ClearSecret()
 	return evtu
 }
 
-// SetNillableOwnerID sets the "owner" edge to the User entity by ID if the given value is not nil.
-func (evtu *EmailVerificationTokenUpdate) SetNillableOwnerID(id *string) *EmailVerificationTokenUpdate {
-	if id != nil {
-		evtu = evtu.SetOwnerID(*id)
+// AddOwnerIDs adds the "owner" edge to the User entity by IDs.
+func (evtu *EmailVerificationTokenUpdate) AddOwnerIDs(ids ...string) *EmailVerificationTokenUpdate {
+	evtu.mutation.AddOwnerIDs(ids...)
+	return evtu
+}
+
+// AddOwner adds the "owner" edges to the User entity.
+func (evtu *EmailVerificationTokenUpdate) AddOwner(u ...*User) *EmailVerificationTokenUpdate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
-	return evtu
-}
-
-// SetOwner sets the "owner" edge to the User entity.
-func (evtu *EmailVerificationTokenUpdate) SetOwner(u *User) *EmailVerificationTokenUpdate {
-	return evtu.SetOwnerID(u.ID)
+	return evtu.AddOwnerIDs(ids...)
 }
 
 // Mutation returns the EmailVerificationTokenMutation object of the builder.
@@ -183,10 +197,25 @@ func (evtu *EmailVerificationTokenUpdate) Mutation() *EmailVerificationTokenMuta
 	return evtu.mutation
 }
 
-// ClearOwner clears the "owner" edge to the User entity.
+// ClearOwner clears all "owner" edges to the User entity.
 func (evtu *EmailVerificationTokenUpdate) ClearOwner() *EmailVerificationTokenUpdate {
 	evtu.mutation.ClearOwner()
 	return evtu
+}
+
+// RemoveOwnerIDs removes the "owner" edge to User entities by IDs.
+func (evtu *EmailVerificationTokenUpdate) RemoveOwnerIDs(ids ...string) *EmailVerificationTokenUpdate {
+	evtu.mutation.RemoveOwnerIDs(ids...)
+	return evtu
+}
+
+// RemoveOwner removes "owner" edges to User entities.
+func (evtu *EmailVerificationTokenUpdate) RemoveOwner(u ...*User) *EmailVerificationTokenUpdate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return evtu.RemoveOwnerIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -273,15 +302,24 @@ func (evtu *EmailVerificationTokenUpdate) sqlSave(ctx context.Context) (n int, e
 	if value, ok := evtu.mutation.TTL(); ok {
 		_spec.SetField(emailverificationtoken.FieldTTL, field.TypeTime, value)
 	}
+	if evtu.mutation.TTLCleared() {
+		_spec.ClearField(emailverificationtoken.FieldTTL, field.TypeTime)
+	}
 	if value, ok := evtu.mutation.Email(); ok {
 		_spec.SetField(emailverificationtoken.FieldEmail, field.TypeString, value)
+	}
+	if evtu.mutation.EmailCleared() {
+		_spec.ClearField(emailverificationtoken.FieldEmail, field.TypeString)
 	}
 	if value, ok := evtu.mutation.Secret(); ok {
 		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeString, value)
 	}
+	if evtu.mutation.SecretCleared() {
+		_spec.ClearField(emailverificationtoken.FieldSecret, field.TypeString)
+	}
 	if evtu.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -290,12 +328,29 @@ func (evtu *EmailVerificationTokenUpdate) sqlSave(ctx context.Context) (n int, e
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = evtu.schemaConfig.EmailVerificationToken
+		edge.Schema = evtu.schemaConfig.User
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := evtu.mutation.RemovedOwnerIDs(); len(nodes) > 0 && !evtu.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   emailverificationtoken.OwnerTable,
+			Columns: []string{emailverificationtoken.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = evtu.schemaConfig.User
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := evtu.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -304,7 +359,7 @@ func (evtu *EmailVerificationTokenUpdate) sqlSave(ctx context.Context) (n int, e
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = evtu.schemaConfig.EmailVerificationToken
+		edge.Schema = evtu.schemaConfig.User
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -432,6 +487,12 @@ func (evtuo *EmailVerificationTokenUpdateOne) SetNillableTTL(t *time.Time) *Emai
 	return evtuo
 }
 
+// ClearTTL clears the value of the "ttl" field.
+func (evtuo *EmailVerificationTokenUpdateOne) ClearTTL() *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.ClearTTL()
+	return evtuo
+}
+
 // SetEmail sets the "email" field.
 func (evtuo *EmailVerificationTokenUpdateOne) SetEmail(s string) *EmailVerificationTokenUpdateOne {
 	evtuo.mutation.SetEmail(s)
@@ -443,6 +504,12 @@ func (evtuo *EmailVerificationTokenUpdateOne) SetNillableEmail(s *string) *Email
 	if s != nil {
 		evtuo.SetEmail(*s)
 	}
+	return evtuo
+}
+
+// ClearEmail clears the value of the "email" field.
+func (evtuo *EmailVerificationTokenUpdateOne) ClearEmail() *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.ClearEmail()
 	return evtuo
 }
 
@@ -460,23 +527,25 @@ func (evtuo *EmailVerificationTokenUpdateOne) SetNillableSecret(s *string) *Emai
 	return evtuo
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (evtuo *EmailVerificationTokenUpdateOne) SetOwnerID(id string) *EmailVerificationTokenUpdateOne {
-	evtuo.mutation.SetOwnerID(id)
+// ClearSecret clears the value of the "secret" field.
+func (evtuo *EmailVerificationTokenUpdateOne) ClearSecret() *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.ClearSecret()
 	return evtuo
 }
 
-// SetNillableOwnerID sets the "owner" edge to the User entity by ID if the given value is not nil.
-func (evtuo *EmailVerificationTokenUpdateOne) SetNillableOwnerID(id *string) *EmailVerificationTokenUpdateOne {
-	if id != nil {
-		evtuo = evtuo.SetOwnerID(*id)
+// AddOwnerIDs adds the "owner" edge to the User entity by IDs.
+func (evtuo *EmailVerificationTokenUpdateOne) AddOwnerIDs(ids ...string) *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.AddOwnerIDs(ids...)
+	return evtuo
+}
+
+// AddOwner adds the "owner" edges to the User entity.
+func (evtuo *EmailVerificationTokenUpdateOne) AddOwner(u ...*User) *EmailVerificationTokenUpdateOne {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
-	return evtuo
-}
-
-// SetOwner sets the "owner" edge to the User entity.
-func (evtuo *EmailVerificationTokenUpdateOne) SetOwner(u *User) *EmailVerificationTokenUpdateOne {
-	return evtuo.SetOwnerID(u.ID)
+	return evtuo.AddOwnerIDs(ids...)
 }
 
 // Mutation returns the EmailVerificationTokenMutation object of the builder.
@@ -484,10 +553,25 @@ func (evtuo *EmailVerificationTokenUpdateOne) Mutation() *EmailVerificationToken
 	return evtuo.mutation
 }
 
-// ClearOwner clears the "owner" edge to the User entity.
+// ClearOwner clears all "owner" edges to the User entity.
 func (evtuo *EmailVerificationTokenUpdateOne) ClearOwner() *EmailVerificationTokenUpdateOne {
 	evtuo.mutation.ClearOwner()
 	return evtuo
+}
+
+// RemoveOwnerIDs removes the "owner" edge to User entities by IDs.
+func (evtuo *EmailVerificationTokenUpdateOne) RemoveOwnerIDs(ids ...string) *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.RemoveOwnerIDs(ids...)
+	return evtuo
+}
+
+// RemoveOwner removes "owner" edges to User entities.
+func (evtuo *EmailVerificationTokenUpdateOne) RemoveOwner(u ...*User) *EmailVerificationTokenUpdateOne {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return evtuo.RemoveOwnerIDs(ids...)
 }
 
 // Where appends a list predicates to the EmailVerificationTokenUpdate builder.
@@ -604,15 +688,24 @@ func (evtuo *EmailVerificationTokenUpdateOne) sqlSave(ctx context.Context) (_nod
 	if value, ok := evtuo.mutation.TTL(); ok {
 		_spec.SetField(emailverificationtoken.FieldTTL, field.TypeTime, value)
 	}
+	if evtuo.mutation.TTLCleared() {
+		_spec.ClearField(emailverificationtoken.FieldTTL, field.TypeTime)
+	}
 	if value, ok := evtuo.mutation.Email(); ok {
 		_spec.SetField(emailverificationtoken.FieldEmail, field.TypeString, value)
+	}
+	if evtuo.mutation.EmailCleared() {
+		_spec.ClearField(emailverificationtoken.FieldEmail, field.TypeString)
 	}
 	if value, ok := evtuo.mutation.Secret(); ok {
 		_spec.SetField(emailverificationtoken.FieldSecret, field.TypeString, value)
 	}
+	if evtuo.mutation.SecretCleared() {
+		_spec.ClearField(emailverificationtoken.FieldSecret, field.TypeString)
+	}
 	if evtuo.mutation.OwnerCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -621,12 +714,29 @@ func (evtuo *EmailVerificationTokenUpdateOne) sqlSave(ctx context.Context) (_nod
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = evtuo.schemaConfig.EmailVerificationToken
+		edge.Schema = evtuo.schemaConfig.User
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := evtuo.mutation.RemovedOwnerIDs(); len(nodes) > 0 && !evtuo.mutation.OwnerCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   emailverificationtoken.OwnerTable,
+			Columns: []string{emailverificationtoken.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = evtuo.schemaConfig.User
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := evtuo.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -635,7 +745,7 @@ func (evtuo *EmailVerificationTokenUpdateOne) sqlSave(ctx context.Context) (_nod
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = evtuo.schemaConfig.EmailVerificationToken
+		edge.Schema = evtuo.schemaConfig.User
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

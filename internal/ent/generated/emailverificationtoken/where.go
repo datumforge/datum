@@ -587,6 +587,16 @@ func TTLLTE(v time.Time) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldLTE(FieldTTL, v))
 }
 
+// TTLIsNil applies the IsNil predicate on the "ttl" field.
+func TTLIsNil() predicate.EmailVerificationToken {
+	return predicate.EmailVerificationToken(sql.FieldIsNull(FieldTTL))
+}
+
+// TTLNotNil applies the NotNil predicate on the "ttl" field.
+func TTLNotNil() predicate.EmailVerificationToken {
+	return predicate.EmailVerificationToken(sql.FieldNotNull(FieldTTL))
+}
+
 // EmailEQ applies the EQ predicate on the "email" field.
 func EmailEQ(v string) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldEQ(FieldEmail, v))
@@ -640,6 +650,16 @@ func EmailHasPrefix(v string) predicate.EmailVerificationToken {
 // EmailHasSuffix applies the HasSuffix predicate on the "email" field.
 func EmailHasSuffix(v string) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldHasSuffix(FieldEmail, v))
+}
+
+// EmailIsNil applies the IsNil predicate on the "email" field.
+func EmailIsNil() predicate.EmailVerificationToken {
+	return predicate.EmailVerificationToken(sql.FieldIsNull(FieldEmail))
+}
+
+// EmailNotNil applies the NotNil predicate on the "email" field.
+func EmailNotNil() predicate.EmailVerificationToken {
+	return predicate.EmailVerificationToken(sql.FieldNotNull(FieldEmail))
 }
 
 // EmailEqualFold applies the EqualFold predicate on the "email" field.
@@ -707,6 +727,16 @@ func SecretHasSuffix(v string) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldHasSuffix(FieldSecret, v))
 }
 
+// SecretIsNil applies the IsNil predicate on the "secret" field.
+func SecretIsNil() predicate.EmailVerificationToken {
+	return predicate.EmailVerificationToken(sql.FieldIsNull(FieldSecret))
+}
+
+// SecretNotNil applies the NotNil predicate on the "secret" field.
+func SecretNotNil() predicate.EmailVerificationToken {
+	return predicate.EmailVerificationToken(sql.FieldNotNull(FieldSecret))
+}
+
 // SecretEqualFold applies the EqualFold predicate on the "secret" field.
 func SecretEqualFold(v string) predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(sql.FieldEqualFold(FieldSecret, v))
@@ -722,11 +752,11 @@ func HasOwner() predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, OwnerTable, OwnerColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, OwnerTable, OwnerColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.User
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -737,7 +767,7 @@ func HasOwnerWith(preds ...predicate.User) predicate.EmailVerificationToken {
 		step := newOwnerStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.User
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

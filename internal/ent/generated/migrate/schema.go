@@ -19,24 +19,15 @@ var (
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "token", Type: field.TypeString, Nullable: true},
-		{Name: "ttl", Type: field.TypeTime},
-		{Name: "email", Type: field.TypeString, Unique: true},
-		{Name: "secret", Type: field.TypeString, Unique: true},
-		{Name: "user_email_verification_tokens", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "ttl", Type: field.TypeTime, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "secret", Type: field.TypeString, Nullable: true},
 	}
 	// EmailVerificationTokensTable holds the schema information for the "email_verification_tokens" table.
 	EmailVerificationTokensTable = &schema.Table{
 		Name:       "email_verification_tokens",
 		Columns:    EmailVerificationTokensColumns,
 		PrimaryKey: []*schema.Column{EmailVerificationTokensColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "email_verification_tokens_users_email_verification_tokens",
-				Columns:    []*schema.Column{EmailVerificationTokensColumns[11]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "emailverificationtoken_token",
@@ -400,12 +391,21 @@ var (
 		{Name: "oauth", Type: field.TypeBool, Default: false},
 		{Name: "agree_tos", Type: field.TypeBool, Default: false},
 		{Name: "agree_privacy", Type: field.TypeBool, Default: false},
+		{Name: "user_email_verification_tokens", Type: field.TypeString, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "users_email_verification_tokens_email_verification_tokens",
+				Columns:    []*schema.Column{UsersColumns[20]},
+				RefColumns: []*schema.Column{EmailVerificationTokensColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "user_id",
@@ -519,7 +519,6 @@ var (
 )
 
 func init() {
-	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
@@ -529,6 +528,7 @@ func init() {
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
+	UsersTable.ForeignKeys[0].RefTable = EmailVerificationTokensTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable

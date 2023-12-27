@@ -360,7 +360,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph.MustAddE(
 		"owner",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -648,7 +648,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph.MustAddE(
 		"email_verification_tokens",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},

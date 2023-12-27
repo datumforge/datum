@@ -2,13 +2,9 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/ulids"
-	echo "github.com/datumforge/echox"
-	"github.com/oklog/ulid/v2"
 )
 
 func (u *User) GetVerificationToken() string {
@@ -71,29 +67,4 @@ func (u *User) CreateResetToken() (err error) {
 	u.EmailVerificationSecret = secret
 
 	return nil
-}
-
-func (u *User) GetUserByToken(ctx echo.Context, token string, orgID any) (u *User, err error) {
-	u = &User{
-		EmailVerificationToken: sql.NullString{String: token, Valid: true},
-	}
-
-	var userOrg ulid.ULID
-	if userOrg, err = ulids.Parse(orgID); err != nil {
-		return nil, err
-	}
-
-	fmt.Sprintf("removeerr", userOrg)
-
-	// add db query to get token
-
-	// Load the user in the specified organization or their default organization
-	//	if err = u.loadOrganization(tx, userOrg); err != nil {
-	//		return nil, err
-	//	}
-	//
-	//	if err = tx.Commit(); err != nil {
-	//		return nil, err
-	//	}
-	return u, nil
 }

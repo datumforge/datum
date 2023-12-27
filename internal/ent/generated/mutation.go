@@ -68,7 +68,8 @@ type EmailVerificationTokenMutation struct {
 	email         *string
 	secret        *string
 	clearedFields map[string]struct{}
-	owner         *string
+	owner         map[string]struct{}
+	removedowner  map[string]struct{}
 	clearedowner  bool
 	done          bool
 	oldValue      func(context.Context) (*EmailVerificationToken, error)
@@ -527,9 +528,22 @@ func (m *EmailVerificationTokenMutation) OldTTL(ctx context.Context) (v time.Tim
 	return oldValue.TTL, nil
 }
 
+// ClearTTL clears the value of the "ttl" field.
+func (m *EmailVerificationTokenMutation) ClearTTL() {
+	m.ttl = nil
+	m.clearedFields[emailverificationtoken.FieldTTL] = struct{}{}
+}
+
+// TTLCleared returns if the "ttl" field was cleared in this mutation.
+func (m *EmailVerificationTokenMutation) TTLCleared() bool {
+	_, ok := m.clearedFields[emailverificationtoken.FieldTTL]
+	return ok
+}
+
 // ResetTTL resets all changes to the "ttl" field.
 func (m *EmailVerificationTokenMutation) ResetTTL() {
 	m.ttl = nil
+	delete(m.clearedFields, emailverificationtoken.FieldTTL)
 }
 
 // SetEmail sets the "email" field.
@@ -563,9 +577,22 @@ func (m *EmailVerificationTokenMutation) OldEmail(ctx context.Context) (v string
 	return oldValue.Email, nil
 }
 
+// ClearEmail clears the value of the "email" field.
+func (m *EmailVerificationTokenMutation) ClearEmail() {
+	m.email = nil
+	m.clearedFields[emailverificationtoken.FieldEmail] = struct{}{}
+}
+
+// EmailCleared returns if the "email" field was cleared in this mutation.
+func (m *EmailVerificationTokenMutation) EmailCleared() bool {
+	_, ok := m.clearedFields[emailverificationtoken.FieldEmail]
+	return ok
+}
+
 // ResetEmail resets all changes to the "email" field.
 func (m *EmailVerificationTokenMutation) ResetEmail() {
 	m.email = nil
+	delete(m.clearedFields, emailverificationtoken.FieldEmail)
 }
 
 // SetSecret sets the "secret" field.
@@ -599,14 +626,32 @@ func (m *EmailVerificationTokenMutation) OldSecret(ctx context.Context) (v strin
 	return oldValue.Secret, nil
 }
 
+// ClearSecret clears the value of the "secret" field.
+func (m *EmailVerificationTokenMutation) ClearSecret() {
+	m.secret = nil
+	m.clearedFields[emailverificationtoken.FieldSecret] = struct{}{}
+}
+
+// SecretCleared returns if the "secret" field was cleared in this mutation.
+func (m *EmailVerificationTokenMutation) SecretCleared() bool {
+	_, ok := m.clearedFields[emailverificationtoken.FieldSecret]
+	return ok
+}
+
 // ResetSecret resets all changes to the "secret" field.
 func (m *EmailVerificationTokenMutation) ResetSecret() {
 	m.secret = nil
+	delete(m.clearedFields, emailverificationtoken.FieldSecret)
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by id.
-func (m *EmailVerificationTokenMutation) SetOwnerID(id string) {
-	m.owner = &id
+// AddOwnerIDs adds the "owner" edge to the User entity by ids.
+func (m *EmailVerificationTokenMutation) AddOwnerIDs(ids ...string) {
+	if m.owner == nil {
+		m.owner = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.owner[ids[i]] = struct{}{}
+	}
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
@@ -619,20 +664,29 @@ func (m *EmailVerificationTokenMutation) OwnerCleared() bool {
 	return m.clearedowner
 }
 
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *EmailVerificationTokenMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
+// RemoveOwnerIDs removes the "owner" edge to the User entity by IDs.
+func (m *EmailVerificationTokenMutation) RemoveOwnerIDs(ids ...string) {
+	if m.removedowner == nil {
+		m.removedowner = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.owner, ids[i])
+		m.removedowner[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOwner returns the removed IDs of the "owner" edge to the User entity.
+func (m *EmailVerificationTokenMutation) RemovedOwnerIDs() (ids []string) {
+	for id := range m.removedowner {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// OwnerID instead. It exists only for internal usage by the builders.
 func (m *EmailVerificationTokenMutation) OwnerIDs() (ids []string) {
-	if id := m.owner; id != nil {
-		ids = append(ids, *id)
+	for id := range m.owner {
+		ids = append(ids, id)
 	}
 	return
 }
@@ -641,6 +695,7 @@ func (m *EmailVerificationTokenMutation) OwnerIDs() (ids []string) {
 func (m *EmailVerificationTokenMutation) ResetOwner() {
 	m.owner = nil
 	m.clearedowner = false
+	m.removedowner = nil
 }
 
 // Where appends a list predicates to the EmailVerificationTokenMutation builder.
@@ -889,6 +944,15 @@ func (m *EmailVerificationTokenMutation) ClearedFields() []string {
 	if m.FieldCleared(emailverificationtoken.FieldToken) {
 		fields = append(fields, emailverificationtoken.FieldToken)
 	}
+	if m.FieldCleared(emailverificationtoken.FieldTTL) {
+		fields = append(fields, emailverificationtoken.FieldTTL)
+	}
+	if m.FieldCleared(emailverificationtoken.FieldEmail) {
+		fields = append(fields, emailverificationtoken.FieldEmail)
+	}
+	if m.FieldCleared(emailverificationtoken.FieldSecret) {
+		fields = append(fields, emailverificationtoken.FieldSecret)
+	}
 	return fields
 }
 
@@ -917,6 +981,15 @@ func (m *EmailVerificationTokenMutation) ClearField(name string) error {
 		return nil
 	case emailverificationtoken.FieldToken:
 		m.ClearToken()
+		return nil
+	case emailverificationtoken.FieldTTL:
+		m.ClearTTL()
+		return nil
+	case emailverificationtoken.FieldEmail:
+		m.ClearEmail()
+		return nil
+	case emailverificationtoken.FieldSecret:
+		m.ClearSecret()
 		return nil
 	}
 	return fmt.Errorf("unknown EmailVerificationToken nullable field %s", name)
@@ -974,9 +1047,11 @@ func (m *EmailVerificationTokenMutation) AddedEdges() []string {
 func (m *EmailVerificationTokenMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case emailverificationtoken.EdgeOwner:
-		if id := m.owner; id != nil {
-			return []ent.Value{*id}
+		ids := make([]ent.Value, 0, len(m.owner))
+		for id := range m.owner {
+			ids = append(ids, id)
 		}
+		return ids
 	}
 	return nil
 }
@@ -984,12 +1059,23 @@ func (m *EmailVerificationTokenMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EmailVerificationTokenMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
+	if m.removedowner != nil {
+		edges = append(edges, emailverificationtoken.EdgeOwner)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *EmailVerificationTokenMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case emailverificationtoken.EdgeOwner:
+		ids := make([]ent.Value, 0, len(m.removedowner))
+		for id := range m.removedowner {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
@@ -1016,9 +1102,6 @@ func (m *EmailVerificationTokenMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *EmailVerificationTokenMutation) ClearEdge(name string) error {
 	switch name {
-	case emailverificationtoken.EdgeOwner:
-		m.ClearOwner()
-		return nil
 	}
 	return fmt.Errorf("unknown EmailVerificationToken unique edge %s", name)
 }

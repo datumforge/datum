@@ -710,7 +710,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -719,10 +719,11 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uc.schemaConfig.EmailVerificationToken
+		edge.Schema = uc.schemaConfig.User
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.user_email_verification_tokens = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

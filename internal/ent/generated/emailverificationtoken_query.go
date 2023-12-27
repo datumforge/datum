@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
@@ -20,14 +21,14 @@ import (
 // EmailVerificationTokenQuery is the builder for querying EmailVerificationToken entities.
 type EmailVerificationTokenQuery struct {
 	config
-	ctx        *QueryContext
-	order      []emailverificationtoken.OrderOption
-	inters     []Interceptor
-	predicates []predicate.EmailVerificationToken
-	withOwner  *UserQuery
-	withFKs    bool
-	modifiers  []func(*sql.Selector)
-	loadTotal  []func(context.Context, []*EmailVerificationToken) error
+	ctx            *QueryContext
+	order          []emailverificationtoken.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.EmailVerificationToken
+	withOwner      *UserQuery
+	modifiers      []func(*sql.Selector)
+	loadTotal      []func(context.Context, []*EmailVerificationToken) error
+	withNamedOwner map[string]*UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,11 +79,11 @@ func (evtq *EmailVerificationTokenQuery) QueryOwner() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(emailverificationtoken.Table, emailverificationtoken.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, emailverificationtoken.OwnerTable, emailverificationtoken.OwnerColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, emailverificationtoken.OwnerTable, emailverificationtoken.OwnerColumn),
 		)
 		schemaConfig := evtq.schemaConfig
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.User
 		fromU = sqlgraph.SetNeighbors(evtq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -376,18 +377,11 @@ func (evtq *EmailVerificationTokenQuery) prepareQuery(ctx context.Context) error
 func (evtq *EmailVerificationTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*EmailVerificationToken, error) {
 	var (
 		nodes       = []*EmailVerificationToken{}
-		withFKs     = evtq.withFKs
 		_spec       = evtq.querySpec()
 		loadedTypes = [1]bool{
 			evtq.withOwner != nil,
 		}
 	)
-	if evtq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, emailverificationtoken.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*EmailVerificationToken).scanValues(nil, columns)
 	}
@@ -412,8 +406,16 @@ func (evtq *EmailVerificationTokenQuery) sqlAll(ctx context.Context, hooks ...qu
 		return nodes, nil
 	}
 	if query := evtq.withOwner; query != nil {
-		if err := evtq.loadOwner(ctx, query, nodes, nil,
-			func(n *EmailVerificationToken, e *User) { n.Edges.Owner = e }); err != nil {
+		if err := evtq.loadOwner(ctx, query, nodes,
+			func(n *EmailVerificationToken) { n.Edges.Owner = []*User{} },
+			func(n *EmailVerificationToken, e *User) { n.Edges.Owner = append(n.Edges.Owner, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range evtq.withNamedOwner {
+		if err := evtq.loadOwner(ctx, query, nodes,
+			func(n *EmailVerificationToken) { n.appendNamedOwner(name) },
+			func(n *EmailVerificationToken, e *User) { n.appendNamedOwner(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -426,34 +428,33 @@ func (evtq *EmailVerificationTokenQuery) sqlAll(ctx context.Context, hooks ...qu
 }
 
 func (evtq *EmailVerificationTokenQuery) loadOwner(ctx context.Context, query *UserQuery, nodes []*EmailVerificationToken, init func(*EmailVerificationToken), assign func(*EmailVerificationToken, *User)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*EmailVerificationToken)
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*EmailVerificationToken)
 	for i := range nodes {
-		if nodes[i].user_email_verification_tokens == nil {
-			continue
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
 		}
-		fk := *nodes[i].user_email_verification_tokens
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(user.IDIn(ids...))
+	query.withFKs = true
+	query.Where(predicate.User(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(emailverificationtoken.OwnerColumn), fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.user_email_verification_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_email_verification_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_email_verification_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_email_verification_tokens" returned %v for node %v`, *fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -545,6 +546,20 @@ func (evtq *EmailVerificationTokenQuery) sqlQuery(ctx context.Context) *sql.Sele
 		selector.Limit(*limit)
 	}
 	return selector
+}
+
+// WithNamedOwner tells the query-builder to eager-load the nodes that are connected to the "owner"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (evtq *EmailVerificationTokenQuery) WithNamedOwner(name string, opts ...func(*UserQuery)) *EmailVerificationTokenQuery {
+	query := (&UserClient{config: evtq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if evtq.withNamedOwner == nil {
+		evtq.withNamedOwner = make(map[string]*UserQuery)
+	}
+	evtq.withNamedOwner[name] = query
+	return evtq
 }
 
 // EmailVerificationTokenGroupBy is the group-by builder for EmailVerificationToken entities.

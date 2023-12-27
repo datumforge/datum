@@ -139,9 +139,25 @@ func (evtc *EmailVerificationTokenCreate) SetEmail(s string) *EmailVerificationT
 	return evtc
 }
 
+// SetNillableEmail sets the "email" field if the given value is not nil.
+func (evtc *EmailVerificationTokenCreate) SetNillableEmail(s *string) *EmailVerificationTokenCreate {
+	if s != nil {
+		evtc.SetEmail(*s)
+	}
+	return evtc
+}
+
 // SetSecret sets the "secret" field.
 func (evtc *EmailVerificationTokenCreate) SetSecret(s string) *EmailVerificationTokenCreate {
 	evtc.mutation.SetSecret(s)
+	return evtc
+}
+
+// SetNillableSecret sets the "secret" field if the given value is not nil.
+func (evtc *EmailVerificationTokenCreate) SetNillableSecret(s *string) *EmailVerificationTokenCreate {
+	if s != nil {
+		evtc.SetSecret(*s)
+	}
 	return evtc
 }
 
@@ -159,23 +175,19 @@ func (evtc *EmailVerificationTokenCreate) SetNillableID(s *string) *EmailVerific
 	return evtc
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (evtc *EmailVerificationTokenCreate) SetOwnerID(id string) *EmailVerificationTokenCreate {
-	evtc.mutation.SetOwnerID(id)
+// AddOwnerIDs adds the "owner" edge to the User entity by IDs.
+func (evtc *EmailVerificationTokenCreate) AddOwnerIDs(ids ...string) *EmailVerificationTokenCreate {
+	evtc.mutation.AddOwnerIDs(ids...)
 	return evtc
 }
 
-// SetNillableOwnerID sets the "owner" edge to the User entity by ID if the given value is not nil.
-func (evtc *EmailVerificationTokenCreate) SetNillableOwnerID(id *string) *EmailVerificationTokenCreate {
-	if id != nil {
-		evtc = evtc.SetOwnerID(*id)
+// AddOwner adds the "owner" edges to the User entity.
+func (evtc *EmailVerificationTokenCreate) AddOwner(u ...*User) *EmailVerificationTokenCreate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
 	}
-	return evtc
-}
-
-// SetOwner sets the "owner" edge to the User entity.
-func (evtc *EmailVerificationTokenCreate) SetOwner(u *User) *EmailVerificationTokenCreate {
-	return evtc.SetOwnerID(u.ID)
+	return evtc.AddOwnerIDs(ids...)
 }
 
 // Mutation returns the EmailVerificationTokenMutation object of the builder.
@@ -250,15 +262,6 @@ func (evtc *EmailVerificationTokenCreate) check() error {
 	}
 	if _, ok := evtc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "EmailVerificationToken.updated_at"`)}
-	}
-	if _, ok := evtc.mutation.TTL(); !ok {
-		return &ValidationError{Name: "ttl", err: errors.New(`generated: missing required field "EmailVerificationToken.ttl"`)}
-	}
-	if _, ok := evtc.mutation.Email(); !ok {
-		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "EmailVerificationToken.email"`)}
-	}
-	if _, ok := evtc.mutation.Secret(); !ok {
-		return &ValidationError{Name: "secret", err: errors.New(`generated: missing required field "EmailVerificationToken.secret"`)}
 	}
 	return nil
 }
@@ -338,7 +341,7 @@ func (evtc *EmailVerificationTokenCreate) createSpec() (*EmailVerificationToken,
 	}
 	if nodes := evtc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -347,11 +350,10 @@ func (evtc *EmailVerificationTokenCreate) createSpec() (*EmailVerificationToken,
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = evtc.schemaConfig.EmailVerificationToken
+		edge.Schema = evtc.schemaConfig.User
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_email_verification_tokens = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

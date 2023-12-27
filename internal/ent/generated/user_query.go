@@ -37,6 +37,7 @@ type UserQuery struct {
 	withPersonalAccessTokens      *PersonalAccessTokenQuery
 	withSetting                   *UserSettingQuery
 	withEmailVerificationTokens   *EmailVerificationTokenQuery
+	withFKs                       bool
 	modifiers                     []func(*sql.Selector)
 	loadTotal                     []func(context.Context, []*User) error
 	withNamedOrganizations        map[string]*OrganizationQuery
@@ -218,11 +219,11 @@ func (uq *UserQuery) QueryEmailVerificationTokens() *EmailVerificationTokenQuery
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
 		)
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.User
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -582,6 +583,7 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
 		nodes       = []*User{}
+		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
 		loadedTypes = [6]bool{
 			uq.withOrganizations != nil,
@@ -592,6 +594,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withEmailVerificationTokens != nil,
 		}
 	)
+	if uq.withEmailVerificationTokens != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
 	}
@@ -907,30 +915,34 @@ func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingQuery, n
 	return nil
 }
 func (uq *UserQuery) loadEmailVerificationTokens(ctx context.Context, query *EmailVerificationTokenQuery, nodes []*User, init func(*User), assign func(*User, *EmailVerificationToken)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*User)
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*User)
 	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
+		if nodes[i].user_email_verification_tokens == nil {
+			continue
+		}
+		fk := *nodes[i].user_email_verification_tokens
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	query.withFKs = true
-	query.Where(predicate.EmailVerificationToken(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.EmailVerificationTokensColumn), fks...))
-	}))
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(emailverificationtoken.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_email_verification_tokens
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_email_verification_tokens" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_email_verification_tokens" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_email_verification_tokens" returned %v`, n.ID)
 		}
-		assign(node, n)
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }

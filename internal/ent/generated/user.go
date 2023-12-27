@@ -59,8 +59,9 @@ type User struct {
 	AgreePrivacy bool `json:"agree_privacy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
-	Edges        UserEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                          UserEdges `json:"edges"`
+	user_email_verification_tokens *string
+	selectValues                   sql.SelectValues
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
@@ -162,6 +163,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
+		case user.ForeignKeys[0]: // user_email_verification_tokens
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -301,6 +304,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field agree_privacy", values[i])
 			} else if value.Valid {
 				u.AgreePrivacy = value.Bool
+			}
+		case user.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_email_verification_tokens", values[i])
+			} else if value.Valid {
+				u.user_email_verification_tokens = new(string)
+				*u.user_email_verification_tokens = value.String
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])

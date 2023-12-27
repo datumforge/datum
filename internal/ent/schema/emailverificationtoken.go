@@ -27,13 +27,14 @@ func (EmailVerificationToken) Fields() []ent.Field {
 			Optional(),
 		field.Time("ttl").
 			Comment("the ttl of the verification token which needs to be explictly set, otherwise defaults to time.Now").
-			Default(time.Now()),
+			Default(time.Now()).
+			Optional(),
 		field.String("email").
 			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed").
-			Unique(),
+			Optional(),
 		field.String("secret").
 			Comment("the comparison secret to verify the token's signature").
-			Unique(),
+			Optional(),
 	}
 }
 
@@ -42,6 +43,7 @@ func (EmailVerificationToken) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("owner", User.Type).
 			Ref("email_verification_tokens").
+			Required().
 			Unique(),
 	}
 }

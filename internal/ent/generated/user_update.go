@@ -907,7 +907,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.EmailVerificationTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -916,12 +916,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		edge.Schema = uu.schemaConfig.User
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uu.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -930,7 +930,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		edge.Schema = uu.schemaConfig.User
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1859,7 +1859,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.EmailVerificationTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -1868,12 +1868,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		edge.Schema = uuo.schemaConfig.User
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uuo.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -1882,7 +1882,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		edge.Schema = uuo.schemaConfig.User
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

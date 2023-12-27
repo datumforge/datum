@@ -1357,11 +1357,11 @@ func HasEmailVerificationTokens() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.User
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -1372,7 +1372,7 @@ func HasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) p
 		step := newEmailVerificationTokensStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.User
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

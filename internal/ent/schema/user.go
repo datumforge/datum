@@ -145,6 +145,8 @@ func (User) Edges() []ent.Edge {
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Unique().
 			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("children", EmailVerificationToken.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

@@ -112,15 +112,15 @@
                     "type": "string"
                   },
                   "owner": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
                   "created_at",
-                  "updated_at",
-                  "ttl",
-                  "email",
-                  "secret"
+                  "updated_at"
                 ]
               }
             }
@@ -283,7 +283,10 @@
                     "type": "string"
                   },
                   "owner": {
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -322,9 +325,9 @@
         "tags": [
           "EmailVerificationToken"
         ],
-        "summary": "Find the attached User",
-        "description": "Find the attached User of the EmailVerificationToken with the given ID",
-        "operationId": "readEmailVerificationTokenOwner",
+        "summary": "List attached Owners",
+        "description": "List attached Owners.",
+        "operationId": "listEmailVerificationTokenOwner",
         "parameters": [
           {
             "name": "id",
@@ -334,15 +337,34 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "User attached to EmailVerificationToken with requested ID was found",
+            "description": "result EmailVerificationTokens list",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EmailVerificationToken_OwnerRead"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmailVerificationToken_OwnerList"
+                  }
                 }
               }
             }
@@ -5923,16 +5945,16 @@
             "type": "string"
           },
           "owner": {
-            "$ref": "#/components/schemas/User"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
           }
         },
         "required": [
           "id",
           "created_at",
-          "updated_at",
-          "ttl",
-          "email",
-          "secret"
+          "updated_at"
         ]
       },
       "EmailVerificationTokenCreate": {
@@ -5979,10 +6001,7 @@
         "required": [
           "id",
           "created_at",
-          "updated_at",
-          "ttl",
-          "email",
-          "secret"
+          "updated_at"
         ]
       },
       "EmailVerificationTokenList": {
@@ -6029,10 +6048,7 @@
         "required": [
           "id",
           "created_at",
-          "updated_at",
-          "ttl",
-          "email",
-          "secret"
+          "updated_at"
         ]
       },
       "EmailVerificationTokenRead": {
@@ -6079,10 +6095,7 @@
         "required": [
           "id",
           "created_at",
-          "updated_at",
-          "ttl",
-          "email",
-          "secret"
+          "updated_at"
         ]
       },
       "EmailVerificationTokenUpdate": {
@@ -6129,13 +6142,10 @@
         "required": [
           "id",
           "created_at",
-          "updated_at",
-          "ttl",
-          "email",
-          "secret"
+          "updated_at"
         ]
       },
-      "EmailVerificationToken_OwnerRead": {
+      "EmailVerificationToken_OwnerList": {
         "type": "object",
         "properties": {
           "id": {
@@ -11354,10 +11364,7 @@
         "required": [
           "id",
           "created_at",
-          "updated_at",
-          "ttl",
-          "email",
-          "secret"
+          "updated_at"
         ]
       },
       "User_GroupsList": {

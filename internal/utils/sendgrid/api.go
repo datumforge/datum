@@ -12,7 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
-// consatants for working with sendgrid; didn't make them configurable as these are dictated by the vendor and this is a vendor specific package
+// constants for working with sendgrid; didn't make them configurable as these are dictated by the vendor and this is a vendor specific package
 const (
 	Host       = "https://api.sendgrid.com"
 	ContactsEP = "/v3/marketing/contacts"
@@ -27,7 +27,7 @@ type AddContactData struct {
 }
 
 // AddContacts to SendGrid marketing list
-func AddContacts(apiKey string, data *AddContactData) (err error) {
+func AddContacts(apiKey string, data *AddContactData) error {
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(data); err != nil {
 		return fmt.Errorf("could not encode json sendgrid contact data: %w", err)
@@ -37,12 +37,12 @@ func AddContacts(apiKey string, data *AddContactData) (err error) {
 	req.Method = http.MethodPut
 	req.Body = buf.Bytes()
 
-	_, err = doRequest(req)
+	_, err := doRequest(req)
 
 	return err
 }
 
-// MarketingLists fetchs lists of contacts from SendGrid
+// MarketingLists fetches lists of contacts from SendGrid
 func MarketingLists(apiKey, pageToken string) (string, error) {
 	params := map[string]string{
 		"page_size": "100",

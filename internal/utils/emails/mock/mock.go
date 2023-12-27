@@ -72,7 +72,7 @@ func CheckEmails(t *testing.T, messages []*EmailMetadata) {
 		found := false
 
 		for _, sent := range sentEmails {
-			recipient, err := sendgrid.GetRecipient(sent)
+			recipient, err := sendgrid.GetFirstRecipient(sent)
 			require.NoError(t, err, "could not parse recipient address")
 
 			if recipient == expectedRecipient.Address {

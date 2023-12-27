@@ -77,7 +77,6 @@ func (c Config) AdminContact() (sendgrid.Contact, error) {
 // `sendgrid.Contact` for the `FromEmail` field in the `Config` struct
 func (c Config) MustFromContact() sendgrid.Contact {
 	contact, err := c.FromContact()
-
 	if err != nil {
 		panic(err)
 	}
@@ -92,7 +91,6 @@ func (c Config) MustFromContact() sendgrid.Contact {
 // `sendgrid.Contact`
 func (c Config) MustAdminContact() sendgrid.Contact {
 	contact, err := c.AdminContact()
-
 	if err != nil {
 		panic(err)
 	}

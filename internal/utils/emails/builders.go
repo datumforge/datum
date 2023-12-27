@@ -20,7 +20,7 @@ const (
 	// Email templates must be provided in this directory and are loaded at compile time
 	templatesDir = "templates"
 
-	// Partials are included when rendering templates for composability and reuse - inclues footer, header, etc.
+	// Partials are included when rendering templates for composability and reuse - includes footer, header, etc.
 	partialsDir = "partials"
 )
 
@@ -219,7 +219,7 @@ func Render(name string, data interface{}) (text, html string, err error) {
 func render(name string, data interface{}) (_ string, err error) {
 	t, ok := templates[name]
 	if !ok {
-		return "", fmt.Errorf("couldn ot find %q in templates", name) // nolint: goerr113
+		return "", fmt.Errorf("could not find %q in templates", name) // nolint: goerr113
 	}
 
 	buf := &strings.Builder{}

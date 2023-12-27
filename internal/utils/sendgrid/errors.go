@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	ErrNoReciepientFound = errors.New("no reciepient found")
+	ErrNoRecipientFound = errors.New("no recipient found")
 )

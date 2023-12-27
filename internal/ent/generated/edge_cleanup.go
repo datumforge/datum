@@ -76,7 +76,22 @@ func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func PermissionEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func RoleEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func RolePermissionEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -108,6 +123,11 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 			return err
 		}
 	}
+
+	return nil
+}
+
+func UserRoleEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

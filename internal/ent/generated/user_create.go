@@ -13,8 +13,10 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userrole"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -322,6 +324,36 @@ func (uc *UserCreate) SetSettingID(id string) *UserCreate {
 // SetSetting sets the "setting" edge to the UserSetting entity.
 func (uc *UserCreate) SetSetting(u *UserSetting) *UserCreate {
 	return uc.SetSettingID(u.ID)
+}
+
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (uc *UserCreate) AddRoleIDs(ids ...string) *UserCreate {
+	uc.mutation.AddRoleIDs(ids...)
+	return uc
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (uc *UserCreate) AddRoles(r ...*Role) *UserCreate {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRoleIDs(ids...)
+}
+
+// AddUserRoleIDs adds the "user_role" edge to the UserRole entity by IDs.
+func (uc *UserCreate) AddUserRoleIDs(ids ...string) *UserCreate {
+	uc.mutation.AddUserRoleIDs(ids...)
+	return uc
+}
+
+// AddUserRole adds the "user_role" edges to the UserRole entity.
+func (uc *UserCreate) AddUserRole(u ...*UserRole) *UserCreate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return uc.AddUserRoleIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -633,6 +665,47 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RolesTable,
+			Columns: user.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.UserRole
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &UserRoleCreate{config: uc.config, mutation: newUserRoleMutation(uc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.UserRoleIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserRoleTable,
+			Columns: []string{user.UserRoleColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(userrole.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.UserRole
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

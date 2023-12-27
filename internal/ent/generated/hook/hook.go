@@ -105,6 +105,18 @@ func (f OrganizationSettingFunc) Mutate(ctx context.Context, m generated.Mutatio
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingMutation", m)
 }
 
+// The PermissionFunc type is an adapter to allow the use of ordinary
+// function as Permission mutator.
+type PermissionFunc func(context.Context, *generated.PermissionMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PermissionFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.PermissionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.PermissionMutation", m)
+}
+
 // The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary
 // function as PersonalAccessToken mutator.
 type PersonalAccessTokenFunc func(context.Context, *generated.PersonalAccessTokenMutation) (generated.Value, error)
@@ -115,6 +127,30 @@ func (f PersonalAccessTokenFunc) Mutate(ctx context.Context, m generated.Mutatio
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.PersonalAccessTokenMutation", m)
+}
+
+// The RoleFunc type is an adapter to allow the use of ordinary
+// function as Role mutator.
+type RoleFunc func(context.Context, *generated.RoleMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RoleFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.RoleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.RoleMutation", m)
+}
+
+// The RolePermissionFunc type is an adapter to allow the use of ordinary
+// function as RolePermission mutator.
+type RolePermissionFunc func(context.Context, *generated.RolePermissionMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RolePermissionFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.RolePermissionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.RolePermissionMutation", m)
 }
 
 // The SessionFunc type is an adapter to allow the use of ordinary
@@ -139,6 +175,18 @@ func (f UserFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.V
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserMutation", m)
+}
+
+// The UserRoleFunc type is an adapter to allow the use of ordinary
+// function as UserRole mutator.
+type UserRoleFunc func(context.Context, *generated.UserRoleMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserRoleFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.UserRoleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.UserRoleMutation", m)
 }
 
 // The UserSettingFunc type is an adapter to allow the use of ordinary

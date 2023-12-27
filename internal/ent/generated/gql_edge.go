@@ -173,10 +173,98 @@ func (os *OrganizationSetting) Organization(ctx context.Context) (*Organization,
 	return result, MaskNotFound(err)
 }
 
+func (pe *Permission) Roles(ctx context.Context) (result []*Role, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = pe.NamedRoles(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = pe.Edges.RolesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = pe.QueryRoles().All(ctx)
+	}
+	return result, err
+}
+
+func (pe *Permission) RolePermission(ctx context.Context) (result []*RolePermission, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = pe.NamedRolePermission(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = pe.Edges.RolePermissionOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = pe.QueryRolePermission().All(ctx)
+	}
+	return result, err
+}
+
 func (pat *PersonalAccessToken) Owner(ctx context.Context) (*User, error) {
 	result, err := pat.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = pat.QueryOwner().Only(ctx)
+	}
+	return result, err
+}
+
+func (r *Role) Permissions(ctx context.Context) (result []*Permission, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = r.NamedPermissions(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = r.Edges.PermissionsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = r.QueryPermissions().All(ctx)
+	}
+	return result, err
+}
+
+func (r *Role) Users(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = r.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = r.Edges.UsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = r.QueryUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (r *Role) RolePermission(ctx context.Context) (result []*RolePermission, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = r.NamedRolePermission(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = r.Edges.RolePermissionOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = r.QueryRolePermission().All(ctx)
+	}
+	return result, err
+}
+
+func (r *Role) UserRole(ctx context.Context) (result []*UserRole, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = r.NamedUserRole(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = r.Edges.UserRoleOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = r.QueryUserRole().All(ctx)
+	}
+	return result, err
+}
+
+func (rp *RolePermission) Role(ctx context.Context) (*Role, error) {
+	result, err := rp.Edges.RoleOrErr()
+	if IsNotLoaded(err) {
+		result, err = rp.QueryRole().Only(ctx)
+	}
+	return result, err
+}
+
+func (rp *RolePermission) Permission(ctx context.Context) (*Permission, error) {
+	result, err := rp.Edges.PermissionOrErr()
+	if IsNotLoaded(err) {
+		result, err = rp.QueryPermission().Only(ctx)
 	}
 	return result, err
 }
@@ -241,6 +329,46 @@ func (u *User) Setting(ctx context.Context) (*UserSetting, error) {
 	result, err := u.Edges.SettingOrErr()
 	if IsNotLoaded(err) {
 		result, err = u.QuerySetting().Only(ctx)
+	}
+	return result, err
+}
+
+func (u *User) Roles(ctx context.Context) (result []*Role, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedRoles(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.RolesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryRoles().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) UserRole(ctx context.Context) (result []*UserRole, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedUserRole(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.UserRoleOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryUserRole().All(ctx)
+	}
+	return result, err
+}
+
+func (ur *UserRole) User(ctx context.Context) (*User, error) {
+	result, err := ur.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = ur.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (ur *UserRole) Role(ctx context.Context) (*Role, error) {
+	result, err := ur.Edges.RoleOrErr()
+	if IsNotLoaded(err) {
+		result, err = ur.QueryRole().Only(ctx)
 	}
 	return result, err
 }

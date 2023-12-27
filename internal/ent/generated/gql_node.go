@@ -16,9 +16,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/permission"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/rolepermission"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userrole"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/hashicorp/go-multierror"
 )
@@ -53,13 +57,25 @@ func (n *Organization) IsNode() {}
 func (n *OrganizationSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *Permission) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *PersonalAccessToken) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *Role) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *RolePermission) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Session) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *User) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *UserRole) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *UserSetting) IsNode() {}
@@ -218,10 +234,46 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case permission.Table:
+		query := c.Permission.Query().
+			Where(permission.ID(id))
+		query, err := query.CollectFields(ctx, "Permission")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case personalaccesstoken.Table:
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.ID(id))
 		query, err := query.CollectFields(ctx, "PersonalAccessToken")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case role.Table:
+		query := c.Role.Query().
+			Where(role.ID(id))
+		query, err := query.CollectFields(ctx, "Role")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case rolepermission.Table:
+		query := c.RolePermission.Query().
+			Where(rolepermission.ID(id))
+		query, err := query.CollectFields(ctx, "RolePermission")
 		if err != nil {
 			return nil, err
 		}
@@ -246,6 +298,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.User.Query().
 			Where(user.ID(id))
 		query, err := query.CollectFields(ctx, "User")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case userrole.Table:
+		query := c.UserRole.Query().
+			Where(userrole.ID(id))
+		query, err := query.CollectFields(ctx, "UserRole")
 		if err != nil {
 			return nil, err
 		}
@@ -467,10 +531,58 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case permission.Table:
+		query := c.Permission.Query().
+			Where(permission.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Permission")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case personalaccesstoken.Table:
 		query := c.PersonalAccessToken.Query().
 			Where(personalaccesstoken.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "PersonalAccessToken")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case role.Table:
+		query := c.Role.Query().
+			Where(role.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "Role")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case rolepermission.Table:
+		query := c.RolePermission.Query().
+			Where(rolepermission.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "RolePermission")
 		if err != nil {
 			return nil, err
 		}
@@ -503,6 +615,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.User.Query().
 			Where(user.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "User")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case userrole.Table:
+		query := c.UserRole.Query().
+			Where(userrole.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "UserRole")
 		if err != nil {
 			return nil, err
 		}

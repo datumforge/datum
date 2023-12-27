@@ -70,16 +70,22 @@ type UserEdges struct {
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
+	// Roles holds the value of the roles edge.
+	Roles []*Role `json:"roles,omitempty"`
+	// UserRole holds the value of the user_role edge.
+	UserRole []*UserRole `json:"user_role,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [7]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [7]map[string]int
 
 	namedOrganizations        map[string][]*Organization
 	namedSessions             map[string][]*Session
 	namedGroups               map[string][]*Group
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
+	namedRoles                map[string][]*Role
+	namedUserRole             map[string][]*UserRole
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -129,6 +135,24 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 		return e.Setting, nil
 	}
 	return nil, &NotLoadedError{edge: "setting"}
+}
+
+// RolesOrErr returns the Roles value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RolesOrErr() ([]*Role, error) {
+	if e.loadedTypes[5] {
+		return e.Roles, nil
+	}
+	return nil, &NotLoadedError{edge: "roles"}
+}
+
+// UserRoleOrErr returns the UserRole value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) UserRoleOrErr() ([]*UserRole, error) {
+	if e.loadedTypes[6] {
+		return e.UserRole, nil
+	}
+	return nil, &NotLoadedError{edge: "user_role"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -306,6 +330,16 @@ func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 // QuerySetting queries the "setting" edge of the User entity.
 func (u *User) QuerySetting() *UserSettingQuery {
 	return NewUserClient(u.config).QuerySetting(u)
+}
+
+// QueryRoles queries the "roles" edge of the User entity.
+func (u *User) QueryRoles() *RoleQuery {
+	return NewUserClient(u.config).QueryRoles(u)
+}
+
+// QueryUserRole queries the "user_role" edge of the User entity.
+func (u *User) QueryUserRole() *UserRoleQuery {
+	return NewUserClient(u.config).QueryUserRole(u)
 }
 
 // Update returns a builder for updating this User.
@@ -488,6 +522,54 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
+	}
+}
+
+// NamedRoles returns the Roles named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedRoles(name string) ([]*Role, error) {
+	if u.Edges.namedRoles == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedRoles[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedRoles(name string, edges ...*Role) {
+	if u.Edges.namedRoles == nil {
+		u.Edges.namedRoles = make(map[string][]*Role)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedRoles[name] = []*Role{}
+	} else {
+		u.Edges.namedRoles[name] = append(u.Edges.namedRoles[name], edges...)
+	}
+}
+
+// NamedUserRole returns the UserRole named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedUserRole(name string) ([]*UserRole, error) {
+	if u.Edges.namedUserRole == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedUserRole[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedUserRole(name string, edges ...*UserRole) {
+	if u.Edges.namedUserRole == nil {
+		u.Edges.namedUserRole = make(map[string][]*UserRole)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedUserRole[name] = []*UserRole{}
+	} else {
+		u.Edges.namedUserRole[name] = append(u.Edges.namedUserRole[name], edges...)
 	}
 }
 

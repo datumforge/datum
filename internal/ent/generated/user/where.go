@@ -1322,6 +1322,64 @@ func HasSettingWith(preds ...predicate.UserSetting) predicate.User {
 	})
 }
 
+// HasRoles applies the HasEdge predicate on the "roles" edge.
+func HasRoles() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RolesTable, RolesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Role
+		step.Edge.Schema = schemaConfig.UserRole
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRolesWith applies the HasEdge predicate on the "roles" edge with a given conditions (other predicates).
+func HasRolesWith(preds ...predicate.Role) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newRolesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Role
+		step.Edge.Schema = schemaConfig.UserRole
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasUserRole applies the HasEdge predicate on the "user_role" edge.
+func HasUserRole() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, UserRoleTable, UserRoleColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.UserRole
+		step.Edge.Schema = schemaConfig.UserRole
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasUserRoleWith applies the HasEdge predicate on the "user_role" edge with a given conditions (other predicates).
+func HasUserRoleWith(preds ...predicate.UserRole) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newUserRoleStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.UserRole
+		step.Edge.Schema = schemaConfig.UserRole
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

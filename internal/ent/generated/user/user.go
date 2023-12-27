@@ -59,6 +59,10 @@ const (
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
+	// EdgeRoles holds the string denoting the roles edge name in mutations.
+	EdgeRoles = "roles"
+	// EdgeUserRole holds the string denoting the user_role edge name in mutations.
+	EdgeUserRole = "user_role"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -92,6 +96,18 @@ const (
 	SettingInverseTable = "user_settings"
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "user_setting"
+	// RolesTable is the table that holds the roles relation/edge. The primary key declared below.
+	RolesTable = "user_roles"
+	// RolesInverseTable is the table name for the Role entity.
+	// It exists in this package in order to avoid circular dependency with the "role" package.
+	RolesInverseTable = "roles"
+	// UserRoleTable is the table that holds the user_role relation/edge.
+	UserRoleTable = "user_roles"
+	// UserRoleInverseTable is the table name for the UserRole entity.
+	// It exists in this package in order to avoid circular dependency with the "userrole" package.
+	UserRoleInverseTable = "user_roles"
+	// UserRoleColumn is the table column denoting the user_role relation/edge.
+	UserRoleColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -123,6 +139,9 @@ var (
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
 	GroupsPrimaryKey = []string{"group_id", "user_id"}
+	// RolesPrimaryKey and RolesColumn2 are the table columns denoting the
+	// primary key for the roles relation (M2M).
+	RolesPrimaryKey = []string{"user_id", "role_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -329,6 +348,34 @@ func BySettingField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newSettingStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByRolesCount orders the results by roles count.
+func ByRolesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRolesStep(), opts...)
+	}
+}
+
+// ByRoles orders the results by roles terms.
+func ByRoles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRolesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByUserRoleCount orders the results by user_role count.
+func ByUserRoleCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUserRoleStep(), opts...)
+	}
+}
+
+// ByUserRole orders the results by user_role terms.
+func ByUserRole(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUserRoleStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -362,5 +409,19 @@ func newSettingStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(SettingInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2O, false, SettingTable, SettingColumn),
+	)
+}
+func newRolesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RolesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, RolesTable, RolesPrimaryKey...),
+	)
+}
+func newUserRoleStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UserRoleInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, UserRoleTable, UserRoleColumn),
 	)
 }

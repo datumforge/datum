@@ -303,6 +303,30 @@ func (f OrganizationSettingMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingMutation", m)
 }
 
+// The PermissionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PermissionQueryRuleFunc func(context.Context, *generated.PermissionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PermissionQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.PermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.PermissionQuery", q)
+}
+
+// The PermissionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PermissionMutationRuleFunc func(context.Context, *generated.PermissionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PermissionMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.PermissionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.PermissionMutation", m)
+}
+
 // The PersonalAccessTokenQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PersonalAccessTokenQueryRuleFunc func(context.Context, *generated.PersonalAccessTokenQuery) error
@@ -325,6 +349,54 @@ func (f PersonalAccessTokenMutationRuleFunc) EvalMutation(ctx context.Context, m
 		return f(ctx, m)
 	}
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.PersonalAccessTokenMutation", m)
+}
+
+// The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RoleQueryRuleFunc func(context.Context, *generated.RoleQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RoleQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.RoleQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.RoleQuery", q)
+}
+
+// The RoleMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RoleMutationRuleFunc func(context.Context, *generated.RoleMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RoleMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.RoleMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.RoleMutation", m)
+}
+
+// The RolePermissionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RolePermissionQueryRuleFunc func(context.Context, *generated.RolePermissionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RolePermissionQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.RolePermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.RolePermissionQuery", q)
+}
+
+// The RolePermissionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RolePermissionMutationRuleFunc func(context.Context, *generated.RolePermissionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RolePermissionMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.RolePermissionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.RolePermissionMutation", m)
 }
 
 // The SessionQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -373,6 +445,30 @@ func (f UserMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Muta
 		return f(ctx, m)
 	}
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserMutation", m)
+}
+
+// The UserRoleQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserRoleQueryRuleFunc func(context.Context, *generated.UserRoleQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserRoleQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserRoleQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.UserRoleQuery", q)
+}
+
+// The UserRoleMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserRoleMutationRuleFunc func(context.Context, *generated.UserRoleMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserRoleMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.UserRoleMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.UserRoleMutation", m)
 }
 
 // The UserSettingQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -450,11 +546,19 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.OrganizationSettingQuery:
 		return q.Filter(), nil
+	case *generated.PermissionQuery:
+		return q.Filter(), nil
 	case *generated.PersonalAccessTokenQuery:
+		return q.Filter(), nil
+	case *generated.RoleQuery:
+		return q.Filter(), nil
+	case *generated.RolePermissionQuery:
 		return q.Filter(), nil
 	case *generated.SessionQuery:
 		return q.Filter(), nil
 	case *generated.UserQuery:
+		return q.Filter(), nil
+	case *generated.UserRoleQuery:
 		return q.Filter(), nil
 	case *generated.UserSettingQuery:
 		return q.Filter(), nil
@@ -481,11 +585,19 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *generated.OrganizationSettingMutation:
 		return m.Filter(), nil
+	case *generated.PermissionMutation:
+		return m.Filter(), nil
 	case *generated.PersonalAccessTokenMutation:
+		return m.Filter(), nil
+	case *generated.RoleMutation:
+		return m.Filter(), nil
+	case *generated.RolePermissionMutation:
 		return m.Filter(), nil
 	case *generated.SessionMutation:
 		return m.Filter(), nil
 	case *generated.UserMutation:
+		return m.Filter(), nil
+	case *generated.UserRoleMutation:
 		return m.Filter(), nil
 	case *generated.UserSettingMutation:
 		return m.Filter(), nil

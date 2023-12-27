@@ -11,10 +11,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/permission"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/rolepermission"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userrole"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 
 	"entgo.io/ent/dialect/sql"
@@ -25,7 +29,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 12)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 16)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   entitlement.Table,
@@ -230,6 +234,27 @@ var schemaGraph = func() *sqlgraph.Schema {
 	}
 	graph.Nodes[8] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
+			Table:   permission.Table,
+			Columns: permission.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: permission.FieldID,
+			},
+		},
+		Type: "Permission",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			permission.FieldCreatedAt:   {Type: field.TypeTime, Column: permission.FieldCreatedAt},
+			permission.FieldUpdatedAt:   {Type: field.TypeTime, Column: permission.FieldUpdatedAt},
+			permission.FieldCreatedBy:   {Type: field.TypeString, Column: permission.FieldCreatedBy},
+			permission.FieldUpdatedBy:   {Type: field.TypeString, Column: permission.FieldUpdatedBy},
+			permission.FieldName:        {Type: field.TypeString, Column: permission.FieldName},
+			permission.FieldAction:      {Type: field.TypeString, Column: permission.FieldAction},
+			permission.FieldDescription: {Type: field.TypeString, Column: permission.FieldDescription},
+			permission.FieldIsDisabled:  {Type: field.TypeBool, Column: permission.FieldIsDisabled},
+		},
+	}
+	graph.Nodes[9] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
 			Table:   personalaccesstoken.Table,
 			Columns: personalaccesstoken.Columns,
 			ID: &sqlgraph.FieldSpec{
@@ -251,7 +276,47 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldLastUsedAt:  {Type: field.TypeTime, Column: personalaccesstoken.FieldLastUsedAt},
 		},
 	}
-	graph.Nodes[9] = &sqlgraph.Node{
+	graph.Nodes[10] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   role.Table,
+			Columns: role.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: role.FieldID,
+			},
+		},
+		Type: "Role",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			role.FieldCreatedAt:   {Type: field.TypeTime, Column: role.FieldCreatedAt},
+			role.FieldUpdatedAt:   {Type: field.TypeTime, Column: role.FieldUpdatedAt},
+			role.FieldCreatedBy:   {Type: field.TypeString, Column: role.FieldCreatedBy},
+			role.FieldUpdatedBy:   {Type: field.TypeString, Column: role.FieldUpdatedBy},
+			role.FieldName:        {Type: field.TypeString, Column: role.FieldName},
+			role.FieldDescription: {Type: field.TypeString, Column: role.FieldDescription},
+			role.FieldIsDisabled:  {Type: field.TypeBool, Column: role.FieldIsDisabled},
+			role.FieldCreatedTime: {Type: field.TypeTime, Column: role.FieldCreatedTime},
+		},
+	}
+	graph.Nodes[11] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   rolepermission.Table,
+			Columns: rolepermission.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: rolepermission.FieldID,
+			},
+		},
+		Type: "RolePermission",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			rolepermission.FieldCreatedAt:    {Type: field.TypeTime, Column: rolepermission.FieldCreatedAt},
+			rolepermission.FieldUpdatedAt:    {Type: field.TypeTime, Column: rolepermission.FieldUpdatedAt},
+			rolepermission.FieldCreatedBy:    {Type: field.TypeString, Column: rolepermission.FieldCreatedBy},
+			rolepermission.FieldUpdatedBy:    {Type: field.TypeString, Column: rolepermission.FieldUpdatedBy},
+			rolepermission.FieldRoleID:       {Type: field.TypeString, Column: rolepermission.FieldRoleID},
+			rolepermission.FieldPermissionID: {Type: field.TypeString, Column: rolepermission.FieldPermissionID},
+		},
+	}
+	graph.Nodes[12] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   session.Table,
 			Columns: session.Columns,
@@ -273,7 +338,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldUserID:         {Type: field.TypeString, Column: session.FieldUserID},
 		},
 	}
-	graph.Nodes[10] = &sqlgraph.Node{
+	graph.Nodes[13] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   user.Table,
 			Columns: user.Columns,
@@ -303,7 +368,26 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldOauth:           {Type: field.TypeBool, Column: user.FieldOauth},
 		},
 	}
-	graph.Nodes[11] = &sqlgraph.Node{
+	graph.Nodes[14] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   userrole.Table,
+			Columns: userrole.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeString,
+				Column: userrole.FieldID,
+			},
+		},
+		Type: "UserRole",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			userrole.FieldCreatedAt: {Type: field.TypeTime, Column: userrole.FieldCreatedAt},
+			userrole.FieldUpdatedAt: {Type: field.TypeTime, Column: userrole.FieldUpdatedAt},
+			userrole.FieldCreatedBy: {Type: field.TypeString, Column: userrole.FieldCreatedBy},
+			userrole.FieldUpdatedBy: {Type: field.TypeString, Column: userrole.FieldUpdatedBy},
+			userrole.FieldRoleID:    {Type: field.TypeString, Column: userrole.FieldRoleID},
+			userrole.FieldUserID:    {Type: field.TypeString, Column: userrole.FieldUserID},
+		},
+	}
+	graph.Nodes[15] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   usersetting.Table,
 			Columns: usersetting.Columns,
@@ -524,6 +608,30 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Organization",
 	)
 	graph.MustAddE(
+		"roles",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   permission.RolesTable,
+			Columns: permission.RolesPrimaryKey,
+			Bidi:    false,
+		},
+		"Permission",
+		"Role",
+	)
+	graph.MustAddE(
+		"role_permission",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   permission.RolePermissionTable,
+			Columns: []string{permission.RolePermissionColumn},
+			Bidi:    false,
+		},
+		"Permission",
+		"RolePermission",
+	)
+	graph.MustAddE(
 		"owner",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -534,6 +642,78 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"PersonalAccessToken",
 		"User",
+	)
+	graph.MustAddE(
+		"permissions",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   role.PermissionsTable,
+			Columns: role.PermissionsPrimaryKey,
+			Bidi:    false,
+		},
+		"Role",
+		"Permission",
+	)
+	graph.MustAddE(
+		"users",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   role.UsersTable,
+			Columns: role.UsersPrimaryKey,
+			Bidi:    false,
+		},
+		"Role",
+		"User",
+	)
+	graph.MustAddE(
+		"role_permission",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   role.RolePermissionTable,
+			Columns: []string{role.RolePermissionColumn},
+			Bidi:    false,
+		},
+		"Role",
+		"RolePermission",
+	)
+	graph.MustAddE(
+		"user_role",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   role.UserRoleTable,
+			Columns: []string{role.UserRoleColumn},
+			Bidi:    false,
+		},
+		"Role",
+		"UserRole",
+	)
+	graph.MustAddE(
+		"role",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   rolepermission.RoleTable,
+			Columns: []string{rolepermission.RoleColumn},
+			Bidi:    false,
+		},
+		"RolePermission",
+		"Role",
+	)
+	graph.MustAddE(
+		"permission",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   rolepermission.PermissionTable,
+			Columns: []string{rolepermission.PermissionColumn},
+			Bidi:    false,
+		},
+		"RolePermission",
+		"Permission",
 	)
 	graph.MustAddE(
 		"owner",
@@ -606,6 +786,54 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"UserSetting",
+	)
+	graph.MustAddE(
+		"roles",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RolesTable,
+			Columns: user.RolesPrimaryKey,
+			Bidi:    false,
+		},
+		"User",
+		"Role",
+	)
+	graph.MustAddE(
+		"user_role",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.UserRoleTable,
+			Columns: []string{user.UserRoleColumn},
+			Bidi:    false,
+		},
+		"User",
+		"UserRole",
+	)
+	graph.MustAddE(
+		"user",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   userrole.UserTable,
+			Columns: []string{userrole.UserColumn},
+			Bidi:    false,
+		},
+		"UserRole",
+		"User",
+	)
+	graph.MustAddE(
+		"role",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   userrole.RoleTable,
+			Columns: []string{userrole.RoleColumn},
+			Bidi:    false,
+		},
+		"UserRole",
+		"Role",
 	)
 	graph.MustAddE(
 		"user",
@@ -1663,6 +1891,114 @@ func (f *OrganizationSettingFilter) WhereHasOrganizationWith(preds ...predicate.
 }
 
 // addPredicate implements the predicateAdder interface.
+func (pq *PermissionQuery) addPredicate(pred func(s *sql.Selector)) {
+	pq.predicates = append(pq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the PermissionQuery builder.
+func (pq *PermissionQuery) Filter() *PermissionFilter {
+	return &PermissionFilter{config: pq.config, predicateAdder: pq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *PermissionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the PermissionMutation builder.
+func (m *PermissionMutation) Filter() *PermissionFilter {
+	return &PermissionFilter{config: m.config, predicateAdder: m}
+}
+
+// PermissionFilter provides a generic filtering capability at runtime for PermissionQuery.
+type PermissionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *PermissionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *PermissionFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(permission.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *PermissionFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(permission.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *PermissionFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(permission.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *PermissionFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(permission.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *PermissionFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(permission.FieldUpdatedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *PermissionFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(permission.FieldName))
+}
+
+// WhereAction applies the entql string predicate on the action field.
+func (f *PermissionFilter) WhereAction(p entql.StringP) {
+	f.Where(p.Field(permission.FieldAction))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *PermissionFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(permission.FieldDescription))
+}
+
+// WhereIsDisabled applies the entql bool predicate on the is_disabled field.
+func (f *PermissionFilter) WhereIsDisabled(p entql.BoolP) {
+	f.Where(p.Field(permission.FieldIsDisabled))
+}
+
+// WhereHasRoles applies a predicate to check if query has an edge roles.
+func (f *PermissionFilter) WhereHasRoles() {
+	f.Where(entql.HasEdge("roles"))
+}
+
+// WhereHasRolesWith applies a predicate to check if query has an edge roles with a given conditions (other predicates).
+func (f *PermissionFilter) WhereHasRolesWith(preds ...predicate.Role) {
+	f.Where(entql.HasEdgeWith("roles", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasRolePermission applies a predicate to check if query has an edge role_permission.
+func (f *PermissionFilter) WhereHasRolePermission() {
+	f.Where(entql.HasEdge("role_permission"))
+}
+
+// WhereHasRolePermissionWith applies a predicate to check if query has an edge role_permission with a given conditions (other predicates).
+func (f *PermissionFilter) WhereHasRolePermissionWith(preds ...predicate.RolePermission) {
+	f.Where(entql.HasEdgeWith("role_permission", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (patq *PersonalAccessTokenQuery) addPredicate(pred func(s *sql.Selector)) {
 	patq.predicates = append(patq.predicates, pred)
 }
@@ -1691,7 +2027,7 @@ type PersonalAccessTokenFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *PersonalAccessTokenFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1767,6 +2103,240 @@ func (f *PersonalAccessTokenFilter) WhereHasOwnerWith(preds ...predicate.User) {
 }
 
 // addPredicate implements the predicateAdder interface.
+func (rq *RoleQuery) addPredicate(pred func(s *sql.Selector)) {
+	rq.predicates = append(rq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the RoleQuery builder.
+func (rq *RoleQuery) Filter() *RoleFilter {
+	return &RoleFilter{config: rq.config, predicateAdder: rq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *RoleMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the RoleMutation builder.
+func (m *RoleMutation) Filter() *RoleFilter {
+	return &RoleFilter{config: m.config, predicateAdder: m}
+}
+
+// RoleFilter provides a generic filtering capability at runtime for RoleQuery.
+type RoleFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *RoleFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *RoleFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(role.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *RoleFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(role.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *RoleFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(role.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *RoleFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(role.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *RoleFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(role.FieldUpdatedBy))
+}
+
+// WhereName applies the entql string predicate on the name field.
+func (f *RoleFilter) WhereName(p entql.StringP) {
+	f.Where(p.Field(role.FieldName))
+}
+
+// WhereDescription applies the entql string predicate on the description field.
+func (f *RoleFilter) WhereDescription(p entql.StringP) {
+	f.Where(p.Field(role.FieldDescription))
+}
+
+// WhereIsDisabled applies the entql bool predicate on the is_disabled field.
+func (f *RoleFilter) WhereIsDisabled(p entql.BoolP) {
+	f.Where(p.Field(role.FieldIsDisabled))
+}
+
+// WhereCreatedTime applies the entql time.Time predicate on the created_time field.
+func (f *RoleFilter) WhereCreatedTime(p entql.TimeP) {
+	f.Where(p.Field(role.FieldCreatedTime))
+}
+
+// WhereHasPermissions applies a predicate to check if query has an edge permissions.
+func (f *RoleFilter) WhereHasPermissions() {
+	f.Where(entql.HasEdge("permissions"))
+}
+
+// WhereHasPermissionsWith applies a predicate to check if query has an edge permissions with a given conditions (other predicates).
+func (f *RoleFilter) WhereHasPermissionsWith(preds ...predicate.Permission) {
+	f.Where(entql.HasEdgeWith("permissions", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasUsers applies a predicate to check if query has an edge users.
+func (f *RoleFilter) WhereHasUsers() {
+	f.Where(entql.HasEdge("users"))
+}
+
+// WhereHasUsersWith applies a predicate to check if query has an edge users with a given conditions (other predicates).
+func (f *RoleFilter) WhereHasUsersWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("users", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasRolePermission applies a predicate to check if query has an edge role_permission.
+func (f *RoleFilter) WhereHasRolePermission() {
+	f.Where(entql.HasEdge("role_permission"))
+}
+
+// WhereHasRolePermissionWith applies a predicate to check if query has an edge role_permission with a given conditions (other predicates).
+func (f *RoleFilter) WhereHasRolePermissionWith(preds ...predicate.RolePermission) {
+	f.Where(entql.HasEdgeWith("role_permission", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasUserRole applies a predicate to check if query has an edge user_role.
+func (f *RoleFilter) WhereHasUserRole() {
+	f.Where(entql.HasEdge("user_role"))
+}
+
+// WhereHasUserRoleWith applies a predicate to check if query has an edge user_role with a given conditions (other predicates).
+func (f *RoleFilter) WhereHasUserRoleWith(preds ...predicate.UserRole) {
+	f.Where(entql.HasEdgeWith("user_role", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (rpq *RolePermissionQuery) addPredicate(pred func(s *sql.Selector)) {
+	rpq.predicates = append(rpq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the RolePermissionQuery builder.
+func (rpq *RolePermissionQuery) Filter() *RolePermissionFilter {
+	return &RolePermissionFilter{config: rpq.config, predicateAdder: rpq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *RolePermissionMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the RolePermissionMutation builder.
+func (m *RolePermissionMutation) Filter() *RolePermissionFilter {
+	return &RolePermissionFilter{config: m.config, predicateAdder: m}
+}
+
+// RolePermissionFilter provides a generic filtering capability at runtime for RolePermissionQuery.
+type RolePermissionFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *RolePermissionFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *RolePermissionFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(rolepermission.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *RolePermissionFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(rolepermission.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *RolePermissionFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(rolepermission.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *RolePermissionFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(rolepermission.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *RolePermissionFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(rolepermission.FieldUpdatedBy))
+}
+
+// WhereRoleID applies the entql string predicate on the role_id field.
+func (f *RolePermissionFilter) WhereRoleID(p entql.StringP) {
+	f.Where(p.Field(rolepermission.FieldRoleID))
+}
+
+// WherePermissionID applies the entql string predicate on the permission_id field.
+func (f *RolePermissionFilter) WherePermissionID(p entql.StringP) {
+	f.Where(p.Field(rolepermission.FieldPermissionID))
+}
+
+// WhereHasRole applies a predicate to check if query has an edge role.
+func (f *RolePermissionFilter) WhereHasRole() {
+	f.Where(entql.HasEdge("role"))
+}
+
+// WhereHasRoleWith applies a predicate to check if query has an edge role with a given conditions (other predicates).
+func (f *RolePermissionFilter) WhereHasRoleWith(preds ...predicate.Role) {
+	f.Where(entql.HasEdgeWith("role", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasPermission applies a predicate to check if query has an edge permission.
+func (f *RolePermissionFilter) WhereHasPermission() {
+	f.Where(entql.HasEdge("permission"))
+}
+
+// WhereHasPermissionWith applies a predicate to check if query has an edge permission with a given conditions (other predicates).
+func (f *RolePermissionFilter) WhereHasPermissionWith(preds ...predicate.Permission) {
+	f.Where(entql.HasEdgeWith("permission", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
 func (sq *SessionQuery) addPredicate(pred func(s *sql.Selector)) {
 	sq.predicates = append(sq.predicates, pred)
 }
@@ -1795,7 +2365,7 @@ type SessionFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *SessionFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[12].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -1894,7 +2464,7 @@ type UserFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[10].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[13].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})
@@ -2060,6 +2630,132 @@ func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSetting) {
 	})))
 }
 
+// WhereHasRoles applies a predicate to check if query has an edge roles.
+func (f *UserFilter) WhereHasRoles() {
+	f.Where(entql.HasEdge("roles"))
+}
+
+// WhereHasRolesWith applies a predicate to check if query has an edge roles with a given conditions (other predicates).
+func (f *UserFilter) WhereHasRolesWith(preds ...predicate.Role) {
+	f.Where(entql.HasEdgeWith("roles", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasUserRole applies a predicate to check if query has an edge user_role.
+func (f *UserFilter) WhereHasUserRole() {
+	f.Where(entql.HasEdge("user_role"))
+}
+
+// WhereHasUserRoleWith applies a predicate to check if query has an edge user_role with a given conditions (other predicates).
+func (f *UserFilter) WhereHasUserRoleWith(preds ...predicate.UserRole) {
+	f.Where(entql.HasEdgeWith("user_role", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (urq *UserRoleQuery) addPredicate(pred func(s *sql.Selector)) {
+	urq.predicates = append(urq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the UserRoleQuery builder.
+func (urq *UserRoleQuery) Filter() *UserRoleFilter {
+	return &UserRoleFilter{config: urq.config, predicateAdder: urq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *UserRoleMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the UserRoleMutation builder.
+func (m *UserRoleMutation) Filter() *UserRoleFilter {
+	return &UserRoleFilter{config: m.config, predicateAdder: m}
+}
+
+// UserRoleFilter provides a generic filtering capability at runtime for UserRoleQuery.
+type UserRoleFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *UserRoleFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[14].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql string predicate on the id field.
+func (f *UserRoleFilter) WhereID(p entql.StringP) {
+	f.Where(p.Field(userrole.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *UserRoleFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(userrole.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *UserRoleFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(userrole.FieldUpdatedAt))
+}
+
+// WhereCreatedBy applies the entql string predicate on the created_by field.
+func (f *UserRoleFilter) WhereCreatedBy(p entql.StringP) {
+	f.Where(p.Field(userrole.FieldCreatedBy))
+}
+
+// WhereUpdatedBy applies the entql string predicate on the updated_by field.
+func (f *UserRoleFilter) WhereUpdatedBy(p entql.StringP) {
+	f.Where(p.Field(userrole.FieldUpdatedBy))
+}
+
+// WhereRoleID applies the entql string predicate on the role_id field.
+func (f *UserRoleFilter) WhereRoleID(p entql.StringP) {
+	f.Where(p.Field(userrole.FieldRoleID))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *UserRoleFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(userrole.FieldUserID))
+}
+
+// WhereHasUser applies a predicate to check if query has an edge user.
+func (f *UserRoleFilter) WhereHasUser() {
+	f.Where(entql.HasEdge("user"))
+}
+
+// WhereHasUserWith applies a predicate to check if query has an edge user with a given conditions (other predicates).
+func (f *UserRoleFilter) WhereHasUserWith(preds ...predicate.User) {
+	f.Where(entql.HasEdgeWith("user", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasRole applies a predicate to check if query has an edge role.
+func (f *UserRoleFilter) WhereHasRole() {
+	f.Where(entql.HasEdge("role"))
+}
+
+// WhereHasRoleWith applies a predicate to check if query has an edge role with a given conditions (other predicates).
+func (f *UserRoleFilter) WhereHasRoleWith(preds ...predicate.Role) {
+	f.Where(entql.HasEdgeWith("role", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (usq *UserSettingQuery) addPredicate(pred func(s *sql.Selector)) {
 	usq.predicates = append(usq.predicates, pred)
@@ -2089,7 +2785,7 @@ type UserSettingFilter struct {
 // Where applies the entql predicate on the query filter.
 func (f *UserSettingFilter) Where(p entql.P) {
 	f.addPredicate(func(s *sql.Selector) {
-		if err := schemaGraph.EvalP(schemaGraph.Nodes[11].Type, p, s); err != nil {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[15].Type, p, s); err != nil {
 			s.AddError(err)
 		}
 	})

@@ -2,3 +2,7 @@ doc.go
 errors.go
 audit_mixin.go
 mixin.go
+userrole.go
+rolepermission.go
+role.go
+permission.go

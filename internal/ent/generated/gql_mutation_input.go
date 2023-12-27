@@ -1164,6 +1164,116 @@ func (c *OrganizationSettingUpdateOne) SetInput(i UpdateOrganizationSettingInput
 	return c
 }
 
+// CreatePermissionInput represents a mutation input for creating permissions.
+type CreatePermissionInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	CreatedBy   *string
+	UpdatedBy   *string
+	Name        string
+	Action      string
+	Description *string
+	IsDisabled  *bool
+	RoleIDs     []string
+}
+
+// Mutate applies the CreatePermissionInput on the PermissionMutation builder.
+func (i *CreatePermissionInput) Mutate(m *PermissionMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	m.SetAction(i.Action)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.IsDisabled; v != nil {
+		m.SetIsDisabled(*v)
+	}
+	if v := i.RoleIDs; len(v) > 0 {
+		m.AddRoleIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreatePermissionInput on the PermissionCreate builder.
+func (c *PermissionCreate) SetInput(i CreatePermissionInput) *PermissionCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePermissionInput represents a mutation input for updating permissions.
+type UpdatePermissionInput struct {
+	UpdatedAt        *time.Time
+	ClearUpdatedBy   bool
+	UpdatedBy        *string
+	Name             *string
+	Action           *string
+	ClearDescription bool
+	Description      *string
+	IsDisabled       *bool
+	ClearRoles       bool
+	AddRoleIDs       []string
+	RemoveRoleIDs    []string
+}
+
+// Mutate applies the UpdatePermissionInput on the PermissionMutation builder.
+func (i *UpdatePermissionInput) Mutate(m *PermissionMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Action; v != nil {
+		m.SetAction(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.IsDisabled; v != nil {
+		m.SetIsDisabled(*v)
+	}
+	if i.ClearRoles {
+		m.ClearRoles()
+	}
+	if v := i.AddRoleIDs; len(v) > 0 {
+		m.AddRoleIDs(v...)
+	}
+	if v := i.RemoveRoleIDs; len(v) > 0 {
+		m.RemoveRoleIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePermissionInput on the PermissionUpdate builder.
+func (c *PermissionUpdate) SetInput(i UpdatePermissionInput) *PermissionUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePermissionInput on the PermissionUpdateOne builder.
+func (c *PermissionUpdateOne) SetInput(i UpdatePermissionInput) *PermissionUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreatePersonalAccessTokenInput represents a mutation input for creating personalaccesstokens.
 type CreatePersonalAccessTokenInput struct {
 	CreatedAt   *time.Time
@@ -1288,6 +1398,208 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 	return c
 }
 
+// CreateRoleInput represents a mutation input for creating roles.
+type CreateRoleInput struct {
+	CreatedAt     *time.Time
+	UpdatedAt     *time.Time
+	CreatedBy     *string
+	UpdatedBy     *string
+	Name          string
+	Description   *string
+	IsDisabled    *bool
+	CreatedTime   *time.Time
+	PermissionIDs []string
+	UserIDs       []string
+}
+
+// Mutate applies the CreateRoleInput on the RoleMutation builder.
+func (i *CreateRoleInput) Mutate(m *RoleMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.IsDisabled; v != nil {
+		m.SetIsDisabled(*v)
+	}
+	if v := i.CreatedTime; v != nil {
+		m.SetCreatedTime(*v)
+	}
+	if v := i.PermissionIDs; len(v) > 0 {
+		m.AddPermissionIDs(v...)
+	}
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateRoleInput on the RoleCreate builder.
+func (c *RoleCreate) SetInput(i CreateRoleInput) *RoleCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateRoleInput represents a mutation input for updating roles.
+type UpdateRoleInput struct {
+	UpdatedAt           *time.Time
+	ClearUpdatedBy      bool
+	UpdatedBy           *string
+	Name                *string
+	ClearDescription    bool
+	Description         *string
+	IsDisabled          *bool
+	CreatedTime         *time.Time
+	ClearPermissions    bool
+	AddPermissionIDs    []string
+	RemovePermissionIDs []string
+	ClearUsers          bool
+	AddUserIDs          []string
+	RemoveUserIDs       []string
+}
+
+// Mutate applies the UpdateRoleInput on the RoleMutation builder.
+func (i *UpdateRoleInput) Mutate(m *RoleMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearDescription {
+		m.ClearDescription()
+	}
+	if v := i.Description; v != nil {
+		m.SetDescription(*v)
+	}
+	if v := i.IsDisabled; v != nil {
+		m.SetIsDisabled(*v)
+	}
+	if v := i.CreatedTime; v != nil {
+		m.SetCreatedTime(*v)
+	}
+	if i.ClearPermissions {
+		m.ClearPermissions()
+	}
+	if v := i.AddPermissionIDs; len(v) > 0 {
+		m.AddPermissionIDs(v...)
+	}
+	if v := i.RemovePermissionIDs; len(v) > 0 {
+		m.RemovePermissionIDs(v...)
+	}
+	if i.ClearUsers {
+		m.ClearUsers()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateRoleInput on the RoleUpdate builder.
+func (c *RoleUpdate) SetInput(i UpdateRoleInput) *RoleUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateRoleInput on the RoleUpdateOne builder.
+func (c *RoleUpdateOne) SetInput(i UpdateRoleInput) *RoleUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateRolePermissionInput represents a mutation input for creating rolepermissions.
+type CreateRolePermissionInput struct {
+	CreatedAt    *time.Time
+	UpdatedAt    *time.Time
+	CreatedBy    *string
+	UpdatedBy    *string
+	RoleID       string
+	PermissionID string
+}
+
+// Mutate applies the CreateRolePermissionInput on the RolePermissionMutation builder.
+func (i *CreateRolePermissionInput) Mutate(m *RolePermissionMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetRoleID(i.RoleID)
+	m.SetPermissionID(i.PermissionID)
+}
+
+// SetInput applies the change-set in the CreateRolePermissionInput on the RolePermissionCreate builder.
+func (c *RolePermissionCreate) SetInput(i CreateRolePermissionInput) *RolePermissionCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateRolePermissionInput represents a mutation input for updating rolepermissions.
+type UpdateRolePermissionInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	RoleID         *string
+	PermissionID   *string
+}
+
+// Mutate applies the UpdateRolePermissionInput on the RolePermissionMutation builder.
+func (i *UpdateRolePermissionInput) Mutate(m *RolePermissionMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.RoleID; v != nil {
+		m.SetRoleID(*v)
+	}
+	if v := i.PermissionID; v != nil {
+		m.SetPermissionID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateRolePermissionInput on the RolePermissionUpdate builder.
+func (c *RolePermissionUpdate) SetInput(i UpdateRolePermissionInput) *RolePermissionUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateRolePermissionInput on the RolePermissionUpdateOne builder.
+func (c *RolePermissionUpdateOne) SetInput(i UpdateRolePermissionInput) *RolePermissionUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateSessionInput represents a mutation input for creating sessions.
 type CreateSessionInput struct {
 	CreatedAt      *time.Time
@@ -1398,6 +1710,7 @@ type CreateUserInput struct {
 	GroupIDs               []string
 	PersonalAccessTokenIDs []string
 	SettingID              string
+	RoleIDs                []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1454,6 +1767,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
+	if v := i.RoleIDs; len(v) > 0 {
+		m.AddRoleIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -1497,6 +1813,9 @@ type UpdateUserInput struct {
 	AddPersonalAccessTokenIDs    []string
 	RemovePersonalAccessTokenIDs []string
 	SettingID                    *string
+	ClearRoles                   bool
+	AddRoleIDs                   []string
+	RemoveRoleIDs                []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1600,6 +1919,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
 	}
+	if i.ClearRoles {
+		m.ClearRoles()
+	}
+	if v := i.AddRoleIDs; len(v) > 0 {
+		m.AddRoleIDs(v...)
+	}
+	if v := i.RemoveRoleIDs; len(v) > 0 {
+		m.RemoveRoleIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the UpdateUserInput on the UserUpdate builder.
@@ -1610,6 +1938,80 @@ func (c *UserUpdate) SetInput(i UpdateUserInput) *UserUpdate {
 
 // SetInput applies the change-set in the UpdateUserInput on the UserUpdateOne builder.
 func (c *UserUpdateOne) SetInput(i UpdateUserInput) *UserUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateUserRoleInput represents a mutation input for creating userroles.
+type CreateUserRoleInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	CreatedBy *string
+	UpdatedBy *string
+	UserID    string
+	RoleID    string
+}
+
+// Mutate applies the CreateUserRoleInput on the UserRoleMutation builder.
+func (i *CreateUserRoleInput) Mutate(m *UserRoleMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetUserID(i.UserID)
+	m.SetRoleID(i.RoleID)
+}
+
+// SetInput applies the change-set in the CreateUserRoleInput on the UserRoleCreate builder.
+func (c *UserRoleCreate) SetInput(i CreateUserRoleInput) *UserRoleCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateUserRoleInput represents a mutation input for updating userroles.
+type UpdateUserRoleInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	UserID         *string
+	RoleID         *string
+}
+
+// Mutate applies the UpdateUserRoleInput on the UserRoleMutation builder.
+func (i *UpdateUserRoleInput) Mutate(m *UserRoleMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+	if v := i.RoleID; v != nil {
+		m.SetRoleID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateUserRoleInput on the UserRoleUpdate builder.
+func (c *UserRoleUpdate) SetInput(i UpdateUserRoleInput) *UserRoleUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateUserRoleInput on the UserRoleUpdateOne builder.
+func (c *UserRoleUpdateOne) SetInput(i UpdateUserRoleInput) *UserRoleUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

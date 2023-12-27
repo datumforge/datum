@@ -88,9 +88,24 @@ func (r *queryResolver) OrganizationSettings(ctx context.Context, after *entgql.
 	return r.client.OrganizationSetting.Query().Paginate(ctx, after, first, before, last, generated.WithOrganizationSettingFilter(where.Filter))
 }
 
+// Permissions is the resolver for the permissions field.
+func (r *queryResolver) Permissions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PermissionWhereInput) (*generated.PermissionConnection, error) {
+	panic(fmt.Errorf("not implemented: Permissions - permissions"))
+}
+
 // PersonalAccessTokens is the resolver for the personalAccessTokens field.
 func (r *queryResolver) PersonalAccessTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.PersonalAccessTokenWhereInput) (*generated.PersonalAccessTokenConnection, error) {
 	panic(fmt.Errorf("not implemented: PersonalAccessTokens - personalAccessTokens"))
+}
+
+// Roles is the resolver for the roles field.
+func (r *queryResolver) Roles(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.RoleWhereInput) (*generated.RoleConnection, error) {
+	panic(fmt.Errorf("not implemented: Roles - roles"))
+}
+
+// RolePermissions is the resolver for the rolePermissions field.
+func (r *queryResolver) RolePermissions(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.RolePermissionWhereInput) (*generated.RolePermissionConnection, error) {
+	panic(fmt.Errorf("not implemented: RolePermissions - rolePermissions"))
 }
 
 // Sessions is the resolver for the sessions field.
@@ -101,6 +116,11 @@ func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[strin
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
+}
+
+// UserRoles is the resolver for the userRoles field.
+func (r *queryResolver) UserRoles(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.UserRoleWhereInput) (*generated.UserRoleConnection, error) {
+	panic(fmt.Errorf("not implemented: UserRoles - userRoles"))
 }
 
 // UserSettings is the resolver for the userSettings field.

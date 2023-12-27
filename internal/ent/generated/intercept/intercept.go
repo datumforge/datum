@@ -16,10 +16,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/permission"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/rolepermission"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userrole"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -295,6 +299,33 @@ func (f TraverseOrganizationSetting) Traverse(ctx context.Context, q generated.Q
 	return fmt.Errorf("unexpected query type %T. expect *generated.OrganizationSettingQuery", q)
 }
 
+// The PermissionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PermissionFunc func(context.Context, *generated.PermissionQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f PermissionFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.PermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.PermissionQuery", q)
+}
+
+// The TraversePermission type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePermission func(context.Context, *generated.PermissionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePermission) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePermission) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.PermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.PermissionQuery", q)
+}
+
 // The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary function as a Querier.
 type PersonalAccessTokenFunc func(context.Context, *generated.PersonalAccessTokenQuery) (generated.Value, error)
 
@@ -320,6 +351,60 @@ func (f TraversePersonalAccessToken) Traverse(ctx context.Context, q generated.Q
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.PersonalAccessTokenQuery", q)
+}
+
+// The RoleFunc type is an adapter to allow the use of ordinary function as a Querier.
+type RoleFunc func(context.Context, *generated.RoleQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f RoleFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.RoleQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.RoleQuery", q)
+}
+
+// The TraverseRole type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseRole func(context.Context, *generated.RoleQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseRole) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseRole) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.RoleQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.RoleQuery", q)
+}
+
+// The RolePermissionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type RolePermissionFunc func(context.Context, *generated.RolePermissionQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f RolePermissionFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.RolePermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.RolePermissionQuery", q)
+}
+
+// The TraverseRolePermission type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseRolePermission func(context.Context, *generated.RolePermissionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseRolePermission) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseRolePermission) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.RolePermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.RolePermissionQuery", q)
 }
 
 // The SessionFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -376,6 +461,33 @@ func (f TraverseUser) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.UserQuery", q)
 }
 
+// The UserRoleFunc type is an adapter to allow the use of ordinary function as a Querier.
+type UserRoleFunc func(context.Context, *generated.UserRoleQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f UserRoleFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.UserRoleQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.UserRoleQuery", q)
+}
+
+// The TraverseUserRole type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseUserRole func(context.Context, *generated.UserRoleQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseUserRole) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseUserRole) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.UserRoleQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.UserRoleQuery", q)
+}
+
 // The UserSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserSettingFunc func(context.Context, *generated.UserSettingQuery) (generated.Value, error)
 
@@ -422,12 +534,20 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.OrganizationSettingQuery:
 		return &query[*generated.OrganizationSettingQuery, predicate.OrganizationSetting, organizationsetting.OrderOption]{typ: generated.TypeOrganizationSetting, tq: q}, nil
+	case *generated.PermissionQuery:
+		return &query[*generated.PermissionQuery, predicate.Permission, permission.OrderOption]{typ: generated.TypePermission, tq: q}, nil
 	case *generated.PersonalAccessTokenQuery:
 		return &query[*generated.PersonalAccessTokenQuery, predicate.PersonalAccessToken, personalaccesstoken.OrderOption]{typ: generated.TypePersonalAccessToken, tq: q}, nil
+	case *generated.RoleQuery:
+		return &query[*generated.RoleQuery, predicate.Role, role.OrderOption]{typ: generated.TypeRole, tq: q}, nil
+	case *generated.RolePermissionQuery:
+		return &query[*generated.RolePermissionQuery, predicate.RolePermission, rolepermission.OrderOption]{typ: generated.TypeRolePermission, tq: q}, nil
 	case *generated.SessionQuery:
 		return &query[*generated.SessionQuery, predicate.Session, session.OrderOption]{typ: generated.TypeSession, tq: q}, nil
 	case *generated.UserQuery:
 		return &query[*generated.UserQuery, predicate.User, user.OrderOption]{typ: generated.TypeUser, tq: q}, nil
+	case *generated.UserRoleQuery:
+		return &query[*generated.UserRoleQuery, predicate.UserRole, userrole.OrderOption]{typ: generated.TypeUserRole, tq: q}, nil
 	case *generated.UserSettingQuery:
 		return &query[*generated.UserSettingQuery, predicate.UserSetting, usersetting.OrderOption]{typ: generated.TypeUserSetting, tq: q}, nil
 	default:

@@ -18,9 +18,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/permission"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/rolepermission"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userrole"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -1322,6 +1326,132 @@ func newOrganizationSettingPaginateArgs(rv map[string]any) *organizationsettingP
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (pe *PermissionQuery) CollectFields(ctx context.Context, satisfies ...string) (*PermissionQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return pe, nil
+	}
+	if err := pe.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return pe, nil
+}
+
+func (pe *PermissionQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(permission.Columns))
+		selectedFields = []string{permission.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "roles":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RoleClient{config: pe.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			pe.WithNamedRoles(alias, func(wq *RoleQuery) {
+				*wq = *query
+			})
+		case "rolePermission":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RolePermissionClient{config: pe.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			pe.WithNamedRolePermission(alias, func(wq *RolePermissionQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[permission.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, permission.FieldCreatedAt)
+				fieldSeen[permission.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[permission.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, permission.FieldUpdatedAt)
+				fieldSeen[permission.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[permission.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, permission.FieldCreatedBy)
+				fieldSeen[permission.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[permission.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, permission.FieldUpdatedBy)
+				fieldSeen[permission.FieldUpdatedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[permission.FieldName]; !ok {
+				selectedFields = append(selectedFields, permission.FieldName)
+				fieldSeen[permission.FieldName] = struct{}{}
+			}
+		case "action":
+			if _, ok := fieldSeen[permission.FieldAction]; !ok {
+				selectedFields = append(selectedFields, permission.FieldAction)
+				fieldSeen[permission.FieldAction] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[permission.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, permission.FieldDescription)
+				fieldSeen[permission.FieldDescription] = struct{}{}
+			}
+		case "isDisabled":
+			if _, ok := fieldSeen[permission.FieldIsDisabled]; !ok {
+				selectedFields = append(selectedFields, permission.FieldIsDisabled)
+				fieldSeen[permission.FieldIsDisabled] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		pe.Select(selectedFields...)
+	}
+	return nil
+}
+
+type permissionPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []PermissionPaginateOption
+}
+
+func newPermissionPaginateArgs(rv map[string]any) *permissionPaginateArgs {
+	args := &permissionPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*PermissionWhereInput); ok {
+		args.opts = append(args.opts, WithPermissionFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (pat *PersonalAccessTokenQuery) CollectFields(ctx context.Context, satisfies ...string) (*PersonalAccessTokenQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1434,6 +1564,276 @@ func newPersonalAccessTokenPaginateArgs(rv map[string]any) *personalaccesstokenP
 	}
 	if v, ok := rv[whereField].(*PersonalAccessTokenWhereInput); ok {
 		args.opts = append(args.opts, WithPersonalAccessTokenFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (r *RoleQuery) CollectFields(ctx context.Context, satisfies ...string) (*RoleQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return r, nil
+	}
+	if err := r.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (r *RoleQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(role.Columns))
+		selectedFields = []string{role.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "permissions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PermissionClient{config: r.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			r.WithNamedPermissions(alias, func(wq *PermissionQuery) {
+				*wq = *query
+			})
+		case "users":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: r.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			r.WithNamedUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
+		case "rolePermission":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RolePermissionClient{config: r.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			r.WithNamedRolePermission(alias, func(wq *RolePermissionQuery) {
+				*wq = *query
+			})
+		case "userRole":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserRoleClient{config: r.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			r.WithNamedUserRole(alias, func(wq *UserRoleQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[role.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, role.FieldCreatedAt)
+				fieldSeen[role.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[role.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, role.FieldUpdatedAt)
+				fieldSeen[role.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[role.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, role.FieldCreatedBy)
+				fieldSeen[role.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[role.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, role.FieldUpdatedBy)
+				fieldSeen[role.FieldUpdatedBy] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[role.FieldName]; !ok {
+				selectedFields = append(selectedFields, role.FieldName)
+				fieldSeen[role.FieldName] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[role.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, role.FieldDescription)
+				fieldSeen[role.FieldDescription] = struct{}{}
+			}
+		case "isDisabled":
+			if _, ok := fieldSeen[role.FieldIsDisabled]; !ok {
+				selectedFields = append(selectedFields, role.FieldIsDisabled)
+				fieldSeen[role.FieldIsDisabled] = struct{}{}
+			}
+		case "createdTime":
+			if _, ok := fieldSeen[role.FieldCreatedTime]; !ok {
+				selectedFields = append(selectedFields, role.FieldCreatedTime)
+				fieldSeen[role.FieldCreatedTime] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		r.Select(selectedFields...)
+	}
+	return nil
+}
+
+type rolePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []RolePaginateOption
+}
+
+func newRolePaginateArgs(rv map[string]any) *rolePaginateArgs {
+	args := &rolePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*RoleWhereInput); ok {
+		args.opts = append(args.opts, WithRoleFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (rp *RolePermissionQuery) CollectFields(ctx context.Context, satisfies ...string) (*RolePermissionQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return rp, nil
+	}
+	if err := rp.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return rp, nil
+}
+
+func (rp *RolePermissionQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(rolepermission.Columns))
+		selectedFields = []string{rolepermission.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "role":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RoleClient{config: rp.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			rp.withRole = query
+			if _, ok := fieldSeen[rolepermission.FieldRoleID]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldRoleID)
+				fieldSeen[rolepermission.FieldRoleID] = struct{}{}
+			}
+		case "permission":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PermissionClient{config: rp.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			rp.withPermission = query
+			if _, ok := fieldSeen[rolepermission.FieldPermissionID]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldPermissionID)
+				fieldSeen[rolepermission.FieldPermissionID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[rolepermission.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldCreatedAt)
+				fieldSeen[rolepermission.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[rolepermission.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldUpdatedAt)
+				fieldSeen[rolepermission.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[rolepermission.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldCreatedBy)
+				fieldSeen[rolepermission.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[rolepermission.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldUpdatedBy)
+				fieldSeen[rolepermission.FieldUpdatedBy] = struct{}{}
+			}
+		case "roleID":
+			if _, ok := fieldSeen[rolepermission.FieldRoleID]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldRoleID)
+				fieldSeen[rolepermission.FieldRoleID] = struct{}{}
+			}
+		case "permissionID":
+			if _, ok := fieldSeen[rolepermission.FieldPermissionID]; !ok {
+				selectedFields = append(selectedFields, rolepermission.FieldPermissionID)
+				fieldSeen[rolepermission.FieldPermissionID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		rp.Select(selectedFields...)
+	}
+	return nil
+}
+
+type rolepermissionPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []RolePermissionPaginateOption
+}
+
+func newRolePermissionPaginateArgs(rv map[string]any) *rolepermissionPaginateArgs {
+	args := &rolepermissionPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*RolePermissionWhereInput); ok {
+		args.opts = append(args.opts, WithRolePermissionFilter(v.Filter))
 	}
 	return args
 }
@@ -1638,6 +2038,30 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.withSetting = query
+		case "roles":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RoleClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedRoles(alias, func(wq *RoleQuery) {
+				*wq = *query
+			})
+		case "userRole":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserRoleClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedUserRole(alias, func(wq *UserRoleQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, user.FieldCreatedAt)
@@ -1782,6 +2206,126 @@ func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*UserWhereInput); ok {
 		args.opts = append(args.opts, WithUserFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ur *UserRoleQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserRoleQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ur, nil
+	}
+	if err := ur.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ur, nil
+}
+
+func (ur *UserRoleQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(userrole.Columns))
+		selectedFields = []string{userrole.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: ur.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			ur.withUser = query
+			if _, ok := fieldSeen[userrole.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldUserID)
+				fieldSeen[userrole.FieldUserID] = struct{}{}
+			}
+		case "role":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&RoleClient{config: ur.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			ur.withRole = query
+			if _, ok := fieldSeen[userrole.FieldRoleID]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldRoleID)
+				fieldSeen[userrole.FieldRoleID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[userrole.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldCreatedAt)
+				fieldSeen[userrole.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[userrole.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldUpdatedAt)
+				fieldSeen[userrole.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[userrole.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldCreatedBy)
+				fieldSeen[userrole.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[userrole.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldUpdatedBy)
+				fieldSeen[userrole.FieldUpdatedBy] = struct{}{}
+			}
+		case "roleID":
+			if _, ok := fieldSeen[userrole.FieldRoleID]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldRoleID)
+				fieldSeen[userrole.FieldRoleID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[userrole.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, userrole.FieldUserID)
+				fieldSeen[userrole.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ur.Select(selectedFields...)
+	}
+	return nil
+}
+
+type userrolePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserRolePaginateOption
+}
+
+func newUserRolePaginateArgs(rv map[string]any) *userrolePaginateArgs {
+	args := &userrolePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*UserRoleWhereInput); ok {
+		args.opts = append(args.opts, WithUserRoleFilter(v.Filter))
 	}
 	return args
 }

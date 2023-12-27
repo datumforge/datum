@@ -133,6 +133,8 @@ func (User) Edges() []ent.Edge {
 			Required().
 			Unique().
 			Annotations(entx.CascadeAnnotationField("User")),
+		edge.To("roles", Role.Type).
+			Through("user_role", UserRole.Type),
 	}
 }
 
@@ -145,8 +147,7 @@ func (User) Annotations() []schema.Annotation {
 	}
 }
 
-// Policy defines the privacy policy of the User.
-// TODO: implement privacy policy on the user
+// Policy defines the privacy policy of the User
 func (User) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{},

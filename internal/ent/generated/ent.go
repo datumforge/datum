@@ -20,9 +20,13 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/permission"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/rolepermission"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userrole"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 )
 
@@ -92,9 +96,13 @@ func checkColumn(table, column string) error {
 			ohauthtootoken.Table:      ohauthtootoken.ValidColumn,
 			organization.Table:        organization.ValidColumn,
 			organizationsetting.Table: organizationsetting.ValidColumn,
+			permission.Table:          permission.ValidColumn,
 			personalaccesstoken.Table: personalaccesstoken.ValidColumn,
+			role.Table:                role.ValidColumn,
+			rolepermission.Table:      rolepermission.ValidColumn,
 			session.Table:             session.ValidColumn,
 			user.Table:                user.ValidColumn,
+			userrole.Table:            userrole.ValidColumn,
 			usersetting.Table:         usersetting.ValidColumn,
 		})
 	})

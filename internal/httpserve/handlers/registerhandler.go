@@ -15,6 +15,20 @@ import (
 	"github.com/datumforge/datum/internal/passwd"
 )
 
+type RegisterReply struct {
+	ID      string `json:"user_id"`
+	Email   string `json:"email"`
+	Message string `json:"message"`
+	Token   string `json:"token"`
+}
+
+type RegisterRequest struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+}
+
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	var (
 		err error
@@ -24,17 +38,14 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		auth.Unauthorized(ctx) //nolint:errcheck
-		return err
+		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
 	}
 
 	if err = in.Validate(); err != nil {
-		ctx.Error(err)
-		ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
-
-		return err
+		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
 	}
 
+	// create user
 	input := generated.CreateUserInput{
 		FirstName: in.FirstName,
 		LastName:  in.LastName,
@@ -42,22 +53,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		Password:  &in.Password,
 	}
 
-	user := &User{
-		FirstName: in.FirstName,
-		LastName:  in.LastName,
-		Email:     in.Email,
-		Password:  in.Password,
-	}
-
-	if err = user.CreateVerificationToken(); err != nil {
-		return fmt.Errorf("verification token is busted")
-	}
-
-	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
-
 	tx, err := h.DBClient.Tx(ctx.Request().Context())
 	if err != nil {
-		return fmt.Errorf("error starting transaction: %v", err)
+		// TODO: error stuff
+		return fmt.Errorf("error starting transaction: %v", err) //nolint:goerr113
 	}
 
 	meowuser, err := tx.User.Create().
@@ -67,10 +66,30 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		if err := tx.Rollback(); err != nil {
 			return err
 		}
+
 		if generated.IsConstraintError(err) {
-			return fmt.Errorf("user already exists")
+			// TODO: error stuff
+			return fmt.Errorf("user already exists") //nolint:goerr113
 		}
 
+		return err
+	}
+
+	// create email verification token
+	user := &User{
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Email:     in.Email,
+		Password:  in.Password,
+	}
+
+	if err = user.CreateVerificationToken(); err != nil {
+		// TODO: error stuff
+		return fmt.Errorf("verification token is busted") //nolint:goerr113
+	}
+
+	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+	if err != nil {
 		return err
 	}
 
@@ -89,18 +108,17 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
-	tx.Commit()
-
 	if err = tx.Commit(); err != nil {
-		return err
+		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 	}
 
 	if err = h.SendVerificationEmail(user); err != nil {
-		return err
+		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 	}
-	//h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+
+	// h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 	//	return h.SendVerificationEmail(user)
-	//}), marionette.WithRetries(3),
+	// }), marionette.WithRetries(3),
 	//	marionette.WithBackoff(backoff.NewExponentialBackOff()),
 	//	marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
 	//)
@@ -115,25 +133,6 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, out)
 }
 
-type RegisterReply struct {
-	ID      string `json:"user_id"`
-	Email   string `json:"email"`
-	Message string `json:"message"`
-	Token   string `json:"token"`
-}
-
-type RegisterRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	// PwCheck   string `json:"pwcheck"`
-	// Organization string `json:"organization"`
-	// Domain       string `json:"domain"`
-	// AgreeToS     bool   `json:"terms_agreement"`
-	// AgreePrivacy bool   `json:"privacy_agreement"`
-}
-
 // Validate the register request ensuring that the required fields are available and
 // that the password is valid - an error is returned if the request is not correct. This
 // method also performs some basic data cleanup, trimming whitespace
@@ -142,9 +141,6 @@ func (r *RegisterRequest) Validate() error {
 	r.LastName = strings.TrimSpace(r.LastName)
 	r.Email = strings.TrimSpace(r.Email)
 	r.Password = strings.TrimSpace(r.Password)
-	// r.PwCheck = strings.TrimSpace(r.PwCheck)
-	//	r.Organization = strings.TrimSpace(r.Organization)
-	//	r.Domain = strings.ToLower(strings.TrimSpace(r.Domain))
 
 	// Required for all requests
 	switch {
@@ -152,14 +148,8 @@ func (r *RegisterRequest) Validate() error {
 		return auth.MissingField("email")
 	case r.Password == "":
 		return auth.MissingField("password")
-	// case r.Password != r.PwCheck:
-	// 	return auth.ErrPasswordMismatch
 	case passwd.Strength(r.Password) < passwd.Moderate:
 		return auth.ErrPasswordTooWeak
-		//	case !r.AgreeToS:
-		//		return auth.MissingField("terms_agreement")
-		//	case !r.AgreePrivacy:
-		//		return auth.MissingField("privacy_agreement")
 	}
 
 	return nil

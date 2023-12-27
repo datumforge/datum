@@ -8,10 +8,11 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
-	"github.com/datumforge/datum/internal/tokens"
 	echo "github.com/datumforge/echox"
 	"github.com/oklog/ulid/v2"
+
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/tokens"
 )
 
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
@@ -21,25 +22,20 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	)
 
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&req); err != nil {
-		auth.Unauthorized(ctx) //nolint:errcheck
-		return err
+		return auth.Unauthorized(ctx)
 	}
 
 	if req.Token == "" {
-		ctx.JSON(http.StatusBadRequest, "missing token")
-		return nil
+		return ctx.JSON(http.StatusBadRequest, "missing token")
 	}
 
 	user, err := h.GetUserByToken(ctx, req.Token)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-			ctx.Error(err)
-			ctx.JSON(http.StatusBadRequest, auth.ErrorResponse("invalid token"))
-			return err
+			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse("invalid token"))
 		}
 
-		ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse("could not verify email"))
-		return err
+		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse("could not verify email"))
 	}
 
 	meowuser, err := h.DBClient.User.Query().WithSetting().Where(func(s *sql.Selector) {
@@ -56,9 +52,9 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	token := &tokens.VerificationToken{
 		Email: user.Email,
 	}
+
 	if token.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
-		ctx.JSON(http.StatusInternalServerError, "could not verify email")
-		return err
+		return ctx.JSON(http.StatusInternalServerError, "could not verify email")
 	}
 
 	// Verify the token with the stored secret
@@ -66,15 +62,18 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		if errors.Is(err, auth.ErrExpiredCredentials) {
 			// If expired, create a new token for the user
 			if err = user.CreateVerificationToken(); err != nil {
-				ctx.JSON(http.StatusInternalServerError, "could not verify email")
-				return err
+				return ctx.JSON(http.StatusInternalServerError, "could not verify email")
 			}
 
 			ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+			if err != nil {
+				return ctx.JSON(http.StatusBadRequest, "unable to parse ttl")
+			}
 
 			tx, err := h.DBClient.Tx(ctx.Request().Context())
 			if err != nil {
-				return fmt.Errorf("error starting transaction: %v", err)
+				// TODO: error stuff
+				return fmt.Errorf("error starting transaction: %v", err) //nolint:goerr113
 			}
 
 			meowtoken, err := tx.EmailVerificationToken.Create().
@@ -93,16 +92,14 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			}
 
 			if err = tx.Commit(); err != nil {
-				return err
+				return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 			}
 
 			if err = h.SendVerificationEmail(user); err != nil {
 				return err
 			}
 
-			var out *RegisterReply
-
-			out = &RegisterReply{
+			out := &RegisterReply{
 				ID:      meowuser.ID,
 				Email:   meowuser.Email,
 				Message: "token expired, a new verification token has been sent to the email associated with the account",
@@ -110,32 +107,37 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			}
 
 			// Send the new token to the user
-			//s.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+			// s.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 			//	return s.SendVerificationEmail(user)
-			//}),
+			// }),
 			//	marionette.WithRetries(3),
 			//	marionette.WithBackoff(backoff.NewExponentialBackOff()),
 			//	marionette.WithErrorf("could not send verification email to user %s", user.ID.String()),
-			//)
+			// )
 
-			ctx.JSON(http.StatusGone, out)
-			return err
+			return ctx.JSON(http.StatusGone, out)
 		}
 
-		ctx.JSON(http.StatusBadRequest, "invalid token")
-		return err
+		return ctx.JSON(http.StatusBadRequest, "invalid token")
 	}
 
-	// does this actually set it?
+	// TODO: set email confirmed with db client
 	meowuser.Edges.Setting.EmailConfirmed = true
 
 	claims := createClaims(user)
 
 	// Create a new access token/refresh token pair
 	out := &LoginReply{}
+
 	if out.AccessToken, out.RefreshToken, err = h.TM.CreateTokenPair(claims); err != nil {
-		ctx.JSON(http.StatusNoContent, "huh?")
-		return err
+		// TODO: go back and see why this is a huh?
+		return ctx.JSON(http.StatusNoContent, "huh?") //nolint:stuff
+	}
+
+	// set cookies on request with the access and refresh token
+	// when cookie domain is localhost, this is dropped but expected
+	if err := auth.SetAuthCookies(ctx, out.AccessToken, out.RefreshToken, h.CookieDomain); err != nil {
+		return auth.ErrorResponse(err)
 	}
 
 	return ctx.JSON(http.StatusOK, out)
@@ -159,7 +161,8 @@ func (h *Handler) GetUserByToken(ctx echo.Context, token string) (u *User, err e
 
 	tx, err := h.DBClient.Tx(ctx.Request().Context())
 	if err != nil {
-		return u, fmt.Errorf("error starting transaction: %v", err)
+		// TODO: error stuff
+		return u, fmt.Errorf("error starting transaction: %v", err) //nolint:goerr113
 	}
 
 	meowuser, err := h.DBClient.User.Query().WithChildren().WithSetting().QueryEmailVerificationTokens().Where(func(s *sql.Selector) {

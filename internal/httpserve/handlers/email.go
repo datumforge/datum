@@ -49,7 +49,8 @@ func (h *Handler) SendVerificationNoContact() (err error) {
 	var msg *mail.SGMailV3
 
 	if msg, err = emails.VerifyEmail(data); err != nil {
-		return fmt.Errorf("SHITBROKEHERE", err)
+		// TODO: fix up error
+		return fmt.Errorf("SHITBROKEHERE: %v", err) //nolint:goerr113
 	}
 
 	// Send the email
@@ -65,10 +66,11 @@ func (h *Handler) SendVerificationNoContact() (err error) {
 }
 
 func (h *Handler) SendVerificationEmail(user *User) (err error) {
+	// TODO: go back and create contact
 	//	if err := h.createSendgridContact(user); err != nil {
 	//		return fmt.Errorf("shit went bad")
 	//	}
-
+	// TODO: go back and configure with viper config instead of setting defaults
 	conf := &emails.Config{}
 	defaults.SetDefaults(conf)
 
@@ -223,7 +225,7 @@ func (c URLConfig) ResetURL(token string) (string, error) {
 	return url.String(), nil
 }
 
-func (h *Handler) createSendgridContact(user *User) error {
+func (h *Handler) createSendgridContact(user *User) error { //nolint:unused
 	contact := &sendgrid.Contact{
 		Email:     user.Email,
 		FirstName: user.FirstName,

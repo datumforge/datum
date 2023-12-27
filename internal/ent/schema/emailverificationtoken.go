@@ -26,7 +26,7 @@ func (EmailVerificationToken) Fields() []ent.Field {
 			Comment("the verification token sent to the user via email which should only be provided to the /verify endpoint + handler").
 			Optional(),
 		field.Time("ttl").
-			Comment("the ttl of the verification token which needs to be explictly set, otherwise defaults to time.Now").
+			Comment("the ttl of the verification token which needs to be explicitly set, otherwise defaults to the current time").
 			Default(time.Now()).
 			Optional(),
 		field.String("email").

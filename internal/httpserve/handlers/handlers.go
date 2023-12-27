@@ -34,7 +34,7 @@ type Handler struct {
 
 	EmailManager *emails.EmailManager
 
-	tasks *marionette.TaskManager
+	tasks *marionette.TaskManager //nolint:unused
 }
 
 type Response struct {

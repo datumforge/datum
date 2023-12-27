@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	ofgaclient "github.com/openfga/go-sdk/client"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/fga"
-	ofgaclient "github.com/openfga/go-sdk/client"
 )
 
 // HookOrganization runs on org mutations to set default values that are not provided
@@ -92,7 +92,6 @@ func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutati
 		}
 
 		if len(tuples) > 0 {
-
 			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
@@ -101,7 +100,6 @@ func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutati
 
 			m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
 		}
-
 	}
 
 	return nil

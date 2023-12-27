@@ -264,7 +264,6 @@ func TestMutation_CreateUser(t *testing.T) {
 					if users[0].ID != resp.CreateUser.User.ID {
 						t.Errorf("user id does not user expected to be added to personal org")
 					}
-
 				}
 			}
 

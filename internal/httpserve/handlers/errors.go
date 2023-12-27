@@ -30,7 +30,7 @@ type ValidationError struct {
 	err error
 }
 
-func invalid(err error) *ValidationError {
+func invalid(err error) *ValidationError { //nolint:unused
 	return &ValidationError{err}
 }
 
@@ -52,9 +52,10 @@ type ConstraintError struct {
 	dberr sqlite3.Error
 }
 
-func constraint(dberr sqlite3.Error) *ConstraintError {
+func constraint(dberr sqlite3.Error) *ConstraintError { //nolint:unused
 	// String parsing seems to be the only way to deal with error handling for sqlite3
 	errs := dberr.Error()
+
 	switch {
 	case strings.HasPrefix(errs, "UNIQUE"):
 		return &ConstraintError{err: ErrDuplicate, dberr: dberr}
@@ -71,6 +72,7 @@ func (e *ConstraintError) Error() string {
 	if e.dberr.Code == sqlite3.ErrConstraint {
 		return e.err.Error()
 	}
+
 	return e.dberr.Error()
 }
 

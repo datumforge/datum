@@ -32,7 +32,7 @@ func (EmailVerificationToken) Fields() []ent.Field {
 		field.String("email").
 			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed").
 			Optional(),
-		field.String("secret").
+		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").
 			Optional(),
 	}

@@ -55,8 +55,18 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 
-	meowuser, err := h.DBClient.User.Create().SetInput(input).Save(ctx.Request().Context())
+	tx, err := h.DBClient.Tx(ctx.Request().Context())
 	if err != nil {
+		return fmt.Errorf("error starting transaction: %v", err)
+	}
+
+	meowuser, err := tx.User.Create().
+		SetInput(input).
+		Save(ctx.Request().Context())
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
 		if generated.IsConstraintError(err) {
 			return fmt.Errorf("user already exists")
 		}
@@ -64,7 +74,22 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
-	meowtoken, err := h.DBClient.EmailVerificationToken.Create().SetToken(user.EmailVerificationToken.String).SetTTL(ttl).SetEmail(user.Email).SetSecret(string(user.EmailVerificationSecret)).Save(ctx.Request().Context())
+	meowtoken, err := tx.EmailVerificationToken.Create().
+		SetOwnerID(meowuser.ID).
+		SetToken(user.EmailVerificationToken.String).
+		SetTTL(ttl).
+		SetEmail(user.Email).
+		SetSecret(string(user.EmailVerificationSecret)).
+		Save(ctx.Request().Context())
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+
+		return err
+	}
+
+	tx.Commit()
 
 	if err = h.SendVerificationEmail(user); err != nil {
 		return err

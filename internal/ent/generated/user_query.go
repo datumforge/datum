@@ -37,13 +37,14 @@ type UserQuery struct {
 	withPersonalAccessTokens      *PersonalAccessTokenQuery
 	withSetting                   *UserSettingQuery
 	withEmailVerificationTokens   *EmailVerificationTokenQuery
-	withFKs                       bool
+	withChildren                  *EmailVerificationTokenQuery
 	modifiers                     []func(*sql.Selector)
 	loadTotal                     []func(context.Context, []*User) error
 	withNamedOrganizations        map[string]*OrganizationQuery
 	withNamedSessions             map[string]*SessionQuery
 	withNamedGroups               map[string]*GroupQuery
 	withNamedPersonalAccessTokens map[string]*PersonalAccessTokenQuery
+	withNamedChildren             map[string]*EmailVerificationTokenQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -219,11 +220,36 @@ func (uq *UserQuery) QueryEmailVerificationTokens() *EmailVerificationTokenQuery
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
 		)
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryChildren chains the current query on the "children" edge.
+func (uq *UserQuery) QueryChildren() *EmailVerificationTokenQuery {
+	query := (&EmailVerificationTokenClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ChildrenTable, user.ChildrenColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -428,6 +454,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withPersonalAccessTokens:    uq.withPersonalAccessTokens.Clone(),
 		withSetting:                 uq.withSetting.Clone(),
 		withEmailVerificationTokens: uq.withEmailVerificationTokens.Clone(),
+		withChildren:                uq.withChildren.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -497,6 +524,17 @@ func (uq *UserQuery) WithEmailVerificationTokens(opts ...func(*EmailVerification
 		opt(query)
 	}
 	uq.withEmailVerificationTokens = query
+	return uq
+}
+
+// WithChildren tells the query-builder to eager-load the nodes that are connected to
+// the "children" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithChildren(opts ...func(*EmailVerificationTokenQuery)) *UserQuery {
+	query := (&EmailVerificationTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withChildren = query
 	return uq
 }
 
@@ -583,23 +621,17 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
 		nodes       = []*User{}
-		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			uq.withOrganizations != nil,
 			uq.withSessions != nil,
 			uq.withGroups != nil,
 			uq.withPersonalAccessTokens != nil,
 			uq.withSetting != nil,
 			uq.withEmailVerificationTokens != nil,
+			uq.withChildren != nil,
 		}
 	)
-	if uq.withEmailVerificationTokens != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
 	}
@@ -665,6 +697,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	if query := uq.withChildren; query != nil {
+		if err := uq.loadChildren(ctx, query, nodes,
+			func(n *User) { n.Edges.Children = []*EmailVerificationToken{} },
+			func(n *User, e *EmailVerificationToken) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range uq.withNamedOrganizations {
 		if err := uq.loadOrganizations(ctx, query, nodes,
 			func(n *User) { n.appendNamedOrganizations(name) },
@@ -690,6 +729,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
 			func(n *User) { n.appendNamedPersonalAccessTokens(name) },
 			func(n *User, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedChildren {
+		if err := uq.loadChildren(ctx, query, nodes,
+			func(n *User) { n.appendNamedChildren(name) },
+			func(n *User, e *EmailVerificationToken) { n.appendNamedChildren(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -915,34 +961,61 @@ func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingQuery, n
 	return nil
 }
 func (uq *UserQuery) loadEmailVerificationTokens(ctx context.Context, query *EmailVerificationTokenQuery, nodes []*User, init func(*User), assign func(*User, *EmailVerificationToken)) error {
-	ids := make([]string, 0, len(nodes))
-	nodeids := make(map[string][]*User)
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
 	for i := range nodes {
-		if nodes[i].user_email_verification_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].user_email_verification_tokens
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
 	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(emailverificationtoken.IDIn(ids...))
+	query.withFKs = true
+	query.Where(predicate.EmailVerificationToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.EmailVerificationTokensColumn), fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.user_email_verification_tokens
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_email_verification_tokens" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_email_verification_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_email_verification_tokens" returned %v for node %v`, *fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadChildren(ctx context.Context, query *EmailVerificationTokenQuery, nodes []*User, init func(*User), assign func(*User, *EmailVerificationToken)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
 		}
+	}
+	query.withFKs = true
+	query.Where(predicate.EmailVerificationToken(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ChildrenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_children
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_children" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_children" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -1089,6 +1162,20 @@ func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*Pe
 		uq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
 	}
 	uq.withNamedPersonalAccessTokens[name] = query
+	return uq
+}
+
+// WithNamedChildren tells the query-builder to eager-load the nodes that are connected to the "children"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedChildren(name string, opts ...func(*EmailVerificationTokenQuery)) *UserQuery {
+	query := (&EmailVerificationTokenClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedChildren == nil {
+		uq.withNamedChildren = make(map[string]*EmailVerificationTokenQuery)
+	}
+	uq.withNamedChildren[name] = query
 	return uq
 }
 

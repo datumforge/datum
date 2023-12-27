@@ -471,11 +471,11 @@ func (c *EmailVerificationTokenClient) QueryOwner(evt *EmailVerificationToken) *
 		step := sqlgraph.NewStep(
 			sqlgraph.From(emailverificationtoken.Table, emailverificationtoken.FieldID, id),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, emailverificationtoken.OwnerTable, emailverificationtoken.OwnerColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, emailverificationtoken.OwnerTable, emailverificationtoken.OwnerColumn),
 		)
 		schemaConfig := evt.schemaConfig
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		fromV = sqlgraph.Neighbors(evt.driver.Dialect(), step)
 		return fromV, nil
 	}
@@ -2408,11 +2408,30 @@ func (c *UserClient) QueryEmailVerificationTokens(u *User) *EmailVerificationTok
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.EmailVerificationTokensTable, user.EmailVerificationTokensColumn),
 		)
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryChildren queries the children edge of a User.
+func (c *UserClient) QueryChildren(u *User) *EmailVerificationTokenQuery {
+	query := (&EmailVerificationTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(emailverificationtoken.Table, emailverificationtoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ChildrenTable, user.ChildrenColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}

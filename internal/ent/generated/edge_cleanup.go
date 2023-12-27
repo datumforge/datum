@@ -122,6 +122,13 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 		}
 	}
 
+	if exists, err := FromContext(ctx).EmailVerificationToken.Query().Where((emailverificationtoken.HasOwnerWith(user.ID(id)))).Exist(ctx); err != nil && exists {
+		if emailverificationtokenCount, err := FromContext(ctx).EmailVerificationToken.Delete().Where(emailverificationtoken.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting emailverificationtoken", "count", emailverificationtokenCount, "err", err)
+			return err
+		}
+	}
+
 	return nil
 }
 

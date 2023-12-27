@@ -10,6 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // EmailVerificationToken is the model entity for the EmailVerificationToken schema.
@@ -39,27 +40,31 @@ type EmailVerificationToken struct {
 	Secret string `json:"secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EmailVerificationTokenQuery when eager-loading is set.
-	Edges        EmailVerificationTokenEdges `json:"edges"`
-	selectValues sql.SelectValues
+	Edges                          EmailVerificationTokenEdges `json:"edges"`
+	user_email_verification_tokens *string
+	user_children                  *string
+	selectValues                   sql.SelectValues
 }
 
 // EmailVerificationTokenEdges holds the relations/edges for other nodes in the graph.
 type EmailVerificationTokenEdges struct {
 	// Owner holds the value of the owner edge.
-	Owner []*User `json:"owner,omitempty"`
+	Owner *User `json:"owner,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 	// totalCount holds the count of the edges above.
 	totalCount [1]map[string]int
-
-	namedOwner map[string][]*User
 }
 
 // OwnerOrErr returns the Owner value or an error if the edge
-// was not loaded in eager-loading.
-func (e EmailVerificationTokenEdges) OwnerOrErr() ([]*User, error) {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EmailVerificationTokenEdges) OwnerOrErr() (*User, error) {
 	if e.loadedTypes[0] {
+		if e.Owner == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: user.Label}
+		}
 		return e.Owner, nil
 	}
 	return nil, &NotLoadedError{edge: "owner"}
@@ -74,6 +79,10 @@ func (*EmailVerificationToken) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case emailverificationtoken.FieldCreatedAt, emailverificationtoken.FieldUpdatedAt, emailverificationtoken.FieldDeletedAt, emailverificationtoken.FieldTTL:
 			values[i] = new(sql.NullTime)
+		case emailverificationtoken.ForeignKeys[0]: // user_email_verification_tokens
+			values[i] = new(sql.NullString)
+		case emailverificationtoken.ForeignKeys[1]: // user_children
+			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -155,6 +164,20 @@ func (evt *EmailVerificationToken) assignValues(columns []string, values []any) 
 			} else if value.Valid {
 				evt.Secret = value.String
 			}
+		case emailverificationtoken.ForeignKeys[0]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_email_verification_tokens", values[i])
+			} else if value.Valid {
+				evt.user_email_verification_tokens = new(string)
+				*evt.user_email_verification_tokens = value.String
+			}
+		case emailverificationtoken.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_children", values[i])
+			} else if value.Valid {
+				evt.user_children = new(string)
+				*evt.user_children = value.String
+			}
 		default:
 			evt.selectValues.Set(columns[i], values[i])
 		}
@@ -227,30 +250,6 @@ func (evt *EmailVerificationToken) String() string {
 	builder.WriteString(evt.Secret)
 	builder.WriteByte(')')
 	return builder.String()
-}
-
-// NamedOwner returns the Owner named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (evt *EmailVerificationToken) NamedOwner(name string) ([]*User, error) {
-	if evt.Edges.namedOwner == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := evt.Edges.namedOwner[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (evt *EmailVerificationToken) appendNamedOwner(name string, edges ...*User) {
-	if evt.Edges.namedOwner == nil {
-		evt.Edges.namedOwner = make(map[string][]*User)
-	}
-	if len(edges) == 0 {
-		evt.Edges.namedOwner[name] = []*User{}
-	} else {
-		evt.Edges.namedOwner[name] = append(evt.Edges.namedOwner[name], edges...)
-	}
 }
 
 // EmailVerificationTokens is a parsable slice of EmailVerificationToken.

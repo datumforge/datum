@@ -65,6 +65,8 @@ const (
 	EdgeSetting = "setting"
 	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
 	EdgeEmailVerificationTokens = "email_verification_tokens"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -99,12 +101,19 @@ const (
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "user_setting"
 	// EmailVerificationTokensTable is the table that holds the email_verification_tokens relation/edge.
-	EmailVerificationTokensTable = "users"
+	EmailVerificationTokensTable = "email_verification_tokens"
 	// EmailVerificationTokensInverseTable is the table name for the EmailVerificationToken entity.
 	// It exists in this package in order to avoid circular dependency with the "emailverificationtoken" package.
 	EmailVerificationTokensInverseTable = "email_verification_tokens"
 	// EmailVerificationTokensColumn is the table column denoting the email_verification_tokens relation/edge.
 	EmailVerificationTokensColumn = "user_email_verification_tokens"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "email_verification_tokens"
+	// ChildrenInverseTable is the table name for the EmailVerificationToken entity.
+	// It exists in this package in order to avoid circular dependency with the "emailverificationtoken" package.
+	ChildrenInverseTable = "email_verification_tokens"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "user_children"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -131,12 +140,6 @@ var Columns = []string{
 	FieldAgreePrivacy,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"user_email_verification_tokens",
-}
-
 var (
 	// OrganizationsPrimaryKey and OrganizationsColumn2 are the table columns denoting the
 	// primary key for the organizations relation (M2M).
@@ -150,11 +153,6 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -376,6 +374,20 @@ func ByEmailVerificationTokensField(field string, opts ...sql.OrderTermOption) O
 		sqlgraph.OrderByNeighborTerms(s, newEmailVerificationTokensStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -415,6 +427,13 @@ func newEmailVerificationTokensStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EmailVerificationTokensInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
+		sqlgraph.Edge(sqlgraph.O2O, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ChildrenInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
 	)
 }

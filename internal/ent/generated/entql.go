@@ -360,7 +360,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph.MustAddE(
 		"owner",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -648,10 +648,22 @@ var schemaGraph = func() *sqlgraph.Schema {
 	graph.MustAddE(
 		"email_verification_tokens",
 		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
+			Bidi:    false,
+		},
+		"User",
+		"EmailVerificationToken",
+	)
+	graph.MustAddE(
+		"children",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
 			Bidi:    false,
 		},
 		"User",
@@ -2232,6 +2244,20 @@ func (f *UserFilter) WhereHasEmailVerificationTokens() {
 // WhereHasEmailVerificationTokensWith applies a predicate to check if query has an edge email_verification_tokens with a given conditions (other predicates).
 func (f *UserFilter) WhereHasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) {
 	f.Where(entql.HasEdgeWith("email_verification_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasChildren applies a predicate to check if query has an edge children.
+func (f *UserFilter) WhereHasChildren() {
+	f.Where(entql.HasEdge("children"))
+}
+
+// WhereHasChildrenWith applies a predicate to check if query has an edge children with a given conditions (other predicates).
+func (f *UserFilter) WhereHasChildrenWith(preds ...predicate.EmailVerificationToken) {
+	f.Where(entql.HasEdgeWith("children", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

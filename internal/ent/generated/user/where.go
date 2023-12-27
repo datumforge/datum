@@ -1357,11 +1357,11 @@ func HasEmailVerificationTokens() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -1372,7 +1372,36 @@ func HasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) p
 		step := newEmailVerificationTokensStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.EmailVerificationToken
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasChildren applies the HasEdge predicate on the "children" edge.
+func HasChildren() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasChildrenWith applies the HasEdge predicate on the "children" edge with a given conditions (other predicates).
+func HasChildrenWith(preds ...predicate.EmailVerificationToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newChildrenStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.EmailVerificationToken
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

@@ -59,9 +59,8 @@ type User struct {
 	AgreePrivacy bool `json:"agree_privacy,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
-	Edges                          UserEdges `json:"edges"`
-	user_email_verification_tokens *string
-	selectValues                   sql.SelectValues
+	Edges        UserEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
@@ -78,9 +77,11 @@ type UserEdges struct {
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
 	EmailVerificationTokens *EmailVerificationToken `json:"email_verification_tokens,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*EmailVerificationToken `json:"children,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 	// totalCount holds the count of the edges above.
 	totalCount [5]map[string]int
 
@@ -88,6 +89,7 @@ type UserEdges struct {
 	namedSessions             map[string][]*Session
 	namedGroups               map[string][]*Group
 	namedPersonalAccessTokens map[string][]*PersonalAccessToken
+	namedChildren             map[string][]*EmailVerificationToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -152,6 +154,15 @@ func (e UserEdges) EmailVerificationTokensOrErr() (*EmailVerificationToken, erro
 	return nil, &NotLoadedError{edge: "email_verification_tokens"}
 }
 
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ChildrenOrErr() ([]*EmailVerificationToken, error) {
+	if e.loadedTypes[6] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
@@ -163,8 +174,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldAvatarUpdatedAt, user.FieldLastSeen:
 			values[i] = new(sql.NullTime)
-		case user.ForeignKeys[0]: // user_email_verification_tokens
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -305,13 +314,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.AgreePrivacy = value.Bool
 			}
-		case user.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_email_verification_tokens", values[i])
-			} else if value.Valid {
-				u.user_email_verification_tokens = new(string)
-				*u.user_email_verification_tokens = value.String
-			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -353,6 +355,11 @@ func (u *User) QuerySetting() *UserSettingQuery {
 // QueryEmailVerificationTokens queries the "email_verification_tokens" edge of the User entity.
 func (u *User) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
 	return NewUserClient(u.config).QueryEmailVerificationTokens(u)
+}
+
+// QueryChildren queries the "children" edge of the User entity.
+func (u *User) QueryChildren() *EmailVerificationTokenQuery {
+	return NewUserClient(u.config).QueryChildren(u)
 }
 
 // Update returns a builder for updating this User.
@@ -541,6 +548,30 @@ func (u *User) appendNamedPersonalAccessTokens(name string, edges ...*PersonalAc
 		u.Edges.namedPersonalAccessTokens[name] = []*PersonalAccessToken{}
 	} else {
 		u.Edges.namedPersonalAccessTokens[name] = append(u.Edges.namedPersonalAccessTokens[name], edges...)
+	}
+}
+
+// NamedChildren returns the Children named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedChildren(name string) ([]*EmailVerificationToken, error) {
+	if u.Edges.namedChildren == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedChildren[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedChildren(name string, edges ...*EmailVerificationToken) {
+	if u.Edges.namedChildren == nil {
+		u.Edges.namedChildren = make(map[string][]*EmailVerificationToken)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedChildren[name] = []*EmailVerificationToken{}
+	} else {
+		u.Edges.namedChildren[name] = append(u.Edges.namedChildren[name], edges...)
 	}
 }
 

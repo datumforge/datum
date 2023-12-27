@@ -112,15 +112,13 @@
                     "type": "string"
                   },
                   "owner": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
+                    "type": "string"
                   }
                 },
                 "required": [
                   "created_at",
-                  "updated_at"
+                  "updated_at",
+                  "owner"
                 ]
               }
             }
@@ -283,10 +281,7 @@
                     "type": "string"
                   },
                   "owner": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
+                    "type": "string"
                   }
                 }
               }
@@ -325,9 +320,9 @@
         "tags": [
           "EmailVerificationToken"
         ],
-        "summary": "List attached Owners",
-        "description": "List attached Owners.",
-        "operationId": "listEmailVerificationTokenOwner",
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the EmailVerificationToken with the given ID",
+        "operationId": "readEmailVerificationTokenOwner",
         "parameters": [
           {
             "name": "id",
@@ -337,34 +332,15 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "result EmailVerificationTokens list",
+            "description": "User attached to EmailVerificationToken with requested ID was found",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EmailVerificationToken_OwnerList"
-                  }
+                  "$ref": "#/components/schemas/EmailVerificationToken_OwnerRead"
                 }
               }
             }
@@ -5291,6 +5267,12 @@
                   },
                   "email_verification_tokens": {
                     "type": "string"
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -5522,6 +5504,12 @@
                   },
                   "email_verification_tokens": {
                     "type": "string"
+                  },
+                  "children": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -5536,6 +5524,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UserUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{id}/children": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached Childrens",
+        "description": "List attached Childrens.",
+        "operationId": "listUserChildren",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_ChildrenList"
+                  }
                 }
               }
             }
@@ -5945,16 +5997,14 @@
             "type": "string"
           },
           "owner": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
+            "$ref": "#/components/schemas/User"
           }
         },
         "required": [
           "id",
           "created_at",
-          "updated_at"
+          "updated_at",
+          "owner"
         ]
       },
       "EmailVerificationTokenCreate": {
@@ -6145,7 +6195,7 @@
           "updated_at"
         ]
       },
-      "EmailVerificationToken_OwnerList": {
+      "EmailVerificationToken_OwnerRead": {
         "type": "object",
         "properties": {
           "id": {
@@ -10463,6 +10513,12 @@
           },
           "email_verification_tokens": {
             "$ref": "#/components/schemas/EmailVerificationToken"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmailVerificationToken"
+            }
           }
         },
         "required": [
@@ -11318,6 +11374,53 @@
           "oauth",
           "agree_tos",
           "agree_privacy"
+        ]
+      },
+      "User_ChildrenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at"
         ]
       },
       "User_EmailVerificationTokensRead": {

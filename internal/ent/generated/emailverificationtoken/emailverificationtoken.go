@@ -40,7 +40,7 @@ const (
 	// Table holds the table name of the emailverificationtoken in the database.
 	Table = "email_verification_tokens"
 	// OwnerTable is the table that holds the owner relation/edge.
-	OwnerTable = "users"
+	OwnerTable = "email_verification_tokens"
 	// OwnerInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	OwnerInverseTable = "users"
@@ -63,10 +63,22 @@ var Columns = []string{
 	FieldSecret,
 }
 
+// ForeignKeys holds the SQL foreign-keys that are owned by the "email_verification_tokens"
+// table and are not defined as standalone fields in the schema.
+var ForeignKeys = []string{
+	"user_email_verification_tokens",
+	"user_children",
+}
+
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
+			return true
+		}
+	}
+	for i := range ForeignKeys {
+		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -151,23 +163,16 @@ func BySecret(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSecret, opts...).ToFunc()
 }
 
-// ByOwnerCount orders the results by owner count.
-func ByOwnerCount(opts ...sql.OrderTermOption) OrderOption {
+// ByOwnerField orders the results by owner field.
+func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newOwnerStep(), opts...)
-	}
-}
-
-// ByOwner orders the results by owner terms.
-func ByOwner(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newOwnerStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OwnerInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, true, OwnerTable, OwnerColumn),
+		sqlgraph.Edge(sqlgraph.O2O, true, OwnerTable, OwnerColumn),
 	)
 }

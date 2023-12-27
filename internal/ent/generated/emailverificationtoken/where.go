@@ -752,11 +752,11 @@ func HasOwner() predicate.EmailVerificationToken {
 	return predicate.EmailVerificationToken(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, true, OwnerTable, OwnerColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, OwnerTable, OwnerColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -767,7 +767,7 @@ func HasOwnerWith(preds ...predicate.User) predicate.EmailVerificationToken {
 		step := newOwnerStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.EmailVerificationToken
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

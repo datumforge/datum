@@ -372,6 +372,21 @@ func (uc *UserCreate) SetEmailVerificationTokens(e *EmailVerificationToken) *Use
 	return uc.SetEmailVerificationTokensID(e.ID)
 }
 
+// AddChildIDs adds the "children" edge to the EmailVerificationToken entity by IDs.
+func (uc *UserCreate) AddChildIDs(ids ...string) *UserCreate {
+	uc.mutation.AddChildIDs(ids...)
+	return uc
+}
+
+// AddChildren adds the "children" edges to the EmailVerificationToken entity.
+func (uc *UserCreate) AddChildren(e ...*EmailVerificationToken) *UserCreate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uc.AddChildIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -710,7 +725,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if nodes := uc.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -719,11 +734,27 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uc.schemaConfig.User
+		edge.Schema = uc.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_email_verification_tokens = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

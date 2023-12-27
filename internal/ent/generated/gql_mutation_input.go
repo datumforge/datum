@@ -1401,6 +1401,7 @@ type CreateUserInput struct {
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
 	EmailVerificationTokensID *string
+	ChildIDs                  []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1466,6 +1467,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.EmailVerificationTokensID; v != nil {
 		m.SetEmailVerificationTokensID(*v)
 	}
+	if v := i.ChildIDs; len(v) > 0 {
+		m.AddChildIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -1513,6 +1517,9 @@ type UpdateUserInput struct {
 	SettingID                    *string
 	ClearEmailVerificationTokens bool
 	EmailVerificationTokensID    *string
+	ClearChildren                bool
+	AddChildIDs                  []string
+	RemoveChildIDs               []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1627,6 +1634,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.EmailVerificationTokensID; v != nil {
 		m.SetEmailVerificationTokensID(*v)
+	}
+	if i.ClearChildren {
+		m.ClearChildren()
+	}
+	if v := i.AddChildIDs; len(v) > 0 {
+		m.AddChildIDs(v...)
+	}
+	if v := i.RemoveChildIDs; len(v) > 0 {
+		m.RemoveChildIDs(v...)
 	}
 }
 

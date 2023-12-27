@@ -68,8 +68,7 @@ type EmailVerificationTokenMutation struct {
 	email         *string
 	secret        *string
 	clearedFields map[string]struct{}
-	owner         map[string]struct{}
-	removedowner  map[string]struct{}
+	owner         *string
 	clearedowner  bool
 	done          bool
 	oldValue      func(context.Context) (*EmailVerificationToken, error)
@@ -644,14 +643,9 @@ func (m *EmailVerificationTokenMutation) ResetSecret() {
 	delete(m.clearedFields, emailverificationtoken.FieldSecret)
 }
 
-// AddOwnerIDs adds the "owner" edge to the User entity by ids.
-func (m *EmailVerificationTokenMutation) AddOwnerIDs(ids ...string) {
-	if m.owner == nil {
-		m.owner = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.owner[ids[i]] = struct{}{}
-	}
+// SetOwnerID sets the "owner" edge to the User entity by id.
+func (m *EmailVerificationTokenMutation) SetOwnerID(id string) {
+	m.owner = &id
 }
 
 // ClearOwner clears the "owner" edge to the User entity.
@@ -664,29 +658,20 @@ func (m *EmailVerificationTokenMutation) OwnerCleared() bool {
 	return m.clearedowner
 }
 
-// RemoveOwnerIDs removes the "owner" edge to the User entity by IDs.
-func (m *EmailVerificationTokenMutation) RemoveOwnerIDs(ids ...string) {
-	if m.removedowner == nil {
-		m.removedowner = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.owner, ids[i])
-		m.removedowner[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedOwner returns the removed IDs of the "owner" edge to the User entity.
-func (m *EmailVerificationTokenMutation) RemovedOwnerIDs() (ids []string) {
-	for id := range m.removedowner {
-		ids = append(ids, id)
+// OwnerID returns the "owner" edge ID in the mutation.
+func (m *EmailVerificationTokenMutation) OwnerID() (id string, exists bool) {
+	if m.owner != nil {
+		return *m.owner, true
 	}
 	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// OwnerID instead. It exists only for internal usage by the builders.
 func (m *EmailVerificationTokenMutation) OwnerIDs() (ids []string) {
-	for id := range m.owner {
-		ids = append(ids, id)
+	if id := m.owner; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -695,7 +680,6 @@ func (m *EmailVerificationTokenMutation) OwnerIDs() (ids []string) {
 func (m *EmailVerificationTokenMutation) ResetOwner() {
 	m.owner = nil
 	m.clearedowner = false
-	m.removedowner = nil
 }
 
 // Where appends a list predicates to the EmailVerificationTokenMutation builder.
@@ -1047,11 +1031,9 @@ func (m *EmailVerificationTokenMutation) AddedEdges() []string {
 func (m *EmailVerificationTokenMutation) AddedIDs(name string) []ent.Value {
 	switch name {
 	case emailverificationtoken.EdgeOwner:
-		ids := make([]ent.Value, 0, len(m.owner))
-		for id := range m.owner {
-			ids = append(ids, id)
+		if id := m.owner; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	}
 	return nil
 }
@@ -1059,23 +1041,12 @@ func (m *EmailVerificationTokenMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EmailVerificationTokenMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 1)
-	if m.removedowner != nil {
-		edges = append(edges, emailverificationtoken.EdgeOwner)
-	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *EmailVerificationTokenMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case emailverificationtoken.EdgeOwner:
-		ids := make([]ent.Value, 0, len(m.removedowner))
-		for id := range m.removedowner {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
@@ -1102,6 +1073,9 @@ func (m *EmailVerificationTokenMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *EmailVerificationTokenMutation) ClearEdge(name string) error {
 	switch name {
+	case emailverificationtoken.EdgeOwner:
+		m.ClearOwner()
+		return nil
 	}
 	return fmt.Errorf("unknown EmailVerificationToken unique edge %s", name)
 }
@@ -12849,6 +12823,9 @@ type UserMutation struct {
 	clearedsetting                   bool
 	email_verification_tokens        *string
 	clearedemail_verification_tokens bool
+	children                         map[string]struct{}
+	removedchildren                  map[string]struct{}
+	clearedchildren                  bool
 	done                             bool
 	oldValue                         func(context.Context) (*User, error)
 	predicates                       []predicate.User
@@ -14066,6 +14043,60 @@ func (m *UserMutation) ResetEmailVerificationTokens() {
 	m.clearedemail_verification_tokens = false
 }
 
+// AddChildIDs adds the "children" edge to the EmailVerificationToken entity by ids.
+func (m *UserMutation) AddChildIDs(ids ...string) {
+	if m.children == nil {
+		m.children = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.children[ids[i]] = struct{}{}
+	}
+}
+
+// ClearChildren clears the "children" edge to the EmailVerificationToken entity.
+func (m *UserMutation) ClearChildren() {
+	m.clearedchildren = true
+}
+
+// ChildrenCleared reports if the "children" edge to the EmailVerificationToken entity was cleared.
+func (m *UserMutation) ChildrenCleared() bool {
+	return m.clearedchildren
+}
+
+// RemoveChildIDs removes the "children" edge to the EmailVerificationToken entity by IDs.
+func (m *UserMutation) RemoveChildIDs(ids ...string) {
+	if m.removedchildren == nil {
+		m.removedchildren = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.children, ids[i])
+		m.removedchildren[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedChildren returns the removed IDs of the "children" edge to the EmailVerificationToken entity.
+func (m *UserMutation) RemovedChildrenIDs() (ids []string) {
+	for id := range m.removedchildren {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ChildrenIDs returns the "children" edge IDs in the mutation.
+func (m *UserMutation) ChildrenIDs() (ids []string) {
+	for id := range m.children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetChildren resets all changes to the "children" edge.
+func (m *UserMutation) ResetChildren() {
+	m.children = nil
+	m.clearedchildren = false
+	m.removedchildren = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -14568,7 +14599,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.organizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -14586,6 +14617,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.email_verification_tokens != nil {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
+	}
+	if m.children != nil {
+		edges = append(edges, user.EdgeChildren)
 	}
 	return edges
 }
@@ -14626,13 +14660,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.email_verification_tokens; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.children))
+		for id := range m.children {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.removedorganizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -14644,6 +14684,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedpersonal_access_tokens != nil {
 		edges = append(edges, user.EdgePersonalAccessTokens)
+	}
+	if m.removedchildren != nil {
+		edges = append(edges, user.EdgeChildren)
 	}
 	return edges
 }
@@ -14676,13 +14719,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.removedchildren))
+		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 6)
+	edges := make([]string, 0, 7)
 	if m.clearedorganizations {
 		edges = append(edges, user.EdgeOrganizations)
 	}
@@ -14700,6 +14749,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedemail_verification_tokens {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
+	}
+	if m.clearedchildren {
+		edges = append(edges, user.EdgeChildren)
 	}
 	return edges
 }
@@ -14720,6 +14772,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedsetting
 	case user.EdgeEmailVerificationTokens:
 		return m.clearedemail_verification_tokens
+	case user.EdgeChildren:
+		return m.clearedchildren
 	}
 	return false
 }
@@ -14759,6 +14813,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeEmailVerificationTokens:
 		m.ResetEmailVerificationTokens()
+		return nil
+	case user.EdgeChildren:
+		m.ResetChildren()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

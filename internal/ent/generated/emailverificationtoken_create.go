@@ -175,19 +175,15 @@ func (evtc *EmailVerificationTokenCreate) SetNillableID(s *string) *EmailVerific
 	return evtc
 }
 
-// AddOwnerIDs adds the "owner" edge to the User entity by IDs.
-func (evtc *EmailVerificationTokenCreate) AddOwnerIDs(ids ...string) *EmailVerificationTokenCreate {
-	evtc.mutation.AddOwnerIDs(ids...)
+// SetOwnerID sets the "owner" edge to the User entity by ID.
+func (evtc *EmailVerificationTokenCreate) SetOwnerID(id string) *EmailVerificationTokenCreate {
+	evtc.mutation.SetOwnerID(id)
 	return evtc
 }
 
-// AddOwner adds the "owner" edges to the User entity.
-func (evtc *EmailVerificationTokenCreate) AddOwner(u ...*User) *EmailVerificationTokenCreate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return evtc.AddOwnerIDs(ids...)
+// SetOwner sets the "owner" edge to the User entity.
+func (evtc *EmailVerificationTokenCreate) SetOwner(u *User) *EmailVerificationTokenCreate {
+	return evtc.SetOwnerID(u.ID)
 }
 
 // Mutation returns the EmailVerificationTokenMutation object of the builder.
@@ -262,6 +258,9 @@ func (evtc *EmailVerificationTokenCreate) check() error {
 	}
 	if _, ok := evtc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "EmailVerificationToken.updated_at"`)}
+	}
+	if _, ok := evtc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "EmailVerificationToken.owner"`)}
 	}
 	return nil
 }
@@ -341,7 +340,7 @@ func (evtc *EmailVerificationTokenCreate) createSpec() (*EmailVerificationToken,
 	}
 	if nodes := evtc.mutation.OwnerIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   emailverificationtoken.OwnerTable,
 			Columns: []string{emailverificationtoken.OwnerColumn},
@@ -350,10 +349,11 @@ func (evtc *EmailVerificationTokenCreate) createSpec() (*EmailVerificationToken,
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = evtc.schemaConfig.User
+		edge.Schema = evtc.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.user_email_verification_tokens = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

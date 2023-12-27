@@ -394,6 +394,21 @@ func (uu *UserUpdate) SetEmailVerificationTokens(e *EmailVerificationToken) *Use
 	return uu.SetEmailVerificationTokensID(e.ID)
 }
 
+// AddChildIDs adds the "children" edge to the EmailVerificationToken entity by IDs.
+func (uu *UserUpdate) AddChildIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddChildIDs(ids...)
+	return uu
+}
+
+// AddChildren adds the "children" edges to the EmailVerificationToken entity.
+func (uu *UserUpdate) AddChildren(e ...*EmailVerificationToken) *UserUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.AddChildIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -493,6 +508,27 @@ func (uu *UserUpdate) ClearSetting() *UserUpdate {
 func (uu *UserUpdate) ClearEmailVerificationTokens() *UserUpdate {
 	uu.mutation.ClearEmailVerificationTokens()
 	return uu
+}
+
+// ClearChildren clears all "children" edges to the EmailVerificationToken entity.
+func (uu *UserUpdate) ClearChildren() *UserUpdate {
+	uu.mutation.ClearChildren()
+	return uu
+}
+
+// RemoveChildIDs removes the "children" edge to EmailVerificationToken entities by IDs.
+func (uu *UserUpdate) RemoveChildIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveChildIDs(ids...)
+	return uu
+}
+
+// RemoveChildren removes "children" edges to EmailVerificationToken entities.
+func (uu *UserUpdate) RemoveChildren(e ...*EmailVerificationToken) *UserUpdate {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uu.RemoveChildIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -907,7 +943,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.EmailVerificationTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -916,12 +952,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.User
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uu.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -930,7 +966,55 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uu.schemaConfig.User
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !uu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1316,6 +1400,21 @@ func (uuo *UserUpdateOne) SetEmailVerificationTokens(e *EmailVerificationToken) 
 	return uuo.SetEmailVerificationTokensID(e.ID)
 }
 
+// AddChildIDs adds the "children" edge to the EmailVerificationToken entity by IDs.
+func (uuo *UserUpdateOne) AddChildIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddChildIDs(ids...)
+	return uuo
+}
+
+// AddChildren adds the "children" edges to the EmailVerificationToken entity.
+func (uuo *UserUpdateOne) AddChildren(e ...*EmailVerificationToken) *UserUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.AddChildIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1415,6 +1514,27 @@ func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
 func (uuo *UserUpdateOne) ClearEmailVerificationTokens() *UserUpdateOne {
 	uuo.mutation.ClearEmailVerificationTokens()
 	return uuo
+}
+
+// ClearChildren clears all "children" edges to the EmailVerificationToken entity.
+func (uuo *UserUpdateOne) ClearChildren() *UserUpdateOne {
+	uuo.mutation.ClearChildren()
+	return uuo
+}
+
+// RemoveChildIDs removes the "children" edge to EmailVerificationToken entities by IDs.
+func (uuo *UserUpdateOne) RemoveChildIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveChildIDs(ids...)
+	return uuo
+}
+
+// RemoveChildren removes "children" edges to EmailVerificationToken entities.
+func (uuo *UserUpdateOne) RemoveChildren(e ...*EmailVerificationToken) *UserUpdateOne {
+	ids := make([]string, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return uuo.RemoveChildIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1859,7 +1979,7 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.EmailVerificationTokensCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -1868,12 +1988,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.User
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := uuo.mutation.EmailVerificationTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   user.EmailVerificationTokensTable,
 			Columns: []string{user.EmailVerificationTokensColumn},
@@ -1882,7 +2002,55 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uuo.schemaConfig.User
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !uuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ChildrenTable,
+			Columns: []string{user.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(emailverificationtoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.EmailVerificationToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

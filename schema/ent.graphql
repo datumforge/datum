@@ -254,6 +254,7 @@ input CreateUserInput {
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   emailVerificationTokensID: ID
+  childIDs: [ID!]
 }
 """
 CreateUserSettingInput is used for create UserSetting object.
@@ -2792,6 +2793,9 @@ input UpdateUserInput {
   settingID: ID
   emailVerificationTokensID: ID
   clearEmailVerificationTokens: Boolean
+  addChildIDs: [ID!]
+  removeChildIDs: [ID!]
+  clearChildren: Boolean
 }
 """
 UpdateUserSettingInput is used for update UserSetting object.

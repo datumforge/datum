@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -27,7 +25,6 @@ func (EmailVerificationToken) Fields() []ent.Field {
 			Unique(),
 		field.Time("ttl").
 			Comment("the ttl of the verification token which needs to be explicitly set, otherwise defaults to the current time").
-			Default(time.Now()).
 			Nillable(),
 		field.String("email").
 			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed"),

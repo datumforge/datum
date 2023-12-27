@@ -91,6 +91,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	tx.Commit()
 
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
 	if err = h.SendVerificationEmail(user); err != nil {
 		return err
 	}
@@ -132,7 +136,7 @@ type RegisterRequest struct {
 
 // Validate the register request ensuring that the required fields are available and
 // that the password is valid - an error is returned if the request is not correct. This
-// method also performs some basic data cleanup, trimming whitespace.
+// method also performs some basic data cleanup, trimming whitespace
 func (r *RegisterRequest) Validate() error {
 	r.FirstName = strings.TrimSpace(r.FirstName)
 	r.LastName = strings.TrimSpace(r.LastName)

@@ -7,6 +7,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
@@ -14,9 +15,20 @@ import (
 )
 
 type User struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	userID   string
+	Username                 string `json:"username"`
+	Password                 string `json:"password"`
+	userID                   string
+	ID                       ulid.ULID
+	FirstName                string
+	LastName                 string
+	Name                     string
+	Email                    string
+	EmailVerified            bool
+	EmailVerificationExpires sql.NullString
+	EmailVerificationToken   sql.NullString
+	EmailVerificationSecret  []byte
+	AgreeToS                 sql.NullBool
+	AgreePrivacy             sql.NullBool
 }
 
 // LoginHandler validates the user credentials and returns a valid cookie

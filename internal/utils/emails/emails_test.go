@@ -32,6 +32,7 @@ type EmailTestSuite struct {
 }
 
 func (suite *EmailTestSuite) SetupSuite() {
+	// TODO: figure out how to get zap to work for this purpose, or replace directly with zerolog - this package was used because the "MIME" write function was pulled directly from that upstream repo
 	logger.Discard()
 
 	suite.conf = emails.Config{

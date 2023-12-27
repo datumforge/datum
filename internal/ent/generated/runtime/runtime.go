@@ -52,10 +52,6 @@ func init() {
 	emailverificationtoken.DefaultUpdatedAt = emailverificationtokenDescUpdatedAt.Default.(func() time.Time)
 	// emailverificationtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	emailverificationtoken.UpdateDefaultUpdatedAt = emailverificationtokenDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// emailverificationtokenDescTTL is the schema descriptor for ttl field.
-	emailverificationtokenDescTTL := emailverificationtokenFields[1].Descriptor()
-	// emailverificationtoken.DefaultTTL holds the default value on creation for the ttl field.
-	emailverificationtoken.DefaultTTL = emailverificationtokenDescTTL.Default.(time.Time)
 	// emailverificationtokenDescID is the schema descriptor for id field.
 	emailverificationtokenDescID := emailverificationtokenMixinFields1[0].Descriptor()
 	// emailverificationtoken.DefaultID holds the default value on creation for the id field.

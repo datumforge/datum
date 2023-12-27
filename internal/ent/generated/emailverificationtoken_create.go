@@ -117,14 +117,6 @@ func (evtc *EmailVerificationTokenCreate) SetTTL(t time.Time) *EmailVerification
 	return evtc
 }
 
-// SetNillableTTL sets the "ttl" field if the given value is not nil.
-func (evtc *EmailVerificationTokenCreate) SetNillableTTL(t *time.Time) *EmailVerificationTokenCreate {
-	if t != nil {
-		evtc.SetTTL(*t)
-	}
-	return evtc
-}
-
 // SetEmail sets the "email" field.
 func (evtc *EmailVerificationTokenCreate) SetEmail(s string) *EmailVerificationTokenCreate {
 	evtc.mutation.SetEmail(s)
@@ -212,10 +204,6 @@ func (evtc *EmailVerificationTokenCreate) defaults() error {
 		}
 		v := emailverificationtoken.DefaultUpdatedAt()
 		evtc.mutation.SetUpdatedAt(v)
-	}
-	if _, ok := evtc.mutation.TTL(); !ok {
-		v := emailverificationtoken.DefaultTTL
-		evtc.mutation.SetTTL(v)
 	}
 	if _, ok := evtc.mutation.ID(); !ok {
 		if emailverificationtoken.DefaultID == nil {

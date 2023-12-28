@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
@@ -32,6 +33,26 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	// when cookie domain is localhost, this is dropped but expected
 	if err := auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain); err != nil {
 		return auth.ErrorResponse(err)
+	}
+
+	tx, err := h.DBClient.Tx(ctx.Request().Context())
+	if err != nil {
+		h.Logger.Errorw("error starting transaction", "error", err)
+		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
+	}
+
+	if _, err := tx.User.Update().SetLastSeen(time.Now()).Where(func(s *sql.Selector) {
+		s.Where(sql.EQ("id", user.userID))
+	}).Save(ctx.Request().Context()); err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 	}
 
 	return ctx.JSON(http.StatusOK, Response{Message: "success"})

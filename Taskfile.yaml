@@ -117,6 +117,7 @@ tasks:
     cmds:
       - go build -mod=mod -o datum
   go:build-cli:
+    aliases: [buildcli]
     desc: Runs go build for the datum cli
     cmds:
       - go build -mod=mod -o datum-cli ./cmd/cli 
@@ -202,3 +203,23 @@ tasks:
         echo "$status"
         exit 1
         fi
+  email:
+    deps: [shell]
+    desc: a task to burn local db and bring stack back up and re-test
+    cmds:
+      - task: buildcli
+      - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
+  shell:
+    desc: open a new shell to launch server as a dep
+    cmds:
+      - rm -f datum.db
+      - rm -f datum-cli
+      - osascript -e 'tell app "Terminal" to do script "cd {{.PWD}} && task run-dev-auth"'
+    vars:
+      PWD:
+        sh: pwd
+  newschema:
+    desc: generate a new ent schema from template
+    silent: true
+    cmds:
+      - go run -mod=mod entgo.io/ent/cmd/ent new --template ./internal/ent/base/entinit.tmpl --target ./internal/ent/schema {{.CLI_ARGS}}

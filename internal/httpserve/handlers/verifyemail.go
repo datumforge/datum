@@ -31,7 +31,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	entUser, err := h.getUserByToken(ctx.Request().Context(), tx, reqToken)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse("invalid token"))
+			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
 		}
 
 		h.Logger.Errorf("error retrieving user token", "error", err)
@@ -47,15 +47,15 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	// check to see if user is already confirmed
 	if !entUser.Edges.Setting.EmailConfirmed {
-		// Construct the user token from the database fields
-		token := &tokens.VerificationToken{
-			Email: entUser.Email,
-		}
-
 		// set tokens for request
 		if err := user.setUserTokens(entUser, reqToken); err != nil {
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		}
+
+		// Construct the user token from the database fields
+		token := &tokens.VerificationToken{
+			Email: entUser.Email,
 		}
 
 		if token.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
@@ -113,6 +113,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	return ctx.JSON(http.StatusNoContent, nil)
 }
 
+// validateVerifyRequest validates the required fields are set in the user request
 func validateVerifyRequest(token string) error {
 	if token == "" {
 		return newMissingRequiredFieldError("token")
@@ -141,6 +142,7 @@ func (h *Handler) getUserByToken(ctx context.Context, tx *generated.Tx, token st
 	return user, nil
 }
 
+// setUserTokens sets the fields to verify the email
 func (u *User) setUserTokens(user *generated.User, reqToken string) error {
 	tokens := user.Edges.EmailVerificationTokens
 	for _, t := range tokens {

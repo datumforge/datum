@@ -32,6 +32,32 @@ func (h *Handler) NewEmailManager() error {
 	return nil
 }
 
+// NewTestEmailManager is responsible for initializing and configuring the email manager used for sending emails but does not
+// send emails, should be used in tests
+func (h *Handler) NewTestEmailManager() error {
+	// TODO: go back and configure with viper config instead of setting defaults
+	h.SendGridConfig = &emails.Config{}
+
+	err := envconfig.Process("datum", h.SendGridConfig)
+	if err != nil {
+		return err
+	}
+
+	h.SendGridConfig.Testing = true
+
+	h.emailManager, err = emails.New(h.SendGridConfig)
+	if err != nil {
+		return err
+	}
+
+	h.EmailURL = &URLConfig{}
+	if err := envconfig.Process("datum", h.EmailURL); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (h *Handler) SendVerificationEmail(user *User) error {
 	contact := &sendgrid.Contact{
 		Email:     user.Email,

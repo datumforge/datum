@@ -31,7 +31,7 @@ var (
 	// ErrNotNull is returned when a field is required but not provided
 	ErrNotNull = errors.New("not null constraint violated on model")
 
-	// ErrConstraint is returned when a database constraint is violted
+	// ErrConstraint is returned when a database constraint is violated
 	ErrConstraint = errors.New("database constraint violated")
 
 	// ErrNotFound is returned when the requested object is not found

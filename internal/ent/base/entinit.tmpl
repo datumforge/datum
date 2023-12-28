@@ -1,0 +1,49 @@
+package schema
+
+import (
+	"entgo.io/contrib/entgql"
+	"entgo.io/ent"
+	"entgo.io/ent/schema"
+
+    "github.com/datumforge/datum/internal/ent/mixin"
+)
+
+// {{ . }} holds the schema definition for the {{ . }} entity
+type {{ . }} struct {
+    ent.Schema
+}
+
+// Fields of the {{ . }}
+func ({{ . }}) Fields() []ent.Field {
+    return []ent.Field{
+        // Fields go here
+    }
+}
+
+// Mixins of the {{ . }}
+func ({{ . }}) Mixins() []ent.Mixin {
+    return []ent.Mixin{
+		mixin.AuditMixin{},
+		mixin.IDMixin{},
+		mixin.SoftDeleteMixin{},
+    }
+}
+
+// Edges of the {{ . }}
+func ({{ . }}) Edges() []ent.Edge {
+	return []ent.Edge{
+		// Edges go here
+	}
+}
+
+// Annotations of the {{ . }}
+func ({{ . }}) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.QueryField(),
+		entgql.RelayConnection(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+        // the above annotations create all the graphQL goodness; if you need the schema only and not the endpoints, use the below annotation instead
+        // if you do not need the graphql bits, also be certain to add an exclusion to scripts/files_to_skip.txt
+		entgql.Skip(entgql.SkipAll),
+	}
+}

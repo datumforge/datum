@@ -128,8 +128,10 @@ func (User) Edges() []ent.Edge {
 		edge.To("organizations", Organization.Type),
 		edge.To("sessions", Session.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
-		edge.From("groups", Group.Type).
-			Ref("users"),
+		//		edge.From("groups", Group.Type).
+		//			Ref("users"),
+		edge.To("groups", Group.Type).
+			Through("joined_groups", GroupMembership.Type).Annotations(entgql.RelayConnection()),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("setting", UserSetting.Type).

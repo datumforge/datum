@@ -73,7 +73,9 @@ func (Group) Edges() []ent.Edge {
 		edge.To("setting", GroupSetting.Type).
 			Required().
 			Unique(),
-		edge.To("users", User.Type),
+		//		edge.To("users", User.Type),
+		edge.From("users", User.Type).
+			Through("joined_users", GroupMembership.Type).Annotations(entgql.RelayConnection()),
 		edge.From("owner", Organization.Type).
 			Ref("groups").
 			Unique().

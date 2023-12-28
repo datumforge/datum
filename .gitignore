@@ -25,6 +25,7 @@ server.crt
 server.key 
 private_key.pem
 public_key.pem
+internal/httpserve/handlers/false/*
 
 # Packages
 *.7z

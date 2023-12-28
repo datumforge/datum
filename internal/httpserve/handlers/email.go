@@ -24,6 +24,11 @@ func (h *Handler) NewEmailManager() error {
 		return err
 	}
 
+	h.EmailURL = URLConfig{}
+	if err := envconfig.Process("datum", h.EmailURL); err != nil {
+		return nil
+	}
+
 	return nil
 }
 
@@ -51,17 +56,8 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 		FullName: contact.FullName(),
 	}
 
-	// TODO: go back and configure with viper config instead of setting defaults
-	var (
-		err     error
-		urlConf URLConfig
-	)
-
-	if err := envconfig.Process("datum", urlConf); err != nil {
-		return nil
-	}
-
-	if data.VerifyURL, err = urlConf.VerifyURL(user.GetVerificationToken()); err != nil {
+	var err error
+	if data.VerifyURL, err = h.EmailURL.VerifyURL(user.GetVerificationToken()); err != nil {
 		return err
 	}
 

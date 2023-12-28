@@ -7,7 +7,6 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/emails"
-	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 // Handler contains configuration options for handlers
@@ -24,17 +23,12 @@ type Handler struct {
 	ReadyChecks Checks
 	// JWTKeys contains the set of valid JWT authentication key
 	JWTKeys jwk.Set
-
 	// SendGridConfig containing the email configuration
 	SendGridConfig *emails.Config
-
+	// emailManager to handle sending emails
 	emailManager *emails.EmailManager
-
+	// EmailURL contains the urls used within emails
 	EmailURL URLConfig
-
-	EmailManager *emails.EmailManager
-
-	tasks *marionette.TaskManager //nolint:unused
 }
 
 type Response struct {

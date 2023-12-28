@@ -37,6 +37,18 @@ var (
 	// ErrNotFound is returned when the requested object is not found
 	ErrNotFound = errors.New("object not found in the database")
 
+	// ErrMissingField is returned when a field is missing duh
+	ErrMissingField = errors.New("missing required field")
+
+	// ErrInvalidCredentials is returned when the password is invalid or missing
+	ErrInvalidCredentials = errors.New("datum credentials are missing or invalid")
+
+	// ErrUnverifiedUser is returned when email_verified on the user is false
+	ErrUnverifiedUser = errors.New("user is not verified")
+
+	// ErrNoAuthUser is returned when the user couldn't be identified by the request
+	ErrNoAuthUser = errors.New("could not identify authenticated user in request")
+
 	unsuccessful = echo.HTTPError{}
 )
 

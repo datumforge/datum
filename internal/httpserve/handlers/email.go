@@ -3,24 +3,25 @@ package handlers
 import (
 	"net/url"
 
-	"github.com/mcuadros/go-defaults"
+	"github.com/kelseyhightower/envconfig"
 
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
-func (h *Handler) SendVerificationEmail(user *User) (err error) {
+func (h *Handler) SendVerificationEmail(user *User) error {
 	// TODO: go back and configure with viper config instead of setting defaults
 	conf := &emails.Config{}
-	defaults.SetDefaults(conf)
 
-	em, err := emails.New(*conf)
+	err := envconfig.Process("datum", conf)
 	if err != nil {
 		return err
 	}
 
-	// add email manager to config
-	h.sendgrid = em
+	h.sendgrid, err = emails.New(*conf)
+	if err != nil {
+		return err
+	}
 
 	contact := &sendgrid.Contact{
 		Email:     user.Email,
@@ -47,7 +48,9 @@ func (h *Handler) SendVerificationEmail(user *User) (err error) {
 
 	// TODO: go back and configure with viper config instead of setting defaults
 	urlConf := &URLConfig{}
-	defaults.SetDefaults(urlConf)
+	if err := envconfig.Process("datum", urlConf); err != nil {
+		return nil
+	}
 
 	if data.VerifyURL, err = urlConf.VerifyURL(user.GetVerificationToken()); err != nil {
 		return err
@@ -59,7 +62,7 @@ func (h *Handler) SendVerificationEmail(user *User) (err error) {
 	}
 
 	// Send the email
-	return em.Send(msg)
+	return h.sendgrid.Send(msg)
 }
 
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
@@ -107,7 +110,8 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 	return h.sendgrid.Send(msg)
 }
 
-// URLConfig is there a better way to do this?
+// URLConfig for the datum registration
+// TODO: move this to the same config setup as everything else
 type URLConfig struct {
 	Base   string `split_words:"true" default:"https://app.datum.net"`
 	Verify string `split_words:"true" default:"/verify"`

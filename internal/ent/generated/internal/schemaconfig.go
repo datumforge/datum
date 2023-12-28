@@ -11,13 +11,17 @@ type SchemaConfig struct {
 	Entitlement            string // Entitlement table.
 	Group                  string // Group table.
 	GroupUsers             string // Group-users->User table.
+	GroupMembership        string // GroupMembership table.
 	GroupSetting           string // GroupSetting table.
 	Integration            string // Integration table.
 	OauthProvider          string // OauthProvider table.
 	OhAuthTooToken         string // OhAuthTooToken table.
 	Organization           string // Organization table.
 	OrganizationSetting    string // OrganizationSetting table.
+	Permission             string // Permission table.
 	PersonalAccessToken    string // PersonalAccessToken table.
+	Role                   string // Role table.
+	RolePermissions        string // Role-permissions->Permission table.
 	Session                string // Session table.
 	User                   string // User table.
 	UserOrganizations      string // User-organizations->Organization table.

@@ -15,6 +15,9 @@ type Entitlement func(*sql.Selector)
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 
+// GroupMembership is the predicate function for groupmembership builders.
+type GroupMembership func(*sql.Selector)
+
 // GroupSetting is the predicate function for groupsetting builders.
 type GroupSetting func(*sql.Selector)
 
@@ -33,8 +36,14 @@ type Organization func(*sql.Selector)
 // OrganizationSetting is the predicate function for organizationsetting builders.
 type OrganizationSetting func(*sql.Selector)
 
+// Permission is the predicate function for permission builders.
+type Permission func(*sql.Selector)
+
 // PersonalAccessToken is the predicate function for personalaccesstoken builders.
 type PersonalAccessToken func(*sql.Selector)
+
+// Role is the predicate function for role builders.
+type Role func(*sql.Selector)
 
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)

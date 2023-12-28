@@ -25,6 +25,7 @@ func (Role) Fields() []ent.Field {
 func (Role) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("users", User.Type).StorageKey(edge.Column("role_id")),
+		edge.To("group_roles", GroupMembership.Type).StorageKey(edge.Column("role_id")),
 		edge.To("permissions", Permission.Type).
 			StorageKey(
 				edge.Table("role_permission"),

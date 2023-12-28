@@ -3,3 +3,6 @@ errors.go
 audit_mixin.go
 mixin.go
 emailverificationtoken.go
+permission.go
+role.go
+groupmembership.go

@@ -17,7 +17,7 @@ type GroupMembership struct {
 
 func (GroupMembership) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("role").GoType(enums.RoleMember),
+		field.Enum("group_role").GoType(enums.RoleMember),
 	}
 }
 
@@ -31,6 +31,7 @@ func (GroupMembership) Edges() []ent.Edge {
 			Ref("group_memberships").
 			Required().
 			Unique(),
+		edge.From("role", Role.Type).Ref("group_roles").Unique(),
 	}
 }
 

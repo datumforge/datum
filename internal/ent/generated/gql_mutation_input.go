@@ -158,6 +158,7 @@ type CreateGroupInput struct {
 	SettingID       string
 	UserIDs         []string
 	OwnerID         string
+	MemberIDs       []string
 }
 
 // Mutate applies the CreateGroupInput on the GroupMutation builder.
@@ -192,6 +193,9 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 		m.AddUserIDs(v...)
 	}
 	m.SetOwnerID(i.OwnerID)
+	if v := i.MemberIDs; len(v) > 0 {
+		m.AddMemberIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateGroupInput on the GroupCreate builder.
@@ -218,6 +222,9 @@ type UpdateGroupInput struct {
 	AddUserIDs           []string
 	RemoveUserIDs        []string
 	OwnerID              *string
+	ClearMembers         bool
+	AddMemberIDs         []string
+	RemoveMemberIDs      []string
 }
 
 // Mutate applies the UpdateGroupInput on the GroupMutation builder.
@@ -269,6 +276,15 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
+	}
+	if i.ClearMembers {
+		m.ClearMembers()
+	}
+	if v := i.AddMemberIDs; len(v) > 0 {
+		m.AddMemberIDs(v...)
+	}
+	if v := i.RemoveMemberIDs; len(v) > 0 {
+		m.RemoveMemberIDs(v...)
 	}
 }
 
@@ -1395,10 +1411,12 @@ type CreateUserInput struct {
 	Oauth                     *bool
 	OrganizationIDs           []string
 	SessionIDs                []string
-	GroupIDs                  []string
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
+	RoleID                    *string
+	GroupIDs                  []string
+	GroupMembershipIDs        []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1448,15 +1466,21 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.SessionIDs; len(v) > 0 {
 		m.AddSessionIDs(v...)
 	}
-	if v := i.GroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
-	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
 		m.AddEmailVerificationTokenIDs(v...)
+	}
+	if v := i.RoleID; v != nil {
+		m.SetRoleID(*v)
+	}
+	if v := i.GroupIDs; len(v) > 0 {
+		m.AddGroupIDs(v...)
+	}
+	if v := i.GroupMembershipIDs; len(v) > 0 {
+		m.AddGroupMembershipIDs(v...)
 	}
 }
 
@@ -1494,9 +1518,6 @@ type UpdateUserInput struct {
 	ClearSessions                   bool
 	AddSessionIDs                   []string
 	RemoveSessionIDs                []string
-	ClearGroups                     bool
-	AddGroupIDs                     []string
-	RemoveGroupIDs                  []string
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
@@ -1504,6 +1525,11 @@ type UpdateUserInput struct {
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
 	RemoveEmailVerificationTokenIDs []string
+	ClearRole                       bool
+	RoleID                          *string
+	ClearGroups                     bool
+	AddGroupIDs                     []string
+	RemoveGroupIDs                  []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1586,15 +1612,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.RemoveSessionIDs; len(v) > 0 {
 		m.RemoveSessionIDs(v...)
 	}
-	if i.ClearGroups {
-		m.ClearGroups()
-	}
-	if v := i.AddGroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
-	}
-	if v := i.RemoveGroupIDs; len(v) > 0 {
-		m.RemoveGroupIDs(v...)
-	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()
 	}
@@ -1615,6 +1632,21 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveEmailVerificationTokenIDs; len(v) > 0 {
 		m.RemoveEmailVerificationTokenIDs(v...)
+	}
+	if i.ClearRole {
+		m.ClearRole()
+	}
+	if v := i.RoleID; v != nil {
+		m.SetRoleID(*v)
+	}
+	if i.ClearGroups {
+		m.ClearGroups()
+	}
+	if v := i.AddGroupIDs; len(v) > 0 {
+		m.AddGroupIDs(v...)
+	}
+	if v := i.RemoveGroupIDs; len(v) > 0 {
+		m.RemoveGroupIDs(v...)
 	}
 }
 

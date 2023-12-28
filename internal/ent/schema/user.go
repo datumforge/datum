@@ -128,8 +128,8 @@ func (User) Edges() []ent.Edge {
 		edge.To("organizations", Organization.Type),
 		edge.To("sessions", Session.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
-		edge.To("groups", Group.Type).
-			StorageKey(edge.Table("user_groups"), edge.Columns("user_id", "group_id")),
+		//		edge.To("groups", Group.Type).
+		//			StorageKey(edge.Table("user_groups"), edge.Columns("user_id", "group_id")),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("setting", UserSetting.Type).
@@ -139,6 +139,11 @@ func (User) Edges() []ent.Edge {
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.From("role", Role.Type).Ref("users").Unique(),
+		edge.From("groups", Group.Type).
+			Ref("users"),
+		edge.To("group_memberships", GroupMembership.Type).Annotations(
+			entgql.Skip(entgql.SkipMutationUpdateInput),
+		),
 	}
 }
 

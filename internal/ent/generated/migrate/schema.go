@@ -119,6 +119,44 @@ var (
 			},
 		},
 	}
+	// GroupMembershipsColumns holds the columns for the "group_memberships" table.
+	GroupMembershipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "group_role", Type: field.TypeEnum, Enums: []string{"OWNER", "ADMIN", "MEMBER"}},
+		{Name: "group_members", Type: field.TypeString},
+		{Name: "role_id", Type: field.TypeString, Nullable: true},
+		{Name: "user_group_memberships", Type: field.TypeString},
+	}
+	// GroupMembershipsTable holds the schema information for the "group_memberships" table.
+	GroupMembershipsTable = &schema.Table{
+		Name:       "group_memberships",
+		Columns:    GroupMembershipsColumns,
+		PrimaryKey: []*schema.Column{GroupMembershipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_memberships_groups_members",
+				Columns:    []*schema.Column{GroupMembershipsColumns[6]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "group_memberships_roles_group_roles",
+				Columns:    []*schema.Column{GroupMembershipsColumns[7]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "group_memberships_users_group_memberships",
+				Columns:    []*schema.Column{GroupMembershipsColumns[8]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// GroupSettingsColumns holds the columns for the "group_settings" table.
 	GroupSettingsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -308,6 +346,21 @@ var (
 			},
 		},
 	}
+	// PermissionsColumns holds the columns for the "permissions" table.
+	PermissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "permission", Type: field.TypeString, Size: 1000},
+	}
+	// PermissionsTable holds the schema information for the "permissions" table.
+	PermissionsTable = &schema.Table{
+		Name:       "permissions",
+		Columns:    PermissionsColumns,
+		PrimaryKey: []*schema.Column{PermissionsColumns[0]},
+	}
 	// PersonalAccessTokensColumns holds the columns for the "personal_access_tokens" table.
 	PersonalAccessTokensColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString},
@@ -343,6 +396,21 @@ var (
 				Columns: []*schema.Column{PersonalAccessTokensColumns[6]},
 			},
 		},
+	}
+	// RolesColumns holds the columns for the "roles" table.
+	RolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeEnum, Enums: []string{"OWNER", "ADMIN", "MEMBER"}},
+	}
+	// RolesTable holds the schema information for the "roles" table.
+	RolesTable = &schema.Table{
+		Name:       "roles",
+		Columns:    RolesColumns,
+		PrimaryKey: []*schema.Column{RolesColumns[0]},
 	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
@@ -398,12 +466,21 @@ var (
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "sub", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "oauth", Type: field.TypeBool, Default: false},
+		{Name: "role_id", Type: field.TypeString, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "users_roles_users",
+				Columns:    []*schema.Column{UsersColumns[18]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "user_id",
@@ -471,6 +548,31 @@ var (
 			},
 		},
 	}
+	// RolePermissionColumns holds the columns for the "role_permission" table.
+	RolePermissionColumns = []*schema.Column{
+		{Name: "role_id", Type: field.TypeString},
+		{Name: "permission_id", Type: field.TypeString},
+	}
+	// RolePermissionTable holds the schema information for the "role_permission" table.
+	RolePermissionTable = &schema.Table{
+		Name:       "role_permission",
+		Columns:    RolePermissionColumns,
+		PrimaryKey: []*schema.Column{RolePermissionColumns[0], RolePermissionColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "role_permission_role_id",
+				Columns:    []*schema.Column{RolePermissionColumns[0]},
+				RefColumns: []*schema.Column{RolesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "role_permission_permission_id",
+				Columns:    []*schema.Column{RolePermissionColumns[1]},
+				RefColumns: []*schema.Column{PermissionsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// UserOrganizationsColumns holds the columns for the "user_organizations" table.
 	UserOrganizationsColumns = []*schema.Column{
 		{Name: "user_id", Type: field.TypeString},
@@ -501,17 +603,21 @@ var (
 		EmailVerificationTokensTable,
 		EntitlementsTable,
 		GroupsTable,
+		GroupMembershipsTable,
 		GroupSettingsTable,
 		IntegrationsTable,
 		OauthProvidersTable,
 		OhAuthTooTokensTable,
 		OrganizationsTable,
 		OrganizationSettingsTable,
+		PermissionsTable,
 		PersonalAccessTokensTable,
+		RolesTable,
 		SessionsTable,
 		UsersTable,
 		UserSettingsTable,
 		GroupUsersTable,
+		RolePermissionTable,
 		UserOrganizationsTable,
 	}
 )
@@ -520,6 +626,9 @@ func init() {
 	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	GroupMembershipsTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupMembershipsTable.ForeignKeys[1].RefTable = RolesTable
+	GroupMembershipsTable.ForeignKeys[2].RefTable = UsersTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
@@ -527,9 +636,12 @@ func init() {
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
+	UsersTable.ForeignKeys[0].RefTable = RolesTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
+	RolePermissionTable.ForeignKeys[0].RefTable = RolesTable
+	RolePermissionTable.ForeignKeys[1].RefTable = PermissionsTable
 	UserOrganizationsTable.ForeignKeys[0].RefTable = UsersTable
 	UserOrganizationsTable.ForeignKeys[1].RefTable = OrganizationsTable
 }

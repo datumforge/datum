@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mattn/go-sqlite3"
+	"github.com/datumforge/datum/internal/ent/generated"
 )
 
 var (
@@ -54,39 +54,49 @@ func (e *ValidationError) Unwrap() error {
 	return e.err
 }
 
-// ConstraintError attempts to parse a sqlite3.ErrConstraint error into a model error.
-type ConstraintError struct {
-	err   error
-	dberr sqlite3.Error
+// IsConstraintError returns true if the error resulted from a database constraint violation.
+func IsConstraintError(err error) bool {
+	var e *generated.ConstraintError
+	return errors.As(err, &e) || IsUniqueConstraintError(err) || IsForeignKeyConstraintError(err)
 }
 
-func newConstraintError(dberr sqlite3.Error) *ConstraintError {
-	errs := dberr.Error()
-
-	switch {
-	case strings.HasPrefix(errs, "UNIQUE"):
-		return &ConstraintError{err: ErrDuplicate, dberr: dberr}
-	case strings.HasPrefix(errs, "FOREIGN KEY"):
-		return &ConstraintError{err: ErrMissingRelation, dberr: dberr}
-	case strings.HasPrefix(errs, "NOT NULL"):
-		return &ConstraintError{err: ErrNotNull, dberr: dberr}
-	default:
-		return &ConstraintError{err: ErrConstraint, dberr: dberr}
-	}
-}
-
-func (e *ConstraintError) Error() string {
-	if e.dberr.Code == sqlite3.ErrConstraint {
-		return e.err.Error()
+// IsUniqueConstraintError reports if the error resulted from a DB uniqueness constraint violation.
+// e.g. duplicate value in unique index.
+func IsUniqueConstraintError(err error) bool {
+	if err == nil {
+		return false
 	}
 
-	return e.dberr.Error()
+	for _, s := range []string{
+		"Error 1062",                 // MySQL
+		"violates unique constraint", // Postgres
+		"UNIQUE constraint failed",   // SQLite
+	} {
+		if strings.Contains(err.Error(), s) {
+			return true
+		}
+	}
+
+	return false
 }
 
-func (e *ConstraintError) Is(target error) bool {
-	return errors.Is(e.err, target)
-}
+// IsForeignKeyConstraintError reports if the error resulted from a database foreign-key constraint violation.
+// e.g. parent row does not exist.
+func IsForeignKeyConstraintError(err error) bool {
+	if err == nil {
+		return false
+	}
 
-func (e *ConstraintError) Unwrap() error {
-	return e.err
+	for _, s := range []string{
+		"Error 1451",                      // MySQL (Cannot delete or update a parent row).
+		"Error 1452",                      // MySQL (Cannot add or update a child row).
+		"violates foreign key constraint", // Postgres
+		"FOREIGN KEY constraint failed",   // SQLite
+	} {
+		if strings.Contains(err.Error(), s) {
+			return true
+		}
+	}
+
+	return false
 }

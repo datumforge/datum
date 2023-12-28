@@ -8,7 +8,6 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
-	"github.com/mattn/go-sqlite3"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -68,14 +67,8 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 			return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 		}
 
-		if generated.IsConstraintError(err) {
-			// TODO: this locks us in more closely to sqlite, should consider parsing the full error instead
-			sqliteErr, ok := err.(sqlite3.Error)
-			if ok {
-				return newConstraintError(sqliteErr)
-			}
-
-			return ctx.JSON(http.StatusBadRequest, err)
+		if IsUniqueConstraintError(err) {
+			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse("user already exists"))
 		}
 
 		return err

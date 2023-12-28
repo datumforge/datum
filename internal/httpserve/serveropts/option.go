@@ -313,7 +313,7 @@ func WithEmailManager() ServerOption {
 	})
 }
 
-// WithTaskManager ...
+// WithTaskManager sets up the default Marionette task manager to be used for delegating background tasks
 func WithTaskManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Start task manager

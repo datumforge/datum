@@ -107,11 +107,16 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
-	if err = tx.Commit(); err != nil {
+	if err = h.SendVerificationEmail(user); err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+
 		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 	}
 
-	if err = h.SendVerificationEmail(user); err != nil {
+	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
+	if err = tx.Commit(); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 	}
 

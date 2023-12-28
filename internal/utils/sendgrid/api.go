@@ -37,9 +37,11 @@ func AddContacts(apiKey string, data *AddContactData) error {
 	req.Method = http.MethodPut
 	req.Body = buf.Bytes()
 
-	_, err := doRequest(req)
+	if _, err := doRequest(req); err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 // MarketingLists fetches lists of contacts from SendGrid
@@ -70,7 +72,6 @@ func FieldDefinitions(apiKey string) (string, error) {
 // doRequest is a helper to perform a SendGrid request, handling errors and returning the response body
 func doRequest(req rest.Request) (_ string, err error) {
 	rep, err := sendgrid.MakeRequest(req)
-
 	if err != nil {
 		return "", auth.ErrorResponse(err)
 	}

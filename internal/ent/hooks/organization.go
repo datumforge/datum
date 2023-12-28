@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"entgo.io/ent"
+	ofgaclient "github.com/openfga/go-sdk/client"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
@@ -85,26 +86,20 @@ func HookOrganizationAuthz() ent.Hook {
 func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutation) error {
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {
-		objID, exists := m.ID()
-		objType := strings.ToLower(m.Type())
-		object := fmt.Sprintf("%s:%s", objType, objID)
+		tuples, err := getOrganizationTuples(ctx, m)
+		if err != nil {
+			return err
+		}
 
-		m.Logger.Infow("creating relationship tuples", "relation", fga.OwnerRelation, "object", object)
-
-		if exists {
-			tuples, err := createTuple(ctx, &m.Authz, fga.OwnerRelation, object)
-			if err != nil {
-				return err
-			}
-
+		if len(tuples) > 0 {
 			if _, err := m.Authz.CreateRelationshipTuple(ctx, tuples); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 				return ErrInternalServerError
 			}
-		}
 
-		m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", object)
+			m.Logger.Infow("created relationship tuples", "relation", fga.OwnerRelation, "object", tuples[0].Object)
+		}
 	}
 
 	return nil
@@ -132,6 +127,37 @@ func organizationDeleteHook(ctx context.Context, m *generated.OrganizationMutati
 	}
 
 	return nil
+}
+
+func getOrganizationTuples(ctx context.Context, m *generated.OrganizationMutation) (tuples []ofgaclient.ClientTupleKey, err error) {
+	objID, exists := m.ID()
+	objType := strings.ToLower(m.Type())
+	object := fmt.Sprintf("%s:%s", objType, objID)
+
+	m.Logger.Infow("creating relationship tuples", "relation", fga.OwnerRelation, "object", object)
+
+	if exists {
+		// personal orgs should be owned by the user, and won't yet have data in the claims
+		if personalOrg, _ := m.PersonalOrg(); personalOrg {
+			users := m.UsersIDs()
+			if len(users) == 0 {
+				return tuples, ErrPersonalOrgsNoUser
+			}
+
+			tuples = []ofgaclient.ClientTupleKey{{
+				User:     fmt.Sprintf("user:%s", users[0]),
+				Relation: fga.OwnerRelation,
+				Object:   object,
+			}}
+		} else {
+			tuples, err = createTupleFromUserContext(ctx, &m.Authz, fga.OwnerRelation, object)
+			if err != nil {
+				return tuples, err
+			}
+		}
+	}
+
+	return
 }
 
 // defaultOrganizationSettings creates the default organizations settings for a new org

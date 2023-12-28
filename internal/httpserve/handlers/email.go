@@ -9,20 +9,25 @@ import (
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
 
-func (h *Handler) SendVerificationEmail(user *User) error {
+// NewEmailManager is responsible for initializing and configuring the email manager used for sending emails
+func (h *Handler) NewEmailManager() error {
 	// TODO: go back and configure with viper config instead of setting defaults
-	conf := &emails.Config{}
+	h.SendGridConfig = &emails.Config{}
 
-	err := envconfig.Process("datum", conf)
+	err := envconfig.Process("datum", h.SendGridConfig)
 	if err != nil {
 		return err
 	}
 
-	h.sendgrid, err = emails.New(*conf)
+	h.emailManager, err = emails.New(h.SendGridConfig)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (h *Handler) SendVerificationEmail(user *User) error {
 	contact := &sendgrid.Contact{
 		Email:     user.Email,
 		FirstName: user.FirstName,
@@ -36,7 +41,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 
 	data := emails.VerifyEmailData{
 		EmailData: emails.EmailData{
-			Sender: conf.MustFromContact(),
+			Sender: h.SendGridConfig.MustFromContact(),
 			Recipient: sendgrid.Contact{
 				Email:     user.Email,
 				FirstName: user.FirstName,
@@ -47,7 +52,11 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 	}
 
 	// TODO: go back and configure with viper config instead of setting defaults
-	urlConf := &URLConfig{}
+	var (
+		err     error
+		urlConf URLConfig
+	)
+
 	if err := envconfig.Process("datum", urlConf); err != nil {
 		return nil
 	}
@@ -62,14 +71,14 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 	}
 
 	// Send the email
-	return h.sendgrid.Send(msg)
+	return h.emailManager.Send(msg)
 }
 
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
 func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data := emails.ResetRequestData{
 		EmailData: emails.EmailData{
-			Sender: h.SendGrid.MustFromContact(),
+			Sender: h.SendGridConfig.MustFromContact(),
 			Recipient: sendgrid.Contact{
 				Email: user.Email,
 			},
@@ -88,13 +97,13 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	}
 
 	// Send the email
-	return h.sendgrid.Send(msg)
+	return h.emailManager.Send(msg)
 }
 
 // SendPasswordResetSuccessEmail Send an email to a user to inform them that their password has been reset
 func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 	data := emails.EmailData{
-		Sender: h.SendGrid.MustFromContact(),
+		Sender: h.SendGridConfig.MustFromContact(),
 		Recipient: sendgrid.Contact{
 			Email: user.Email,
 		},
@@ -107,7 +116,7 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 	}
 
 	// Send the email
-	return h.sendgrid.Send(msg)
+	return h.emailManager.Send(msg)
 }
 
 // URLConfig for the datum registration
@@ -177,7 +186,7 @@ func (c URLConfig) ResetURL(token string) (string, error) {
 }
 
 func (h *Handler) createSendGridContact(contact *sendgrid.Contact) error { //nolint:unused
-	if err := h.sendgrid.AddContact(contact); err != nil {
+	if err := h.emailManager.AddContact(contact); err != nil {
 		h.Logger.Errorw("unable to add contact to sendgrid", "error", err)
 		return err
 	}

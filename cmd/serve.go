@@ -78,6 +78,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithSQLiteDB(settings),
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
+		serveropts.WithEmailManager(),
 	)
 
 	// Create keys for development

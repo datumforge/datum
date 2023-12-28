@@ -25,10 +25,10 @@ type Handler struct {
 	// JWTKeys contains the set of valid JWT authentication key
 	JWTKeys jwk.Set
 
-	// not sure why this import is being weird?
-	SendGrid emails.Config `split_words:"false"`
+	// SendGridConfig containing the email configuration
+	SendGridConfig *emails.Config
 
-	sendgrid *emails.EmailManager
+	emailManager *emails.EmailManager
 
 	EmailURL URLConfig
 

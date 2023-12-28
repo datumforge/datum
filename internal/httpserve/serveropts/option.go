@@ -301,3 +301,13 @@ func WithMiddleware(mw []echo.MiddlewareFunc) ServerOption {
 		s.Config.Server.Middleware = append(s.Config.Server.Middleware, mw...)
 	})
 }
+
+// WithEmailManager sets up the default SendGrid email manager to be used to send emails to users
+// on registration, password reset, etc
+func WithEmailManager() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		if err := s.Config.Server.Handler.NewEmailManager(); err != nil {
+			s.Config.Logger.Panicw("unable to create email manager", "error", err.Error())
+		}
+	})
+}

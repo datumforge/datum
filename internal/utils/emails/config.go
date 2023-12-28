@@ -36,7 +36,7 @@ const (
 )
 
 // Validate the from and admin emails are present if the SendGrid API is enabled
-func (c Config) Validate() (err error) {
+func (c *Config) Validate() (err error) {
 	if c.Enabled() {
 		if c.AdminEmail == "" || c.FromEmail == "" {
 			return ErrBothAdminAndFromRequired
@@ -59,12 +59,12 @@ func (c Config) Validate() (err error) {
 }
 
 // Enabled returns true if there is a SendGrid API key available
-func (c Config) Enabled() bool {
+func (c *Config) Enabled() bool {
 	return c.APIKey != ""
 }
 
 // FromContact parses the FromEmail and returns a sendgrid contact
-func (c Config) FromContact() (sendgrid.Contact, error) {
+func (c *Config) FromContact() (sendgrid.Contact, error) {
 	return parseEmail(c.FromEmail)
 }
 
@@ -75,7 +75,7 @@ func (c Config) AdminContact() (sendgrid.Contact, error) {
 
 // MustFromContact function is a helper function that returns the
 // `sendgrid.Contact` for the `FromEmail` field in the `Config` struct
-func (c Config) MustFromContact() sendgrid.Contact {
+func (c *Config) MustFromContact() sendgrid.Contact {
 	contact, err := c.FromContact()
 	if err != nil {
 		panic(err)
@@ -89,7 +89,7 @@ func (c Config) MustFromContact() sendgrid.Contact {
 // `AdminContact` function to parse the `AdminEmail` and return a `sendgrid.Contact`. If there is an
 // error parsing the email, it will panic and throw an error. Otherwise, it will return the parsed
 // `sendgrid.Contact`
-func (c Config) MustAdminContact() sendgrid.Contact {
+func (c *Config) MustAdminContact() sendgrid.Contact {
 	contact, err := c.AdminContact()
 	if err != nil {
 		panic(err)

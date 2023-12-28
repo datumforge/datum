@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -220,6 +221,21 @@ func (gc *GroupCreate) SetOwner(o *Organization) *GroupCreate {
 	return gc.SetOwnerID(o.ID)
 }
 
+// AddJoinedUserIDs adds the "joined_users" edge to the GroupMembership entity by IDs.
+func (gc *GroupCreate) AddJoinedUserIDs(ids ...string) *GroupCreate {
+	gc.mutation.AddJoinedUserIDs(ids...)
+	return gc
+}
+
+// AddJoinedUsers adds the "joined_users" edges to the GroupMembership entity.
+func (gc *GroupCreate) AddJoinedUsers(g ...*GroupMembership) *GroupCreate {
+	ids := make([]string, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return gc.AddJoinedUserIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (gc *GroupCreate) Mutation() *GroupMutation {
 	return gc.mutation
@@ -415,7 +431,7 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if nodes := gc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -423,9 +439,16 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = gc.schemaConfig.GroupUsers
+		edge.Schema = gc.schemaConfig.GroupMembership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &GroupMembershipCreate{config: gc.config, mutation: newGroupMembershipMutation(gc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
@@ -445,6 +468,23 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.organization_groups = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.JoinedUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   group.JoinedUsersTable,
+			Columns: []string{group.JoinedUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(groupmembership.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gc.schemaConfig.GroupMembership
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

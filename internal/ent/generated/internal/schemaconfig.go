@@ -10,7 +10,7 @@ type SchemaConfig struct {
 	EmailVerificationToken string // EmailVerificationToken table.
 	Entitlement            string // Entitlement table.
 	Group                  string // Group table.
-	GroupUsers             string // Group-users->User table.
+	GroupMembership        string // GroupMembership table.
 	GroupSetting           string // GroupSetting table.
 	Integration            string // Integration table.
 	OauthProvider          string // OauthProvider table.
@@ -18,6 +18,8 @@ type SchemaConfig struct {
 	Organization           string // Organization table.
 	OrganizationSetting    string // OrganizationSetting table.
 	PersonalAccessToken    string // PersonalAccessToken table.
+	Role                   string // Role table.
+	RoleUser               string // RoleUser table.
 	Session                string // Session table.
 	User                   string // User table.
 	UserOrganizations      string // User-organizations->Organization table.

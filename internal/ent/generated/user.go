@@ -66,23 +66,32 @@ type UserEdges struct {
 	Sessions []*Session `json:"sessions,omitempty"`
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
+	// Roles holds the value of the roles edge.
+	Roles []*Role `json:"roles,omitempty"`
 	// PersonalAccessTokens holds the value of the personal_access_tokens edge.
 	PersonalAccessTokens []*PersonalAccessToken `json:"personal_access_tokens,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
 	EmailVerificationTokens []*EmailVerificationToken `json:"email_verification_tokens,omitempty"`
+	// JoinedGroups holds the value of the joined_groups edge.
+	JoinedGroups []*GroupMembership `json:"joined_groups,omitempty"`
+	// RolesUsers holds the value of the roles_users edge.
+	RolesUsers []*RoleUser `json:"roles_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
-	totalCount [5]map[string]int
+	totalCount [7]map[string]int
 
 	namedOrganizations           map[string][]*Organization
 	namedSessions                map[string][]*Session
 	namedGroups                  map[string][]*Group
+	namedRoles                   map[string][]*Role
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
+	namedJoinedGroups            map[string][]*GroupMembership
+	namedRolesUsers              map[string][]*RoleUser
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -112,10 +121,19 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 	return nil, &NotLoadedError{edge: "groups"}
 }
 
+// RolesOrErr returns the Roles value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RolesOrErr() ([]*Role, error) {
+	if e.loadedTypes[3] {
+		return e.Roles, nil
+	}
+	return nil, &NotLoadedError{edge: "roles"}
+}
+
 // PersonalAccessTokensOrErr returns the PersonalAccessTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[4] {
 		return e.PersonalAccessTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "personal_access_tokens"}
@@ -124,7 +142,7 @@ func (e UserEdges) PersonalAccessTokensOrErr() ([]*PersonalAccessToken, error) {
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e UserEdges) SettingOrErr() (*UserSetting, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[5] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: usersetting.Label}
@@ -137,10 +155,28 @@ func (e UserEdges) SettingOrErr() (*UserSetting, error) {
 // EmailVerificationTokensOrErr returns the EmailVerificationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[6] {
 		return e.EmailVerificationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "email_verification_tokens"}
+}
+
+// JoinedGroupsOrErr returns the JoinedGroups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) JoinedGroupsOrErr() ([]*GroupMembership, error) {
+	if e.loadedTypes[7] {
+		return e.JoinedGroups, nil
+	}
+	return nil, &NotLoadedError{edge: "joined_groups"}
+}
+
+// RolesUsersOrErr returns the RolesUsers value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) RolesUsersOrErr() ([]*RoleUser, error) {
+	if e.loadedTypes[8] {
+		return e.RolesUsers, nil
+	}
+	return nil, &NotLoadedError{edge: "roles_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -310,6 +346,11 @@ func (u *User) QueryGroups() *GroupQuery {
 	return NewUserClient(u.config).QueryGroups(u)
 }
 
+// QueryRoles queries the "roles" edge of the User entity.
+func (u *User) QueryRoles() *RoleQuery {
+	return NewUserClient(u.config).QueryRoles(u)
+}
+
 // QueryPersonalAccessTokens queries the "personal_access_tokens" edge of the User entity.
 func (u *User) QueryPersonalAccessTokens() *PersonalAccessTokenQuery {
 	return NewUserClient(u.config).QueryPersonalAccessTokens(u)
@@ -323,6 +364,16 @@ func (u *User) QuerySetting() *UserSettingQuery {
 // QueryEmailVerificationTokens queries the "email_verification_tokens" edge of the User entity.
 func (u *User) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
 	return NewUserClient(u.config).QueryEmailVerificationTokens(u)
+}
+
+// QueryJoinedGroups queries the "joined_groups" edge of the User entity.
+func (u *User) QueryJoinedGroups() *GroupMembershipQuery {
+	return NewUserClient(u.config).QueryJoinedGroups(u)
+}
+
+// QueryRolesUsers queries the "roles_users" edge of the User entity.
+func (u *User) QueryRolesUsers() *RoleUserQuery {
+	return NewUserClient(u.config).QueryRolesUsers(u)
 }
 
 // Update returns a builder for updating this User.
@@ -484,6 +535,30 @@ func (u *User) appendNamedGroups(name string, edges ...*Group) {
 	}
 }
 
+// NamedRoles returns the Roles named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedRoles(name string) ([]*Role, error) {
+	if u.Edges.namedRoles == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedRoles[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedRoles(name string, edges ...*Role) {
+	if u.Edges.namedRoles == nil {
+		u.Edges.namedRoles = make(map[string][]*Role)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedRoles[name] = []*Role{}
+	} else {
+		u.Edges.namedRoles[name] = append(u.Edges.namedRoles[name], edges...)
+	}
+}
+
 // NamedPersonalAccessTokens returns the PersonalAccessTokens named value or an error if the edge was not
 // loaded in eager-loading with this name.
 func (u *User) NamedPersonalAccessTokens(name string) ([]*PersonalAccessToken, error) {
@@ -529,6 +604,54 @@ func (u *User) appendNamedEmailVerificationTokens(name string, edges ...*EmailVe
 		u.Edges.namedEmailVerificationTokens[name] = []*EmailVerificationToken{}
 	} else {
 		u.Edges.namedEmailVerificationTokens[name] = append(u.Edges.namedEmailVerificationTokens[name], edges...)
+	}
+}
+
+// NamedJoinedGroups returns the JoinedGroups named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedJoinedGroups(name string) ([]*GroupMembership, error) {
+	if u.Edges.namedJoinedGroups == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedJoinedGroups[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedJoinedGroups(name string, edges ...*GroupMembership) {
+	if u.Edges.namedJoinedGroups == nil {
+		u.Edges.namedJoinedGroups = make(map[string][]*GroupMembership)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedJoinedGroups[name] = []*GroupMembership{}
+	} else {
+		u.Edges.namedJoinedGroups[name] = append(u.Edges.namedJoinedGroups[name], edges...)
+	}
+}
+
+// NamedRolesUsers returns the RolesUsers named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedRolesUsers(name string) ([]*RoleUser, error) {
+	if u.Edges.namedRolesUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedRolesUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedRolesUsers(name string, edges ...*RoleUser) {
+	if u.Edges.namedRolesUsers == nil {
+		u.Edges.namedRolesUsers = make(map[string][]*RoleUser)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedRolesUsers[name] = []*RoleUser{}
+	} else {
+		u.Edges.namedRolesUsers[name] = append(u.Edges.namedRolesUsers[name], edges...)
 	}
 }
 

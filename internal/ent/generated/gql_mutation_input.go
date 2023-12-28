@@ -284,6 +284,88 @@ func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
 	return c
 }
 
+// CreateGroupMembershipInput represents a mutation input for creating groupmemberships.
+type CreateGroupMembershipInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	CreatedBy *string
+	UpdatedBy *string
+	JoinedAt  *time.Time
+	UserID    string
+	GroupID   string
+}
+
+// Mutate applies the CreateGroupMembershipInput on the GroupMembershipMutation builder.
+func (i *CreateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.JoinedAt; v != nil {
+		m.SetJoinedAt(*v)
+	}
+	m.SetUserID(i.UserID)
+	m.SetGroupID(i.GroupID)
+}
+
+// SetInput applies the change-set in the CreateGroupMembershipInput on the GroupMembershipCreate builder.
+func (c *GroupMembershipCreate) SetInput(i CreateGroupMembershipInput) *GroupMembershipCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateGroupMembershipInput represents a mutation input for updating groupmemberships.
+type UpdateGroupMembershipInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	JoinedAt       *time.Time
+	UserID         *string
+	GroupID        *string
+}
+
+// Mutate applies the UpdateGroupMembershipInput on the GroupMembershipMutation builder.
+func (i *UpdateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.JoinedAt; v != nil {
+		m.SetJoinedAt(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdate builder.
+func (c *GroupMembershipUpdate) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdateOne builder.
+func (c *GroupMembershipUpdateOne) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateGroupSettingInput represents a mutation input for creating groupsettings.
 type CreateGroupSettingInput struct {
 	CreatedAt    *time.Time
@@ -1288,6 +1370,90 @@ func (c *PersonalAccessTokenUpdateOne) SetInput(i UpdatePersonalAccessTokenInput
 	return c
 }
 
+// CreateRoleInput represents a mutation input for creating roles.
+type CreateRoleInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	CreatedBy *string
+	UpdatedBy *string
+	Name      string
+	UserIDs   []string
+}
+
+// Mutate applies the CreateRoleInput on the RoleMutation builder.
+func (i *CreateRoleInput) Mutate(m *RoleMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	m.SetName(i.Name)
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateRoleInput on the RoleCreate builder.
+func (c *RoleCreate) SetInput(i CreateRoleInput) *RoleCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateRoleInput represents a mutation input for updating roles.
+type UpdateRoleInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Name           *string
+	ClearUser      bool
+	AddUserIDs     []string
+	RemoveUserIDs  []string
+}
+
+// Mutate applies the UpdateRoleInput on the RoleMutation builder.
+func (i *UpdateRoleInput) Mutate(m *RoleMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearUser {
+		m.ClearUser()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateRoleInput on the RoleUpdate builder.
+func (c *RoleUpdate) SetInput(i UpdateRoleInput) *RoleUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateRoleInput on the RoleUpdateOne builder.
+func (c *RoleUpdateOne) SetInput(i UpdateRoleInput) *RoleUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateSessionInput represents a mutation input for creating sessions.
 type CreateSessionInput struct {
 	CreatedAt      *time.Time
@@ -1396,6 +1562,7 @@ type CreateUserInput struct {
 	OrganizationIDs           []string
 	SessionIDs                []string
 	GroupIDs                  []string
+	RoleIDs                   []string
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
@@ -1451,6 +1618,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.GroupIDs; len(v) > 0 {
 		m.AddGroupIDs(v...)
 	}
+	if v := i.RoleIDs; len(v) > 0 {
+		m.AddRoleIDs(v...)
+	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
@@ -1497,6 +1667,9 @@ type UpdateUserInput struct {
 	ClearGroups                     bool
 	AddGroupIDs                     []string
 	RemoveGroupIDs                  []string
+	ClearRoles                      bool
+	AddRoleIDs                      []string
+	RemoveRoleIDs                   []string
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
@@ -1594,6 +1767,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveGroupIDs; len(v) > 0 {
 		m.RemoveGroupIDs(v...)
+	}
+	if i.ClearRoles {
+		m.ClearRoles()
+	}
+	if v := i.AddRoleIDs; len(v) > 0 {
+		m.AddRoleIDs(v...)
+	}
+	if v := i.RemoveRoleIDs; len(v) > 0 {
+		m.RemoveRoleIDs(v...)
 	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()

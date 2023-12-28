@@ -55,12 +55,18 @@ const (
 	EdgeSessions = "sessions"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
+	// EdgeRoles holds the string denoting the roles edge name in mutations.
+	EdgeRoles = "roles"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
 	EdgeSetting = "setting"
 	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
 	EdgeEmailVerificationTokens = "email_verification_tokens"
+	// EdgeJoinedGroups holds the string denoting the joined_groups edge name in mutations.
+	EdgeJoinedGroups = "joined_groups"
+	// EdgeRolesUsers holds the string denoting the roles_users edge name in mutations.
+	EdgeRolesUsers = "roles_users"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -76,10 +82,15 @@ const (
 	// SessionsColumn is the table column denoting the sessions relation/edge.
 	SessionsColumn = "user_id"
 	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
-	GroupsTable = "group_users"
+	GroupsTable = "group_memberships"
 	// GroupsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
+	// RolesTable is the table that holds the roles relation/edge. The primary key declared below.
+	RolesTable = "role_users"
+	// RolesInverseTable is the table name for the Role entity.
+	// It exists in this package in order to avoid circular dependency with the "role" package.
+	RolesInverseTable = "roles"
 	// PersonalAccessTokensTable is the table that holds the personal_access_tokens relation/edge.
 	PersonalAccessTokensTable = "personal_access_tokens"
 	// PersonalAccessTokensInverseTable is the table name for the PersonalAccessToken entity.
@@ -101,6 +112,20 @@ const (
 	EmailVerificationTokensInverseTable = "email_verification_tokens"
 	// EmailVerificationTokensColumn is the table column denoting the email_verification_tokens relation/edge.
 	EmailVerificationTokensColumn = "user_email_verification_tokens"
+	// JoinedGroupsTable is the table that holds the joined_groups relation/edge.
+	JoinedGroupsTable = "group_memberships"
+	// JoinedGroupsInverseTable is the table name for the GroupMembership entity.
+	// It exists in this package in order to avoid circular dependency with the "groupmembership" package.
+	JoinedGroupsInverseTable = "group_memberships"
+	// JoinedGroupsColumn is the table column denoting the joined_groups relation/edge.
+	JoinedGroupsColumn = "user_id"
+	// RolesUsersTable is the table that holds the roles_users relation/edge.
+	RolesUsersTable = "role_users"
+	// RolesUsersInverseTable is the table name for the RoleUser entity.
+	// It exists in this package in order to avoid circular dependency with the "roleuser" package.
+	RolesUsersInverseTable = "role_users"
+	// RolesUsersColumn is the table column denoting the roles_users relation/edge.
+	RolesUsersColumn = "user_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -131,7 +156,10 @@ var (
 	OrganizationsPrimaryKey = []string{"user_id", "organization_id"}
 	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
 	// primary key for the groups relation (M2M).
-	GroupsPrimaryKey = []string{"group_id", "user_id"}
+	GroupsPrimaryKey = []string{"user_id", "group_id"}
+	// RolesPrimaryKey and RolesColumn2 are the table columns denoting the
+	// primary key for the roles relation (M2M).
+	RolesPrimaryKey = []string{"user_id", "role_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -318,6 +346,20 @@ func ByGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
+// ByRolesCount orders the results by roles count.
+func ByRolesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRolesStep(), opts...)
+	}
+}
+
+// ByRoles orders the results by roles terms.
+func ByRoles(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRolesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
 func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -352,6 +394,34 @@ func ByEmailVerificationTokens(term sql.OrderTerm, terms ...sql.OrderTerm) Order
 		sqlgraph.OrderByNeighborTerms(s, newEmailVerificationTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByJoinedGroupsCount orders the results by joined_groups count.
+func ByJoinedGroupsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newJoinedGroupsStep(), opts...)
+	}
+}
+
+// ByJoinedGroups orders the results by joined_groups terms.
+func ByJoinedGroups(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newJoinedGroupsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByRolesUsersCount orders the results by roles_users count.
+func ByRolesUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newRolesUsersStep(), opts...)
+	}
+}
+
+// ByRolesUsers orders the results by roles_users terms.
+func ByRolesUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newRolesUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -370,7 +440,14 @@ func newGroupsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GroupsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, GroupsTable, GroupsPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2M, false, GroupsTable, GroupsPrimaryKey...),
+	)
+}
+func newRolesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RolesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, RolesTable, RolesPrimaryKey...),
 	)
 }
 func newPersonalAccessTokensStep() *sqlgraph.Step {
@@ -392,5 +469,19 @@ func newEmailVerificationTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EmailVerificationTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
+	)
+}
+func newJoinedGroupsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(JoinedGroupsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, JoinedGroupsTable, JoinedGroupsColumn),
+	)
+}
+func newRolesUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(RolesUsersInverseTable, RolesUsersColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, RolesUsersTable, RolesUsersColumn),
 	)
 }

@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -17,9 +16,6 @@ type RoleUser struct {
 func (RoleUser) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		field.ID("user_id", "role_id"),
-		entgql.QueryField(),
-		entgql.RelayConnection(),
-		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }
 

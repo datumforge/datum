@@ -9,6 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
@@ -16,6 +17,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/roleuser"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -160,6 +163,33 @@ func init() {
 	groupDescID := groupMixinFields2[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
 	group.DefaultID = groupDescID.Default.(func() string)
+	groupmembershipMixin := schema.GroupMembership{}.Mixin()
+	groupmembershipMixinHooks0 := groupmembershipMixin[0].Hooks()
+	groupmembership.Hooks[0] = groupmembershipMixinHooks0[0]
+	groupmembershipMixinFields0 := groupmembershipMixin[0].Fields()
+	_ = groupmembershipMixinFields0
+	groupmembershipMixinFields1 := groupmembershipMixin[1].Fields()
+	_ = groupmembershipMixinFields1
+	groupmembershipFields := schema.GroupMembership{}.Fields()
+	_ = groupmembershipFields
+	// groupmembershipDescCreatedAt is the schema descriptor for created_at field.
+	groupmembershipDescCreatedAt := groupmembershipMixinFields0[0].Descriptor()
+	// groupmembership.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupmembership.DefaultCreatedAt = groupmembershipDescCreatedAt.Default.(func() time.Time)
+	// groupmembershipDescUpdatedAt is the schema descriptor for updated_at field.
+	groupmembershipDescUpdatedAt := groupmembershipMixinFields0[1].Descriptor()
+	// groupmembership.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	groupmembership.DefaultUpdatedAt = groupmembershipDescUpdatedAt.Default.(func() time.Time)
+	// groupmembership.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	groupmembership.UpdateDefaultUpdatedAt = groupmembershipDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupmembershipDescJoinedAt is the schema descriptor for joined_at field.
+	groupmembershipDescJoinedAt := groupmembershipFields[0].Descriptor()
+	// groupmembership.DefaultJoinedAt holds the default value on creation for the joined_at field.
+	groupmembership.DefaultJoinedAt = groupmembershipDescJoinedAt.Default.(func() time.Time)
+	// groupmembershipDescID is the schema descriptor for id field.
+	groupmembershipDescID := groupmembershipMixinFields1[0].Descriptor()
+	// groupmembership.DefaultID holds the default value on creation for the id field.
+	groupmembership.DefaultID = groupmembershipDescID.Default.(func() string)
 	groupsettingMixin := schema.GroupSetting{}.Mixin()
 	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
 	groupsettingMixinHooks2 := groupsettingMixin[2].Hooks()
@@ -435,6 +465,46 @@ func init() {
 	personalaccesstokenDescID := personalaccesstokenMixinFields1[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
+	roleMixin := schema.Role{}.Mixin()
+	roleMixinHooks0 := roleMixin[0].Hooks()
+	role.Hooks[0] = roleMixinHooks0[0]
+	roleMixinFields0 := roleMixin[0].Fields()
+	_ = roleMixinFields0
+	roleMixinFields1 := roleMixin[1].Fields()
+	_ = roleMixinFields1
+	roleFields := schema.Role{}.Fields()
+	_ = roleFields
+	// roleDescCreatedAt is the schema descriptor for created_at field.
+	roleDescCreatedAt := roleMixinFields0[0].Descriptor()
+	// role.DefaultCreatedAt holds the default value on creation for the created_at field.
+	role.DefaultCreatedAt = roleDescCreatedAt.Default.(func() time.Time)
+	// roleDescUpdatedAt is the schema descriptor for updated_at field.
+	roleDescUpdatedAt := roleMixinFields0[1].Descriptor()
+	// role.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	role.DefaultUpdatedAt = roleDescUpdatedAt.Default.(func() time.Time)
+	// role.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	role.UpdateDefaultUpdatedAt = roleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// roleDescID is the schema descriptor for id field.
+	roleDescID := roleMixinFields1[0].Descriptor()
+	// role.DefaultID holds the default value on creation for the id field.
+	role.DefaultID = roleDescID.Default.(func() string)
+	roleuserMixin := schema.RoleUser{}.Mixin()
+	roleuserMixinHooks0 := roleuserMixin[0].Hooks()
+	roleuser.Hooks[0] = roleuserMixinHooks0[0]
+	roleuserMixinFields0 := roleuserMixin[0].Fields()
+	_ = roleuserMixinFields0
+	roleuserFields := schema.RoleUser{}.Fields()
+	_ = roleuserFields
+	// roleuserDescCreatedAt is the schema descriptor for created_at field.
+	roleuserDescCreatedAt := roleuserMixinFields0[0].Descriptor()
+	// roleuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	roleuser.DefaultCreatedAt = roleuserDescCreatedAt.Default.(func() time.Time)
+	// roleuserDescUpdatedAt is the schema descriptor for updated_at field.
+	roleuserDescUpdatedAt := roleuserMixinFields0[1].Descriptor()
+	// roleuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	roleuser.DefaultUpdatedAt = roleuserDescUpdatedAt.Default.(func() time.Time)
+	// roleuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	roleuser.UpdateDefaultUpdatedAt = roleuserDescUpdatedAt.UpdateDefault.(func() time.Time)
 	sessionMixin := schema.Session{}.Mixin()
 	sessionMixinHooks0 := sessionMixin[0].Hooks()
 	sessionHooks := schema.Session{}.Hooks()

@@ -24,22 +24,67 @@ func (gr *Group) Setting(ctx context.Context) (*GroupSetting, error) {
 	return result, err
 }
 
-func (gr *Group) Users(ctx context.Context) (result []*User, err error) {
-	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = gr.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
-	} else {
-		result, err = gr.Edges.UsersOrErr()
+func (gr *Group) Users(
+	ctx context.Context, after *Cursor, first *int, before *Cursor, last *int, orderBy *UserOrder, where *UserWhereInput,
+) (*UserConnection, error) {
+	opts := []UserPaginateOption{
+		WithUserOrder(orderBy),
+		WithUserFilter(where.Filter),
 	}
-	if IsNotLoaded(err) {
-		result, err = gr.QueryUsers().All(ctx)
+	alias := graphql.GetFieldContext(ctx).Field.Alias
+	totalCount, hasTotalCount := gr.Edges.totalCount[1][alias]
+	if nodes, err := gr.NamedUsers(alias); err == nil || hasTotalCount {
+		pager, err := newUserPager(opts, last != nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := &UserConnection{Edges: []*UserEdge{}, TotalCount: totalCount}
+		conn.build(nodes, pager, after, first, before, last)
+		return conn, nil
 	}
-	return result, err
+	return gr.QueryUsers().Paginate(ctx, after, first, before, last, opts...)
 }
 
 func (gr *Group) Owner(ctx context.Context) (*Organization, error) {
 	result, err := gr.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
 		result, err = gr.QueryOwner().Only(ctx)
+	}
+	return result, err
+}
+
+func (gr *Group) JoinedUsers(
+	ctx context.Context, after *Cursor, first *int, before *Cursor, last *int, where *GroupMembershipWhereInput,
+) (*GroupMembershipConnection, error) {
+	opts := []GroupMembershipPaginateOption{
+		WithGroupMembershipFilter(where.Filter),
+	}
+	alias := graphql.GetFieldContext(ctx).Field.Alias
+	totalCount, hasTotalCount := gr.Edges.totalCount[3][alias]
+	if nodes, err := gr.NamedJoinedUsers(alias); err == nil || hasTotalCount {
+		pager, err := newGroupMembershipPager(opts, last != nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := &GroupMembershipConnection{Edges: []*GroupMembershipEdge{}, TotalCount: totalCount}
+		conn.build(nodes, pager, after, first, before, last)
+		return conn, nil
+	}
+	return gr.QueryJoinedUsers().Paginate(ctx, after, first, before, last, opts...)
+}
+
+func (gm *GroupMembership) User(ctx context.Context) (*User, error) {
+	result, err := gm.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = gm.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (gm *GroupMembership) Group(ctx context.Context) (*Group, error) {
+	result, err := gm.Edges.GroupOrErr()
+	if IsNotLoaded(err) {
+		result, err = gm.QueryGroup().Only(ctx)
 	}
 	return result, err
 }
@@ -181,6 +226,18 @@ func (pat *PersonalAccessToken) Owner(ctx context.Context) (*User, error) {
 	return result, err
 }
 
+func (r *Role) User(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = r.NamedUser(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = r.Edges.UserOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = r.QueryUser().All(ctx)
+	}
+	return result, err
+}
+
 func (s *Session) Owner(ctx context.Context) (*User, error) {
 	result, err := s.Edges.OwnerOrErr()
 	if IsNotLoaded(err) {
@@ -213,14 +270,35 @@ func (u *User) Sessions(ctx context.Context) (result []*Session, err error) {
 	return result, err
 }
 
-func (u *User) Groups(ctx context.Context) (result []*Group, err error) {
+func (u *User) Groups(
+	ctx context.Context, after *Cursor, first *int, before *Cursor, last *int, orderBy *GroupOrder, where *GroupWhereInput,
+) (*GroupConnection, error) {
+	opts := []GroupPaginateOption{
+		WithGroupOrder(orderBy),
+		WithGroupFilter(where.Filter),
+	}
+	alias := graphql.GetFieldContext(ctx).Field.Alias
+	totalCount, hasTotalCount := u.Edges.totalCount[2][alias]
+	if nodes, err := u.NamedGroups(alias); err == nil || hasTotalCount {
+		pager, err := newGroupPager(opts, last != nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := &GroupConnection{Edges: []*GroupEdge{}, TotalCount: totalCount}
+		conn.build(nodes, pager, after, first, before, last)
+		return conn, nil
+	}
+	return u.QueryGroups().Paginate(ctx, after, first, before, last, opts...)
+}
+
+func (u *User) Roles(ctx context.Context) (result []*Role, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = u.NamedGroups(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = u.NamedRoles(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = u.Edges.GroupsOrErr()
+		result, err = u.Edges.RolesOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = u.QueryGroups().All(ctx)
+		result, err = u.QueryRoles().All(ctx)
 	}
 	return result, err
 }
@@ -243,6 +321,26 @@ func (u *User) Setting(ctx context.Context) (*UserSetting, error) {
 		result, err = u.QuerySetting().Only(ctx)
 	}
 	return result, err
+}
+
+func (u *User) JoinedGroups(
+	ctx context.Context, after *Cursor, first *int, before *Cursor, last *int, where *GroupMembershipWhereInput,
+) (*GroupMembershipConnection, error) {
+	opts := []GroupMembershipPaginateOption{
+		WithGroupMembershipFilter(where.Filter),
+	}
+	alias := graphql.GetFieldContext(ctx).Field.Alias
+	totalCount, hasTotalCount := u.Edges.totalCount[6][alias]
+	if nodes, err := u.NamedJoinedGroups(alias); err == nil || hasTotalCount {
+		pager, err := newGroupMembershipPager(opts, last != nil)
+		if err != nil {
+			return nil, err
+		}
+		conn := &GroupMembershipConnection{Edges: []*GroupMembershipEdge{}, TotalCount: totalCount}
+		conn.build(nodes, pager, after, first, before, last)
+		return conn, nil
+	}
+	return u.QueryJoinedGroups().Paginate(ctx, after, first, before, last, opts...)
 }
 
 func (us *UserSetting) User(ctx context.Context) (*User, error) {

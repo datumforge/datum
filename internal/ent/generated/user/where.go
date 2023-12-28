@@ -1240,11 +1240,11 @@ func HasGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, true, GroupsTable, GroupsPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, false, GroupsTable, GroupsPrimaryKey...),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Group
-		step.Edge.Schema = schemaConfig.GroupUsers
+		step.Edge.Schema = schemaConfig.GroupMembership
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -1255,7 +1255,36 @@ func HasGroupsWith(preds ...predicate.Group) predicate.User {
 		step := newGroupsStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.Group
-		step.Edge.Schema = schemaConfig.GroupUsers
+		step.Edge.Schema = schemaConfig.GroupMembership
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasRoles applies the HasEdge predicate on the "roles" edge.
+func HasRoles() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, RolesTable, RolesPrimaryKey...),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Role
+		step.Edge.Schema = schemaConfig.RoleUser
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRolesWith applies the HasEdge predicate on the "roles" edge with a given conditions (other predicates).
+func HasRolesWith(preds ...predicate.Role) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newRolesStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Role
+		step.Edge.Schema = schemaConfig.RoleUser
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -1343,6 +1372,64 @@ func HasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) p
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.EmailVerificationToken
 		step.Edge.Schema = schemaConfig.EmailVerificationToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasJoinedGroups applies the HasEdge predicate on the "joined_groups" edge.
+func HasJoinedGroups() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, JoinedGroupsTable, JoinedGroupsColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.GroupMembership
+		step.Edge.Schema = schemaConfig.GroupMembership
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasJoinedGroupsWith applies the HasEdge predicate on the "joined_groups" edge with a given conditions (other predicates).
+func HasJoinedGroupsWith(preds ...predicate.GroupMembership) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newJoinedGroupsStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.GroupMembership
+		step.Edge.Schema = schemaConfig.GroupMembership
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasRolesUsers applies the HasEdge predicate on the "roles_users" edge.
+func HasRolesUsers() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, RolesUsersTable, RolesUsersColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.RoleUser
+		step.Edge.Schema = schemaConfig.RoleUser
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasRolesUsersWith applies the HasEdge predicate on the "roles_users" edge with a given conditions (other predicates).
+func HasRolesUsersWith(preds ...predicate.RoleUser) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newRolesUsersStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.RoleUser
+		step.Edge.Schema = schemaConfig.RoleUser
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

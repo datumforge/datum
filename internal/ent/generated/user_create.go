@@ -12,8 +12,10 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -299,6 +301,21 @@ func (uc *UserCreate) AddGroups(g ...*Group) *UserCreate {
 	return uc.AddGroupIDs(ids...)
 }
 
+// AddRoleIDs adds the "roles" edge to the Role entity by IDs.
+func (uc *UserCreate) AddRoleIDs(ids ...string) *UserCreate {
+	uc.mutation.AddRoleIDs(ids...)
+	return uc
+}
+
+// AddRoles adds the "roles" edges to the Role entity.
+func (uc *UserCreate) AddRoles(r ...*Role) *UserCreate {
+	ids := make([]string, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddRoleIDs(ids...)
+}
+
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
 func (uc *UserCreate) AddPersonalAccessTokenIDs(ids ...string) *UserCreate {
 	uc.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -338,6 +355,21 @@ func (uc *UserCreate) AddEmailVerificationTokens(e ...*EmailVerificationToken) *
 		ids[i] = e[i].ID
 	}
 	return uc.AddEmailVerificationTokenIDs(ids...)
+}
+
+// AddJoinedGroupIDs adds the "joined_groups" edge to the GroupMembership entity by IDs.
+func (uc *UserCreate) AddJoinedGroupIDs(ids ...string) *UserCreate {
+	uc.mutation.AddJoinedGroupIDs(ids...)
+	return uc
+}
+
+// AddJoinedGroups adds the "joined_groups" edges to the GroupMembership entity.
+func (uc *UserCreate) AddJoinedGroups(g ...*GroupMembership) *UserCreate {
+	ids := make([]string, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return uc.AddJoinedGroupIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -606,7 +638,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if nodes := uc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: true,
+			Inverse: false,
 			Table:   user.GroupsTable,
 			Columns: user.GroupsPrimaryKey,
 			Bidi:    false,
@@ -614,10 +646,38 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = uc.schemaConfig.GroupUsers
+		edge.Schema = uc.schemaConfig.GroupMembership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		createE := &GroupMembershipCreate{config: uc.config, mutation: newGroupMembershipMutation(uc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.RolesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   user.RolesTable,
+			Columns: user.RolesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(role.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.RoleUser
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &RoleUserCreate{config: uc.config, mutation: newRoleUserMutation(uc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := uc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
@@ -666,6 +726,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.JoinedGroupsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.JoinedGroupsTable,
+			Columns: []string{user.JoinedGroupsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(groupmembership.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.GroupMembership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

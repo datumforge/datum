@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -24,17 +25,19 @@ import (
 // GroupQuery is the builder for querying Group entities.
 type GroupQuery struct {
 	config
-	ctx            *QueryContext
-	order          []group.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.Group
-	withSetting    *GroupSettingQuery
-	withUsers      *UserQuery
-	withOwner      *OrganizationQuery
-	withFKs        bool
-	modifiers      []func(*sql.Selector)
-	loadTotal      []func(context.Context, []*Group) error
-	withNamedUsers map[string]*UserQuery
+	ctx                  *QueryContext
+	order                []group.OrderOption
+	inters               []Interceptor
+	predicates           []predicate.Group
+	withSetting          *GroupSettingQuery
+	withUsers            *UserQuery
+	withOwner            *OrganizationQuery
+	withJoinedUsers      *GroupMembershipQuery
+	withFKs              bool
+	modifiers            []func(*sql.Selector)
+	loadTotal            []func(context.Context, []*Group) error
+	withNamedUsers       map[string]*UserQuery
+	withNamedJoinedUsers map[string]*GroupMembershipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -110,11 +113,11 @@ func (gq *GroupQuery) QueryUsers() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, group.UsersTable, group.UsersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, group.UsersTable, group.UsersPrimaryKey...),
 		)
 		schemaConfig := gq.schemaConfig
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.GroupUsers
+		step.Edge.Schema = schemaConfig.GroupMembership
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -140,6 +143,31 @@ func (gq *GroupQuery) QueryOwner() *OrganizationQuery {
 		schemaConfig := gq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.Group
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryJoinedUsers chains the current query on the "joined_users" edge.
+func (gq *GroupQuery) QueryJoinedUsers() *GroupMembershipQuery {
+	query := (&GroupMembershipClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(groupmembership.Table, groupmembership.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, group.JoinedUsersTable, group.JoinedUsersColumn),
+		)
+		schemaConfig := gq.schemaConfig
+		step.To.Schema = schemaConfig.GroupMembership
+		step.Edge.Schema = schemaConfig.GroupMembership
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -333,14 +361,15 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		return nil
 	}
 	return &GroupQuery{
-		config:      gq.config,
-		ctx:         gq.ctx.Clone(),
-		order:       append([]group.OrderOption{}, gq.order...),
-		inters:      append([]Interceptor{}, gq.inters...),
-		predicates:  append([]predicate.Group{}, gq.predicates...),
-		withSetting: gq.withSetting.Clone(),
-		withUsers:   gq.withUsers.Clone(),
-		withOwner:   gq.withOwner.Clone(),
+		config:          gq.config,
+		ctx:             gq.ctx.Clone(),
+		order:           append([]group.OrderOption{}, gq.order...),
+		inters:          append([]Interceptor{}, gq.inters...),
+		predicates:      append([]predicate.Group{}, gq.predicates...),
+		withSetting:     gq.withSetting.Clone(),
+		withUsers:       gq.withUsers.Clone(),
+		withOwner:       gq.withOwner.Clone(),
+		withJoinedUsers: gq.withJoinedUsers.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
@@ -377,6 +406,17 @@ func (gq *GroupQuery) WithOwner(opts ...func(*OrganizationQuery)) *GroupQuery {
 		opt(query)
 	}
 	gq.withOwner = query
+	return gq
+}
+
+// WithJoinedUsers tells the query-builder to eager-load the nodes that are connected to
+// the "joined_users" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithJoinedUsers(opts ...func(*GroupMembershipQuery)) *GroupQuery {
+	query := (&GroupMembershipClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withJoinedUsers = query
 	return gq
 }
 
@@ -465,10 +505,11 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		nodes       = []*Group{}
 		withFKs     = gq.withFKs
 		_spec       = gq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			gq.withSetting != nil,
 			gq.withUsers != nil,
 			gq.withOwner != nil,
+			gq.withJoinedUsers != nil,
 		}
 	)
 	if gq.withOwner != nil {
@@ -519,10 +560,24 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			return nil, err
 		}
 	}
+	if query := gq.withJoinedUsers; query != nil {
+		if err := gq.loadJoinedUsers(ctx, query, nodes,
+			func(n *Group) { n.Edges.JoinedUsers = []*GroupMembership{} },
+			func(n *Group, e *GroupMembership) { n.Edges.JoinedUsers = append(n.Edges.JoinedUsers, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range gq.withNamedUsers {
 		if err := gq.loadUsers(ctx, query, nodes,
 			func(n *Group) { n.appendNamedUsers(name) },
 			func(n *Group, e *User) { n.appendNamedUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range gq.withNamedJoinedUsers {
+		if err := gq.loadJoinedUsers(ctx, query, nodes,
+			func(n *Group) { n.appendNamedJoinedUsers(name) },
+			func(n *Group, e *GroupMembership) { n.appendNamedJoinedUsers(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -575,11 +630,11 @@ func (gq *GroupQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*
 	}
 	query.Where(func(s *sql.Selector) {
 		joinT := sql.Table(group.UsersTable)
-		joinT.Schema(gq.schemaConfig.GroupUsers)
-		s.Join(joinT).On(s.C(user.FieldID), joinT.C(group.UsersPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(group.UsersPrimaryKey[0]), edgeIDs...))
+		joinT.Schema(gq.schemaConfig.GroupMembership)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(group.UsersPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(group.UsersPrimaryKey[1]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(group.UsersPrimaryKey[0]))
+		s.Select(joinT.C(group.UsersPrimaryKey[1]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -653,6 +708,36 @@ func (gq *GroupQuery) loadOwner(ctx context.Context, query *OrganizationQuery, n
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (gq *GroupQuery) loadJoinedUsers(ctx context.Context, query *GroupMembershipQuery, nodes []*Group, init func(*Group), assign func(*Group, *GroupMembership)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(groupmembership.FieldGroupID)
+	}
+	query.Where(predicate.GroupMembership(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.JoinedUsersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.GroupID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }
@@ -757,6 +842,20 @@ func (gq *GroupQuery) WithNamedUsers(name string, opts ...func(*UserQuery)) *Gro
 		gq.withNamedUsers = make(map[string]*UserQuery)
 	}
 	gq.withNamedUsers[name] = query
+	return gq
+}
+
+// WithNamedJoinedUsers tells the query-builder to eager-load the nodes that are connected to the "joined_users"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithNamedJoinedUsers(name string, opts ...func(*GroupMembershipQuery)) *GroupQuery {
+	query := (&GroupMembershipClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if gq.withNamedJoinedUsers == nil {
+		gq.withNamedJoinedUsers = make(map[string]*GroupMembershipQuery)
+	}
+	gq.withNamedJoinedUsers[name] = query
 	return gq
 }
 

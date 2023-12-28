@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
@@ -22,6 +23,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/role"
+	"github.com/datumforge/datum/internal/ent/generated/roleuser"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -88,6 +91,7 @@ func checkColumn(table, column string) error {
 			emailverificationtoken.Table: emailverificationtoken.ValidColumn,
 			entitlement.Table:            entitlement.ValidColumn,
 			group.Table:                  group.ValidColumn,
+			groupmembership.Table:        groupmembership.ValidColumn,
 			groupsetting.Table:           groupsetting.ValidColumn,
 			integration.Table:            integration.ValidColumn,
 			oauthprovider.Table:          oauthprovider.ValidColumn,
@@ -95,6 +99,8 @@ func checkColumn(table, column string) error {
 			organization.Table:           organization.ValidColumn,
 			organizationsetting.Table:    organizationsetting.ValidColumn,
 			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
+			role.Table:                   role.ValidColumn,
+			roleuser.Table:               roleuser.ValidColumn,
 			session.Table:                session.ValidColumn,
 			user.Table:                   user.ValidColumn,
 			usersetting.Table:            usersetting.ValidColumn,

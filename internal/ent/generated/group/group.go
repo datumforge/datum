@@ -43,6 +43,8 @@ const (
 	EdgeUsers = "users"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
+	// EdgeJoinedUsers holds the string denoting the joined_users edge name in mutations.
+	EdgeJoinedUsers = "joined_users"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// SettingTable is the table that holds the setting relation/edge.
@@ -53,7 +55,7 @@ const (
 	// SettingColumn is the table column denoting the setting relation/edge.
 	SettingColumn = "group_setting"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
-	UsersTable = "group_users"
+	UsersTable = "group_memberships"
 	// UsersInverseTable is the table name for the User entity.
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	UsersInverseTable = "users"
@@ -64,6 +66,13 @@ const (
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
 	OwnerColumn = "organization_groups"
+	// JoinedUsersTable is the table that holds the joined_users relation/edge.
+	JoinedUsersTable = "group_memberships"
+	// JoinedUsersInverseTable is the table name for the GroupMembership entity.
+	// It exists in this package in order to avoid circular dependency with the "groupmembership" package.
+	JoinedUsersInverseTable = "group_memberships"
+	// JoinedUsersColumn is the table column denoting the joined_users relation/edge.
+	JoinedUsersColumn = "group_id"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -91,7 +100,7 @@ var ForeignKeys = []string{
 var (
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
-	UsersPrimaryKey = []string{"group_id", "user_id"}
+	UsersPrimaryKey = []string{"user_id", "group_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -224,6 +233,20 @@ func ByOwnerField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOwnerStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByJoinedUsersCount orders the results by joined_users count.
+func ByJoinedUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newJoinedUsersStep(), opts...)
+	}
+}
+
+// ByJoinedUsers orders the results by joined_users terms.
+func ByJoinedUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newJoinedUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newSettingStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -235,7 +258,7 @@ func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(UsersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, false, UsersTable, UsersPrimaryKey...),
+		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 	)
 }
 func newOwnerStep() *sqlgraph.Step {
@@ -243,5 +266,12 @@ func newOwnerStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OwnerInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+	)
+}
+func newJoinedUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(JoinedUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, JoinedUsersTable, JoinedUsersColumn),
 	)
 }

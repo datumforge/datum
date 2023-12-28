@@ -18,6 +18,8 @@ type Tx struct {
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupMembership is the client for interacting with the GroupMembership builders.
+	GroupMembership *GroupMembershipClient
 	// GroupSetting is the client for interacting with the GroupSetting builders.
 	GroupSetting *GroupSettingClient
 	// Integration is the client for interacting with the Integration builders.
@@ -32,6 +34,10 @@ type Tx struct {
 	OrganizationSetting *OrganizationSettingClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
+	// Role is the client for interacting with the Role builders.
+	Role *RoleClient
+	// RoleUser is the client for interacting with the RoleUser builders.
+	RoleUser *RoleUserClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
 	// User is the client for interacting with the User builders.
@@ -172,6 +178,7 @@ func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
+	tx.GroupMembership = NewGroupMembershipClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
@@ -179,6 +186,8 @@ func (tx *Tx) init() {
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
+	tx.Role = NewRoleClient(tx.config)
+	tx.RoleUser = NewRoleUserClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)

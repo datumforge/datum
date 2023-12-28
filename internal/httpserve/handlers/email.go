@@ -24,9 +24,9 @@ func (h *Handler) NewEmailManager() error {
 		return err
 	}
 
-	h.EmailURL = URLConfig{}
+	h.EmailURL = &URLConfig{}
 	if err := envconfig.Process("datum", h.EmailURL); err != nil {
-		return nil
+		return err
 	}
 
 	return nil
@@ -120,9 +120,9 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 // TODO: move this to the same config setup as everything else
 type URLConfig struct {
 	Base   string `split_words:"true" default:"https://app.datum.net"`
-	Verify string `split_words:"true" default:"/verify"`
-	Invite string `split_words:"true" default:"/invite"`
-	Reset  string `split_words:"true" default:"/reset"`
+	Verify string `split_words:"true" default:"/v1/verify"`
+	Invite string `split_words:"true" default:"/v1/invite"`
+	Reset  string `split_words:"true" default:"/v1/reset"`
 }
 
 func (c URLConfig) Validate() error {

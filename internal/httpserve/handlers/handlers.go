@@ -28,7 +28,7 @@ type Handler struct {
 	// emailManager to handle sending emails
 	emailManager *emails.EmailManager
 	// EmailURL contains the urls used within emails
-	EmailURL URLConfig
+	EmailURL *URLConfig
 }
 
 type Response struct {

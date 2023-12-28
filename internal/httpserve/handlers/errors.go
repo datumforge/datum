@@ -46,6 +46,9 @@ var (
 	// ErrUnverifiedUser is returned when email_verified on the user is false
 	ErrUnverifiedUser = errors.New("user is not verified")
 
+	// ErrUnableToVerifyEmail is returned when user's email is not able to be verified
+	ErrUnableToVerifyEmail = errors.New("could not verify email")
+
 	// ErrNoAuthUser is returned when the user couldn't be identified by the request
 	ErrNoAuthUser = errors.New("could not identify authenticated user in request")
 

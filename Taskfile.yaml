@@ -9,6 +9,8 @@ env:
   TEST_FGA_URL: "localhost:8080"
   # To actually have emails sent, you will need a valid API Key
   DATUM_SEND_GRID_API_KEY: "SG.FakeAPIKey" 
+  # Overrides the default config for local development for email registration/verification
+  DATUM_BASE: "http://localhost:17608/"
 
 tasks:
   clean:generated:

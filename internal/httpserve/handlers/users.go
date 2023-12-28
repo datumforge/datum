@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/oklog/ulid/v2"
@@ -36,6 +37,7 @@ func (u *User) GetVerificationToken() string {
 // GetVerificationExpires returns the expiration time of email verification token
 func (u *User) GetVerificationExpires() (time.Time, error) {
 	if u.EmailVerificationExpires.Valid {
+		fmt.Printf("Time expiration: %v\n", u.EmailVerificationExpires.String)
 		return time.Parse(time.RFC3339Nano, u.EmailVerificationExpires.String)
 	}
 

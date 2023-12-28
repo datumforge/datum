@@ -22,10 +22,10 @@ func New(conf *Config) (m *EmailManager, err error) {
 			Storage: conf.Archive,
 		}
 	} else {
-		if conf.APIKey == "" {
+		if conf.SendGridAPIKey == "" {
 			return nil, ErrFailedToCreateEmailClient
 		}
-		m.client = sendgrid.NewSendClient(conf.APIKey)
+		m.client = sendgrid.NewSendClient(conf.SendGridAPIKey)
 	}
 
 	// Parse the from and admin emails from the configuration

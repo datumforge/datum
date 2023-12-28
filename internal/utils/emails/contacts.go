@@ -32,7 +32,7 @@ func (m *EmailManager) AddContact(contact *sg.Contact, listIDs ...string) (err e
 	}
 
 	// Invoke the SendGrid API to add the contact
-	if err = sg.AddContacts(m.conf.APIKey, sgdata); err != nil {
+	if err = sg.AddContacts(m.conf.SendGridAPIKey, sgdata); err != nil {
 		return err
 	}
 

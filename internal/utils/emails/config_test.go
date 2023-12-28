@@ -13,7 +13,7 @@ func TestSendGrid(t *testing.T) {
 	require.False(t, conf.Enabled(), "sendgrid should be disabled when there is no API key")
 	require.NoError(t, conf.Validate(), "no validation error should be returned when sendgrid is disabled")
 
-	conf.APIKey = "SG.testing123"
+	conf.SendGridAPIKey = "SG.testing123"
 	require.True(t, conf.Enabled(), "sendgrid should be enabled when there is an API key")
 
 	// FromEmail is required when enabled
@@ -37,9 +37,9 @@ func TestSendGrid(t *testing.T) {
 
 	// Should be valid when enabled and emails are specified
 	conf = &emails.Config{
-		APIKey:     "testing123",
-		FromEmail:  "meow@mattthecat.com",
-		AdminEmail: "sarahistheboss@example.com",
+		SendGridAPIKey: "testing123",
+		FromEmail:      "meow@mattthecat.com",
+		AdminEmail:     "sarahistheboss@example.com",
 	}
 	require.NoError(t, conf.Validate(), "expected configuration to be valid")
 

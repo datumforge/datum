@@ -12,8 +12,8 @@ import (
 // Config is a struct for sending emails via SendGrid and managing marketing contacts
 // TODO: migrate these configs into the default httpserve/config struct and add local yaml / viper configs
 type Config struct {
-	// APIKey is the sendgrid API key
-	APIKey string `split_words:"true" required:"false"`
+	// SendGridAPIKey is the sendgrid API key
+	SendGridAPIKey string `split_words:"true" required:"false"`
 	// FromEmail is the default email we'll send from and is safe to configure by default as our emails and domain are signed
 	FromEmail string `split_words:"true" default:"no-reply@datum.net"`
 	// Testing is a bool flag to indicate we shouldn't be sending live emails and defaults to true so needs to be specifically changed to send live emails
@@ -60,7 +60,7 @@ func (c *Config) Validate() (err error) {
 
 // Enabled returns true if there is a SendGrid API key available
 func (c *Config) Enabled() bool {
-	return c.APIKey != ""
+	return c.SendGridAPIKey != ""
 }
 
 // FromContact parses the FromEmail and returns a sendgrid contact

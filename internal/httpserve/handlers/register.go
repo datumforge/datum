@@ -27,7 +27,8 @@ type RegisterReply struct {
 	ID      string `json:"user_id"`
 	Email   string `json:"email"`
 	Message string `json:"message"`
-	Token   string `json:"token"`
+	// TODO: remove this before go live, we shouldn't actually return the token here
+	Token string `json:"token"`
 }
 
 // RegisterHandler handles the registration of a new datum user, creating the user, personal organization
@@ -77,11 +78,8 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	// create email verification token
 	user := &User{
-		FirstName: in.FirstName,
-		LastName:  in.LastName,
-		Email:     in.Email,
-		Password:  in.Password,
-		userID:    meowuser.ID,
+		Email: in.Email,
+		ID:    meowuser.ID,
 	}
 
 	meowtoken, err := h.storeEmailVerificationToken(ctx.Request().Context(), tx, user)
@@ -124,7 +122,7 @@ func (h *Handler) storeEmailVerificationToken(ctx context.Context, tx *generated
 	}
 
 	meowtoken, err := tx.EmailVerificationToken.Create().
-		SetOwnerID(user.userID).
+		SetOwnerID(user.ID).
 		SetToken(user.EmailVerificationToken.String).
 		SetTTL(ttl).
 		SetEmail(user.Email).

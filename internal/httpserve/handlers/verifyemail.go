@@ -41,8 +41,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	// create email verification
 	user := &User{
-		userID: entUser.ID,
-		Email:  entUser.Email,
+		ID:    entUser.ID,
+		Email: entUser.Email,
 	}
 
 	// check to see if user is already confirmed
@@ -90,7 +90,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		}
 	}
 
-	claims := createClaims(user)
+	claims := createClaims(entUser)
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {

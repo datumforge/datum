@@ -78,8 +78,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	// create email verification token
 	user := &User{
-		Email: in.Email,
-		ID:    meowuser.ID,
+		FirstName: in.FirstName,
+		LastName:  in.LastName,
+		Email:     in.Email,
+		ID:        meowuser.ID,
 	}
 
 	meowtoken, err := h.storeEmailVerificationToken(ctx.Request().Context(), tx, user)

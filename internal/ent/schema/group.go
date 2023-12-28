@@ -78,6 +78,9 @@ func (Group) Edges() []ent.Edge {
 			Ref("groups").
 			Unique().
 			Required(),
+		edge.To("members", GroupMembership.Type).Annotations(
+			entgql.RelayConnection(),
+		),
 	}
 }
 

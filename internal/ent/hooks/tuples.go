@@ -10,7 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
-func createTuple(ctx context.Context, c *fga.Client, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
+func createTupleFromUserContext(ctx context.Context, c *fga.Client, relation, object string) ([]ofgaclient.ClientTupleKey, error) {
 	actor, err := auth.GetUserIDFromContext(ctx)
 	if err != nil {
 		c.Logger.Errorw("unable to get user ID from context", "error", err)

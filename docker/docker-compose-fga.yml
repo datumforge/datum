@@ -1,4 +1,17 @@
+version: "3.9"
 services:
+  api:
+    depends_on:
+      - openfga
+    command:
+      - serve
+      - --dev
+      - --debug
+      - --pretty
+      - --auth=true
+      - --fga-host=openfga:8080
+      - --fga-scheme=http
+
   postgres:
     image: postgres:16
     container_name: postgres

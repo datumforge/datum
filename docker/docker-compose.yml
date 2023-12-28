@@ -1,23 +1,20 @@
 version: "3.9"
+
 services:
   api:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     command:
       - serve
       - --debug
       - --pretty
       - --dev
-      - --jwt-secretkey
-      - mysupersecretkey
-      # - --oidc=false # uncomment to bypass auth checks
-      - --fga-host
-      - openfga:8080
-      - --fga-scheme
-      - "http"
+      - --auth=false
     ports:
       - "17608:17608"
     restart: unless-stopped
+    environment:
+      - DATUM_SEND_GRID_API_KEY="THIS_IS_A_FAKE_KEY"
     networks:
       - default

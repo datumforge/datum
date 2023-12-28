@@ -162,6 +162,10 @@ tasks:
     deps: [docker:build]
     cmds:
       - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
+  compose:datum-auth:
+    desc: brings up the compose environment for the datum server configured with auth
+    cmds:
+      - "docker compose -f ./docker/docker-compose.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
   compose:datum:down:
     desc: brings the datum compose environment down
     cmds:

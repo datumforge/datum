@@ -14,6 +14,10 @@ USER 65532:65532
 # Copy the binary that goreleaser built
 COPY --from=builder /go/bin/datum /bin/datum
 
+# Copy default model into image
+COPY fga/model/datum.fga fga/model/datum.fga
+
+
 # Run the web service on container startup.
 ENTRYPOINT [ "/bin/datum" ]
 CMD ["serve"]

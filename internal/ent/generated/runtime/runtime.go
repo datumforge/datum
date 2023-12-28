@@ -32,8 +32,10 @@ func init() {
 	emailverificationtokenMixin := schema.EmailVerificationToken{}.Mixin()
 	emailverificationtokenMixinHooks0 := emailverificationtokenMixin[0].Hooks()
 	emailverificationtokenMixinHooks2 := emailverificationtokenMixin[2].Hooks()
+	emailverificationtokenHooks := schema.EmailVerificationToken{}.Hooks()
 	emailverificationtoken.Hooks[0] = emailverificationtokenMixinHooks0[0]
 	emailverificationtoken.Hooks[1] = emailverificationtokenMixinHooks2[0]
+	emailverificationtoken.Hooks[2] = emailverificationtokenHooks[0]
 	emailverificationtokenMixinInters2 := emailverificationtokenMixin[2].Interceptors()
 	emailverificationtoken.Interceptors[0] = emailverificationtokenMixinInters2[0]
 	emailverificationtokenMixinFields0 := emailverificationtokenMixin[0].Fields()
@@ -52,6 +54,18 @@ func init() {
 	emailverificationtoken.DefaultUpdatedAt = emailverificationtokenDescUpdatedAt.Default.(func() time.Time)
 	// emailverificationtoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	emailverificationtoken.UpdateDefaultUpdatedAt = emailverificationtokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// emailverificationtokenDescToken is the schema descriptor for token field.
+	emailverificationtokenDescToken := emailverificationtokenFields[0].Descriptor()
+	// emailverificationtoken.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	emailverificationtoken.TokenValidator = emailverificationtokenDescToken.Validators[0].(func(string) error)
+	// emailverificationtokenDescEmail is the schema descriptor for email field.
+	emailverificationtokenDescEmail := emailverificationtokenFields[2].Descriptor()
+	// emailverificationtoken.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	emailverificationtoken.EmailValidator = emailverificationtokenDescEmail.Validators[0].(func(string) error)
+	// emailverificationtokenDescSecret is the schema descriptor for secret field.
+	emailverificationtokenDescSecret := emailverificationtokenFields[3].Descriptor()
+	// emailverificationtoken.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	emailverificationtoken.SecretValidator = emailverificationtokenDescSecret.Validators[0].(func([]byte) error)
 	// emailverificationtokenDescID is the schema descriptor for id field.
 	emailverificationtokenDescID := emailverificationtokenMixinFields1[0].Descriptor()
 	// emailverificationtoken.DefaultID holds the default value on creation for the id field.

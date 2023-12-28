@@ -32,7 +32,7 @@ type EmailVerificationToken struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// the verification token sent to the user via email which should only be provided to the /verify endpoint + handler
 	Token string `json:"token,omitempty"`
-	// the ttl of the verification token which needs to be explicitly set, otherwise defaults to the current time
+	// the ttl of the verification token which defaults to 7 days
 	TTL *time.Time `json:"ttl,omitempty"`
 	// the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed
 	Email string `json:"email,omitempty"`

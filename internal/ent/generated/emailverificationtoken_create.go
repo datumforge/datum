@@ -226,14 +226,29 @@ func (evtc *EmailVerificationTokenCreate) check() error {
 	if _, ok := evtc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "EmailVerificationToken.token"`)}
 	}
+	if v, ok := evtc.mutation.Token(); ok {
+		if err := emailverificationtoken.TokenValidator(v); err != nil {
+			return &ValidationError{Name: "token", err: fmt.Errorf(`generated: validator failed for field "EmailVerificationToken.token": %w`, err)}
+		}
+	}
 	if _, ok := evtc.mutation.TTL(); !ok {
 		return &ValidationError{Name: "ttl", err: errors.New(`generated: missing required field "EmailVerificationToken.ttl"`)}
 	}
 	if _, ok := evtc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`generated: missing required field "EmailVerificationToken.email"`)}
 	}
+	if v, ok := evtc.mutation.Email(); ok {
+		if err := emailverificationtoken.EmailValidator(v); err != nil {
+			return &ValidationError{Name: "email", err: fmt.Errorf(`generated: validator failed for field "EmailVerificationToken.email": %w`, err)}
+		}
+	}
 	if _, ok := evtc.mutation.Secret(); !ok {
 		return &ValidationError{Name: "secret", err: errors.New(`generated: missing required field "EmailVerificationToken.secret"`)}
+	}
+	if v, ok := evtc.mutation.Secret(); ok {
+		if err := emailverificationtoken.SecretValidator(v); err != nil {
+			return &ValidationError{Name: "secret", err: fmt.Errorf(`generated: validator failed for field "EmailVerificationToken.secret": %w`, err)}
+		}
 	}
 	if _, ok := evtc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "EmailVerificationToken.owner"`)}

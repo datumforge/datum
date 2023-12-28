@@ -9,6 +9,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
@@ -22,14 +23,17 @@ func (EmailVerificationToken) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("token").
 			Comment("the verification token sent to the user via email which should only be provided to the /verify endpoint + handler").
-			Unique(),
+			Unique().
+			NotEmpty(),
 		field.Time("ttl").
-			Comment("the ttl of the verification token which needs to be explicitly set").
+			Comment("the ttl of the verification token which defaults to 7 days").
 			Nillable(),
 		field.String("email").
-			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed"),
+			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed").
+			NotEmpty(),
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").
+			NotEmpty().
 			Nillable(),
 	}
 }
@@ -66,5 +70,12 @@ func (EmailVerificationToken) Indexes() []ent.Index {
 func (EmailVerificationToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
+	}
+}
+
+// Hooks of the EmailVerificationToken
+func (EmailVerificationToken) Hooks() []ent.Hook {
+	return []ent.Hook{
+		hooks.HookEmailVerificationToken(),
 	}
 }

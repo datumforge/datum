@@ -4,9 +4,27 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/oklog/ulid/v2"
+
 	"github.com/datumforge/datum/internal/tokens"
 )
 
+// User holds data specific to the datum user for the REST handlers for
+// login, registration, verification, etc
+type User struct {
+	Username                 string `json:"username"`
+	Password                 string `json:"password"`
+	userID                   string
+	FirstName                string
+	LastName                 string
+	Name                     string
+	Email                    string
+	EmailVerificationExpires sql.NullString
+	EmailVerificationToken   sql.NullString
+	EmailVerificationSecret  []byte
+}
+
+// GetVerificationToken returns the verification token if its valid
 func (u *User) GetVerificationToken() string {
 	if u.EmailVerificationToken.Valid {
 		return u.EmailVerificationToken.String
@@ -15,6 +33,7 @@ func (u *User) GetVerificationToken() string {
 	return ""
 }
 
+// GetVerificationExpires returns the expiration time of email verification token
 func (u *User) GetVerificationExpires() (time.Time, error) {
 	if u.EmailVerificationExpires.Valid {
 		return time.Parse(time.RFC3339Nano, u.EmailVerificationExpires.String)
@@ -23,20 +42,17 @@ func (u *User) GetVerificationExpires() (time.Time, error) {
 	return time.Time{}, nil
 }
 
-func (u *User) CreateVerificationToken() (err error) {
-	var (
-		verify *tokens.VerificationToken
-		token  string
-		secret []byte
-	)
-
+// CreateVerificationToken creates a new email verification token for the user
+func (u *User) CreateVerificationToken() error {
 	// Create a unique token from the user's email address
-	if verify, err = tokens.NewVerificationToken(u.Email); err != nil {
+	verify, err := tokens.NewVerificationToken(u.Email)
+	if err != nil {
 		return err
 	}
 
 	// Sign the token to ensure that we can verify it later
-	if token, secret, err = verify.Sign(); err != nil {
+	token, secret, err := verify.Sign()
+	if err != nil {
 		return err
 	}
 
@@ -47,18 +63,20 @@ func (u *User) CreateVerificationToken() (err error) {
 	return nil
 }
 
-func (u *User) CreateResetToken() (err error) {
-	var (
-		reset  *tokens.ResetToken
-		token  string
-		secret []byte
-	)
-
-	if reset, err = tokens.NewResetToken(u.ID); err != nil {
+// CreateResetToken creates a new reset token for the user
+func (u *User) CreateResetToken() error {
+	uid, err := ulid.Parse(u.userID)
+	if err != nil {
 		return err
 	}
 
-	if token, secret, err = reset.Sign(); err != nil {
+	reset, err := tokens.NewResetToken(uid)
+	if err != nil {
+		return err
+	}
+
+	token, secret, err := reset.Sign()
+	if err != nil {
 		return err
 	}
 

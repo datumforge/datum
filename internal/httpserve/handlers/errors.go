@@ -70,26 +70,6 @@ func newMissingRequiredFieldError(field string) *MissingRequiredFieldError {
 	}
 }
 
-type ValidationError struct {
-	err error
-}
-
-func invalid(err error) *ValidationError { //nolint:unused
-	return &ValidationError{err}
-}
-
-func (e *ValidationError) Error() string {
-	return fmt.Sprintf("validation error: %s", e.err)
-}
-
-func (e *ValidationError) Is(target error) bool {
-	return errors.Is(e.err, target)
-}
-
-func (e *ValidationError) Unwrap() error {
-	return e.err
-}
-
 // IsConstraintError returns true if the error resulted from a database constraint violation.
 func IsConstraintError(err error) bool {
 	var e *generated.ConstraintError

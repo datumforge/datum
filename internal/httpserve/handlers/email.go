@@ -71,6 +71,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 }
 
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
+// TODO: implement handler to use this and send password reset email
 func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data := emails.ResetRequestData{
 		EmailData: emails.EmailData{
@@ -156,7 +157,7 @@ func (c URLConfig) InviteURL(token string) (string, error) {
 	return url.String(), nil
 }
 
-// VerifyURL Construct a verify URL from the token.
+// VerifyURL constructs a verify URL from the token.
 func (c URLConfig) VerifyURL(token string) (string, error) {
 	if token == "" {
 		return "", newMissingRequiredFieldError("token")
@@ -168,7 +169,7 @@ func (c URLConfig) VerifyURL(token string) (string, error) {
 	return url.String(), nil
 }
 
-// ResetURL Construct a reset URL from the token.
+// ResetURL constructs a reset URL from the token.
 func (c URLConfig) ResetURL(token string) (string, error) {
 	if token == "" {
 		return "", newMissingRequiredFieldError("token")
@@ -181,6 +182,8 @@ func (c URLConfig) ResetURL(token string) (string, error) {
 	return url.String(), nil
 }
 
+// createSendGridContact creates a contact in sendgrid to be used later
+// TODO: this current returns a 403 error, come back and figure out why
 func (h *Handler) createSendGridContact(contact *sendgrid.Contact) error { //nolint:unused
 	if err := h.emailManager.AddContact(contact); err != nil {
 		h.Logger.Errorw("unable to add contact to sendgrid", "error", err)

@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -14,13 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/passwd"
 )
 
-type RegisterReply struct {
-	ID      string `json:"user_id"`
-	Email   string `json:"email"`
-	Message string `json:"message"`
-	Token   string `json:"token"`
-}
-
+// RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
 type RegisterRequest struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -28,19 +21,26 @@ type RegisterRequest struct {
 	Password  string `json:"password"`
 }
 
+// RegisterReply holds the fields that are sent on a response to the `/register` endpoint
+type RegisterReply struct {
+	ID      string `json:"user_id"`
+	Email   string `json:"email"`
+	Message string `json:"message"`
+	Token   string `json:"token"`
+}
+
+// RegisterHandler handles the registration of a new datum user, creating the user, personal organization
+// and sending an email verification to the email address in the request
+// the user will not be able to authenticate until the email is verified
 func (h *Handler) RegisterHandler(ctx echo.Context) error {
-	var (
-		err error
-		in  *RegisterRequest
-		out *RegisterReply
-	)
+	var in *RegisterRequest
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
 	}
 
-	if err = in.Validate(); err != nil {
+	if err := in.Validate(); err != nil {
 		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
 	}
 
@@ -122,7 +122,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	//	marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
 	//)
 
-	out = &RegisterReply{
+	out := &RegisterReply{
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
 		Message: "Welcome to Datum!",
@@ -152,9 +152,4 @@ func (r *RegisterRequest) Validate() error {
 	}
 
 	return nil
-}
-
-func (u *User) SetAgreement(agreeTos, agreePrivacy bool) {
-	u.AgreeToS = sql.NullBool{Valid: true, Bool: agreeTos}
-	u.AgreePrivacy = sql.NullBool{Valid: true, Bool: agreePrivacy}
 }

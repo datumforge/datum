@@ -1,16 +1,19 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 // RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
@@ -106,26 +109,24 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 		return err
 	}
-
-	if err = h.SendVerificationEmail(user); err != nil {
+	// send emails via TaskMan as to not create blocking operations in the server
+	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return h.SendVerificationEmail(user)
+	}), marionette.WithRetries(3), // nolint: gomnd
+		marionette.WithBackoff(backoff.NewExponentialBackOff()),
+		marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
+	); err != nil {
 		if err := tx.Rollback(); err != nil {
 			return err
 		}
 
-		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
 	if err = tx.Commit(); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
 	}
-
-	// h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-	//	return h.SendVerificationEmail(user)
-	// }), marionette.WithRetries(3),
-	//	marionette.WithBackoff(backoff.NewExponentialBackOff()),
-	//	marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
-	//)
 
 	out := &RegisterReply{
 		ID:      meowuser.ID,

@@ -24,7 +24,7 @@ func (h *Handler) NewEmailManager() error {
 		return err
 	}
 
-	h.EmailURL = URLConfig{}
+	h.EmailURL = &URLConfig{}
 	if err := envconfig.Process("datum", h.EmailURL); err != nil {
 		return nil
 	}

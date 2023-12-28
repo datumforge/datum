@@ -16,7 +16,7 @@ import (
 )
 
 var registerCmd = &cobra.Command{
-	Use:   "create",
+	Use:   "register",
 	Short: "Register a new datum user",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return registerUser(cmd.Context())

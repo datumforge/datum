@@ -1,13 +1,15 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"github.com/datumforge/datum/internal/ent/mixin"
 )
 
-// RoleUser holds the schema definition for the RoleUser entity.
+// RoleUser holds the schema definition for the RoleUser entity
 type RoleUser struct {
 	ent.Schema
 }
@@ -15,18 +17,21 @@ type RoleUser struct {
 func (RoleUser) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		field.ID("user_id", "role_id"),
+		entgql.QueryField(),
+		entgql.RelayConnection(),
+		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
 	}
 }
 
-// Fields of the RoleUser.
+// Fields of the RoleUser
 func (RoleUser) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("role_id"),
-		field.Int("user_id"),
+		field.String("role_id"),
+		field.String("user_id"),
 	}
 }
 
-// Edges of the RoleUser.
+// Edges of the RoleUser
 func (RoleUser) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("role", Role.Type).
@@ -37,5 +42,13 @@ func (RoleUser) Edges() []ent.Edge {
 			Unique().
 			Required().
 			Field("user_id"),
+	}
+}
+
+// Mixin of the RoleUser
+func (RoleUser) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.AuditMixin{},
+		mixin.IDMixin{},
 	}
 }

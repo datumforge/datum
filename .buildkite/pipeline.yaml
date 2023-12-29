@@ -59,7 +59,7 @@ steps:
 
   - label: ":github: upload fork PR reports"
     key: "scan-upload-pr"
-    if: build.branch != "main"
+    if: build.pull_request.id != null
     depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:

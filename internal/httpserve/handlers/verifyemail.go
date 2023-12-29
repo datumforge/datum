@@ -83,7 +83,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		// Verify the token with the stored secret
 		if err = token.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
 			if errors.Is(err, tokens.ErrTokenExpired) {
-				meowtoken, err := h.storeEmailVerificationToken(ctx.Request().Context(), tx, user)
+				meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), tx, user)
 				if err != nil {
 					if err := tx.Rollback(); err != nil {
 						h.Logger.Errorw("error rolling back transaction", "error", err)

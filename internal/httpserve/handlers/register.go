@@ -86,23 +86,8 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ID:        meowuser.ID,
 	}
 
-	meowtoken, err := h.storeEmailVerificationToken(ctx.Request().Context(), tx, user)
+	meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), tx, user)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
-
-	// send emails via TaskMan as to not create blocking operations in the server
-	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-		return h.SendVerificationEmail(user)
-	}), marionette.WithRetries(3), // nolint: gomnd
-		marionette.WithBackoff(backoff.NewExponentialBackOff()),
-		marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
-	); err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return err
-		}
-
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
@@ -121,7 +106,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, out)
 }
 
-func (h *Handler) storeEmailVerificationToken(ctx context.Context, tx *generated.Tx, user *User) (*generated.EmailVerificationToken, error) {
+func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, tx *generated.Tx, user *User) (*generated.EmailVerificationToken, error) {
 	if err := user.CreateVerificationToken(); err != nil {
 		h.Logger.Errorw("unable to create verification token", "error", err)
 		return nil, err
@@ -151,13 +136,17 @@ func (h *Handler) storeEmailVerificationToken(ctx context.Context, tx *generated
 		return nil, err
 	}
 
-	if err = h.SendVerificationEmail(user); err != nil {
+	// send emails via TaskMan as to not create blocking operations in the server
+	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return h.SendVerificationEmail(user)
+	}), marionette.WithRetries(3), // nolint: gomnd
+		marionette.WithBackoff(backoff.NewExponentialBackOff()),
+		marionette.WithErrorf("could not send verification email to user %s", user.ID),
+	); err != nil {
 		if err := tx.Rollback(); err != nil {
 			h.Logger.Errorw("error rolling back transaction", "error", err)
 			return nil, err
 		}
-
-		h.Logger.Errorw("error sending verification email", "error", err)
 
 		return nil, err
 	}
@@ -178,6 +167,10 @@ func (r *RegisterRequest) Validate() error {
 	switch {
 	case r.Email == "":
 		return auth.MissingField("email")
+	case r.FirstName == "":
+		return auth.MissingField("first name")
+	case r.LastName == "":
+		return auth.MissingField("last name")
 	case r.Password == "":
 		return auth.MissingField("password")
 	case passwd.Strength(r.Password) < passwd.Moderate:

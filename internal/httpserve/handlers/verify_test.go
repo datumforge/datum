@@ -18,6 +18,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var (
@@ -25,13 +26,14 @@ var (
 	validPassword = "sup3rs3cu7e!"
 )
 
-func TestVerifyHandler(t *testing.T) {
+// handlerSetup to be used for required references in the handler tests
+func handlerSetup(t *testing.T) *handlers.Handler {
 	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
 	if err != nil {
 		t.Fatal("error creating token manager")
 	}
 
-	h := handlers.Handler{
+	h := &handlers.Handler{
 		TM:           tm,
 		DBClient:     EntClient,
 		Logger:       zap.NewNop().Sugar(),
@@ -41,6 +43,21 @@ func TestVerifyHandler(t *testing.T) {
 	if err := h.NewTestEmailManager(); err != nil {
 		t.Fatalf("error creating email manager: %v", err)
 	}
+
+	// Start task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
+
+	h.TaskMan = marionette.New(tmConfig)
+
+	h.TaskMan.Start()
+
+	return h
+}
+
+func TestVerifyHandler(t *testing.T) {
+	h := handlerSetup(t)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -113,7 +130,7 @@ func TestVerifyHandler(t *testing.T) {
 				ID:        u.ID,
 			}
 
-			if err = user.CreateVerificationToken(); err != nil {
+			if err := user.CreateVerificationToken(); err != nil {
 				t.Error("error creating verification token")
 			}
 

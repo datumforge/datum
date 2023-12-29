@@ -119,14 +119,14 @@ func TestLoginHandler(t *testing.T) {
 			// create echo context
 			e := echo.New()
 
-			userJSON := handlers.LoginRequest{
+			loginJSON := handlers.LoginRequest{
 				Username: tc.username,
 				Password: tc.password,
 			}
 
-			body, err := json.Marshal(userJSON)
+			body, err := json.Marshal(loginJSON)
 			if err != nil {
-				t.Error("error creating user json")
+				t.Error("error creating login json")
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(body)))

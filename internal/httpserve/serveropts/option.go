@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
+	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 
@@ -326,5 +327,15 @@ func WithTaskManager() ServerOption {
 		tm.Start()
 
 		s.Config.Server.Handler.TaskMan = tm
+	})
+}
+
+// WithSessionManager sets up the default session manager
+func WithSessionManager() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// Start task manager
+		sm := scs.New()
+
+		s.Config.Server.Handler.SM = sm
 	})
 }

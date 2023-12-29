@@ -214,6 +214,7 @@ tasks:
     desc: a task to burn local db and bring stack back up and re-test
     cmds:
       - task: buildcli
+      - sleep 2
       - ./datum-cli register --email="manderson@datum.net" --first-name="matt" --last-name="anderson" --password="mattisthebest1234!"
   shell:
     desc: open a new shell to launch server as a dep

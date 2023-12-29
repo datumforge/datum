@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 
+	"github.com/alexedwards/scs/v2"
 	echoprometheus "github.com/datumforge/echo-prometheus/v5"
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
@@ -16,6 +17,7 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/httpserve/middleware/mime"
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/route"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -62,6 +64,9 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 
 	srv.Debug = s.config.Debug
 
+	var sessionManager *scs.SessionManager
+	sessionManager = scs.New()
+
 	// default middleware
 	defaultMW := []echo.MiddlewareFunc{}
 	defaultMW = append(defaultMW,
@@ -75,6 +80,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		cachecontrol.New(),      // add cache control middleware
 		ratelimit.RateLimiter(), // add ratelimit middleware
 		middleware.Secure(),     // add XSS middleware
+		session.LoadAndSave(sessionManager),
 	)
 
 	if srv.Debug {
@@ -104,6 +110,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 	s.config.Handler.JWTKeys = keys
 	s.config.Handler.TM = tm
 	s.config.Handler.CookieDomain = s.config.Token.CookieDomain
+	s.config.Handler.SM = sessionManager
 
 	// Add base routes to the server
 	if err := route.RegisterRoutes(srv, &s.config.Handler); err != nil {

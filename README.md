@@ -55,4 +55,4 @@ To ease the effort required to add additional schemas into the system a template
 
 **NOTE: you still have to make intelligent decisions around things like the presence / integration of hooks, interceptors, policies, etc. This is saving you about 10 seconds of copy-paste, so don't over estimate the automation, here.
 
-To geenrate a new schema, you can run `task newschema -- [yourschemaname]` where you replace the name within `[]`. Please be sure to note that this isn't a command line flag so there's a space between `--` and the name.
+To generate a new schema, you can run `task newschema -- [yourschemaname]` where you replace the name within `[]`. Please be sure to note that this isn't a command line flag so there's a space between `--` and the name.

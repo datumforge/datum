@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Ent Schema API",
-    "description": "This is an auto generated API description made out of an Ent schema definition",
-    "version": "0.1.0"
+    "title": "Datum API",
+    "description": "Programmatic interfaces for interacting with Datum Services",
+    "version": "0.0.1"
   },
   "paths": {
     "/email-verification-tokens": {
@@ -1972,6 +1972,36 @@
           },
           "500": {
             "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/livez": {
+      "description": "Check if the server is up",
+      "get": {
+        "summary": "Simple endpoint to check if the server is up",
+        "operationId": "Livez",
+        "responses": {
+          "200": {
+            "description": "Server is reachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Server is not reachable"
           }
         }
       }

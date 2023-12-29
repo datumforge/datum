@@ -34,7 +34,39 @@ func main() {
 
 	// Add OpenAPI Gen extension
 	spec := new(ogen.Spec)
-	oas, err := entoas.NewExtension(entoas.Spec(spec))
+	oas, err := entoas.NewExtension(
+		entoas.Spec(spec),
+		entoas.Mutations(func(graph *gen.Graph, spec *ogen.Spec) error {
+			spec.Info.SetTitle("Datum API").
+				SetDescription("Programmatic interfaces for interacting with Datum Services").
+				SetVersion("0.0.1")
+			// TODO: finish the remainder of our http endpoints
+			spec.AddPathItem("/livez", ogen.NewPathItem().
+				SetDescription("Check if the server is up").
+				SetGet(ogen.NewOperation().
+					SetOperationID("Livez").
+					SetSummary("Simple endpoint to check if the server is up").
+					AddResponse(
+						"200",
+						ogen.
+							NewResponse().
+							SetDescription("Server is reachable").
+							SetJSONContent(
+								ogen.NewSchema().
+									SetType("object").
+									AddRequiredProperties(
+										ogen.String().ToProperty("status"),
+									),
+							),
+					).
+					AddResponse("503", ogen.NewResponse().SetDescription("Server is not reachable")),
+				),
+			)
+
+			return nil
+		}),
+	)
+
 	if err != nil {
 		log.Fatalf("creating entoas extension: %v", err)
 	}

@@ -58,7 +58,7 @@ func login(ctx context.Context) (*oauth2.Token, error) {
 		password = string(bytepw)
 	}
 
-	login := handlers.User{
+	login := handlers.LoginRequest{
 		Username: username,
 		Password: password,
 	}

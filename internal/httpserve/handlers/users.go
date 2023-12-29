@@ -12,9 +12,7 @@ import (
 // User holds data specific to the datum user for the REST handlers for
 // login, registration, verification, etc
 type User struct {
-	Username                 string `json:"username"`
-	Password                 string `json:"password"`
-	userID                   string
+	ID                       string
 	FirstName                string
 	LastName                 string
 	Name                     string
@@ -65,7 +63,7 @@ func (u *User) CreateVerificationToken() error {
 
 // CreateResetToken creates a new reset token for the user
 func (u *User) CreateResetToken() error {
-	uid, err := ulid.Parse(u.userID)
+	uid, err := ulid.Parse(u.ID)
 	if err != nil {
 		return err
 	}

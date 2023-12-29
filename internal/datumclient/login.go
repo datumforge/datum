@@ -17,7 +17,7 @@ import (
 )
 
 // Login creates a login request to the Datum API
-func Login(c *Client, ctx context.Context, user handlers.User) (*oauth2.Token, error) {
+func Login(c *Client, ctx context.Context, login handlers.LoginRequest) (*oauth2.Token, error) {
 	method := http.MethodPost
 	endpoint := "login"
 
@@ -33,7 +33,7 @@ func Login(c *Client, ctx context.Context, user handlers.User) (*oauth2.Token, e
 		return nil, err
 	}
 
-	b, err := json.Marshal(user)
+	b, err := json.Marshal(login)
 	if err != nil {
 		return nil, err
 	}

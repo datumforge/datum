@@ -88,7 +88,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	meowtoken, err := h.storeEmailVerificationToken(ctx.Request().Context(), tx, user)
 	if err != nil {
-		return err
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// send emails via TaskMan as to not create blocking operations in the server

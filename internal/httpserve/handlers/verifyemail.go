@@ -18,7 +18,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	reqToken := ctx.QueryParam("token")
 
 	if err := validateVerifyRequest(reqToken); err != nil {
-		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	// starts db transaction for entire request
@@ -36,12 +36,12 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		}
 
 		if errors.Is(err, ErrNotFound) {
-			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
-		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(ErrUnableToVerifyEmail))
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrUnableToVerifyEmail))
 	}
 
 	// create email verification
@@ -61,7 +61,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 
-			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 
 		// Construct the user token from the database fields
@@ -106,7 +106,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				if err := tx.Commit(); err != nil {
 					h.Logger.Errorw("error committing transaction", "error", err)
 
-					return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+					return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 				}
 
 				return ctx.JSON(http.StatusCreated, out)
@@ -117,7 +117,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				return err
 			}
 
-			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 
 		if err := h.setEmailConfirmed(ctx.Request().Context(), tx, entUser); err != nil {
@@ -126,7 +126,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				return err
 			}
 
-			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 	}
 
@@ -141,7 +141,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 		h.Logger.Errorw("error creating token pair", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	// set cookies on request with the access and refresh token
@@ -152,14 +152,14 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			return err
 		}
 
-		return auth.ErrorResponse(err)
+		return ErrorResponse(err)
 	}
 
 	// commit transaction at end of request
 	if err := tx.Commit(); err != nil {
 		h.Logger.Errorw("error committing transaction", "error", err)
 
-		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	return ctx.JSON(http.StatusNoContent, nil)

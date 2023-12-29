@@ -7,11 +7,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 // RegisterRequest holds the fields that should be included on a request to the `/register` endpoint
@@ -39,11 +41,11 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
-		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	if err := in.Validate(); err != nil {
-		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	// create user
@@ -70,7 +72,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		}
 
 		if IsUniqueConstraintError(err) {
-			return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse("user already exists"))
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse("user already exists"))
 		}
 
 		return err
@@ -86,20 +88,28 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 	meowtoken, err := h.storeEmailVerificationToken(ctx.Request().Context(), tx, user)
 	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+	}
+
+	// send emails via TaskMan as to not create blocking operations in the server
+	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
+		return h.SendVerificationEmail(user)
+	}), marionette.WithRetries(3), // nolint: gomnd
+		marionette.WithBackoff(backoff.NewExponentialBackOff()),
+		marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
+	); err != nil {
+		if err := tx.Rollback(); err != nil {
+			h.Logger.Errorw("error rolling back transaction", "error", err)
+			return err
+		}
+
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
 	if err = tx.Commit(); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, auth.ErrorResponse(err))
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
-
-	// h.tasks.Queue(marionette.TaskFunc(func(ctx context.Context) error {
-	//	return h.SendVerificationEmail(user)
-	// }), marionette.WithRetries(3),
-	//	marionette.WithBackoff(backoff.NewExponentialBackOff()),
-	//	marionette.WithErrorf("could not send verification email to user %s", meowuser.ID),
-	//)
 
 	out := &RegisterReply{
 		ID:      meowuser.ID,

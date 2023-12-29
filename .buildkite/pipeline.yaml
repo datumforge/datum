@@ -59,7 +59,7 @@ steps:
 
   - label: ":github: upload fork PR reports"
     key: "scan-upload-pr"
-    if: (build.pull_request.labels includes "run-ci" ) 
+    if: build.branch != "main"
     depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:
@@ -75,7 +75,7 @@ steps:
 
   - label: ":github: upload reports"
     key: "scan-upload"
-    if: (build.branch == "main") || (build.branch !~ /:/i)
+    if: build.branch == "main"
     depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:

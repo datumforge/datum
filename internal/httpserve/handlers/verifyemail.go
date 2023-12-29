@@ -104,11 +104,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 				// commit transaction at end of request
 				if err := tx.Commit(); err != nil {
-					if err := tx.Rollback(); err != nil {
-						h.Logger.Errorw("error rolling back transaction", "error", err)
-						return err
-					}
-
 					h.Logger.Errorw("error committing transaction", "error", err)
 
 					return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))
@@ -162,11 +157,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	// commit transaction at end of request
 	if err := tx.Commit(); err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return err
-		}
-
 		h.Logger.Errorw("error committing transaction", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, auth.ErrorResponse(err))

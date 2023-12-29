@@ -12,6 +12,7 @@ import (
 	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -71,46 +72,52 @@ func TestLoginHandler(t *testing.T) {
 		SaveX(ec)
 
 	testCases := []struct {
-		name     string
-		username string
-		password string
-		err      error
+		name           string
+		username       string
+		password       string
+		expectedErr    error
+		expectedStatus int
 	}{
 		{
-			name:     "happy path, valid credentials",
-			username: validConfirmedUser,
-			password: validPassword,
-			err:      nil,
+			name:           "happy path, valid credentials",
+			username:       validConfirmedUser,
+			password:       validPassword,
+			expectedStatus: http.StatusOK,
 		},
 		{
-			name:     "email unverified",
-			username: validUnconfirmedUser,
-			password: validPassword,
-			err:      auth.ErrUnverifiedUser,
+			name:           "email unverified",
+			username:       validUnconfirmedUser,
+			password:       validPassword,
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:    auth.ErrUnverifiedUser,
 		},
 		{
-			name:     "invalid password",
-			username: validConfirmedUser,
-			password: "thisisnottherightone",
-			err:      auth.ErrInvalidCredentials,
+			name:           "invalid password",
+			username:       validConfirmedUser,
+			password:       "thisisnottherightone",
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:    auth.ErrInvalidCredentials,
 		},
 		{
-			name:     "user not found",
-			username: "rick.sanchez@datum.net",
-			password: validPassword,
-			err:      auth.ErrNoAuthUser,
+			name:           "user not found",
+			username:       "rick.sanchez@datum.net",
+			password:       validPassword,
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:    auth.ErrNoAuthUser,
 		},
 		{
-			name:     "empty username",
-			username: "",
-			password: validPassword,
-			err:      handlers.ErrMissingRequiredFields,
+			name:           "empty username",
+			username:       "",
+			password:       validPassword,
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:    handlers.ErrMissingRequiredFields,
 		},
 		{
-			name:     "empty username",
-			username: validConfirmedUser,
-			password: "",
-			err:      handlers.ErrMissingRequiredFields,
+			name:           "empty username",
+			username:       validConfirmedUser,
+			password:       "",
+			expectedStatus: http.StatusBadRequest,
+			expectedErr:    handlers.ErrMissingRequiredFields,
 		},
 	}
 
@@ -126,7 +133,7 @@ func TestLoginHandler(t *testing.T) {
 
 			body, err := json.Marshal(loginJSON)
 			if err != nil {
-				t.Error("error creating login json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/login", strings.NewReader(string(body)))
@@ -137,15 +144,25 @@ func TestLoginHandler(t *testing.T) {
 			ctx := e.NewContext(req, recorder)
 
 			err = h.LoginHandler(ctx)
+			require.NoError(t, err)
 
-			if tc.err != nil {
-				assert.Error(t, err)
-				assert.ErrorContains(t, err, tc.err.Error())
+			res := recorder.Result()
+			defer res.Body.Close()
 
-				return
+			var out *handlers.Response
+
+			// parse request body
+			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+				t.Error("error parsing response", err)
 			}
 
-			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+
+			if tc.expectedStatus == http.StatusOK {
+				assert.Equal(t, out.Message, "success")
+			} else {
+				assert.Contains(t, out.Message, tc.expectedErr.Error())
+			}
 		})
 	}
 

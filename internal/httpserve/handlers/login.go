@@ -26,20 +26,20 @@ type LoginRequest struct {
 func (h *Handler) LoginHandler(ctx echo.Context) error {
 	user, err := h.verifyUserPassword(ctx)
 	if err != nil {
-		return err
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	claims := createClaims(user)
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		return ErrorResponse(err)
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// set cookies on request with the access and refresh token
 	// when cookie domain is localhost, this is dropped but expected
 	if err := auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain); err != nil {
-		return ErrorResponse(err)
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	tx, err := h.DBClient.Tx(ctx.Request().Context())
@@ -52,10 +52,10 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		s.Where(sql.EQ("id", user.ID))
 	}).Save(ctx.Request().Context()); err != nil {
 		if err := tx.Rollback(); err != nil {
-			return err
+			return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 		}
 
-		return err
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -81,12 +81,10 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&l); err != nil {
-		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, ErrBadRequest
 	}
 
 	if l.Username == "" || l.Password == "" {
-		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, ErrMissingRequiredFields
 	}
 
@@ -95,25 +93,21 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 		s.Where(sql.EQ("email", l.Username))
 	}).Only(ctx.Request().Context())
 	if err != nil {
-		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, ErrNoAuthUser
 	}
 
 	if user.Edges.Setting.Status != "ACTIVE" {
-		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, ErrNoAuthUser
 	}
 
 	// verify the password is correct
 	valid, err := passwd.VerifyDerivedKey(*user.Password, l.Password)
 	if err != nil || !valid {
-		auth.Unauthorized(ctx) //nolint:errcheck
 		return nil, ErrInvalidCredentials
 	}
 
 	// verify email is verified
 	if !user.Edges.Setting.EmailConfirmed {
-		auth.Unverified(ctx) //nolint:errcheck
 		return nil, ErrUnverifiedUser
 	}
 

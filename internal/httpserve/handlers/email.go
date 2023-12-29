@@ -24,9 +24,35 @@ func (h *Handler) NewEmailManager() error {
 		return err
 	}
 
-	h.EmailURL = URLConfig{}
+	h.EmailURL = &URLConfig{}
 	if err := envconfig.Process("datum", h.EmailURL); err != nil {
-		return nil
+		return err
+	}
+
+	return nil
+}
+
+// NewTestEmailManager is responsible for initializing and configuring the email manager used for sending emails but does not
+// send emails, should be used in tests
+func (h *Handler) NewTestEmailManager() error {
+	// TODO: go back and configure with viper config instead of setting defaults
+	h.SendGridConfig = &emails.Config{}
+
+	err := envconfig.Process("datum", h.SendGridConfig)
+	if err != nil {
+		return err
+	}
+
+	h.SendGridConfig.Testing = true
+
+	h.emailManager, err = emails.New(h.SendGridConfig)
+	if err != nil {
+		return err
+	}
+
+	h.EmailURL = &URLConfig{}
+	if err := envconfig.Process("datum", h.EmailURL); err != nil {
+		return err
 	}
 
 	return nil
@@ -120,9 +146,9 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 // TODO: move this to the same config setup as everything else
 type URLConfig struct {
 	Base   string `split_words:"true" default:"https://app.datum.net"`
-	Verify string `split_words:"true" default:"/verify"`
-	Invite string `split_words:"true" default:"/invite"`
-	Reset  string `split_words:"true" default:"/reset"`
+	Verify string `split_words:"true" default:"/v1/verify"`
+	Invite string `split_words:"true" default:"/v1/invite"`
+	Reset  string `split_words:"true" default:"/v1/reset"`
 }
 
 func (c URLConfig) Validate() error {

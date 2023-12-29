@@ -119,7 +119,7 @@ func TestLoginHandler(t *testing.T) {
 			// create echo context
 			e := echo.New()
 
-			userJSON := handlers.User{
+			userJSON := handlers.LoginRequest{
 				Username: tc.username,
 				Password: tc.password,
 			}

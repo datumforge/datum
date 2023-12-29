@@ -19,6 +19,7 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
+	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
@@ -309,5 +310,21 @@ func WithEmailManager() ServerOption {
 		if err := s.Config.Server.Handler.NewEmailManager(); err != nil {
 			s.Config.Logger.Panicw("unable to create email manager", "error", err.Error())
 		}
+	})
+}
+
+// WithTaskManager sets up the default Marionette task manager to be used for delegating background tasks
+func WithTaskManager() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// Start task manager
+		tmConfig := marionette.Config{
+			Logger: s.Config.Logger,
+		}
+
+		tm := marionette.New(tmConfig)
+
+		tm.Start()
+
+		s.Config.Server.Handler.TaskMan = tm
 	})
 }

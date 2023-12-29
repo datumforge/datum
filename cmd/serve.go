@@ -19,7 +19,6 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/server"
 	"github.com/datumforge/datum/internal/httpserve/serveropts"
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var serveCmd = &cobra.Command{
@@ -79,6 +78,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithAuth(settings),
 		serveropts.WithFGAAuthz(settings),
 		serveropts.WithEmailManager(),
+		serveropts.WithTaskManager(),
 	)
 
 	// Create keys for development
@@ -121,13 +121,6 @@ func serve(ctx context.Context) error {
 
 	// add ready checks
 	so.AddServerOptions(serveropts.WithReadyChecks(dbConfig, fgaClient))
-
-	// Start task manager
-	tmConfig := marionette.Config{
-		Logger: logger,
-	}
-
-	marionette.New(tmConfig).Start()
 
 	// Add Driver to the Handlers Config
 	so.Config.Server.Handler.DBClient = entdbClient

@@ -31,7 +31,7 @@ var (
 	// ErrNotNull is returned when a field is required but not provided
 	ErrNotNull = errors.New("not null constraint violated on model")
 
-	// ErrConstraint is returned when a database constraint is violted
+	// ErrConstraint is returned when a database constraint is violated
 	ErrConstraint = errors.New("database constraint violated")
 
 	// ErrNotFound is returned when the requested object is not found
@@ -45,6 +45,9 @@ var (
 
 	// ErrUnverifiedUser is returned when email_verified on the user is false
 	ErrUnverifiedUser = errors.New("user is not verified")
+
+	// ErrUnableToVerifyEmail is returned when user's email is not able to be verified
+	ErrUnableToVerifyEmail = errors.New("could not verify email")
 
 	// ErrNoAuthUser is returned when the user couldn't be identified by the request
 	ErrNoAuthUser = errors.New("could not identify authenticated user in request")

@@ -48,7 +48,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
-	if err := registerVerifyHandler(router); err != nil {
+	if err := registerVerifyHandler(router, h); err != nil {
 		return err
 	}
 

@@ -65,6 +65,8 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 
 	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
 	if err = h.TXClient.Commit(); err != nil {
+		h.Logger.Errorw(transactionCommitErr, "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 

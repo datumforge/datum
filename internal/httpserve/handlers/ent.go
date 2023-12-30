@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	rollbackErr         = "error rolling back transaction"
-	transactionStartErr = "error starting transaction"
+	rollbackErr          = "error rolling back transaction"
+	transactionStartErr  = "error starting transaction"
+	transactionCommitErr = "error committing transaction"
 )
 
 func (h *Handler) startTransaction(ctx context.Context) (err error) {
@@ -138,7 +139,7 @@ func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User
 
 // getUserByEmail returns the ent user with the user settings based on the email in the request
 func (h *Handler) getUserByEmail(ctx context.Context, email string) (*ent.User, error) {
-	user, err := h.DBClient.User.Query().WithSetting().
+	user, err := h.TXClient.User.Query().WithSetting().
 		Where(user.Email(email)).
 		Only(ctx)
 	if err != nil {
@@ -148,6 +149,26 @@ func (h *Handler) getUserByEmail(ctx context.Context, email string) (*ent.User, 
 		}
 
 		h.Logger.Errorw("error obtaining user from email", "error", err)
+
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// getUserBySub returns the ent user with the user settings based on the subject in the claim
+func (h *Handler) getUserBySub(ctx context.Context, subject string) (*ent.User, error) {
+	// check user in the database, sub == claims subject and ensure only one record is returned
+	user, err := h.TXClient.User.Query().WithSetting().Where(
+		user.Sub(subject),
+	).Only(ctx)
+	if err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
+			return nil, err
+		}
+
+		h.Logger.Errorf("error retrieving user", "error", err)
 
 		return nil, err
 	}

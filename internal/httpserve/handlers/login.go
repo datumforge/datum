@@ -49,6 +49,8 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	}
 
 	if err = h.TXClient.Commit(); err != nil {
+		h.Logger.Errorw(transactionCommitErr, "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 

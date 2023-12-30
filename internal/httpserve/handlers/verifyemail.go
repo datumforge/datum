@@ -96,7 +96,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 				// commit transaction at end of request
 				if err := h.TXClient.Commit(); err != nil {
-					h.Logger.Errorw("error committing transaction", "error", err)
+					h.Logger.Errorw(transactionCommitErr, "error", err)
 
 					return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 				}

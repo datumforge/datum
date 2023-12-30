@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"entgo.io/ent/dialect/sql"
 	echo "github.com/datumforge/echox"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -38,13 +37,13 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// check user in the database, sub == claims subject and ensure only one record is returned
-	user, err := h.DBClient.User.Query().WithSetting().Where(func(s *sql.Selector) {
-		s.Where(sql.EQ("sub", claims.Subject))
-	}).Only(ctx.Request().Context())
-	if err != nil {
-		h.Logger.Errorf("error retrieving user", "error", err)
+	if err := h.startTransaction(ctx.Request().Context()); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
+	}
 
+	// check user in the database, sub == claims subject and ensure only one record is returned
+	user, err := h.getUserBySub(ctx.Request().Context(), claims.Subject)
+	if err != nil {
 		if ent.IsNotFound(err) {
 			return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
 		}
@@ -55,6 +54,12 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	// ensure the user is still active
 	if user.Edges.Setting.Status != "ACTIVE" {
 		return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
+	}
+
+	if err = h.TXClient.Commit(); err != nil {
+		h.Logger.Errorw(transactionCommitErr, "error", err)
+
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// UserID is not on the refresh token, so we need to set it now

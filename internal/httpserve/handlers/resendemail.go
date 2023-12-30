@@ -57,6 +57,12 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 	// check to see if user is already confirmed
 	if entUser.Edges.Setting.EmailConfirmed {
+		if err = h.TXClient.Commit(); err != nil {
+			h.Logger.Errorw(transactionCommitErr, "error", err)
+
+			return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+		}
+
 		out.Message = "email is already confirmed"
 
 		return ctx.JSON(http.StatusOK, out)
@@ -75,6 +81,8 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	}
 
 	if err = h.TXClient.Commit(); err != nil {
+		h.Logger.Errorw(transactionCommitErr, "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 

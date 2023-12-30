@@ -56,7 +56,7 @@ func (d *Client) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.SetRequest(c.Request().WithContext(ctx))
 
 		if err := next(c); err != nil {
-			if errors.Is(err, echo.ErrTooManyRequests) {
+			if err.(*echo.HTTPError).Code != http.StatusTooManyRequests {
 				d.Logger.Debug("rolling back transaction in middleware")
 
 				if err := client.Rollback(); err != nil {

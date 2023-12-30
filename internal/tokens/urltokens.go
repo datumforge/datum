@@ -17,7 +17,7 @@ const (
 	nonceLength                 = 64
 	keyLength                   = 64
 	expirationDays              = 7
-	resetTokenExpirationMinutes = 30
+	resetTokenExpirationMinutes = 15
 )
 
 // NewVerificationToken creates a token struct from an email address that expires
@@ -83,7 +83,7 @@ func (t *VerificationToken) Verify(signature string, secret []byte) (err error) 
 	return t.verifyData(data, signature, secret)
 }
 
-// NewResetToken creates a token struct from a user ID that expires in 30 minutes
+// NewResetToken creates a token struct from a user ID that expires in 15 minutes
 func NewResetToken(id ulid.ULID) (token *ResetToken, err error) {
 	if ulids.IsZero(id) {
 		return nil, ErrMissingUserID

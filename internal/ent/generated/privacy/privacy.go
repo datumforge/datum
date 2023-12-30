@@ -327,6 +327,30 @@ func (f OrganizationSettingMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.OrganizationSettingMutation", m)
 }
 
+// The PasswordResetTokenQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PasswordResetTokenQueryRuleFunc func(context.Context, *generated.PasswordResetTokenQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PasswordResetTokenQueryRuleFunc) EvalQuery(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.PasswordResetTokenQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("generated/privacy: unexpected query type %T, expect *generated.PasswordResetTokenQuery", q)
+}
+
+// The PasswordResetTokenMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PasswordResetTokenMutationRuleFunc func(context.Context, *generated.PasswordResetTokenMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PasswordResetTokenMutationRuleFunc) EvalMutation(ctx context.Context, m generated.Mutation) error {
+	if m, ok := m.(*generated.PasswordResetTokenMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("generated/privacy: unexpected mutation type %T, expect *generated.PasswordResetTokenMutation", m)
+}
+
 // The PersonalAccessTokenQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PersonalAccessTokenQueryRuleFunc func(context.Context, *generated.PersonalAccessTokenQuery) error
@@ -476,6 +500,8 @@ func queryFilter(q generated.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *generated.OrganizationSettingQuery:
 		return q.Filter(), nil
+	case *generated.PasswordResetTokenQuery:
+		return q.Filter(), nil
 	case *generated.PersonalAccessTokenQuery:
 		return q.Filter(), nil
 	case *generated.SessionQuery:
@@ -508,6 +534,8 @@ func mutationFilter(m generated.Mutation) (Filter, error) {
 	case *generated.OrganizationMutation:
 		return m.Filter(), nil
 	case *generated.OrganizationSettingMutation:
+		return m.Filter(), nil
+	case *generated.PasswordResetTokenMutation:
 		return m.Filter(), nil
 	case *generated.PersonalAccessTokenMutation:
 		return m.Filter(), nil

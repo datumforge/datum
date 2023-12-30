@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
@@ -41,7 +40,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	entUser, err := h.getTokenUserByEmail(ctx.Request().Context(), tx, in.Email)
+	entUser, err := h.getUserByEmail(ctx.Request().Context(), tx, in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 204 response even if user is not found to avoid
@@ -62,7 +61,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	if _, err = h.sentPasswordResetEmail(ctx.Request().Context(), tx, user); err != nil {
+	if _, err = h.storeAndSendPasswordResetToken(ctx.Request().Context(), tx, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
@@ -83,45 +82,32 @@ func validateForgotPasswordRequest(req *ForgotPasswordRequest) error {
 	return nil
 }
 
-func (h *Handler) sentPasswordResetEmail(ctx context.Context, tx *ent.Tx, user *User) (*ent.EmailVerificationToken, error) {
-	if err := user.CreateVerificationToken(); err != nil {
-		h.Logger.Errorw("unable to create verification token", "error", err)
+func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, tx *ent.Tx, user *User) (*ent.PasswordResetToken, error) {
+	if err := h.expireAllResetTokensUserByEmail(ctx, tx, user.Email); err != nil {
+		h.Logger.Errorw("error expiring existing tokens", "error", err)
+
 		return nil, err
 	}
 
-	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
-	if err != nil {
-		h.Logger.Errorw("unable to parse ttl", "error", err)
+	if err := user.CreateResetToken(); err != nil {
+		h.Logger.Errorw("unable to create password reset token", "error", err)
 		return nil, err
 	}
 
-	meowtoken, err := tx.EmailVerificationToken.Create().
-		SetOwnerID(user.ID).
-		SetToken(user.EmailVerificationToken.String).
-		SetTTL(ttl).
-		SetEmail(user.Email).
-		SetSecret(user.EmailVerificationSecret).
-		Save(ctx)
+	meowtoken, err := h.createPasswordResetToken(ctx, tx, user)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return nil, err
-		}
-
-		h.Logger.Errorw("error creating email verification token", "error", err)
-
 		return nil, err
 	}
 
 	// send emails via TaskMan as to not create blocking operations in the server
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
 		return h.SendPasswordResetRequestEmail(user)
-	}), marionette.WithRetries(3), // nolint: gomnd
+	}), marionette.WithRetries(3), //nolint: gomnd
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
-		marionette.WithErrorf("could not send verification email to user %s", user.ID),
+		marionette.WithErrorf("could not send password reset email to user %s", user.ID),
 	); err != nil {
 		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 

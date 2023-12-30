@@ -33,6 +33,9 @@ type Organization func(*sql.Selector)
 // OrganizationSetting is the predicate function for organizationsetting builders.
 type OrganizationSetting func(*sql.Selector)
 
+// PasswordResetToken is the predicate function for passwordresettoken builders.
+type PasswordResetToken func(*sql.Selector)
+
 // PersonalAccessToken is the predicate function for personalaccesstoken builders.
 type PersonalAccessToken func(*sql.Selector)
 

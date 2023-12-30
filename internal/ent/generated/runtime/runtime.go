@@ -15,6 +15,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -398,6 +399,47 @@ func init() {
 	organizationsettingDescID := organizationsettingMixinFields1[0].Descriptor()
 	// organizationsetting.DefaultID holds the default value on creation for the id field.
 	organizationsetting.DefaultID = organizationsettingDescID.Default.(func() string)
+	passwordresettokenMixin := schema.PasswordResetToken{}.Mixin()
+	passwordresettokenMixinHooks0 := passwordresettokenMixin[0].Hooks()
+	passwordresettokenMixinHooks2 := passwordresettokenMixin[2].Hooks()
+	passwordresettokenHooks := schema.PasswordResetToken{}.Hooks()
+	passwordresettoken.Hooks[0] = passwordresettokenMixinHooks0[0]
+	passwordresettoken.Hooks[1] = passwordresettokenMixinHooks2[0]
+	passwordresettoken.Hooks[2] = passwordresettokenHooks[0]
+	passwordresettokenMixinInters2 := passwordresettokenMixin[2].Interceptors()
+	passwordresettoken.Interceptors[0] = passwordresettokenMixinInters2[0]
+	passwordresettokenMixinFields0 := passwordresettokenMixin[0].Fields()
+	_ = passwordresettokenMixinFields0
+	passwordresettokenMixinFields1 := passwordresettokenMixin[1].Fields()
+	_ = passwordresettokenMixinFields1
+	passwordresettokenFields := schema.PasswordResetToken{}.Fields()
+	_ = passwordresettokenFields
+	// passwordresettokenDescCreatedAt is the schema descriptor for created_at field.
+	passwordresettokenDescCreatedAt := passwordresettokenMixinFields0[0].Descriptor()
+	// passwordresettoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	passwordresettoken.DefaultCreatedAt = passwordresettokenDescCreatedAt.Default.(func() time.Time)
+	// passwordresettokenDescUpdatedAt is the schema descriptor for updated_at field.
+	passwordresettokenDescUpdatedAt := passwordresettokenMixinFields0[1].Descriptor()
+	// passwordresettoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	passwordresettoken.DefaultUpdatedAt = passwordresettokenDescUpdatedAt.Default.(func() time.Time)
+	// passwordresettoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	passwordresettoken.UpdateDefaultUpdatedAt = passwordresettokenDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// passwordresettokenDescToken is the schema descriptor for token field.
+	passwordresettokenDescToken := passwordresettokenFields[0].Descriptor()
+	// passwordresettoken.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	passwordresettoken.TokenValidator = passwordresettokenDescToken.Validators[0].(func(string) error)
+	// passwordresettokenDescEmail is the schema descriptor for email field.
+	passwordresettokenDescEmail := passwordresettokenFields[2].Descriptor()
+	// passwordresettoken.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	passwordresettoken.EmailValidator = passwordresettokenDescEmail.Validators[0].(func(string) error)
+	// passwordresettokenDescSecret is the schema descriptor for secret field.
+	passwordresettokenDescSecret := passwordresettokenFields[3].Descriptor()
+	// passwordresettoken.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	passwordresettoken.SecretValidator = passwordresettokenDescSecret.Validators[0].(func([]byte) error)
+	// passwordresettokenDescID is the schema descriptor for id field.
+	passwordresettokenDescID := passwordresettokenMixinFields1[0].Descriptor()
+	// passwordresettoken.DefaultID holds the default value on creation for the id field.
+	passwordresettoken.DefaultID = passwordresettokenDescID.Default.(func() string)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
 	personalaccesstokenHooks := schema.PersonalAccessToken{}.Hooks()

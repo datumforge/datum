@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -338,6 +339,21 @@ func (uc *UserCreate) AddEmailVerificationTokens(e ...*EmailVerificationToken) *
 		ids[i] = e[i].ID
 	}
 	return uc.AddEmailVerificationTokenIDs(ids...)
+}
+
+// AddResetTokenIDs adds the "reset_tokens" edge to the PasswordResetToken entity by IDs.
+func (uc *UserCreate) AddResetTokenIDs(ids ...string) *UserCreate {
+	uc.mutation.AddResetTokenIDs(ids...)
+	return uc
+}
+
+// AddResetTokens adds the "reset_tokens" edges to the PasswordResetToken entity.
+func (uc *UserCreate) AddResetTokens(p ...*PasswordResetToken) *UserCreate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return uc.AddResetTokenIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -666,6 +682,23 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			},
 		}
 		edge.Schema = uc.schemaConfig.EmailVerificationToken
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ResetTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ResetTokensTable,
+			Columns: []string{user.ResetTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(passwordresettoken.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uc.schemaConfig.PasswordResetToken
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

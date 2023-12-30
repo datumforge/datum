@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -82,6 +83,11 @@ func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func PasswordResetTokenEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
@@ -118,6 +124,13 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 	if exists, err := FromContext(ctx).EmailVerificationToken.Query().Where((emailverificationtoken.HasOwnerWith(user.ID(id)))).Exist(ctx); err != nil && exists {
 		if emailverificationtokenCount, err := FromContext(ctx).EmailVerificationToken.Delete().Where(emailverificationtoken.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
 			FromContext(ctx).Logger.Debugw("deleting emailverificationtoken", "count", emailverificationtokenCount, "err", err)
+			return err
+		}
+	}
+
+	if exists, err := FromContext(ctx).PasswordResetToken.Query().Where((passwordresettoken.HasOwnerWith(user.ID(id)))).Exist(ctx); err != nil && exists {
+		if passwordresettokenCount, err := FromContext(ctx).PasswordResetToken.Delete().Where(passwordresettoken.HasOwnerWith(user.ID(id))).Exec(ctx); err != nil {
+			FromContext(ctx).Logger.Debugw("deleting passwordresettoken", "count", passwordresettokenCount, "err", err)
 			return err
 		}
 	}

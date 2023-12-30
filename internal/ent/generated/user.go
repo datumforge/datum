@@ -72,9 +72,11 @@ type UserEdges struct {
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
 	EmailVerificationTokens []*EmailVerificationToken `json:"email_verification_tokens,omitempty"`
+	// ResetTokens holds the value of the reset_tokens edge.
+	ResetTokens []*PasswordResetToken `json:"reset_tokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 	// totalCount holds the count of the edges above.
 	totalCount [5]map[string]int
 
@@ -83,6 +85,7 @@ type UserEdges struct {
 	namedGroups                  map[string][]*Group
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
+	namedResetTokens             map[string][]*PasswordResetToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -141,6 +144,15 @@ func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, er
 		return e.EmailVerificationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "email_verification_tokens"}
+}
+
+// ResetTokensOrErr returns the ResetTokens value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ResetTokensOrErr() ([]*PasswordResetToken, error) {
+	if e.loadedTypes[6] {
+		return e.ResetTokens, nil
+	}
+	return nil, &NotLoadedError{edge: "reset_tokens"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -323,6 +335,11 @@ func (u *User) QuerySetting() *UserSettingQuery {
 // QueryEmailVerificationTokens queries the "email_verification_tokens" edge of the User entity.
 func (u *User) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
 	return NewUserClient(u.config).QueryEmailVerificationTokens(u)
+}
+
+// QueryResetTokens queries the "reset_tokens" edge of the User entity.
+func (u *User) QueryResetTokens() *PasswordResetTokenQuery {
+	return NewUserClient(u.config).QueryResetTokens(u)
 }
 
 // Update returns a builder for updating this User.
@@ -529,6 +546,30 @@ func (u *User) appendNamedEmailVerificationTokens(name string, edges ...*EmailVe
 		u.Edges.namedEmailVerificationTokens[name] = []*EmailVerificationToken{}
 	} else {
 		u.Edges.namedEmailVerificationTokens[name] = append(u.Edges.namedEmailVerificationTokens[name], edges...)
+	}
+}
+
+// NamedResetTokens returns the ResetTokens named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedResetTokens(name string) ([]*PasswordResetToken, error) {
+	if u.Edges.namedResetTokens == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedResetTokens[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedResetTokens(name string, edges ...*PasswordResetToken) {
+	if u.Edges.namedResetTokens == nil {
+		u.Edges.namedResetTokens = make(map[string][]*PasswordResetToken)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedResetTokens[name] = []*PasswordResetToken{}
+	} else {
+		u.Edges.namedResetTokens[name] = append(u.Edges.namedResetTokens[name], edges...)
 	}
 }
 

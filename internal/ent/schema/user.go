@@ -138,6 +138,8 @@ func (User) Edges() []ent.Edge {
 			Annotations(entx.CascadeAnnotationField("User")),
 		edge.To("email_verification_tokens", EmailVerificationToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("reset_tokens", PasswordResetToken.Type).
+			Annotations(entx.CascadeAnnotationField("Owner")),
 	}
 }
 

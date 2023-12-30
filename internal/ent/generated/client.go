@@ -26,6 +26,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -60,6 +61,8 @@ type Client struct {
 	Organization *OrganizationClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
 	OrganizationSetting *OrganizationSettingClient
+	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
+	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
 	// Session is the client for interacting with the Session builders.
@@ -88,6 +91,7 @@ func (c *Client) init() {
 	c.OhAuthTooToken = NewOhAuthTooTokenClient(c.config)
 	c.Organization = NewOrganizationClient(c.config)
 	c.OrganizationSetting = NewOrganizationSettingClient(c.config)
+	c.PasswordResetToken = NewPasswordResetTokenClient(c.config)
 	c.PersonalAccessToken = NewPersonalAccessTokenClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.User = NewUserClient(c.config)
@@ -227,6 +231,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
 		Organization:           NewOrganizationClient(cfg),
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
+		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
 		Session:                NewSessionClient(cfg),
 		User:                   NewUserClient(cfg),
@@ -259,6 +264,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OhAuthTooToken:         NewOhAuthTooTokenClient(cfg),
 		Organization:           NewOrganizationClient(cfg),
 		OrganizationSetting:    NewOrganizationSettingClient(cfg),
+		PasswordResetToken:     NewPasswordResetTokenClient(cfg),
 		PersonalAccessToken:    NewPersonalAccessTokenClient(cfg),
 		Session:                NewSessionClient(cfg),
 		User:                   NewUserClient(cfg),
@@ -294,7 +300,7 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupSetting, c.Integration,
 		c.OauthProvider, c.OhAuthTooToken, c.Organization, c.OrganizationSetting,
-		c.PersonalAccessToken, c.Session, c.User, c.UserSetting,
+		c.PasswordResetToken, c.PersonalAccessToken, c.Session, c.User, c.UserSetting,
 	} {
 		n.Use(hooks...)
 	}
@@ -306,7 +312,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.EmailVerificationToken, c.Entitlement, c.Group, c.GroupSetting, c.Integration,
 		c.OauthProvider, c.OhAuthTooToken, c.Organization, c.OrganizationSetting,
-		c.PersonalAccessToken, c.Session, c.User, c.UserSetting,
+		c.PasswordResetToken, c.PersonalAccessToken, c.Session, c.User, c.UserSetting,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -333,6 +339,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Organization.mutate(ctx, m)
 	case *OrganizationSettingMutation:
 		return c.OrganizationSetting.mutate(ctx, m)
+	case *PasswordResetTokenMutation:
+		return c.PasswordResetToken.mutate(ctx, m)
 	case *PersonalAccessTokenMutation:
 		return c.PersonalAccessToken.mutate(ctx, m)
 	case *SessionMutation:
@@ -1882,6 +1890,160 @@ func (c *OrganizationSettingClient) mutate(ctx context.Context, m *OrganizationS
 	}
 }
 
+// PasswordResetTokenClient is a client for the PasswordResetToken schema.
+type PasswordResetTokenClient struct {
+	config
+}
+
+// NewPasswordResetTokenClient returns a client for the PasswordResetToken from the given config.
+func NewPasswordResetTokenClient(c config) *PasswordResetTokenClient {
+	return &PasswordResetTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `passwordresettoken.Hooks(f(g(h())))`.
+func (c *PasswordResetTokenClient) Use(hooks ...Hook) {
+	c.hooks.PasswordResetToken = append(c.hooks.PasswordResetToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `passwordresettoken.Intercept(f(g(h())))`.
+func (c *PasswordResetTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PasswordResetToken = append(c.inters.PasswordResetToken, interceptors...)
+}
+
+// Create returns a builder for creating a PasswordResetToken entity.
+func (c *PasswordResetTokenClient) Create() *PasswordResetTokenCreate {
+	mutation := newPasswordResetTokenMutation(c.config, OpCreate)
+	return &PasswordResetTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PasswordResetToken entities.
+func (c *PasswordResetTokenClient) CreateBulk(builders ...*PasswordResetTokenCreate) *PasswordResetTokenCreateBulk {
+	return &PasswordResetTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PasswordResetTokenClient) MapCreateBulk(slice any, setFunc func(*PasswordResetTokenCreate, int)) *PasswordResetTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PasswordResetTokenCreateBulk{err: fmt.Errorf("calling to PasswordResetTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PasswordResetTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PasswordResetTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PasswordResetToken.
+func (c *PasswordResetTokenClient) Update() *PasswordResetTokenUpdate {
+	mutation := newPasswordResetTokenMutation(c.config, OpUpdate)
+	return &PasswordResetTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PasswordResetTokenClient) UpdateOne(prt *PasswordResetToken) *PasswordResetTokenUpdateOne {
+	mutation := newPasswordResetTokenMutation(c.config, OpUpdateOne, withPasswordResetToken(prt))
+	return &PasswordResetTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PasswordResetTokenClient) UpdateOneID(id string) *PasswordResetTokenUpdateOne {
+	mutation := newPasswordResetTokenMutation(c.config, OpUpdateOne, withPasswordResetTokenID(id))
+	return &PasswordResetTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PasswordResetToken.
+func (c *PasswordResetTokenClient) Delete() *PasswordResetTokenDelete {
+	mutation := newPasswordResetTokenMutation(c.config, OpDelete)
+	return &PasswordResetTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PasswordResetTokenClient) DeleteOne(prt *PasswordResetToken) *PasswordResetTokenDeleteOne {
+	return c.DeleteOneID(prt.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PasswordResetTokenClient) DeleteOneID(id string) *PasswordResetTokenDeleteOne {
+	builder := c.Delete().Where(passwordresettoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PasswordResetTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for PasswordResetToken.
+func (c *PasswordResetTokenClient) Query() *PasswordResetTokenQuery {
+	return &PasswordResetTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePasswordResetToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PasswordResetToken entity by its id.
+func (c *PasswordResetTokenClient) Get(ctx context.Context, id string) (*PasswordResetToken, error) {
+	return c.Query().Where(passwordresettoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PasswordResetTokenClient) GetX(ctx context.Context, id string) *PasswordResetToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryOwner queries the owner edge of a PasswordResetToken.
+func (c *PasswordResetTokenClient) QueryOwner(prt *PasswordResetToken) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := prt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(passwordresettoken.Table, passwordresettoken.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, passwordresettoken.OwnerTable, passwordresettoken.OwnerColumn),
+		)
+		schemaConfig := prt.schemaConfig
+		step.To.Schema = schemaConfig.User
+		step.Edge.Schema = schemaConfig.PasswordResetToken
+		fromV = sqlgraph.Neighbors(prt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PasswordResetTokenClient) Hooks() []Hook {
+	hooks := c.hooks.PasswordResetToken
+	return append(hooks[:len(hooks):len(hooks)], passwordresettoken.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PasswordResetTokenClient) Interceptors() []Interceptor {
+	inters := c.inters.PasswordResetToken
+	return append(inters[:len(inters):len(inters)], passwordresettoken.Interceptors[:]...)
+}
+
+func (c *PasswordResetTokenClient) mutate(ctx context.Context, m *PasswordResetTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PasswordResetTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PasswordResetTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PasswordResetTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PasswordResetTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("generated: unknown PasswordResetToken mutation op: %q", m.Op())
+	}
+}
+
 // PersonalAccessTokenClient is a client for the PersonalAccessToken schema.
 type PersonalAccessTokenClient struct {
 	config
@@ -2410,6 +2572,25 @@ func (c *UserClient) QueryEmailVerificationTokens(u *User) *EmailVerificationTok
 	return query
 }
 
+// QueryResetTokens queries the reset_tokens edge of a User.
+func (c *UserClient) QueryResetTokens(u *User) *PasswordResetTokenQuery {
+	query := (&PasswordResetTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(passwordresettoken.Table, passwordresettoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ResetTokensTable, user.ResetTokensColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.PasswordResetToken
+		step.Edge.Schema = schemaConfig.PasswordResetToken
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -2596,12 +2777,13 @@ type (
 	hooks struct {
 		EmailVerificationToken, Entitlement, Group, GroupSetting, Integration,
 		OauthProvider, OhAuthTooToken, Organization, OrganizationSetting,
-		PersonalAccessToken, Session, User, UserSetting []ent.Hook
+		PasswordResetToken, PersonalAccessToken, Session, User, UserSetting []ent.Hook
 	}
 	inters struct {
 		EmailVerificationToken, Entitlement, Group, GroupSetting, Integration,
 		OauthProvider, OhAuthTooToken, Organization, OrganizationSetting,
-		PersonalAccessToken, Session, User, UserSetting []ent.Interceptor
+		PasswordResetToken, PersonalAccessToken, Session, User,
+		UserSetting []ent.Interceptor
 	}
 )
 

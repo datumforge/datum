@@ -61,6 +61,8 @@ const (
 	EdgeSetting = "setting"
 	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
 	EdgeEmailVerificationTokens = "email_verification_tokens"
+	// EdgeResetTokens holds the string denoting the reset_tokens edge name in mutations.
+	EdgeResetTokens = "reset_tokens"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -101,6 +103,13 @@ const (
 	EmailVerificationTokensInverseTable = "email_verification_tokens"
 	// EmailVerificationTokensColumn is the table column denoting the email_verification_tokens relation/edge.
 	EmailVerificationTokensColumn = "user_email_verification_tokens"
+	// ResetTokensTable is the table that holds the reset_tokens relation/edge.
+	ResetTokensTable = "password_reset_tokens"
+	// ResetTokensInverseTable is the table name for the PasswordResetToken entity.
+	// It exists in this package in order to avoid circular dependency with the "passwordresettoken" package.
+	ResetTokensInverseTable = "password_reset_tokens"
+	// ResetTokensColumn is the table column denoting the reset_tokens relation/edge.
+	ResetTokensColumn = "user_reset_tokens"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -352,6 +361,20 @@ func ByEmailVerificationTokens(term sql.OrderTerm, terms ...sql.OrderTerm) Order
 		sqlgraph.OrderByNeighborTerms(s, newEmailVerificationTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByResetTokensCount orders the results by reset_tokens count.
+func ByResetTokensCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newResetTokensStep(), opts...)
+	}
+}
+
+// ByResetTokens orders the results by reset_tokens terms.
+func ByResetTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newResetTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrganizationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -392,5 +415,12 @@ func newEmailVerificationTokensStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EmailVerificationTokensInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
+	)
+}
+func newResetTokensStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ResetTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ResetTokensTable, ResetTokensColumn),
 	)
 }

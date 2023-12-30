@@ -117,6 +117,18 @@ func (f OrganizationSettingFunc) Mutate(ctx context.Context, m generated.Mutatio
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrganizationSettingMutation", m)
 }
 
+// The PasswordResetTokenFunc type is an adapter to allow the use of ordinary
+// function as PasswordResetToken mutator.
+type PasswordResetTokenFunc func(context.Context, *generated.PasswordResetTokenMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PasswordResetTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.PasswordResetTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.PasswordResetTokenMutation", m)
+}
+
 // The PersonalAccessTokenFunc type is an adapter to allow the use of ordinary
 // function as PersonalAccessToken mutator.
 type PersonalAccessTokenFunc func(context.Context, *generated.PersonalAccessTokenMutation) (generated.Value, error)

@@ -21,6 +21,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -94,6 +95,7 @@ func checkColumn(table, column string) error {
 			ohauthtootoken.Table:         ohauthtootoken.ValidColumn,
 			organization.Table:           organization.ValidColumn,
 			organizationsetting.Table:    organizationsetting.ValidColumn,
+			passwordresettoken.Table:     passwordresettoken.ValidColumn,
 			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
 			session.Table:                session.ValidColumn,
 			user.Table:                   user.ValidColumn,

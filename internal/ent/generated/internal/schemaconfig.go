@@ -17,6 +17,7 @@ type SchemaConfig struct {
 	OhAuthTooToken         string // OhAuthTooToken table.
 	Organization           string // Organization table.
 	OrganizationSetting    string // OrganizationSetting table.
+	PasswordResetToken     string // PasswordResetToken table.
 	PersonalAccessToken    string // PersonalAccessToken table.
 	Session                string // Session table.
 	User                   string // User table.

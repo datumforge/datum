@@ -1399,6 +1399,7 @@ type CreateUserInput struct {
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
 	EmailVerificationTokenIDs []string
+	ResetTokenIDs             []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1458,6 +1459,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
 		m.AddEmailVerificationTokenIDs(v...)
 	}
+	if v := i.ResetTokenIDs; len(v) > 0 {
+		m.AddResetTokenIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
@@ -1504,6 +1508,9 @@ type UpdateUserInput struct {
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
 	RemoveEmailVerificationTokenIDs []string
+	ClearResetTokens                bool
+	AddResetTokenIDs                []string
+	RemoveResetTokenIDs             []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1615,6 +1622,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemoveEmailVerificationTokenIDs; len(v) > 0 {
 		m.RemoveEmailVerificationTokenIDs(v...)
+	}
+	if i.ClearResetTokens {
+		m.ClearResetTokens()
+	}
+	if v := i.AddResetTokenIDs; len(v) > 0 {
+		m.AddResetTokenIDs(v...)
+	}
+	if v := i.RemoveResetTokenIDs; len(v) > 0 {
+		m.RemoveResetTokenIDs(v...)
 	}
 }
 

@@ -20,6 +20,9 @@ type User struct {
 	EmailVerificationExpires sql.NullString
 	EmailVerificationToken   sql.NullString
 	EmailVerificationSecret  []byte
+	PasswordResetExpires     sql.NullString
+	PasswordResetToken       sql.NullString
+	PasswordResetSecret      []byte
 }
 
 // GetVerificationToken returns the verification token if its valid
@@ -61,6 +64,24 @@ func (u *User) CreateVerificationToken() error {
 	return nil
 }
 
+// GetPasswordResetToken returns the password reset token if its valid
+func (u *User) GetPasswordResetToken() string {
+	if u.PasswordResetToken.Valid {
+		return u.PasswordResetToken.String
+	}
+
+	return ""
+}
+
+// GetPasswordResetExpires returns the expiration time of password verification token
+func (u *User) GetPasswordResetExpires() (time.Time, error) {
+	if u.EmailVerificationExpires.Valid {
+		return time.Parse(time.RFC3339Nano, u.PasswordResetExpires.String)
+	}
+
+	return time.Time{}, nil
+}
+
 // CreateResetToken creates a new reset token for the user
 func (u *User) CreateResetToken() error {
 	uid, err := ulid.Parse(u.ID)
@@ -78,9 +99,9 @@ func (u *User) CreateResetToken() error {
 		return err
 	}
 
-	u.EmailVerificationToken = sql.NullString{Valid: true, String: token}
-	u.EmailVerificationExpires = sql.NullString{Valid: true, String: reset.ExpiresAt.Format(time.RFC3339Nano)}
-	u.EmailVerificationSecret = secret
+	u.PasswordResetToken = sql.NullString{Valid: true, String: token}
+	u.PasswordResetExpires = sql.NullString{Valid: true, String: reset.ExpiresAt.Format(time.RFC3339Nano)}
+	u.PasswordResetSecret = secret
 
 	return nil
 }

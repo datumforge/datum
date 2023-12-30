@@ -30,6 +30,8 @@ type Tx struct {
 	Organization *OrganizationClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
 	OrganizationSetting *OrganizationSettingClient
+	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
+	PasswordResetToken *PasswordResetTokenClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
 	// Session is the client for interacting with the Session builders.
@@ -178,6 +180,7 @@ func (tx *Tx) init() {
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
+	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.User = NewUserClient(tx.config)

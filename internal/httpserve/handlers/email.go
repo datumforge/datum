@@ -112,7 +112,7 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data.Recipient.ParseName(user.Name)
 
 	var err error
-	if data.ResetURL, err = h.EmailURL.ResetURL(user.GetVerificationToken()); err != nil {
+	if data.ResetURL, err = h.EmailURL.ResetURL(user.GetPasswordResetToken()); err != nil {
 		return err
 	}
 

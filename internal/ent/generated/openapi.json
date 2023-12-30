@@ -4002,6 +4002,366 @@
         }
       }
     },
+    "/password-reset-tokens": {
+      "get": {
+        "tags": [
+          "PasswordResetToken"
+        ],
+        "summary": "List PasswordResetTokens",
+        "description": "List PasswordResetTokens.",
+        "operationId": "listPasswordResetToken",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result PasswordResetToken list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PasswordResetTokenList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "PasswordResetToken"
+        ],
+        "summary": "Create a new PasswordResetToken",
+        "description": "Creates a new PasswordResetToken and persists it to storage.",
+        "operationId": "createPasswordResetToken",
+        "requestBody": {
+          "description": "PasswordResetToken to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "token",
+                  "ttl",
+                  "email",
+                  "secret",
+                  "owner"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "PasswordResetToken created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordResetTokenCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/password-reset-tokens/{id}": {
+      "get": {
+        "tags": [
+          "PasswordResetToken"
+        ],
+        "summary": "Find a PasswordResetToken by ID",
+        "description": "Finds the PasswordResetToken with the requested ID and returns it.",
+        "operationId": "readPasswordResetToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the PasswordResetToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PasswordResetToken with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordResetTokenRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PasswordResetToken"
+        ],
+        "summary": "Deletes a PasswordResetToken by ID",
+        "description": "Deletes the PasswordResetToken with the requested ID.",
+        "operationId": "deletePasswordResetToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the PasswordResetToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "PasswordResetToken with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "PasswordResetToken"
+        ],
+        "summary": "Updates a PasswordResetToken",
+        "description": "Updates a PasswordResetToken and persists changes to storage.",
+        "operationId": "updatePasswordResetToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the PasswordResetToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "PasswordResetToken properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "ttl": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "secret": {
+                    "type": "string",
+                    "format": "byte"
+                  },
+                  "owner": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "PasswordResetToken updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordResetTokenUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/password-reset-tokens/{id}/owner": {
+      "get": {
+        "tags": [
+          "PasswordResetToken"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the PasswordResetToken with the given ID",
+        "operationId": "readPasswordResetTokenOwner",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the PasswordResetToken",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to PasswordResetToken with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordResetToken_OwnerRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/personal-access-tokens": {
       "get": {
         "tags": [
@@ -5300,6 +5660,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "reset_tokens": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
@@ -5522,6 +5888,12 @@
                     "type": "string"
                   },
                   "email_verification_tokens": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "reset_tokens": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5795,6 +6167,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/User_PersonalAccessTokensList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{id}/reset-tokens": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached ResetTokens",
+        "description": "List attached ResetTokens.",
+        "operationId": "listUserResetTokens",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_ResetTokensList"
                   }
                 }
               }
@@ -9717,6 +10153,334 @@
           "oauth"
         ]
       },
+      "PasswordResetToken": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "token",
+          "email",
+          "owner"
+        ]
+      },
+      "PasswordResetTokenCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "token",
+          "email"
+        ]
+      },
+      "PasswordResetTokenList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "token",
+          "email"
+        ]
+      },
+      "PasswordResetTokenRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "token",
+          "email"
+        ]
+      },
+      "PasswordResetTokenUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "token",
+          "email"
+        ]
+      },
+      "PasswordResetToken_OwnerRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "password": {
+            "type": "string"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name",
+          "oauth"
+        ]
+      },
       "PersonalAccessToken": {
         "type": "object",
         "properties": {
@@ -10455,6 +11219,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EmailVerificationToken"
+            }
+          },
+          "reset_tokens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PasswordResetToken"
             }
           }
         },
@@ -11470,6 +12240,56 @@
           "created_at",
           "updated_at",
           "name"
+        ]
+      },
+      "User_ResetTokensList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "token",
+          "email"
         ]
       },
       "User_SessionsList": {

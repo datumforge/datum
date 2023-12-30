@@ -27,7 +27,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return err
 	}
 
-	entUser, err := h.getUserByToken(ctx.Request().Context(), tx, reqToken)
+	entUser, err := h.getUserByEVToken(ctx.Request().Context(), tx, reqToken)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
 			h.Logger.Errorw("error rolling back transaction", "error", err)

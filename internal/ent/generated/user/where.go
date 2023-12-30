@@ -1351,6 +1351,35 @@ func HasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) p
 	})
 }
 
+// HasResetTokens applies the HasEdge predicate on the "reset_tokens" edge.
+func HasResetTokens() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, ResetTokensTable, ResetTokensColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.PasswordResetToken
+		step.Edge.Schema = schemaConfig.PasswordResetToken
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasResetTokensWith applies the HasEdge predicate on the "reset_tokens" edge with a given conditions (other predicates).
+func HasResetTokensWith(preds ...predicate.PasswordResetToken) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newResetTokensStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.PasswordResetToken
+		step.Edge.Schema = schemaConfig.PasswordResetToken
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

@@ -251,6 +251,7 @@ type CreateUserInput struct {
 	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
 	SettingID                 string   `json:"settingID"`
 	EmailVerificationTokenIDs []string `json:"emailVerificationTokenIDs,omitempty"`
+	ResetTokenIDs             []string `json:"resetTokenIDs,omitempty"`
 }
 
 // CreateUserSettingInput is used for create UserSetting object.
@@ -2705,6 +2706,9 @@ type UpdateUserInput struct {
 	AddEmailVerificationTokenIDs    []string `json:"addEmailVerificationTokenIDs,omitempty"`
 	RemoveEmailVerificationTokenIDs []string `json:"removeEmailVerificationTokenIDs,omitempty"`
 	ClearEmailVerificationTokens    *bool    `json:"clearEmailVerificationTokens,omitempty"`
+	AddResetTokenIDs                []string `json:"addResetTokenIDs,omitempty"`
+	RemoveResetTokenIDs             []string `json:"removeResetTokenIDs,omitempty"`
+	ClearResetTokens                *bool    `json:"clearResetTokens,omitempty"`
 }
 
 // UpdateUserSettingInput is used for update UserSetting object.

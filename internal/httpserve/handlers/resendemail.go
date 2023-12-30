@@ -38,13 +38,11 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	}
 
 	// start transaction
-	tx, err := h.DBClient.Tx(ctx.Request().Context())
-	if err != nil {
-		h.Logger.Errorw("error starting transaction", "error", err)
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+	if err := h.startTransaction(ctx.Request().Context()); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 	}
 
-	entUser, err := h.getUserByEmail(ctx.Request().Context(), tx, in.Email)
+	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid
@@ -72,11 +70,11 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	if _, err = h.storeAndSendEmailVerificationToken(ctx.Request().Context(), tx, user); err != nil {
+	if _, err = h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	if err = tx.Commit(); err != nil {
+	if err = h.TXClient.Commit(); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 

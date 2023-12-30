@@ -56,13 +56,11 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		Password:  &in.Password,
 	}
 
-	tx, err := h.DBClient.Tx(ctx.Request().Context())
-	if err != nil {
-		h.Logger.Errorw("error starting transaction", "error", err)
+	if err := h.startTransaction(ctx.Request().Context()); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 	}
 
-	meowuser, err := h.createUser(ctx.Request().Context(), tx, input)
+	meowuser, err := h.createUser(ctx.Request().Context(), input)
 	if err != nil {
 		if IsUniqueConstraintError(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse("user already exists"))
@@ -84,13 +82,13 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ID:        meowuser.ID,
 	}
 
-	meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), tx, user)
+	meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
-	if err = tx.Commit(); err != nil {
+	if err = h.TXClient.Commit(); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
@@ -104,8 +102,8 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	return ctx.JSON(http.StatusCreated, out)
 }
 
-func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, tx *generated.Tx, user *User) (*generated.EmailVerificationToken, error) {
-	if err := h.expireAllVerificationTokensUserByEmail(ctx, tx, user.Email); err != nil {
+func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *User) (*generated.EmailVerificationToken, error) {
+	if err := h.expireAllVerificationTokensUserByEmail(ctx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
 		return nil, err
@@ -116,7 +114,7 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, tx *ge
 		return nil, err
 	}
 
-	meowtoken, err := h.createEmailVerificationToken(ctx, tx, user)
+	meowtoken, err := h.createEmailVerificationToken(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -128,8 +126,8 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, tx *ge
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send verification email to user %s", user.ID),
 	); err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+		if err := h.TXClient.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 

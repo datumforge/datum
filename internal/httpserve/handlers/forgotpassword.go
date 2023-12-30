@@ -34,13 +34,11 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	}
 
 	// start transaction
-	tx, err := h.DBClient.Tx(ctx.Request().Context())
-	if err != nil {
-		h.Logger.Errorw("error starting transaction", "error", err)
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
+	if err := h.startTransaction(ctx.Request().Context()); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 	}
 
-	entUser, err := h.getUserByEmail(ctx.Request().Context(), tx, in.Email)
+	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 204 response even if user is not found to avoid
@@ -61,12 +59,12 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	if _, err = h.storeAndSendPasswordResetToken(ctx.Request().Context(), tx, user); err != nil {
+	if _, err = h.storeAndSendPasswordResetToken(ctx.Request().Context(), user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
 	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
-	if err = tx.Commit(); err != nil {
+	if err = h.TXClient.Commit(); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
@@ -82,8 +80,8 @@ func validateForgotPasswordRequest(req *ForgotPasswordRequest) error {
 	return nil
 }
 
-func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, tx *ent.Tx, user *User) (*ent.PasswordResetToken, error) {
-	if err := h.expireAllResetTokensUserByEmail(ctx, tx, user.Email); err != nil {
+func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User) (*ent.PasswordResetToken, error) {
+	if err := h.expireAllResetTokensUserByEmail(ctx, user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
 		return nil, err
@@ -94,7 +92,7 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, tx *ent.Tx
 		return nil, err
 	}
 
-	meowtoken, err := h.createPasswordResetToken(ctx, tx, user)
+	meowtoken, err := h.createPasswordResetToken(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +104,7 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, tx *ent.Tx
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send password reset email to user %s", user.ID),
 	); err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}

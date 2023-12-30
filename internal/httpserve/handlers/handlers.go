@@ -14,6 +14,8 @@ import (
 type Handler struct {
 	// DBClient to interact with the generated ent schema
 	DBClient *ent.Client
+	// TXClient to interact with the generated ent schema in a transaction
+	TXClient *ent.Tx
 	// TM contains the token manager in order to validate auth requests
 	TM *tokens.TokenManager
 	// CookieDomain is the domain set in cookie for authenticated requests, defaults to datum.net

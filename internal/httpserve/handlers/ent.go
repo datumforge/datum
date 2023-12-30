@@ -12,16 +12,26 @@ import (
 )
 
 const (
-	rollbackErr = "error rolling back transaction"
+	rollbackErr         = "error rolling back transaction"
+	transactionStartErr = "error starting transaction"
 )
 
-func (h *Handler) updateUserLastSeen(ctx context.Context, tx *ent.Tx, id string) error {
-	if _, err := tx.User.Update().SetLastSeen(time.Now()).
+func (h *Handler) startTransaction(ctx context.Context) (err error) {
+	h.TXClient, err = h.DBClient.Tx(ctx)
+	if err != nil {
+		h.Logger.Errorw(transactionStartErr, "error", err)
+	}
+
+	return
+}
+
+func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
+	if _, err := h.TXClient.User.Update().SetLastSeen(time.Now()).
 		Where(
 			user.ID(id),
 		).
 		Save(ctx); err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}
@@ -32,12 +42,12 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, tx *ent.Tx, id string)
 	return nil
 }
 
-func (h *Handler) createUser(ctx context.Context, tx *ent.Tx, input ent.CreateUserInput) (*ent.User, error) {
-	meowuser, err := tx.User.Create().
+func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*ent.User, error) {
+	meowuser, err := h.TXClient.User.Create().
 		SetInput(input).
 		Save(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
@@ -48,14 +58,14 @@ func (h *Handler) createUser(ctx context.Context, tx *ent.Tx, input ent.CreateUs
 	return meowuser, nil
 }
 
-func (h *Handler) createEmailVerificationToken(ctx context.Context, tx *ent.Tx, user *User) (*ent.EmailVerificationToken, error) {
+func (h *Handler) createEmailVerificationToken(ctx context.Context, user *User) (*ent.EmailVerificationToken, error) {
 	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 	if err != nil {
 		h.Logger.Errorw("unable to parse ttl", "error", err)
 		return nil, err
 	}
 
-	meowtoken, err := tx.EmailVerificationToken.Create().
+	meowtoken, err := h.TXClient.EmailVerificationToken.Create().
 		SetOwnerID(user.ID).
 		SetToken(user.EmailVerificationToken.String).
 		SetTTL(ttl).
@@ -63,7 +73,7 @@ func (h *Handler) createEmailVerificationToken(ctx context.Context, tx *ent.Tx, 
 		SetSecret(user.EmailVerificationSecret).
 		Save(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
@@ -76,14 +86,14 @@ func (h *Handler) createEmailVerificationToken(ctx context.Context, tx *ent.Tx, 
 	return meowtoken, nil
 }
 
-func (h *Handler) createPasswordResetToken(ctx context.Context, tx *ent.Tx, user *User) (*ent.PasswordResetToken, error) {
+func (h *Handler) createPasswordResetToken(ctx context.Context, user *User) (*ent.PasswordResetToken, error) {
 	ttl, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
 	if err != nil {
 		h.Logger.Errorw("unable to parse ttl", "error", err)
 		return nil, err
 	}
 
-	meowtoken, err := tx.PasswordResetToken.Create().
+	meowtoken, err := h.TXClient.PasswordResetToken.Create().
 		SetOwnerID(user.ID).
 		SetToken(user.PasswordResetToken.String).
 		SetTTL(ttl).
@@ -91,7 +101,7 @@ func (h *Handler) createPasswordResetToken(ctx context.Context, tx *ent.Tx, user
 		SetSecret(user.PasswordResetSecret).
 		Save(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
@@ -106,14 +116,14 @@ func (h *Handler) createPasswordResetToken(ctx context.Context, tx *ent.Tx, user
 
 // getUserByEVToken returns the ent user with the user settings and email verification token fields based on the
 // token in the request
-func (h *Handler) getUserByEVToken(ctx context.Context, tx *ent.Tx, token string) (*ent.User, error) {
-	user, err := tx.EmailVerificationToken.Query().WithOwner().
+func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User, error) {
+	user, err := h.TXClient.EmailVerificationToken.Query().WithOwner().
 		Where(
 			emailverificationtoken.Token(token),
 		).
 		QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
@@ -127,39 +137,17 @@ func (h *Handler) getUserByEVToken(ctx context.Context, tx *ent.Tx, token string
 }
 
 // getUserByEmail returns the ent user with the user settings based on the email in the request
-func (h *Handler) getUserByEmail(ctx context.Context, tx *ent.Tx, email string) (*ent.User, error) {
+func (h *Handler) getUserByEmail(ctx context.Context, email string) (*ent.User, error) {
 	user, err := h.DBClient.User.Query().WithSetting().
 		Where(user.Email(email)).
 		Only(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 
-		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
-
-		return nil, err
-	}
-
-	return user, nil
-}
-
-// getTokenUserByEmail returns the ent user with the user settings and email verification token fields based on the
-// email in the request
-func (h *Handler) getTokenUserByEmail(ctx context.Context, tx *ent.Tx, email string) (*ent.User, error) { //nolint:unused
-	user, err := tx.EmailVerificationToken.Query().WithOwner().
-		Where(
-			emailverificationtoken.Email(email),
-		).
-		QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
-	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return nil, err
-		}
-
-		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
+		h.Logger.Errorw("error obtaining user from email", "error", err)
 
 		return nil, err
 	}
@@ -168,14 +156,14 @@ func (h *Handler) getTokenUserByEmail(ctx context.Context, tx *ent.Tx, email str
 }
 
 // expireAllVerificationTokensUserByEmail expires all existing email verification tokens before issuing a new one
-func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, tx *ent.Tx, email string) error {
-	prs, err := tx.EmailVerificationToken.Query().WithOwner().Where(
+func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, email string) error {
+	prs, err := h.TXClient.EmailVerificationToken.Query().WithOwner().Where(
 		emailverificationtoken.And(
 			emailverificationtoken.Email(email),
 			emailverificationtoken.TTLGT(time.Now()),
 		)).All(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}
@@ -187,7 +175,7 @@ func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, tx
 
 	for _, pr := range prs {
 		if err := pr.Update().SetTTL(time.Now()).Exec(ctx); err != nil {
-			if err := tx.Rollback(); err != nil {
+			if err := h.TXClient.Rollback(); err != nil {
 				h.Logger.Errorw(rollbackErr, "error", err)
 				return err
 			}
@@ -202,14 +190,14 @@ func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, tx
 }
 
 // expireAllResetTokensUserByEmail expires all existing password reset tokens before issuing a new one
-func (h *Handler) expireAllResetTokensUserByEmail(ctx context.Context, tx *ent.Tx, email string) error {
-	prs, err := tx.PasswordResetToken.Query().WithOwner().Where(
+func (h *Handler) expireAllResetTokensUserByEmail(ctx context.Context, email string) error {
+	prs, err := h.TXClient.PasswordResetToken.Query().WithOwner().Where(
 		passwordresettoken.And(
 			passwordresettoken.Email(email),
 			passwordresettoken.TTLGT(time.Now()),
 		)).All(ctx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}
@@ -221,7 +209,7 @@ func (h *Handler) expireAllResetTokensUserByEmail(ctx context.Context, tx *ent.T
 
 	for _, pr := range prs {
 		if err := pr.Update().SetTTL(time.Now()).Exec(ctx); err != nil {
-			if err := tx.Rollback(); err != nil {
+			if err := h.TXClient.Rollback(); err != nil {
 				h.Logger.Errorw(rollbackErr, "error", err)
 				return err
 			}
@@ -236,12 +224,12 @@ func (h *Handler) expireAllResetTokensUserByEmail(ctx context.Context, tx *ent.T
 }
 
 // setEmailConfirmed sets the user setting field email_confirmed to true within a transaction
-func (h *Handler) setEmailConfirmed(ctx context.Context, tx *ent.Tx, user *ent.User) error {
-	if _, err := tx.UserSetting.Update().SetEmailConfirmed(true).
+func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
+	if _, err := h.TXClient.UserSetting.Update().SetEmailConfirmed(true).
 		Where(
 			usersetting.ID(user.Edges.Setting.ID),
 		).Save(ctx); err != nil {
-		if err := tx.Rollback(); err != nil {
+		if err := h.TXClient.Rollback(); err != nil {
 			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}

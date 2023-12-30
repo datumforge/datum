@@ -21,19 +21,12 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	}
 
 	// starts db transaction for entire request
-	tx, err := h.DBClient.Tx(ctx.Request().Context())
-	if err != nil {
-		h.Logger.Errorw("error starting transaction", "error", err)
-		return err
+	if err := h.startTransaction(ctx.Request().Context()); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 	}
 
-	entUser, err := h.getUserByEVToken(ctx.Request().Context(), tx, reqToken)
+	entUser, err := h.getUserByEVToken(ctx.Request().Context(), reqToken)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return err
-		}
-
 		if generated.IsNotFound(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
@@ -53,8 +46,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	if !entUser.Edges.Setting.EmailConfirmed {
 		// set tokens for request
 		if err := user.setUserTokens(entUser, reqToken); err != nil {
-			if err := tx.Rollback(); err != nil {
-				h.Logger.Errorw("error rolling back transaction", "error", err)
+			if err := h.TXClient.Rollback(); err != nil {
+				h.Logger.Errorw(rollbackErr, "error", err)
 				return err
 			}
 
@@ -69,8 +62,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		}
 
 		if token.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
-			if err := tx.Rollback(); err != nil {
-				h.Logger.Errorw("error rolling back transaction", "error", err)
+			if err := h.TXClient.Rollback(); err != nil {
+				h.Logger.Errorw(rollbackErr, "error", err)
 				return err
 			}
 
@@ -82,10 +75,10 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		// Verify the token with the stored secret
 		if err = token.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
 			if errors.Is(err, tokens.ErrTokenExpired) {
-				meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), tx, user)
+				meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user)
 				if err != nil {
-					if err := tx.Rollback(); err != nil {
-						h.Logger.Errorw("error rolling back transaction", "error", err)
+					if err := h.TXClient.Rollback(); err != nil {
+						h.Logger.Errorw(rollbackErr, "error", err)
 						return err
 					}
 
@@ -102,7 +95,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				}
 
 				// commit transaction at end of request
-				if err := tx.Commit(); err != nil {
+				if err := h.TXClient.Commit(); err != nil {
 					h.Logger.Errorw("error committing transaction", "error", err)
 
 					return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -111,20 +104,15 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 				return ctx.JSON(http.StatusCreated, out)
 			}
 
-			if err := tx.Rollback(); err != nil {
-				h.Logger.Errorw("error rolling back transaction", "error", err)
+			if err := h.TXClient.Rollback(); err != nil {
+				h.Logger.Errorw(rollbackErr, "error", err)
 				return err
 			}
 
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 
-		if err := h.setEmailConfirmed(ctx.Request().Context(), tx, entUser); err != nil {
-			if err := tx.Rollback(); err != nil {
-				h.Logger.Errorw("error rolling back transaction", "error", err)
-				return err
-			}
-
+		if err := h.setEmailConfirmed(ctx.Request().Context(), entUser); err != nil {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 	}
@@ -133,8 +121,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+		if err := h.TXClient.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}
 
@@ -146,8 +134,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	// set cookies on request with the access and refresh token
 	// when cookie domain is localhost, this is dropped but expected
 	if err := auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain); err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+		if err := h.TXClient.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}
 
@@ -155,7 +143,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	}
 
 	// commit transaction at end of request
-	if err := tx.Commit(); err != nil {
+	if err := h.TXClient.Commit(); err != nil {
 		h.Logger.Errorw("error committing transaction", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))

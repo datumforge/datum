@@ -46,7 +46,9 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 
 	mw = append(mw, transactionConfig.Middleware)
 
-	restrictedEndpointsMW = append(mw, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
+	// Middleware for restricted endpoints
+	restrictedEndpointsMW = append(restrictedEndpointsMW, mw...)
+	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
 
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {

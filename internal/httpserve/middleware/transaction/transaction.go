@@ -65,6 +65,7 @@ func (d *Client) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 				return c.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 			}
+
 			return err
 		}
 

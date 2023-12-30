@@ -38,6 +38,9 @@ type Route struct {
 
 // RegisterRoutes with the echo routers
 func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
+	// add transaction middleware
+	mw = append(mw, h.Transaction)
+
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
 		return err

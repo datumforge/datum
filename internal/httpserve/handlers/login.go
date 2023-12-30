@@ -40,17 +40,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	if err := h.updateUserLastSeen(ctx.Request().Context(), user.ID); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
-
-	if err = h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw(transactionCommitErr, "error", err)
-
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
@@ -80,18 +70,10 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 		return nil, ErrMissingRequiredFields
 	}
 
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return nil, err
-	}
-
 	// check user in the database, username == email and ensure only one record is returned
 	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username)
 	if err != nil {
 		return nil, ErrNoAuthUser
-	}
-
-	if err = h.TXClient.Commit(); err != nil {
-		return nil, err
 	}
 
 	if user.Edges.Setting.Status != "ACTIVE" {

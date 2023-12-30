@@ -123,8 +123,10 @@ func TestLoginHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.POST("login", h.LoginHandler)
+			e.Use(h.Transaction)
 
 			loginJSON := handlers.LoginRequest{
 				Username: tc.username,
@@ -141,10 +143,8 @@ func TestLoginHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
-
-			err = h.LoginHandler(ctx)
-			require.NoError(t, err)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -156,7 +156,7 @@ func TestLoginHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Message, "success")

@@ -60,8 +60,9 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
 			e := echo.New()
+			e.POST("forgot-password", h.ForgotPassword)
+			e.Use(h.Transaction)
 
 			resendJSON := handlers.ForgotPasswordRequest{
 				Email: tc.email,
@@ -69,7 +70,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			body, err := json.Marshal(resendJSON)
 			if err != nil {
-				t.Error("error creating resend json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/forgot-password", strings.NewReader(string(body)))
@@ -77,10 +78,8 @@ func TestForgotPasswordHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
-
-			err = h.ForgotPassword(ctx)
-			require.NoError(t, err)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -92,7 +91,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusNoContent {
 				assert.Nil(t, out)

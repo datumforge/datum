@@ -37,10 +37,6 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	// check user in the database, sub == claims subject and ensure only one record is returned
 	user, err := h.getUserBySub(ctx.Request().Context(), claims.Subject)
 	if err != nil {
@@ -54,12 +50,6 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 	// ensure the user is still active
 	if user.Edges.Setting.Status != "ACTIVE" {
 		return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)
-	}
-
-	if err = h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw(transactionCommitErr, "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
 	// UserID is not on the refresh token, so we need to set it now

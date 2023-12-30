@@ -1,8 +1,8 @@
 package handlers_test
 
 import (
+	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -107,8 +107,10 @@ func TestVerifyHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.GET("verify", h.VerifyEmail)
+			e.Use(h.Transaction)
 
 			// create user in the database
 			userSetting := EntClient.UserSetting.Create().
@@ -131,7 +133,7 @@ func TestVerifyHandler(t *testing.T) {
 			}
 
 			if err := user.CreateVerificationToken(); err != nil {
-				t.Error("error creating verification token")
+				require.NoError(t, err)
 			}
 
 			if tc.ttl != "" {
@@ -140,7 +142,7 @@ func TestVerifyHandler(t *testing.T) {
 
 			ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 			if err != nil {
-				t.Error("unable to parse ttl")
+				require.NoError(t, err)
 			}
 
 			et := EntClient.EmailVerificationToken.Create().
@@ -161,19 +163,26 @@ func TestVerifyHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
-
-			err = h.VerifyEmail(ctx)
-			require.NoError(t, err)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			data, err := io.ReadAll(res.Body)
-			require.NoError(t, err)
+			var out *handlers.Response
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
-			assert.Contains(t, string(data), tc.expectedResp)
+			// parse request body
+			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+				t.Error("error parsing response", err)
+			}
+
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
+
+			if tc.expectedStatus == http.StatusNoContent {
+				assert.Empty(t, out)
+			} else {
+				assert.Contains(t, out.Message, tc.expectedResp)
+			}
 
 			// cleanup after
 			EntClient.User.DeleteOneID(u.ID).ExecX(ec)

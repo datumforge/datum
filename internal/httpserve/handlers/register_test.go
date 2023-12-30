@@ -92,8 +92,10 @@ func TestRegisterHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.POST("register", h.RegisterHandler)
+			e.Use(h.Transaction)
 
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,
@@ -104,7 +106,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			body, err := json.Marshal(registerJSON)
 			if err != nil {
-				t.Error("error creating register json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(string(body)))
@@ -112,10 +114,8 @@ func TestRegisterHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
-
-			err = h.RegisterHandler(ctx)
-			require.NoError(t, err)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
 			res := recorder.Result()
 			defer res.Body.Close()
@@ -127,7 +127,7 @@ func TestRegisterHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Email, tc.email)

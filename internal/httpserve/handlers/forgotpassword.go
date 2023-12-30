@@ -33,11 +33,6 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// start transaction
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -60,13 +55,6 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	}
 
 	if _, err = h.storeAndSendPasswordResetToken(ctx.Request().Context(), user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
-	}
-
-	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
-	if err = h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw(transactionCommitErr, "error", err)
-
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
@@ -106,11 +94,6 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send password reset email to user %s", user.ID),
 	); err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return nil, err
-		}
-
 		return nil, err
 	}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/tokens"
 )
 
+// VerifyEmail is a handler function that handles the verification of a user's email
 func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	reqToken := ctx.QueryParam("token")
 

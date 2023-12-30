@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -67,6 +68,11 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse("user already exists"))
 		}
 
+		if generated.IsValidationError(err) {
+			field := err.(*generated.ValidationError).Name
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse(fmt.Sprintf("%s was invalid", field)))
+		}
+
 		return err
 	}
 
@@ -99,6 +105,12 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 }
 
 func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, tx *generated.Tx, user *User) (*generated.EmailVerificationToken, error) {
+	if err := h.expireAllVerificationTokensUserByEmail(ctx, tx, user.Email); err != nil {
+		h.Logger.Errorw("error expiring existing tokens", "error", err)
+
+		return nil, err
+	}
+
 	if err := user.CreateVerificationToken(); err != nil {
 		h.Logger.Errorw("unable to create verification token", "error", err)
 		return nil, err

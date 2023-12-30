@@ -1,14 +1,12 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
 // ResendRequest contains fields for a resend email verification request
@@ -92,23 +90,4 @@ func validateResendRequest(req *ResendRequest) error {
 	}
 
 	return nil
-}
-
-// getUserByEmail returns the ent user with the user settings based on the email in the request
-func (h *Handler) getUserByEmail(ctx context.Context, tx *ent.Tx, email string) (*ent.User, error) {
-	user, err := h.DBClient.User.Query().WithSetting().
-		Where(user.Email(email)).
-		Only(ctx)
-	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return nil, err
-		}
-
-		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
-
-		return nil, err
-	}
-
-	return user, nil
 }

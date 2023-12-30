@@ -167,9 +167,42 @@ func (h *Handler) getTokenUserByEmail(ctx context.Context, tx *ent.Tx, email str
 	return user, nil
 }
 
-// getTokenUserByEmail returns the ent user with the user settings and email verification token fields based on the
-// email in the request
-func (h *Handler) expireAllResetTokensUserByEmail(ctx context.Context, tx *ent.Tx, email string) error { //nolint:unused
+// expireAllVerificationTokensUserByEmail expires all existing email verification tokens before issuing a new one
+func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, tx *ent.Tx, email string) error {
+	prs, err := tx.EmailVerificationToken.Query().WithOwner().Where(
+		emailverificationtoken.And(
+			emailverificationtoken.Email(email),
+			emailverificationtoken.TTLGT(time.Now()),
+		)).All(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
+			return err
+		}
+
+		h.Logger.Errorw("error obtaining verification reset tokens", "error", err)
+
+		return err
+	}
+
+	for _, pr := range prs {
+		if err := pr.Update().SetTTL(time.Now()).Exec(ctx); err != nil {
+			if err := tx.Rollback(); err != nil {
+				h.Logger.Errorw(rollbackErr, "error", err)
+				return err
+			}
+
+			h.Logger.Errorw("error expiring verification token", "error", err)
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+// expireAllResetTokensUserByEmail expires all existing password reset tokens before issuing a new one
+func (h *Handler) expireAllResetTokensUserByEmail(ctx context.Context, tx *ent.Tx, email string) error {
 	prs, err := tx.PasswordResetToken.Query().WithOwner().Where(
 		passwordresettoken.And(
 			passwordresettoken.Email(email),

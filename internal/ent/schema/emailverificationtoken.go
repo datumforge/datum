@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"net/mail"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
@@ -30,6 +32,10 @@ func (EmailVerificationToken) Fields() []ent.Field {
 			Nillable(),
 		field.String("email").
 			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed").
+			Validate(func(email string) error {
+				_, err := mail.ParseAddress(email)
+				return err
+			}).
 			NotEmpty(),
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").

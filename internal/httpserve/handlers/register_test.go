@@ -47,6 +47,15 @@ func TestRegisterHandler(t *testing.T) {
 			expectedStatus:     http.StatusBadRequest,
 		},
 		{
+			name:               "invalid email",
+			email:              "bananas.net",
+			firstName:          "Princess",
+			lastName:           "Fiona",
+			password:           "b!a!n!a!n!a!s!",
+			expectedErrMessage: "email was invalid",
+			expectedStatus:     http.StatusBadRequest,
+		},
+		{
 			name:               "missing email",
 			firstName:          "Princess",
 			lastName:           "Fiona",

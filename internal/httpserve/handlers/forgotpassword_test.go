@@ -31,7 +31,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 	u := EntClient.User.Create().
 		SetFirstName(gofakeit.FirstName()).
 		SetLastName(gofakeit.LastName()).
-		SetEmail("bsanders@datum.net").
+		SetEmail("asandler@datum.net").
 		SetPassword(validPassword).
 		SetSetting(userSetting).
 		SaveX(ec)
@@ -44,12 +44,12 @@ func TestForgotPasswordHandler(t *testing.T) {
 	}{
 		{
 			name:           "happy path",
-			email:          "bsanders@datum.net",
+			email:          "asandler@datum.net",
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email does not exist, should still return 204",
-			email:          "bsander1@datum.net",
+			email:          "asandler1@datum.net",
 			expectedStatus: http.StatusNoContent,
 		},
 		{

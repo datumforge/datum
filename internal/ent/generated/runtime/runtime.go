@@ -62,7 +62,21 @@ func init() {
 	// emailverificationtokenDescEmail is the schema descriptor for email field.
 	emailverificationtokenDescEmail := emailverificationtokenFields[2].Descriptor()
 	// emailverificationtoken.EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	emailverificationtoken.EmailValidator = emailverificationtokenDescEmail.Validators[0].(func(string) error)
+	emailverificationtoken.EmailValidator = func() func(string) error {
+		validators := emailverificationtokenDescEmail.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(email string) error {
+			for _, fn := range fns {
+				if err := fn(email); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// emailverificationtokenDescSecret is the schema descriptor for secret field.
 	emailverificationtokenDescSecret := emailverificationtokenFields[3].Descriptor()
 	// emailverificationtoken.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
@@ -431,7 +445,21 @@ func init() {
 	// passwordresettokenDescEmail is the schema descriptor for email field.
 	passwordresettokenDescEmail := passwordresettokenFields[2].Descriptor()
 	// passwordresettoken.EmailValidator is a validator for the "email" field. It is called by the builders before save.
-	passwordresettoken.EmailValidator = passwordresettokenDescEmail.Validators[0].(func(string) error)
+	passwordresettoken.EmailValidator = func() func(string) error {
+		validators := passwordresettokenDescEmail.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(email string) error {
+			for _, fn := range fns {
+				if err := fn(email); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// passwordresettokenDescSecret is the schema descriptor for secret field.
 	passwordresettokenDescSecret := passwordresettokenFields[3].Descriptor()
 	// passwordresettoken.SecretValidator is a validator for the "secret" field. It is called by the builders before save.

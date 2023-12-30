@@ -9,13 +9,32 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 )
 
+const (
+	rollbackErr = "error rolling back transaction"
+)
+
+func (h *Handler) updateUserLastSeen(ctx context.Context, tx *ent.Tx, id string) error {
+	if _, err := tx.User.Update().SetLastSeen(time.Now()).Where(func(s *sql.Selector) {
+		s.Where(sql.EQ("id", id))
+	}).Save(ctx); err != nil {
+		if err := tx.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
+			return err
+		}
+
+		return err
+	}
+
+	return nil
+}
+
 func (h *Handler) createUser(ctx context.Context, tx *ent.Tx, input ent.CreateUserInput) (*ent.User, error) {
 	meowuser, err := tx.User.Create().
 		SetInput(input).
 		Save(ctx)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 
@@ -41,7 +60,7 @@ func (h *Handler) createEmailVerificationToken(ctx context.Context, tx *ent.Tx, 
 		Save(ctx)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 
@@ -61,7 +80,7 @@ func (h *Handler) getUserByToken(ctx context.Context, tx *ent.Tx, token string) 
 	}).QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 
@@ -73,15 +92,34 @@ func (h *Handler) getUserByToken(ctx context.Context, tx *ent.Tx, token string) 
 	return user, nil
 }
 
-// getUserByEmail returns the ent user with the user settings and email verification token fields based on the
-// email in the request
+// getUserByEmail returns the ent user with the user settings based on the email in the request
 func (h *Handler) getUserByEmail(ctx context.Context, tx *ent.Tx, email string) (*ent.User, error) {
+	user, err := h.DBClient.User.Query().WithSetting().Where(func(s *sql.Selector) {
+		s.Where(sql.EQ("email", email))
+	}).Only(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			h.Logger.Errorw(rollbackErr, "error", err)
+			return nil, err
+		}
+
+		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
+
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// getTokenUserByEmail returns the ent user with the user settings and email verification token fields based on the
+// email in the request
+func (h *Handler) getTokenUserByEmail(ctx context.Context, tx *ent.Tx, email string) (*ent.User, error) {
 	user, err := tx.EmailVerificationToken.Query().WithOwner().Where(func(s *sql.Selector) {
 		s.Where(sql.EQ("email", email))
 	}).QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
 	if err != nil {
 		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return nil, err
 		}
 
@@ -99,7 +137,7 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, tx *ent.Tx, user *ent.U
 		s.Where(sql.EQ("id", user.Edges.Setting.ID))
 	}).Save(ctx); err != nil {
 		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
+			h.Logger.Errorw(rollbackErr, "error", err)
 			return err
 		}
 

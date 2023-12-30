@@ -13,6 +13,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -77,19 +78,21 @@ func TestRefreshHandler(t *testing.T) {
 	}
 
 	testCases := []struct {
-		name    string
-		refresh string
-		err     error
+		name               string
+		refresh            string
+		expectedErrMessage string
+		expectedStatus     int
 	}{
 		{
-			name:    "happy path, valid credentials",
-			refresh: refresh,
-			err:     nil,
+			name:           "happy path, valid credentials",
+			refresh:        refresh,
+			expectedStatus: http.StatusOK,
 		},
 		{
-			name:    "empty refresh",
-			refresh: "",
-			err:     handlers.ErrBadRequest,
+			name:               "empty refresh",
+			refresh:            "",
+			expectedStatus:     http.StatusBadRequest,
+			expectedErrMessage: "refresh_token is required",
 		},
 	}
 
@@ -115,15 +118,25 @@ func TestRefreshHandler(t *testing.T) {
 			ctx := e.NewContext(req, recorder)
 
 			err = h.RefreshHandler(ctx)
+			require.NoError(t, err)
 
-			if tc.err != nil {
-				assert.Error(t, err)
-				assert.ErrorContains(t, err, tc.err.Error())
+			res := recorder.Result()
+			defer res.Body.Close()
 
-				return
+			var out *handlers.Response
+
+			// parse request body
+			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+				t.Error("error parsing response", err)
 			}
 
-			assert.NoError(t, err)
+			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+
+			if tc.expectedStatus == http.StatusOK {
+				assert.Equal(t, out.Message, "success")
+			} else {
+				assert.Contains(t, out.Message, tc.expectedErrMessage)
+			}
 		})
 	}
 

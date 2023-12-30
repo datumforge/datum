@@ -25,6 +25,8 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 
 	// parse request body
 	if err := json.NewDecoder(ctx.Request().Body).Decode(&in); err != nil {
+		h.Logger.Errorw("error parsing request", "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
@@ -39,7 +41,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	entUser, err := h.getUserByEmail(ctx.Request().Context(), tx, in.Email)
+	entUser, err := h.getTokenUserByEmail(ctx.Request().Context(), tx, in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 204 response even if user is not found to avoid

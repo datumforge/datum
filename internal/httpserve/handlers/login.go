@@ -26,6 +26,11 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
+	// https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Session_Management_Cheat_Sheet.md#renew-the-session-id-after-any-privilege-level-change
+	// https://pkg.go.dev/github.com/alexedwards/scs/v2#SessionManager.RenewToken
+	if err := h.SM.RenewToken(ctx.Request().Context()); err != nil {
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+	}
 
 	claims := createClaims(user)
 

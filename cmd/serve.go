@@ -79,6 +79,7 @@ func serve(ctx context.Context) error {
 		serveropts.WithFGAAuthz(settings),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
+		serveropts.WithSessionManager(),
 	)
 
 	// Create keys for development

@@ -76,6 +76,14 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
+	if err := registerSessionPutHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerSessionGetHandler(router, h); err != nil {
+		return err
+	}
+
 	return nil
 }
 

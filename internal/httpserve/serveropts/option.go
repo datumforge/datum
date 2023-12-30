@@ -6,11 +6,13 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
 	"entgo.io/ent/dialect"
 	"github.com/alexedwards/scs/v2"
+	"github.com/alexedwards/scs/v2/memstore"
 	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 
@@ -330,11 +332,26 @@ func WithTaskManager() ServerOption {
 	})
 }
 
-// WithSessionManager sets up the default session manager
+// WithSessionManager sets up the default session manager with a 15 minute timeout and stale sessions are cleaned every 5 minutes
 func WithSessionManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		// Start task manager
 		sm := scs.New()
+		sm.Lifetime = time.Hour
+		sm.Store = memstore.NewWithCleanupInterval(5 * time.Minute) // nolint: gomnd
+		sm.IdleTimeout = 15 * time.Minute                           // nolint: gomnd
+		// CookieName is the name of the CSRF cookie - it's prefixed with "__Host-" as
+		// an additional defense in depth measure; prefixing the name ensures the cookie is sent from a
+		// secure page (HTTPS), won't be sent to subdomains, and the path attribute
+		// is set to /.
+		sm.Cookie.Name = "__Host-datum"
+		// forbids JavaScript from accessing the cookie
+		sm.Cookie.HttpOnly = true
+		// the default is true which doesn't remove cookies after browser is shut down
+		sm.Cookie.Persist = false
+		// lock it up
+		sm.Cookie.SameSite = http.SameSiteStrictMode
+		sm.Cookie.Secure = true
 
 		s.Config.Server.Handler.SM = sm
 	})

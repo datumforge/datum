@@ -64,8 +64,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 
 	srv.Debug = s.config.Debug
 
-	var sessionManager *scs.SessionManager
-	sessionManager = scs.New()
+	sessionManager := scs.New()
 
 	// default middleware
 	defaultMW := []echo.MiddlewareFunc{}
@@ -95,7 +94,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		srv.Use(m)
 	}
 
-	// Setup token manager (TODO: should this go elsewhere?)
+	// Setup token manager
 	tm, err := tokens.New(s.config.Token)
 	if err != nil {
 		return err

@@ -19,6 +19,9 @@ var DefaultSessionConfig = SessionConfig{
 	Skipper: middleware.DefaultSkipper,
 }
 
+// LoadAndSave is a middleware function that loads and saves session data using a
+// provided session manager. It takes a `SessionManager` as input and returns a middleware function
+// that can be used with an Echo framework application
 func LoadAndSave(sessionManager *scs.SessionManager) echo.MiddlewareFunc {
 	c := DefaultSessionConfig
 	c.SessionManager = sessionManager
@@ -26,8 +29,10 @@ func LoadAndSave(sessionManager *scs.SessionManager) echo.MiddlewareFunc {
 	return LoadAndSaveWithConfig(c)
 }
 
+// LoadAndSaveWithConfig is a middleware that loads and saves session data
+// using a provided session manager configuration. It takes a `SessionConfig` struct as input, which
+// contains the skipper function and the session manager
 func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
-
 	if config.Skipper == nil {
 		config.Skipper = DefaultSessionConfig.Skipper
 	}
@@ -95,11 +100,15 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 	}
 }
 
+// addHeaderIfMissing function is used to add a header to the HTTP response if it is not already
+// present. It takes in the response writer (`http.ResponseWriter`), the header key, and the header
+// value as parameters
 func addHeaderIfMissing(w http.ResponseWriter, key, value string) {
 	for _, h := range w.Header()[key] {
 		if h == value {
 			return
 		}
 	}
+
 	w.Header().Add(key, value)
 }

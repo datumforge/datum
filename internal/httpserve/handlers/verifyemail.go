@@ -149,6 +149,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
+	h.SM.Put(ctx.Request().Context(), "userID", user.ID)
+
 	return ctx.JSON(http.StatusNoContent, nil)
 }
 

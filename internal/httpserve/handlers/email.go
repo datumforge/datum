@@ -103,7 +103,9 @@ func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 		EmailData: emails.EmailData{
 			Sender: h.SendGridConfig.MustFromContact(),
 			Recipient: sendgrid.Contact{
-				Email: user.Email,
+				Email:     user.Email,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
 			},
 		},
 	}

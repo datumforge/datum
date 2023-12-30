@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"time"
@@ -174,26 +173,6 @@ func validateVerifyRequest(token string) error {
 	return nil
 }
 
-// getUserByToken returns the ent user with the user settings and email verification token fields based on the
-// token in the request
-func (h *Handler) getUserByToken(ctx context.Context, tx *generated.Tx, token string) (*generated.User, error) {
-	user, err := tx.EmailVerificationToken.Query().WithOwner().Where(func(s *sql.Selector) {
-		s.Where(sql.EQ("token", token))
-	}).QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
-	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return nil, err
-		}
-
-		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
-
-		return nil, err
-	}
-
-	return user, nil
-}
-
 // setUserTokens sets the fields to verify the email
 func (u *User) setUserTokens(user *generated.User, reqToken string) error {
 	tokens := user.Edges.EmailVerificationTokens
@@ -208,20 +187,4 @@ func (u *User) setUserTokens(user *generated.User, reqToken string) error {
 	}
 
 	return ErrNotFound
-}
-
-// setEmailConfirmed sets the user setting field email_confirmed to true within a transaction
-func (h *Handler) setEmailConfirmed(ctx context.Context, tx *generated.Tx, user *generated.User) error {
-	if _, err := tx.UserSetting.Update().SetEmailConfirmed(true).Where(func(s *sql.Selector) {
-		s.Where(sql.EQ("id", user.Edges.Setting.ID))
-	}).Save(ctx); err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return err
-		}
-
-		return err
-	}
-
-	return nil
 }

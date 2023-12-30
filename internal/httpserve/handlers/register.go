@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
@@ -62,15 +61,8 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 	}
 
-	meowuser, err := tx.User.Create().
-		SetInput(input).
-		Save(ctx.Request().Context())
+	meowuser, err := h.createUser(ctx.Request().Context(), tx, input)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-		}
-
 		if IsUniqueConstraintError(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse("user already exists"))
 		}
@@ -112,27 +104,8 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, tx *ge
 		return nil, err
 	}
 
-	ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
+	meowtoken, err := h.createEmailVerificationToken(ctx, tx, user)
 	if err != nil {
-		h.Logger.Errorw("unable to parse ttl", "error", err)
-		return nil, err
-	}
-
-	meowtoken, err := tx.EmailVerificationToken.Create().
-		SetOwnerID(user.ID).
-		SetToken(user.EmailVerificationToken.String).
-		SetTTL(ttl).
-		SetEmail(user.Email).
-		SetSecret(user.EmailVerificationSecret).
-		Save(ctx)
-	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			h.Logger.Errorw("error rolling back transaction", "error", err)
-			return nil, err
-		}
-
-		h.Logger.Errorw("error creating email verification token", "error", err)
-
 		return nil, err
 	}
 

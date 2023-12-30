@@ -44,7 +44,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
-	if err := registerForgotPasswordHandler(router); err != nil {
+	if err := registerForgotPasswordHandler(router, h); err != nil {
 		return err
 	}
 

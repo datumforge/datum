@@ -3,7 +3,6 @@ package transaction
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -58,7 +57,6 @@ func (d *Client) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		if err := next(c); err != nil {
 			d.Logger.Debug("rolling back transaction in middleware")
-			fmt.Println(err)
 
 			if err := client.Rollback(); err != nil {
 				d.Logger.Errorw(rollbackErr, "error", err)

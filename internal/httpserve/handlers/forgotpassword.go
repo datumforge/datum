@@ -38,7 +38,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		if ent.IsNotFound(err) {
 			// return a 204 response even if user is not found to avoid
 			// exposing confidential information
-			return ctx.JSON(http.StatusNoContent, nil)
+			return ctx.NoContent(http.StatusNoContent)
 		}
 
 		h.Logger.Errorf("error retrieving user email", "error", err)
@@ -58,7 +58,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	return ctx.JSON(http.StatusNoContent, nil)
+	return ctx.NoContent(http.StatusNoContent)
 }
 
 // validateResendRequest validates the required fields are set in the user request

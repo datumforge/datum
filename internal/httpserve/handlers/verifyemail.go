@@ -100,7 +100,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return ErrorResponse(err)
 	}
 
-	return ctx.JSON(http.StatusNoContent, nil)
+	return ctx.NoContent(http.StatusNoContent)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request

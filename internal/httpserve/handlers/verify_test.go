@@ -167,18 +167,16 @@ func TestVerifyHandler(t *testing.T) {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.Response
-
-			// parse request body
-			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
-				t.Error("error parsing response", err)
-			}
-
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus == http.StatusNoContent {
-				assert.Empty(t, out)
-			} else {
+			if tc.expectedStatus != http.StatusNoContent {
+				var out *handlers.Response
+
+				// parse request body
+				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+					t.Error("error parsing response", err)
+				}
+
 				assert.Contains(t, out.Message, tc.expectedResp)
 			}
 

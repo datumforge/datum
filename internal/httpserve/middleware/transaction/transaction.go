@@ -3,6 +3,7 @@ package transaction
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	echo "github.com/datumforge/echox"
@@ -56,13 +57,11 @@ func (d *Client) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.SetRequest(c.Request().WithContext(ctx))
 
 		if err := next(c); err != nil {
-			echoErr, ok := err.(*echo.HTTPError)
-			if !ok || echoErr.Code != http.StatusTooManyRequests {
-				d.Logger.Debug("rolling back transaction in middleware")
+			d.Logger.Debug("rolling back transaction in middleware")
+			fmt.Println(err)
 
-				if err := client.Rollback(); err != nil {
-					d.Logger.Errorw(rollbackErr, "error", err)
-				}
+			if err := client.Rollback(); err != nil {
+				d.Logger.Errorw(rollbackErr, "error", err)
 
 				return c.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 			}

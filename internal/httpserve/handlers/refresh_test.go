@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/brianvoe/gofakeit/v6"
 	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
@@ -20,6 +21,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
@@ -31,11 +33,14 @@ func TestRefreshHandler(t *testing.T) {
 		t.Error("error creating token manager")
 	}
 
+	sm := scs.New()
+
 	h := handlers.Handler{
 		TM:           tm,
 		DBClient:     EntClient,
 		Logger:       zap.NewNop().Sugar(),
 		CookieDomain: "datum.net",
+		SM:           sm,
 	}
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
@@ -98,8 +103,10 @@ func TestRefreshHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.POST("refresh", h.RefreshHandler)
+			e.Use(session.LoadAndSave(h.SM))
 
 			refreshJSON := handlers.RefreshRequest{
 				RefreshToken: tc.refresh,
@@ -115,9 +122,9 @@ func TestRefreshHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
-			err = h.RefreshHandler(ctx)
 			require.NoError(t, err)
 
 			res := recorder.Result()
@@ -130,7 +137,7 @@ func TestRefreshHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Message, "success")

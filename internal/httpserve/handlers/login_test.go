@@ -130,7 +130,6 @@ func TestLoginHandler(t *testing.T) {
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
 
-			// err = h.LoginHandler(ctx)
 			require.NoError(t, err)
 
 			res := recorder.Result()

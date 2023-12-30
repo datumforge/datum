@@ -89,10 +89,10 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 	// https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Session_Management_Cheat_Sheet.md#renew-the-session-id-after-any-privilege-level-change
 	// https://pkg.go.dev/github.com/alexedwards/scs/v2#SessionManager.RenewToken
 
-	err := h.SM.RenewToken(ctx.Request().Context())
-	if err != nil {
-		return nil, ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
+	//	err := h.SM.RenewToken(ctx.Request().Context())
+	//	if err != nil {
+	//		return nil, ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+	//	}
 
 	//	exists := h.SM.Exists(ctx.Request().Context(), "userID")
 	//	if exists {

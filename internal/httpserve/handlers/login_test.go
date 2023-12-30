@@ -49,6 +49,8 @@ func TestLoginHandler(t *testing.T) {
 	validConfirmedUser := "rsanchez@datum.net"
 	validPassword := "sup3rs3cu7e!"
 
+	h.SM.Put(ec, "userID", validConfirmedUser)
+
 	userSetting := EntClient.UserSetting.Create().
 		SetEmailConfirmed(true).
 		SaveX(ec)
@@ -62,6 +64,7 @@ func TestLoginHandler(t *testing.T) {
 		SaveX(ec)
 
 	validUnconfirmedUser := "msmith@datum.net"
+	h.SM.Put(ec, "userID", validUnconfirmedUser)
 
 	userSetting = EntClient.UserSetting.Create().
 		SetEmailConfirmed(false).

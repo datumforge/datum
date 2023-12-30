@@ -6,38 +6,23 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
-	"github.com/alexedwards/scs/v2"
 	"github.com/brianvoe/gofakeit/v6"
 	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 )
 
 func TestLoginHandler(t *testing.T) {
-	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
-	if err != nil {
-		t.Error("error creating token manager")
-	}
-
-	sm := scs.New()
-
-	h := handlers.Handler{
-		TM:           tm,
-		DBClient:     EntClient,
-		Logger:       zap.NewNop().Sugar(),
-		CookieDomain: "datum.net",
-		SM:           sm,
-	}
+	h := handlerSetup(t)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
@@ -48,8 +33,6 @@ func TestLoginHandler(t *testing.T) {
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"
 	validPassword := "sup3rs3cu7e!"
-
-	h.SM.Put(ec, "userID", validConfirmedUser)
 
 	userSetting := EntClient.UserSetting.Create().
 		SetEmailConfirmed(true).
@@ -64,7 +47,6 @@ func TestLoginHandler(t *testing.T) {
 		SaveX(ec)
 
 	validUnconfirmedUser := "msmith@datum.net"
-	h.SM.Put(ec, "userID", validUnconfirmedUser)
 
 	userSetting = EntClient.UserSetting.Create().
 		SetEmailConfirmed(false).
@@ -130,8 +112,10 @@ func TestLoginHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.POST("login", h.LoginHandler)
+			e.Use(session.LoadAndSave(h.SM))
 
 			loginJSON := handlers.LoginRequest{
 				Username: tc.username,
@@ -147,6 +131,8 @@ func TestLoginHandler(t *testing.T) {
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
 			ctx := e.NewContext(req, recorder)
 

@@ -7,9 +7,9 @@ import (
 	"github.com/datumforge/echox/middleware"
 )
 
-// RateLimiter returns a middleware function for rate limiting requests, see https://echo.labstack.com/docs/middleware/rate-limiter
+// DefaultRateLimiter returns a middleware function for rate limiting requests, see https://echo.labstack.com/docs/middleware/rate-limiter
 // TODO: https://github.com/datumforge/datum/issues/287
-func RateLimiter() echo.MiddlewareFunc {
+func DefaultRateLimiter() echo.MiddlewareFunc {
 	rateLimitConfig := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
@@ -39,5 +39,36 @@ func RateLimiter() echo.MiddlewareFunc {
 		},
 	}
 	// TODO: make this configurable with inputs
+	return middleware.RateLimiterWithConfig(rateLimitConfig)
+}
+
+// RateLimiterWithConfig returns a middleware function for rate limiting requests with a config supplied, see https://echo.labstack.com/docs/middleware/rate-limiter
+// TODO: https://github.com/datumforge/datum/issues/287
+func RateLimiterWithConfig(conf middleware.RateLimiterMemoryStoreConfig) echo.MiddlewareFunc {
+	rateLimitConfig := middleware.RateLimiterConfig{
+		Skipper: middleware.DefaultSkipper,
+		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
+			conf,
+		),
+		IdentifierExtractor: func(ctx echo.Context) (string, error) {
+			id := ctx.RealIP()
+			return id, nil
+		},
+		ErrorHandler: func(context echo.Context, err error) error {
+			return &echo.HTTPError{
+				Code:     middleware.ErrExtractorError.Code,
+				Message:  middleware.ErrExtractorError.Message,
+				Internal: err,
+			}
+		},
+		DenyHandler: func(context echo.Context, identifier string, err error) error {
+			return &echo.HTTPError{
+				Code:     middleware.ErrRateLimitExceeded.Code,
+				Message:  "Too many requests!",
+				Internal: err,
+			}
+		},
+	}
+
 	return middleware.RateLimiterWithConfig(rateLimitConfig)
 }

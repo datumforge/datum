@@ -19,7 +19,7 @@ func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err 
 		Handler: func(c echo.Context) error {
 			return h.ForgotPassword(c)
 		},
-	}.ForGroup(V1Version, mw))
+	}.ForGroup(V1Version, restrictedEndpointsMW))
 
 	return
 }

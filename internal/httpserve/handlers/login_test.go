@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -25,10 +24,6 @@ func TestLoginHandler(t *testing.T) {
 	h := handlerSetup(t)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
-
-	// set privacy allow in order to allow the creation of the users without
-	// authentication in the tests
-	ec = privacy.DecisionContext(ec, privacy.Allow)
 
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"
@@ -131,12 +126,11 @@ func TestLoginHandler(t *testing.T) {
 
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
+
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
 
-			ctx := e.NewContext(req, recorder)
-
-			err = h.LoginHandler(ctx)
+			// err = h.LoginHandler(ctx)
 			require.NoError(t, err)
 
 			res := recorder.Result()
@@ -149,7 +143,7 @@ func TestLoginHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Message, "success")

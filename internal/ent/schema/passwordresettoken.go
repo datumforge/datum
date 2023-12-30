@@ -26,10 +26,10 @@ func (PasswordResetToken) Fields() []ent.Field {
 			Unique().
 			NotEmpty(),
 		field.Time("ttl").
-			Comment("the ttl of the verification token which defaults to 15 minutes").
+			Comment("the ttl of the reset token which defaults to 15 minutes").
 			Nillable(),
 		field.String("email").
-			Comment("the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed").
+			Comment("the email used as input to generate the reset token; this is used to verify that the token when regenerated within the server matches the token emailed").
 			NotEmpty(),
 		field.Bytes("secret").
 			Comment("the comparison secret to verify the token's signature").

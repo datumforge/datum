@@ -32,9 +32,9 @@ type PasswordResetToken struct {
 	DeletedBy string `json:"deleted_by,omitempty"`
 	// the reset token sent to the user via email which should only be provided to the /forgot-password endpoint + handler
 	Token string `json:"token,omitempty"`
-	// the ttl of the verification token which defaults to 15 minutes
+	// the ttl of the reset token which defaults to 15 minutes
 	TTL *time.Time `json:"ttl,omitempty"`
-	// the email used as input to generate the verification token; this is used to verify that the token when regenerated within the server matches the token emailed
+	// the email used as input to generate the reset token; this is used to verify that the token when regenerated within the server matches the token emailed
 	Email string `json:"email,omitempty"`
 	// the comparison secret to verify the token's signature
 	Secret *[]byte `json:"secret,omitempty"`

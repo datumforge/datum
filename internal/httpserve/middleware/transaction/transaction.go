@@ -56,13 +56,16 @@ func (d *Client) Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 		c.SetRequest(c.Request().WithContext(ctx))
 
 		if err := next(c); err != nil {
-			d.Logger.Debug("rolling back transaction in middleware")
+			if errors.Is(err, echo.ErrTooManyRequests) {
+				d.Logger.Debug("rolling back transaction in middleware")
 
-			if err := client.Rollback(); err != nil {
-				d.Logger.Errorw(rollbackErr, "error", err)
+				if err := client.Rollback(); err != nil {
+					d.Logger.Errorw(rollbackErr, "error", err)
+				}
+
+				return c.JSON(http.StatusInternalServerError, ErrProcessingRequest)
 			}
-
-			return c.JSON(http.StatusInternalServerError, ErrProcessingRequest)
+			return err
 		}
 
 		d.Logger.Debug("committing transaction in middleware")

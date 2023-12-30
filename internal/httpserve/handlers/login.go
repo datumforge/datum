@@ -26,12 +26,6 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
-	// https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Session_Management_Cheat_Sheet.md#renew-the-session-id-after-any-privilege-level-change
-	// https://pkg.go.dev/github.com/alexedwards/scs/v2#SessionManager.RenewToken
-	err = h.SM.RenewToken(ctx.Request().Context())
-	if err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
 
 	claims := createClaims(user)
 
@@ -91,6 +85,22 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 	if err := h.startTransaction(ctx.Request().Context()); err != nil {
 		return nil, err
 	}
+
+	// https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Session_Management_Cheat_Sheet.md#renew-the-session-id-after-any-privilege-level-change
+	// https://pkg.go.dev/github.com/alexedwards/scs/v2#SessionManager.RenewToken
+
+	err := h.SM.RenewToken(ctx.Request().Context())
+	if err != nil {
+		return nil, ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+	}
+
+	//	exists := h.SM.Exists(ctx.Request().Context(), "userID")
+	//	if exists {
+	//		err := h.SM.RenewToken(ctx.Request().Context())
+	//		if err != nil {
+	//			return nil, ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
+	//		}
+	//	}
 
 	// check user in the database, username == email and ensure only one record is returned
 	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username)

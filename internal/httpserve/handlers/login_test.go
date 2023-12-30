@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/brianvoe/gofakeit/v6"
 	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
@@ -28,11 +29,14 @@ func TestLoginHandler(t *testing.T) {
 		t.Error("error creating token manager")
 	}
 
+	sm := scs.New()
+
 	h := handlers.Handler{
 		TM:           tm,
 		DBClient:     EntClient,
 		Logger:       zap.NewNop().Sugar(),
 		CookieDomain: "datum.net",
+		SM:           sm,
 	}
 
 	ec := echocontext.NewTestEchoContext().Request().Context()

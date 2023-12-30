@@ -56,7 +56,7 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
-	if err := registerResendEmailHandler(router); err != nil {
+	if err := registerResendEmailHandler(router, h); err != nil {
 		return err
 	}
 

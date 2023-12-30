@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	echo "github.com/datumforge/echox"
+
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 )
 
 // ResendEmail accepts an email address via a POST request and always returns a 204
@@ -12,16 +14,12 @@ import (
 // address belongs to a user who has not been verified, another verification email is
 // sent. If the post request contains an orgID and the user is invited to that
 // organization but hasn't accepted the invite, then the invite is resent.
-
-// TODO: implement resendemail handler
-func registerResendEmailHandler(router *echo.Echo) (err error) { //nolint:unused
+func registerResendEmailHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 	_, err = router.AddRoute(echo.Route{
-		Method: http.MethodGet,
+		Method: http.MethodPost,
 		Path:   "/resend",
 		Handler: func(c echo.Context) error {
-			return c.JSON(http.StatusNotImplemented, echo.Map{
-				"error": "Not implemented",
-			})
+			return h.ResendEmail(c)
 		},
 	}.ForGroup(V1Version, mw))
 

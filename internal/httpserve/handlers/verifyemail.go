@@ -35,7 +35,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			return err
 		}
 
-		if errors.Is(err, ErrNotFound) {
+		if generated.IsNotFound(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 

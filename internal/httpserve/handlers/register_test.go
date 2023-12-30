@@ -15,6 +15,7 @@ import (
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 )
 
 func TestRegisterHandler(t *testing.T) {
@@ -92,8 +93,10 @@ func TestRegisterHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.POST("register", h.RegisterHandler)
+			e.Use(session.LoadAndSave(h.SM))
 
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,
@@ -112,9 +115,9 @@ func TestRegisterHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
-			err = h.RegisterHandler(ctx)
 			require.NoError(t, err)
 
 			res := recorder.Result()
@@ -127,7 +130,7 @@ func TestRegisterHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusOK {
 				assert.Equal(t, out.Email, tc.email)

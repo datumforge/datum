@@ -183,6 +183,8 @@ func TestVerifyHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
+
 			if tc.expectedStatus == http.StatusNoContent {
 				assert.Empty(t, out)
 			} else {

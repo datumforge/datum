@@ -16,6 +16,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 )
 
 func TestResendHandler(t *testing.T) {
@@ -81,8 +82,10 @@ func TestResendHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context
+			// create echo context with middleware
 			e := echo.New()
+			e.POST("resend", h.ResendEmail)
+			e.Use(session.LoadAndSave(h.SM))
 
 			resendJSON := handlers.ResendRequest{
 				Email: tc.email,
@@ -98,9 +101,9 @@ func TestResendHandler(t *testing.T) {
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
-			ctx := e.NewContext(req, recorder)
+			// Using the ServerHTTP on echo will trigger the router and middleware
+			e.ServeHTTP(recorder, req)
 
-			err = h.ResendEmail(ctx)
 			require.NoError(t, err)
 
 			res := recorder.Result()
@@ -113,7 +116,7 @@ func TestResendHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, ctx.Response().Status)
+			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusNoContent {
 				require.NotEmpty(t, out)

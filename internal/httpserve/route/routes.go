@@ -18,10 +18,10 @@ const (
 var (
 	mw = []echo.MiddlewareFunc{middleware.Recover()}
 
-	restrictedRateLimit = middleware.RateLimiterMemoryStoreConfig{
-		Rate:      1,
-		Burst:     1,
-		ExpiresIn: 1 * time.Minute, //nolint:gomnd
+	restrictedRateLimit = &ratelimit.Config{
+		RateLimit:  1,
+		BurstLimit: 1,
+		ExpiresIn:  15 * time.Minute, //nolint:gomnd
 	}
 
 	restrictedEndpointsMW = append(mw, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware

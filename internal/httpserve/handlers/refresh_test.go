@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
@@ -99,9 +98,8 @@ func TestRefreshHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("refresh", h.RefreshHandler)
-			e.Use(h.Transaction)
 
 			refreshJSON := handlers.RefreshRequest{
 				RefreshToken: tc.refresh,

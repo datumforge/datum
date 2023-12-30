@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -60,9 +59,8 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			e := echo.New()
+			e := setupEcho()
 			e.POST("forgot-password", h.ForgotPassword)
-			e.Use(h.Transaction)
 
 			resendJSON := handlers.ForgotPasswordRequest{
 				Email: tc.email,

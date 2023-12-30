@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -93,9 +92,8 @@ func TestRegisterHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("register", h.RegisterHandler)
-			e.Use(h.Transaction)
 
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,

@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -124,9 +123,8 @@ func TestLoginHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("login", h.LoginHandler)
-			e.Use(h.Transaction)
 
 			loginJSON := handlers.LoginRequest{
 				Username: tc.username,

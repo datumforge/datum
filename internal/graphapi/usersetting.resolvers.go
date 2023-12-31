@@ -34,7 +34,7 @@ func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.
 			return nil, err
 		}
 
-		r.logger.Errorw("failed to get user", "error", err)
+		r.logger.Errorw("failed to get user setting", "error", err)
 		return nil, ErrInternalServerError
 	}
 

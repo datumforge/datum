@@ -455,7 +455,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
 
-			// make sure the is a user setting deleted
+			// make sure the user setting is deleted
 			out, err := client.GetUserSettingByID(reqCtx, userSetting.ID)
 			require.Nil(t, out)
 			require.Error(t, err)

@@ -77,6 +77,34 @@ func (patc *PersonalAccessTokenCreate) SetNillableUpdatedBy(s *string) *Personal
 	return patc
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (patc *PersonalAccessTokenCreate) SetDeletedAt(t time.Time) *PersonalAccessTokenCreate {
+	patc.mutation.SetDeletedAt(t)
+	return patc
+}
+
+// SetNillableDeletedAt sets the "deleted_at" field if the given value is not nil.
+func (patc *PersonalAccessTokenCreate) SetNillableDeletedAt(t *time.Time) *PersonalAccessTokenCreate {
+	if t != nil {
+		patc.SetDeletedAt(*t)
+	}
+	return patc
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (patc *PersonalAccessTokenCreate) SetDeletedBy(s string) *PersonalAccessTokenCreate {
+	patc.mutation.SetDeletedBy(s)
+	return patc
+}
+
+// SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
+func (patc *PersonalAccessTokenCreate) SetNillableDeletedBy(s *string) *PersonalAccessTokenCreate {
+	if s != nil {
+		patc.SetDeletedBy(*s)
+	}
+	return patc
+}
+
 // SetName sets the "name" field.
 func (patc *PersonalAccessTokenCreate) SetName(s string) *PersonalAccessTokenCreate {
 	patc.mutation.SetName(s)
@@ -305,6 +333,14 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 	if value, ok := patc.mutation.UpdatedBy(); ok {
 		_spec.SetField(personalaccesstoken.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = value
+	}
+	if value, ok := patc.mutation.DeletedAt(); ok {
+		_spec.SetField(personalaccesstoken.FieldDeletedAt, field.TypeTime, value)
+		_node.DeletedAt = value
+	}
+	if value, ok := patc.mutation.DeletedBy(); ok {
+		_spec.SetField(personalaccesstoken.FieldDeletedBy, field.TypeString, value)
+		_node.DeletedBy = value
 	}
 	if value, ok := patc.mutation.Name(); ok {
 		_spec.SetField(personalaccesstoken.FieldName, field.TypeString, value)

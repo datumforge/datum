@@ -434,6 +434,8 @@ type ComplexityRoot struct {
 		Abilities   func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		CreatedBy   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		DeletedBy   func(childComplexity int) int
 		Description func(childComplexity int) int
 		ExpiresAt   func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -2511,6 +2513,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PersonalAccessToken.CreatedBy(childComplexity), true
+
+	case "PersonalAccessToken.deletedAt":
+		if e.complexity.PersonalAccessToken.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.PersonalAccessToken.DeletedAt(childComplexity), true
+
+	case "PersonalAccessToken.deletedBy":
+		if e.complexity.PersonalAccessToken.DeletedBy == nil {
+			break
+		}
+
+		return e.complexity.PersonalAccessToken.DeletedBy(childComplexity), true
 
 	case "PersonalAccessToken.description":
 		if e.complexity.PersonalAccessToken.Description == nil {
@@ -5570,6 +5586,8 @@ type PersonalAccessToken implements Node {
   updatedAt: Time!
   createdBy: String
   updatedBy: String
+  deletedAt: Time
+  deletedBy: String
   """the name associated with the token"""
   name: String!
   """what abilites the token should have"""
@@ -5666,6 +5684,33 @@ input PersonalAccessTokenWhereInput {
   updatedByNotNil: Boolean
   updatedByEqualFold: String
   updatedByContainsFold: String
+  """deleted_at field predicates"""
+  deletedAt: Time
+  deletedAtNEQ: Time
+  deletedAtIn: [Time!]
+  deletedAtNotIn: [Time!]
+  deletedAtGT: Time
+  deletedAtGTE: Time
+  deletedAtLT: Time
+  deletedAtLTE: Time
+  deletedAtIsNil: Boolean
+  deletedAtNotNil: Boolean
+  """deleted_by field predicates"""
+  deletedBy: String
+  deletedByNEQ: String
+  deletedByIn: [String!]
+  deletedByNotIn: [String!]
+  deletedByGT: String
+  deletedByGTE: String
+  deletedByLT: String
+  deletedByLTE: String
+  deletedByContains: String
+  deletedByHasPrefix: String
+  deletedByHasSuffix: String
+  deletedByIsNil: Boolean
+  deletedByNotNil: Boolean
+  deletedByEqualFold: String
+  deletedByContainsFold: String
   """name field predicates"""
   name: String
   nameNEQ: String
@@ -21346,6 +21391,88 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_updatedBy(ctx conte
 	return fc, nil
 }
 
+func (ec *executionContext) _PersonalAccessToken_deletedAt(ctx context.Context, field graphql.CollectedField, obj *generated.PersonalAccessToken) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PersonalAccessToken_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PersonalAccessToken_deletedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PersonalAccessToken",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PersonalAccessToken_deletedBy(ctx context.Context, field graphql.CollectedField, obj *generated.PersonalAccessToken) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PersonalAccessToken_deletedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PersonalAccessToken_deletedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PersonalAccessToken",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PersonalAccessToken_name(ctx context.Context, field graphql.CollectedField, obj *generated.PersonalAccessToken) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PersonalAccessToken_name(ctx, field)
 	if err != nil {
@@ -21843,6 +21970,10 @@ func (ec *executionContext) fieldContext_PersonalAccessTokenCreatePayload_Person
 				return ec.fieldContext_PersonalAccessToken_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_PersonalAccessToken_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_PersonalAccessToken_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_PersonalAccessToken_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_PersonalAccessToken_name(ctx, field)
 			case "abilities":
@@ -21952,6 +22083,10 @@ func (ec *executionContext) fieldContext_PersonalAccessTokenEdge_node(ctx contex
 				return ec.fieldContext_PersonalAccessToken_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_PersonalAccessToken_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_PersonalAccessToken_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_PersonalAccessToken_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_PersonalAccessToken_name(ctx, field)
 			case "abilities":
@@ -22064,6 +22199,10 @@ func (ec *executionContext) fieldContext_PersonalAccessTokenUpdatePayload_Person
 				return ec.fieldContext_PersonalAccessToken_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_PersonalAccessToken_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_PersonalAccessToken_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_PersonalAccessToken_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_PersonalAccessToken_name(ctx, field)
 			case "abilities":
@@ -23693,6 +23832,10 @@ func (ec *executionContext) fieldContext_Query_personalAccessToken(ctx context.C
 				return ec.fieldContext_PersonalAccessToken_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_PersonalAccessToken_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_PersonalAccessToken_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_PersonalAccessToken_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_PersonalAccessToken_name(ctx, field)
 			case "abilities":
@@ -26110,6 +26253,10 @@ func (ec *executionContext) fieldContext_User_personalAccessTokens(ctx context.C
 				return ec.fieldContext_PersonalAccessToken_createdBy(ctx, field)
 			case "updatedBy":
 				return ec.fieldContext_PersonalAccessToken_updatedBy(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_PersonalAccessToken_deletedAt(ctx, field)
+			case "deletedBy":
+				return ec.fieldContext_PersonalAccessToken_deletedBy(ctx, field)
 			case "name":
 				return ec.fieldContext_PersonalAccessToken_name(ctx, field)
 			case "abilities":
@@ -39159,7 +39306,7 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "lastUsedAt", "lastUsedAtNEQ", "lastUsedAtIn", "lastUsedAtNotIn", "lastUsedAtGT", "lastUsedAtGTE", "lastUsedAtLT", "lastUsedAtLTE", "lastUsedAtIsNil", "lastUsedAtNotNil", "hasOwner", "hasOwnerWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "expiresAt", "expiresAtNEQ", "expiresAtIn", "expiresAtNotIn", "expiresAtGT", "expiresAtGTE", "expiresAtLT", "expiresAtLTE", "lastUsedAt", "lastUsedAtNEQ", "lastUsedAtIn", "lastUsedAtNotIn", "lastUsedAtGT", "lastUsedAtGTE", "lastUsedAtLT", "lastUsedAtLTE", "lastUsedAtIsNil", "lastUsedAtNotNil", "hasOwner", "hasOwnerWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39579,6 +39726,181 @@ func (ec *executionContext) unmarshalInputPersonalAccessTokenWhereInput(ctx cont
 				return it, err
 			}
 			it.UpdatedByContainsFold = data
+		case "deletedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAt = data
+		case "deletedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNEQ = data
+		case "deletedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIn = data
+		case "deletedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotIn = data
+		case "deletedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGT = data
+		case "deletedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtGTE = data
+		case "deletedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLT = data
+		case "deletedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtLTE = data
+		case "deletedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtIsNil = data
+		case "deletedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedAtNotNil = data
+		case "deletedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedBy = data
+		case "deletedByNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNEQ = data
+		case "deletedByIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIn = data
+		case "deletedByNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotIn = data
+		case "deletedByGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGT = data
+		case "deletedByGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByGTE = data
+		case "deletedByLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLT = data
+		case "deletedByLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByLTE = data
+		case "deletedByContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContains = data
+		case "deletedByHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasPrefix = data
+		case "deletedByHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByHasSuffix = data
+		case "deletedByIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByIsNil = data
+		case "deletedByNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByNotNil = data
+		case "deletedByEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByEqualFold = data
+		case "deletedByContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletedByContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletedByContainsFold = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -48170,6 +48492,10 @@ func (ec *executionContext) _PersonalAccessToken(ctx context.Context, sel ast.Se
 			out.Values[i] = ec._PersonalAccessToken_createdBy(ctx, field, obj)
 		case "updatedBy":
 			out.Values[i] = ec._PersonalAccessToken_updatedBy(ctx, field, obj)
+		case "deletedAt":
+			out.Values[i] = ec._PersonalAccessToken_deletedAt(ctx, field, obj)
+		case "deletedBy":
+			out.Values[i] = ec._PersonalAccessToken_deletedBy(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._PersonalAccessToken_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

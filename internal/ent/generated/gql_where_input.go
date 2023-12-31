@@ -5623,6 +5623,35 @@ type PersonalAccessTokenWhereInput struct {
 	UpdatedByEqualFold    *string  `json:"updatedByEqualFold,omitempty"`
 	UpdatedByContainsFold *string  `json:"updatedByContainsFold,omitempty"`
 
+	// "deleted_at" field predicates.
+	DeletedAt       *time.Time  `json:"deletedAt,omitempty"`
+	DeletedAtNEQ    *time.Time  `json:"deletedAtNEQ,omitempty"`
+	DeletedAtIn     []time.Time `json:"deletedAtIn,omitempty"`
+	DeletedAtNotIn  []time.Time `json:"deletedAtNotIn,omitempty"`
+	DeletedAtGT     *time.Time  `json:"deletedAtGT,omitempty"`
+	DeletedAtGTE    *time.Time  `json:"deletedAtGTE,omitempty"`
+	DeletedAtLT     *time.Time  `json:"deletedAtLT,omitempty"`
+	DeletedAtLTE    *time.Time  `json:"deletedAtLTE,omitempty"`
+	DeletedAtIsNil  bool        `json:"deletedAtIsNil,omitempty"`
+	DeletedAtNotNil bool        `json:"deletedAtNotNil,omitempty"`
+
+	// "deleted_by" field predicates.
+	DeletedBy             *string  `json:"deletedBy,omitempty"`
+	DeletedByNEQ          *string  `json:"deletedByNEQ,omitempty"`
+	DeletedByIn           []string `json:"deletedByIn,omitempty"`
+	DeletedByNotIn        []string `json:"deletedByNotIn,omitempty"`
+	DeletedByGT           *string  `json:"deletedByGT,omitempty"`
+	DeletedByGTE          *string  `json:"deletedByGTE,omitempty"`
+	DeletedByLT           *string  `json:"deletedByLT,omitempty"`
+	DeletedByLTE          *string  `json:"deletedByLTE,omitempty"`
+	DeletedByContains     *string  `json:"deletedByContains,omitempty"`
+	DeletedByHasPrefix    *string  `json:"deletedByHasPrefix,omitempty"`
+	DeletedByHasSuffix    *string  `json:"deletedByHasSuffix,omitempty"`
+	DeletedByIsNil        bool     `json:"deletedByIsNil,omitempty"`
+	DeletedByNotNil       bool     `json:"deletedByNotNil,omitempty"`
+	DeletedByEqualFold    *string  `json:"deletedByEqualFold,omitempty"`
+	DeletedByContainsFold *string  `json:"deletedByContainsFold,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -5918,6 +5947,81 @@ func (i *PersonalAccessTokenWhereInput) P() (predicate.PersonalAccessToken, erro
 	}
 	if i.UpdatedByContainsFold != nil {
 		predicates = append(predicates, personalaccesstoken.UpdatedByContainsFold(*i.UpdatedByContainsFold))
+	}
+	if i.DeletedAt != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtEQ(*i.DeletedAt))
+	}
+	if i.DeletedAtNEQ != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtNEQ(*i.DeletedAtNEQ))
+	}
+	if len(i.DeletedAtIn) > 0 {
+		predicates = append(predicates, personalaccesstoken.DeletedAtIn(i.DeletedAtIn...))
+	}
+	if len(i.DeletedAtNotIn) > 0 {
+		predicates = append(predicates, personalaccesstoken.DeletedAtNotIn(i.DeletedAtNotIn...))
+	}
+	if i.DeletedAtGT != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtGT(*i.DeletedAtGT))
+	}
+	if i.DeletedAtGTE != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtGTE(*i.DeletedAtGTE))
+	}
+	if i.DeletedAtLT != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtLT(*i.DeletedAtLT))
+	}
+	if i.DeletedAtLTE != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtLTE(*i.DeletedAtLTE))
+	}
+	if i.DeletedAtIsNil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtIsNil())
+	}
+	if i.DeletedAtNotNil {
+		predicates = append(predicates, personalaccesstoken.DeletedAtNotNil())
+	}
+	if i.DeletedBy != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByEQ(*i.DeletedBy))
+	}
+	if i.DeletedByNEQ != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByNEQ(*i.DeletedByNEQ))
+	}
+	if len(i.DeletedByIn) > 0 {
+		predicates = append(predicates, personalaccesstoken.DeletedByIn(i.DeletedByIn...))
+	}
+	if len(i.DeletedByNotIn) > 0 {
+		predicates = append(predicates, personalaccesstoken.DeletedByNotIn(i.DeletedByNotIn...))
+	}
+	if i.DeletedByGT != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByGT(*i.DeletedByGT))
+	}
+	if i.DeletedByGTE != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByGTE(*i.DeletedByGTE))
+	}
+	if i.DeletedByLT != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByLT(*i.DeletedByLT))
+	}
+	if i.DeletedByLTE != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByLTE(*i.DeletedByLTE))
+	}
+	if i.DeletedByContains != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByContains(*i.DeletedByContains))
+	}
+	if i.DeletedByHasPrefix != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByHasPrefix(*i.DeletedByHasPrefix))
+	}
+	if i.DeletedByHasSuffix != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByHasSuffix(*i.DeletedByHasSuffix))
+	}
+	if i.DeletedByIsNil {
+		predicates = append(predicates, personalaccesstoken.DeletedByIsNil())
+	}
+	if i.DeletedByNotNil {
+		predicates = append(predicates, personalaccesstoken.DeletedByNotNil())
+	}
+	if i.DeletedByEqualFold != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByEqualFold(*i.DeletedByEqualFold))
+	}
+	if i.DeletedByContainsFold != nil {
+		predicates = append(predicates, personalaccesstoken.DeletedByContainsFold(*i.DeletedByContainsFold))
 	}
 	if i.Name != nil {
 		predicates = append(predicates, personalaccesstoken.NameEQ(*i.Name))

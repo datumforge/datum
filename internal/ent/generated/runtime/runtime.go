@@ -470,13 +470,17 @@ func init() {
 	passwordresettoken.DefaultID = passwordresettokenDescID.Default.(func() string)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
+	personalaccesstokenMixinHooks1 := personalaccesstokenMixin[1].Hooks()
 	personalaccesstokenHooks := schema.PersonalAccessToken{}.Hooks()
 	personalaccesstoken.Hooks[0] = personalaccesstokenMixinHooks0[0]
-	personalaccesstoken.Hooks[1] = personalaccesstokenHooks[0]
+	personalaccesstoken.Hooks[1] = personalaccesstokenMixinHooks1[0]
+	personalaccesstoken.Hooks[2] = personalaccesstokenHooks[0]
+	personalaccesstokenMixinInters1 := personalaccesstokenMixin[1].Interceptors()
+	personalaccesstoken.Interceptors[0] = personalaccesstokenMixinInters1[0]
 	personalaccesstokenMixinFields0 := personalaccesstokenMixin[0].Fields()
 	_ = personalaccesstokenMixinFields0
-	personalaccesstokenMixinFields1 := personalaccesstokenMixin[1].Fields()
-	_ = personalaccesstokenMixinFields1
+	personalaccesstokenMixinFields2 := personalaccesstokenMixin[2].Fields()
+	_ = personalaccesstokenMixinFields2
 	personalaccesstokenFields := schema.PersonalAccessToken{}.Fields()
 	_ = personalaccesstokenFields
 	// personalaccesstokenDescCreatedAt is the schema descriptor for created_at field.
@@ -502,7 +506,7 @@ func init() {
 	// personalaccesstoken.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
 	personalaccesstoken.UpdateDefaultLastUsedAt = personalaccesstokenDescLastUsedAt.UpdateDefault.(func() time.Time)
 	// personalaccesstokenDescID is the schema descriptor for id field.
-	personalaccesstokenDescID := personalaccesstokenMixinFields1[0].Descriptor()
+	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
 	sessionMixin := schema.Session{}.Mixin()

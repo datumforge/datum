@@ -291,6 +291,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldUpdatedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldUpdatedAt},
 			personalaccesstoken.FieldCreatedBy:   {Type: field.TypeString, Column: personalaccesstoken.FieldCreatedBy},
 			personalaccesstoken.FieldUpdatedBy:   {Type: field.TypeString, Column: personalaccesstoken.FieldUpdatedBy},
+			personalaccesstoken.FieldDeletedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldDeletedAt},
+			personalaccesstoken.FieldDeletedBy:   {Type: field.TypeString, Column: personalaccesstoken.FieldDeletedBy},
 			personalaccesstoken.FieldName:        {Type: field.TypeString, Column: personalaccesstoken.FieldName},
 			personalaccesstoken.FieldToken:       {Type: field.TypeString, Column: personalaccesstoken.FieldToken},
 			personalaccesstoken.FieldAbilities:   {Type: field.TypeJSON, Column: personalaccesstoken.FieldAbilities},
@@ -2024,6 +2026,16 @@ func (f *PersonalAccessTokenFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *PersonalAccessTokenFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(personalaccesstoken.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *PersonalAccessTokenFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(personalaccesstoken.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *PersonalAccessTokenFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldDeletedBy))
 }
 
 // WhereName applies the entql string predicate on the name field.

@@ -21,7 +21,7 @@ COPY --from=openfga/openfga:v1.4.0 /openfga /bin/openfga
 # Copy default model into image
 COPY fga/model/datum.fga fga/model/datum.fga
 
-COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.23 /ko-app/grpc-health-probe /bin/grpc_health_probe
+COPY --from=ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.24 /ko-app/grpc-health-probe /bin/grpc_health_probe
 
 # Copy entrypoint and env files
 COPY docker/all-in-one/docker_entrypoint.sh /bin/docker_entrypoint.sh

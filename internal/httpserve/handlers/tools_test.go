@@ -10,12 +10,14 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
+	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -36,7 +38,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func setupEcho() *echo.Echo {
+func setupEcho(sm *scs.SessionManager) *echo.Echo {
 	// create echo context with middleware
 	e := echo.New()
 	transactionConfig := transaction.Client{
@@ -45,6 +47,7 @@ func setupEcho() *echo.Echo {
 	}
 
 	e.Use(transactionConfig.Middleware)
+	e.Use(session.LoadAndSave(sm))
 
 	return e
 }

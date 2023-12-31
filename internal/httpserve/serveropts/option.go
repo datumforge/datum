@@ -340,16 +340,9 @@ func WithSessionManager() ServerOption {
 		sm.Lifetime = time.Hour
 		sm.Store = memstore.NewWithCleanupInterval(5 * time.Minute) // nolint: gomnd
 		sm.IdleTimeout = 15 * time.Minute                           // nolint: gomnd
-		// CookieName is the name of the CSRF cookie - it's prefixed with "__Host-" as
-		// an additional defense in depth measure; prefixing the name ensures the cookie is sent from a
-		// secure page (HTTPS), won't be sent to subdomains, and the path attribute
-		// is set to /.
 		sm.Cookie.Name = "__Host-datum"
-		// forbids JavaScript from accessing the cookie
 		sm.Cookie.HttpOnly = true
-		// the default is true which doesn't remove cookies after browser is shut down
 		sm.Cookie.Persist = false
-		// lock it up
 		sm.Cookie.SameSite = http.SameSiteStrictMode
 		sm.Cookie.Secure = true
 		s.Config.Server.Handler.SM = sm

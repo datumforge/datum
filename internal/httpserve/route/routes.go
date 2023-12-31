@@ -1,10 +1,13 @@
 package route
 
 import (
+	"time"
+
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
 )
 
 const (
@@ -14,6 +17,14 @@ const (
 
 var (
 	mw = []echo.MiddlewareFunc{middleware.Recover()}
+
+	restrictedRateLimit = &ratelimit.Config{
+		RateLimit:  1,
+		BurstLimit: 1,
+		ExpiresIn:  15 * time.Minute, //nolint:gomnd
+	}
+
+	restrictedEndpointsMW = append(mw, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
 )
 
 type Route struct {

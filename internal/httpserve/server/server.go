@@ -74,7 +74,7 @@ func (s *Server) StartEchoServer(ctx context.Context) error {
 		cors.New(),              // add cors middleware
 		mime.New(),              // add mime middleware
 		cachecontrol.New(),      // add cache control middleware
-		ratelimit.RateLimiter(), // add ratelimit middleware
+		ratelimit.DefaultRateLimiter(), // add ratelimit middleware
 		middleware.Secure(),     // add XSS middleware
 		session.LoadAndSave(s.config.Handler.SM),
 	)

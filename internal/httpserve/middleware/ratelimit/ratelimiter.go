@@ -5,18 +5,39 @@ import (
 
 	echo "github.com/datumforge/echox"
 	"github.com/datumforge/echox/middleware"
+	"github.com/kelseyhightower/envconfig"
 )
 
-// RateLimiter returns a middleware function for rate limiting requests, see https://echo.labstack.com/docs/middleware/rate-limiter
+// Config defines the configuration settings for the default rate limiter
+type Config struct {
+	RateLimit  float64       `split_words:"true" default:"10"` // DATUM_RATE_LIMIT
+	BurstLimit int           `split_words:"true" default:"30"` // DATUM_BURST_LIMIT
+	ExpiresIn  time.Duration `split_words:"true" default:"1m"` // DATUM_EXPIRES_IN
+}
+
+// DefaultRateLimiter returns a middleware function for rate limiting requests, see https://echo.labstack.com/docs/middleware/rate-limiter
 // TODO: https://github.com/datumforge/datum/issues/287
-func RateLimiter() echo.MiddlewareFunc {
+func DefaultRateLimiter() echo.MiddlewareFunc {
+	conf := &Config{}
+
+	err := envconfig.Process("datum", conf)
+	if err != nil {
+		panic(err)
+	}
+
+	return RateLimiterWithConfig(conf)
+}
+
+// RateLimiterWithConfig returns a middleware function for rate limiting requests with a config supplied, see https://echo.labstack.com/docs/middleware/rate-limiter
+// TODO: https://github.com/datumforge/datum/issues/287
+func RateLimiterWithConfig(conf *Config) echo.MiddlewareFunc {
 	rateLimitConfig := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
 			middleware.RateLimiterMemoryStoreConfig{
-				Rate:      10,              // nolint: gomnd
-				Burst:     30,              // nolint: gomnd
-				ExpiresIn: 1 * time.Minute, // nolint: gomnd
+				Rate:      conf.RateLimit,
+				Burst:     conf.BurstLimit,
+				ExpiresIn: conf.ExpiresIn,
 			},
 		),
 		IdentifierExtractor: func(ctx echo.Context) (string, error) {
@@ -38,6 +59,6 @@ func RateLimiter() echo.MiddlewareFunc {
 			}
 		},
 	}
-	// TODO: make this configurable with inputs
+
 	return middleware.RateLimiterWithConfig(rateLimitConfig)
 }

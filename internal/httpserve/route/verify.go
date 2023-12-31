@@ -20,7 +20,7 @@ func registerVerifyHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Handler: func(c echo.Context) error {
 			return h.VerifyEmail(c)
 		},
-	}.ForGroup(V1Version, mw))
+	}.ForGroup(V1Version, restrictedEndpointsMW))
 
 	return
 }

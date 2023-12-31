@@ -23,7 +23,7 @@ func registerRegisterHandler(router *echo.Echo, h *handlers.Handler) (err error)
 		Handler: func(c echo.Context) error {
 			return h.RegisterHandler(c)
 		},
-	}.ForGroup(V1Version, mw))
+	}.ForGroup(V1Version, restrictedEndpointsMW))
 
 	return
 }

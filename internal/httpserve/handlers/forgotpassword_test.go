@@ -59,7 +59,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			e := setupEcho()
+			e := setupEcho(h.SM)
 			e.POST("forgot-password", h.ForgotPassword)
 
 			resendJSON := handlers.ForgotPasswordRequest{

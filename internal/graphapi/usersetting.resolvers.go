@@ -28,5 +28,15 @@ func (r *mutationResolver) DeleteUserSetting(ctx context.Context, id string) (*U
 
 // UserSetting is the resolver for the UserSetting field.
 func (r *queryResolver) UserSetting(ctx context.Context, id string) (*generated.UserSetting, error) {
-	panic(fmt.Errorf("not implemented: UserSetting - UserSetting"))
+	userSetting, err := r.client.UserSetting.Get(ctx, id)
+	if err != nil {
+		if generated.IsNotFound(err) {
+			return nil, err
+		}
+
+		r.logger.Errorw("failed to get user setting", "error", err)
+		return nil, ErrInternalServerError
+	}
+
+	return userSetting, nil
 }

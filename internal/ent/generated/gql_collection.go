@@ -1372,6 +1372,16 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				selectedFields = append(selectedFields, personalaccesstoken.FieldUpdatedBy)
 				fieldSeen[personalaccesstoken.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[personalaccesstoken.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldDeletedAt)
+				fieldSeen[personalaccesstoken.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[personalaccesstoken.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldDeletedBy)
+				fieldSeen[personalaccesstoken.FieldDeletedBy] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[personalaccesstoken.FieldName]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldName)

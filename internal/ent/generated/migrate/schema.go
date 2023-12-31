@@ -354,6 +354,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "token", Type: field.TypeString, Unique: true},
 		{Name: "abilities", Type: field.TypeJSON, Nullable: true},
@@ -370,7 +372,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "personal_access_tokens_users_personal_access_tokens",
-				Columns:    []*schema.Column{PersonalAccessTokensColumns[11]},
+				Columns:    []*schema.Column{PersonalAccessTokensColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -379,7 +381,7 @@ var (
 			{
 				Name:    "personalaccesstoken_token",
 				Unique:  false,
-				Columns: []*schema.Column{PersonalAccessTokensColumns[6]},
+				Columns: []*schema.Column{PersonalAccessTokensColumns[8]},
 			},
 		},
 	}

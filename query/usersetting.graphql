@@ -1,0 +1,19 @@
+query GetUserSettingByID($userSettingId: ID!) {
+  userSetting(id: $userSettingId) {
+    id
+    permissions
+    role
+    silencedAt
+    status
+    suspendedAt
+    tags
+    locked
+    emailConfirmed
+    createdAt
+    createdBy
+    deletedAt
+    deletedBy
+    updatedAt
+    updatedBy
+  }
+}

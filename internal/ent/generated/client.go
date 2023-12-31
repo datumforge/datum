@@ -2179,7 +2179,8 @@ func (c *PersonalAccessTokenClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *PersonalAccessTokenClient) Interceptors() []Interceptor {
-	return c.inters.PersonalAccessToken
+	inters := c.inters.PersonalAccessToken
+	return append(inters[:len(inters):len(inters)], personalaccesstoken.Interceptors[:]...)
 }
 
 func (c *PersonalAccessTokenClient) mutate(ctx context.Context, m *PersonalAccessTokenMutation) (Value, error) {

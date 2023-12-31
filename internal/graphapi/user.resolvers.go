@@ -89,6 +89,10 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 		return nil, err
 	}
 
+	if err := generated.UserEdgeCleanup(ctx, id); err != nil {
+		return nil, newCascadeDeleteError(err)
+	}
+
 	return &UserDeletePayload{DeletedID: id}, nil
 }
 

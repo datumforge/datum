@@ -27,6 +27,10 @@ type PersonalAccessToken struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
 	// the name associated with the token
 	Name string `json:"name,omitempty"`
 	// Token holds the value of the "token" field.
@@ -77,9 +81,9 @@ func (*PersonalAccessToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case personalaccesstoken.FieldAbilities:
 			values[i] = new([]byte)
-		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
+		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldDeletedBy, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
 			values[i] = new(sql.NullString)
-		case personalaccesstoken.FieldCreatedAt, personalaccesstoken.FieldUpdatedAt, personalaccesstoken.FieldExpiresAt, personalaccesstoken.FieldLastUsedAt:
+		case personalaccesstoken.FieldCreatedAt, personalaccesstoken.FieldUpdatedAt, personalaccesstoken.FieldDeletedAt, personalaccesstoken.FieldExpiresAt, personalaccesstoken.FieldLastUsedAt:
 			values[i] = new(sql.NullTime)
 		case personalaccesstoken.ForeignKeys[0]: // user_personal_access_tokens
 			values[i] = new(sql.NullString)
@@ -127,6 +131,18 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				pat.UpdatedBy = value.String
+			}
+		case personalaccesstoken.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				pat.DeletedAt = value.Time
+			}
+		case personalaccesstoken.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				pat.DeletedBy = value.String
 			}
 		case personalaccesstoken.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -227,6 +243,12 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(pat.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(pat.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(pat.DeletedBy)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(pat.Name)

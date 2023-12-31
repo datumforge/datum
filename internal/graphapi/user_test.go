@@ -414,6 +414,9 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 	user := (&UserBuilder{}).MustNew(reqCtx)
 
+	userSetting, err := user.Setting(reqCtx)
+	require.NoError(t, err)
+
 	testCases := []struct {
 		name     string
 		userID   string
@@ -452,7 +455,11 @@ func TestMutation_DeleteUser(t *testing.T) {
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
 
-			// TODO: make sure user settings was deleted on user delete once user-setting resolvers are completed
+			// make sure the user setting is deleted
+			out, err := client.GetUserSettingByID(reqCtx, userSetting.ID)
+			require.Nil(t, out)
+			require.Error(t, err)
+			assert.ErrorContains(t, err, "not found")
 		})
 	}
 }
@@ -487,20 +494,20 @@ func TestMutation_UserCascadeDelete(t *testing.T) {
 	assert.ErrorContains(t, err, "not found")
 
 	g, err := client.GetPersonalAccessTokenByID(reqCtx, token1.ID)
+	require.Error(t, err)
 
 	require.Nil(t, g)
-	require.Error(t, err)
 	assert.ErrorContains(t, err, "not found")
 
 	ctx := mixin.SkipSoftDelete(reqCtx)
 
 	o, err = client.GetUserByID(ctx, usr.ID)
+	require.NoError(t, err)
 
 	require.Equal(t, o.User.ID, usr.ID)
-	require.NoError(t, err)
 
 	g, err = client.GetPersonalAccessTokenByID(ctx, token1.ID)
+	require.NoError(t, err)
 
 	require.Equal(t, g.PersonalAccessToken.ID, token1.ID)
-	require.NoError(t, err)
 }

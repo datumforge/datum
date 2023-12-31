@@ -346,7 +346,6 @@ func WithSessionManager() ServerOption {
 		sm.Cookie.SameSite = http.SameSiteStrictMode
 		sm.Cookie.Secure = true
 		s.Config.Server.Handler.SM = sm
-
 	})
 
 }

@@ -2,6 +2,8 @@ package viewer
 
 import (
 	"context"
+
+	"github.com/datumforge/datum/internal/ent/generated"
 )
 
 // ViewerContextKey is the context key for the viewer-context
@@ -12,17 +14,36 @@ type ContextKey struct {
 	name string
 }
 
-// Viewer describes the query/mutation viewer-context.
+// Viewer describes the query/mutation viewer-context
 type Viewer interface {
-	// OrganizationID returns the organization ID from the context
 	GetOrganizationID() string
 	GetGroupID() string
+	IsAdmin() bool
+	GetID() (id string, exists bool)
 }
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
+	Viewer
 	GroupID string
 	OrgID   string
+	id      string
+	hasID   bool
+}
+
+func NewUserViewerFromUser(user *generated.User) *UserViewer {
+	if user == nil {
+		return NewUserViewerFromID("", false)
+	}
+
+	return NewUserViewerFromID(user.ID, true)
+}
+
+func NewUserViewerFromID(id string, hasID bool) *UserViewer {
+	return &UserViewer{
+		id:    id,
+		hasID: hasID,
+	}
 }
 
 // GetOrganizationID returns the ID of the organization.
@@ -33,6 +54,14 @@ func (u UserViewer) GetOrganizationID() string {
 // GetGroupID returns the ID of the group
 func (u UserViewer) GetGroupID() string {
 	return u.GroupID
+}
+
+func (u UserViewer) IsAdmin() bool {
+	return false
+}
+
+func (u UserViewer) GetID() (string, bool) {
+	return u.id, u.hasID
 }
 
 // FromContext returns the Viewer stored in a context.

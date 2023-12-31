@@ -1,18 +1,25 @@
 package schema
 
 import (
+	"errors"
+	"fmt"
 	"net/mail"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/entql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/entx"
 )
 
@@ -61,6 +68,9 @@ func (EmailVerificationToken) Mixin() []ent.Mixin {
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
+		UserOwnedMixin{
+			Ref: "email_verification_token",
+		},
 	}
 }
 
@@ -85,5 +95,68 @@ func (EmailVerificationToken) Annotations() []schema.Annotation {
 func (EmailVerificationToken) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookEmailVerificationToken(),
+	}
+}
+
+func (EmailVerificationToken) Policy() ent.Policy {
+	emailGetter := func(mutation generated.Mutation) (email string, err error) {
+		type EmailVerificationTokenMutation interface {
+			Email() (email string, exists bool)
+		}
+
+		emailVerificationTokenMutation, ok := mutation.(EmailVerificationTokenMutation)
+
+		if !ok {
+			return "", fmt.Errorf("unexpected mutation type %T", mutation) // nolint: goerr113
+		}
+
+		email, exists := emailVerificationTokenMutation.Email()
+		if !exists {
+			return "", errors.New("email is not set") // nolint: goerr113
+		}
+
+		return email, nil
+	}
+
+	return privacy.Policy{
+		Query: privacy.QueryPolicy{
+			rule.AllowIfAdmin(),
+			rule.AllowIfOwnedByViewer(),
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.LoginToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.LoginToken)
+					emailFilter := filter.(*generated.EmailVerificationTokenFilter)
+					emailFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+				},
+			),
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.PasswordResetToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.PasswordResetToken)
+					emailFilter := filter.(*generated.EmailVerificationTokenFilter)
+					emailFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+				},
+			),
+			privacy.AlwaysDenyRule(),
+		},
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.MutationPolicy{
+					rule.AllowIfAdmin(),
+					rule.AllowMutationIfContextHasValidEmailSignupToken(emailGetter),
+					privacy.AlwaysDenyRule(),
+				},
+				ent.OpCreate,
+			),
+			privacy.OnMutationOperation(
+				privacy.MutationPolicy{
+					rule.AllowIfAdmin(),
+					rule.AllowMutationAfterApplyingOwnerFilter(),
+					privacy.AlwaysDenyRule(),
+				},
+				ent.OpUpdateOne|ent.OpUpdate|ent.OpDeleteOne|ent.OpDelete,
+			),
+		},
 	}
 }

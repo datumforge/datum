@@ -16,6 +16,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/entx"
 )
 
@@ -153,12 +155,30 @@ func (User) Annotations() []schema.Annotation {
 	}
 }
 
-// Policy defines the privacy policy of the User.
-// TODO: implement privacy policy on the user
+// Policy of the User
 func (User) Policy() ent.Policy {
 	return privacy.Policy{
-		Mutation: privacy.MutationPolicy{},
-		Query:    privacy.QueryPolicy{},
+		Mutation: privacy.MutationPolicy{
+			privacy.OnMutationOperation(
+				privacy.MutationPolicy{
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignupToken{}),
+					rule.DenyIfNoViewer(),
+					rule.AllowIfAdmin(),
+					privacy.AlwaysDenyRule(),
+				},
+				ent.OpCreate,
+			),
+			privacy.OnMutationOperation(
+				privacy.MutationPolicy{
+					rule.AllowIfAdmin(),
+					privacy.AlwaysDenyRule(),
+				},
+				ent.OpUpdateOne|ent.OpUpdate|ent.OpDeleteOne|ent.OpDelete,
+			),
+		},
+		Query: privacy.QueryPolicy{
+			privacy.AlwaysAllowRule(),
+		},
 	}
 }
 

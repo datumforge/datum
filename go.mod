@@ -107,6 +107,7 @@ require (
 	ariga.io/atlas v0.16.0 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
+	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect

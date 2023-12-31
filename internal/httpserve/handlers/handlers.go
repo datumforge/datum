@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/alexedwards/scs/v2"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 	"go.uber.org/zap"
 
@@ -32,6 +33,8 @@ type Handler struct {
 	EmailURL *URLConfig
 	// TaskMan manages tasks in a separate goroutine to allow for non blocking operations
 	TaskMan *marionette.TaskManager
+	// SessionManager manages sessions for users
+	SM *scs.SessionManager
 }
 
 type Response struct {

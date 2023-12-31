@@ -6,13 +6,11 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
@@ -22,17 +20,7 @@ import (
 )
 
 func TestLoginHandler(t *testing.T) {
-	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
-	if err != nil {
-		t.Error("error creating token manager")
-	}
-
-	h := handlers.Handler{
-		TM:           tm,
-		DBClient:     EntClient,
-		Logger:       zap.NewNop().Sugar(),
-		CookieDomain: "datum.net",
-	}
+	h := handlerSetup(t)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 

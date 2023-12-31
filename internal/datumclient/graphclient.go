@@ -37,6 +37,7 @@ type DatumClient interface {
 	CreateUser(ctx context.Context, input CreateUserInput, interceptors ...clientv2.RequestInterceptor) (*CreateUser, error)
 	UpdateUser(ctx context.Context, updateUserID string, input UpdateUserInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUser, error)
 	DeleteUser(ctx context.Context, deleteUserID string, interceptors ...clientv2.RequestInterceptor) (*DeleteUser, error)
+	GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error)
 }
 
 type Client struct {
@@ -3716,6 +3717,115 @@ func (t *DeleteUser_DeleteUser) GetDeletedID() string {
 	return t.DeletedID
 }
 
+type GetUserSettingByID_UserSetting struct {
+	ID             string             "json:\"id\" graphql:\"id\""
+	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
+	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
+	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
+	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
+	Tags           []string           "json:\"tags\" graphql:\"tags\""
+	Locked         bool               "json:\"locked\" graphql:\"locked\""
+	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	DeletedAt      *time.Time         "json:\"deletedAt,omitempty\" graphql:\"deletedAt\""
+	DeletedBy      *string            "json:\"deletedBy,omitempty\" graphql:\"deletedBy\""
+	UpdatedAt      time.Time          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+}
+
+func (t *GetUserSettingByID_UserSetting) GetID() string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.ID
+}
+func (t *GetUserSettingByID_UserSetting) GetPermissions() []string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.Permissions
+}
+func (t *GetUserSettingByID_UserSetting) GetRole() *usersetting.Role {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return &t.Role
+}
+func (t *GetUserSettingByID_UserSetting) GetSilencedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.SilencedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetStatus() *usersetting.Status {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return &t.Status
+}
+func (t *GetUserSettingByID_UserSetting) GetSuspendedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.SuspendedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetTags() []string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.Tags
+}
+func (t *GetUserSettingByID_UserSetting) GetLocked() bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.Locked
+}
+func (t *GetUserSettingByID_UserSetting) GetEmailConfirmed() bool {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.EmailConfirmed
+}
+func (t *GetUserSettingByID_UserSetting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return &t.CreatedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetCreatedBy() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.CreatedBy
+}
+func (t *GetUserSettingByID_UserSetting) GetDeletedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.DeletedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetDeletedBy() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.DeletedBy
+}
+func (t *GetUserSettingByID_UserSetting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *GetUserSettingByID_UserSetting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.UpdatedBy
+}
+
 type GetGroupByID struct {
 	Group GetGroupByID_Group "json:\"group\" graphql:\"group\""
 }
@@ -3967,6 +4077,17 @@ func (t *DeleteUser) GetDeleteUser() *DeleteUser_DeleteUser {
 		t = &DeleteUser{}
 	}
 	return &t.DeleteUser
+}
+
+type GetUserSettingByID struct {
+	UserSetting GetUserSettingByID_UserSetting "json:\"userSetting\" graphql:\"userSetting\""
+}
+
+func (t *GetUserSettingByID) GetUserSetting() *GetUserSettingByID_UserSetting {
+	if t == nil {
+		t = &GetUserSettingByID{}
+	}
+	return &t.UserSetting
 }
 
 const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
@@ -5024,6 +5145,44 @@ func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, intercepto
 	return &res, nil
 }
 
+const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID!) {
+	userSetting(id: $userSettingId) {
+		id
+		permissions
+		role
+		silencedAt
+		status
+		suspendedAt
+		tags
+		locked
+		emailConfirmed
+		createdAt
+		createdBy
+		deletedAt
+		deletedBy
+		updatedAt
+		updatedBy
+	}
+}
+`
+
+func (c *Client) GetUserSettingByID(ctx context.Context, userSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetUserSettingByID, error) {
+	vars := map[string]interface{}{
+		"userSettingId": userSettingID,
+	}
+
+	var res GetUserSettingByID
+	if err := c.Client.Post(ctx, "GetUserSettingByID", GetUserSettingByIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 var DocumentOperationNames = map[string]string{
 	GetGroupByIDDocument:               "GetGroupByID",
 	GroupsWhereDocument:                "GroupsWhere",
@@ -5048,4 +5207,5 @@ var DocumentOperationNames = map[string]string{
 	CreateUserDocument:                 "CreateUser",
 	UpdateUserDocument:                 "UpdateUser",
 	DeleteUserDocument:                 "DeleteUser",
+	GetUserSettingByIDDocument:         "GetUserSettingByID",
 }

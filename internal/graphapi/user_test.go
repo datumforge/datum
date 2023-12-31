@@ -432,6 +432,10 @@ func TestMutation_DeleteUser(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
+			// make sure there is a user setting
+			userSetting, err := user.Setting(reqCtx)
+			require.NoError(t, err)
+
 			// delete user
 			resp, err := client.DeleteUser(reqCtx, tc.userID)
 
@@ -452,7 +456,11 @@ func TestMutation_DeleteUser(t *testing.T) {
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)
 
-			// TODO: make sure user settings was deleted on user delete once user-setting resolvers are completed
+			// make sure the is a user setting deleted
+			out, err := client.GetUserSettingByID(reqCtx, userSetting.ID)
+			require.Nil(t, out)
+			require.Error(t, err)
+			assert.ErrorContains(t, err, "not found")
 		})
 	}
 }

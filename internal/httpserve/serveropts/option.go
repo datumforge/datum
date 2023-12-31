@@ -335,7 +335,6 @@ func WithTaskManager() ServerOption {
 // WithSessionManager sets up the default session manager with a 15 minute timeout and stale sessions are cleaned every 5 minutes
 func WithSessionManager() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		// Start task manager
 		sm := scs.New()
 		sm.Lifetime = time.Hour
 		sm.Store = memstore.NewWithCleanupInterval(5 * time.Minute) // nolint: gomnd
@@ -347,5 +346,4 @@ func WithSessionManager() ServerOption {
 		sm.Cookie.Secure = true
 		s.Config.Server.Handler.SM = sm
 	})
-
 }

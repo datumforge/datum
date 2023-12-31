@@ -10,11 +10,13 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect"
+	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/httpserve/config"
+	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -32,6 +34,19 @@ func TestMain(m *testing.M) {
 	teardownDB()
 	// return the test response code
 	os.Exit(code)
+}
+
+func setupEcho() *echo.Echo {
+	// create echo context with middleware
+	e := echo.New()
+	transactionConfig := transaction.Client{
+		EntDBClient: EntClient,
+		Logger:      zap.NewNop().Sugar(),
+	}
+
+	e.Use(transactionConfig.Middleware)
+
+	return e
 }
 
 func setupDB() {

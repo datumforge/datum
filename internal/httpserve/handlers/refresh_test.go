@@ -10,7 +10,6 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	"github.com/golang-jwt/jwt/v5"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
@@ -104,9 +103,8 @@ func TestRefreshHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("refresh", h.RefreshHandler)
-			e.Use(session.LoadAndSave(h.SM))
 
 			refreshJSON := handlers.RefreshRequest{
 				RefreshToken: tc.refresh,
@@ -114,7 +112,7 @@ func TestRefreshHandler(t *testing.T) {
 
 			body, err := json.Marshal(refreshJSON)
 			if err != nil {
-				t.Error("error creating refresh json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/refresh", strings.NewReader(string(body)))
@@ -124,8 +122,6 @@ func TestRefreshHandler(t *testing.T) {
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
-
-			require.NoError(t, err)
 
 			res := recorder.Result()
 			defer res.Body.Close()

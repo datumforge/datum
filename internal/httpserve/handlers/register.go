@@ -56,10 +56,6 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		Password:  &in.Password,
 	}
 
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	meowuser, err := h.createUser(ctx.Request().Context(), input)
 	if err != nil {
 		if IsUniqueConstraintError(err) {
@@ -87,13 +83,6 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
-	// TODO: this will rollback on email failure, but FGA tuples will not get rolled back
-	if err = h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw(transactionCommitErr, "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
-
 	out := &RegisterReply{
 		ID:      meowuser.ID,
 		Email:   meowuser.Email,
@@ -106,22 +95,12 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 
 func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *User) (*generated.EmailVerificationToken, error) {
 	if err := h.expireAllVerificationTokensUserByEmail(ctx, user.Email); err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return nil, err
-		}
-
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
 		return nil, err
 	}
 
 	if err := user.CreateVerificationToken(); err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return nil, err
-		}
-
 		h.Logger.Errorw("unable to create verification token", "error", err)
 
 		return nil, err
@@ -129,11 +108,6 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *
 
 	meowtoken, err := h.createEmailVerificationToken(ctx, user)
 	if err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return nil, err
-		}
-
 		return nil, err
 	}
 
@@ -144,11 +118,6 @@ func (h *Handler) storeAndSendEmailVerificationToken(ctx context.Context, user *
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send verification email to user %s", user.ID),
 	); err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return nil, err
-		}
-
 		return nil, err
 	}
 

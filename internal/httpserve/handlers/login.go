@@ -40,21 +40,9 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	if err := h.updateUserLastSeen(ctx.Request().Context(), user.ID); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
-
-	if err = h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw(transactionCommitErr, "error", err)
-
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
-
-	h.SM.Put(ctx.Request().Context(), "userID", user.ID)
 
 	return ctx.JSON(http.StatusOK, Response{Message: "success"})
 }
@@ -82,34 +70,10 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 		return nil, ErrMissingRequiredFields
 	}
 
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return nil, err
-	}
-
-	// https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Session_Management_Cheat_Sheet.md#renew-the-session-id-after-any-privilege-level-change
-	// https://pkg.go.dev/github.com/alexedwards/scs/v2#SessionManager.RenewToken
-
-	err := h.SM.RenewToken(ctx.Request().Context())
-	if err != nil {
-		return nil, ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-	}
-
-	exists := h.SM.Exists(ctx.Request().Context(), "userID")
-	if exists {
-		err := h.SM.RenewToken(ctx.Request().Context())
-		if err != nil {
-			return nil, ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
-		}
-	}
-
 	// check user in the database, username == email and ensure only one record is returned
 	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username)
 	if err != nil {
 		return nil, ErrNoAuthUser
-	}
-
-	if err = h.TXClient.Commit(); err != nil {
-		return nil, err
 	}
 
 	if user.Edges.Setting.Status != "ACTIVE" {

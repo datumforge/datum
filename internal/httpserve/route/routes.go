@@ -8,6 +8,7 @@ import (
 
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/ratelimit"
+	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 )
 
 const (
@@ -23,8 +24,7 @@ var (
 		BurstLimit: 1,
 		ExpiresIn:  15 * time.Minute, //nolint:gomnd
 	}
-
-	restrictedEndpointsMW = append(mw, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
+	restrictedEndpointsMW = []echo.MiddlewareFunc{}
 )
 
 type Route struct {
@@ -38,6 +38,18 @@ type Route struct {
 
 // RegisterRoutes with the echo routers
 func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
+	// add transaction middleware
+	transactionConfig := transaction.Client{
+		EntDBClient: h.DBClient,
+		Logger:      h.Logger,
+	}
+
+	mw = append(mw, transactionConfig.Middleware)
+
+	// Middleware for restricted endpoints
+	restrictedEndpointsMW = append(restrictedEndpointsMW, mw...)
+	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
+
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
 		return err

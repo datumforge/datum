@@ -37,11 +37,6 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// start transaction
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -57,12 +52,6 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 
 	// check to see if user is already confirmed
 	if entUser.Edges.Setting.EmailConfirmed {
-		if err = h.TXClient.Commit(); err != nil {
-			h.Logger.Errorw(transactionCommitErr, "error", err)
-
-			return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
-		}
-
 		out.Message = "email is already confirmed"
 
 		return ctx.JSON(http.StatusOK, out)
@@ -77,12 +66,6 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	}
 
 	if _, err = h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
-	}
-
-	if err = h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw(transactionCommitErr, "error", err)
-
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 

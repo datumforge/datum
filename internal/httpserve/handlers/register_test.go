@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -94,9 +93,8 @@ func TestRegisterHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("register", h.RegisterHandler)
-			e.Use(session.LoadAndSave(h.SM))
 
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,
@@ -107,7 +105,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			body, err := json.Marshal(registerJSON)
 			if err != nil {
-				t.Error("error creating register json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/register", strings.NewReader(string(body)))
@@ -117,8 +115,6 @@ func TestRegisterHandler(t *testing.T) {
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
-
-			require.NoError(t, err)
 
 			res := recorder.Result()
 			defer res.Body.Close()

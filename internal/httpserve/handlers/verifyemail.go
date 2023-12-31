@@ -21,11 +21,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// starts db transaction for entire request
-	if err := h.startTransaction(ctx.Request().Context()); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrProcessingRequest)
-	}
-
 	entUser, err := h.getUserByEVToken(ctx.Request().Context(), reqToken)
 	if err != nil {
 		if generated.IsNotFound(err) {
@@ -47,11 +42,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	if !entUser.Edges.Setting.EmailConfirmed {
 		// set tokens for request
 		if err := user.setUserTokens(entUser, reqToken); err != nil {
-			if err := h.TXClient.Rollback(); err != nil {
-				h.Logger.Errorw(rollbackErr, "error", err)
-				return err
-			}
-
 			h.Logger.Errorw("unable to set user tokens for request", "error", err)
 
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -63,11 +53,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		}
 
 		if token.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
-			if err := h.TXClient.Rollback(); err != nil {
-				h.Logger.Errorw(rollbackErr, "error", err)
-				return err
-			}
-
 			h.Logger.Errorw("unable to parse expiration", "error", err)
 
 			return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
@@ -78,11 +63,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			if errors.Is(err, tokens.ErrTokenExpired) {
 				meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user)
 				if err != nil {
-					if err := h.TXClient.Rollback(); err != nil {
-						h.Logger.Errorw(rollbackErr, "error", err)
-						return err
-					}
-
 					h.Logger.Errorw("unable to resend verification token", "error", err)
 
 					return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
@@ -95,19 +75,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 					Token:   meowtoken.Token,
 				}
 
-				// commit transaction at end of request
-				if err := h.TXClient.Commit(); err != nil {
-					h.Logger.Errorw(transactionCommitErr, "error", err)
-
-					return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-				}
-
 				return ctx.JSON(http.StatusCreated, out)
-			}
-
-			if err := h.TXClient.Rollback(); err != nil {
-				h.Logger.Errorw(rollbackErr, "error", err)
-				return err
 			}
 
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -122,11 +90,6 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
 	if err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return err
-		}
-
 		h.Logger.Errorw("error creating token pair", "error", err)
 
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -135,22 +98,10 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 	// set cookies on request with the access and refresh token
 	// when cookie domain is localhost, this is dropped but expected
 	if err := auth.SetAuthCookies(ctx, access, refresh, h.CookieDomain); err != nil {
-		if err := h.TXClient.Rollback(); err != nil {
-			h.Logger.Errorw(rollbackErr, "error", err)
-			return err
-		}
-
 		return ErrorResponse(err)
 	}
 
-	// commit transaction at end of request
-	if err := h.TXClient.Commit(); err != nil {
-		h.Logger.Errorw("error committing transaction", "error", err)
-
-		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-	}
-
-	return ctx.JSON(http.StatusNoContent, nil)
+	return ctx.NoContent(http.StatusNoContent)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request

@@ -10,7 +10,6 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -113,9 +112,8 @@ func TestVerifyHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.GET("verify", h.VerifyEmail)
-			e.Use(session.LoadAndSave(h.SM))
 
 			// create user in the database
 			userSetting := EntClient.UserSetting.Create().
@@ -138,7 +136,7 @@ func TestVerifyHandler(t *testing.T) {
 			}
 
 			if err := user.CreateVerificationToken(); err != nil {
-				t.Error("error creating verification token")
+				require.NoError(t, err)
 			}
 
 			if tc.ttl != "" {
@@ -147,7 +145,7 @@ func TestVerifyHandler(t *testing.T) {
 
 			ttl, err := time.Parse(time.RFC3339Nano, user.EmailVerificationExpires.String)
 			if err != nil {
-				t.Error("unable to parse ttl")
+				require.NoError(t, err)
 			}
 
 			et := EntClient.EmailVerificationToken.Create().
@@ -171,23 +169,19 @@ func TestVerifyHandler(t *testing.T) {
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
 
-			require.NoError(t, err)
-
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.Response
-
-			// parse request body
-			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
-				t.Error("error parsing response", err)
-			}
-
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus == http.StatusNoContent {
-				assert.Empty(t, out)
-			} else {
+			if tc.expectedStatus != http.StatusNoContent {
+				var out *handlers.Response
+
+				// parse request body
+				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+					t.Error("error parsing response", err)
+				}
+        
 				assert.Contains(t, out.Message, tc.expectedResp)
 			}
 

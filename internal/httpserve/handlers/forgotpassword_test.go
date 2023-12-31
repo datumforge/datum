@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -61,10 +60,8 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("forgot-password", h.ForgotPassword)
-			e.Use(session.LoadAndSave(h.SM))
 
 			resendJSON := handlers.ForgotPasswordRequest{
 				Email: tc.email,
@@ -72,7 +69,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 
 			body, err := json.Marshal(resendJSON)
 			if err != nil {
-				t.Error("error creating resend json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/forgot-password", strings.NewReader(string(body)))
@@ -83,23 +80,19 @@ func TestForgotPasswordHandler(t *testing.T) {
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
 
-			require.NoError(t, err)
-
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			var out *handlers.Response
-
-			// parse request body
-			if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
-				t.Error("error parsing response", err)
-			}
-
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus == http.StatusNoContent {
-				assert.Nil(t, out)
-			} else {
+			if tc.expectedStatus != http.StatusNoContent {
+				var out *handlers.Response
+
+				// parse request body
+				if err := json.NewDecoder(res.Body).Decode(&out); err != nil {
+					t.Error("error parsing response", err)
+				}
+
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
 			}
 		})

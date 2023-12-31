@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	echo "github.com/datumforge/echox"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -83,9 +82,8 @@ func TestResendHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
-			e := echo.New()
+			e := setupEcho()
 			e.POST("resend", h.ResendEmail)
-			e.Use(session.LoadAndSave(h.SM))
 
 			resendJSON := handlers.ResendRequest{
 				Email: tc.email,
@@ -93,7 +91,7 @@ func TestResendHandler(t *testing.T) {
 
 			body, err := json.Marshal(resendJSON)
 			if err != nil {
-				t.Error("error creating resend json")
+				require.NoError(t, err)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/resend", strings.NewReader(string(body)))
@@ -103,8 +101,6 @@ func TestResendHandler(t *testing.T) {
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
-
-			require.NoError(t, err)
 
 			res := recorder.Result()
 			defer res.Body.Close()

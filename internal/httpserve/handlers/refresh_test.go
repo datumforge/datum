@@ -20,6 +20,7 @@ import (
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
@@ -104,6 +105,7 @@ func TestRefreshHandler(t *testing.T) {
 			// create echo context with middleware
 			e := setupEcho()
 			e.POST("refresh", h.RefreshHandler)
+			e.Use(session.LoadAndSave(h.SM))
 
 			refreshJSON := handlers.RefreshRequest{
 				RefreshToken: tc.refresh,

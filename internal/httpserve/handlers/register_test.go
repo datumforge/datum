@@ -14,6 +14,7 @@ import (
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 )
 
 func TestRegisterHandler(t *testing.T) {
@@ -93,7 +94,10 @@ func TestRegisterHandler(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// create echo context with middleware
 			e := setupEcho()
+
 			e.POST("register", h.RegisterHandler)
+
+			e.Use(session.LoadAndSave(h.SM))
 
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,

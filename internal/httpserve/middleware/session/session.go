@@ -53,9 +53,11 @@ func LoadAndSaveWithConfig(config SessionConfig) echo.MiddlewareFunc {
 
 			cookie, err := c.Cookie(config.SessionManager.Cookie.Name)
 
-			if err == nil {
-				token = cookie.Value
+			if err != nil {
+				return err
 			}
+
+			token = cookie.Value
 
 			ctx, err = config.SessionManager.Load(ctx, token)
 			if err != nil {

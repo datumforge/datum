@@ -27,7 +27,6 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 }
 
 func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*ent.User, error) {
-
 	//	email, exists := h.getUserByEVToken(ctx, privacyToken)
 	//	if !exists {
 	//		return nil
@@ -40,7 +39,6 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 	//	ctxWithToken := token.NewContextWithSignupToken(ctx, &privacyToken)
 	//
 	//	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromUser(user))
-
 	meowuser, err := transaction.FromContext(ctx).User.Create().
 		SetInput(input).
 		Save(ctx)

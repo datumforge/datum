@@ -17,9 +17,9 @@ import (
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
 
-func TestQuery_User(t *testing.T) {
+func TestQuery_UserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClientNoAuth(EntClient)
 
 	sub := ulids.New().String()
 
@@ -73,9 +73,9 @@ func TestQuery_User(t *testing.T) {
 	}
 }
 
-func TestQuery_Users(t *testing.T) {
+func TestQuery_UsersNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClientNoAuth(EntClient)
 
 	sub := ulids.New().String()
 
@@ -120,9 +120,9 @@ func TestQuery_Users(t *testing.T) {
 	})
 }
 
-func TestMutation_CreateUser(t *testing.T) {
+func TestMutation_CreateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClientNoAuth(EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -263,9 +263,9 @@ func TestMutation_CreateUser(t *testing.T) {
 	}
 }
 
-func TestMutation_UpdateUser(t *testing.T) {
+func TestMutation_UpdateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClientNoAuth(EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -392,9 +392,9 @@ func TestMutation_UpdateUser(t *testing.T) {
 	}
 }
 
-func TestMutation_DeleteUser(t *testing.T) {
+func TestMutation_DeleteUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClientNoAuth(EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -462,7 +462,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 	}
 }
 
-func TestMutation_UserCascadeDelete(t *testing.T) {
+func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 	client := graphTestClientNoAuth(EntClient)
 
 	ec := echocontext.NewTestEchoContext()

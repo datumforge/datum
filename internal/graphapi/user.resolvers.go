@@ -46,6 +46,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input generated.UpdateUserInput) (*UserUpdatePayload, error) {
 	// TODO - add permissions checks
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
 
 	user, err := withTransactionalMutation(ctx).User.Get(ctx, id)
 	if err != nil {
@@ -79,6 +82,9 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDeletePayload, error) {
 	// TODO - add permissions checks
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
 
 	if err := withTransactionalMutation(ctx).User.DeleteOneID(id).Exec(ctx); err != nil {
 		if generated.IsNotFound(err) {
@@ -98,6 +104,10 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, error) {
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
 	user, err := r.client.User.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

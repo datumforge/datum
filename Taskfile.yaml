@@ -159,7 +159,11 @@ tasks:
   docker:build:
     desc: builds the datum docker image
     cmds:
-      - docker build -f docker/Dockerfile . 
+      - docker build -f docker/Dockerfile .
+  docker:build:aio:
+    desc: builds the datum docker image all-in-one image
+    cmds:
+      - docker build -f docker/all-in-one/Dockerfile.all-in-one -t datum:dev-aio .
   compose:datum:
     desc: brings up the compose environment for the datum server
     deps: [docker:build]

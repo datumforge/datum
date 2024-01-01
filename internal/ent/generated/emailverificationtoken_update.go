@@ -97,6 +97,20 @@ func (evtu *EmailVerificationTokenUpdate) ClearDeletedBy() *EmailVerificationTok
 	return evtu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (evtu *EmailVerificationTokenUpdate) SetOwnerID(s string) *EmailVerificationTokenUpdate {
+	evtu.mutation.SetOwnerID(s)
+	return evtu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (evtu *EmailVerificationTokenUpdate) SetNillableOwnerID(s *string) *EmailVerificationTokenUpdate {
+	if s != nil {
+		evtu.SetOwnerID(*s)
+	}
+	return evtu
+}
+
 // SetToken sets the "token" field.
 func (evtu *EmailVerificationTokenUpdate) SetToken(s string) *EmailVerificationTokenUpdate {
 	evtu.mutation.SetToken(s)
@@ -142,12 +156,6 @@ func (evtu *EmailVerificationTokenUpdate) SetNillableEmail(s *string) *EmailVeri
 // SetSecret sets the "secret" field.
 func (evtu *EmailVerificationTokenUpdate) SetSecret(b []byte) *EmailVerificationTokenUpdate {
 	evtu.mutation.SetSecret(b)
-	return evtu
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (evtu *EmailVerificationTokenUpdate) SetOwnerID(id string) *EmailVerificationTokenUpdate {
-	evtu.mutation.SetOwnerID(id)
 	return evtu
 }
 
@@ -399,6 +407,20 @@ func (evtuo *EmailVerificationTokenUpdateOne) ClearDeletedBy() *EmailVerificatio
 	return evtuo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (evtuo *EmailVerificationTokenUpdateOne) SetOwnerID(s string) *EmailVerificationTokenUpdateOne {
+	evtuo.mutation.SetOwnerID(s)
+	return evtuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (evtuo *EmailVerificationTokenUpdateOne) SetNillableOwnerID(s *string) *EmailVerificationTokenUpdateOne {
+	if s != nil {
+		evtuo.SetOwnerID(*s)
+	}
+	return evtuo
+}
+
 // SetToken sets the "token" field.
 func (evtuo *EmailVerificationTokenUpdateOne) SetToken(s string) *EmailVerificationTokenUpdateOne {
 	evtuo.mutation.SetToken(s)
@@ -444,12 +466,6 @@ func (evtuo *EmailVerificationTokenUpdateOne) SetNillableEmail(s *string) *Email
 // SetSecret sets the "secret" field.
 func (evtuo *EmailVerificationTokenUpdateOne) SetSecret(b []byte) *EmailVerificationTokenUpdateOne {
 	evtuo.mutation.SetSecret(b)
-	return evtuo
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (evtuo *EmailVerificationTokenUpdateOne) SetOwnerID(id string) *EmailVerificationTokenUpdateOne {
-	evtuo.mutation.SetOwnerID(id)
 	return evtuo
 }
 

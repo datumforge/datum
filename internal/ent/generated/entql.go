@@ -45,6 +45,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			emailverificationtoken.FieldUpdatedBy: {Type: field.TypeString, Column: emailverificationtoken.FieldUpdatedBy},
 			emailverificationtoken.FieldDeletedAt: {Type: field.TypeTime, Column: emailverificationtoken.FieldDeletedAt},
 			emailverificationtoken.FieldDeletedBy: {Type: field.TypeString, Column: emailverificationtoken.FieldDeletedBy},
+			emailverificationtoken.FieldOwnerID:   {Type: field.TypeString, Column: emailverificationtoken.FieldOwnerID},
 			emailverificationtoken.FieldToken:     {Type: field.TypeString, Column: emailverificationtoken.FieldToken},
 			emailverificationtoken.FieldTTL:       {Type: field.TypeTime, Column: emailverificationtoken.FieldTTL},
 			emailverificationtoken.FieldEmail:     {Type: field.TypeString, Column: emailverificationtoken.FieldEmail},
@@ -794,6 +795,11 @@ func (f *EmailVerificationTokenFilter) WhereDeletedAt(p entql.TimeP) {
 // WhereDeletedBy applies the entql string predicate on the deleted_by field.
 func (f *EmailVerificationTokenFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(emailverificationtoken.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *EmailVerificationTokenFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(emailverificationtoken.FieldOwnerID))
 }
 
 // WhereToken applies the entql string predicate on the token field.

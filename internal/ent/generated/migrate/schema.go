@@ -22,7 +22,7 @@ var (
 		{Name: "ttl", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeBytes},
-		{Name: "user_email_verification_tokens", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// EmailVerificationTokensTable holds the schema information for the "email_verification_tokens" table.
 	EmailVerificationTokensTable = &schema.Table{

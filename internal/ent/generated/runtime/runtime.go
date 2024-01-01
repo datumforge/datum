@@ -31,12 +31,24 @@ import (
 // to their package variables.
 func init() {
 	emailverificationtokenMixin := schema.EmailVerificationToken{}.Mixin()
+	emailverificationtoken.Policy = privacy.NewPolicies(schema.EmailVerificationToken{})
+	emailverificationtoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := emailverificationtoken.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	emailverificationtokenMixinHooks0 := emailverificationtokenMixin[0].Hooks()
 	emailverificationtokenMixinHooks2 := emailverificationtokenMixin[2].Hooks()
 	emailverificationtokenHooks := schema.EmailVerificationToken{}.Hooks()
-	emailverificationtoken.Hooks[0] = emailverificationtokenMixinHooks0[0]
-	emailverificationtoken.Hooks[1] = emailverificationtokenMixinHooks2[0]
-	emailverificationtoken.Hooks[2] = emailverificationtokenHooks[0]
+
+	emailverificationtoken.Hooks[1] = emailverificationtokenMixinHooks0[0]
+
+	emailverificationtoken.Hooks[2] = emailverificationtokenMixinHooks2[0]
+
+	emailverificationtoken.Hooks[3] = emailverificationtokenHooks[0]
 	emailverificationtokenMixinInters2 := emailverificationtokenMixin[2].Interceptors()
 	emailverificationtoken.Interceptors[0] = emailverificationtokenMixinInters2[0]
 	emailverificationtokenMixinFields0 := emailverificationtokenMixin[0].Fields()

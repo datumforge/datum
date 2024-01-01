@@ -102,7 +102,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "emailverificationtoken" package.
 	EmailVerificationTokensInverseTable = "email_verification_tokens"
 	// EmailVerificationTokensColumn is the table column denoting the email_verification_tokens relation/edge.
-	EmailVerificationTokensColumn = "user_email_verification_tokens"
+	EmailVerificationTokensColumn = "owner_id"
 	// ResetTokensTable is the table that holds the reset_tokens relation/edge.
 	ResetTokensTable = "password_reset_tokens"
 	// ResetTokensInverseTable is the table name for the PasswordResetToken entity.

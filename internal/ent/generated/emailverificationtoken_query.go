@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type EmailVerificationTokenQuery struct {
 	inters     []Interceptor
 	predicates []predicate.EmailVerificationToken
 	withOwner  *UserQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*EmailVerificationToken) error
 	// intermediate query (i.e. traversal path).
@@ -370,24 +370,23 @@ func (evtq *EmailVerificationTokenQuery) prepareQuery(ctx context.Context) error
 		}
 		evtq.sql = prev
 	}
+	if emailverificationtoken.Policy == nil {
+		return errors.New("generated: uninitialized emailverificationtoken.Policy (forgotten import generated/runtime?)")
+	}
+	if err := emailverificationtoken.Policy.EvalQuery(ctx, evtq); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (evtq *EmailVerificationTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*EmailVerificationToken, error) {
 	var (
 		nodes       = []*EmailVerificationToken{}
-		withFKs     = evtq.withFKs
 		_spec       = evtq.querySpec()
 		loadedTypes = [1]bool{
 			evtq.withOwner != nil,
 		}
 	)
-	if evtq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, emailverificationtoken.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*EmailVerificationToken).scanValues(nil, columns)
 	}
@@ -429,10 +428,7 @@ func (evtq *EmailVerificationTokenQuery) loadOwner(ctx context.Context, query *U
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*EmailVerificationToken)
 	for i := range nodes {
-		if nodes[i].user_email_verification_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].user_email_verification_tokens
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +445,7 @@ func (evtq *EmailVerificationTokenQuery) loadOwner(ctx context.Context, query *U
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_email_verification_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +483,9 @@ func (evtq *EmailVerificationTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != emailverificationtoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if evtq.withOwner != nil {
+			_spec.Node.AddColumnOnce(emailverificationtoken.FieldOwnerID)
 		}
 	}
 	if ps := evtq.predicates; len(ps) > 0 {

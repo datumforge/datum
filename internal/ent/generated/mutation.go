@@ -449,6 +449,42 @@ func (m *EmailVerificationTokenMutation) ResetDeletedBy() {
 	delete(m.clearedFields, emailverificationtoken.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *EmailVerificationTokenMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *EmailVerificationTokenMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the EmailVerificationToken entity.
+// If the EmailVerificationToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EmailVerificationTokenMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *EmailVerificationTokenMutation) ResetOwnerID() {
+	m.owner = nil
+}
+
 // SetToken sets the "token" field.
 func (m *EmailVerificationTokenMutation) SetToken(s string) {
 	m.token = &s
@@ -593,27 +629,15 @@ func (m *EmailVerificationTokenMutation) ResetSecret() {
 	m.secret = nil
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by id.
-func (m *EmailVerificationTokenMutation) SetOwnerID(id string) {
-	m.owner = &id
-}
-
 // ClearOwner clears the "owner" edge to the User entity.
 func (m *EmailVerificationTokenMutation) ClearOwner() {
 	m.clearedowner = true
+	m.clearedFields[emailverificationtoken.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the User entity was cleared.
 func (m *EmailVerificationTokenMutation) OwnerCleared() bool {
 	return m.clearedowner
-}
-
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *EmailVerificationTokenMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
-	}
-	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -666,7 +690,7 @@ func (m *EmailVerificationTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EmailVerificationTokenMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, emailverificationtoken.FieldCreatedAt)
 	}
@@ -684,6 +708,9 @@ func (m *EmailVerificationTokenMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, emailverificationtoken.FieldDeletedBy)
+	}
+	if m.owner != nil {
+		fields = append(fields, emailverificationtoken.FieldOwnerID)
 	}
 	if m.token != nil {
 		fields = append(fields, emailverificationtoken.FieldToken)
@@ -717,6 +744,8 @@ func (m *EmailVerificationTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case emailverificationtoken.FieldDeletedBy:
 		return m.DeletedBy()
+	case emailverificationtoken.FieldOwnerID:
+		return m.OwnerID()
 	case emailverificationtoken.FieldToken:
 		return m.Token()
 	case emailverificationtoken.FieldTTL:
@@ -746,6 +775,8 @@ func (m *EmailVerificationTokenMutation) OldField(ctx context.Context, name stri
 		return m.OldDeletedAt(ctx)
 	case emailverificationtoken.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case emailverificationtoken.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case emailverificationtoken.FieldToken:
 		return m.OldToken(ctx)
 	case emailverificationtoken.FieldTTL:
@@ -804,6 +835,13 @@ func (m *EmailVerificationTokenMutation) SetField(name string, value ent.Value) 
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case emailverificationtoken.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
 		return nil
 	case emailverificationtoken.FieldToken:
 		v, ok := value.(string)
@@ -926,6 +964,9 @@ func (m *EmailVerificationTokenMutation) ResetField(name string) error {
 		return nil
 	case emailverificationtoken.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case emailverificationtoken.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case emailverificationtoken.FieldToken:
 		m.ResetToken()

@@ -105,6 +105,12 @@ func (evtc *EmailVerificationTokenCreate) SetNillableDeletedBy(s *string) *Email
 	return evtc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (evtc *EmailVerificationTokenCreate) SetOwnerID(s string) *EmailVerificationTokenCreate {
+	evtc.mutation.SetOwnerID(s)
+	return evtc
+}
+
 // SetToken sets the "token" field.
 func (evtc *EmailVerificationTokenCreate) SetToken(s string) *EmailVerificationTokenCreate {
 	evtc.mutation.SetToken(s)
@@ -140,12 +146,6 @@ func (evtc *EmailVerificationTokenCreate) SetNillableID(s *string) *EmailVerific
 	if s != nil {
 		evtc.SetID(*s)
 	}
-	return evtc
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (evtc *EmailVerificationTokenCreate) SetOwnerID(id string) *EmailVerificationTokenCreate {
-	evtc.mutation.SetOwnerID(id)
 	return evtc
 }
 
@@ -222,6 +222,9 @@ func (evtc *EmailVerificationTokenCreate) check() error {
 	}
 	if _, ok := evtc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "EmailVerificationToken.updated_at"`)}
+	}
+	if _, ok := evtc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "EmailVerificationToken.owner_id"`)}
 	}
 	if _, ok := evtc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "EmailVerificationToken.token"`)}
@@ -344,7 +347,7 @@ func (evtc *EmailVerificationTokenCreate) createSpec() (*EmailVerificationToken,
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_email_verification_tokens = &nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

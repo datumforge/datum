@@ -30,6 +30,8 @@ type EmailVerificationToken struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the verification token sent to the user via email which should only be provided to the /verify endpoint + handler
 	Token string `json:"token,omitempty"`
 	// the ttl of the verification token which defaults to 7 days
@@ -40,9 +42,8 @@ type EmailVerificationToken struct {
 	Secret *[]byte `json:"secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EmailVerificationTokenQuery when eager-loading is set.
-	Edges                          EmailVerificationTokenEdges `json:"edges"`
-	user_email_verification_tokens *string
-	selectValues                   sql.SelectValues
+	Edges        EmailVerificationTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // EmailVerificationTokenEdges holds the relations/edges for other nodes in the graph.
@@ -76,12 +77,10 @@ func (*EmailVerificationToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case emailverificationtoken.FieldSecret:
 			values[i] = new([]byte)
-		case emailverificationtoken.FieldID, emailverificationtoken.FieldCreatedBy, emailverificationtoken.FieldUpdatedBy, emailverificationtoken.FieldDeletedBy, emailverificationtoken.FieldToken, emailverificationtoken.FieldEmail:
+		case emailverificationtoken.FieldID, emailverificationtoken.FieldCreatedBy, emailverificationtoken.FieldUpdatedBy, emailverificationtoken.FieldDeletedBy, emailverificationtoken.FieldOwnerID, emailverificationtoken.FieldToken, emailverificationtoken.FieldEmail:
 			values[i] = new(sql.NullString)
 		case emailverificationtoken.FieldCreatedAt, emailverificationtoken.FieldUpdatedAt, emailverificationtoken.FieldDeletedAt, emailverificationtoken.FieldTTL:
 			values[i] = new(sql.NullTime)
-		case emailverificationtoken.ForeignKeys[0]: // user_email_verification_tokens
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -139,6 +138,12 @@ func (evt *EmailVerificationToken) assignValues(columns []string, values []any) 
 			} else if value.Valid {
 				evt.DeletedBy = value.String
 			}
+		case emailverificationtoken.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				evt.OwnerID = value.String
+			}
 		case emailverificationtoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
@@ -163,13 +168,6 @@ func (evt *EmailVerificationToken) assignValues(columns []string, values []any) 
 				return fmt.Errorf("unexpected type %T for field secret", values[i])
 			} else if value != nil {
 				evt.Secret = value
-			}
-		case emailverificationtoken.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_email_verification_tokens", values[i])
-			} else if value.Valid {
-				evt.user_email_verification_tokens = new(string)
-				*evt.user_email_verification_tokens = value.String
 			}
 		default:
 			evt.selectValues.Set(columns[i], values[i])
@@ -229,6 +227,9 @@ func (evt *EmailVerificationToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(evt.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(evt.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(evt.Token)

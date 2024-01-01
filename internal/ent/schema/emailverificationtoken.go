@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/entql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -54,12 +53,7 @@ func (EmailVerificationToken) Fields() []ent.Field {
 
 // Edges of the EmailVerificationToken
 func (EmailVerificationToken) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("owner", User.Type).
-			Ref("email_verification_tokens").
-			Required().
-			Unique(),
-	}
+	return []ent.Edge{}
 }
 
 // Mixin of the EmailVerificationToken
@@ -69,7 +63,7 @@ func (EmailVerificationToken) Mixin() []ent.Mixin {
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
 		UserOwnedMixin{
-			Ref: "email_verification_token",
+			Ref: "email_verification_tokens",
 		},
 	}
 }

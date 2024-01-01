@@ -97,8 +97,6 @@ func TestRegisterHandler(t *testing.T) {
 
 			e.POST("register", h.RegisterHandler)
 
-			e.Use(session.LoadAndSave(h.SM))
-
 			registerJSON := handlers.RegisterRequest{
 				FirstName: tc.firstName,
 				LastName:  tc.lastName,

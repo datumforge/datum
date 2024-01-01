@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
@@ -27,9 +28,11 @@ func TestForgotPasswordHandler(t *testing.T) {
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
 	// create user in the database
+	ctx := privacy.DecisionContext(ec, privacy.Allow)
+
 	userSetting := EntClient.UserSetting.Create().
 		SetEmailConfirmed(false).
-		SaveX(ec)
+		SaveX(ctx)
 
 	u := EntClient.User.Create().
 		SetFirstName(gofakeit.FirstName()).
@@ -37,7 +40,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 		SetEmail("asandler@datum.net").
 		SetPassword(validPassword).
 		SetSetting(userSetting).
-		SaveX(ec)
+		SaveX(ctx)
 
 	testCases := []struct {
 		name               string
@@ -135,5 +138,5 @@ func TestForgotPasswordHandler(t *testing.T) {
 	}
 
 	// cleanup after
-	EntClient.User.DeleteOneID(u.ID).ExecX(ec)
+	EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
 }

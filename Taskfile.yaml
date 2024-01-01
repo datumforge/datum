@@ -94,7 +94,7 @@ tasks:
     desc: runs the datum server with oidc enabled
     cmds:
     - task: compose:fga
-    - go run main.go serve  --config="config/.datum.dev.yml"
+    - go run main.go serve --debug --pretty
   run-dev:
     dotenv: ['{{.ENV}}/.env.dev']
     desc: runs the datum server with oidc disabled for easy local testing / querying

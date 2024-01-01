@@ -9,8 +9,8 @@ services:
       - serve
       - --debug
       - --pretty
-      - --dev
-      - --auth=false
+    env_file:
+      - ../config/.env.dev
     ports:
       - "17608:17608"
     restart: unless-stopped

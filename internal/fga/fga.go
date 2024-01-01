@@ -4,9 +4,9 @@ package fga
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 
+	"github.com/kelseyhightower/envconfig"
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 	"github.com/openfga/go-sdk/credentials"
@@ -34,27 +34,35 @@ type Client struct {
 // Config configures the openFGA setup
 type Config struct {
 	// Enabled - checks this first before reading the config
-	Enabled bool `yaml:"enabled"`
+	Enabled bool `yaml:"enabled" split_words:"true" default:"true"`
 	// StoreName of the FGA Store
-	StoreName string `yaml:"storeName"`
+	StoreName string `yaml:"storeName" split_words:"true" default:"datum"`
 	// Host of the fga API
-	Host string `yaml:"host"`
+	Host string `yaml:"host" split_words:"true" default:"authz.datum.net"`
 	// Scheme to connect to the fga API (http or https)
-	Scheme string `yaml:"enabled"`
+	Scheme string `yaml:"enabled" split_words:"true" default:"https"`
 	// StoreID of the authorization store in FGA
-	StoreID string `yaml:"enabled"`
+	StoreID string `yaml:"enabled" split_words:"true" default:""`
 	// ModelID that already exists in authorization store to be used
-	ModelID string `yaml:"enabled"`
+	ModelID string `yaml:"enabled" split_words:"true" default:""`
 	// CreateNewModel force creates a new model, even if one already exists
-	CreateNewModel bool `yaml:"enabled"`
+	CreateNewModel bool `yaml:"enabled" split_words:"true" default:"false"`
 	// logger contains the zap logger
 	logger *zap.SugaredLogger
 }
 
 // NewAuthzConfig returns a new authorization configuration
-func NewAuthzConfig(c Config, l *zap.SugaredLogger) Config {
+func NewAuthzConfig(l *zap.SugaredLogger) (*Config, error) {
+	c := &Config{}
+
+	err := envconfig.Process("datum_authz", c)
+	if err != nil {
+		return nil, err
+	}
+
 	c.logger = l
-	return c
+
+	return c, nil
 }
 
 // Option is a functional configuration option for openFGA client
@@ -261,7 +269,6 @@ func (c *Client) CreateModel(ctx context.Context, fn string, forceCreate bool) (
 
 	resp, err := c.Ofga.WriteAuthorizationModel(ctx).Body(body).Execute()
 	if err != nil {
-		fmt.Println("here 1")
 		return "", err
 	}
 

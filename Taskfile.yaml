@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 includes:
   cli: ./cli
@@ -7,10 +7,7 @@ env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
   TEST_DB_URL: "file:ent?mode=memory&cache=shared&_fk=1"
   TEST_FGA_URL: "localhost:8080"
-  # To actually have emails sent, you will need a valid API Key
-  DATUM_SEND_GRID_API_KEY: "SG.FakeAPIKey"
-  # Overrides the default config for local development for email registration/verification
-  DATUM_BASE: "http://localhost:17608/"
+  ENV: config
 
 tasks:
   clean:generated:
@@ -93,14 +90,16 @@ tasks:
       - 'open "http://localhost:4000"'
       - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
   run-dev-auth:
+    dotenv: ['{{.ENV}}/.env.devauth']
     desc: runs the datum server with oidc enabled
     cmds:
     - task: compose:fga
     - go run main.go serve  --config="config/.datum.dev.yml"
   run-dev:
+    dotenv: ['{{.ENV}}/.env.dev']
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
-      - go run main.go serve  --debug --pretty --dev --auth=false
+      - go run main.go serve  --debug --pretty
   go:lint:
     desc: runs golangci-lint, the most annoying opinionated linter ever
     cmds:
@@ -171,6 +170,7 @@ tasks:
       - "docker compose -f ./docker/docker-compose.yml -p datum up -d"
   compose:datum-auth:
     desc: brings up the compose environment for the datum server configured with auth
+    deps: [docker:build]
     cmds:
       - "docker compose -f ./docker/docker-compose.yml -f ./docker/docker-compose-auth.yml -f ./docker/docker-compose-fga.yml -p datum up -d"
   compose:datum:down:
@@ -180,14 +180,12 @@ tasks:
   compose:all:up:
     desc: brings up the full docker compose development environment including datum server, fga, and rover
     cmds:
-      - task: fga:up
-      - task: compose:datum
+      - task: compose:datum-auth
       - task: rover
   compose:all:down: 
     desc: brings down both fga and datum server compose environments 
     cmds:
-      - task: compose:fga:down
-      - task: compose:datum:down
+      - task: compose:datum-auth:down
   pr:
     desc: runs the comprehensive roll-up tasks required to ensure all files are being committed / pushed as a part of opening a PR 
     cmds:

@@ -6,20 +6,37 @@ import (
 	"time"
 
 	echo "github.com/datumforge/echox"
+	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 
+	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/tokens"
+)
+
+var (
+	// DefaultConfigRefresh sets the default interval to refresh the config.
+	DefaultConfigRefresh = 10 * time.Minute
+	// DefaultTLSConfig is the default TLS config used when HTTPS is enabled
+	DefaultTLSConfig = &tls.Config{
+		MinVersion:               tls.VersionTLS12,
+		CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+		PreferServerCipherSuites: true,
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+		},
+	}
 )
 
 type (
 	// Config contains the configuration for the datum server
 	Config struct {
 		// RefreshInterval holds often to reload the config
-		RefreshInterval time.Duration `yaml:"refreshInterval"`
+		RefreshInterval time.Duration `yaml:"refreshInterval" split_words:"true" default:"10m"`
 
 		// Server contains the echo server settings
 		Server Server `yaml:"server"`
@@ -31,7 +48,7 @@ type (
 		Authz fga.Config `yaml:"authz"`
 
 		// DB contains the database configuration
-		DB DB `yaml:"auth"`
+		DB entdb.Config `yaml:"db"`
 
 		// Logger contains the logger used by echo functions
 		Logger *zap.SugaredLogger `yaml:"logger"`
@@ -40,21 +57,21 @@ type (
 	// Server settings
 	Server struct {
 		// Debug enables echo's Debug option.
-		Debug bool `yaml:"debug"`
+		Debug bool `yaml:"debug" split_words:"true" default:"false"`
 		// Dev enables echo's dev mode options.
-		Dev bool `yaml:"dev"`
+		Dev bool `yaml:"dev" split_words:"true" default:"false"`
 		// Listen sets the listen address to serve the echo server on.
-		Listen string
+		Listen string `yaml:"listen" split_words:"true" default:":17608"`
 		// ShutdownGracePeriod sets the grace period for in flight requests before shutting down.
-		ShutdownGracePeriod time.Duration `yaml:"shutdownGracePeriod"`
+		ShutdownGracePeriod time.Duration `yaml:"shutdownGracePeriod" split_words:"true" default:"10s"`
 		// ReadTimeout sets the maximum duration for reading the entire request including the body.
-		ReadTimeout time.Duration `yaml:"readTimeout"`
+		ReadTimeout time.Duration `yaml:"readTimeout" split_words:"true" default:"15s"`
 		// WriteTimeout sets the maximum duration before timing out writes of the response.
-		WriteTimeout time.Duration `yaml:"writeTimeout"`
+		WriteTimeout time.Duration `yaml:"writeTimeout" split_words:"true" default:"15s"`
 		// IdleTimeout sets the maximum amount of time to wait for the next request when keep-alives are enabled.
-		IdleTimeout time.Duration `yaml:"idleTimeout"`
+		IdleTimeout time.Duration `yaml:"idleTimeout" split_words:"true" default:"30s"`
 		// ReadHeaderTimeout sets the amount of time allowed to read request headers.
-		ReadHeaderTimeout time.Duration `yaml:"readHeaderTimeout"`
+		ReadHeaderTimeout time.Duration `yaml:"readHeaderTimeout" split_words:"true" default:"2s"`
 		// TLS contains the tls configuration settings
 		TLS TLS `yaml:"tls"`
 		// CORS contains settings to allow cross origin settings and insecure cookies
@@ -69,28 +86,10 @@ type (
 		Token tokens.Config `yaml:"token"`
 	}
 
-	// DB Settings
-	DB struct {
-		// Debug to print debug database logs
-		Debug bool
-		// SQL Driver name from dialect.Driver
-		DriverName string
-		// MultiWrite enabled writing to two databases
-		MultiWrite bool
-		// Primary write database source (required)
-		PrimaryDBSource string
-		// Secondary write databsae source (optional)
-		SecondaryDBSource string
-		// CacheTTL to have results cached for subsequent requests
-		CacheTTL time.Duration
-	}
-
 	// Auth settings including providers and the ability to enable/disable auth all together
 	Auth struct {
 		// Enabled - checks this first before reading your provider config
-		Enabled bool `yaml:"enabled"`
-		// JWTSigningKey contains a 32 byte array to sign with the HmacSha256 algorithms
-		JWTSigningKey []byte `yaml:"jwtSigningKey"`
+		Enabled bool `yaml:"enabled" split_words:"true" default:"true"`
 		// A list of auth providers. Currently enables only the first provider in the list.
 		Providers []AuthProvider `yaml:"providers"`
 	}
@@ -111,32 +110,34 @@ type (
 		// Config contains the tls.Config settings
 		Config *tls.Config `yaml:"config"`
 		// Enabled turns on TLS settings for the server
-		Enabled bool
+		Enabled bool `yaml:"enabled" split_words:"true" default:"false"`
 		// CertFile location for the TLS server
-		CertFile string
+		CertFile string `yaml:"certFile" split_words:"true" default:"server.crt"`
 		// CertKey file location for the TLS server
-		CertKey string
+		CertKey string `yaml:"certKey" split_words:"true" default:"server.key"`
 		// AutoCert generates the cert with letsencrypt, this does not work on localhost
-		AutoCert bool
+		AutoCert bool `yaml:"autoCert" split_words:"true" default:"false"`
 	}
 
+	// AuthProvider settings
+	// TODO: This is currently unused, when enabled these settings should be added to the config/.env.example
 	AuthProvider struct {
 		// Label for the provider (optional)
-		Label string `yaml:"label"`
+		Label string `yaml:"label" split_words:"true" default:"default"`
 		// Type of the auth provider, currently only OIDC is supported
-		Type string `yaml:"type"`
+		Type string `yaml:"type" split_words:"true" default:"oidc"`
 		// OIDC .well-known/openid-configuration URL, ex. https://accounts.google.com/
-		ProviderURL string `yaml:"providerUrl"`
+		ProviderURL string `yaml:"providerUrl" split_words:"true" default:"https://accounts.google.com/"`
 		// IssuerURL is only needed when it differs from the ProviderURL (optional)
-		IssuerURL string `yaml:"issuerUrl"`
+		IssuerURL string `yaml:"issuerUrl" split_words:"true" default:""`
 		// ClientID of the oauth2 provider
-		ClientID string `yaml:"clientId"`
+		ClientID string `yaml:"clientId" split_words:"true" default:""`
 		// ClientSecret is the private key that authenticates your integration when requesting an OAuth token (optional when using PKCE)
-		ClientSecret string `yaml:"clientSecret"`
+		ClientSecret string `yaml:"clientSecret" split_words:"true" default:""`
 		// Scopes for authentication, typically [openid, profile, email]
-		Scopes []string `yaml:"scopes"`
+		Scopes []string `yaml:"scopes" split_words:"true" default:"openid,profile,email"`
 		// CallbackURL after a successful auth, e.g. https://localhost:8080/oauth/callback
-		CallbackURL string `yaml:"callbackUrl"`
+		CallbackURL string `yaml:"callbackUrl" split_words:"true" default:"https://auth.datum.net/oauth/callback"`
 		// Options added as URL query params when redirecting to auth provider. Can be used to configure custom auth flows such as Auth0 invitation flow.
 		Options map[string]interface{} `yaml:"options"`
 	}
@@ -150,122 +151,33 @@ func (c *Config) GetConfig() (*Config, error) {
 	return c, nil
 }
 
-// NewConfig creates a new empty config
-func NewConfig() *Config {
-	c := Config{}
+// NewServerConfig creates a new empty config
+func NewServerConfig() *Config {
+	// tls settings
+	t := &TLS{}
 
-	return &c
-}
-
-// SetDefaults sets default values if not already defined.
-func (c *Config) SetDefaults() *Config {
-	if c.Server.TLS.Enabled {
-		// use 443 for secure servers as the default port
-		c.Server.Listen = ":443"
-		c.Server.TLS.Config = DefaultTLSConfig
-	} else if c.Server.Listen == "" {
-		// set default port if none is provided
-		c.Server.Listen = ":8080"
+	// load defaults and env vars
+	if err := envconfig.Process("datum_tls", t); err != nil {
+		panic(err)
 	}
 
-	if c.Server.ShutdownGracePeriod <= 0 {
-		c.Server.ShutdownGracePeriod = DefaultShutdownGracePeriod
+	s := &Server{}
+
+	// load defaults and env vars
+	if err := envconfig.Process("datum_server", s); err != nil {
+		panic(err)
 	}
 
-	if c.Server.ReadTimeout <= 0 {
-		c.Server.ReadTimeout = DefaultReadTimeout
+	s.TLS = *t
+
+	return &Config{
+		Server: *s,
 	}
-
-	if c.Server.WriteTimeout <= 0 {
-		c.Server.WriteTimeout = DefaultWriteTimeout
-	}
-
-	if c.Server.IdleTimeout <= 0 {
-		c.Server.IdleTimeout = DefaultIdleTimeout
-	}
-
-	if c.Server.ReadHeaderTimeout <= 0 {
-		c.Server.ReadHeaderTimeout = DefaultReadHeaderTimeout
-	}
-
-	return c
-}
-
-// WithDebug enables echo's Debug option.
-func (c *Config) WithDebug(debug bool) *Config {
-	c.Server.Debug = debug
-
-	return c
-}
-
-// WithDev enables echo's dev mode options.
-func (c *Config) WithDev(dev bool) *Config {
-	c.Server.Dev = dev
-
-	return c
-}
-
-// WithListen sets the listen address to serve the echo server on.
-func (c *Config) WithListen(listen string) *Config {
-	c.Server.Listen = listen
-
-	return c
-}
-
-// WithHTTPS enables https server options
-func (c *Config) WithHTTPS(https bool) *Config {
-	c.Server.TLS.Enabled = https
-
-	return c
 }
 
 // WithTLSDefaults sets tls default settings assuming a default cert and key file location.
 func (c Config) WithTLSDefaults() Config {
 	c.WithDefaultTLSConfig()
-	c.Server.TLS.CertFile = DefaultCertFile
-	c.Server.TLS.CertKey = DefaultKeyFile
-
-	return c
-}
-
-// WithShutdownGracePeriod sets the grace period for in flight requests before shutting down.
-func (c *Config) WithShutdownGracePeriod(period time.Duration) *Config {
-	c.Server.ShutdownGracePeriod = period
-
-	return c
-}
-
-// WithDefaultReadTimeout sets the maximum duration for reading the entire request including the body.
-func (c *Config) WithDefaultReadTimeout(period time.Duration) *Config {
-	c.Server.ReadTimeout = period
-
-	return c
-}
-
-// WithWriteTimeout sets the maximum duration before timing out writes of the response.
-func (c *Config) WithWriteTimeout(period time.Duration) *Config {
-	c.Server.WriteTimeout = period
-
-	return c
-}
-
-// WithIdleTimeout sets the maximum amount of time to wait for the next request when keep-alives are enabled.
-func (c *Config) WithIdleTimeout(period time.Duration) *Config {
-	c.Server.IdleTimeout = period
-
-	return c
-}
-
-// WithReadHeaderTimeout sets the amount of time allowed to read request headers.
-func (c *Config) WithReadHeaderTimeout(period time.Duration) *Config {
-	c.Server.ReadHeaderTimeout = period
-
-	return c
-}
-
-// WithMiddleware includes the provided middleware when echo is initialized.
-func (c Config) WithMiddleware(mdw ...echo.MiddlewareFunc) Config {
-	c.Server.Middleware = append(c.Server.Middleware, mdw...)
 
 	return c
 }

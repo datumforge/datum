@@ -37,7 +37,10 @@ func init() {
 	viperBindFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 
 	rootCmd.PersistentFlags().Bool("pretty", false, "enable pretty (human readable) logging output")
-	viperBindFlag("server.logging.pretty", rootCmd.PersistentFlags().Lookup("pretty"))
+	viperBindFlag("pretty", rootCmd.PersistentFlags().Lookup("pretty"))
+
+	rootCmd.PersistentFlags().Bool("debug", false, "debug logging output")
+	viperBindFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -70,11 +73,11 @@ func initConfig() {
 
 func setupLogging() {
 	cfg := zap.NewProductionConfig()
-	if viper.GetBool("logging.pretty") {
+	if viper.GetBool("pretty") {
 		cfg = zap.NewDevelopmentConfig()
 	}
 
-	if viper.GetBool("server.logging.debug") {
+	if viper.GetBool("debug") {
 		cfg.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
 	} else {
 		cfg.Level = zap.NewAtomicLevelAt(zap.InfoLevel)

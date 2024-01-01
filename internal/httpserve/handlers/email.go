@@ -11,10 +11,9 @@ import (
 
 // NewEmailManager is responsible for initializing and configuring the email manager used for sending emails
 func (h *Handler) NewEmailManager() error {
-	// TODO: go back and configure with viper config instead of setting defaults
 	h.SendGridConfig = &emails.Config{}
 
-	err := envconfig.Process("datum", h.SendGridConfig)
+	err := envconfig.Process("datum_email", h.SendGridConfig)
 	if err != nil {
 		return err
 	}
@@ -25,7 +24,7 @@ func (h *Handler) NewEmailManager() error {
 	}
 
 	h.EmailURL = &URLConfig{}
-	if err := envconfig.Process("datum", h.EmailURL); err != nil {
+	if err := envconfig.Process("datum_email_url", h.EmailURL); err != nil {
 		return err
 	}
 
@@ -35,7 +34,6 @@ func (h *Handler) NewEmailManager() error {
 // NewTestEmailManager is responsible for initializing and configuring the email manager used for sending emails but does not
 // send emails, should be used in tests
 func (h *Handler) NewTestEmailManager() error {
-	// TODO: go back and configure with viper config instead of setting defaults
 	h.SendGridConfig = &emails.Config{}
 
 	err := envconfig.Process("datum", h.SendGridConfig)
@@ -145,7 +143,6 @@ func (h *Handler) SendPasswordResetSuccessEmail(user *User) error {
 }
 
 // URLConfig for the datum registration
-// TODO: move this to the same config setup as everything else
 type URLConfig struct {
 	Base   string `split_words:"true" default:"https://app.datum.net"`
 	Verify string `split_words:"true" default:"/v1/verify"`

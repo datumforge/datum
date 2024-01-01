@@ -10,10 +10,10 @@ type ServerOptions struct {
 }
 
 func NewServerOptions(opts []ServerOption) *ServerOptions {
+	config := config.Config{}
+
 	so := &ServerOptions{
-		Config: config.Config{
-			RefreshInterval: config.DefaultConfigRefresh,
-		},
+		Config: config,
 	}
 
 	for _, opt := range opts {

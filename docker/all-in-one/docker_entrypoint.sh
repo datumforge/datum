@@ -8,4 +8,6 @@ while [ $FGACHECK -ne 0 ]; do
 	FGACHECK=$?
 done
 
-/bin/datum serve --dev --debug --pretty --auth=true --fga-host=localhost:8080 --fga-scheme=http 
+export $(cat .env | xargs)
+
+/bin/datum serve --debug --pretty

@@ -14,17 +14,32 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/interceptors"
-	"github.com/datumforge/datum/internal/httpserve/config"
 )
 
 const (
 	DefaultCacheTTL = 1 * time.Second
 )
 
+// Config Settings
+type Config struct {
+	// Debug to print debug database logs
+	Debug bool `yaml:"debug" split_words:"true" default:"false"`
+	// SQL Driver name from dialect.Driver
+	DriverName string `yaml:"driverName" split_words:"true" default:"sqlite3"`
+	// MultiWrite enabled writing to two databases
+	MultiWrite bool `yaml:"multiWrite" split_words:"true" default:"false"`
+	// Primary write database source (required)
+	PrimaryDBSource string `yaml:"primaryDBSource" split_words:"true" default:"datum.db?mode=memory&_fk=1"`
+	// Secondary write database source (optional)
+	SecondaryDBSource string `yaml:"secondaryDBSource" split_words:"true" default:"backup.db?mode=memory&_fk=1"`
+	// CacheTTL to have results cached for subsequent requests
+	CacheTTL time.Duration `yaml:"cacheTTL" split_words:"true" default:"1s"`
+}
+
 // EntClientConfig configures the entsql drivers
 type EntClientConfig struct {
 	// config contains the base database settings
-	config config.DB
+	config Config
 	// primaryDB contains the primary db connection
 	primaryDB *entsql.Driver
 	// secondaryDB contains the secondary db connection, if set
@@ -34,7 +49,7 @@ type EntClientConfig struct {
 }
 
 // NewDBConfig returns a new database configuration
-func NewDBConfig(c config.DB, l *zap.SugaredLogger) *EntClientConfig {
+func NewDBConfig(c Config, l *zap.SugaredLogger) *EntClientConfig {
 	return &EntClientConfig{
 		config: c,
 		logger: l,

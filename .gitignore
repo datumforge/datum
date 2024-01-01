@@ -25,7 +25,9 @@ server.crt
 server.key 
 private_key.pem
 public_key.pem
+# Sendgrid test email folders
 internal/httpserve/handlers/false/*
+false/*
 
 # Packages
 *.7z

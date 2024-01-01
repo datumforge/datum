@@ -16,7 +16,6 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/tokens"
@@ -66,7 +65,7 @@ func setupDB() {
 		testDBURI = defaultDBURI
 	}
 
-	dbconf := config.DB{
+	dbconf := entdb.Config{
 		Debug:           true,
 		DriverName:      dialect.SQLite,
 		PrimaryDBSource: testDBURI,

@@ -10,10 +10,10 @@ import (
 	"os"
 	"time"
 
-	"entgo.io/ent/dialect"
 	"github.com/alexedwards/scs/v2"
 	"github.com/alexedwards/scs/v2/memstore"
 	echo "github.com/datumforge/echox"
+	"github.com/kelseyhightower/envconfig"
 	"go.uber.org/zap"
 
 	"github.com/datumforge/datum/internal/ent/generated"
@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
+	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/ulids"
 )
@@ -62,33 +63,17 @@ func WithLogger(l *zap.SugaredLogger) ServerOption {
 }
 
 // WithServer supplies the echo server config for the server
-func WithServer(settings map[string]any) ServerOption {
+func WithServer() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		serverSettings := settings["server"].(map[string]any)
-		logSettings := serverSettings["logging"].(map[string]any)
-
-		shutdown, err := time.ParseDuration(serverSettings["shutdown-grace-period"].(string))
-		if err != nil {
-			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
-		}
-
-		serverConfig := config.NewConfig().
-			WithListen(serverSettings["listen"].(string)). // set custom port
-			WithHTTPS(serverSettings["https"].(bool)).     // enable https
-			WithShutdownGracePeriod(shutdown).             // override default grace period shutdown
-			WithDebug(logSettings["debug"].(bool)).        // enable debug mode
-			WithDev(serverSettings["dev"].(bool)).         // enable dev mode
-			SetDefaults()                                  // set defaults if not already set
+		serverConfig := config.NewServerConfig()
 
 		s.Config = *serverConfig
 	})
 }
 
 // WithHTTPS sets up TLS config settings for the server
-func WithHTTPS(settings map[string]any) ServerOption {
+func WithHTTPS() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		serverSettings := settings["server"].(map[string]any)
-
 		if !s.Config.Server.TLS.Enabled {
 			// this is set to enabled by WithServer
 			// if TLS is not enabled, move on
@@ -97,83 +82,48 @@ func WithHTTPS(settings map[string]any) ServerOption {
 
 		s.Config.WithTLSDefaults()
 
-		autoCert := serverSettings["auto-cert"].(bool)
-
-		if autoCert {
-			s.Config.WithAutoCert(serverSettings["cert-host"].(string))
-		} else {
-			cf := serverSettings["ssl-cert"].(string)
-			k := serverSettings["ssl-key"].(string)
-
-			certFile, certKey, err := server.GetCertFiles(cf, k)
-			if err != nil {
-				// if this errors, we should panic because a required file is not found
-				s.Config.Logger.Panicw("unable to start https server", "error", err.Error())
-			}
-
-			s.Config.WithTLSCerts(certFile, certKey)
+		if !s.Config.Server.TLS.AutoCert {
+			s.Config.WithTLSCerts(s.Config.Server.TLS.CertFile, s.Config.Server.TLS.CertKey)
 		}
 	})
 }
 
 // WithSQLiteDB supplies the sqlite db config for the server
-func WithSQLiteDB(settings map[string]any) ServerOption {
+func WithSQLiteDB() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		serverSettings := settings["server"].(map[string]any)
-		logSettings := serverSettings["logging"].(map[string]any)
-		dbSettings := settings["db"].(map[string]any)
+		// Database Config Setup
+		dbConfig := &entdb.Config{}
 
-		// Database Settings
-		dbConfig := config.DB{
-			Debug:           logSettings["debug"].(bool),
-			MultiWrite:      dbSettings["multi-write"].(bool),
-			DriverName:      dialect.SQLite,
-			PrimaryDBSource: dbSettings["primary"].(string),
-			CacheTTL:        entdb.DefaultCacheTTL,
+		// load defaults and env vars
+		err := envconfig.Process("datum_db", dbConfig)
+		if err != nil {
+			panic(err)
 		}
 
-		if dbConfig.MultiWrite {
-			dbConfig.SecondaryDBSource = dbSettings["secondary"].(string)
-		}
-
-		s.Config.DB = dbConfig
+		s.Config.DB = *dbConfig
 	})
 }
 
 // WithFGAAuthz supplies the FGA authz config for the server
-func WithFGAAuthz(settings map[string]any) ServerOption {
+func WithFGAAuthz() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		authzEnabled := settings["auth"].(bool)
+		config, err := fga.NewAuthzConfig(s.Config.Logger)
+		if err != nil {
+			panic(err)
+		}
 
-		if !authzEnabled {
-			s.Config.Authz = fga.Config{
-				Enabled: false,
-			}
+		s.Config.Authz = *config
 
+		if !s.Config.Authz.Enabled {
 			return
 		}
-
-		fgaSettings := settings["fga"].(map[string]any)
-
-		// Authz Setup
-		authzConfig := fga.Config{
-			Enabled:        authzEnabled,
-			StoreName:      "datum",
-			Host:           fgaSettings["host"].(string),
-			Scheme:         fgaSettings["scheme"].(string),
-			StoreID:        fgaSettings["store"].(map[string]any)["id"].(string),
-			ModelID:        fgaSettings["model"].(map[string]any)["id"].(string),
-			CreateNewModel: fgaSettings["model"].(map[string]any)["create"].(bool),
-		}
-
-		s.Config.Authz = authzConfig
 	})
 }
 
 // WithGeneratedKeys will generate a public/private key pair
 // that can be used for jwt signing.
 // This should only be used in a development environment
-func WithGeneratedKeys(settings map[string]any) ServerOption {
+func WithGeneratedKeys() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
 		privFileName := "private_key.pem"
 
@@ -206,14 +156,7 @@ func WithGeneratedKeys(settings map[string]any) ServerOption {
 		keys := map[string]string{}
 
 		// check if kid was passed in
-		var kidPriv string
-		jwtSettings, ok := settings["jwt"].(map[string]any)
-		if ok {
-			kid, ok := jwtSettings["kid"].(string)
-			if ok {
-				kidPriv = kid
-			}
-		}
+		kidPriv := s.Config.Server.Token.KID
 
 		// if we didn't get a kid in the settings, assign one
 		if kidPriv == "" {
@@ -227,36 +170,28 @@ func WithGeneratedKeys(settings map[string]any) ServerOption {
 }
 
 // WithAuth supplies the authn and jwt config for the server
-func WithAuth(settings map[string]any) ServerOption {
+func WithAuth() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		authEnabled := settings["auth"].(bool)
-		jwtSettings := settings["jwt"].(map[string]any)
+		// Database Config Setup
+		tokenConfig := &tokens.Config{}
 
-		s.Config.Auth.Enabled = authEnabled
-
-		s.Config.Server.Token.Issuer = jwtSettings["issuer"].(string)
-		s.Config.Server.Token.Audience = jwtSettings["audience"].(string)
-		s.Config.Server.Token.CookieDomain = jwtSettings["cookie-domain"].(string)
-
-		// Set durations, flags have defaults values set
-		accessDuration, err := time.ParseDuration(jwtSettings["access-duration"].(string))
-		if err != nil {
-			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
+		// load defaults and env vars
+		if err := envconfig.Process("datum_token", tokenConfig); err != nil {
+			panic(err)
 		}
 
-		refreshDuration, err := time.ParseDuration(jwtSettings["refresh-duration"].(string))
-		if err != nil {
-			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
+		s.Config.Server.Token = *tokenConfig
+
+		// TODO: currently not used, this needs to be updated
+		// to allow for an array to be provided in envconfig
+		authProviderConfig := &config.AuthProvider{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_auth_provider", authProviderConfig); err != nil {
+			panic(err)
 		}
 
-		refreshOverlap, err := time.ParseDuration(jwtSettings["refresh-overlap"].(string))
-		if err != nil {
-			s.Config.Logger.Panicw("unable to parse shutdown duration", "error", err.Error())
-		}
-
-		s.Config.Server.Token.AccessDuration = accessDuration
-		s.Config.Server.Token.RefreshDuration = refreshDuration
-		s.Config.Server.Token.RefreshOverlap = refreshOverlap
+		s.Config.Auth.Providers = []config.AuthProvider{*authProviderConfig}
 	})
 }
 
@@ -279,15 +214,13 @@ func WithReadyChecks(c *entdb.EntClientConfig, f *fga.Client) ServerOption {
 }
 
 // WithGraphRoute adds the graph handler to the server
-func WithGraphRoute(srv *server.Server, c *generated.Client, settings map[string]any, mw []echo.MiddlewareFunc) ServerOption {
+func WithGraphRoute(srv *server.Server, c *generated.Client, mw []echo.MiddlewareFunc) ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		serverSettings := settings["server"].(map[string]any)
-
 		// Setup Graph API Handlers
 		r := graphapi.NewResolver(c, s.Config.Auth.Enabled).
 			WithLogger(s.Config.Logger.Named("resolvers"))
 
-		handler := r.Handler(serverSettings["dev"].(bool), mw...)
+		handler := r.Handler(s.Config.Server.Dev, mw...)
 
 		// Add Graph Handler
 		srv.AddHandler(handler)

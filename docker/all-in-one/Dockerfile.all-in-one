@@ -10,7 +10,8 @@ FROM cgr.dev/chainguard/bash:latest
 
 WORKDIR /home/nonroot
 
-ENV DATUM_SEND_GRID_API_KEY="THIS_IS_A_FAKE_KEY"
+# Copy env config 
+COPY config/.env.devauth .env
 
 # Copy the binary that goreleaser built
 COPY --from=builder /go/bin/datum /bin/datum

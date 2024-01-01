@@ -9,11 +9,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 )
 
 func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
-	if _, err := transaction.FromContext(ctx).User.Update().SetLastSeen(time.Now()).
+	userCtx := viewer.NewContext(ctx, viewer.NewUserViewerFromID(id, true))
+
+	if _, err := transaction.FromContext(userCtx).User.Update().SetLastSeen(time.Now()).
 		Where(
 			user.ID(id),
 		).
@@ -27,18 +30,6 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 }
 
 func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*ent.User, error) {
-	//	email, exists := h.getUserByEVToken(ctx, privacyToken)
-	//	if !exists {
-	//		return nil
-	//		)
-	//	}
-	//
-	//	privacyToken := token.EmailSignupToken{
-	//		Email: email,
-	//	}
-	//	ctxWithToken := token.NewContextWithSignupToken(ctx, &privacyToken)
-	//
-	//	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromUser(user))
 	meowuser, err := transaction.FromContext(ctx).User.Create().
 		SetInput(input).
 		Save(ctx)

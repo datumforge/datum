@@ -20,7 +20,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mattn/go-sqlite3 v1.14.19
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/ogen-go/ogen v0.81.0
+	github.com/ogen-go/ogen v0.81.1
 	github.com/openfga/go-sdk v0.3.3
 	github.com/openfga/language/pkg/go v0.0.0-20240101091435-53d68ae8b4bf
 	github.com/pkg/errors v0.9.1

@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/datumforge/datum/internal/utils/sendgrid"
 )
@@ -142,6 +144,8 @@ type ResetRequestData struct {
 func WelcomeEmail(data WelcomeData) (message *mail.SGMailV3, err error) {
 	var text, html string
 
+	data.FirstName = cases.Title(language.AmericanEnglish, cases.NoLower).String(data.FirstName)
+
 	if text, html, err = Render("welcome", data); err != nil {
 		return nil, err
 	}
@@ -154,6 +158,9 @@ func WelcomeEmail(data WelcomeData) (message *mail.SGMailV3, err error) {
 // VerifyEmail creates an email to verify a user's email address
 func VerifyEmail(data VerifyEmailData) (message *mail.SGMailV3, err error) {
 	var text, html string
+
+	// we might consider using shortname or alias instead of this but today the email sends whatever is stored exactly in the db
+	data.FullName = cases.Title(language.AmericanEnglish, cases.NoLower).String(data.FullName)
 
 	if text, html, err = Render("verify_email", data); err != nil {
 		return nil, err

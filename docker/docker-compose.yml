@@ -10,7 +10,7 @@ services:
       - --debug
       - --pretty
     env_file:
-      - ../config/.env.dev
+      - ../config/.env-dev
     ports:
       - "17608:17608"
     restart: unless-stopped

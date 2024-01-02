@@ -11,6 +11,8 @@ import (
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/marionette"
@@ -56,8 +58,17 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		Password:  &in.Password,
 	}
 
-	meowuser, err := h.createUser(ctx.Request().Context(), input)
+	// set viewer context
+	privacyToken := token.EmailSignUpToken{
+		Email: in.Email,
+	}
+
+	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), &privacyToken)
+
+	meowuser, err := h.createUser(ctxWithToken, input)
 	if err != nil {
+		h.Logger.Errorw("error creating new user", "error", err)
+
 		if IsUniqueConstraintError(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse("user already exists"))
 		}
@@ -70,6 +81,9 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		return err
 	}
 
+	// setup viewer context
+	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(meowuser.ID, true))
+
 	// create email verification token
 	user := &User{
 		FirstName: in.FirstName,
@@ -78,8 +92,10 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 		ID:        meowuser.ID,
 	}
 
-	meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user)
+	meowtoken, err := h.storeAndSendEmailVerificationToken(viewerCtx, user)
 	if err != nil {
+		h.Logger.Errorw("error storing token", "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 

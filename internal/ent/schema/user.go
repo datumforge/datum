@@ -161,15 +161,22 @@ func (User) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignupToken{}),
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignUpToken{}),
 					rule.DenyIfNoViewer(),
+					rule.AllowIfSelf(),
+					rule.AllowIfOwnedByViewer(),
 					rule.AllowIfAdmin(),
 					privacy.AlwaysDenyRule(),
 				},
-				ent.OpCreate,
+				// the user hook has update operations on user create so we need to allow email token sign up for update
+				// operations as well
+				ent.OpCreate|ent.OpUpdateOne,
 			),
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
+					rule.DenyIfNoViewer(),
+					rule.AllowIfSelf(),
+					rule.AllowIfOwnedByViewer(),
 					rule.AllowIfAdmin(),
 					privacy.AlwaysDenyRule(),
 				},
@@ -177,6 +184,7 @@ func (User) Policy() ent.Policy {
 			),
 		},
 		Query: privacy.QueryPolicy{
+			// TODO: update, this should not be always allow
 			privacy.AlwaysAllowRule(),
 		},
 	}

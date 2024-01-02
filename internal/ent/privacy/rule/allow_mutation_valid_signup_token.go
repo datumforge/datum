@@ -10,13 +10,13 @@ import (
 
 type MutationEmailGetter func(generated.Mutation) (string, error)
 
-// AllowMutationIfContextHasValidEmailSignupToken is used to determine whether a
+// AllowMutationIfContextHasValidEmailSignUpToken is used to determine whether a
 // mutation should be allowed or skipped based on the presence and validity of an
 // email signup token in the context
-func AllowMutationIfContextHasValidEmailSignupToken(getEmail MutationEmailGetter) privacy.MutationRule {
+func AllowMutationIfContextHasValidEmailSignUpToken(getEmail MutationEmailGetter) privacy.MutationRule {
 	return privacy.MutationRuleFunc(
 		func(ctx context.Context, mutation generated.Mutation) error {
-			emailSignupToken := token.EmailSignupTokenFromContext(ctx)
+			emailSignupToken := token.EmailSignUpTokenFromContext(ctx)
 			if emailSignupToken == nil {
 				return privacy.Skipf("email signup token not found in context")
 			}
@@ -25,9 +25,11 @@ func AllowMutationIfContextHasValidEmailSignupToken(getEmail MutationEmailGetter
 			if err != nil {
 				return privacy.Skipf("unable to obtain email from mutation")
 			}
+
 			if email != emailSignupToken.Email {
 				return privacy.Skipf("email sign up token does not match mutation result")
 			}
+
 			return privacy.Allow
 		},
 	)

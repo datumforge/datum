@@ -26,7 +26,7 @@ func TestLoginHandler(t *testing.T) {
 
 	// set privacy allow in order to allow the creation of the users without
 	// authentication in the tests
-	ec = privacy.DecisionContext(ec, privacy.Allow)
+	ctx := privacy.DecisionContext(ec, privacy.Allow)
 
 	// create user in the database
 	validConfirmedUser := "rsanchez@datum.net"
@@ -42,13 +42,13 @@ func TestLoginHandler(t *testing.T) {
 		SetEmail(validConfirmedUser).
 		SetPassword(validPassword).
 		SetSetting(userSetting).
-		SaveX(ec)
+		SaveX(ctx)
 
 	validUnconfirmedUser := "msmith@datum.net"
 
 	userSetting = EntClient.UserSetting.Create().
 		SetEmailConfirmed(false).
-		SaveX(ec)
+		SaveX(ctx)
 
 	userUnconfirmed := EntClient.User.Create().
 		SetFirstName(gofakeit.FirstName()).
@@ -56,7 +56,7 @@ func TestLoginHandler(t *testing.T) {
 		SetEmail(validUnconfirmedUser).
 		SetPassword(validPassword).
 		SetSetting(userSetting).
-		SaveX(ec)
+		SaveX(ctx)
 
 	testCases := []struct {
 		name           string
@@ -153,6 +153,6 @@ func TestLoginHandler(t *testing.T) {
 	}
 
 	// cleanup after
-	EntClient.User.DeleteOneID(userConfirmed.ID).ExecX(ec)
-	EntClient.User.DeleteOneID(userUnconfirmed.ID).ExecX(ec)
+	EntClient.User.DeleteOneID(userConfirmed.ID).ExecX(ctx)
+	EntClient.User.DeleteOneID(userUnconfirmed.ID).ExecX(ctx)
 }

@@ -9,6 +9,8 @@ import (
 	echo "github.com/datumforge/echox"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/tokens"
 )
@@ -20,7 +22,10 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	entUser, err := h.getUserByEVToken(ctx.Request().Context(), reqToken)
+	// setup viewer context
+	ctxWithToken := token.NewContextWithVerifyToken(ctx.Request().Context(), reqToken)
+
+	entUser, err := h.getUserByEVToken(ctxWithToken, reqToken)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -37,6 +42,8 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		Email: entUser.Email,
 	}
 
+	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
+
 	// check to see if user is already confirmed
 	if !entUser.Edges.Setting.EmailConfirmed {
 		// set tokens for request
@@ -47,20 +54,27 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		}
 
 		// Construct the user token from the database fields
-		token := &tokens.VerificationToken{
+		t := &tokens.VerificationToken{
 			Email: entUser.Email,
 		}
 
-		if token.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
+		if t.ExpiresAt, err = user.GetVerificationExpires(); err != nil {
 			h.Logger.Errorw("unable to parse expiration", "error", err)
 
 			return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
 		}
 
 		// Verify the token with the stored secret
-		if err = token.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
+		if err = t.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
 			if errors.Is(err, tokens.ErrTokenExpired) {
-				meowtoken, err := h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user)
+				// set viewer context
+				privacyToken := token.EmailSignUpToken{
+					Email: user.Email,
+				}
+
+				viewerCtx := token.NewContextWithSignUpToken(viewerCtx, &privacyToken)
+
+				meowtoken, err := h.storeAndSendEmailVerificationToken(viewerCtx, user)
 				if err != nil {
 					h.Logger.Errorw("unable to resend verification token", "error", err)
 
@@ -80,7 +94,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 
-		if err := h.setEmailConfirmed(ctx.Request().Context(), entUser); err != nil {
+		if err := h.setEmailConfirmed(viewerCtx, entUser); err != nil {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 		}
 	}

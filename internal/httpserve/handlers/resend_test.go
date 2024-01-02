@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
@@ -22,10 +23,12 @@ func TestResendHandler(t *testing.T) {
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 
+	ctx := privacy.DecisionContext(ec, privacy.Allow)
+
 	// create user in the database
 	userSetting := EntClient.UserSetting.Create().
 		SetEmailConfirmed(false).
-		SaveX(ec)
+		SaveX(ctx)
 
 	u := EntClient.User.Create().
 		SetFirstName(gofakeit.FirstName()).
@@ -33,12 +36,12 @@ func TestResendHandler(t *testing.T) {
 		SetEmail("bsanderson@datum.net").
 		SetPassword(validPassword).
 		SetSetting(userSetting).
-		SaveX(ec)
+		SaveX(ctx)
 
 	// create user in the database
 	userSetting2 := EntClient.UserSetting.Create().
 		SetEmailConfirmed(true).
-		SaveX(ec)
+		SaveX(ctx)
 
 	u2 := EntClient.User.Create().
 		SetFirstName(gofakeit.FirstName()).
@@ -46,7 +49,7 @@ func TestResendHandler(t *testing.T) {
 		SetEmail("dabraham@datum.net").
 		SetPassword(validPassword).
 		SetSetting(userSetting2).
-		SaveX(ec)
+		SaveX(ctx)
 
 	testCases := []struct {
 		name            string
@@ -111,7 +114,7 @@ func TestResendHandler(t *testing.T) {
 				t.Error("error parsing response", err)
 			}
 
-			assert.Equal(t, tc.expectedStatus, recorder.Code)
+			require.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus == http.StatusNoContent {
 				require.NotEmpty(t, out)
@@ -123,6 +126,6 @@ func TestResendHandler(t *testing.T) {
 	}
 
 	// cleanup after
-	EntClient.User.DeleteOneID(u.ID).ExecX(ec)
-	EntClient.User.DeleteOneID(u2.ID).ExecX(ec)
+	EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
+	EntClient.User.DeleteOneID(u2.ID).ExecX(ctx)
 }

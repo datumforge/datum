@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/tokens"
@@ -27,6 +28,9 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
+	// Set context for further requests
+	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(user.ID, true))
+
 	claims := createClaims(user)
 
 	access, refresh, err := h.TM.CreateTokenPair(claims)
@@ -40,7 +44,9 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 
-	if err := h.updateUserLastSeen(ctx.Request().Context(), user.ID); err != nil {
+	if err := h.updateUserLastSeen(userCtx, user.ID); err != nil {
+		h.Logger.Errorw("unable to update last seen", "error", err)
+
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(err))
 	}
 

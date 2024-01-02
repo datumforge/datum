@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
@@ -73,10 +74,14 @@ func TestVerifyHandler(t *testing.T) {
 			e := setupEcho(h.SM)
 			e.GET("verify", h.VerifyEmail)
 
+			// set privacy allow in order to allow the creation of the users without
+			// authentication in the tests
+			ctx := privacy.DecisionContext(ec, privacy.Allow)
+
 			// create user in the database
 			userSetting := EntClient.UserSetting.Create().
 				SetEmailConfirmed(tc.userConfirmed).
-				SaveX(ec)
+				SaveX(ctx)
 
 			u := EntClient.User.Create().
 				SetFirstName(gofakeit.FirstName()).
@@ -84,7 +89,7 @@ func TestVerifyHandler(t *testing.T) {
 				SetEmail(tc.email).
 				SetPassword(validPassword).
 				SetSetting(userSetting).
-				SaveX(ec)
+				SaveX(ctx)
 
 			user := handlers.User{
 				FirstName: u.FirstName,
@@ -114,7 +119,7 @@ func TestVerifyHandler(t *testing.T) {
 				SetEmail(user.Email).
 				SetSecret(user.EmailVerificationSecret).
 				SetTTL(ttl).
-				SaveX(ec)
+				SaveX(ctx)
 
 			target := "/verify"
 			if tc.tokenSet {
@@ -146,7 +151,7 @@ func TestVerifyHandler(t *testing.T) {
 			}
 
 			// cleanup after
-			EntClient.User.DeleteOneID(u.ID).ExecX(ec)
+			EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
 		})
 	}
 }

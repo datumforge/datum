@@ -7,6 +7,8 @@ import (
 	echo "github.com/datumforge/echox"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // ResendRequest contains fields for a resend email verification request
@@ -34,6 +36,8 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	}
 
 	if err := validateResendRequest(in); err != nil {
+		h.Logger.Errorw("error validating request", "error", err)
+
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
@@ -57,6 +61,15 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, out)
 	}
 
+	// setup viewer context
+	// TODO: move to middleware?
+	privacyToken := token.EmailSignUpToken{
+		Email: in.Email,
+	}
+
+	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), &privacyToken)
+	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
+
 	// create email verification token
 	user := &User{
 		FirstName: entUser.FirstName,
@@ -65,7 +78,8 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	if _, err = h.storeAndSendEmailVerificationToken(ctx.Request().Context(), user); err != nil {
+	if _, err = h.storeAndSendEmailVerificationToken(viewerCtx, user); err != nil {
+		h.Logger.Errorw("error storing token", "error", err)
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 

@@ -132,13 +132,22 @@ func (EmailVerificationToken) Policy() ent.Policy {
 					emailFilter.WhereEmail(entql.StringEQ(actualToken.Email))
 				},
 			),
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.VerifyToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.VerifyToken)
+					tokenFilter := filter.(*generated.EmailVerificationTokenFilter)
+					tokenFilter.WhereToken(entql.StringEQ(actualToken.VerifyToken))
+				},
+			),
 			privacy.AlwaysDenyRule(),
 		},
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
 					rule.AllowIfAdmin(),
-					rule.AllowMutationIfContextHasValidEmailSignupToken(emailGetter),
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignUpToken{}),
+					rule.AllowMutationIfContextHasValidEmailSignUpToken(emailGetter),
 					privacy.AlwaysDenyRule(),
 				},
 				ent.OpCreate,

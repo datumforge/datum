@@ -8,43 +8,43 @@ type PrivacyToken interface {
 	GetContextKey() interface{}
 }
 
-type EmailSignupToken struct {
-	BaseSignupToken
+type EmailSignUpToken struct {
+	BaseSignUpToken
 	Email string
 }
 
-type signupTokenKey struct{}
+type signUpTokenKey struct{}
 
 type (
-	SignupToken interface {
+	SignUpToken interface {
 		PrivacyToken
 	}
 
-	BaseSignupToken struct {
-		SignupToken
+	BaseSignUpToken struct {
+		SignUpToken
 	}
 )
 
-func (token EmailSignupToken) GetEmail() string {
+func (token EmailSignUpToken) GetEmail() string {
 	return token.Email
 }
 
-func (BaseSignupToken) GetContextKey() interface{} {
-	return signupTokenKey{}
+func (BaseSignUpToken) GetContextKey() interface{} {
+	return signUpTokenKey{}
 }
 
-// NewContextWithSignupToken createsg a new context with a signup token. It takes a
-// parent context and a signup token as parameters and returns a new context with
-// the signup token added
-func NewContextWithSignupToken(parent context.Context, token SignupToken) context.Context {
-	return context.WithValue(parent, signupTokenKey{}, token)
+// NewContextWithSignUpToken creates a new context with a sign-up token. It takes a
+// parent context and a sign-up token as parameters and returns a new context with
+// the sign-up token added
+func NewContextWithSignUpToken(parent context.Context, token SignUpToken) context.Context {
+	return context.WithValue(parent, signUpTokenKey{}, token)
 }
 
-// EmailSignupTokenFromContext retrieves the value associated with the
-// signupTokenKey key from the context.
-// It then type asserts the value to an EmailSignupToken and returns it. If the
-// value is not of type EmailSignupToken`, it returns nil
-func EmailSignupTokenFromContext(ctx context.Context) *EmailSignupToken {
-	token, _ := ctx.Value(signupTokenKey{}).(*EmailSignupToken)
+// EmailSignUpTokenFromContext retrieves the value associated with the
+// signUpTokenKey key from the context.
+// It then type asserts the value to an EmailSignUpToken and returns it. If the
+// value is not of type EmailSignUpToken, it returns nil
+func EmailSignUpTokenFromContext(ctx context.Context) *EmailSignUpToken {
+	token, _ := ctx.Value(signUpTokenKey{}).(*EmailSignUpToken)
 	return token
 }

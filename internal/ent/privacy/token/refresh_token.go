@@ -15,8 +15,8 @@ func (RefreshToken) GetContextKey() interface{} {
 	return refreshTokenKey{}
 }
 
-// NewContextWithrefreshToken returns a new context with the refresh token inside
-func NewContextWithrefreshToken(parent context.Context, loginSessionID string) context.Context {
+// NewContextWithRefreshToken returns a new context with the refresh token inside
+func NewContextWithRefreshToken(parent context.Context, loginSessionID string) context.Context {
 	return context.WithValue(parent, refreshTokenKey{}, &RefreshToken{
 		loginSessionID: loginSessionID,
 	})

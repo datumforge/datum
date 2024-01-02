@@ -18,6 +18,7 @@ func AllowMutationAfterApplyingOwnerFilter() privacy.MutationRule {
 	return privacy.FilterFunc(
 		func(ctx context.Context, f privacy.Filter) error {
 			v := viewer.FromContext(ctx)
+
 			ownerFilter, ok := f.(OwnerFilter)
 			if !ok {
 				return privacy.Deny
@@ -27,6 +28,7 @@ func AllowMutationAfterApplyingOwnerFilter() privacy.MutationRule {
 			if !exists {
 				return privacy.Skip
 			}
+
 			ownerFilter.WhereHasOwnerWith(user.ID(viewerID))
 			return privacy.Allowf("applied owner filter")
 		},

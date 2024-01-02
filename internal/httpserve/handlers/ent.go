@@ -7,19 +7,17 @@ import (
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
+	"github.com/datumforge/datum/internal/ent/generated/predicate"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
-	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 )
 
 func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
-	userCtx := viewer.NewContext(ctx, viewer.NewUserViewerFromID(id, true))
-
-	if _, err := transaction.FromContext(userCtx).User.Update().SetLastSeen(time.Now()).
-		Where(
-			user.ID(id),
-		).
+	if _, err := transaction.FromContext(ctx).
+		User.
+		UpdateOneID(id).
+		SetLastSeen(time.Now()).
 		Save(ctx); err != nil {
 		h.Logger.Errorw("error updating user last seen", "error", err)
 
@@ -155,7 +153,7 @@ func (h *Handler) getUserBySub(ctx context.Context, subject string) (*ent.User, 
 func (h *Handler) expireAllVerificationTokensUserByEmail(ctx context.Context, email string) error {
 	prs, err := transaction.FromContext(ctx).EmailVerificationToken.Query().WithOwner().Where(
 		emailverificationtoken.And(
-			emailverificationtoken.Email(email),
+			emailverificationtoken.HasOwnerWith(predicate.User(emailverificationtoken.Email(email))),
 			emailverificationtoken.TTLGT(time.Now()),
 		)).All(ctx)
 	if err != nil {

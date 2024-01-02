@@ -74,7 +74,7 @@ func HookUser() ent.Hook {
 
 			userCreated, ok := v.(*generated.User)
 			if !ok {
-				return nil, ErrInternalServerError
+				return nil, err
 			}
 
 			if mutation.Op().Is(ent.OpCreate) {
@@ -86,13 +86,13 @@ func HookUser() ent.Hook {
 						UpdateOneID(userCreated.ID).
 						SetSub(userCreated.Sub).
 						Save(ctx); err != nil {
-						return nil, ErrInternalServerError
+						return nil, err
 					}
 				}
 
 				// when a user is created, we create a personal user org
 				if err := createPersonalOrg(ctx, mutation.Client(), userCreated); err != nil {
-					return nil, ErrInternalServerError
+					return nil, err
 				}
 			}
 

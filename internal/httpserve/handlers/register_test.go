@@ -14,7 +14,6 @@ import (
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
-	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 )
 
 func TestRegisterHandler(t *testing.T) {

@@ -1,75 +1,75 @@
 extend type Query {
     """
-    Look up {{.Env.name}} by ID
+    Look up {{ .Name | ToLower }} by ID
     """
-     {{.Env.name}}(
+     {{ .Name}}(
         """
-        ID of the {{.Env.name}}
+        ID of the {{ .Name | ToLower }}
         """
         id: ID!
-    ):  {{.Env.object}}!
+    ):  {{ .Name }}!
 }
 
 extend type Mutation{
     """
-    Create a new {{.Env.name}}
+    Create a new {{ .Name | ToLower }}
     """
-    create{{.Env.object}}(
+    create{{ .Name }}(
         """
-        values of the {{.Env.name}}
+        values of the {{ .Name | ToLower }}
         """
-        input: Create{{.Env.object}}Input!
-    ): {{.Env.object}}CreatePayload!
+        input: Create{{ .Name }}Input!
+    ): {{ .Name }}CreatePayload!
     """
-    Update an existing {{.Env.name}}
+    Update an existing {{ .Name | ToLower }}
     """
-    update{{.Env.object}}(
+    update{{ .Name }}(
         """
-        ID of the {{.Env.name}}
-        """
-        id: ID!
-        """
-        New values for the {{.Env.name}}
-        """
-        input: Update{{.Env.object}}Input!
-    ): {{.Env.object}}UpdatePayload!
-    """
-    Delete an existing {{.Env.name}}
-    """
-    delete{{.Env.object}}(
-        """
-        ID of the {{.Env.name}}
+        ID of the {{ .Name | ToLower }} 
         """
         id: ID!
-    ): {{.Env.object}}DeletePayload!
+        """
+        New values for the {{ .Name | ToLower }}
+        """
+        input: Update{{ .Name }}Input!
+    ): {{ .Name }}UpdatePayload!
+    """
+    Delete an existing {{ .Name | ToLower}}
+    """
+    delete{{ .Name }}(
+        """
+        ID of the {{ .Name | ToLower }}
+        """
+        id: ID!
+    ): {{ .Name }}DeletePayload!
 }
 
 """
-Return response for create{{.Env.object}} mutation
+Return response for create{{ .Name }} mutation
 """
-type {{.Env.object}}CreatePayload {
+type {{ .Name }}CreatePayload {
     """
-    Created {{.Env.name}}
+    Created {{ .Name | ToLower }}
     """
-    {{.Env.name}}: {{.Env.object}}!
+    {{ .Name }}: {{ .Name }}!
 }
 
 """
-Return response for update{{.Env.object}} mutation
+Return response for update{{ .Name }} mutation
 """
-type {{.Env.object}}UpdatePayload {
+type {{ .Name }}UpdatePayload {
     """
-    Updated {{.Env.name}}
+    Updated {{ .Name | ToLower }}
     """
-    {{.Env.name}}: {{.Env.object}}!
+    {{ .Name }}: {{ .Name }}!
 }
 
 """
-Return response for delete{{.Env.object}} mutation
+Return response for delete{{ .Name }} mutation
 """
-type {{.Env.object}}DeletePayload {
+type {{ .Name }}DeletePayload {
     """
-    Deleted {{.Env.name}} ID
+    Deleted {{ .Name | ToLower }} ID
     """
     deletedID: ID!
 }

@@ -44,7 +44,7 @@ tasks:
   graph:
     desc: runs scripts/gen_graphql.sh to stub out files in the schema/ directory
     cmds:
-        - bash scripts/gen_graphql.sh
+        - SCHEMAGEN=true go generate ./...
   gqlgen:
     desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
     cmds:

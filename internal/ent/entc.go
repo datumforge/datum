@@ -8,6 +8,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
+	"strings"
+	"text/template"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/contrib/entoas"
@@ -21,7 +25,17 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 )
 
+var (
+	entSchemaDir   = "./internal/ent/schema/"
+	graphSchemaDir = "./schema/"
+)
+
 func main() {
+	check, _ := strconv.ParseBool(os.Getenv("SCHEMAGEN"))
+	if check {
+		generateSchemaFuncs()
+	}
+
 	xExt, err := entx.NewExtension(
 		entx.WithJSONScalar(),
 	)
@@ -118,5 +132,65 @@ func main() {
 			oas,
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
+	}
+}
+
+func generateSchemaFuncs() {
+	r, err := regexp.Compile("type ([a-zA-Z].*) struct")
+	if err != nil {
+		log.Fatalf("Unable to compile regex: %v", err)
+	}
+
+	skipFile, err := os.ReadFile("./scripts/files_to_skip.txt")
+	if err != nil {
+		log.Fatalf("Unable to read skip list: %v", err)
+	}
+
+	files, _ := os.ReadDir(entSchemaDir)
+	for _, f := range files {
+		skip, err := regexp.Match(f.Name(), skipFile)
+		if err != nil {
+			log.Fatalf("Unable to search file: %v", err)
+		}
+
+		if !skip {
+			if _, err := os.Stat(graphSchemaDir + strings.Split(f.Name(), ".")[0] + ".graphql"); os.IsNotExist(err) {
+				log.Printf("Generating schema %s\n", f.Name())
+
+				t, err := os.ReadFile(entSchemaDir + f.Name())
+				if err != nil {
+					log.Fatalf("Unable to read file: %v", err)
+				}
+
+				m := strings.Split(string(r.Find(t)), "")[1]
+
+				fm := template.FuncMap{
+					"ToLower": strings.ToLower,
+				}
+
+				tmpl, err := template.New("graph.tpl").Funcs(fm).ParseFiles("./scripts/templates/graph.tpl")
+				if err != nil {
+					log.Fatalf("Unable to parse template: %v", err)
+				}
+
+				file, err := os.Create(graphSchemaDir + strings.ToLower(m) + ".graphql")
+				if err != nil {
+					log.Fatalf("Unable to create file: %v", err)
+				}
+
+				s := struct {
+					Name string
+				}{
+					Name: m,
+				}
+
+				err = tmpl.Execute(file, s)
+				if err != nil {
+					log.Fatalf("Unable to execute template: %v", err)
+				}
+			} else {
+				log.Printf("Schema exists %s\n", f.Name())
+			}
+		}
 	}
 }

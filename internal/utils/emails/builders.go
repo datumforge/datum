@@ -292,13 +292,3 @@ func AttachJSON(message *mail.SGMailV3, data []byte, filename string) (err error
 func AttachCSV(message *mail.SGMailV3, data []byte, filename string) (err error) {
 	return AttachData(message, data, filename, "text/csv")
 }
-
-//func ToTitle(s string) string {
-//	a := []rune(s)
-//	for i, c := range a {
-//		a[i] = unicode.ToTitle(c)
-//	}
-//
-//	return string(a)
-//}
-//

@@ -73,9 +73,65 @@ func TestQuery_UserNoAuth(t *testing.T) {
 	}
 }
 
-func TestQuery_UsersNoAuth(t *testing.T) {
+func TestQuery_User(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClient(EntClient)
+
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
+	if err != nil {
+		t.Fatal()
+	}
+
+	echoContext := *ec
+
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+
+	user1 := (&UserBuilder{}).MustNew(reqCtx)
+
+	testCases := []struct {
+		name     string
+		queryID  string
+		expected *ent.User
+		errorMsg string
+	}{
+		{
+			name:     "happy path user",
+			queryID:  user1.ID,
+			expected: user1,
+		},
+		{
+			name:     "invalid-id",
+			queryID:  "tacos-for-dinner",
+			errorMsg: "user not found",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Get "+tc.name, func(t *testing.T) {
+			resp, err := client.GetUserByID(reqCtx, tc.queryID)
+
+			if tc.errorMsg != "" {
+				require.Error(t, err)
+				assert.ErrorContains(t, err, tc.errorMsg)
+				assert.Nil(t, resp)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			require.NotNil(t, resp.User)
+		})
+	}
+}
+
+func TestQuery_Users(t *testing.T) {
+	// Setup Test Graph Client
+	client := graphTestClient(EntClient)
 
 	sub := ulids.New().String()
 
@@ -100,8 +156,29 @@ func TestQuery_UsersNoAuth(t *testing.T) {
 		require.NotNil(t, resp)
 		require.NotNil(t, resp.Users.Edges)
 
-		// make sure at least two users are returned
-		assert.GreaterOrEqual(t, len(resp.Users.Edges), 2)
+		// make sure no users are returned because neither user is self
+		assert.Equal(t, len(resp.Users.Edges), 0)
+
+		// set new context with existing user id
+		ec, err := auth.NewTestContextWithValidUser(user1.ID)
+		if err != nil {
+			t.Fatal()
+		}
+
+		echoContext := *ec
+
+		reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+		echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+
+		resp, err = client.GetAllUsers(reqCtx)
+
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+		require.NotNil(t, resp.Users.Edges)
+
+		// only user that is making the request should be returned
+		assert.Equal(t, len(resp.Users.Edges), 1)
 
 		user1Found := false
 		user2Found := false
@@ -113,10 +190,31 @@ func TestQuery_UsersNoAuth(t *testing.T) {
 			}
 		}
 
-		// if one of the users isn't found, fail the test
-		if !user1Found || !user2Found {
-			t.Fail()
+		// only user 1 should be found
+		if !user1Found {
+			t.Errorf("user 1 was expected to be found but was not")
 		}
+
+		// user 2 should not be found
+		if user2Found {
+			t.Errorf("user 2 was not expected to be found but was returned")
+		}
+
+		// TODO: Add admin test that should be able to do a `GET` on all users
+		// user1Found := false
+		// user2Found := false
+		// for _, o := range resp.Users.Edges {
+		// 	if o.Node.ID == user1.ID {
+		// 		user1Found = true
+		// 	} else if o.Node.ID == user2.ID {
+		// 		user2Found = true
+		// 	}
+		// }
+
+		// // if one of the users isn't found, fail the test
+		// if !user1Found || !user2Found {
+		// 	t.Fail()
+		// }
 	})
 }
 
@@ -263,9 +361,152 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 	}
 }
 
+func TestMutation_CreateUser(t *testing.T) {
+	// Setup Test Graph Client
+	client := graphTestClient(EntClient)
+
+	// Setup echo context
+	sub := ulids.New().String()
+
+	ec, err := auth.NewTestContextWithValidUser(sub)
+	if err != nil {
+		t.Fatal()
+	}
+
+	echoContext := *ec
+
+	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
+
+	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+
+	displayName := gofakeit.LetterN(50)
+
+	weakPassword := "notsecure"
+	strongPassword := "my&supers3cr3tpassw0rd!"
+
+	testCases := []struct {
+		name      string
+		userInput datumclient.CreateUserInput
+		errorMsg  string
+	}{
+		{
+			name: "happy path user",
+			userInput: datumclient.CreateUserInput{
+				FirstName:   gofakeit.FirstName(),
+				LastName:    gofakeit.LastName(),
+				DisplayName: &displayName,
+				Email:       gofakeit.Email(),
+				Password:    &strongPassword,
+			},
+			errorMsg: "",
+		},
+		{
+			name: "no email",
+			userInput: datumclient.CreateUserInput{
+				FirstName:   gofakeit.FirstName(),
+				LastName:    gofakeit.LastName(),
+				DisplayName: &displayName,
+				Email:       "",
+			},
+			errorMsg: "mail: no address",
+		},
+		{
+			name: "no first name",
+			userInput: datumclient.CreateUserInput{
+				FirstName:   "",
+				LastName:    gofakeit.LastName(),
+				DisplayName: &displayName,
+				Email:       gofakeit.Email(),
+			},
+			errorMsg: "value is less than the required length",
+		},
+		{
+			name: "no last name",
+			userInput: datumclient.CreateUserInput{
+				FirstName:   gofakeit.FirstName(),
+				LastName:    "",
+				DisplayName: &displayName,
+				Email:       gofakeit.Email(),
+			},
+			errorMsg: "value is less than the required length",
+		},
+		{
+			name: "no display name, should default to email",
+			userInput: datumclient.CreateUserInput{
+				FirstName: gofakeit.FirstName(),
+				LastName:  gofakeit.LastName(),
+				Email:     gofakeit.Email(),
+			},
+			errorMsg: "",
+		},
+		{
+			name: "weak password",
+			userInput: datumclient.CreateUserInput{
+				FirstName: gofakeit.FirstName(),
+				LastName:  gofakeit.LastName(),
+				Email:     gofakeit.Email(),
+				Password:  &weakPassword,
+			},
+			errorMsg: auth.ErrPasswordTooWeak.Error(),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run("Create "+tc.name, func(t *testing.T) {
+			resp, err := client.CreateUser(reqCtx, tc.userInput)
+
+			if tc.errorMsg != "" {
+				require.Error(t, err)
+				assert.ErrorContains(t, err, tc.errorMsg)
+				assert.Nil(t, resp)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			require.NotNil(t, resp.CreateUser.User)
+
+			// Make sure provided values match
+			assert.Equal(t, tc.userInput.FirstName, resp.CreateUser.User.FirstName)
+			assert.Equal(t, tc.userInput.LastName, resp.CreateUser.User.LastName)
+			assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.Email)
+
+			// display name defaults to email if not provided
+			if tc.userInput.DisplayName == nil {
+				assert.Equal(t, tc.userInput.Email, resp.CreateUser.User.DisplayName)
+			} else {
+				assert.Equal(t, *tc.userInput.DisplayName, resp.CreateUser.User.DisplayName)
+			}
+
+			// ensure a user setting was created
+			assert.NotNil(t, resp.CreateUser.User.Setting)
+
+			// ensure personal org is created
+			personalOrg := true
+			whereInput := &datumclient.OrganizationWhereInput{
+				PersonalOrg: &personalOrg,
+			}
+
+			// TODO: update to pull by user once https://github.com/datumforge/datum/issues/293 is complete
+			orgs, err := client.OrganizationsWhere(reqCtx, whereInput)
+			require.NoError(t, err)
+
+			orgCreated := false
+			for _, o := range orgs.Organizations.GetEdges() {
+				if *o.Node.Description == fmt.Sprintf("Personal Organization - %s %s", resp.CreateUser.User.FirstName, resp.CreateUser.User.LastName) {
+					orgCreated = true
+				}
+			}
+
+			assert.True(t, orgCreated, "personal org expected to be created")
+		})
+	}
+}
+
 func TestMutation_UpdateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClient(EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -394,7 +635,7 @@ func TestMutation_UpdateUserNoAuth(t *testing.T) {
 
 func TestMutation_DeleteUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClient(EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -463,7 +704,7 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 }
 
 func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClient(EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 

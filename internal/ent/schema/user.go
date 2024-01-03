@@ -8,11 +8,14 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/entql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -184,8 +187,57 @@ func (User) Policy() ent.Policy {
 			),
 		},
 		Query: privacy.QueryPolicy{
-			// TODO: update, this should not be always allow
-			privacy.AlwaysAllowRule(),
+			// Required to verify tokens
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.VerifyToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.VerifyToken)
+					userFilter := filter.(*generated.UserFilter)
+					userFilter.WhereHasEmailVerificationTokensWith(emailverificationtoken.Token(actualToken.VerifyToken))
+				},
+			),
+			// Password reset paths
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.PasswordResetToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.PasswordResetToken)
+					userFilter := filter.(*generated.UserFilter)
+					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+				},
+			),
+			// Login path
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.LoginToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.LoginToken)
+					userFilter := filter.(*generated.UserFilter)
+					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+				},
+			),
+			// Register and Resend path
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.EmailSignUpToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.EmailSignUpToken)
+					userFilter := filter.(*generated.UserFilter)
+					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+				},
+			),
+			// Refresh path
+			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.RefreshToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.RefreshToken)
+					userFilter := filter.(*generated.UserFilter)
+					userFilter.WhereSub(entql.StringEQ(actualToken.Subject))
+				},
+			),
+			rule.DenyIfNoSubject(),
+			rule.AllowIfSelf(),
+			// TODO: come back and see about making a global admin type
+			// so admins can view all users
+			// rule.AllowIfAdmin(),
+			privacy.AlwaysDenyRule(),
 		},
 	}
 }

@@ -7,6 +7,7 @@ import (
 	echo "github.com/datumforge/echox"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
@@ -41,8 +42,11 @@ func (h *Handler) RefreshHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
+	// setup viewer context
+	ctxWithToken := token.NewContextWithRefreshToken(ctx.Request().Context(), claims.Subject)
+
 	// check user in the database, sub == claims subject and ensure only one record is returned
-	user, err := h.getUserBySub(ctx.Request().Context(), claims.Subject)
+	user, err := h.getUserBySub(ctxWithToken, claims.Subject)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			return ctx.JSON(http.StatusNotFound, ErrNoAuthUser)

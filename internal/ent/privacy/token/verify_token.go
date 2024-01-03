@@ -5,6 +5,7 @@ import "context"
 type (
 	VerifyToken struct {
 		PrivacyToken
+		// TODO: unexport this I think?
 		VerifyToken string
 	}
 

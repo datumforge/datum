@@ -11,6 +11,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // AuthStyle is the resolver for the authStyle field.
@@ -100,6 +101,13 @@ func (r *queryResolver) Sessions(ctx context.Context, after *entgql.Cursor[strin
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.UserOrder, where *generated.UserWhereInput) (*generated.UserConnection, error) {
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	} else {
+		// setup view context
+		ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+	}
+
 	return r.client.User.Query().Paginate(ctx, after, first, before, last, generated.WithUserOrder(orderBy), generated.WithUserFilter(where.Filter))
 }
 

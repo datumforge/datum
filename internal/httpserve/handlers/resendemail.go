@@ -41,7 +41,14 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
+	// set viewer context
+	privacyToken := token.EmailSignUpToken{
+		Email: in.Email,
+	}
+
+	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), &privacyToken)
+
+	entUser, err := h.getUserByEmail(ctxWithToken, in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 200 response even if user is not found to avoid
@@ -61,13 +68,6 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 		return ctx.JSON(http.StatusOK, out)
 	}
 
-	// setup viewer context
-	// TODO: move to middleware?
-	privacyToken := token.EmailSignUpToken{
-		Email: in.Email,
-	}
-
-	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), &privacyToken)
 	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
 
 	// create email verification token

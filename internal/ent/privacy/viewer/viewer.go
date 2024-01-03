@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 // ViewerContextKey is the context key for the viewer-context
@@ -43,6 +44,21 @@ func NewUserViewerFromID(id string, hasID bool) *UserViewer {
 	return &UserViewer{
 		id:    id,
 		hasID: hasID,
+	}
+}
+
+func NewUserViewerFromSubject(c context.Context) *UserViewer {
+	id, err := auth.GetUserIDFromContext(c)
+	if err != nil {
+		return &UserViewer{
+			id:    id,
+			hasID: false,
+		}
+	}
+
+	return &UserViewer{
+		id:    id,
+		hasID: true,
 	}
 }
 

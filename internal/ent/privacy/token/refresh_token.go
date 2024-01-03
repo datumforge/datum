@@ -5,7 +5,8 @@ import "context"
 type (
 	RefreshToken struct {
 		PrivacyToken
-		loginSessionID string
+		// TODO: unexport this I think?
+		Subject string
 	}
 
 	refreshTokenKey struct{}
@@ -16,9 +17,9 @@ func (RefreshToken) GetContextKey() interface{} {
 }
 
 // NewContextWithRefreshToken returns a new context with the refresh token inside
-func NewContextWithRefreshToken(parent context.Context, loginSessionID string) context.Context {
+func NewContextWithRefreshToken(parent context.Context, subject string) context.Context {
 	return context.WithValue(parent, refreshTokenKey{}, &RefreshToken{
-		loginSessionID: loginSessionID,
+		Subject: subject,
 	})
 }
 

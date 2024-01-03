@@ -21,6 +21,7 @@ func AllowIfContextHasPrivacyTokenOfType(emptyToken token.PrivacyToken) privacy.
 		if actualTokenType == expectedTokenType {
 			return privacy.Allow
 		}
+
 		return privacy.Skipf("no token found from context with type %T", emptyToken)
 	})
 }
@@ -42,6 +43,7 @@ func AllowAfterApplyingPrivacyTokenFilter(
 				applyFilter(actualToken.(token.PrivacyToken), filter)
 				return privacy.Allowf("applied privacy token filter")
 			}
+
 			return privacy.Skipf("no token found from context with type %T", emptyToken)
 		})
 }

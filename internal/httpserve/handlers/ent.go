@@ -89,7 +89,7 @@ func (h *Handler) createPasswordResetToken(ctx context.Context, user *User) (*en
 // getUserByEVToken returns the ent user with the user settings and email verification token fields based on the
 // token in the request
 func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User, error) {
-	user, err := transaction.FromContext(ctx).EmailVerificationToken.Query().WithOwner().
+	user, err := transaction.FromContext(ctx).EmailVerificationToken.Query().
 		Where(
 			emailverificationtoken.Token(token),
 		).

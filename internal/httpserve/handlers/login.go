@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
@@ -28,7 +29,7 @@ func (h *Handler) LoginHandler(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// Set context for further requests
+	// set context for remaining request based on logged in user
 	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(user.ID, true))
 
 	claims := createClaims(user)
@@ -76,8 +77,11 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 		return nil, ErrMissingRequiredFields
 	}
 
+	// Set context for further requests
+	ctxWithToken := token.NewContextWithPasswordResetToken(ctx.Request().Context(), l.Username)
+
 	// check user in the database, username == email and ensure only one record is returned
-	user, err := h.getUserByEmail(ctx.Request().Context(), l.Username)
+	user, err := h.getUserByEmail(ctxWithToken, l.Username)
 	if err != nil {
 		return nil, ErrNoAuthUser
 	}

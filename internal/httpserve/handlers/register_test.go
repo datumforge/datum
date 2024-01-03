@@ -144,7 +144,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus == http.StatusOK {
+			if tc.expectedStatus == http.StatusCreated {
 				assert.Equal(t, out.Email, tc.email)
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)

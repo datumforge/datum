@@ -21,8 +21,6 @@ import (
 
 func TestRegisterHandler(t *testing.T) {
 	h := handlerSetup(t)
-	sent := time.Now()
-	defer mock.ResetEmailMock()
 
 	testCases := []struct {
 		name               string
@@ -96,6 +94,9 @@ func TestRegisterHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			sent := time.Now()
+			defer mock.ResetEmailMock()
+
 			// create echo context with middleware
 			e := setupEcho(h.SM)
 
@@ -133,7 +134,6 @@ func TestRegisterHandler(t *testing.T) {
 					Timestamp: sent,
 				},
 			}
-			mock.CheckEmails(t, messages)
 
 			var out *handlers.RegisterReply
 
@@ -149,10 +149,20 @@ func TestRegisterHandler(t *testing.T) {
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)
 
+				// wait for messages
+				time.Sleep(1 * time.Second)
+
+				mock.CheckEmails(t, messages)
+
 				// cleanup after
 				EntClient.User.DeleteOneID(out.ID).ExecX(context.Background())
 			} else {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
+
+				// wait for messages
+				time.Sleep(1 * time.Second)
+
+				mock.CheckEmails(t, nil)
 			}
 		})
 	}

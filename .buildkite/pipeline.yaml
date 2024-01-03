@@ -29,10 +29,14 @@ steps:
             - "GOTOOLCHAIN=auto"
   - label: ":golang: go test"
     key: "go_test"
+    matrix:
+      - "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+      - "docker://postgres:16-alpine"
+      - "docker://postgres:15-alpine"
     plugins:
       - docker#v5.9.0:
           image: golang:1.21.5
-          command: ["go", "test", "-coverprofile=coverage.out","./..."]
+          command: ["TEST_DB_URL={{matrix}}", "go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
 
 

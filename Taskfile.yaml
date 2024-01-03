@@ -44,7 +44,7 @@ tasks:
   graph:
     desc: runs scripts/gen_graphql.sh to stub out files in the schema/ directory
     cmds:
-        - bash scripts/gen_graphql.sh
+        - SCHEMAGEN=true go generate ./...
   gqlgen:
     desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
     cmds:
@@ -90,13 +90,13 @@ tasks:
       - 'open "http://localhost:4000"'
       - rover dev -u http://localhost:17608/query -s schema.graphql -n datum --elv2-license=accept
   run-dev-auth:
-    dotenv: ['{{.ENV}}/.env.devauth']
+    dotenv: ['{{.ENV}}/.env-devauth']
     desc: runs the datum server with oidc enabled
     cmds:
     - task: compose:fga
     - go run main.go serve --debug --pretty
   run-dev:
-    dotenv: ['{{.ENV}}/.env.dev']
+    dotenv: ['{{.ENV}}/.env-dev']
     desc: runs the datum server with oidc disabled for easy local testing / querying
     cmds:
       - go run main.go serve  --debug --pretty

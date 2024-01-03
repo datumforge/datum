@@ -4,7 +4,7 @@ services:
     depends_on:
       - openfga
     env_file:
-      - ../config/.env.devauth
+      - ../config/.env-devauth
     environment:
       DATUM_AUTHZ_HOST: openfga:8080
     command:

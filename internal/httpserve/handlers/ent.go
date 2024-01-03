@@ -99,7 +99,7 @@ func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User
 	return user, nil
 }
 
-// getUserByEVToken returns the ent user with the user settings and email verification token fields based on the
+// getUserByResetToken returns the ent user with the user settings and email verification token fields based on the
 // token in the request
 func (h *Handler) getUserByResetToken(ctx context.Context, token string) (*ent.User, error) {
 	user, err := transaction.FromContext(ctx).PasswordResetToken.Query().WithOwner().
@@ -205,6 +205,7 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 	return nil
 }
 
+// updateUserPassword changes a user's password to a new dk hash value based on input
 func (h *Handler) updateUserPassword(ctx context.Context, id string, password string) error {
 	hash, err := passwd.CreateDerivedKey(password)
 	if err != nil {

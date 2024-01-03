@@ -109,7 +109,7 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 
 	if c.config.MultiWrite {
 		if !checkMultiwriteSupport(c.config.DriverName) {
-			return nil, fmt.Errorf("multiwrite is not supported for %s", c.config.DriverName)
+			return nil, newMultiwriteDriverError(c.config.DriverName)
 		}
 
 		c.secondaryDB, err = c.newEntDB(c.config.SecondaryDBSource)
@@ -197,7 +197,7 @@ func checkDialect(d string) (string, error) {
 	case "postgres":
 		return dialect.Postgres, nil
 	default:
-		return "", fmt.Errorf("unsupported dialect %s", d)
+		return "", newDialectError(d)
 	}
 }
 

@@ -110,7 +110,7 @@ func getTestDB(ctx context.Context, u string) (TC, error) {
 		container, uri, err := getPG(ctx, u)
 		return TC{Container: container, URI: uri, Dialect: dialect.Postgres}, err
 	default:
-		return TC{}, fmt.Errorf("invalid DB URI, uri: %s", u)
+		return TC{}, newURIError(u)
 	}
 }
 

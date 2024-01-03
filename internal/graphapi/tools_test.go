@@ -29,9 +29,8 @@ import (
 )
 
 var (
-	defaultDBURI = "file:ent?mode=memory&cache=shared&_fk=1"
-	EntClient    *ent.Client
-	DBContainer  *testutils.TC
+	EntClient   *ent.Client
+	DBContainer *testutils.TC
 )
 
 const (

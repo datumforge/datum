@@ -38,8 +38,8 @@ steps:
     plugins:
       - docker#v5.9.0:
           image: golang:1.21.5
-          command: ["go", "test", "-coverprofile=coverage.out","./..."]
-    artifact_paths: ["coverage.out"]
+          command: ["go", "test", "-coverprofile=coverage.out-{{matrix}}","./..."]
+    artifact_paths: ["coverage.out-{{matrix}}"]
 
 
   - label: ":auth0: fga model test"
@@ -71,7 +71,7 @@ steps:
       - artifacts#v1.9.2:
           download: "results.txt"
       - artifacts#v1.9.2:
-          download: "coverage.out"    
+          download: "coverage.out-sqlite*"    
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:4"
             environment:

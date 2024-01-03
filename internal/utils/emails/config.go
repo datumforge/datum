@@ -10,7 +10,6 @@ import (
 )
 
 // Config is a struct for sending emails via SendGrid and managing marketing contacts
-// TODO: migrate these configs into the default httpserve/config struct and add local yaml / viper configs
 type Config struct {
 	// SendGridAPIKey is the sendgrid API key
 	SendGridAPIKey string `split_words:"true" required:"false"`

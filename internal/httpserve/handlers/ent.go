@@ -10,6 +10,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
+	"github.com/datumforge/datum/internal/passwd"
 )
 
 func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
@@ -89,6 +90,23 @@ func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User
 			emailverificationtoken.Token(token),
 		).
 		QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
+	if err != nil {
+		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
+
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// getUserByEVToken returns the ent user with the user settings and email verification token fields based on the
+// token in the request
+func (h *Handler) getUserByResetToken(ctx context.Context, token string) (*ent.User, error) {
+	user, err := transaction.FromContext(ctx).PasswordResetToken.Query().WithOwner().
+		Where(
+			passwordresettoken.Token(token),
+		).
+		QueryOwner().WithSetting().WithResetTokens().Only(ctx)
 	if err != nil {
 		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
 
@@ -181,6 +199,23 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 		Where(
 			usersetting.ID(user.Edges.Setting.ID),
 		).Save(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h *Handler) updateUserPassword(ctx context.Context, id string, password string) error {
+	hash, err := passwd.CreateDerivedKey(password)
+	if err != nil {
+		return err
+	}
+
+	if _, err := transaction.FromContext(ctx).User.Update().SetPassword(hash).
+		Where(
+			user.ID(id),
+		).
+		Save(ctx); err != nil {
 		return err
 	}
 

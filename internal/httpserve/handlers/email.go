@@ -95,7 +95,6 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 }
 
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
-// TODO: implement handler to use this and send password reset email
 func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data := emails.ResetRequestData{
 		EmailData: emails.EmailData{

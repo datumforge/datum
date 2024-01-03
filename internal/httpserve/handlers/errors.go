@@ -52,6 +52,9 @@ var (
 	// ErrNoAuthUser is returned when the user couldn't be identified by the request
 	ErrNoAuthUser = errors.New("could not identify authenticated user in request")
 
+	// ErrPassWordResetTokenInvalid is returned when the provided token and secret do not match the stored
+	ErrPassWordResetTokenInvalid = errors.New("password reset token invalid")
+
 	unsuccessful = echo.HTTPError{}
 )
 

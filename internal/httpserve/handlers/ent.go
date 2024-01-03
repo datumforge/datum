@@ -99,16 +99,16 @@ func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User
 	return user, nil
 }
 
-// getUserByResetToken returns the ent user with the user settings and email verification token fields based on the
+// getUserByResetToken returns the ent user with the user settings and password reset tokens based on the
 // token in the request
 func (h *Handler) getUserByResetToken(ctx context.Context, token string) (*ent.User, error) {
-	user, err := transaction.FromContext(ctx).PasswordResetToken.Query().WithOwner().
+	user, err := transaction.FromContext(ctx).PasswordResetToken.Query().
 		Where(
 			passwordresettoken.Token(token),
 		).
 		QueryOwner().WithSetting().WithResetTokens().Only(ctx)
 	if err != nil {
-		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
+		h.Logger.Errorw("error obtaining user from reset token", "error", err)
 
 		return nil, err
 	}
@@ -212,11 +212,7 @@ func (h *Handler) updateUserPassword(ctx context.Context, id string, password st
 		return err
 	}
 
-	if _, err := transaction.FromContext(ctx).User.Update().SetPassword(hash).
-		Where(
-			user.ID(id),
-		).
-		Save(ctx); err != nil {
+	if _, err := transaction.FromContext(ctx).User.UpdateOneID(id).SetPassword(hash).Save(ctx); err != nil {
 		return err
 	}
 

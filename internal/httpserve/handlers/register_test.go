@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
@@ -14,12 +15,14 @@ import (
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
 
 func TestRegisterHandler(t *testing.T) {
 	h := handlerSetup(t)
-	//	sent := time.Now()
-	//	defer mock.ResetEmailMock()
+	sent := time.Now()
+	defer mock.ResetEmailMock()
 
 	testCases := []struct {
 		name               string
@@ -118,19 +121,19 @@ func TestRegisterHandler(t *testing.T) {
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
 
-			//			// Test that one verify email was sent to each user
-			//			messages := []*mock.EmailMetadata{
-			//				{
-			//					To:        "bananas@datum.net",
-			//					From:      h.SendGridConfig.FromEmail,
-			//					Subject:   emails.VerifyEmailRE,
-			//					Timestamp: sent,
-			//				},
-			//			}
-			//			mock.CheckEmails(t, messages)
-
 			res := recorder.Result()
 			defer res.Body.Close()
+
+			// Test that one verify email was sent to each user
+			messages := []*mock.EmailMetadata{
+				{
+					To:        "bananas@datum.net",
+					From:      h.SendGridConfig.FromEmail,
+					Subject:   emails.VerifyEmailRE,
+					Timestamp: sent,
+				},
+			}
+			mock.CheckEmails(t, messages)
 
 			var out *handlers.RegisterReply
 

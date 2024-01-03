@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/url"
+	"path/filepath"
 
 	"github.com/kelseyhightower/envconfig"
 
@@ -42,6 +43,7 @@ func (h *Handler) NewTestEmailManager() error {
 	}
 
 	h.SendGridConfig.Testing = true
+	h.SendGridConfig.Archive = filepath.Join("fixtures", "emails")
 
 	h.emailManager, err = emails.New(h.SendGridConfig)
 	if err != nil {

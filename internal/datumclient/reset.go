@@ -14,9 +14,9 @@ import (
 )
 
 // Reset a user password
-func Reset(c *Client, ctx context.Context, r handlers.RegisterRequest) (*handlers.ResetPasswordReply, error) {
+func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*handlers.ResetPasswordReply, error) {
 	method := http.MethodPost
-	endpoint := "eset-password"
+	endpoint := "reset-password"
 
 	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
 
@@ -44,7 +44,6 @@ func Reset(c *Client, ctx context.Context, r handlers.RegisterRequest) (*handler
 
 	defer resp.Body.Close()
 
-	//	out := handlers.ResetPasswordReply{}
 	out := handlers.ResetPasswordReply{
 		Message: "password reset successfully",
 	}
@@ -57,5 +56,5 @@ func Reset(c *Client, ctx context.Context, r handlers.RegisterRequest) (*handler
 		return nil, newRegistrationError(resp.StatusCode, out.Message)
 	}
 
-	return &out, err
+	return ctx.NoContent(http.StatusNoContent)
 }

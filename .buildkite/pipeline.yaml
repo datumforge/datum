@@ -38,7 +38,7 @@ steps:
     plugins:
       - docker#v5.9.0:
           image: golang:1.21.5
-          command: ["go", "test", "-coverprofile=coverage.out-{{matrix}}","./..."]
+          command: ["go", "test", "-coverprofile=coverage.out-$$TEST_DB_URL","./..."]
     artifact_paths: ["coverage.out-{{matrix}}"]
 
 

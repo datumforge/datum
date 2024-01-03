@@ -27,18 +27,26 @@ steps:
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
             - "GOTOOLCHAIN=auto"
+  - label: ":golang: go test - sqlite"
+    key: "go_test_sqlite"
+    env:
+      TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+    plugins:
+      - docker#v5.9.0:
+          image: golang:1.21.5
+          command: ["go", "test", "-coverprofile=coverage.out","./..."]
+    artifact_paths: ["coverage.out-sqlite"]
   - label: ":golang: go test - {{matrix}}"
     key: "go_test"
     env:
       TEST_DB_URL: "{{matrix}}"
     matrix:
-      - "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
       - "docker://postgres:16-alpine"
       - "docker://postgres:15-alpine"
     plugins:
       - docker#v5.9.0:
           image: golang:1.21.5
-          command: ["go", "test", "-coverprofile=coverage.out-$$TEST_DB_URL","./..."]
+          command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out-{{matrix}}"]
 
 
@@ -66,12 +74,13 @@ steps:
   - label: ":github: upload fork PR reports"
     key: "scan-upload-pr"
     if: build.pull_request.id != null
-    depends_on: ["gosec", "go_test"]
+    depends_on: ["gosec", "go_test_sqlite"]
     plugins:
       - artifacts#v1.9.2:
           download: "results.txt"
       - artifacts#v1.9.2:
-          download: "coverage.out-sqlite*"    
+          download: "coverage.out"
+          step: "go_test_sqlite"    
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:4"
             environment:
@@ -82,12 +91,13 @@ steps:
   - label: ":github: upload reports"
     key: "scan-upload"
     if: build.branch == "main"
-    depends_on: ["gosec", "go_test"]
+    depends_on: ["gosec", "go_test_sqlite"]
     plugins:
       - artifacts#v1.9.2:
           download: results.txt
       - artifacts#v1.9.2:
           download: coverage.out
+          step: "go_test_sqlite"
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:4"
             environment:

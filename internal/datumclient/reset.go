@@ -14,11 +14,11 @@ import (
 )
 
 // Reset a user password
-func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*handlers.ResetPasswordReply, error) {
+func Reset(c *Client, ctx context.Context, r handlers.ResetPassword) (*handlers.ResetPasswordReply, error) {
 	method := http.MethodPost
 	endpoint := "reset-password"
 
-	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
+	u := fmt.Sprintf("%s%s/%s?token=%s", c.Client.BaseURL, route.V1Version, endpoint, r.Token)
 
 	queryURL, err := url.Parse(u)
 	if err != nil {
@@ -45,13 +45,16 @@ func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*ha
 	defer resp.Body.Close()
 
 	out := handlers.ResetPasswordReply{}
-	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
-		return nil, err
-	}
 
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusNoContent {
+		if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+			return nil, err
+		}
+
 		return nil, newRegistrationError(resp.StatusCode, out.Message)
 	}
+
+	out.Message = "success"
 
 	return &out, err
 }

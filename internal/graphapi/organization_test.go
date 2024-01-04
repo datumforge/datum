@@ -31,7 +31,7 @@ func TestQuery_Organization(t *testing.T) {
 	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient(entClient)
+	client := graphTestClient(t, entClient)
 
 	sub := ulids.New().String()
 
@@ -101,7 +101,7 @@ func TestQuery_Organization(t *testing.T) {
 
 func TestQuery_OrganizationsNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -154,7 +154,7 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient(entClient)
+	client := graphTestClient(t, entClient)
 
 	sub := ulids.New().String()
 
@@ -229,7 +229,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient(entClient)
+	client := graphTestClient(t, entClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -395,7 +395,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -489,7 +489,7 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient(entClient)
+	client := graphTestClient(t, entClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -608,7 +608,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient(entClient)
+	client := graphTestClient(t, entClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -714,7 +714,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 }
 
 func TestMutation_OrganizationCascadeDelete(t *testing.T) {
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -773,7 +773,7 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 	defer entClient.Close()
 
 	// Setup Test Graph Client
-	client := graphTestClient(entClient)
+	client := graphTestClient(t, entClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -804,7 +804,7 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 		require.Empty(t, resp)
 
 		// Make sure the org was not added to the database (check without auth)
-		clientNoAuth := graphTestClientNoAuth(EntClient)
+		clientNoAuth := graphTestClientNoAuth(t, EntClient)
 
 		ec := echocontext.NewTestEchoContext()
 

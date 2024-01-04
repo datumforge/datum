@@ -20,7 +20,7 @@ import (
 
 func TestQuery_UserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	sub := ulids.New().String()
 
@@ -76,7 +76,7 @@ func TestQuery_UserNoAuth(t *testing.T) {
 
 func TestQuery_User(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClient(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -144,7 +144,7 @@ func TestQuery_User(t *testing.T) {
 
 func TestQuery_Users(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClient(t, EntClient)
 
 	sub := ulids.New().String()
 
@@ -229,7 +229,7 @@ func TestQuery_Users(t *testing.T) {
 
 func TestMutation_CreateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -366,7 +366,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 
 func TestMutation_CreateUser(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClient(t, EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -522,7 +522,7 @@ func TestMutation_CreateUser(t *testing.T) {
 
 func TestMutation_UpdateUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	// Setup echo context
 	sub := ulids.New().String()
@@ -649,7 +649,7 @@ func TestMutation_UpdateUserNoAuth(t *testing.T) {
 
 func TestMutation_UpdateUser(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClient(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 
@@ -782,7 +782,7 @@ func TestMutation_UpdateUser(t *testing.T) {
 
 func TestMutation_DeleteUserNoAuth(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	// Setup echo context
 	ec := echocontext.NewTestEchoContext()
@@ -845,7 +845,7 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 
 func TestMutation_DeleteUser(t *testing.T) {
 	// Setup Test Graph Client
-	client := graphTestClient(EntClient)
+	client := graphTestClient(t, EntClient)
 
 	// Setup echo context
 	ec := echocontext.NewTestEchoContext()
@@ -917,7 +917,7 @@ func TestMutation_DeleteUser(t *testing.T) {
 }
 
 func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
-	client := graphTestClientNoAuth(EntClient)
+	client := graphTestClientNoAuth(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext()
 

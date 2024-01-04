@@ -18,6 +18,7 @@ import (
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -137,10 +138,12 @@ type graphClient struct {
 	httpClient *http.Client
 }
 
-func graphTestClient(c *ent.Client) datumclient.DatumClient {
+func graphTestClient(t *testing.T, c *ent.Client) datumclient.DatumClient {
+	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
+
 	srv := handler.NewDefaultServer(
 		graphapi.NewExecutableSchema(
-			graphapi.Config{Resolvers: graphapi.NewResolver(c, true).WithLogger(zap.NewNop().Sugar())},
+			graphapi.Config{Resolvers: graphapi.NewResolver(c, true).WithLogger(logger)},
 		))
 
 	graphapi.WithTransactions(srv, c)
@@ -161,10 +164,12 @@ func graphTestClient(c *ent.Client) datumclient.DatumClient {
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }
 
-func graphTestClientNoAuth(c *ent.Client) datumclient.DatumClient {
+func graphTestClientNoAuth(t *testing.T, c *ent.Client) datumclient.DatumClient {
+	logger := zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar()
+
 	srv := handler.NewDefaultServer(
 		graphapi.NewExecutableSchema(
-			graphapi.Config{Resolvers: graphapi.NewResolver(c, false).WithLogger(zap.NewNop().Sugar())},
+			graphapi.Config{Resolvers: graphapi.NewResolver(c, false).WithLogger(logger)},
 		))
 
 	graphapi.WithTransactions(srv, c)

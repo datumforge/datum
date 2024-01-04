@@ -51,7 +51,7 @@ func Reset(c *Client, ctx context.Context, r handlers.ResetPassword) (*handlers.
 			return nil, err
 		}
 
-		return nil, newRegistrationError(resp.StatusCode, out.Message)
+		return nil, newRequestError(resp.StatusCode, out.Message)
 	}
 
 	out.Message = "success"

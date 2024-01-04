@@ -32,6 +32,7 @@ func TestResetPassword(t *testing.T) {
 		email                string
 		newPassword          string
 		tokenSet             bool
+		badToken             bool
 		ttl                  string
 		emailExpected        bool
 		expectedEmailSubject string
@@ -47,6 +48,16 @@ func TestResetPassword(t *testing.T) {
 			expectedEmailSubject: emails.PasswordResetSuccessRE,
 			expectedResp:         emptyResponse,
 			expectedStatus:       http.StatusNoContent,
+		},
+		{
+			name:           "bad token (user not found)",
+			email:          "eventure@datum.net",
+			tokenSet:       true,
+			badToken:       true,
+			newPassword:    "6z9Fqc-E-9v32NsJzLNU",
+			emailExpected:  false,
+			expectedResp:   "password reset token invalid",
+			expectedStatus: http.StatusBadRequest,
 		},
 		{
 			name:           "weak password",
@@ -78,7 +89,7 @@ func TestResetPassword(t *testing.T) {
 		{
 			name:                 "expired reset token",
 			email:                "tensoon@datum.net",
-			newPassword:          "6z9Fqc-E-9v32NsJzLNU",
+			newPassword:          "6z9Fqc-E-9v32NsJzLNP",
 			tokenSet:             true,
 			emailExpected:        true,
 			expectedEmailSubject: emails.PasswordResetRequestRE,
@@ -140,6 +151,7 @@ func TestResetPassword(t *testing.T) {
 				SetTTL(ttl).
 				SaveX(ec)
 
+			// setup request request
 			e.POST("reset-password", h.ResetPassword)
 
 			pwResetJSON := handlers.ResetPasswordRequest{
@@ -153,19 +165,27 @@ func TestResetPassword(t *testing.T) {
 
 			target := "/reset-password"
 			if tc.tokenSet {
-				target = fmt.Sprintf("%s?token=%s", target, rt.Token)
+				token := rt.Token
+				if tc.badToken {
+					token = "thisisnotavalidtoken"
+				}
+
+				target = fmt.Sprintf("%s?token=%s", target, token)
 			}
 
 			req := httptest.NewRequest(http.MethodPost, target, strings.NewReader(string(body)))
+
 			// Set writer for tests that write on the response
 			recorder := httptest.NewRecorder()
 
 			// Using the ServerHTTP on echo will trigger the router and middleware
 			e.ServeHTTP(recorder, req)
 
+			// get result
 			res := recorder.Result()
 			defer res.Body.Close()
 
+			// check status
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
 			if tc.expectedStatus != http.StatusNoContent {

@@ -30,6 +30,10 @@ var (
 	// commonly used vars in tests
 	emptyResponse = "null\n"
 	validPassword = "sup3rs3cu7e!"
+
+	// mock email send settings
+	maxWaitInMillis      = 2000
+	pollIntervalInMillis = 50
 )
 
 func TestMain(m *testing.M) {

@@ -204,7 +204,7 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 	return nil
 }
 
-// updateUserPassword changes a user's password to a new dk hash value based on input
+// updateUserPassword changes a updates a user's password in the database
 func (h *Handler) updateUserPassword(ctx context.Context, id string, password string) error {
 	if _, err := transaction.FromContext(ctx).User.UpdateOneID(id).SetPassword(password).Save(ctx); err != nil {
 		return err

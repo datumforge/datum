@@ -31,6 +31,8 @@ type ResetPassword struct {
 	Token    string
 }
 
+// ResetPasswordReply is the response returned from a non-successful password reset request
+// on success, no content is returned (204)
 type ResetPasswordReply struct {
 	Message string `json:"message"`
 }
@@ -63,11 +65,11 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	// lookup user from db based on provided token
 	entUser, err := h.getUserByResetToken(ctx.Request().Context(), rp.Token)
 	if err != nil {
-		if generated.IsNotFound(err) {
-			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
-		}
-
 		h.Logger.Errorf("error retrieving user token", "error", err)
+
+		if generated.IsNotFound(err) {
+			return ctx.JSON(http.StatusBadRequest, ErrorResponse(ErrPassWordResetTokenInvalid))
+		}
 
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrUnableToVerifyEmail))
 	}
@@ -184,5 +186,8 @@ func (u *User) setResetTokens(user *generated.User, reqToken string) error {
 		}
 	}
 
-	return ErrNotFound
+	// This should only happen on a race condition with two request
+	// otherwise, since we get the user by the token, it should always
+	// be there
+	return ErrPassWordResetTokenInvalid
 }

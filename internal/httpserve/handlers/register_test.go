@@ -20,11 +20,6 @@ import (
 	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
 
-var (
-	maxWaitInMillis      = 500
-	pollIntervalInMillis = 20
-)
-
 func TestRegisterHandler(t *testing.T) {
 	h := handlerSetup(t)
 

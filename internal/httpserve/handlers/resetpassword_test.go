@@ -58,6 +58,15 @@ func TestResetPassword(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
+			name:           "same password",
+			email:          "sventure@datum.net",
+			tokenSet:       true,
+			newPassword:    validPassword,
+			emailExpected:  false,
+			expectedResp:   "password was already used",
+			expectedStatus: http.StatusBadRequest,
+		},
+		{
 			name:           "missing token",
 			email:          "dockson@datum.net",
 			tokenSet:       false,

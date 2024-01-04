@@ -46,6 +46,7 @@ var (
 	ErrExpiredCredentials = errors.New("datum credentials have expired")
 	ErrPasswordMismatch   = errors.New("passwords do not match")
 	ErrPasswordTooWeak    = errors.New("password is too weak: use a combination of upper and lower case letters, numbers, and special characters")
+	ErrNonUniquePassword  = errors.New("password was already used, please try again")
 	ErrMissingID          = errors.New("missing required id")
 	ErrMissingField       = errors.New("missing required field")
 	ErrInvalidField       = errors.New("invalid or unparsable field")

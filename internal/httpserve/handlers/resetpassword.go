@@ -123,6 +123,12 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
+	// make sure its not the same password as current
+	valid, err := passwd.VerifyDerivedKey(*entUser.Password, rp.Password)
+	if err != nil || valid {
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(auth.ErrNonUniquePassword))
+	}
+
 	if err := h.updateUserPassword(ctx.Request().Context(), entUser.ID, rp.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)
 

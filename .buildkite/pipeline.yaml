@@ -35,7 +35,7 @@ steps:
       - docker#v5.9.0:
           image: golang:1.21.5
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
-    artifact_paths: ["coverage.out-sqlite"]
+    artifact_paths: ["coverage.out"]
   - label: ":golang: go test - {{matrix}}"
     key: "go_test"
     env:

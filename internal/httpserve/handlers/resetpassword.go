@@ -105,21 +105,14 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
 	}
 
-	// Verify the token with the stored secret
+	// Verify the token is valid with the stored secret
 	if err = token.Verify(user.GetPasswordResetToken(), user.PasswordResetSecret); err != nil {
 		if errors.Is(err, tokens.ErrTokenExpired) {
-			_, err := h.storeAndSendPasswordResetToken(ctx.Request().Context(), user)
-			if err != nil {
-				h.Logger.Errorw("unable to resend password reset", "error", err)
-
-				return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
-			}
-
 			out := &Response{
-				Message: "reset token is expired, a new token has been issued. Please check your email try again.",
+				Message: "reset token is expired, please request a new token using forgot-password",
 			}
 
-			return ctx.JSON(http.StatusCreated, out)
+			return ctx.JSON(http.StatusBadRequest, out)
 		}
 
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))

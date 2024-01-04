@@ -87,15 +87,14 @@ func TestResetPassword(t *testing.T) {
 			expectedStatus: http.StatusBadRequest,
 		},
 		{
-			name:                 "expired reset token",
-			email:                "tensoon@datum.net",
-			newPassword:          "6z9Fqc-E-9v32NsJzLNP",
-			tokenSet:             true,
-			emailExpected:        true,
-			expectedEmailSubject: emails.PasswordResetRequestRE,
-			ttl:                  "1987-08-16T03:04:11.169086-07:00",
-			expectedResp:         "reset token is expired, a new token has been issued. Please check your email try again.",
-			expectedStatus:       http.StatusCreated,
+			name:           "expired reset token",
+			email:          "tensoon@datum.net",
+			newPassword:    "6z9Fqc-E-9v32NsJzLNP",
+			tokenSet:       true,
+			emailExpected:  false,
+			ttl:            "1987-08-16T03:04:11.169086-07:00",
+			expectedResp:   "reset token is expired, please request a new token using forgot-password",
+			expectedStatus: http.StatusBadRequest,
 		},
 	}
 

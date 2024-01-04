@@ -56,6 +56,7 @@ Thumbs.db
 results.txt
 
 *.mime
+*.mim
 
 # Configs
 *.env

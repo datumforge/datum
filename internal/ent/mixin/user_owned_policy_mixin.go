@@ -20,6 +20,7 @@ type (
 	}
 )
 
+// Policy sets the policy for updating owned fields by the user
 func (mixin UserOwnedMutationPolicyMixin) Policy() ent.Policy {
 	return privacy.Policy{
 		Mutation: privacy.MutationPolicy{
@@ -43,6 +44,7 @@ func (mixin UserOwnedMutationPolicyMixin) Policy() ent.Policy {
 	}
 }
 
+// Policy sets the policy for querying owned fields by the user
 func (mixin UserOwnedQueryPolicyMixin) Policy() ent.Policy {
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{

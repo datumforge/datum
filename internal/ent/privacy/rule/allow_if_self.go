@@ -9,7 +9,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
-// AllowIfSelf determines whether a query or mutation operation should be allowed based on whether the requested data is the viewer
+// AllowIfSelf determines whether a query or mutation operation should be allowed based on whether the requested data is for the viewer
 func AllowIfSelf() privacy.QueryMutationRule {
 	return privacy.FilterFunc(func(ctx context.Context, f privacy.Filter) error {
 		type UserFilter interface {

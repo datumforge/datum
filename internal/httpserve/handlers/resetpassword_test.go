@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
@@ -33,7 +35,7 @@ func TestResetPassword(t *testing.T) {
 		email                string
 		newPassword          string
 		tokenSet             bool
-		badToken             bool
+		tokenProvided        string
 		ttl                  string
 		emailExpected        bool
 		expectedEmailSubject string
@@ -54,7 +56,7 @@ func TestResetPassword(t *testing.T) {
 			name:           "bad token (user not found)",
 			email:          "eventure@datum.net",
 			tokenSet:       true,
-			badToken:       true,
+			tokenProvided:  "thisisnotavalidtoken",
 			newPassword:    "6z9Fqc-E-9v32NsJzLNU",
 			emailExpected:  false,
 			expectedResp:   "password reset token invalid",
@@ -108,50 +110,8 @@ func TestResetPassword(t *testing.T) {
 			e := setupEcho(h.SM)
 
 			// create user in the database
-			ctx := privacy.DecisionContext(ec, privacy.Allow)
-
-			userSetting := EntClient.UserSetting.Create().
-				SetEmailConfirmed(true).
-				SaveX(ctx)
-
-			u := EntClient.User.Create().
-				SetFirstName(gofakeit.FirstName()).
-				SetLastName(gofakeit.LastName()).
-				SetEmail(tc.email).
-				SetPassword(validPassword).
-				SetSetting(userSetting).
-				SaveX(ctx)
-
-			user := handlers.User{
-				FirstName: u.FirstName,
-				LastName:  u.LastName,
-				Email:     u.Email,
-				ID:        u.ID,
-			}
-
-			// create token
-			if err := user.CreatePasswordResetToken(); err != nil {
-				require.NoError(t, err)
-			}
-
-			// set expiry if provided in test case
-			if tc.ttl != "" {
-				user.PasswordResetExpires.String = tc.ttl
-			}
-
-			ttl, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
-			if err != nil {
-				require.NoError(t, err)
-			}
-
-			// store token in db
-			rt := EntClient.PasswordResetToken.Create().
-				SetOwner(u).
-				SetToken(user.PasswordResetToken.String).
-				SetEmail(user.Email).
-				SetSecret(user.PasswordResetSecret).
-				SetTTL(ttl).
-				SaveX(ec)
+			rt, userID, err := createUserWithResetToken(ec, tc.email, tc.ttl)
+			require.NoError(t, err)
 
 			// setup request request
 			e.POST("reset-password", h.ResetPassword)
@@ -168,8 +128,8 @@ func TestResetPassword(t *testing.T) {
 			target := "/reset-password"
 			if tc.tokenSet {
 				token := rt.Token
-				if tc.badToken {
-					token = "thisisnotavalidtoken"
+				if tc.tokenProvided != "" {
+					token = tc.tokenProvided
 				}
 
 				target = fmt.Sprintf("%s?token=%s", target, token)
@@ -228,7 +188,56 @@ func TestResetPassword(t *testing.T) {
 			}
 
 			// cleanup after
-			EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
+			ctx := privacy.DecisionContext(ec, privacy.Allow)
+			EntClient.User.DeleteOneID(userID).ExecX(ctx)
 		})
 	}
+}
+
+// createUserWithResetToken creates a user with a valid reset token and returns the token, user id, and error if one occurred
+func createUserWithResetToken(ec context.Context, email string, ttl string) (*ent.PasswordResetToken, string, error) {
+	ctx := privacy.DecisionContext(ec, privacy.Allow)
+
+	userSetting := EntClient.UserSetting.Create().
+		SetEmailConfirmed(true).
+		SaveX(ctx)
+
+	u := EntClient.User.Create().
+		SetFirstName(gofakeit.FirstName()).
+		SetLastName(gofakeit.LastName()).
+		SetEmail(email).
+		SetPassword(validPassword).
+		SetSetting(userSetting).
+		SaveX(ctx)
+
+	user := handlers.User{
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		ID:        u.ID,
+	}
+
+	// create token
+	if err := user.CreatePasswordResetToken(); err != nil {
+		return nil, "", err
+	}
+
+	// set expiry if provided in test case
+	if ttl != "" {
+		user.PasswordResetExpires.String = ttl
+	}
+
+	exp, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
+	if err != nil {
+		return nil, "", err
+	}
+
+	// store token in db
+	return EntClient.PasswordResetToken.Create().
+		SetOwner(u).
+		SetToken(user.PasswordResetToken.String).
+		SetEmail(user.Email).
+		SetSecret(user.PasswordResetSecret).
+		SetTTL(exp).
+		SaveX(ec), user.ID, nil
 }

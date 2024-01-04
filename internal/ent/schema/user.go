@@ -169,7 +169,7 @@ func (User) Policy() ent.Policy {
 					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
 					rule.AllowIfOwnedByViewer(),
-					rule.AllowIfAdmin(),
+					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 					privacy.AlwaysDenyRule(),
 				},
 				// the user hook has update operations on user create so we need to allow email token sign up for update
@@ -181,7 +181,7 @@ func (User) Policy() ent.Policy {
 					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
 					rule.AllowIfOwnedByViewer(),
-					rule.AllowIfAdmin(),
+					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 					privacy.AlwaysDenyRule(),
 				},
 				ent.OpUpdateOne|ent.OpUpdate|ent.OpDeleteOne|ent.OpDelete,
@@ -197,7 +197,7 @@ func (User) Policy() ent.Policy {
 					userFilter.WhereHasEmailVerificationTokensWith(emailverificationtoken.Token(actualToken.VerifyToken))
 				},
 			),
-			// Password reset paths
+			// Forgot password path
 			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.ForgotPasswordToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
@@ -206,6 +206,7 @@ func (User) Policy() ent.Policy {
 					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
 				},
 			),
+			// Reset password path
 			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.PasswordResetToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
@@ -243,9 +244,7 @@ func (User) Policy() ent.Policy {
 			),
 			rule.DenyIfNoSubject(),
 			rule.AllowIfSelf(),
-			// TODO: come back and see about making a global admin type
-			// so admins can view all users
-			// rule.AllowIfAdmin(),
+			// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 			privacy.AlwaysDenyRule(),
 		},
 	}

@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"errors"
-	"fmt"
 	"net/mail"
 
 	"entgo.io/contrib/entgql"
@@ -92,29 +90,10 @@ func (EmailVerificationToken) Hooks() []ent.Hook {
 	}
 }
 
+// Policy of the EmailVerificationToken
 func (EmailVerificationToken) Policy() ent.Policy {
-	emailGetter := func(mutation generated.Mutation) (email string, err error) {
-		type EmailVerificationTokenMutation interface {
-			Email() (email string, exists bool)
-		}
-
-		emailVerificationTokenMutation, ok := mutation.(EmailVerificationTokenMutation)
-
-		if !ok {
-			return "", fmt.Errorf("unexpected mutation type %T", mutation) // nolint: goerr113
-		}
-
-		email, exists := emailVerificationTokenMutation.Email()
-		if !exists {
-			return "", errors.New("email is not set") // nolint: goerr113
-		}
-
-		return email, nil
-	}
-
 	return privacy.Policy{
 		Query: privacy.QueryPolicy{
-			rule.AllowIfAdmin(),
 			rule.AllowIfOwnedByViewer(),
 			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.LoginToken{},
@@ -147,7 +126,6 @@ func (EmailVerificationToken) Policy() ent.Policy {
 				privacy.MutationPolicy{
 					rule.AllowIfAdmin(),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignUpToken{}),
-					rule.AllowMutationIfContextHasValidEmailSignUpToken(emailGetter),
 					privacy.AlwaysDenyRule(),
 				},
 				ent.OpCreate,

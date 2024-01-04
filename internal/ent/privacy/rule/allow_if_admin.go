@@ -8,6 +8,7 @@ import (
 )
 
 // AllowIfAdmin is used to determine whether a query or mutation should be allowed or skipped based on the user's admin status
+// TODO: implement setting admin, this will currently always return a skip
 func AllowIfAdmin() privacy.QueryMutationRule {
 	return privacy.ContextQueryMutationRule(func(ctx context.Context) error {
 		v := viewer.FromContext(ctx)

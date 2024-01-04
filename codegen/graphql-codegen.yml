@@ -3,6 +3,7 @@
 #    - prettier --write
 config:
   strict: true
+  useTypeImports: true
   maybeValue: T | null
   declarationKind: interface
   avoidOptionals: true
@@ -29,6 +30,8 @@ generates:
     plugins:
       - typescript
       - typescript-operations
-      - typescript-resolvers
+      - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
+      - typescript-graphql-request
+      - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
       - add:
           content: '/* eslint-disable */'

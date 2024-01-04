@@ -1,5 +1,8 @@
 /* eslint-disable */
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import type { GraphQLClient } from 'graphql-request';
+import type { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
+import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -3979,3 +3982,776 @@ export type DirectiveResolvers<ContextType = any> = {
   goField: GoFieldDirectiveResolver<any, any, ContextType>;
   goModel: GoModelDirectiveResolver<any, any, ContextType>;
 };
+
+
+export const GetGroupByIdDocument = gql`
+    query GetGroupByID($groupId: ID!) {
+  group(id: $groupId) {
+    id
+    name
+    description
+    displayName
+    owner {
+      id
+    }
+    logoURL
+    users {
+      id
+      displayName
+      email
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      visibility
+      joinPolicy
+      syncToSlack
+      syncToGithub
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+export const GroupsWhereDocument = gql`
+    query GroupsWhere($where: GroupWhereInput) {
+  groups(where: $where) {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        owner {
+          id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+    `;
+export const GetAllGroupsDocument = gql`
+    query GetAllGroups {
+  groups {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        owner {
+          id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+    `;
+export const CreateGroupDocument = gql`
+    mutation CreateGroup($input: CreateGroupInput!) {
+  createGroup(input: $input) {
+    group {
+      id
+      name
+      description
+      displayName
+      owner {
+        id
+      }
+      logoURL
+      users {
+        id
+        displayName
+        email
+      }
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        syncToSlack
+        syncToGithub
+        tags
+      }
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+    `;
+export const UpdateGroupDocument = gql`
+    mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
+  updateGroup(id: $updateGroupId, input: $input) {
+    group {
+      id
+      name
+      displayName
+      description
+      updatedAt
+      updatedBy
+    }
+  }
+}
+    `;
+export const DeleteGroupDocument = gql`
+    mutation DeleteGroup($deleteGroupId: ID!) {
+  deleteGroup(id: $deleteGroupId) {
+    deletedID
+  }
+}
+    `;
+export const GetGroupSettingDocument = gql`
+    query GetGroupSetting($groupSettingId: ID!) {
+  groupSetting(id: $groupSettingId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    visibility
+    joinPolicy
+    tags
+    syncToSlack
+    syncToGithub
+    group {
+      id
+    }
+  }
+}
+    `;
+export const GetOrganizationByIdDocument = gql`
+    query GetOrganizationByID($organizationId: ID!) {
+  organization(id: $organizationId) {
+    id
+    name
+    displayName
+    description
+    personalOrg
+    parent {
+      id
+      name
+    }
+    children {
+      edges {
+        node {
+          id
+          name
+          displayName
+          description
+        }
+      }
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      domains
+      ssoCert
+      ssoEntrypoint
+      ssoIssuer
+      billingContact
+      billingEmail
+      billingPhone
+      billingAddress
+      taxIdentifier
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+export const GetAllOrganizationsDocument = gql`
+    query GetAllOrganizations {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+export const OrganizationsWhereDocument = gql`
+    query OrganizationsWhere($where: OrganizationWhereInput) {
+  organizations(where: $where) {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+export const CreateOrganizationDocument = gql`
+    mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      createdAt
+      updatedAt
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        domains
+        ssoCert
+        ssoEntrypoint
+        ssoIssuer
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+      }
+      parent {
+        id
+        name
+      }
+      children {
+        edges {
+          node {
+            id
+            name
+            displayName
+            description
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export const UpdateOrganizationDocument = gql`
+    mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
+  updateOrganization(id: $updateOrganizationId, input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+    }
+  }
+}
+    `;
+export const DeleteOrganizationDocument = gql`
+    mutation DeleteOrganization($deleteOrganizationId: ID!) {
+  deleteOrganization(id: $deleteOrganizationId) {
+    deletedID
+  }
+}
+    `;
+export const GetOrganizationSettingDocument = gql`
+    query GetOrganizationSetting($organizationSettingId: ID!) {
+  organizationSetting(id: $organizationSettingId) {
+    id
+    ssoCert
+    taxIdentifier
+    tags
+    ssoIssuer
+    ssoEntrypoint
+    billingAddress
+    billingContact
+    billingEmail
+    billingPhone
+    createdAt
+    createdBy
+    domains
+    updatedAt
+    updatedBy
+    organization {
+      id
+    }
+  }
+}
+    `;
+export const CreatePersonalAccessTokenDocument = gql`
+    mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
+  createPersonalAccessToken(input: $input) {
+    PersonalAccessToken {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      name
+      abilities
+      expiresAt
+      description
+      lastUsedAt
+      owner {
+        id
+        displayName
+      }
+    }
+  }
+}
+    `;
+export const GetPersonalAccessTokenByIdDocument = gql`
+    query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
+  personalAccessToken(id: $personalAccessTokenId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    name
+    abilities
+    expiresAt
+    description
+    lastUsedAt
+    owner {
+      id
+      displayName
+    }
+  }
+}
+    `;
+export const DeletePersonalAccessTokenDocument = gql`
+    mutation DeletePersonalAccessToken($deletePersonalAccessTokenId: ID!) {
+  deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+    deletedID
+  }
+}
+    `;
+export const GetUserByIdDocument = gql`
+    query GetUserByID($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
+    setting {
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
+    }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
+  }
+}
+    `;
+export const GetUserByIdWithOrgsDocument = gql`
+    query GetUserByIDWithOrgs($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
+    setting {
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
+    }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
+    organizations {
+      id
+      name
+      displayName
+    }
+  }
+}
+    `;
+export const GetAllUsersDocument = gql`
+    query GetAllUsers {
+  users {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        displayName
+        email
+        lastSeen
+        sub
+        avatarRemoteURL
+        avatarLocalFile
+        oauth
+        setting {
+          emailConfirmed
+          locked
+          status
+          role
+          permissions
+          tags
+          suspendedAt
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          silencedAt
+        }
+        updatedAt
+        updatedBy
+        createdAt
+        createdBy
+      }
+    }
+  }
+}
+    `;
+export const CreateUserDocument = gql`
+    mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      organizations {
+        id
+      }
+      groups {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
+    }
+  }
+}
+    `;
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $updateUserId, input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      groups {
+        id
+      }
+      organizations {
+        id
+      }
+      personalAccessTokens {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
+    }
+  }
+}
+    `;
+export const DeleteUserDocument = gql`
+    mutation DeleteUser($deleteUserId: ID!) {
+  deleteUser(id: $deleteUserId) {
+    deletedID
+  }
+}
+    `;
+export const GetUserSettingByIdDocument = gql`
+    query GetUserSettingByID($userSettingId: ID!) {
+  userSetting(id: $userSettingId) {
+    id
+    permissions
+    role
+    silencedAt
+    status
+    suspendedAt
+    tags
+    locked
+    emailConfirmed
+    createdAt
+    createdBy
+    deletedAt
+    deletedBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
+
+
+const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, variables) => action();
+
+export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
+  return {
+    GetGroupByID(variables: GetGroupByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetGroupByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetGroupByIdQuery>(GetGroupByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetGroupByID', 'query', variables);
+    },
+    GroupsWhere(variables?: GroupsWhereQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GroupsWhereQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GroupsWhereQuery>(GroupsWhereDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GroupsWhere', 'query', variables);
+    },
+    GetAllGroups(variables?: GetAllGroupsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetAllGroupsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllGroupsQuery>(GetAllGroupsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetAllGroups', 'query', variables);
+    },
+    CreateGroup(variables: CreateGroupMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateGroupMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateGroupMutation>(CreateGroupDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CreateGroup', 'mutation', variables);
+    },
+    UpdateGroup(variables: UpdateGroupMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UpdateGroupMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateGroupMutation>(UpdateGroupDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UpdateGroup', 'mutation', variables);
+    },
+    DeleteGroup(variables: DeleteGroupMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<DeleteGroupMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteGroupMutation>(DeleteGroupDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DeleteGroup', 'mutation', variables);
+    },
+    GetGroupSetting(variables: GetGroupSettingQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetGroupSettingQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetGroupSettingQuery>(GetGroupSettingDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetGroupSetting', 'query', variables);
+    },
+    GetOrganizationByID(variables: GetOrganizationByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetOrganizationByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetOrganizationByIdQuery>(GetOrganizationByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetOrganizationByID', 'query', variables);
+    },
+    GetAllOrganizations(variables?: GetAllOrganizationsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetAllOrganizationsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllOrganizationsQuery>(GetAllOrganizationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetAllOrganizations', 'query', variables);
+    },
+    OrganizationsWhere(variables?: OrganizationsWhereQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<OrganizationsWhereQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<OrganizationsWhereQuery>(OrganizationsWhereDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'OrganizationsWhere', 'query', variables);
+    },
+    CreateOrganization(variables: CreateOrganizationMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateOrganizationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateOrganizationMutation>(CreateOrganizationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CreateOrganization', 'mutation', variables);
+    },
+    UpdateOrganization(variables: UpdateOrganizationMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UpdateOrganizationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateOrganizationMutation>(UpdateOrganizationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UpdateOrganization', 'mutation', variables);
+    },
+    DeleteOrganization(variables: DeleteOrganizationMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<DeleteOrganizationMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteOrganizationMutation>(DeleteOrganizationDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DeleteOrganization', 'mutation', variables);
+    },
+    GetOrganizationSetting(variables: GetOrganizationSettingQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetOrganizationSettingQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetOrganizationSettingQuery>(GetOrganizationSettingDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetOrganizationSetting', 'query', variables);
+    },
+    CreatePersonalAccessToken(variables: CreatePersonalAccessTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreatePersonalAccessTokenMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreatePersonalAccessTokenMutation>(CreatePersonalAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CreatePersonalAccessToken', 'mutation', variables);
+    },
+    GetPersonalAccessTokenByID(variables: GetPersonalAccessTokenByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetPersonalAccessTokenByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPersonalAccessTokenByIdQuery>(GetPersonalAccessTokenByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetPersonalAccessTokenByID', 'query', variables);
+    },
+    DeletePersonalAccessToken(variables: DeletePersonalAccessTokenMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<DeletePersonalAccessTokenMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeletePersonalAccessTokenMutation>(DeletePersonalAccessTokenDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DeletePersonalAccessToken', 'mutation', variables);
+    },
+    GetUserByID(variables: GetUserByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetUserByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserByIdQuery>(GetUserByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetUserByID', 'query', variables);
+    },
+    GetUserByIDWithOrgs(variables: GetUserByIdWithOrgsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetUserByIdWithOrgsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserByIdWithOrgsQuery>(GetUserByIdWithOrgsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetUserByIDWithOrgs', 'query', variables);
+    },
+    GetAllUsers(variables?: GetAllUsersQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetAllUsersQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetAllUsersQuery>(GetAllUsersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetAllUsers', 'query', variables);
+    },
+    CreateUser(variables: CreateUserMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<CreateUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateUserMutation>(CreateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CreateUser', 'mutation', variables);
+    },
+    UpdateUser(variables: UpdateUserMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UpdateUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateUserMutation>(UpdateUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UpdateUser', 'mutation', variables);
+    },
+    DeleteUser(variables: DeleteUserMutationVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<DeleteUserMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteUserMutation>(DeleteUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DeleteUser', 'mutation', variables);
+    },
+    GetUserSettingByID(variables: GetUserSettingByIdQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetUserSettingByIdQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetUserSettingByIdQuery>(GetUserSettingByIdDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetUserSettingByID', 'query', variables);
+    }
+  };
+}
+export type Sdk = ReturnType<typeof getSdk>;

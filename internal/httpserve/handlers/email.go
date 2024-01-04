@@ -148,7 +148,7 @@ type URLConfig struct {
 	Base   string `split_words:"true" default:"https://app.datum.net"`
 	Verify string `split_words:"true" default:"/v1/verify"`
 	Invite string `split_words:"true" default:"/v1/invite"`
-	Reset  string `split_words:"true" default:"/v1/reset"`
+	Reset  string `split_words:"true" default:"/v1/reset-password"`
 }
 
 func (c URLConfig) Validate() error {

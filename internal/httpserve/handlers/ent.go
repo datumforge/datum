@@ -10,7 +10,6 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
-	"github.com/datumforge/datum/internal/passwd"
 )
 
 func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
@@ -207,12 +206,7 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 
 // updateUserPassword changes a user's password to a new dk hash value based on input
 func (h *Handler) updateUserPassword(ctx context.Context, id string, password string) error {
-	hash, err := passwd.CreateDerivedKey(password)
-	if err != nil {
-		return err
-	}
-
-	if _, err := transaction.FromContext(ctx).User.UpdateOneID(id).SetPassword(hash).Save(ctx); err != nil {
+	if _, err := transaction.FromContext(ctx).User.UpdateOneID(id).SetPassword(password).Save(ctx); err != nil {
 		return err
 	}
 

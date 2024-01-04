@@ -17,7 +17,7 @@ COPY config/.env-devauth .env
 COPY --from=builder /go/bin/datum /bin/datum
 
 # Copy FGA binary
-COPY --from=openfga/openfga:v1.4.0 /openfga /bin/openfga
+COPY --from=openfga/openfga:v1.4.1 /openfga /bin/openfga
 
 # Copy default model into image
 COPY fga/model/datum.fga fga/model/datum.fga

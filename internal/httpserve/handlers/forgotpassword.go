@@ -77,7 +77,7 @@ func (h *Handler) storeAndSendPasswordResetToken(ctx context.Context, user *User
 		return nil, err
 	}
 
-	if err := user.CreateResetToken(); err != nil {
+	if err := user.CreatePasswordResetToken(); err != nil {
 		h.Logger.Errorw("unable to create password reset token", "error", err)
 		return nil, err
 	}

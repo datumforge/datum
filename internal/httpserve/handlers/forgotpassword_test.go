@@ -68,7 +68,7 @@ func TestForgotPasswordHandler(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			sent := time.Now()
-			defer mock.ResetEmailMock()
+			mock.ResetEmailMock()
 
 			e := setupEcho(h.SM)
 			e.POST("forgot-password", h.ForgotPassword)

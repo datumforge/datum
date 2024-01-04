@@ -75,15 +75,15 @@ func (u *User) GetPasswordResetToken() string {
 
 // GetPasswordResetExpires returns the expiration time of password verification token
 func (u *User) GetPasswordResetExpires() (time.Time, error) {
-	if u.EmailVerificationExpires.Valid {
+	if u.PasswordResetExpires.Valid {
 		return time.Parse(time.RFC3339Nano, u.PasswordResetExpires.String)
 	}
 
 	return time.Time{}, nil
 }
 
-// CreateResetToken creates a new reset token for the user
-func (u *User) CreateResetToken() error {
+// CreatePasswordResetToken creates a new reset token for the user
+func (u *User) CreatePasswordResetToken() error {
 	uid, err := ulid.Parse(u.ID)
 	if err != nil {
 		return err

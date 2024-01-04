@@ -8,56 +8,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alexedwards/scs/v2"
 	"github.com/brianvoe/gofakeit/v6"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/marionette"
 )
-
-var (
-	emptyResponse = "null\n"
-	validPassword = "sup3rs3cu7e!"
-)
-
-// handlerSetup to be used for required references in the handler tests
-func handlerSetup(t *testing.T) *handlers.Handler {
-	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
-	if err != nil {
-		t.Fatal("error creating token manager")
-	}
-
-	sm := scs.New()
-
-	h := &handlers.Handler{
-		TM:           tm,
-		DBClient:     EntClient,
-		Logger:       zap.NewNop().Sugar(),
-		CookieDomain: "datum.net",
-		SM:           sm,
-	}
-
-	if err := h.NewTestEmailManager(); err != nil {
-		t.Fatalf("error creating email manager: %v", err)
-	}
-
-	// Start task manager
-	tmConfig := marionette.Config{
-		Logger: zap.NewNop().Sugar(),
-	}
-
-	h.TaskMan = marionette.New(tmConfig)
-
-	h.TaskMan.Start()
-
-	return h
-}
 
 func TestVerifyHandler(t *testing.T) {
 	h := handlerSetup(t)
@@ -134,6 +93,7 @@ func TestVerifyHandler(t *testing.T) {
 				ID:        u.ID,
 			}
 
+			// create token
 			if err := user.CreateVerificationToken(); err != nil {
 				require.NoError(t, err)
 			}
@@ -147,6 +107,7 @@ func TestVerifyHandler(t *testing.T) {
 				require.NoError(t, err)
 			}
 
+			// store token in db
 			et := EntClient.EmailVerificationToken.Create().
 				SetOwner(u).
 				SetToken(user.EmailVerificationToken.String).

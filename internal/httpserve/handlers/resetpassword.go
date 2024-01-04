@@ -2,9 +2,12 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	echo "github.com/datumforge/echox"
@@ -17,10 +20,15 @@ import (
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
-// ResetPasswordRequest contains fields required to reset a user's password
+// ResetPasswordRequest contains user input required to reset a user's password
 type ResetPasswordRequest struct {
-	Token    string `json:"token"`
 	Password string `json:"password"`
+}
+
+// ResetPassword contains the full request to validate a password reset
+type ResetPassword struct {
+	Password string
+	Token    string
 }
 
 type ResetPasswordReply struct {
@@ -32,6 +40,10 @@ type ResetPasswordReply struct {
 // and not expired. If the request is successful, a confirmation of the reset is sent
 // to the user and a 204 no content is returned
 func (h *Handler) ResetPassword(ctx echo.Context) error {
+	rp := &ResetPassword{
+		Token: ctx.QueryParam("token"),
+	}
+
 	var in *ResetPasswordRequest
 
 	// parse request body
@@ -41,14 +53,15 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	if err := in.validateResetToken(); err != nil {
+	// Add to the full request to be validated
+	rp.Password = in.Password
+
+	if err := rp.validateResetRequest(); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	reqToken := ctx.QueryParam("token")
-
 	// lookup user from db based on provided token
-	entUser, err := h.getUserByResetToken(ctx.Request().Context(), reqToken)
+	entUser, err := h.getUserByResetToken(ctx.Request().Context(), rp.Token)
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -65,6 +78,14 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		Email: entUser.Email,
 	}
 
+	// set tokens for request
+	if err := user.setResetTokens(entUser, rp.Token); err != nil {
+		h.Logger.Errorw("unable to set reset tokens for request", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
+	}
+
+	// Construct the user token from the database fields
 	// type ulid to string
 	uid, err := ulid.Parse(entUser.ID)
 	if err != nil {
@@ -84,17 +105,34 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 
 	// Verify the token with the stored secret
 	if err = token.Verify(user.GetPasswordResetToken(), user.PasswordResetSecret); err != nil {
-		return ctx.JSON(http.StatusInternalServerError, ErrPassWordResetTokenInvalid)
+		if errors.Is(err, tokens.ErrTokenExpired) {
+			_, err := h.storeAndSendPasswordResetToken(ctx.Request().Context(), user)
+			if err != nil {
+				h.Logger.Errorw("unable to resend password reset", "error", err)
+
+				return ctx.JSON(http.StatusInternalServerError, ErrUnableToVerifyEmail)
+			}
+
+			out := &Response{
+				Message: "reset token is expired, a new token has been issued. Please check your email try again.",
+			}
+
+			return ctx.JSON(http.StatusCreated, out)
+		}
+
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	if err := h.updateUserPassword(ctx.Request().Context(), entUser.ID, in.Password); err != nil {
-		return err
+	if err := h.updateUserPassword(ctx.Request().Context(), entUser.ID, rp.Password); err != nil {
+		h.Logger.Errorw("error updating user password", "error", err)
+
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	if err := h.expireAllResetTokensUserByEmail(ctx.Request().Context(), user.Email); err != nil {
 		h.Logger.Errorw("error expiring existing tokens", "error", err)
 
-		return err
+		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
 	if err := h.TaskMan.Queue(marionette.TaskFunc(func(ctx context.Context) error {
@@ -103,18 +141,16 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		marionette.WithBackoff(backoff.NewExponentialBackOff()),
 		marionette.WithErrorf("could not send password reset confirmation email to user %s", user.Email),
 	); err != nil {
-		return err
+		h.Logger.Errorw("error sending confirmation email", "error", err)
+
+		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	out := &ResetPasswordReply{
-		Message: "password reset successfully",
-	}
-
-	return ctx.JSON(http.StatusOK, out)
+	return ctx.NoContent(http.StatusNoContent)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request
-func (r *ResetPasswordRequest) validateResetToken() error {
+func (r *ResetPassword) validateResetRequest() error {
 	r.Password = strings.TrimSpace(r.Password)
 
 	switch {
@@ -127,4 +163,20 @@ func (r *ResetPasswordRequest) validateResetToken() error {
 	}
 
 	return nil
+}
+
+// setResetTokens sets the fields for the password reset
+func (u *User) setResetTokens(user *generated.User, reqToken string) error {
+	tokens := user.Edges.ResetTokens
+	for _, t := range tokens {
+		if t.Token == reqToken {
+			u.PasswordResetToken = sql.NullString{String: t.Token, Valid: true}
+			u.PasswordResetSecret = *t.Secret
+			u.PasswordResetExpires = sql.NullString{String: t.TTL.Format(time.RFC3339Nano), Valid: true}
+
+			return nil
+		}
+	}
+
+	return ErrNotFound
 }

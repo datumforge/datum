@@ -65,7 +65,7 @@ func (c *EntClientConfig) GetSecondaryDB() *entsql.Driver {
 }
 
 func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
-	dialect, err := checkDialect(c.config.DriverName)
+	dialect, err := CheckDialect(c.config.DriverName)
 	if err != nil {
 		return nil, fmt.Errorf("failed checking dialect: %w", err)
 	}
@@ -108,7 +108,7 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 	var cOpts []ent.Option
 
 	if c.config.MultiWrite {
-		if !checkMultiwriteSupport(c.config.DriverName) {
+		if !CheckMultiwriteSupport(c.config.DriverName) {
 			return nil, newMultiwriteDriverError(c.config.DriverName)
 		}
 
@@ -190,7 +190,7 @@ func Healthcheck(client *entsql.Driver) func(ctx context.Context) error {
 	}
 }
 
-func checkDialect(d string) (string, error) {
+func CheckDialect(d string) (string, error) {
 	switch d {
 	case "sqlite3":
 		return dialect.SQLite, nil
@@ -201,7 +201,7 @@ func checkDialect(d string) (string, error) {
 	}
 }
 
-func checkMultiwriteSupport(d string) bool {
+func CheckMultiwriteSupport(d string) bool {
 	switch d {
 	case "sqlite3":
 		return true

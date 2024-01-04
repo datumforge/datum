@@ -18,6 +18,8 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 			user.ID(id),
 		).
 		Save(ctx); err != nil {
+		h.Logger.Errorw("error updating user last seen", "error", err)
+
 		return err
 	}
 
@@ -29,6 +31,8 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 		SetInput(input).
 		Save(ctx)
 	if err != nil {
+		h.Logger.Errorw("error creating new user", "error", err)
+
 		return nil, err
 	}
 
@@ -198,6 +202,8 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 		Where(
 			usersetting.ID(user.Edges.Setting.ID),
 		).Save(ctx); err != nil {
+		h.Logger.Errorw("error setting email confirmed", "error", err)
+
 		return err
 	}
 
@@ -207,6 +213,8 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 // updateUserPassword changes a updates a user's password in the database
 func (h *Handler) updateUserPassword(ctx context.Context, id string, password string) error {
 	if _, err := transaction.FromContext(ctx).User.UpdateOneID(id).SetPassword(password).Save(ctx); err != nil {
+		h.Logger.Errorw("error updating user password", "error", err)
+
 		return err
 	}
 

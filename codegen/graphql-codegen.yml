@@ -16,6 +16,7 @@ config:
   flattenGeneratedTypes: true
   namingConvention:
     enumValues: keep
+#  noSchemaStitching: false
   scalars:
     DateTime: string
     Date: string
@@ -29,7 +30,7 @@ overwrite: true
 schema: ../schema.graphql
 documents: '../query/*.graphql'
 generates:
-  ./src/schema.json:
+  ./src/introspectionschema.json:
     plugins:
       - introspection
     config:
@@ -45,6 +46,8 @@ generates:
       - typescript-graphql-request
       - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
       - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
+      - typescript-react-apollo
+      - typed-document-node # These plugins generate a ready-to-use TypedDocumentNode (a combination of pre-compiled DocumentNode and the TypeScript signature it represents)
 #      - typescript-mock-data
 #      - typescript-validation-schema # A plugin for GraphQL Codegen to generate form validation schema (such as yup, zod) based on your GraphQL schema for use in a client application
       - add:

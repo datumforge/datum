@@ -752,13 +752,13 @@ func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 
 	o, err = client.GetOrganizationByID(ctx, org.ID)
 
-	require.Equal(t, o.Organization.ID, org.ID)
 	require.NoError(t, err)
+	require.Equal(t, o.Organization.ID, org.ID)
 
 	g, err = client.GetGroupByID(ctx, group1.ID)
 
-	require.Equal(t, g.Group.ID, group1.ID)
 	require.NoError(t, err)
+	require.Equal(t, g.Group.ID, group1.ID)
 }
 
 func TestMutation_CreateOrganizationTransaction(t *testing.T) {

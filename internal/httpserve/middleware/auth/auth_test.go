@@ -228,7 +228,7 @@ func TestSetAuthCookies(t *testing.T) {
 
 		{
 			name:         "happy path",
-			ctx:          *validCtx,
+			ctx:          validCtx,
 			accessToken:  testAccessToken,
 			refreshToken: testRefreshToken,
 			wantErr:      false,
@@ -236,7 +236,7 @@ func TestSetAuthCookies(t *testing.T) {
 		},
 		{
 			name:         "invalid access token",
-			ctx:          *validCtx,
+			ctx:          validCtx,
 			accessToken:  "poke",
 			refreshToken: testRefreshToken,
 			wantErr:      true,
@@ -244,7 +244,7 @@ func TestSetAuthCookies(t *testing.T) {
 		},
 		{
 			name:         "invalid refresh token",
-			ctx:          *validCtx,
+			ctx:          validCtx,
 			accessToken:  testAccessToken,
 			refreshToken: "poke",
 			wantErr:      true,
@@ -287,7 +287,7 @@ func TestClearAuthCookies(t *testing.T) {
 
 		{
 			name: "happy path",
-			ctx:  *validCtx,
+			ctx:  validCtx,
 		},
 	}
 	for _, tc := range tests {
@@ -369,7 +369,7 @@ func TestGetClaims(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			e:    *validCtx,
+			e:    validCtx,
 			err:  nil,
 		},
 		{

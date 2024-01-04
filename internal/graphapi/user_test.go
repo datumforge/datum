@@ -11,6 +11,7 @@ import (
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/graphapi"
 	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
@@ -957,6 +958,10 @@ func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Equal(t, o.User.ID, usr.ID)
+
+	// Bypass auth check to get owner of access token
+	// this should only be done in non-auth tests
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
 
 	g, err = client.GetPersonalAccessTokenByID(ctx, token1.ID)
 	require.NoError(t, err)

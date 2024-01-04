@@ -8,11 +8,6 @@ query GetGroupByID($groupId: ID!) {
       id
     }
     logoURL
-    users {
-      id
-      displayName
-      email
-    }
     setting {
       id
       createdAt
@@ -44,11 +39,6 @@ query GroupsWhere($where: GroupWhereInput) {
           id
         }
         logoURL
-        users {
-          id
-          displayName
-          email
-        }
         setting {
           id
           createdAt
@@ -82,11 +72,6 @@ query GetAllGroups {
           id
         }
         logoURL
-        users {
-          id
-          displayName
-          email
-        }
         setting {
           id
           createdAt
@@ -119,11 +104,6 @@ mutation CreateGroup($input: CreateGroupInput!) {
         id
       }
       logoURL
-      users {
-        id
-        displayName
-        email
-      }
       setting {
         id
         createdAt

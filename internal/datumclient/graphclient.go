@@ -125,31 +125,6 @@ func (t *GetGroupByID_Group_Owner) GetID() string {
 	return t.ID
 }
 
-type GetGroupByID_Group_Users struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Email       string "json:\"email\" graphql:\"email\""
-}
-
-func (t *GetGroupByID_Group_Users) GetID() string {
-	if t == nil {
-		t = &GetGroupByID_Group_Users{}
-	}
-	return t.ID
-}
-func (t *GetGroupByID_Group_Users) GetDisplayName() string {
-	if t == nil {
-		t = &GetGroupByID_Group_Users{}
-	}
-	return t.DisplayName
-}
-func (t *GetGroupByID_Group_Users) GetEmail() string {
-	if t == nil {
-		t = &GetGroupByID_Group_Users{}
-	}
-	return t.Email
-}
-
 type GetGroupByID_Group_Setting struct {
 	ID           string                  "json:\"id\" graphql:\"id\""
 	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
@@ -225,18 +200,17 @@ func (t *GetGroupByID_Group_Setting) GetTags() []string {
 }
 
 type GetGroupByID_Group struct {
-	ID          string                      "json:\"id\" graphql:\"id\""
-	Name        string                      "json:\"name\" graphql:\"name\""
-	Description *string                     "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                      "json:\"displayName\" graphql:\"displayName\""
-	Owner       GetGroupByID_Group_Owner    "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                     "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Users       []*GetGroupByID_Group_Users "json:\"users,omitempty\" graphql:\"users\""
-	Setting     GetGroupByID_Group_Setting  "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                   "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                   "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                     "json:\"id\" graphql:\"id\""
+	Name        string                     "json:\"name\" graphql:\"name\""
+	Description *string                    "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                     "json:\"displayName\" graphql:\"displayName\""
+	Owner       GetGroupByID_Group_Owner   "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                    "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     GetGroupByID_Group_Setting "json:\"setting\" graphql:\"setting\""
+	CreatedAt   time.Time                  "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                  "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetGroupByID_Group) GetID() string {
@@ -274,12 +248,6 @@ func (t *GetGroupByID_Group) GetLogoURL() *string {
 		t = &GetGroupByID_Group{}
 	}
 	return t.LogoURL
-}
-func (t *GetGroupByID_Group) GetUsers() []*GetGroupByID_Group_Users {
-	if t == nil {
-		t = &GetGroupByID_Group{}
-	}
-	return t.Users
 }
 func (t *GetGroupByID_Group) GetSetting() *GetGroupByID_Group_Setting {
 	if t == nil {
@@ -321,31 +289,6 @@ func (t *GroupsWhere_Groups_Edges_Node_Owner) GetID() string {
 		t = &GroupsWhere_Groups_Edges_Node_Owner{}
 	}
 	return t.ID
-}
-
-type GroupsWhere_Groups_Edges_Node_Users struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Email       string "json:\"email\" graphql:\"email\""
-}
-
-func (t *GroupsWhere_Groups_Edges_Node_Users) GetID() string {
-	if t == nil {
-		t = &GroupsWhere_Groups_Edges_Node_Users{}
-	}
-	return t.ID
-}
-func (t *GroupsWhere_Groups_Edges_Node_Users) GetDisplayName() string {
-	if t == nil {
-		t = &GroupsWhere_Groups_Edges_Node_Users{}
-	}
-	return t.DisplayName
-}
-func (t *GroupsWhere_Groups_Edges_Node_Users) GetEmail() string {
-	if t == nil {
-		t = &GroupsWhere_Groups_Edges_Node_Users{}
-	}
-	return t.Email
 }
 
 type GroupsWhere_Groups_Edges_Node_Setting struct {
@@ -423,18 +366,17 @@ func (t *GroupsWhere_Groups_Edges_Node_Setting) GetTags() []string {
 }
 
 type GroupsWhere_Groups_Edges_Node struct {
-	ID          string                                 "json:\"id\" graphql:\"id\""
-	Name        string                                 "json:\"name\" graphql:\"name\""
-	Description *string                                "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
-	Owner       GroupsWhere_Groups_Edges_Node_Owner    "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                                "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Users       []*GroupsWhere_Groups_Edges_Node_Users "json:\"users,omitempty\" graphql:\"users\""
-	Setting     GroupsWhere_Groups_Edges_Node_Setting  "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                              "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                "json:\"id\" graphql:\"id\""
+	Name        string                                "json:\"name\" graphql:\"name\""
+	Description *string                               "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                "json:\"displayName\" graphql:\"displayName\""
+	Owner       GroupsWhere_Groups_Edges_Node_Owner   "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                               "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     GroupsWhere_Groups_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
+	CreatedAt   time.Time                             "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                               "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                             "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                               "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GroupsWhere_Groups_Edges_Node) GetID() string {
@@ -472,12 +414,6 @@ func (t *GroupsWhere_Groups_Edges_Node) GetLogoURL() *string {
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
 	return t.LogoURL
-}
-func (t *GroupsWhere_Groups_Edges_Node) GetUsers() []*GroupsWhere_Groups_Edges_Node_Users {
-	if t == nil {
-		t = &GroupsWhere_Groups_Edges_Node{}
-	}
-	return t.Users
 }
 func (t *GroupsWhere_Groups_Edges_Node) GetSetting() *GroupsWhere_Groups_Edges_Node_Setting {
 	if t == nil {
@@ -541,31 +477,6 @@ func (t *GetAllGroups_Groups_Edges_Node_Owner) GetID() string {
 		t = &GetAllGroups_Groups_Edges_Node_Owner{}
 	}
 	return t.ID
-}
-
-type GetAllGroups_Groups_Edges_Node_Users struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Email       string "json:\"email\" graphql:\"email\""
-}
-
-func (t *GetAllGroups_Groups_Edges_Node_Users) GetID() string {
-	if t == nil {
-		t = &GetAllGroups_Groups_Edges_Node_Users{}
-	}
-	return t.ID
-}
-func (t *GetAllGroups_Groups_Edges_Node_Users) GetDisplayName() string {
-	if t == nil {
-		t = &GetAllGroups_Groups_Edges_Node_Users{}
-	}
-	return t.DisplayName
-}
-func (t *GetAllGroups_Groups_Edges_Node_Users) GetEmail() string {
-	if t == nil {
-		t = &GetAllGroups_Groups_Edges_Node_Users{}
-	}
-	return t.Email
 }
 
 type GetAllGroups_Groups_Edges_Node_Setting struct {
@@ -643,18 +554,17 @@ func (t *GetAllGroups_Groups_Edges_Node_Setting) GetTags() []string {
 }
 
 type GetAllGroups_Groups_Edges_Node struct {
-	ID          string                                  "json:\"id\" graphql:\"id\""
-	Name        string                                  "json:\"name\" graphql:\"name\""
-	Description *string                                 "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                                  "json:\"displayName\" graphql:\"displayName\""
-	Owner       GetAllGroups_Groups_Edges_Node_Owner    "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                                 "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Users       []*GetAllGroups_Groups_Edges_Node_Users "json:\"users,omitempty\" graphql:\"users\""
-	Setting     GetAllGroups_Groups_Edges_Node_Setting  "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                               "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                               "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                 "json:\"id\" graphql:\"id\""
+	Name        string                                 "json:\"name\" graphql:\"name\""
+	Description *string                                "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
+	Owner       GetAllGroups_Groups_Edges_Node_Owner   "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                                "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     GetAllGroups_Groups_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
+	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                              "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetAllGroups_Groups_Edges_Node) GetID() string {
@@ -692,12 +602,6 @@ func (t *GetAllGroups_Groups_Edges_Node) GetLogoURL() *string {
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
 	return t.LogoURL
-}
-func (t *GetAllGroups_Groups_Edges_Node) GetUsers() []*GetAllGroups_Groups_Edges_Node_Users {
-	if t == nil {
-		t = &GetAllGroups_Groups_Edges_Node{}
-	}
-	return t.Users
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetSetting() *GetAllGroups_Groups_Edges_Node_Setting {
 	if t == nil {
@@ -761,31 +665,6 @@ func (t *CreateGroup_CreateGroup_Group_Owner) GetID() string {
 		t = &CreateGroup_CreateGroup_Group_Owner{}
 	}
 	return t.ID
-}
-
-type CreateGroup_CreateGroup_Group_Users struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
-	Email       string "json:\"email\" graphql:\"email\""
-}
-
-func (t *CreateGroup_CreateGroup_Group_Users) GetID() string {
-	if t == nil {
-		t = &CreateGroup_CreateGroup_Group_Users{}
-	}
-	return t.ID
-}
-func (t *CreateGroup_CreateGroup_Group_Users) GetDisplayName() string {
-	if t == nil {
-		t = &CreateGroup_CreateGroup_Group_Users{}
-	}
-	return t.DisplayName
-}
-func (t *CreateGroup_CreateGroup_Group_Users) GetEmail() string {
-	if t == nil {
-		t = &CreateGroup_CreateGroup_Group_Users{}
-	}
-	return t.Email
 }
 
 type CreateGroup_CreateGroup_Group_Setting struct {
@@ -863,18 +742,17 @@ func (t *CreateGroup_CreateGroup_Group_Setting) GetTags() []string {
 }
 
 type CreateGroup_CreateGroup_Group struct {
-	ID          string                                 "json:\"id\" graphql:\"id\""
-	Name        string                                 "json:\"name\" graphql:\"name\""
-	Description *string                                "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
-	Owner       CreateGroup_CreateGroup_Group_Owner    "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                                "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Users       []*CreateGroup_CreateGroup_Group_Users "json:\"users,omitempty\" graphql:\"users\""
-	Setting     CreateGroup_CreateGroup_Group_Setting  "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                              "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                "json:\"id\" graphql:\"id\""
+	Name        string                                "json:\"name\" graphql:\"name\""
+	Description *string                               "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                "json:\"displayName\" graphql:\"displayName\""
+	Owner       CreateGroup_CreateGroup_Group_Owner   "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                               "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     CreateGroup_CreateGroup_Group_Setting "json:\"setting\" graphql:\"setting\""
+	CreatedAt   time.Time                             "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                               "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                             "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                               "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *CreateGroup_CreateGroup_Group) GetID() string {
@@ -912,12 +790,6 @@ func (t *CreateGroup_CreateGroup_Group) GetLogoURL() *string {
 		t = &CreateGroup_CreateGroup_Group{}
 	}
 	return t.LogoURL
-}
-func (t *CreateGroup_CreateGroup_Group) GetUsers() []*CreateGroup_CreateGroup_Group_Users {
-	if t == nil {
-		t = &CreateGroup_CreateGroup_Group{}
-	}
-	return t.Users
 }
 func (t *CreateGroup_CreateGroup_Group) GetSetting() *CreateGroup_CreateGroup_Group_Setting {
 	if t == nil {
@@ -4086,11 +3958,6 @@ const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
 			id
 		}
 		logoURL
-		users {
-			id
-			displayName
-			email
-		}
 		setting {
 			id
 			createdAt
@@ -4140,11 +4007,6 @@ const GroupsWhereDocument = `query GroupsWhere ($where: GroupWhereInput) {
 					id
 				}
 				logoURL
-				users {
-					id
-					displayName
-					email
-				}
 				setting {
 					id
 					createdAt
@@ -4196,11 +4058,6 @@ const GetAllGroupsDocument = `query GetAllGroups {
 					id
 				}
 				logoURL
-				users {
-					id
-					displayName
-					email
-				}
 				setting {
 					id
 					createdAt
@@ -4249,11 +4106,6 @@ const CreateGroupDocument = `mutation CreateGroup ($input: CreateGroupInput!) {
 				id
 			}
 			logoURL
-			users {
-				id
-				displayName
-				email
-			}
 			setting {
 				id
 				createdAt

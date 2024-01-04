@@ -185,9 +185,7 @@ func graphTestClientNoAuth(t *testing.T, c *ent.Client) datumclient.DatumClient 
 	}
 
 	// setup interceptors
-	i := func(ctx context.Context, req *http.Request, gqlInfo *clientv2.GQLRequestInfo, res interface{}, next clientv2.RequestInterceptorFunc) error {
-		return next(ctx, req, gqlInfo, res)
-	}
+	i := datumclient.WithEmptyInterceptor()
 
 	return datumclient.NewClient(g.httpClient, g.srvURL, opt, i)
 }

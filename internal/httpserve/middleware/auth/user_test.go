@@ -39,7 +39,7 @@ func Test_GetActorUserID(t *testing.T) {
 	}{
 		{
 			name: "happy path",
-			e:    *validCtx,
+			e:    validCtx,
 			err:  nil,
 		},
 		{
@@ -54,7 +54,7 @@ func Test_GetActorUserID(t *testing.T) {
 		},
 		{
 			name: "null user",
-			e:    *invalidUserCtx,
+			e:    invalidUserCtx,
 			err:  auth.ErrNoUserInfo,
 		},
 	}

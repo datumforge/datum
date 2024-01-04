@@ -15,7 +15,8 @@
     "@graphql-codegen/typescript-graphql-request": "^6.1.0",
     "@graphql-codegen/typescript-operations": "^4.0.1",
     "@graphql-codegen/typescript-react-query": "^6.0.0",
-    "@graphql-codegen/typescript-resolvers": "4.0.1"
+    "@graphql-codegen/typescript-resolvers": "4.0.1",
+    "@graphql-codegen/typescript-urql": "^4.0.0"
   },
   "scripts": {
     "codegen": "graphql-codegen --config graphql-codegen.yml"

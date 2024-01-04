@@ -4,6 +4,10 @@
 config:
   strict: true
   useTypeImports: true
+  exposeDocument: true # For each generate query hook adds document field with a corresponding GraphQL query. Useful for queryClient.fetchQuery
+  exposeQueryKeys: true # For each generate query hook adds getKey(variables: QueryVariables) function. Useful for cache updates. If addInfiniteQuery is true, it will also add a getKey function to each infinite query
+  exposeMutationKeys: true # For each generate mutation hook adds getKey() function. Useful for call outside of functional component
+  exposeFetcher: true # For each generate query hook adds fetcher field with a corresponding GraphQL query using the fetcher. It is useful for queryClient.fetchQuery and queryClient.prefetchQuery
   maybeValue: T | null
   declarationKind: interface
   avoidOptionals: true
@@ -28,10 +32,11 @@ generates:
 #    presetConfig:
 #      baseTypesPath: 'types.ts'
     plugins:
-      - typescript
-      - typescript-operations
+      - typescript # This plugin generates the base TypeScript types, based on your GraphQL schema
+      - typescript-operations # This plugin generates TypeScript types based on your GraphQLSchema and your GraphQL operations and fragments. It generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment
       - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
       - typescript-graphql-request
       - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
+      - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
       - add:
           content: '/* eslint-disable */'

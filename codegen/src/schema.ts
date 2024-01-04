@@ -3,6 +3,8 @@ import type { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } f
 import type { GraphQLClient } from 'graphql-request';
 import type { GraphQLClientRequestHeaders } from 'graphql-request/build/cjs/types';
 import gql from 'graphql-tag';
+import { useQuery, useMutation, type UseQueryOptions, type UseMutationOptions } from '@tanstack/react-query';
+import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -11,6 +13,27 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Mayb
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+
+function fetcher<TData, TVariables>(endpoint: string, requestInit: RequestInit, query: string, variables?: TVariables) {
+  return async (): Promise<TData> => {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      ...requestInit,
+      body: JSON.stringify({ query, variables }),
+    });
+
+    const json = await res.json();
+
+    if (json.errors) {
+      const { message } = json.errors[0];
+
+      throw new Error(message);
+    }
+
+    return json.data;
+  }
+}
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
   ID: { input: string; output: string; }
@@ -4755,3 +4778,1997 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   };
 }
 export type Sdk = ReturnType<typeof getSdk>;
+
+
+export const GetGroupByIdDocument = `
+    query GetGroupByID($groupId: ID!) {
+  group(id: $groupId) {
+    id
+    name
+    description
+    displayName
+    owner {
+      id
+    }
+    logoURL
+    users {
+      id
+      displayName
+      email
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      visibility
+      joinPolicy
+      syncToSlack
+      syncToGithub
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export const useGetGroupByIdQuery = <
+      TData = GetGroupByIdQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetGroupByIdQueryVariables,
+      options?: UseQueryOptions<GetGroupByIdQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetGroupByIdQuery, TError, TData>(
+      ['GetGroupByID', variables],
+      fetcher<GetGroupByIdQuery, GetGroupByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetGroupByIdDocument, variables),
+      options
+    )};
+
+useGetGroupByIdQuery.document = GetGroupByIdDocument;
+
+useGetGroupByIdQuery.getKey = (variables: GetGroupByIdQueryVariables) => ['GetGroupByID', variables];
+
+
+useGetGroupByIdQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetGroupByIdQueryVariables) => fetcher<GetGroupByIdQuery, GetGroupByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetGroupByIdDocument, variables);
+
+export const GroupsWhereDocument = `
+    query GroupsWhere($where: GroupWhereInput) {
+  groups(where: $where) {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        owner {
+          id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+    `;
+
+export const useGroupsWhereQuery = <
+      TData = GroupsWhereQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables?: GroupsWhereQueryVariables,
+      options?: UseQueryOptions<GroupsWhereQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GroupsWhereQuery, TError, TData>(
+      variables === undefined ? ['GroupsWhere'] : ['GroupsWhere', variables],
+      fetcher<GroupsWhereQuery, GroupsWhereQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GroupsWhereDocument, variables),
+      options
+    )};
+
+useGroupsWhereQuery.document = GroupsWhereDocument;
+
+useGroupsWhereQuery.getKey = (variables?: GroupsWhereQueryVariables) => variables === undefined ? ['GroupsWhere'] : ['GroupsWhere', variables];
+
+
+useGroupsWhereQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables?: GroupsWhereQueryVariables) => fetcher<GroupsWhereQuery, GroupsWhereQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GroupsWhereDocument, variables);
+
+export const GetAllGroupsDocument = `
+    query GetAllGroups {
+  groups {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        owner {
+          id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+    `;
+
+export const useGetAllGroupsQuery = <
+      TData = GetAllGroupsQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables?: GetAllGroupsQueryVariables,
+      options?: UseQueryOptions<GetAllGroupsQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetAllGroupsQuery, TError, TData>(
+      variables === undefined ? ['GetAllGroups'] : ['GetAllGroups', variables],
+      fetcher<GetAllGroupsQuery, GetAllGroupsQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetAllGroupsDocument, variables),
+      options
+    )};
+
+useGetAllGroupsQuery.document = GetAllGroupsDocument;
+
+useGetAllGroupsQuery.getKey = (variables?: GetAllGroupsQueryVariables) => variables === undefined ? ['GetAllGroups'] : ['GetAllGroups', variables];
+
+
+useGetAllGroupsQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables?: GetAllGroupsQueryVariables) => fetcher<GetAllGroupsQuery, GetAllGroupsQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetAllGroupsDocument, variables);
+
+export const CreateGroupDocument = `
+    mutation CreateGroup($input: CreateGroupInput!) {
+  createGroup(input: $input) {
+    group {
+      id
+      name
+      description
+      displayName
+      owner {
+        id
+      }
+      logoURL
+      users {
+        id
+        displayName
+        email
+      }
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        syncToSlack
+        syncToGithub
+        tags
+      }
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+    `;
+
+export const useCreateGroupMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<CreateGroupMutation, TError, CreateGroupMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<CreateGroupMutation, TError, CreateGroupMutationVariables, TContext>(
+      ['CreateGroup'],
+      (variables?: CreateGroupMutationVariables) => fetcher<CreateGroupMutation, CreateGroupMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreateGroupDocument, variables)(),
+      options
+    )};
+
+useCreateGroupMutation.getKey = () => ['CreateGroup'];
+
+
+useCreateGroupMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: CreateGroupMutationVariables) => fetcher<CreateGroupMutation, CreateGroupMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreateGroupDocument, variables);
+
+export const UpdateGroupDocument = `
+    mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
+  updateGroup(id: $updateGroupId, input: $input) {
+    group {
+      id
+      name
+      displayName
+      description
+      updatedAt
+      updatedBy
+    }
+  }
+}
+    `;
+
+export const useUpdateGroupMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<UpdateGroupMutation, TError, UpdateGroupMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<UpdateGroupMutation, TError, UpdateGroupMutationVariables, TContext>(
+      ['UpdateGroup'],
+      (variables?: UpdateGroupMutationVariables) => fetcher<UpdateGroupMutation, UpdateGroupMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, UpdateGroupDocument, variables)(),
+      options
+    )};
+
+useUpdateGroupMutation.getKey = () => ['UpdateGroup'];
+
+
+useUpdateGroupMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: UpdateGroupMutationVariables) => fetcher<UpdateGroupMutation, UpdateGroupMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, UpdateGroupDocument, variables);
+
+export const DeleteGroupDocument = `
+    mutation DeleteGroup($deleteGroupId: ID!) {
+  deleteGroup(id: $deleteGroupId) {
+    deletedID
+  }
+}
+    `;
+
+export const useDeleteGroupMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<DeleteGroupMutation, TError, DeleteGroupMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<DeleteGroupMutation, TError, DeleteGroupMutationVariables, TContext>(
+      ['DeleteGroup'],
+      (variables?: DeleteGroupMutationVariables) => fetcher<DeleteGroupMutation, DeleteGroupMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeleteGroupDocument, variables)(),
+      options
+    )};
+
+useDeleteGroupMutation.getKey = () => ['DeleteGroup'];
+
+
+useDeleteGroupMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: DeleteGroupMutationVariables) => fetcher<DeleteGroupMutation, DeleteGroupMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeleteGroupDocument, variables);
+
+export const GetGroupSettingDocument = `
+    query GetGroupSetting($groupSettingId: ID!) {
+  groupSetting(id: $groupSettingId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    visibility
+    joinPolicy
+    tags
+    syncToSlack
+    syncToGithub
+    group {
+      id
+    }
+  }
+}
+    `;
+
+export const useGetGroupSettingQuery = <
+      TData = GetGroupSettingQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetGroupSettingQueryVariables,
+      options?: UseQueryOptions<GetGroupSettingQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetGroupSettingQuery, TError, TData>(
+      ['GetGroupSetting', variables],
+      fetcher<GetGroupSettingQuery, GetGroupSettingQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetGroupSettingDocument, variables),
+      options
+    )};
+
+useGetGroupSettingQuery.document = GetGroupSettingDocument;
+
+useGetGroupSettingQuery.getKey = (variables: GetGroupSettingQueryVariables) => ['GetGroupSetting', variables];
+
+
+useGetGroupSettingQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetGroupSettingQueryVariables) => fetcher<GetGroupSettingQuery, GetGroupSettingQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetGroupSettingDocument, variables);
+
+export const GetOrganizationByIdDocument = `
+    query GetOrganizationByID($organizationId: ID!) {
+  organization(id: $organizationId) {
+    id
+    name
+    displayName
+    description
+    personalOrg
+    parent {
+      id
+      name
+    }
+    children {
+      edges {
+        node {
+          id
+          name
+          displayName
+          description
+        }
+      }
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      domains
+      ssoCert
+      ssoEntrypoint
+      ssoIssuer
+      billingContact
+      billingEmail
+      billingPhone
+      billingAddress
+      taxIdentifier
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export const useGetOrganizationByIdQuery = <
+      TData = GetOrganizationByIdQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetOrganizationByIdQueryVariables,
+      options?: UseQueryOptions<GetOrganizationByIdQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetOrganizationByIdQuery, TError, TData>(
+      ['GetOrganizationByID', variables],
+      fetcher<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetOrganizationByIdDocument, variables),
+      options
+    )};
+
+useGetOrganizationByIdQuery.document = GetOrganizationByIdDocument;
+
+useGetOrganizationByIdQuery.getKey = (variables: GetOrganizationByIdQueryVariables) => ['GetOrganizationByID', variables];
+
+
+useGetOrganizationByIdQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetOrganizationByIdQueryVariables) => fetcher<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetOrganizationByIdDocument, variables);
+
+export const GetAllOrganizationsDocument = `
+    query GetAllOrganizations {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+export const useGetAllOrganizationsQuery = <
+      TData = GetAllOrganizationsQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables?: GetAllOrganizationsQueryVariables,
+      options?: UseQueryOptions<GetAllOrganizationsQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetAllOrganizationsQuery, TError, TData>(
+      variables === undefined ? ['GetAllOrganizations'] : ['GetAllOrganizations', variables],
+      fetcher<GetAllOrganizationsQuery, GetAllOrganizationsQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetAllOrganizationsDocument, variables),
+      options
+    )};
+
+useGetAllOrganizationsQuery.document = GetAllOrganizationsDocument;
+
+useGetAllOrganizationsQuery.getKey = (variables?: GetAllOrganizationsQueryVariables) => variables === undefined ? ['GetAllOrganizations'] : ['GetAllOrganizations', variables];
+
+
+useGetAllOrganizationsQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables?: GetAllOrganizationsQueryVariables) => fetcher<GetAllOrganizationsQuery, GetAllOrganizationsQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetAllOrganizationsDocument, variables);
+
+export const OrganizationsWhereDocument = `
+    query OrganizationsWhere($where: OrganizationWhereInput) {
+  organizations(where: $where) {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+export const useOrganizationsWhereQuery = <
+      TData = OrganizationsWhereQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables?: OrganizationsWhereQueryVariables,
+      options?: UseQueryOptions<OrganizationsWhereQuery, TError, TData>
+    ) => {
+    
+    return useQuery<OrganizationsWhereQuery, TError, TData>(
+      variables === undefined ? ['OrganizationsWhere'] : ['OrganizationsWhere', variables],
+      fetcher<OrganizationsWhereQuery, OrganizationsWhereQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, OrganizationsWhereDocument, variables),
+      options
+    )};
+
+useOrganizationsWhereQuery.document = OrganizationsWhereDocument;
+
+useOrganizationsWhereQuery.getKey = (variables?: OrganizationsWhereQueryVariables) => variables === undefined ? ['OrganizationsWhere'] : ['OrganizationsWhere', variables];
+
+
+useOrganizationsWhereQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables?: OrganizationsWhereQueryVariables) => fetcher<OrganizationsWhereQuery, OrganizationsWhereQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, OrganizationsWhereDocument, variables);
+
+export const CreateOrganizationDocument = `
+    mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      createdAt
+      updatedAt
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        domains
+        ssoCert
+        ssoEntrypoint
+        ssoIssuer
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+      }
+      parent {
+        id
+        name
+      }
+      children {
+        edges {
+          node {
+            id
+            name
+            displayName
+            description
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+export const useCreateOrganizationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<CreateOrganizationMutation, TError, CreateOrganizationMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<CreateOrganizationMutation, TError, CreateOrganizationMutationVariables, TContext>(
+      ['CreateOrganization'],
+      (variables?: CreateOrganizationMutationVariables) => fetcher<CreateOrganizationMutation, CreateOrganizationMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreateOrganizationDocument, variables)(),
+      options
+    )};
+
+useCreateOrganizationMutation.getKey = () => ['CreateOrganization'];
+
+
+useCreateOrganizationMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: CreateOrganizationMutationVariables) => fetcher<CreateOrganizationMutation, CreateOrganizationMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreateOrganizationDocument, variables);
+
+export const UpdateOrganizationDocument = `
+    mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
+  updateOrganization(id: $updateOrganizationId, input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+    }
+  }
+}
+    `;
+
+export const useUpdateOrganizationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<UpdateOrganizationMutation, TError, UpdateOrganizationMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<UpdateOrganizationMutation, TError, UpdateOrganizationMutationVariables, TContext>(
+      ['UpdateOrganization'],
+      (variables?: UpdateOrganizationMutationVariables) => fetcher<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, UpdateOrganizationDocument, variables)(),
+      options
+    )};
+
+useUpdateOrganizationMutation.getKey = () => ['UpdateOrganization'];
+
+
+useUpdateOrganizationMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: UpdateOrganizationMutationVariables) => fetcher<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, UpdateOrganizationDocument, variables);
+
+export const DeleteOrganizationDocument = `
+    mutation DeleteOrganization($deleteOrganizationId: ID!) {
+  deleteOrganization(id: $deleteOrganizationId) {
+    deletedID
+  }
+}
+    `;
+
+export const useDeleteOrganizationMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<DeleteOrganizationMutation, TError, DeleteOrganizationMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<DeleteOrganizationMutation, TError, DeleteOrganizationMutationVariables, TContext>(
+      ['DeleteOrganization'],
+      (variables?: DeleteOrganizationMutationVariables) => fetcher<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeleteOrganizationDocument, variables)(),
+      options
+    )};
+
+useDeleteOrganizationMutation.getKey = () => ['DeleteOrganization'];
+
+
+useDeleteOrganizationMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: DeleteOrganizationMutationVariables) => fetcher<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeleteOrganizationDocument, variables);
+
+export const GetOrganizationSettingDocument = `
+    query GetOrganizationSetting($organizationSettingId: ID!) {
+  organizationSetting(id: $organizationSettingId) {
+    id
+    ssoCert
+    taxIdentifier
+    tags
+    ssoIssuer
+    ssoEntrypoint
+    billingAddress
+    billingContact
+    billingEmail
+    billingPhone
+    createdAt
+    createdBy
+    domains
+    updatedAt
+    updatedBy
+    organization {
+      id
+    }
+  }
+}
+    `;
+
+export const useGetOrganizationSettingQuery = <
+      TData = GetOrganizationSettingQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetOrganizationSettingQueryVariables,
+      options?: UseQueryOptions<GetOrganizationSettingQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetOrganizationSettingQuery, TError, TData>(
+      ['GetOrganizationSetting', variables],
+      fetcher<GetOrganizationSettingQuery, GetOrganizationSettingQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetOrganizationSettingDocument, variables),
+      options
+    )};
+
+useGetOrganizationSettingQuery.document = GetOrganizationSettingDocument;
+
+useGetOrganizationSettingQuery.getKey = (variables: GetOrganizationSettingQueryVariables) => ['GetOrganizationSetting', variables];
+
+
+useGetOrganizationSettingQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetOrganizationSettingQueryVariables) => fetcher<GetOrganizationSettingQuery, GetOrganizationSettingQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetOrganizationSettingDocument, variables);
+
+export const CreatePersonalAccessTokenDocument = `
+    mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
+  createPersonalAccessToken(input: $input) {
+    PersonalAccessToken {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      name
+      abilities
+      expiresAt
+      description
+      lastUsedAt
+      owner {
+        id
+        displayName
+      }
+    }
+  }
+}
+    `;
+
+export const useCreatePersonalAccessTokenMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<CreatePersonalAccessTokenMutation, TError, CreatePersonalAccessTokenMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<CreatePersonalAccessTokenMutation, TError, CreatePersonalAccessTokenMutationVariables, TContext>(
+      ['CreatePersonalAccessToken'],
+      (variables?: CreatePersonalAccessTokenMutationVariables) => fetcher<CreatePersonalAccessTokenMutation, CreatePersonalAccessTokenMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreatePersonalAccessTokenDocument, variables)(),
+      options
+    )};
+
+useCreatePersonalAccessTokenMutation.getKey = () => ['CreatePersonalAccessToken'];
+
+
+useCreatePersonalAccessTokenMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: CreatePersonalAccessTokenMutationVariables) => fetcher<CreatePersonalAccessTokenMutation, CreatePersonalAccessTokenMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreatePersonalAccessTokenDocument, variables);
+
+export const GetPersonalAccessTokenByIdDocument = `
+    query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
+  personalAccessToken(id: $personalAccessTokenId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    name
+    abilities
+    expiresAt
+    description
+    lastUsedAt
+    owner {
+      id
+      displayName
+    }
+  }
+}
+    `;
+
+export const useGetPersonalAccessTokenByIdQuery = <
+      TData = GetPersonalAccessTokenByIdQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetPersonalAccessTokenByIdQueryVariables,
+      options?: UseQueryOptions<GetPersonalAccessTokenByIdQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetPersonalAccessTokenByIdQuery, TError, TData>(
+      ['GetPersonalAccessTokenByID', variables],
+      fetcher<GetPersonalAccessTokenByIdQuery, GetPersonalAccessTokenByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetPersonalAccessTokenByIdDocument, variables),
+      options
+    )};
+
+useGetPersonalAccessTokenByIdQuery.document = GetPersonalAccessTokenByIdDocument;
+
+useGetPersonalAccessTokenByIdQuery.getKey = (variables: GetPersonalAccessTokenByIdQueryVariables) => ['GetPersonalAccessTokenByID', variables];
+
+
+useGetPersonalAccessTokenByIdQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetPersonalAccessTokenByIdQueryVariables) => fetcher<GetPersonalAccessTokenByIdQuery, GetPersonalAccessTokenByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetPersonalAccessTokenByIdDocument, variables);
+
+export const DeletePersonalAccessTokenDocument = `
+    mutation DeletePersonalAccessToken($deletePersonalAccessTokenId: ID!) {
+  deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+    deletedID
+  }
+}
+    `;
+
+export const useDeletePersonalAccessTokenMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<DeletePersonalAccessTokenMutation, TError, DeletePersonalAccessTokenMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<DeletePersonalAccessTokenMutation, TError, DeletePersonalAccessTokenMutationVariables, TContext>(
+      ['DeletePersonalAccessToken'],
+      (variables?: DeletePersonalAccessTokenMutationVariables) => fetcher<DeletePersonalAccessTokenMutation, DeletePersonalAccessTokenMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeletePersonalAccessTokenDocument, variables)(),
+      options
+    )};
+
+useDeletePersonalAccessTokenMutation.getKey = () => ['DeletePersonalAccessToken'];
+
+
+useDeletePersonalAccessTokenMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: DeletePersonalAccessTokenMutationVariables) => fetcher<DeletePersonalAccessTokenMutation, DeletePersonalAccessTokenMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeletePersonalAccessTokenDocument, variables);
+
+export const GetUserByIdDocument = `
+    query GetUserByID($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
+    setting {
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
+    }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
+  }
+}
+    `;
+
+export const useGetUserByIdQuery = <
+      TData = GetUserByIdQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetUserByIdQueryVariables,
+      options?: UseQueryOptions<GetUserByIdQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetUserByIdQuery, TError, TData>(
+      ['GetUserByID', variables],
+      fetcher<GetUserByIdQuery, GetUserByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetUserByIdDocument, variables),
+      options
+    )};
+
+useGetUserByIdQuery.document = GetUserByIdDocument;
+
+useGetUserByIdQuery.getKey = (variables: GetUserByIdQueryVariables) => ['GetUserByID', variables];
+
+
+useGetUserByIdQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetUserByIdQueryVariables) => fetcher<GetUserByIdQuery, GetUserByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetUserByIdDocument, variables);
+
+export const GetUserByIdWithOrgsDocument = `
+    query GetUserByIDWithOrgs($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
+    setting {
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
+    }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
+    organizations {
+      id
+      name
+      displayName
+    }
+  }
+}
+    `;
+
+export const useGetUserByIdWithOrgsQuery = <
+      TData = GetUserByIdWithOrgsQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetUserByIdWithOrgsQueryVariables,
+      options?: UseQueryOptions<GetUserByIdWithOrgsQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetUserByIdWithOrgsQuery, TError, TData>(
+      ['GetUserByIDWithOrgs', variables],
+      fetcher<GetUserByIdWithOrgsQuery, GetUserByIdWithOrgsQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetUserByIdWithOrgsDocument, variables),
+      options
+    )};
+
+useGetUserByIdWithOrgsQuery.document = GetUserByIdWithOrgsDocument;
+
+useGetUserByIdWithOrgsQuery.getKey = (variables: GetUserByIdWithOrgsQueryVariables) => ['GetUserByIDWithOrgs', variables];
+
+
+useGetUserByIdWithOrgsQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetUserByIdWithOrgsQueryVariables) => fetcher<GetUserByIdWithOrgsQuery, GetUserByIdWithOrgsQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetUserByIdWithOrgsDocument, variables);
+
+export const GetAllUsersDocument = `
+    query GetAllUsers {
+  users {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        displayName
+        email
+        lastSeen
+        sub
+        avatarRemoteURL
+        avatarLocalFile
+        oauth
+        setting {
+          emailConfirmed
+          locked
+          status
+          role
+          permissions
+          tags
+          suspendedAt
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          silencedAt
+        }
+        updatedAt
+        updatedBy
+        createdAt
+        createdBy
+      }
+    }
+  }
+}
+    `;
+
+export const useGetAllUsersQuery = <
+      TData = GetAllUsersQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables?: GetAllUsersQueryVariables,
+      options?: UseQueryOptions<GetAllUsersQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetAllUsersQuery, TError, TData>(
+      variables === undefined ? ['GetAllUsers'] : ['GetAllUsers', variables],
+      fetcher<GetAllUsersQuery, GetAllUsersQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetAllUsersDocument, variables),
+      options
+    )};
+
+useGetAllUsersQuery.document = GetAllUsersDocument;
+
+useGetAllUsersQuery.getKey = (variables?: GetAllUsersQueryVariables) => variables === undefined ? ['GetAllUsers'] : ['GetAllUsers', variables];
+
+
+useGetAllUsersQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables?: GetAllUsersQueryVariables) => fetcher<GetAllUsersQuery, GetAllUsersQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetAllUsersDocument, variables);
+
+export const CreateUserDocument = `
+    mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      organizations {
+        id
+      }
+      groups {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
+    }
+  }
+}
+    `;
+
+export const useCreateUserMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<CreateUserMutation, TError, CreateUserMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<CreateUserMutation, TError, CreateUserMutationVariables, TContext>(
+      ['CreateUser'],
+      (variables?: CreateUserMutationVariables) => fetcher<CreateUserMutation, CreateUserMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreateUserDocument, variables)(),
+      options
+    )};
+
+useCreateUserMutation.getKey = () => ['CreateUser'];
+
+
+useCreateUserMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: CreateUserMutationVariables) => fetcher<CreateUserMutation, CreateUserMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, CreateUserDocument, variables);
+
+export const UpdateUserDocument = `
+    mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $updateUserId, input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      groups {
+        id
+      }
+      organizations {
+        id
+      }
+      personalAccessTokens {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
+    }
+  }
+}
+    `;
+
+export const useUpdateUserMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<UpdateUserMutation, TError, UpdateUserMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<UpdateUserMutation, TError, UpdateUserMutationVariables, TContext>(
+      ['UpdateUser'],
+      (variables?: UpdateUserMutationVariables) => fetcher<UpdateUserMutation, UpdateUserMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, UpdateUserDocument, variables)(),
+      options
+    )};
+
+useUpdateUserMutation.getKey = () => ['UpdateUser'];
+
+
+useUpdateUserMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: UpdateUserMutationVariables) => fetcher<UpdateUserMutation, UpdateUserMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, UpdateUserDocument, variables);
+
+export const DeleteUserDocument = `
+    mutation DeleteUser($deleteUserId: ID!) {
+  deleteUser(id: $deleteUserId) {
+    deletedID
+  }
+}
+    `;
+
+export const useDeleteUserMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      options?: UseMutationOptions<DeleteUserMutation, TError, DeleteUserMutationVariables, TContext>
+    ) => {
+    
+    return useMutation<DeleteUserMutation, TError, DeleteUserMutationVariables, TContext>(
+      ['DeleteUser'],
+      (variables?: DeleteUserMutationVariables) => fetcher<DeleteUserMutation, DeleteUserMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeleteUserDocument, variables)(),
+      options
+    )};
+
+useDeleteUserMutation.getKey = () => ['DeleteUser'];
+
+
+useDeleteUserMutation.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: DeleteUserMutationVariables) => fetcher<DeleteUserMutation, DeleteUserMutationVariables>(dataSource.endpoint, dataSource.fetchParams || {}, DeleteUserDocument, variables);
+
+export const GetUserSettingByIdDocument = `
+    query GetUserSettingByID($userSettingId: ID!) {
+  userSetting(id: $userSettingId) {
+    id
+    permissions
+    role
+    silencedAt
+    status
+    suspendedAt
+    tags
+    locked
+    emailConfirmed
+    createdAt
+    createdBy
+    deletedAt
+    deletedBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export const useGetUserSettingByIdQuery = <
+      TData = GetUserSettingByIdQuery,
+      TError = unknown
+    >(
+      dataSource: { endpoint: string, fetchParams?: RequestInit },
+      variables: GetUserSettingByIdQueryVariables,
+      options?: UseQueryOptions<GetUserSettingByIdQuery, TError, TData>
+    ) => {
+    
+    return useQuery<GetUserSettingByIdQuery, TError, TData>(
+      ['GetUserSettingByID', variables],
+      fetcher<GetUserSettingByIdQuery, GetUserSettingByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetUserSettingByIdDocument, variables),
+      options
+    )};
+
+useGetUserSettingByIdQuery.document = GetUserSettingByIdDocument;
+
+useGetUserSettingByIdQuery.getKey = (variables: GetUserSettingByIdQueryVariables) => ['GetUserSettingByID', variables];
+
+
+useGetUserSettingByIdQuery.fetcher = (dataSource: { endpoint: string, fetchParams?: RequestInit }, variables: GetUserSettingByIdQueryVariables) => fetcher<GetUserSettingByIdQuery, GetUserSettingByIdQueryVariables>(dataSource.endpoint, dataSource.fetchParams || {}, GetUserSettingByIdDocument, variables);
+
+
+export const GetGroupByIdDocument = gql`
+    query GetGroupByID($groupId: ID!) {
+  group(id: $groupId) {
+    id
+    name
+    description
+    displayName
+    owner {
+      id
+    }
+    logoURL
+    users {
+      id
+      displayName
+      email
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      visibility
+      joinPolicy
+      syncToSlack
+      syncToGithub
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export function useGetGroupByIdQuery(options: Omit<Urql.UseQueryArgs<GetGroupByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetGroupByIdQuery, GetGroupByIdQueryVariables>({ query: GetGroupByIdDocument, ...options });
+};
+export const GroupsWhereDocument = gql`
+    query GroupsWhere($where: GroupWhereInput) {
+  groups(where: $where) {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        owner {
+          id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+    `;
+
+export function useGroupsWhereQuery(options?: Omit<Urql.UseQueryArgs<GroupsWhereQueryVariables>, 'query'>) {
+  return Urql.useQuery<GroupsWhereQuery, GroupsWhereQueryVariables>({ query: GroupsWhereDocument, ...options });
+};
+export const GetAllGroupsDocument = gql`
+    query GetAllGroups {
+  groups {
+    edges {
+      node {
+        id
+        name
+        description
+        displayName
+        owner {
+          id
+        }
+        logoURL
+        users {
+          id
+          displayName
+          email
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          visibility
+          joinPolicy
+          syncToSlack
+          syncToGithub
+          tags
+        }
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+      }
+    }
+  }
+}
+    `;
+
+export function useGetAllGroupsQuery(options?: Omit<Urql.UseQueryArgs<GetAllGroupsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAllGroupsQuery, GetAllGroupsQueryVariables>({ query: GetAllGroupsDocument, ...options });
+};
+export const CreateGroupDocument = gql`
+    mutation CreateGroup($input: CreateGroupInput!) {
+  createGroup(input: $input) {
+    group {
+      id
+      name
+      description
+      displayName
+      owner {
+        id
+      }
+      logoURL
+      users {
+        id
+        displayName
+        email
+      }
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        syncToSlack
+        syncToGithub
+        tags
+      }
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+    }
+  }
+}
+    `;
+
+export function useCreateGroupMutation() {
+  return Urql.useMutation<CreateGroupMutation, CreateGroupMutationVariables>(CreateGroupDocument);
+};
+export const UpdateGroupDocument = gql`
+    mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
+  updateGroup(id: $updateGroupId, input: $input) {
+    group {
+      id
+      name
+      displayName
+      description
+      updatedAt
+      updatedBy
+    }
+  }
+}
+    `;
+
+export function useUpdateGroupMutation() {
+  return Urql.useMutation<UpdateGroupMutation, UpdateGroupMutationVariables>(UpdateGroupDocument);
+};
+export const DeleteGroupDocument = gql`
+    mutation DeleteGroup($deleteGroupId: ID!) {
+  deleteGroup(id: $deleteGroupId) {
+    deletedID
+  }
+}
+    `;
+
+export function useDeleteGroupMutation() {
+  return Urql.useMutation<DeleteGroupMutation, DeleteGroupMutationVariables>(DeleteGroupDocument);
+};
+export const GetGroupSettingDocument = gql`
+    query GetGroupSetting($groupSettingId: ID!) {
+  groupSetting(id: $groupSettingId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    visibility
+    joinPolicy
+    tags
+    syncToSlack
+    syncToGithub
+    group {
+      id
+    }
+  }
+}
+    `;
+
+export function useGetGroupSettingQuery(options: Omit<Urql.UseQueryArgs<GetGroupSettingQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetGroupSettingQuery, GetGroupSettingQueryVariables>({ query: GetGroupSettingDocument, ...options });
+};
+export const GetOrganizationByIdDocument = gql`
+    query GetOrganizationByID($organizationId: ID!) {
+  organization(id: $organizationId) {
+    id
+    name
+    displayName
+    description
+    personalOrg
+    parent {
+      id
+      name
+    }
+    children {
+      edges {
+        node {
+          id
+          name
+          displayName
+          description
+        }
+      }
+    }
+    setting {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      domains
+      ssoCert
+      ssoEntrypoint
+      ssoIssuer
+      billingContact
+      billingEmail
+      billingPhone
+      billingAddress
+      taxIdentifier
+      tags
+    }
+    createdAt
+    createdBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export function useGetOrganizationByIdQuery(options: Omit<Urql.UseQueryArgs<GetOrganizationByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetOrganizationByIdQuery, GetOrganizationByIdQueryVariables>({ query: GetOrganizationByIdDocument, ...options });
+};
+export const GetAllOrganizationsDocument = gql`
+    query GetAllOrganizations {
+  organizations {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+export function useGetAllOrganizationsQuery(options?: Omit<Urql.UseQueryArgs<GetAllOrganizationsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAllOrganizationsQuery, GetAllOrganizationsQueryVariables>({ query: GetAllOrganizationsDocument, ...options });
+};
+export const OrganizationsWhereDocument = gql`
+    query OrganizationsWhere($where: OrganizationWhereInput) {
+  organizations(where: $where) {
+    edges {
+      node {
+        id
+        name
+        displayName
+        description
+        personalOrg
+        parent {
+          id
+          name
+        }
+        children {
+          edges {
+            node {
+              id
+              name
+              displayName
+              description
+            }
+          }
+        }
+        setting {
+          id
+          createdAt
+          updatedAt
+          createdBy
+          updatedBy
+          domains
+          ssoCert
+          ssoEntrypoint
+          ssoIssuer
+          billingContact
+          billingEmail
+          billingPhone
+          billingAddress
+          taxIdentifier
+          tags
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+export function useOrganizationsWhereQuery(options?: Omit<Urql.UseQueryArgs<OrganizationsWhereQueryVariables>, 'query'>) {
+  return Urql.useQuery<OrganizationsWhereQuery, OrganizationsWhereQueryVariables>({ query: OrganizationsWhereDocument, ...options });
+};
+export const CreateOrganizationDocument = gql`
+    mutation CreateOrganization($input: CreateOrganizationInput!) {
+  createOrganization(input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+      personalOrg
+      createdAt
+      updatedAt
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        domains
+        ssoCert
+        ssoEntrypoint
+        ssoIssuer
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+      }
+      parent {
+        id
+        name
+      }
+      children {
+        edges {
+          node {
+            id
+            name
+            displayName
+            description
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+export function useCreateOrganizationMutation() {
+  return Urql.useMutation<CreateOrganizationMutation, CreateOrganizationMutationVariables>(CreateOrganizationDocument);
+};
+export const UpdateOrganizationDocument = gql`
+    mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizationInput!) {
+  updateOrganization(id: $updateOrganizationId, input: $input) {
+    organization {
+      id
+      name
+      displayName
+      description
+    }
+  }
+}
+    `;
+
+export function useUpdateOrganizationMutation() {
+  return Urql.useMutation<UpdateOrganizationMutation, UpdateOrganizationMutationVariables>(UpdateOrganizationDocument);
+};
+export const DeleteOrganizationDocument = gql`
+    mutation DeleteOrganization($deleteOrganizationId: ID!) {
+  deleteOrganization(id: $deleteOrganizationId) {
+    deletedID
+  }
+}
+    `;
+
+export function useDeleteOrganizationMutation() {
+  return Urql.useMutation<DeleteOrganizationMutation, DeleteOrganizationMutationVariables>(DeleteOrganizationDocument);
+};
+export const GetOrganizationSettingDocument = gql`
+    query GetOrganizationSetting($organizationSettingId: ID!) {
+  organizationSetting(id: $organizationSettingId) {
+    id
+    ssoCert
+    taxIdentifier
+    tags
+    ssoIssuer
+    ssoEntrypoint
+    billingAddress
+    billingContact
+    billingEmail
+    billingPhone
+    createdAt
+    createdBy
+    domains
+    updatedAt
+    updatedBy
+    organization {
+      id
+    }
+  }
+}
+    `;
+
+export function useGetOrganizationSettingQuery(options: Omit<Urql.UseQueryArgs<GetOrganizationSettingQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetOrganizationSettingQuery, GetOrganizationSettingQueryVariables>({ query: GetOrganizationSettingDocument, ...options });
+};
+export const CreatePersonalAccessTokenDocument = gql`
+    mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
+  createPersonalAccessToken(input: $input) {
+    PersonalAccessToken {
+      id
+      createdAt
+      updatedAt
+      createdBy
+      updatedBy
+      name
+      abilities
+      expiresAt
+      description
+      lastUsedAt
+      owner {
+        id
+        displayName
+      }
+    }
+  }
+}
+    `;
+
+export function useCreatePersonalAccessTokenMutation() {
+  return Urql.useMutation<CreatePersonalAccessTokenMutation, CreatePersonalAccessTokenMutationVariables>(CreatePersonalAccessTokenDocument);
+};
+export const GetPersonalAccessTokenByIdDocument = gql`
+    query GetPersonalAccessTokenByID($personalAccessTokenId: ID!) {
+  personalAccessToken(id: $personalAccessTokenId) {
+    id
+    createdAt
+    updatedAt
+    createdBy
+    updatedBy
+    name
+    abilities
+    expiresAt
+    description
+    lastUsedAt
+    owner {
+      id
+      displayName
+    }
+  }
+}
+    `;
+
+export function useGetPersonalAccessTokenByIdQuery(options: Omit<Urql.UseQueryArgs<GetPersonalAccessTokenByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPersonalAccessTokenByIdQuery, GetPersonalAccessTokenByIdQueryVariables>({ query: GetPersonalAccessTokenByIdDocument, ...options });
+};
+export const DeletePersonalAccessTokenDocument = gql`
+    mutation DeletePersonalAccessToken($deletePersonalAccessTokenId: ID!) {
+  deletePersonalAccessToken(id: $deletePersonalAccessTokenId) {
+    deletedID
+  }
+}
+    `;
+
+export function useDeletePersonalAccessTokenMutation() {
+  return Urql.useMutation<DeletePersonalAccessTokenMutation, DeletePersonalAccessTokenMutationVariables>(DeletePersonalAccessTokenDocument);
+};
+export const GetUserByIdDocument = gql`
+    query GetUserByID($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
+    setting {
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
+    }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
+  }
+}
+    `;
+
+export function useGetUserByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUserByIdQuery, GetUserByIdQueryVariables>({ query: GetUserByIdDocument, ...options });
+};
+export const GetUserByIdWithOrgsDocument = gql`
+    query GetUserByIDWithOrgs($userId: ID!) {
+  user(id: $userId) {
+    id
+    firstName
+    lastName
+    displayName
+    email
+    lastSeen
+    sub
+    avatarRemoteURL
+    avatarLocalFile
+    oauth
+    setting {
+      emailConfirmed
+      locked
+      status
+      role
+      permissions
+      tags
+      suspendedAt
+      createdAt
+      createdBy
+      updatedAt
+      updatedBy
+      silencedAt
+    }
+    updatedAt
+    updatedBy
+    createdAt
+    createdBy
+    organizations {
+      id
+      name
+      displayName
+    }
+  }
+}
+    `;
+
+export function useGetUserByIdWithOrgsQuery(options: Omit<Urql.UseQueryArgs<GetUserByIdWithOrgsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUserByIdWithOrgsQuery, GetUserByIdWithOrgsQueryVariables>({ query: GetUserByIdWithOrgsDocument, ...options });
+};
+export const GetAllUsersDocument = gql`
+    query GetAllUsers {
+  users {
+    edges {
+      node {
+        id
+        firstName
+        lastName
+        displayName
+        email
+        lastSeen
+        sub
+        avatarRemoteURL
+        avatarLocalFile
+        oauth
+        setting {
+          emailConfirmed
+          locked
+          status
+          role
+          permissions
+          tags
+          suspendedAt
+          createdAt
+          createdBy
+          updatedAt
+          updatedBy
+          silencedAt
+        }
+        updatedAt
+        updatedBy
+        createdAt
+        createdBy
+      }
+    }
+  }
+}
+    `;
+
+export function useGetAllUsersQuery(options?: Omit<Urql.UseQueryArgs<GetAllUsersQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>({ query: GetAllUsersDocument, ...options });
+};
+export const CreateUserDocument = gql`
+    mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      organizations {
+        id
+      }
+      groups {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
+    }
+  }
+}
+    `;
+
+export function useCreateUserMutation() {
+  return Urql.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument);
+};
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $updateUserId, input: $input) {
+    user {
+      id
+      email
+      firstName
+      lastName
+      displayName
+      avatarRemoteURL
+      avatarLocalFile
+      password
+      sub
+      oauth
+      groups {
+        id
+      }
+      organizations {
+        id
+      }
+      personalAccessTokens {
+        id
+      }
+      setting {
+        emailConfirmed
+        locked
+        status
+        role
+        permissions
+        tags
+        suspendedAt
+        createdAt
+        createdBy
+        updatedAt
+        updatedBy
+        silencedAt
+      }
+    }
+  }
+}
+    `;
+
+export function useUpdateUserMutation() {
+  return Urql.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument);
+};
+export const DeleteUserDocument = gql`
+    mutation DeleteUser($deleteUserId: ID!) {
+  deleteUser(id: $deleteUserId) {
+    deletedID
+  }
+}
+    `;
+
+export function useDeleteUserMutation() {
+  return Urql.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument);
+};
+export const GetUserSettingByIdDocument = gql`
+    query GetUserSettingByID($userSettingId: ID!) {
+  userSetting(id: $userSettingId) {
+    id
+    permissions
+    role
+    silencedAt
+    status
+    suspendedAt
+    tags
+    locked
+    emailConfirmed
+    createdAt
+    createdBy
+    deletedAt
+    deletedBy
+    updatedAt
+    updatedBy
+  }
+}
+    `;
+
+export function useGetUserSettingByIdQuery(options: Omit<Urql.UseQueryArgs<GetUserSettingByIdQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetUserSettingByIdQuery, GetUserSettingByIdQueryVariables>({ query: GetUserSettingByIdDocument, ...options });
+};

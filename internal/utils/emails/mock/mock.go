@@ -113,6 +113,7 @@ func (c *SendGridClient) Send(msg *sgmail.SGMailV3) (rep *rest.Response, err err
 
 	// Email needs to contain a From address
 	if msg.From.Address == "" {
+		// Wait until `done` is closed.
 		return &rest.Response{
 			StatusCode: http.StatusBadRequest,
 			Body:       "no From address",
@@ -121,6 +122,7 @@ func (c *SendGridClient) Send(msg *sgmail.SGMailV3) (rep *rest.Response, err err
 
 	// Validate From address
 	if _, err := sgmail.ParseEmail(msg.From.Address); err != nil {
+		// Wait until `done` is closed.
 		return &rest.Response{
 			StatusCode: http.StatusBadRequest,
 			Body:       fmt.Sprintf("invalid From address: %s", msg.From.Address),
@@ -129,6 +131,7 @@ func (c *SendGridClient) Send(msg *sgmail.SGMailV3) (rep *rest.Response, err err
 
 	// Email recipients are stored in Personalizations
 	if len(msg.Personalizations) == 0 {
+		// Wait until `done` is closed.
 		return &rest.Response{
 			StatusCode: http.StatusBadRequest,
 			Body:       "no Personalization info",

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
+	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -17,6 +18,11 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/emails/mock"
+)
+
+var (
+	maxWaitInMillis      = 500
+	pollIntervalInMillis = 20
 )
 
 func TestRegisterHandler(t *testing.T) {
@@ -125,16 +131,6 @@ func TestRegisterHandler(t *testing.T) {
 			res := recorder.Result()
 			defer res.Body.Close()
 
-			// Test that one verify email was sent to each user
-			messages := []*mock.EmailMetadata{
-				{
-					To:        "bananas@datum.net",
-					From:      h.SendGridConfig.FromEmail,
-					Subject:   emails.VerifyEmailRE,
-					Timestamp: sent,
-				},
-			}
-
 			var out *handlers.RegisterReply
 
 			// parse request body
@@ -149,8 +145,25 @@ func TestRegisterHandler(t *testing.T) {
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)
 
+				// Test that one verify email was sent to each user
+				messages := []*mock.EmailMetadata{
+					{
+						To:        tc.email,
+						From:      h.SendGridConfig.FromEmail,
+						Subject:   emails.VerifyEmailRE,
+						Timestamp: sent,
+					},
+				}
+
 				// wait for messages
-				time.Sleep(1 * time.Second)
+				predicate := func() bool {
+					return h.TaskMan.GetQueueLength() == 0
+				}
+				successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+				if successful != true {
+					t.Errorf("max wait of email send")
+				}
 
 				mock.CheckEmails(t, messages)
 
@@ -160,7 +173,15 @@ func TestRegisterHandler(t *testing.T) {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
 
 				// wait for messages
-				time.Sleep(1 * time.Second)
+				predicate := func() bool {
+					return h.TaskMan.GetQueueLength() == 0
+				}
+
+				successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+				if successful != true {
+					t.Errorf("max wait of email send")
+				}
 
 				mock.CheckEmails(t, nil)
 			}

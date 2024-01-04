@@ -27,6 +27,7 @@ private_key.pem
 public_key.pem
 # Sendgrid test email folders
 internal/httpserve/handlers/false/*
+internal/httpserve/handlers/fixtures/*
 false/*
 
 # Packages

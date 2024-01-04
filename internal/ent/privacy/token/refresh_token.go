@@ -5,7 +5,6 @@ import "context"
 type (
 	RefreshToken struct {
 		PrivacyToken
-		// TODO: unexport this I think?
 		Subject string
 	}
 

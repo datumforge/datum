@@ -125,9 +125,9 @@ func (EmailVerificationToken) Policy() ent.Policy {
 				},
 			),
 			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.PasswordResetToken{},
+				&token.ForgotPasswordToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.PasswordResetToken)
+					actualToken := t.(*token.ForgotPasswordToken)
 					emailFilter := filter.(*generated.EmailVerificationTokenFilter)
 					emailFilter.WhereEmail(entql.StringEQ(actualToken.Email))
 				},

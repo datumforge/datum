@@ -32,7 +32,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 	}
 
 	// setup viewer context
-	ctxWithToken := token.NewContextWithPasswordResetToken(ctx.Request().Context(), in.Email)
+	ctxWithToken := token.NewContextWithForgotPasswordToken(ctx.Request().Context(), in.Email)
 
 	if err := validateForgotPasswordRequest(in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))

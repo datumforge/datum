@@ -78,7 +78,7 @@ func (h *Handler) verifyUserPassword(ctx echo.Context) (*generated.User, error) 
 	}
 
 	// Set context for further requests
-	ctxWithToken := token.NewContextWithPasswordResetToken(ctx.Request().Context(), l.Username)
+	ctxWithToken := token.NewContextWithForgotPasswordToken(ctx.Request().Context(), l.Username)
 
 	// check user in the database, username == email and ensure only one record is returned
 	user, err := h.getUserByEmail(ctxWithToken, l.Username)

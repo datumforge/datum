@@ -15,6 +15,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zaptest"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
@@ -76,7 +77,7 @@ func handlerSetup(t *testing.T) *handlers.Handler {
 	h := &handlers.Handler{
 		TM:           tm,
 		DBClient:     EntClient,
-		Logger:       zap.NewNop().Sugar(),
+		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
 		CookieDomain: "datum.net",
 		SM:           sm,
 	}

@@ -1,7 +1,6 @@
 package handlers_test
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -14,8 +13,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
 	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
@@ -148,8 +149,10 @@ func TestRegisterHandler(t *testing.T) {
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)
 
-				// cleanup after
-				EntClient.User.DeleteOneID(out.ID).ExecX(context.Background())
+				// create user in the database with no auth
+				ec := echocontext.NewTestEchoContext().Request().Context()
+				ctx := privacy.DecisionContext(ec, privacy.Allow)
+				EntClient.User.DeleteOneID(out.ID).ExecX(ctx)
 			} else {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
 			}

@@ -16,6 +16,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -198,11 +199,19 @@ func (User) Policy() ent.Policy {
 			),
 			// Password reset paths
 			rule.AllowAfterApplyingPrivacyTokenFilter(
+				&token.ForgotPasswordToken{},
+				func(t token.PrivacyToken, filter privacy.Filter) {
+					actualToken := t.(*token.ForgotPasswordToken)
+					userFilter := filter.(*generated.UserFilter)
+					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+				},
+			),
+			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.PasswordResetToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
 					actualToken := t.(*token.PasswordResetToken)
 					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
+					userFilter.WhereHasResetTokensWith(passwordresettoken.Token(actualToken.ResetToken))
 				},
 			),
 			// Login path

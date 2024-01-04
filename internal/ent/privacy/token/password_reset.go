@@ -5,7 +5,7 @@ import "context"
 type (
 	PasswordResetToken struct {
 		PrivacyToken
-		Email string
+		ResetToken string
 	}
 
 	PasswordResetTokenKey struct{}
@@ -16,8 +16,8 @@ func (PasswordResetToken) GetContextKey() interface{} {
 }
 
 // NewContextWithPasswordResetToken returns a new context with the password reset token inside
-func NewContextWithPasswordResetToken(parent context.Context, email string) context.Context {
-	return context.WithValue(parent, &PasswordResetTokenKey{}, &PasswordResetToken{Email: email})
+func NewContextWithPasswordResetToken(parent context.Context, token string) context.Context {
+	return context.WithValue(parent, &PasswordResetTokenKey{}, &PasswordResetToken{ResetToken: token})
 }
 
 // PasswordResetTokenFromContext parses the context for a password reset token and returns it

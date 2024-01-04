@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
@@ -107,9 +108,11 @@ func TestResetPassword(t *testing.T) {
 			e := setupEcho(h.SM)
 
 			// create user in the database
+			ctx := privacy.DecisionContext(ec, privacy.Allow)
+
 			userSetting := EntClient.UserSetting.Create().
 				SetEmailConfirmed(true).
-				SaveX(ec)
+				SaveX(ctx)
 
 			u := EntClient.User.Create().
 				SetFirstName(gofakeit.FirstName()).
@@ -117,7 +120,7 @@ func TestResetPassword(t *testing.T) {
 				SetEmail(tc.email).
 				SetPassword(validPassword).
 				SetSetting(userSetting).
-				SaveX(ec)
+				SaveX(ctx)
 
 			user := handlers.User{
 				FirstName: u.FirstName,
@@ -225,7 +228,7 @@ func TestResetPassword(t *testing.T) {
 			}
 
 			// cleanup after
-			EntClient.User.DeleteOneID(u.ID).ExecX(ec)
+			EntClient.User.DeleteOneID(u.ID).ExecX(ctx)
 		})
 	}
 }

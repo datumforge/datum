@@ -42,7 +42,7 @@ func registerUser(ctx context.Context) error {
 	}
 
 	token := viper.GetString("reset.token")
-	if password == "" {
+	if token == "" {
 		return datum.NewRequiredFieldMissingError("token")
 	}
 

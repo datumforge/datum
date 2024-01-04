@@ -44,10 +44,7 @@ func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*ha
 
 	defer resp.Body.Close()
 
-	out := handlers.ResetPasswordReply{
-		Message: "password reset successfully",
-	}
-
+	out := handlers.ResetPasswordReply{}
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, err
 	}
@@ -56,5 +53,5 @@ func Reset(c *Client, ctx context.Context, r handlers.ResetPasswordRequest) (*ha
 		return nil, newRegistrationError(resp.StatusCode, out.Message)
 	}
 
-	return ctx.NoContent(http.StatusNoContent)
+	return &out, err
 }

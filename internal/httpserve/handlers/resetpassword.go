@@ -84,7 +84,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 
 	// Verify the token with the stored secret
 	if err = token.Verify(user.GetPasswordResetToken(), user.PasswordResetSecret); err != nil {
-		return err
+		return ctx.JSON(http.StatusInternalServerError, ErrPassWordResetTokenInvalid)
 	}
 
 	if err := h.updateUserPassword(ctx.Request().Context(), entUser.ID, in.Password); err != nil {
@@ -106,7 +106,11 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return err
 	}
 
-	return ctx.NoContent(http.StatusNoContent)
+	out := &ResetPasswordReply{
+		Message: "password reset successfully",
+	}
+
+	return ctx.JSON(http.StatusOK, out)
 }
 
 // validateVerifyRequest validates the required fields are set in the user request

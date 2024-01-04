@@ -37,6 +37,11 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input generated.Creat
 			return nil, err
 		}
 
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+
+		}
+
 		r.logger.Errorw("failed to create user", "error", err)
 		return nil, ErrInternalServerError
 	}
@@ -57,6 +62,11 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id string, input gene
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+
 		}
 
 		r.logger.Errorw("failed to get user", "error", err)
@@ -96,6 +106,11 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id string) (*UserDele
 			return nil, err
 		}
 
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+
+		}
+
 		r.logger.Errorw("failed to delete user", "error", err)
 		return nil, err
 	}
@@ -120,6 +135,11 @@ func (r *queryResolver) User(ctx context.Context, id string) (*generated.User, e
 	if err != nil {
 		if generated.IsNotFound(err) {
 			return nil, err
+		}
+
+		if errors.Is(err, privacy.Deny) {
+			return nil, ErrPermissionDenied
+
 		}
 
 		r.logger.Errorw("failed to get user", "error", err)

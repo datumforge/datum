@@ -35,12 +35,12 @@ func newValidClaims(subject string) *tokens.Claims {
 }
 
 // NewTestContextWithValidUser creates an echo context with a fake subject for testing purposes ONLY
-func NewTestContextWithValidUser(subject string) (*echo.Context, error) {
+func NewTestContextWithValidUser(subject string) (echo.Context, error) {
 	ec := echocontext.NewTestEchoContext()
 
 	claims := newValidClaims(subject)
 
 	ec.Set(ContextUserClaims.name, claims)
 
-	return &ec, nil
+	return ec, nil
 }

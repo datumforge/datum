@@ -9,6 +9,8 @@ import (
 	"fmt"
 
 	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 )
 
 // CreatePersonalAccessToken is the resolver for the createPersonalAccessToken field.
@@ -51,6 +53,13 @@ func (r *mutationResolver) DeletePersonalAccessToken(ctx context.Context, id str
 
 // PersonalAccessToken is the resolver for the PersonalAccessToken field.
 func (r *queryResolver) PersonalAccessToken(ctx context.Context, id string) (*generated.PersonalAccessToken, error) {
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	} else {
+		// setup view context
+		ctx = viewer.NewContext(ctx, viewer.NewUserViewerFromSubject(ctx))
+	}
+
 	pat, err := r.client.PersonalAccessToken.Get(ctx, id)
 	if err != nil {
 		if generated.IsNotFound(err) {

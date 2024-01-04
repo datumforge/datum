@@ -39,11 +39,9 @@ func TestQuery_Group(t *testing.T) {
 		t.Fatal()
 	}
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	group1 := (&GroupBuilder{Owner: org1.ID}).MustNew(reqCtx)
@@ -172,11 +170,9 @@ func TestQuery_GroupsByOwner(t *testing.T) {
 		t.Fatal()
 	}
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -326,11 +322,9 @@ func TestQuery_Groups(t *testing.T) {
 		t.Fatal()
 	}
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -478,11 +472,9 @@ func TestMutation_CreateGroup(t *testing.T) {
 		t.Fatal()
 	}
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	owner1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	owner2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -687,11 +679,9 @@ func TestMutation_UpdateGroup(t *testing.T) {
 		t.Fatal()
 	}
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	nameUpdate := gofakeit.Name()
 	displayNameUpdate := gofakeit.LetterN(40)
@@ -906,11 +896,9 @@ func TestMutation_DeleteGroup(t *testing.T) {
 		t.Fatal()
 	}
 
-	echoContext := *ec
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
 
-	reqCtx := context.WithValue(echoContext.Request().Context(), echocontext.EchoContextKey, echoContext)
-
-	echoContext.SetRequest(echoContext.Request().WithContext(reqCtx))
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
 
 	group := (&GroupBuilder{}).MustNew(reqCtx)
 

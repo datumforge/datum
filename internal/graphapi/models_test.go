@@ -39,6 +39,10 @@ type UserBuilder struct {
 	Password  string
 }
 
+type UserCleanup struct {
+	UserID string
+}
+
 type PersonalAccessTokenBuilder struct {
 	Name        string
 	Token       string
@@ -111,6 +115,13 @@ func (u *UserBuilder) MustNew(ctx context.Context) *generated.User {
 		SetPassword(u.Password).
 		SetSetting(userSetting).
 		SaveX(ctx)
+}
+
+// MustDelete is used to cleanup, without authz checks, orgs in the database
+func (u *UserCleanup) MustDelete(ctx context.Context) {
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+
+	EntClient.User.DeleteOneID(u.UserID).ExecX(ctx)
 }
 
 // MustNew group builder is used to create, without authz checks, groups in the database

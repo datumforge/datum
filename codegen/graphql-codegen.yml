@@ -13,6 +13,7 @@ config:
   avoidOptionals: true
   preResolveTypes: true
   onlyOperationTypes: true
+  flattenGeneratedTypes: true
   namingConvention:
     enumValues: keep
   scalars:
@@ -23,10 +24,16 @@ config:
     ID: string
     JSON: any
     Upload: File
+  schema: yup
 overwrite: true
 schema: ../schema.graphql
 documents: '../query/*.graphql'
 generates:
+  ./src/schema.json:
+    plugins:
+      - introspection
+    config:
+      minify: true
   ./src/schema.ts:
 #    preset: near-operation-file
 #    presetConfig:
@@ -38,5 +45,7 @@ generates:
       - typescript-graphql-request
       - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
       - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
+#      - typescript-mock-data
+#      - typescript-validation-schema # A plugin for GraphQL Codegen to generate form validation schema (such as yup, zod) based on your GraphQL schema for use in a client application
       - add:
           content: '/* eslint-disable */'

@@ -26,22 +26,22 @@ func newAuthenticationError(statusCode int, body string) *AuthenticationError {
 	}
 }
 
-// RegistrationError is returned when a user cannot be registered
-type RegistrationError struct {
+// RequestError is a generic error when a request with the client fails
+type RequestError struct {
 	// StatusCode is the http response code that was returned
 	StatusCode int
 	// Body of the response
 	Body string
 }
 
-// Error returns the RegistrationError in string format
-func (e *RegistrationError) Error() string {
-	return fmt.Sprintf("unable to register new user (status %d): %s", e.StatusCode, strings.ToLower(e.Body))
+// Error returns the RequestError in string format
+func (e *RequestError) Error() string {
+	return fmt.Sprintf("unable to process request (status %d): %s", e.StatusCode, strings.ToLower(e.Body))
 }
 
-// newRegistrationError returns an error when a new user cannot be registered
-func newRegistrationError(statusCode int, body string) *RegistrationError {
-	return &RegistrationError{
+// newRequestError returns an error when a datum client request fails
+func newRequestError(statusCode int, body string) *RequestError {
+	return &RequestError{
 		StatusCode: statusCode,
 		Body:       body,
 	}

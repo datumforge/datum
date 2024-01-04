@@ -13,12 +13,12 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/route"
 )
 
-// Register a new user within Datum
-func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*handlers.RegisterReply, error) {
+// Reset a user password
+func Reset(c *Client, ctx context.Context, r handlers.ResetPassword) (*handlers.ResetPasswordReply, error) {
 	method := http.MethodPost
-	endpoint := "register"
+	endpoint := "reset-password"
 
-	u := fmt.Sprintf("%s%s/%s", c.Client.BaseURL, route.V1Version, endpoint)
+	u := fmt.Sprintf("%s%s/%s?token=%s", c.Client.BaseURL, route.V1Version, endpoint, r.Token)
 
 	queryURL, err := url.Parse(u)
 	if err != nil {
@@ -44,14 +44,17 @@ func Register(c *Client, ctx context.Context, r handlers.RegisterRequest) (*hand
 
 	defer resp.Body.Close()
 
-	out := handlers.RegisterReply{}
-	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
-		return nil, err
-	}
+	out := handlers.ResetPasswordReply{}
 
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != http.StatusNoContent {
+		if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+			return nil, err
+		}
+
 		return nil, newRequestError(resp.StatusCode, out.Message)
 	}
+
+	out.Message = "success"
 
 	return &out, err
 }

@@ -10,7 +10,6 @@ import (
 )
 
 // Config is a struct for sending emails via SendGrid and managing marketing contacts
-// TODO: migrate these configs into the default httpserve/config struct and add local yaml / viper configs
 type Config struct {
 	// SendGridAPIKey is the sendgrid API key
 	SendGridAPIKey string `split_words:"true" required:"false"`
@@ -19,7 +18,7 @@ type Config struct {
 	// Testing is a bool flag to indicate we shouldn't be sending live emails and defaults to true so needs to be specifically changed to send live emails
 	Testing bool `split_words:"true" default:"false"`
 	// Archive is only supported in testing mode and is what is tied through the mock to write out fixtures
-	Archive string `split_words:"true" default:"false"`
+	Archive string `split_words:"true" default:"fixtures/emails"`
 	// DatumListID is the UUID sendgrid spits out when you create marketing lists
 	DatumListID string `split_words:"true" required:"false" default:"f5459563-8a46-44ef-9066-e96124d30e52"`
 	// AdminEmail is an internal group email configured within datum for email testing and visibility

@@ -107,7 +107,7 @@ tasks:
   go:test:
     desc: runs and outputs results of created go tests
     cmds:
-      - go test -v ./... 
+      - go test -v ./...
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]

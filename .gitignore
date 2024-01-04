@@ -26,8 +26,8 @@ server.key
 private_key.pem
 public_key.pem
 # Sendgrid test email folders
-internal/httpserve/handlers/false/*
-false/*
+internal/httpserve/handlers/fixtures/emails/*
+fixtures/emails/*
 
 # Packages
 *.7z
@@ -56,6 +56,7 @@ Thumbs.db
 results.txt
 
 *.mime
+*.mim
 
 # Configs
 *.env

@@ -6,15 +6,19 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
+	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
 
 func TestForgotPasswordHandler(t *testing.T) {
@@ -38,27 +42,34 @@ func TestForgotPasswordHandler(t *testing.T) {
 	testCases := []struct {
 		name               string
 		email              string
+		emailExpected      bool
 		expectedErrMessage string
 		expectedStatus     int
 	}{
 		{
 			name:           "happy path",
 			email:          "asandler@datum.net",
+			emailExpected:  true,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email does not exist, should still return 204",
 			email:          "asandler1@datum.net",
+			emailExpected:  false,
 			expectedStatus: http.StatusNoContent,
 		},
 		{
 			name:           "email not sent in request",
+			emailExpected:  false,
 			expectedStatus: http.StatusBadRequest,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			sent := time.Now()
+			mock.ResetEmailMock()
+
 			e := setupEcho(h.SM)
 			e.POST("forgot-password", h.ForgotPassword)
 
@@ -93,6 +104,32 @@ func TestForgotPasswordHandler(t *testing.T) {
 				}
 
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
+			}
+
+			// Test that one verify email was sent to each user
+			messages := []*mock.EmailMetadata{
+				{
+					To:        tc.email,
+					From:      h.SendGridConfig.FromEmail,
+					Subject:   emails.PasswordResetRequestRE,
+					Timestamp: sent,
+				},
+			}
+
+			// wait for messages
+			predicate := func() bool {
+				return h.TaskMan.GetQueueLength() == 0
+			}
+			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+			if successful != true {
+				t.Errorf("max wait of email send")
+			}
+
+			if tc.emailExpected {
+				mock.CheckEmails(t, messages)
+			} else {
+				mock.CheckEmails(t, nil)
 			}
 		})
 	}

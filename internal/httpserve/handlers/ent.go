@@ -18,6 +18,8 @@ func (h *Handler) updateUserLastSeen(ctx context.Context, id string) error {
 			user.ID(id),
 		).
 		Save(ctx); err != nil {
+		h.Logger.Errorw("error updating user last seen", "error", err)
+
 		return err
 	}
 
@@ -29,6 +31,8 @@ func (h *Handler) createUser(ctx context.Context, input ent.CreateUserInput) (*e
 		SetInput(input).
 		Save(ctx)
 	if err != nil {
+		h.Logger.Errorw("error creating new user", "error", err)
+
 		return nil, err
 	}
 
@@ -91,6 +95,23 @@ func (h *Handler) getUserByEVToken(ctx context.Context, token string) (*ent.User
 		QueryOwner().WithSetting().WithEmailVerificationTokens().Only(ctx)
 	if err != nil {
 		h.Logger.Errorw("error obtaining user from email verification token", "error", err)
+
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// getUserByResetToken returns the ent user with the user settings and password reset tokens based on the
+// token in the request
+func (h *Handler) getUserByResetToken(ctx context.Context, token string) (*ent.User, error) {
+	user, err := transaction.FromContext(ctx).PasswordResetToken.Query().
+		Where(
+			passwordresettoken.Token(token),
+		).
+		QueryOwner().WithSetting().WithResetTokens().Only(ctx)
+	if err != nil {
+		h.Logger.Errorw("error obtaining user from reset token", "error", err)
 
 		return nil, err
 	}
@@ -181,6 +202,19 @@ func (h *Handler) setEmailConfirmed(ctx context.Context, user *ent.User) error {
 		Where(
 			usersetting.ID(user.Edges.Setting.ID),
 		).Save(ctx); err != nil {
+		h.Logger.Errorw("error setting email confirmed", "error", err)
+
+		return err
+	}
+
+	return nil
+}
+
+// updateUserPassword changes a updates a user's password in the database
+func (h *Handler) updateUserPassword(ctx context.Context, id string, password string) error {
+	if _, err := transaction.FromContext(ctx).User.UpdateOneID(id).SetPassword(password).Save(ctx); err != nil {
+		h.Logger.Errorw("error updating user password", "error", err)
+
 		return err
 	}
 

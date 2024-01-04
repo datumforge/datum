@@ -7,13 +7,17 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
+	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/utils/emails"
+	"github.com/datumforge/datum/internal/utils/emails/mock"
 )
 
 func TestRegisterHandler(t *testing.T) {
@@ -25,6 +29,7 @@ func TestRegisterHandler(t *testing.T) {
 		firstName          string
 		lastName           string
 		password           string
+		emailExpected      bool
 		expectedErrMessage string
 		expectedStatus     int
 	}{
@@ -34,6 +39,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:      "Princess",
 			lastName:       "Fiona",
 			password:       "b!a!n!a!n!a!s!",
+			emailExpected:  true,
 			expectedStatus: http.StatusCreated,
 		},
 		{
@@ -42,6 +48,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "user already exists",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -51,6 +58,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "email was invalid",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -59,6 +67,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "missing required field: email",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -67,6 +76,7 @@ func TestRegisterHandler(t *testing.T) {
 			email:              "tacos@datum.net",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "missing required field: first name",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -75,6 +85,7 @@ func TestRegisterHandler(t *testing.T) {
 			email:              "waffles@datum.net",
 			firstName:          "Princess",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "missing required field: last name",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -84,6 +95,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "asfghjkl",
+			emailExpected:      false,
 			expectedErrMessage: "password is too weak",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -91,6 +103,9 @@ func TestRegisterHandler(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			sent := time.Now()
+			mock.ResetEmailMock()
+
 			// create echo context with middleware
 			e := setupEcho(h.SM)
 
@@ -128,7 +143,7 @@ func TestRegisterHandler(t *testing.T) {
 
 			assert.Equal(t, tc.expectedStatus, recorder.Code)
 
-			if tc.expectedStatus == http.StatusOK {
+			if tc.expectedStatus == http.StatusCreated {
 				assert.Equal(t, out.Email, tc.email)
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)
@@ -137,6 +152,32 @@ func TestRegisterHandler(t *testing.T) {
 				EntClient.User.DeleteOneID(out.ID).ExecX(context.Background())
 			} else {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
+			}
+
+			// Test that one verify email was sent to each user
+			messages := []*mock.EmailMetadata{
+				{
+					To:        tc.email,
+					From:      h.SendGridConfig.FromEmail,
+					Subject:   emails.VerifyEmailRE,
+					Timestamp: sent,
+				},
+			}
+
+			// wait for messages
+			predicate := func() bool {
+				return h.TaskMan.GetQueueLength() == 0
+			}
+			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+			if successful != true {
+				t.Errorf("max wait of email send")
+			}
+
+			if tc.emailExpected {
+				mock.CheckEmails(t, messages)
+			} else {
+				mock.CheckEmails(t, nil)
 			}
 		})
 	}

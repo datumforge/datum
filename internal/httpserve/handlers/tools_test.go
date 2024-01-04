@@ -18,15 +18,25 @@ import (
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
+	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
 	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
+	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var (
 	EntClient   *ent.Client
 	DBContainer *testutils.TC
+
+	// commonly used vars in tests
+	emptyResponse = "null\n"
+	validPassword = "sup3rs3cu7e!"
+
+	// mock email send settings
+	maxWaitInMillis      = 2000
+	pollIntervalInMillis = 50
 )
 
 func TestMain(m *testing.M) {
@@ -52,6 +62,39 @@ func setupEcho(sm *scs.SessionManager) *echo.Echo {
 	e.Use(session.LoadAndSave(sm))
 
 	return e
+}
+
+// handlerSetup to be used for required references in the handler tests
+func handlerSetup(t *testing.T) *handlers.Handler {
+	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
+	if err != nil {
+		t.Fatal("error creating token manager")
+	}
+
+	sm := scs.New()
+
+	h := &handlers.Handler{
+		TM:           tm,
+		DBClient:     EntClient,
+		Logger:       zap.NewNop().Sugar(),
+		CookieDomain: "datum.net",
+		SM:           sm,
+	}
+
+	if err := h.NewTestEmailManager(); err != nil {
+		t.Fatalf("error creating email manager: %v", err)
+	}
+
+	// Start task manager
+	tmConfig := marionette.Config{
+		Logger: zap.NewNop().Sugar(),
+	}
+
+	h.TaskMan = marionette.New(tmConfig)
+
+	h.TaskMan.Start()
+
+	return h
 }
 
 func setupDB() {

@@ -199,28 +199,30 @@ func TestResetPassword(t *testing.T) {
 				assert.Contains(t, out.Message, tc.expectedResp)
 			}
 
+			// Test that one verify email was sent to each user
+			messages := []*mock.EmailMetadata{
+				{
+					To:        tc.email,
+					From:      h.SendGridConfig.FromEmail,
+					Subject:   tc.expectedEmailSubject,
+					Timestamp: sent,
+				},
+			}
+
+			// wait for messages
+			predicate := func() bool {
+				return h.TaskMan.GetQueueLength() == 0
+			}
+			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+
+			if successful != true {
+				t.Errorf("max wait of email send")
+			}
+
 			if tc.emailExpected {
-				// Test that one verify email was sent to each user
-				messages := []*mock.EmailMetadata{
-					{
-						To:        tc.email,
-						From:      h.SendGridConfig.FromEmail,
-						Subject:   tc.expectedEmailSubject,
-						Timestamp: sent,
-					},
-				}
-
-				// wait for messages
-				predicate := func() bool {
-					return h.TaskMan.GetQueueLength() == 0
-				}
-				successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
-
-				if successful != true {
-					t.Errorf("max wait of email send")
-				}
-
 				mock.CheckEmails(t, messages)
+			} else {
+				mock.CheckEmails(t, nil)
 			}
 
 			// cleanup after

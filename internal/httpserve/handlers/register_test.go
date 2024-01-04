@@ -29,6 +29,7 @@ func TestRegisterHandler(t *testing.T) {
 		firstName          string
 		lastName           string
 		password           string
+		emailExpected      bool
 		expectedErrMessage string
 		expectedStatus     int
 	}{
@@ -38,6 +39,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:      "Princess",
 			lastName:       "Fiona",
 			password:       "b!a!n!a!n!a!s!",
+			emailExpected:  true,
 			expectedStatus: http.StatusCreated,
 		},
 		{
@@ -46,6 +48,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "user already exists",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -55,6 +58,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "email was invalid",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -63,6 +67,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "missing required field: email",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -71,6 +76,7 @@ func TestRegisterHandler(t *testing.T) {
 			email:              "tacos@datum.net",
 			lastName:           "Fiona",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "missing required field: first name",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -79,6 +85,7 @@ func TestRegisterHandler(t *testing.T) {
 			email:              "waffles@datum.net",
 			firstName:          "Princess",
 			password:           "b!a!n!a!n!a!s!",
+			emailExpected:      false,
 			expectedErrMessage: "missing required field: last name",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -88,6 +95,7 @@ func TestRegisterHandler(t *testing.T) {
 			firstName:          "Princess",
 			lastName:           "Fiona",
 			password:           "asfghjkl",
+			emailExpected:      false,
 			expectedErrMessage: "password is too weak",
 			expectedStatus:     http.StatusBadRequest,
 		},
@@ -140,44 +148,35 @@ func TestRegisterHandler(t *testing.T) {
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)
 
-				// Test that one verify email was sent to each user
-				messages := []*mock.EmailMetadata{
-					{
-						To:        tc.email,
-						From:      h.SendGridConfig.FromEmail,
-						Subject:   emails.VerifyEmailRE,
-						Timestamp: sent,
-					},
-				}
-
-				// wait for messages
-				predicate := func() bool {
-					return h.TaskMan.GetQueueLength() == 0
-				}
-				successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
-
-				if successful != true {
-					t.Errorf("max wait of email send")
-				}
-
-				mock.CheckEmails(t, messages)
-
 				// cleanup after
 				EntClient.User.DeleteOneID(out.ID).ExecX(context.Background())
 			} else {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)
+			}
 
-				// wait for messages
-				predicate := func() bool {
-					return h.TaskMan.GetQueueLength() == 0
-				}
+			// Test that one verify email was sent to each user
+			messages := []*mock.EmailMetadata{
+				{
+					To:        tc.email,
+					From:      h.SendGridConfig.FromEmail,
+					Subject:   emails.VerifyEmailRE,
+					Timestamp: sent,
+				},
+			}
 
-				successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
+			// wait for messages
+			predicate := func() bool {
+				return h.TaskMan.GetQueueLength() == 0
+			}
+			successful := asyncwait.NewAsyncWait(maxWaitInMillis, pollIntervalInMillis).Check(predicate)
 
-				if successful != true {
-					t.Errorf("max wait of email send")
-				}
+			if successful != true {
+				t.Errorf("max wait of email send")
+			}
 
+			if tc.emailExpected {
+				mock.CheckEmails(t, messages)
+			} else {
 				mock.CheckEmails(t, nil)
 			}
 		})

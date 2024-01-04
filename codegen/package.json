@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "@graphql-tools/schema": "^10.0.0",
+    "graphql": "^16.8.1",
+    "tsc": "^2.0.4",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "^5.0.0",
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/introspection": "4.0.0",
+    "@graphql-codegen/near-operation-file-preset": "^3.0.0",
+    "@graphql-codegen/typescript": "4.0.1",
+    "@graphql-codegen/typescript-document-nodes": "4.0.1",
+    "@graphql-codegen/typescript-operations": "^4.0.1",
+    "@graphql-codegen/typescript-resolvers": "4.0.1"
+  },
+  "scripts": {
+    "codegen": "graphql-codegen --config graphql-codegen.yml"
+  }
+}

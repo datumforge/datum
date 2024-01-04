@@ -1,0 +1,34 @@
+#hooks:
+#  afterOneFileWrite:
+#    - prettier --write
+config:
+  strict: true
+  maybeValue: T | null
+  declarationKind: interface
+  avoidOptionals: true
+  preResolveTypes: true
+  onlyOperationTypes: true
+  namingConvention:
+    enumValues: keep
+  scalars:
+    DateTime: string
+    Date: string
+    Decimal: number
+    UUID: string
+    ID: string
+    JSON: any
+    Upload: File
+overwrite: true
+schema: ../schema.graphql
+documents: '../query/*.graphql'
+generates:
+  ./src/schema.ts:
+#    preset: near-operation-file
+#    presetConfig:
+#      baseTypesPath: 'types.ts'
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-resolvers
+      - add:
+          content: '/* eslint-disable */'

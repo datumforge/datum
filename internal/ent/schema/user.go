@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"context"
 	"net/mail"
 	"net/url"
 	"strings"
@@ -13,11 +14,17 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	"github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/intercept"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
+	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/entx"
 )
 
@@ -193,5 +200,62 @@ func (User) Policy() ent.Policy {
 func (User) Hooks() []ent.Hook {
 	return []ent.Hook{
 		hooks.HookUser(),
+	}
+}
+
+// Interceptors of the User.
+func (d User) Interceptors() []ent.Interceptor {
+	return []ent.Interceptor{
+		intercept.TraverseUser(func(ctx context.Context, q *generated.UserQuery) error {
+			// skip filters on non-authorized user
+			err, allow := privacy.DecisionFromContext(ctx)
+			if err == nil && allow {
+				return nil
+			}
+
+			v := viewer.FromContext(ctx)
+			if v == nil {
+				t := token.EmailSignUpTokenFromContext(ctx)
+				if t != nil {
+					q.Where(user.Email(t.GetEmail()))
+					return nil
+				}
+
+				vt := token.VerifyTokenFromContext(ctx)
+				if vt != nil {
+					q.Filter().WhereHasEmailVerificationTokensWith(emailverificationtoken.Token(vt.VerifyToken))
+					return nil
+				}
+
+				rt := token.PasswordResetTokenFromContext(ctx)
+				if rt != nil {
+					q.Filter().WhereHasResetTokensWith(passwordresettoken.Token(rt.ResetToken))
+					return nil
+				}
+
+				fp := token.ForgotPasswordTokenFromContext(ctx)
+				if fp != nil {
+					q.Where(user.Email(fp.Email))
+					return nil
+				}
+
+				ref := token.RefreshTokenFromContext(ctx)
+				if ref != nil {
+					q.Where(user.Sub(ref.Subject))
+					return nil
+				}
+
+				// block request
+				return privacy.Denyf("anonymous viewer with no valid token")
+			}
+
+			viewerID, exists := v.GetID()
+			if exists {
+				q.Where(user.ID(viewerID))
+				return nil
+			}
+
+			return nil
+		}),
 	}
 }

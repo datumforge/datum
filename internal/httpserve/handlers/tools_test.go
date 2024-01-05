@@ -9,34 +9,21 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
-
+	"entgo.io/ent/dialect"
 	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
-	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
-	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
-	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var (
-	EntClient   *ent.Client
-	DBContainer *testutils.TC
-
-	// commonly used vars in tests
-	emptyResponse = "null\n"
-	validPassword = "sup3rs3cu7e!"
-
-	// mock email send settings
-	maxWaitInMillis      = 2000
-	pollIntervalInMillis = 50
+	defaultDBURI = "file:ent?mode=memory&cache=shared&_fk=1"
+	EntClient    *ent.Client
 )
 
 func TestMain(m *testing.M) {
@@ -64,42 +51,7 @@ func setupEcho(sm *scs.SessionManager) *echo.Echo {
 	return e
 }
 
-// handlerSetup to be used for required references in the handler tests
-func handlerSetup(t *testing.T) *handlers.Handler {
-	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
-	if err != nil {
-		t.Fatal("error creating token manager")
-	}
-
-	sm := scs.New()
-
-	h := &handlers.Handler{
-		TM:           tm,
-		DBClient:     EntClient,
-		Logger:       zap.NewNop().Sugar(),
-		CookieDomain: "datum.net",
-		SM:           sm,
-	}
-
-	if err := h.NewTestEmailManager(); err != nil {
-		t.Fatalf("error creating email manager: %v", err)
-	}
-
-	// Start task manager
-	tmConfig := marionette.Config{
-		Logger: zap.NewNop().Sugar(),
-	}
-
-	h.TaskMan = marionette.New(tmConfig)
-
-	h.TaskMan.Start()
-
-	return h
-}
-
 func setupDB() {
-	ctx := context.Background()
-
 	// don't setup the datastore if we already have one
 	if EntClient != nil {
 		return
@@ -109,17 +61,19 @@ func setupDB() {
 
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
-
-	ctr := testutils.GetTestURI(ctx, testDBURI)
-	DBContainer = ctr
+	if testDBURI == "" {
+		testDBURI = defaultDBURI
+	}
 
 	dbconf := entdb.Config{
 		Debug:           true,
-		DriverName:      ctr.Dialect,
-		PrimaryDBSource: ctr.URI,
+		DriverName:      dialect.SQLite,
+		PrimaryDBSource: testDBURI,
 	}
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
+
+	ctx := context.Background()
 
 	opts := []ent.Option{ent.Logger(*logger)}
 

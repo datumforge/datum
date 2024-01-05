@@ -3,9 +3,7 @@ package cmd
 import (
 	"context"
 
-	_ "github.com/lib/pq"           // postgres driver
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
-
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 

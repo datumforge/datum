@@ -17,7 +17,6 @@ type TaskManager struct {
 	scheduler *Scheduler
 	wg        *sync.WaitGroup
 	add       chan Task
-	queue     chan *TaskHandler
 	stop      chan struct{}
 	running   bool
 }
@@ -94,24 +93,24 @@ func (tm *TaskManager) run() {
 
 	tm.logger.Info("task manager running")
 
-	tm.queue = make(chan *TaskHandler, tm.conf.QueueSize)
+	queue := make(chan *TaskHandler, tm.conf.QueueSize)
 
 	for i := 0; i < tm.conf.Workers; i++ {
 		tm.wg.Add(1)
-		go worker(tm.wg, tm.queue) // nolint: wsl
+		go worker(tm.wg, queue) // nolint: wsl
 	}
 
 	for {
 		select {
 		case task := <-tm.add:
 			if handler, ok := task.(*TaskHandler); ok {
-				tm.queue <- handler
+				queue <- handler
 			} else {
-				tm.queue <- tm.WrapTask(task)
+				queue <- tm.WrapTask(task)
 			}
 
 		case <-tm.stop:
-			close(tm.queue)
+			close(queue)
 			tm.logger.Info("task manager stopped")
 
 			return
@@ -161,11 +160,4 @@ func (tm *TaskManager) IsRunning() bool {
 	defer tm.RUnlock()
 
 	return tm.running
-}
-
-func (tm *TaskManager) GetQueueLength() int {
-	tm.RLock()
-	defer tm.RUnlock()
-
-	return (len(tm.queue))
 }

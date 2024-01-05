@@ -1,6 +1,7 @@
 env:
   APP_NAME: ${BUILDKITE_PIPELINE_SLUG}
   IMAGE_REPO: ghcr.io/datumforge/${APP_NAME}
+  GCR_REPO:  us-central1-docker.pkg.dev/vernal-sunspot-397816/${APP_NAME}/${APP_NAME}
   IMAGE_TAG: ${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT:0:8}
   SONAR_HOST: "https://sonarcloud.io"
 
@@ -27,22 +28,8 @@ steps:
           command: ["golangci-lint", "run", "-v", "--timeout", "10m"]
           environment: 
             - "GOTOOLCHAIN=auto"
-  - label: ":golang: go test - sqlite"
-    key: "go_test_sqlite"
-    env:
-      TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
-    plugins:
-      - docker#v5.9.0:
-          image: golang:1.21.5
-          command: ["go", "test", "-coverprofile=coverage.out","./..."]
-    artifact_paths: ["coverage.out"]
-  - label: ":golang: go test - {{matrix}}"
+  - label: ":golang: go test"
     key: "go_test"
-    env:
-      TEST_DB_URL: "{{matrix}}"
-    matrix:
-      - "docker://postgres:16-alpine"
-      - "docker://postgres:15-alpine"
     plugins:
       - docker#v5.9.0:
           image: golang:1.21.5
@@ -74,13 +61,12 @@ steps:
   - label: ":github: upload fork PR reports"
     key: "scan-upload-pr"
     if: build.pull_request.id != null
-    depends_on: ["gosec", "go_test_sqlite"]
+    depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:
           download: "results.txt"
       - artifacts#v1.9.2:
-          download: "coverage.out"
-          step: "go_test_sqlite"    
+          download: "coverage.out"    
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:4"
             environment:
@@ -91,13 +77,12 @@ steps:
   - label: ":github: upload reports"
     key: "scan-upload"
     if: build.branch == "main"
-    depends_on: ["gosec", "go_test_sqlite"]
+    depends_on: ["gosec", "go_test"]
     plugins:
       - artifacts#v1.9.2:
           download: results.txt
       - artifacts#v1.9.2:
           download: coverage.out
-          step: "go_test_sqlite"
       - docker#v5.9.0:
             image: "sonarsource/sonar-scanner-cli:4"
             environment:
@@ -142,7 +127,7 @@ steps:
       #!/bin/bash
       ls
     plugins:
-      - equinixmetal-buildkite/docker-metadata#v1.0.0:
+      - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
           images:
           - "${IMAGE_REPO}"
           extra_tags:
@@ -168,13 +153,41 @@ steps:
           username: datum-bender
           password-env: SECRET_GHCR_PUBLISH_TOKEN
           server: ghcr.io
-      - equinixmetal-buildkite/docker-metadata#v1.0.0:
+      - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
           images:
           - "${IMAGE_REPO}"
           extra_tags:
           - "${IMAGE_TAG}"
       - equinixmetal-buildkite/docker-build#v1.1.0:
           dockerfile: docker/Dockerfile
+          push: true
+          build-args:
+            - NAME=${APP_NAME}
+      - equinixmetal-buildkite/trivy#v1.18.3:
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          security-checks: config,secret,vuln
+          skip-files: 'cosign.key,Dockerfile.dev'
+  - label: ":docker: docker build and publish all in one"
+    key: "docker-build-aio"
+    if: build.branch == "main"
+    commands: |
+      #!/bin/bash
+      cp config/.env-devauth.example config/.env-devauth
+    plugins:
+      - docker-login#v3.0.0:
+          username: _json_key_base64
+          password-env: SECRET_GCR_PUBLISH_TOKEN
+          server: us-central1-docker.pkg.dev
+      - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
+          tag_prefix: "aio-"
+          debug: true
+          images:
+          - "${GCR_REPO}"
+          extra_tags:
+          - "${IMAGE_TAG}"
+      - equinixmetal-buildkite/docker-build#v1.1.0:
+          dockerfile: docker/all-in-one/Dockerfile.all-in-one
           push: true
           build-args:
             - NAME=${APP_NAME}

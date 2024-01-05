@@ -5,7 +5,7 @@ includes:
 
 env:
   ATLAS_DB_URI: "sqlite://file?mode=memory&_fk=1"
-  TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
+  TEST_DB_URL: "file:ent?mode=memory&cache=shared&_fk=1"
   TEST_FGA_URL: "localhost:8080"
   ENV: config
 
@@ -107,7 +107,7 @@ tasks:
   go:test:
     desc: runs and outputs results of created go tests
     cmds:
-      - go test -v ./...
+      - go test -v ./... 
   go:tidy:
     desc: Runs go mod tidy on the backend
     aliases: [tidy]

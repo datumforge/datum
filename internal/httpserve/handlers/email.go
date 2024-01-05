@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/url"
-	"path/filepath"
 
 	"github.com/kelseyhightower/envconfig"
 
@@ -43,7 +42,6 @@ func (h *Handler) NewTestEmailManager() error {
 	}
 
 	h.SendGridConfig.Testing = true
-	h.SendGridConfig.Archive = filepath.Join("fixtures", "emails")
 
 	h.emailManager, err = emails.New(h.SendGridConfig)
 	if err != nil {
@@ -97,6 +95,7 @@ func (h *Handler) SendVerificationEmail(user *User) error {
 }
 
 // SendPasswordResetRequestEmail Send an email to a user to request them to reset their password
+// TODO: implement handler to use this and send password reset email
 func (h *Handler) SendPasswordResetRequestEmail(user *User) error {
 	data := emails.ResetRequestData{
 		EmailData: emails.EmailData{
@@ -148,7 +147,7 @@ type URLConfig struct {
 	Base   string `split_words:"true" default:"https://app.datum.net"`
 	Verify string `split_words:"true" default:"/v1/verify"`
 	Invite string `split_words:"true" default:"/v1/invite"`
-	Reset  string `split_words:"true" default:"/v1/reset-password"`
+	Reset  string `split_words:"true" default:"/v1/reset"`
 }
 
 func (c URLConfig) Validate() error {

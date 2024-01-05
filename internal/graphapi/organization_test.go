@@ -309,7 +309,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			name:           "duplicate organization name",
 			orgName:        parentOrg.Name,
 			orgDescription: gofakeit.HipsterSentence(10),
-			errorMsg:       "constraint failed",
+			errorMsg:       "UNIQUE constraint failed",
 		},
 		{
 			name:           "duplicate organization name, but other was deleted, should pass",

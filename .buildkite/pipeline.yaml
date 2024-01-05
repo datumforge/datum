@@ -183,3 +183,31 @@ steps:
           ignore-unfixed: true
           security-checks: config,secret,vuln
           skip-files: 'cosign.key,Dockerfile.dev'
+  - label: ":docker: docker build and publish all in one"
+    key: "docker-build-aio"
+    if: build.branch == "main"
+    commands: |
+      #!/bin/bash
+      cp config/.env-devauth.example config/.env-devauth
+    plugins:
+      - docker-login#v3.0.0:
+          username: _json_key_base64
+          password-env: SECRET_GCR_PUBLISH_TOKEN
+          server: us-central1-docker.pkg.dev
+      - equinixmetal-buildkite/docker-metadata#e42eac2c2f81db3fc402b8ced031d9086149e9fd:
+          tag_prefix: "aio-"
+          debug: true
+          images:
+          - "${GCR_REPO}"
+          extra_tags:
+          - "${IMAGE_TAG}"
+      - equinixmetal-buildkite/docker-build#v1.1.0:
+          dockerfile: docker/all-in-one/Dockerfile.all-in-one
+          push: true
+          build-args:
+            - NAME=${APP_NAME}
+      - equinixmetal-buildkite/trivy#v1.18.3:
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          security-checks: config,secret,vuln
+          skip-files: 'cosign.key,Dockerfile.dev'

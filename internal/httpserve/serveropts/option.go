@@ -172,7 +172,7 @@ func WithGeneratedKeys() ServerOption {
 // WithAuth supplies the authn and jwt config for the server
 func WithAuth() ServerOption {
 	return newApplyFunc(func(s *ServerOptions) {
-		// Database Config Setup
+		// Token Config Setup
 		tokenConfig := &tokens.Config{}
 
 		// load defaults and env vars
@@ -181,6 +181,16 @@ func WithAuth() ServerOption {
 		}
 
 		s.Config.Server.Token = *tokenConfig
+
+		// Token Config Setup
+		authConfig := &config.Auth{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_auth", authConfig); err != nil {
+			panic(err)
+		}
+
+		s.Config.Auth = *authConfig
 
 		// TODO: currently not used, this needs to be updated
 		// to allow for an array to be provided in envconfig

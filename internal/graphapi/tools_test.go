@@ -9,11 +9,11 @@ import (
 	"testing"
 	"time"
 
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	openfga "github.com/openfga/go-sdk"
 	ofgaclient "github.com/openfga/go-sdk/client"
 
-	"entgo.io/ent/dialect"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/Yamashou/gqlgenc/clientv2"
 	"go.uber.org/mock/gomock"
@@ -25,11 +25,12 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/graphapi"
+	"github.com/datumforge/datum/internal/testutils"
 )
 
 var (
-	defaultDBURI = "file:ent?mode=memory&cache=shared&_fk=1"
-	EntClient    *ent.Client
+	EntClient   *ent.Client
+	DBContainer *testutils.TC
 )
 
 const (
@@ -48,6 +49,8 @@ func TestMain(m *testing.M) {
 }
 
 func setupDB() {
+	ctx := context.Background()
+
 	// don't setup the datastore if we already have one
 	if EntClient != nil {
 		return
@@ -57,20 +60,18 @@ func setupDB() {
 
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
-	if testDBURI == "" {
-		testDBURI = defaultDBURI
-	}
+
+	ctr := testutils.GetTestURI(ctx, testDBURI)
+	DBContainer = ctr
 
 	dbconf := entdb.Config{
 		Debug:           true,
-		DriverName:      dialect.SQLite,
-		PrimaryDBSource: testDBURI,
+		DriverName:      ctr.Dialect,
+		PrimaryDBSource: ctr.URI,
 		CacheTTL:        -1 * time.Second, // do not cache results in tests
 	}
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
-
-	ctx := context.Background()
 
 	opts := []ent.Option{ent.Logger(*logger)}
 
@@ -92,16 +93,14 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 
 	logger := zap.NewNop().Sugar()
 
-	// Grab the DB environment variable or use the default
-	testDBURI := os.Getenv("TEST_DB_URL")
-	if testDBURI == "" {
-		testDBURI = defaultDBURI
+	if DBContainer == nil {
+		t.Fatalf("DBContainer is nil")
 	}
 
 	dbconf := entdb.Config{
 		Debug:           true,
-		DriverName:      dialect.SQLite,
-		PrimaryDBSource: testDBURI,
+		DriverName:      DBContainer.Dialect,
+		PrimaryDBSource: DBContainer.URI,
 		CacheTTL:        -1 * time.Second, // do not cache results in tests
 	}
 

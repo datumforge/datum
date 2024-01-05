@@ -65,8 +65,13 @@ func (c *EntClientConfig) GetSecondaryDB() *entsql.Driver {
 }
 
 func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
+	dialect, err := CheckDialect(c.config.DriverName)
+	if err != nil {
+		return nil, fmt.Errorf("failed checking dialect: %w", err)
+	}
+
 	// setup db connection
-	db, err := sql.Open(c.config.DriverName, dataSource)
+	db, err := sql.Open(dialect, dataSource)
 	if err != nil {
 		return nil, fmt.Errorf("failed connecting to database: %w", err)
 	}
@@ -76,7 +81,7 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 		return nil, fmt.Errorf("failed verifying database connection: %w", err)
 	}
 
-	return entsql.OpenDB(dialect.SQLite, db), nil
+	return entsql.OpenDB(dialect, db), nil
 }
 
 // NewMultiDriverDBClient returns a ent client with a primary and secondary, if configured, write database
@@ -103,6 +108,10 @@ func (c *EntClientConfig) NewMultiDriverDBClient(ctx context.Context, opts []ent
 	var cOpts []ent.Option
 
 	if c.config.MultiWrite {
+		if !CheckMultiwriteSupport(c.config.DriverName) {
+			return nil, newMultiwriteDriverError(c.config.DriverName)
+		}
+
 		c.secondaryDB, err = c.newEntDB(c.config.SecondaryDBSource)
 		if err != nil {
 			return nil, err
@@ -178,5 +187,27 @@ func Healthcheck(client *entsql.Driver) func(ctx context.Context) error {
 		}
 
 		return nil
+	}
+}
+
+func CheckDialect(d string) (string, error) {
+	switch d {
+	case "sqlite3":
+		return dialect.SQLite, nil
+	case "postgres":
+		return dialect.Postgres, nil
+	default:
+		return "", newDialectError(d)
+	}
+}
+
+func CheckMultiwriteSupport(d string) bool {
+	switch d {
+	case "sqlite3":
+		return true
+	case "postgres":
+		return false
+	default:
+		return false
 	}
 }

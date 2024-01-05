@@ -9,7 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"entgo.io/ent/dialect"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
+
 	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
 	"go.uber.org/zap"
@@ -19,13 +21,14 @@ import (
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
+	"github.com/datumforge/datum/internal/testutils"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
 
 var (
-	defaultDBURI = "file:ent?mode=memory&cache=shared&_fk=1"
-	EntClient    *ent.Client
+	EntClient   *ent.Client
+	DBContainer *testutils.TC
 
 	// commonly used vars in tests
 	emptyResponse = "null\n"
@@ -95,6 +98,8 @@ func handlerSetup(t *testing.T) *handlers.Handler {
 }
 
 func setupDB() {
+	ctx := context.Background()
+
 	// don't setup the datastore if we already have one
 	if EntClient != nil {
 		return
@@ -104,19 +109,17 @@ func setupDB() {
 
 	// Grab the DB environment variable or use the default
 	testDBURI := os.Getenv("TEST_DB_URL")
-	if testDBURI == "" {
-		testDBURI = defaultDBURI
-	}
+
+	ctr := testutils.GetTestURI(ctx, testDBURI)
+	DBContainer = ctr
 
 	dbconf := entdb.Config{
 		Debug:           true,
-		DriverName:      dialect.SQLite,
-		PrimaryDBSource: testDBURI,
+		DriverName:      ctr.Dialect,
+		PrimaryDBSource: ctr.URI,
 	}
 
 	entConfig := entdb.NewDBConfig(dbconf, logger)
-
-	ctx := context.Background()
 
 	opts := []ent.Option{ent.Logger(*logger)}
 

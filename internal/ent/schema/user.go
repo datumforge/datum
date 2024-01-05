@@ -8,15 +8,11 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
-	"entgo.io/ent/entql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
-	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
-	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -188,64 +184,8 @@ func (User) Policy() ent.Policy {
 			),
 		},
 		Query: privacy.QueryPolicy{
-			// Required to verify tokens
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.VerifyToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.VerifyToken)
-					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereHasEmailVerificationTokensWith(emailverificationtoken.Token(actualToken.VerifyToken))
-				},
-			),
-			// Forgot password path
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.ForgotPasswordToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.ForgotPasswordToken)
-					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
-				},
-			),
-			// Reset password path
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.PasswordResetToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.PasswordResetToken)
-					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereHasResetTokensWith(passwordresettoken.Token(actualToken.ResetToken))
-				},
-			),
-			// Login path
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.LoginToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.LoginToken)
-					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
-				},
-			),
-			// Register and Resend path
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.EmailSignUpToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.EmailSignUpToken)
-					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereEmail(entql.StringEQ(actualToken.Email))
-				},
-			),
-			// Refresh path
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.RefreshToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.RefreshToken)
-					userFilter := filter.(*generated.UserFilter)
-					userFilter.WhereSub(entql.StringEQ(actualToken.Subject))
-				},
-			),
-			rule.DenyIfNoSubject(),
-			rule.AllowIfSelf(),
-			// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
-			privacy.AlwaysDenyRule(),
+			// Privacy willl be always allow, but interceptors will filter the queries
+			privacy.AlwaysAllowRule(),
 		},
 	}
 }

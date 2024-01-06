@@ -1112,13 +1112,13 @@ type OauthProviderConnection struct {
 	TotalCount int64 `json:"totalCount"`
 }
 
-// Return response for createOauthprovider mutation
+// Return response for createOauthProvider mutation
 type OauthProviderCreatePayload struct {
 	// Created oauthProvider
-	OauthProvider OauthProvider `json:"OauthProvider"`
+	OauthProvider OauthProvider `json:"oauthProvider"`
 }
 
-// Return response for deleteOauthprovider mutation
+// Return response for deleteOauthProvider mutation
 type OauthProviderDeletePayload struct {
 	// Deleted oauthProvider ID
 	DeletedID string `json:"deletedID"`
@@ -1132,10 +1132,10 @@ type OauthProviderEdge struct {
 	Cursor string `json:"cursor"`
 }
 
-// Return response for updateOauthprovider mutation
+// Return response for updateOauthProvider mutation
 type OauthProviderUpdatePayload struct {
 	// Updated oauthProvider
-	OauthProvider OauthProvider `json:"OauthProvider"`
+	OauthProvider OauthProvider `json:"oauthProvider"`
 }
 
 // OauthProviderWhereInput is used for filtering OauthProvider objects.
@@ -2104,7 +2104,7 @@ type PersonalAccessTokenConnection struct {
 // Return response for createPersonalAccessToken mutation
 type PersonalAccessTokenCreatePayload struct {
 	// Created personalAccessToken
-	PersonalAccessToken PersonalAccessToken `json:"PersonalAccessToken"`
+	PersonalAccessToken PersonalAccessToken `json:"personalAccessToken"`
 }
 
 // Return response for deletePersonalAccessToken mutation
@@ -2124,7 +2124,7 @@ type PersonalAccessTokenEdge struct {
 // Return response for updatePersonalAccessToken mutation
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
-	PersonalAccessToken PersonalAccessToken `json:"PersonalAccessToken"`
+	PersonalAccessToken PersonalAccessToken `json:"personalAccessToken"`
 }
 
 // PersonalAccessTokenWhereInput is used for filtering PersonalAccessToken objects.
@@ -2879,7 +2879,7 @@ type UserSettingConnection struct {
 // Return response for createUserSetting mutation
 type UserSettingCreatePayload struct {
 	// Created userSetting
-	UserSetting UserSetting `json:"UserSetting"`
+	UserSetting UserSetting `json:"userSetting"`
 }
 
 // Return response for deleteUserSetting mutation
@@ -2899,7 +2899,7 @@ type UserSettingEdge struct {
 // Return response for updateUserSetting mutation
 type UserSettingUpdatePayload struct {
 	// Updated userSetting
-	UserSetting UserSetting `json:"UserSetting"`
+	UserSetting UserSetting `json:"userSetting"`
 }
 
 // UserSettingWhereInput is used for filtering UserSetting objects.

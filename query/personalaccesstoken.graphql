@@ -1,6 +1,6 @@
 mutation CreatePersonalAccessToken($input: CreatePersonalAccessTokenInput!) {
   createPersonalAccessToken(input: $input) {
-    PersonalAccessToken {
+    personalAccessToken {
       id
       createdAt
       updatedAt

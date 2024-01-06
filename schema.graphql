@@ -1150,7 +1150,7 @@ type Mutation {
 	): IntegrationDeletePayload!
 	"""Create a new oauthProvider"""
 	createOauthProvider(
-		"""values of the oauthprovider"""
+		"""values of the oauthProvider"""
 		input: CreateOauthProviderInput!
 	): OauthProviderCreatePayload!
 	"""Update an existing oauthProvider"""
@@ -1161,7 +1161,7 @@ type Mutation {
 		"""New values for the oauthProvider"""
 		input: UpdateOauthProviderInput!
 	): OauthProviderUpdatePayload!
-	"""Delete an existing oauthprovider"""
+	"""Delete an existing oauthProvider"""
 	deleteOauthProvider(
 		"""ID of the oauthProvider"""
 		id: ID!
@@ -1225,7 +1225,7 @@ type Mutation {
 		"""values of the personalAccessToken"""
 		input: CreatePersonalAccessTokenInput!
 	): PersonalAccessTokenCreatePayload!
-	"""Update an existing PersonalAccessToken"""
+	"""Update an existing personalAccessToken"""
 	updatePersonalAccessToken(
 		"""ID of the personalAccessToken"""
 		id: ID!
@@ -1233,7 +1233,7 @@ type Mutation {
 		"""New values for the personalAccessToken"""
 		input: UpdatePersonalAccessTokenInput!
 	): PersonalAccessTokenUpdatePayload!
-	"""Delete an existing PersonalAccessToken"""
+	"""Delete an existing personalAccessToken"""
 	deletePersonalAccessToken(
 		"""ID of the personalAccessToken"""
 		id: ID!
@@ -1338,12 +1338,12 @@ type OauthProviderConnection {
 	"""Identifies the total count of items in the connection."""
 	totalCount: Int!
 }
-"""Return response for createOauthprovider mutation"""
+"""Return response for createOauthProvider mutation"""
 type OauthProviderCreatePayload {
 	"""Created oauthProvider"""
-	OauthProvider: OauthProvider!
+	oauthProvider: OauthProvider!
 }
-"""Return response for deleteOauthprovider mutation"""
+"""Return response for deleteOauthProvider mutation"""
 type OauthProviderDeletePayload {
 	"""Deleted oauthProvider ID"""
 	deletedID: ID!
@@ -1355,10 +1355,10 @@ type OauthProviderEdge {
 	"""A cursor for use in pagination."""
 	cursor: Cursor!
 }
-"""Return response for updateOauthprovider mutation"""
+"""Return response for updateOauthProvider mutation"""
 type OauthProviderUpdatePayload {
 	"""Updated oauthProvider"""
-	OauthProvider: OauthProvider!
+	oauthProvider: OauthProvider!
 }
 """
 OauthProviderWhereInput is used for filtering OauthProvider objects.
@@ -2332,7 +2332,7 @@ type PersonalAccessTokenConnection {
 """Return response for createPersonalAccessToken mutation"""
 type PersonalAccessTokenCreatePayload {
 	"""Created personalAccessToken"""
-	PersonalAccessToken: PersonalAccessToken!
+	personalAccessToken: PersonalAccessToken!
 }
 """Return response for deletePersonalAccessToken mutation"""
 type PersonalAccessTokenDeletePayload {
@@ -2349,7 +2349,7 @@ type PersonalAccessTokenEdge {
 """Return response for updatePersonalAccessToken mutation"""
 type PersonalAccessTokenUpdatePayload {
 	"""Updated personalAccessToken"""
-	PersonalAccessToken: PersonalAccessToken!
+	personalAccessToken: PersonalAccessToken!
 }
 """
 PersonalAccessTokenWhereInput is used for filtering PersonalAccessToken objects.
@@ -2757,7 +2757,7 @@ type Query {
 	): User!
 	"""Look up userSetting by ID"""
 	userSetting(
-		"""ID of the UserSetting"""
+		"""ID of the userSetting"""
 		id: ID!
 	): UserSetting!
 }
@@ -3381,7 +3381,7 @@ type UserSettingConnection {
 """Return response for createUserSetting mutation"""
 type UserSettingCreatePayload {
 	"""Created userSetting"""
-	UserSetting: UserSetting!
+	userSetting: UserSetting!
 }
 """Return response for deleteUserSetting mutation"""
 type UserSettingDeletePayload {
@@ -3411,7 +3411,7 @@ enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent
 """Return response for updateUserSetting mutation"""
 type UserSettingUpdatePayload {
 	"""Updated userSetting"""
-	UserSetting: UserSetting!
+	userSetting: UserSetting!
 }
 """
 UserSettingWhereInput is used for filtering UserSetting objects.

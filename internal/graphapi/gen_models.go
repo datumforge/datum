@@ -78,22 +78,22 @@ type IntegrationUpdatePayload struct {
 	Integration *generated.Integration `json:"integration"`
 }
 
-// Return response for createOauthprovider mutation
+// Return response for createOauthProvider mutation
 type OauthProviderCreatePayload struct {
 	// Created oauthProvider
-	OauthProvider *generated.OauthProvider `json:"OauthProvider"`
+	OauthProvider *generated.OauthProvider `json:"oauthProvider"`
 }
 
-// Return response for deleteOauthprovider mutation
+// Return response for deleteOauthProvider mutation
 type OauthProviderDeletePayload struct {
 	// Deleted oauthProvider ID
 	DeletedID string `json:"deletedID"`
 }
 
-// Return response for updateOauthprovider mutation
+// Return response for updateOauthProvider mutation
 type OauthProviderUpdatePayload struct {
 	// Updated oauthProvider
-	OauthProvider *generated.OauthProvider `json:"OauthProvider"`
+	OauthProvider *generated.OauthProvider `json:"oauthProvider"`
 }
 
 // Return response for createOhAuthTooToken mutation
@@ -153,7 +153,7 @@ type OrganizationUpdatePayload struct {
 // Return response for createPersonalAccessToken mutation
 type PersonalAccessTokenCreatePayload struct {
 	// Created personalAccessToken
-	PersonalAccessToken *generated.PersonalAccessToken `json:"PersonalAccessToken"`
+	PersonalAccessToken *generated.PersonalAccessToken `json:"personalAccessToken"`
 }
 
 // Return response for deletePersonalAccessToken mutation
@@ -165,7 +165,7 @@ type PersonalAccessTokenDeletePayload struct {
 // Return response for updatePersonalAccessToken mutation
 type PersonalAccessTokenUpdatePayload struct {
 	// Updated personalAccessToken
-	PersonalAccessToken *generated.PersonalAccessToken `json:"PersonalAccessToken"`
+	PersonalAccessToken *generated.PersonalAccessToken `json:"personalAccessToken"`
 }
 
 // Return response for createSession mutation
@@ -201,7 +201,7 @@ type UserDeletePayload struct {
 // Return response for createUserSetting mutation
 type UserSettingCreatePayload struct {
 	// Created userSetting
-	UserSetting *generated.UserSetting `json:"UserSetting"`
+	UserSetting *generated.UserSetting `json:"userSetting"`
 }
 
 // Return response for deleteUserSetting mutation
@@ -213,7 +213,7 @@ type UserSettingDeletePayload struct {
 // Return response for updateUserSetting mutation
 type UserSettingUpdatePayload struct {
 	// Updated userSetting
-	UserSetting *generated.UserSetting `json:"UserSetting"`
+	UserSetting *generated.UserSetting `json:"userSetting"`
 }
 
 // Return response for updateUser mutation

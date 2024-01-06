@@ -2491,7 +2491,7 @@ func (t *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken
 }
 
 type CreatePersonalAccessToken_CreatePersonalAccessToken struct {
-	PersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken "json:\"PersonalAccessToken\" graphql:\"PersonalAccessToken\""
+	PersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken "json:\"personalAccessToken\" graphql:\"personalAccessToken\""
 }
 
 func (t *CreatePersonalAccessToken_CreatePersonalAccessToken) GetPersonalAccessToken() *CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken {
@@ -4735,7 +4735,7 @@ func (c *Client) GetOrganizationSetting(ctx context.Context, organizationSetting
 
 const CreatePersonalAccessTokenDocument = `mutation CreatePersonalAccessToken ($input: CreatePersonalAccessTokenInput!) {
 	createPersonalAccessToken(input: $input) {
-		PersonalAccessToken {
+		personalAccessToken {
 			id
 			createdAt
 			updatedAt

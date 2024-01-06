@@ -1906,7 +1906,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OauthProviderConnection.TotalCount(childComplexity), true
 
-	case "OauthProviderCreatePayload.OauthProvider":
+	case "OauthProviderCreatePayload.oauthProvider":
 		if e.complexity.OauthProviderCreatePayload.OauthProvider == nil {
 			break
 		}
@@ -1934,7 +1934,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OauthProviderEdge.Node(childComplexity), true
 
-	case "OauthProviderUpdatePayload.OauthProvider":
+	case "OauthProviderUpdatePayload.oauthProvider":
 		if e.complexity.OauthProviderUpdatePayload.OauthProvider == nil {
 			break
 		}
@@ -2604,7 +2604,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PersonalAccessTokenConnection.TotalCount(childComplexity), true
 
-	case "PersonalAccessTokenCreatePayload.PersonalAccessToken":
+	case "PersonalAccessTokenCreatePayload.personalAccessToken":
 		if e.complexity.PersonalAccessTokenCreatePayload.PersonalAccessToken == nil {
 			break
 		}
@@ -2632,7 +2632,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PersonalAccessTokenEdge.Node(childComplexity), true
 
-	case "PersonalAccessTokenUpdatePayload.PersonalAccessToken":
+	case "PersonalAccessTokenUpdatePayload.personalAccessToken":
 		if e.complexity.PersonalAccessTokenUpdatePayload.PersonalAccessToken == nil {
 			break
 		}
@@ -3420,7 +3420,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSettingConnection.TotalCount(childComplexity), true
 
-	case "UserSettingCreatePayload.UserSetting":
+	case "UserSettingCreatePayload.userSetting":
 		if e.complexity.UserSettingCreatePayload.UserSetting == nil {
 			break
 		}
@@ -3448,7 +3448,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserSettingEdge.Node(childComplexity), true
 
-	case "UserSettingUpdatePayload.UserSetting":
+	case "UserSettingUpdatePayload.userSetting":
 		if e.complexity.UserSettingUpdatePayload.UserSetting == nil {
 			break
 		}
@@ -7267,7 +7267,7 @@ extend type Mutation{
     """
     createOauthProvider(
         """
-        values of the oauthprovider
+        values of the oauthProvider
         """
         input: CreateOauthProviderInput!
     ): OauthProviderCreatePayload!
@@ -7285,7 +7285,7 @@ extend type Mutation{
         input: UpdateOauthProviderInput!
     ): OauthProviderUpdatePayload!
     """
-    Delete an existing oauthprovider
+    Delete an existing oauthProvider
     """
     deleteOauthProvider(
         """
@@ -7296,27 +7296,27 @@ extend type Mutation{
 }
 
 """
-Return response for createOauthprovider mutation
+Return response for createOauthProvider mutation
 """
 type OauthProviderCreatePayload {
     """
     Created oauthProvider
     """
-    OauthProvider: OauthProvider!
+    oauthProvider: OauthProvider!
 }
 
 """
-Return response for updateOauthprovider mutation
+Return response for updateOauthProvider mutation
 """
 type OauthProviderUpdatePayload {
     """
     Updated oauthProvider
     """
-    OauthProvider: OauthProvider!
+    oauthProvider: OauthProvider!
 }
 
 """
-Return response for deleteOauthprovider mutation
+Return response for deleteOauthProvider mutation
 """
 type OauthProviderDeletePayload {
     """
@@ -7572,7 +7572,7 @@ extend type Mutation{
         input: CreatePersonalAccessTokenInput!
     ): PersonalAccessTokenCreatePayload!
     """
-    Update an existing PersonalAccessToken
+    Update an existing personalAccessToken
     """
     updatePersonalAccessToken(
         """
@@ -7585,7 +7585,7 @@ extend type Mutation{
         input: UpdatePersonalAccessTokenInput!
     ): PersonalAccessTokenUpdatePayload!
     """
-    Delete an existing PersonalAccessToken
+    Delete an existing personalAccessToken
     """
     deletePersonalAccessToken(
         """
@@ -7602,7 +7602,7 @@ type PersonalAccessTokenCreatePayload {
     """
     Created personalAccessToken
     """
-    PersonalAccessToken: PersonalAccessToken!
+    personalAccessToken: PersonalAccessToken!
 }
 
 """
@@ -7612,7 +7612,7 @@ type PersonalAccessTokenUpdatePayload {
     """
     Updated personalAccessToken
     """
-    PersonalAccessToken: PersonalAccessToken!
+    personalAccessToken: PersonalAccessToken!
 }
 
 """
@@ -7780,7 +7780,7 @@ type UserDeletePayload {
     """
      userSetting(
         """
-        ID of the UserSetting
+        ID of the userSetting
         """
         id: ID!
     ):  UserSetting!
@@ -7827,7 +7827,7 @@ type UserSettingCreatePayload {
     """
     Created userSetting
     """
-    UserSetting: UserSetting!
+    userSetting: UserSetting!
 }
 
 """
@@ -7837,7 +7837,7 @@ type UserSettingUpdatePayload {
     """
     Updated userSetting
     """
-    UserSetting: UserSetting!
+    userSetting: UserSetting!
 }
 
 """
@@ -14536,8 +14536,8 @@ func (ec *executionContext) fieldContext_Mutation_createOauthProvider(ctx contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "OauthProvider":
-				return ec.fieldContext_OauthProviderCreatePayload_OauthProvider(ctx, field)
+			case "oauthProvider":
+				return ec.fieldContext_OauthProviderCreatePayload_oauthProvider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OauthProviderCreatePayload", field.Name)
 		},
@@ -14595,8 +14595,8 @@ func (ec *executionContext) fieldContext_Mutation_updateOauthProvider(ctx contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "OauthProvider":
-				return ec.fieldContext_OauthProviderUpdatePayload_OauthProvider(ctx, field)
+			case "oauthProvider":
+				return ec.fieldContext_OauthProviderUpdatePayload_oauthProvider(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type OauthProviderUpdatePayload", field.Name)
 		},
@@ -15244,8 +15244,8 @@ func (ec *executionContext) fieldContext_Mutation_createPersonalAccessToken(ctx 
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "PersonalAccessToken":
-				return ec.fieldContext_PersonalAccessTokenCreatePayload_PersonalAccessToken(ctx, field)
+			case "personalAccessToken":
+				return ec.fieldContext_PersonalAccessTokenCreatePayload_personalAccessToken(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PersonalAccessTokenCreatePayload", field.Name)
 		},
@@ -15303,8 +15303,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePersonalAccessToken(ctx 
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "PersonalAccessToken":
-				return ec.fieldContext_PersonalAccessTokenUpdatePayload_PersonalAccessToken(ctx, field)
+			case "personalAccessToken":
+				return ec.fieldContext_PersonalAccessTokenUpdatePayload_personalAccessToken(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PersonalAccessTokenUpdatePayload", field.Name)
 		},
@@ -15775,8 +15775,8 @@ func (ec *executionContext) fieldContext_Mutation_createUserSetting(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "UserSetting":
-				return ec.fieldContext_UserSettingCreatePayload_UserSetting(ctx, field)
+			case "userSetting":
+				return ec.fieldContext_UserSettingCreatePayload_userSetting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSettingCreatePayload", field.Name)
 		},
@@ -15834,8 +15834,8 @@ func (ec *executionContext) fieldContext_Mutation_updateUserSetting(ctx context.
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "UserSetting":
-				return ec.fieldContext_UserSettingUpdatePayload_UserSetting(ctx, field)
+			case "userSetting":
+				return ec.fieldContext_UserSettingUpdatePayload_userSetting(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSettingUpdatePayload", field.Name)
 		},
@@ -16831,8 +16831,8 @@ func (ec *executionContext) fieldContext_OauthProviderConnection_totalCount(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _OauthProviderCreatePayload_OauthProvider(ctx context.Context, field graphql.CollectedField, obj *OauthProviderCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OauthProviderCreatePayload_OauthProvider(ctx, field)
+func (ec *executionContext) _OauthProviderCreatePayload_oauthProvider(ctx context.Context, field graphql.CollectedField, obj *OauthProviderCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderCreatePayload_oauthProvider(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -16862,7 +16862,7 @@ func (ec *executionContext) _OauthProviderCreatePayload_OauthProvider(ctx contex
 	return ec.marshalNOauthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProvider(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OauthProviderCreatePayload_OauthProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OauthProviderCreatePayload_oauthProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OauthProviderCreatePayload",
 		Field:      field,
@@ -17076,8 +17076,8 @@ func (ec *executionContext) fieldContext_OauthProviderEdge_cursor(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _OauthProviderUpdatePayload_OauthProvider(ctx context.Context, field graphql.CollectedField, obj *OauthProviderUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_OauthProviderUpdatePayload_OauthProvider(ctx, field)
+func (ec *executionContext) _OauthProviderUpdatePayload_oauthProvider(ctx context.Context, field graphql.CollectedField, obj *OauthProviderUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthProviderUpdatePayload_oauthProvider(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -17107,7 +17107,7 @@ func (ec *executionContext) _OauthProviderUpdatePayload_OauthProvider(ctx contex
 	return ec.marshalNOauthProvider2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOauthProvider(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_OauthProviderUpdatePayload_OauthProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_OauthProviderUpdatePayload_oauthProvider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "OauthProviderUpdatePayload",
 		Field:      field,
@@ -21889,8 +21889,8 @@ func (ec *executionContext) fieldContext_PersonalAccessTokenConnection_totalCoun
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonalAccessTokenCreatePayload_PersonalAccessToken(ctx context.Context, field graphql.CollectedField, obj *PersonalAccessTokenCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonalAccessTokenCreatePayload_PersonalAccessToken(ctx, field)
+func (ec *executionContext) _PersonalAccessTokenCreatePayload_personalAccessToken(ctx context.Context, field graphql.CollectedField, obj *PersonalAccessTokenCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PersonalAccessTokenCreatePayload_personalAccessToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -21920,7 +21920,7 @@ func (ec *executionContext) _PersonalAccessTokenCreatePayload_PersonalAccessToke
 	return ec.marshalNPersonalAccessToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐPersonalAccessToken(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonalAccessTokenCreatePayload_PersonalAccessToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PersonalAccessTokenCreatePayload_personalAccessToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PersonalAccessTokenCreatePayload",
 		Field:      field,
@@ -22118,8 +22118,8 @@ func (ec *executionContext) fieldContext_PersonalAccessTokenEdge_cursor(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonalAccessTokenUpdatePayload_PersonalAccessToken(ctx context.Context, field graphql.CollectedField, obj *PersonalAccessTokenUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonalAccessTokenUpdatePayload_PersonalAccessToken(ctx, field)
+func (ec *executionContext) _PersonalAccessTokenUpdatePayload_personalAccessToken(ctx context.Context, field graphql.CollectedField, obj *PersonalAccessTokenUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PersonalAccessTokenUpdatePayload_personalAccessToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22149,7 +22149,7 @@ func (ec *executionContext) _PersonalAccessTokenUpdatePayload_PersonalAccessToke
 	return ec.marshalNPersonalAccessToken2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐPersonalAccessToken(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonalAccessTokenUpdatePayload_PersonalAccessToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PersonalAccessTokenUpdatePayload_personalAccessToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PersonalAccessTokenUpdatePayload",
 		Field:      field,
@@ -27561,8 +27561,8 @@ func (ec *executionContext) fieldContext_UserSettingConnection_totalCount(ctx co
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingCreatePayload_UserSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingCreatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingCreatePayload_UserSetting(ctx, field)
+func (ec *executionContext) _UserSettingCreatePayload_userSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingCreatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingCreatePayload_userSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -27592,7 +27592,7 @@ func (ec *executionContext) _UserSettingCreatePayload_UserSetting(ctx context.Co
 	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingCreatePayload_UserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingCreatePayload_userSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserSettingCreatePayload",
 		Field:      field,
@@ -27802,8 +27802,8 @@ func (ec *executionContext) fieldContext_UserSettingEdge_cursor(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UserSettingUpdatePayload_UserSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingUpdatePayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserSettingUpdatePayload_UserSetting(ctx, field)
+func (ec *executionContext) _UserSettingUpdatePayload_userSetting(ctx context.Context, field graphql.CollectedField, obj *UserSettingUpdatePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserSettingUpdatePayload_userSetting(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -27833,7 +27833,7 @@ func (ec *executionContext) _UserSettingUpdatePayload_UserSetting(ctx context.Co
 	return ec.marshalNUserSetting2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserSetting(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserSettingUpdatePayload_UserSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UserSettingUpdatePayload_userSetting(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserSettingUpdatePayload",
 		Field:      field,
@@ -46924,8 +46924,8 @@ func (ec *executionContext) _OauthProviderCreatePayload(ctx context.Context, sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("OauthProviderCreatePayload")
-		case "OauthProvider":
-			out.Values[i] = ec._OauthProviderCreatePayload_OauthProvider(ctx, field, obj)
+		case "oauthProvider":
+			out.Values[i] = ec._OauthProviderCreatePayload_oauthProvider(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47043,8 +47043,8 @@ func (ec *executionContext) _OauthProviderUpdatePayload(ctx context.Context, sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("OauthProviderUpdatePayload")
-		case "OauthProvider":
-			out.Values[i] = ec._OauthProviderUpdatePayload_OauthProvider(ctx, field, obj)
+		case "oauthProvider":
+			out.Values[i] = ec._OauthProviderUpdatePayload_oauthProvider(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -48438,8 +48438,8 @@ func (ec *executionContext) _PersonalAccessTokenCreatePayload(ctx context.Contex
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("PersonalAccessTokenCreatePayload")
-		case "PersonalAccessToken":
-			out.Values[i] = ec._PersonalAccessTokenCreatePayload_PersonalAccessToken(ctx, field, obj)
+		case "personalAccessToken":
+			out.Values[i] = ec._PersonalAccessTokenCreatePayload_personalAccessToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -48557,8 +48557,8 @@ func (ec *executionContext) _PersonalAccessTokenUpdatePayload(ctx context.Contex
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("PersonalAccessTokenUpdatePayload")
-		case "PersonalAccessToken":
-			out.Values[i] = ec._PersonalAccessTokenUpdatePayload_PersonalAccessToken(ctx, field, obj)
+		case "personalAccessToken":
+			out.Values[i] = ec._PersonalAccessTokenUpdatePayload_personalAccessToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -50128,8 +50128,8 @@ func (ec *executionContext) _UserSettingCreatePayload(ctx context.Context, sel a
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UserSettingCreatePayload")
-		case "UserSetting":
-			out.Values[i] = ec._UserSettingCreatePayload_UserSetting(ctx, field, obj)
+		case "userSetting":
+			out.Values[i] = ec._UserSettingCreatePayload_userSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -50247,8 +50247,8 @@ func (ec *executionContext) _UserSettingUpdatePayload(ctx context.Context, sel a
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UserSettingUpdatePayload")
-		case "UserSetting":
-			out.Values[i] = ec._UserSettingUpdatePayload_UserSetting(ctx, field, obj)
+		case "userSetting":
+			out.Values[i] = ec._UserSettingUpdatePayload_userSetting(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

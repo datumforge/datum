@@ -125,6 +125,10 @@ func main() {
 		entc.Extensions(
 			gqlExt,
 			oas,
+			// enthistory.NewHistoryExtension(
+			// 	enthistory.WithAuditing(),
+			// 	enthistory.WithSchemaPath("./internal/ent/schema"),
+			// ),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

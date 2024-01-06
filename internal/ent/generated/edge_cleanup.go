@@ -22,7 +22,17 @@ func EmailVerificationTokenEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func EmailVerificationTokenHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func EntitlementEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func EntitlementHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -32,7 +42,17 @@ func GroupEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func GroupHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func GroupSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func GroupSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -42,12 +62,27 @@ func IntegrationEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func IntegrationHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
+func OauthProviderHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OhAuthTooTokenEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func OhAuthTooTokenHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -78,7 +113,17 @@ func OrganizationEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func OrganizationHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func OrganizationSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func OrganizationSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -88,12 +133,27 @@ func PasswordResetTokenEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func PasswordResetTokenHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func PersonalAccessTokenEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
 
+func PersonalAccessTokenHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func SessionEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func SessionHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }
@@ -138,7 +198,17 @@ func UserEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func UserHistoryEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func UserSettingEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func UserSettingHistoryEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

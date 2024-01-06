@@ -13,19 +13,33 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/sessionhistory"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -86,20 +100,34 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			emailverificationtoken.Table: emailverificationtoken.ValidColumn,
-			entitlement.Table:            entitlement.ValidColumn,
-			group.Table:                  group.ValidColumn,
-			groupsetting.Table:           groupsetting.ValidColumn,
-			integration.Table:            integration.ValidColumn,
-			oauthprovider.Table:          oauthprovider.ValidColumn,
-			ohauthtootoken.Table:         ohauthtootoken.ValidColumn,
-			organization.Table:           organization.ValidColumn,
-			organizationsetting.Table:    organizationsetting.ValidColumn,
-			passwordresettoken.Table:     passwordresettoken.ValidColumn,
-			personalaccesstoken.Table:    personalaccesstoken.ValidColumn,
-			session.Table:                session.ValidColumn,
-			user.Table:                   user.ValidColumn,
-			usersetting.Table:            usersetting.ValidColumn,
+			emailverificationtoken.Table:        emailverificationtoken.ValidColumn,
+			emailverificationtokenhistory.Table: emailverificationtokenhistory.ValidColumn,
+			entitlement.Table:                   entitlement.ValidColumn,
+			entitlementhistory.Table:            entitlementhistory.ValidColumn,
+			group.Table:                         group.ValidColumn,
+			grouphistory.Table:                  grouphistory.ValidColumn,
+			groupsetting.Table:                  groupsetting.ValidColumn,
+			groupsettinghistory.Table:           groupsettinghistory.ValidColumn,
+			integration.Table:                   integration.ValidColumn,
+			integrationhistory.Table:            integrationhistory.ValidColumn,
+			oauthprovider.Table:                 oauthprovider.ValidColumn,
+			oauthproviderhistory.Table:          oauthproviderhistory.ValidColumn,
+			ohauthtootoken.Table:                ohauthtootoken.ValidColumn,
+			ohauthtootokenhistory.Table:         ohauthtootokenhistory.ValidColumn,
+			organization.Table:                  organization.ValidColumn,
+			organizationhistory.Table:           organizationhistory.ValidColumn,
+			organizationsetting.Table:           organizationsetting.ValidColumn,
+			organizationsettinghistory.Table:    organizationsettinghistory.ValidColumn,
+			passwordresettoken.Table:            passwordresettoken.ValidColumn,
+			passwordresettokenhistory.Table:     passwordresettokenhistory.ValidColumn,
+			personalaccesstoken.Table:           personalaccesstoken.ValidColumn,
+			personalaccesstokenhistory.Table:    personalaccesstokenhistory.ValidColumn,
+			session.Table:                       session.ValidColumn,
+			sessionhistory.Table:                sessionhistory.ValidColumn,
+			user.Table:                          user.ValidColumn,
+			userhistory.Table:                   userhistory.ValidColumn,
+			usersetting.Table:                   usersetting.ValidColumn,
+			usersettinghistory.Table:            usersettinghistory.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

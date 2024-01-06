@@ -14,32 +14,60 @@ type Tx struct {
 	config
 	// EmailVerificationToken is the client for interacting with the EmailVerificationToken builders.
 	EmailVerificationToken *EmailVerificationTokenClient
+	// EmailVerificationTokenHistory is the client for interacting with the EmailVerificationTokenHistory builders.
+	EmailVerificationTokenHistory *EmailVerificationTokenHistoryClient
 	// Entitlement is the client for interacting with the Entitlement builders.
 	Entitlement *EntitlementClient
+	// EntitlementHistory is the client for interacting with the EntitlementHistory builders.
+	EntitlementHistory *EntitlementHistoryClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupHistory is the client for interacting with the GroupHistory builders.
+	GroupHistory *GroupHistoryClient
 	// GroupSetting is the client for interacting with the GroupSetting builders.
 	GroupSetting *GroupSettingClient
+	// GroupSettingHistory is the client for interacting with the GroupSettingHistory builders.
+	GroupSettingHistory *GroupSettingHistoryClient
 	// Integration is the client for interacting with the Integration builders.
 	Integration *IntegrationClient
+	// IntegrationHistory is the client for interacting with the IntegrationHistory builders.
+	IntegrationHistory *IntegrationHistoryClient
 	// OauthProvider is the client for interacting with the OauthProvider builders.
 	OauthProvider *OauthProviderClient
+	// OauthProviderHistory is the client for interacting with the OauthProviderHistory builders.
+	OauthProviderHistory *OauthProviderHistoryClient
 	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
 	OhAuthTooToken *OhAuthTooTokenClient
+	// OhAuthTooTokenHistory is the client for interacting with the OhAuthTooTokenHistory builders.
+	OhAuthTooTokenHistory *OhAuthTooTokenHistoryClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
+	// OrganizationHistory is the client for interacting with the OrganizationHistory builders.
+	OrganizationHistory *OrganizationHistoryClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
 	OrganizationSetting *OrganizationSettingClient
+	// OrganizationSettingHistory is the client for interacting with the OrganizationSettingHistory builders.
+	OrganizationSettingHistory *OrganizationSettingHistoryClient
 	// PasswordResetToken is the client for interacting with the PasswordResetToken builders.
 	PasswordResetToken *PasswordResetTokenClient
+	// PasswordResetTokenHistory is the client for interacting with the PasswordResetTokenHistory builders.
+	PasswordResetTokenHistory *PasswordResetTokenHistoryClient
 	// PersonalAccessToken is the client for interacting with the PersonalAccessToken builders.
 	PersonalAccessToken *PersonalAccessTokenClient
+	// PersonalAccessTokenHistory is the client for interacting with the PersonalAccessTokenHistory builders.
+	PersonalAccessTokenHistory *PersonalAccessTokenHistoryClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
+	// SessionHistory is the client for interacting with the SessionHistory builders.
+	SessionHistory *SessionHistoryClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserHistory is the client for interacting with the UserHistory builders.
+	UserHistory *UserHistoryClient
 	// UserSetting is the client for interacting with the UserSetting builders.
 	UserSetting *UserSettingClient
+	// UserSettingHistory is the client for interacting with the UserSettingHistory builders.
+	UserSettingHistory *UserSettingHistoryClient
 
 	// lazily loaded.
 	client     *Client
@@ -172,19 +200,33 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
+	tx.EmailVerificationTokenHistory = NewEmailVerificationTokenHistoryClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
+	tx.EntitlementHistory = NewEntitlementHistoryClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
+	tx.GroupHistory = NewGroupHistoryClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
+	tx.GroupSettingHistory = NewGroupSettingHistoryClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
+	tx.IntegrationHistory = NewIntegrationHistoryClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
+	tx.OauthProviderHistory = NewOauthProviderHistoryClient(tx.config)
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
+	tx.OhAuthTooTokenHistory = NewOhAuthTooTokenHistoryClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
+	tx.OrganizationHistory = NewOrganizationHistoryClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
+	tx.OrganizationSettingHistory = NewOrganizationSettingHistoryClient(tx.config)
 	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)
+	tx.PasswordResetTokenHistory = NewPasswordResetTokenHistoryClient(tx.config)
 	tx.PersonalAccessToken = NewPersonalAccessTokenClient(tx.config)
+	tx.PersonalAccessTokenHistory = NewPersonalAccessTokenHistoryClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
+	tx.SessionHistory = NewSessionHistoryClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserHistory = NewUserHistoryClient(tx.config)
 	tx.UserSetting = NewUserSettingClient(tx.config)
+	tx.UserSettingHistory = NewUserSettingHistoryClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

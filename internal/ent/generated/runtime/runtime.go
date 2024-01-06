@@ -7,19 +7,33 @@ import (
 	"time"
 
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
+	"github.com/datumforge/datum/internal/ent/generated/emailverificationtokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
+	"github.com/datumforge/datum/internal/ent/generated/entitlementhistory"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/grouphistory"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
+	"github.com/datumforge/datum/internal/ent/generated/groupsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
+	"github.com/datumforge/datum/internal/ent/generated/integrationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
+	"github.com/datumforge/datum/internal/ent/generated/oauthproviderhistory"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
+	"github.com/datumforge/datum/internal/ent/generated/ohauthtootokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
+	"github.com/datumforge/datum/internal/ent/generated/organizationhistory"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/organizationsettinghistory"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
+	"github.com/datumforge/datum/internal/ent/generated/passwordresettokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
+	"github.com/datumforge/datum/internal/ent/generated/personalaccesstokenhistory"
 	"github.com/datumforge/datum/internal/ent/generated/session"
+	"github.com/datumforge/datum/internal/ent/generated/sessionhistory"
 	"github.com/datumforge/datum/internal/ent/generated/user"
+	"github.com/datumforge/datum/internal/ent/generated/userhistory"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
+	"github.com/datumforge/datum/internal/ent/generated/usersettinghistory"
 	"github.com/datumforge/datum/internal/ent/schema"
 
 	"entgo.io/ent"
@@ -85,6 +99,51 @@ func init() {
 	emailverificationtokenDescID := emailverificationtokenMixinFields1[0].Descriptor()
 	// emailverificationtoken.DefaultID holds the default value on creation for the id field.
 	emailverificationtoken.DefaultID = emailverificationtokenDescID.Default.(func() string)
+	emailverificationtokenhistoryMixin := schema.EmailVerificationTokenHistory{}.Mixin()
+	emailverificationtokenhistoryMixinFields0 := emailverificationtokenhistoryMixin[0].Fields()
+	_ = emailverificationtokenhistoryMixinFields0
+	emailverificationtokenhistoryFields := schema.EmailVerificationTokenHistory{}.Fields()
+	_ = emailverificationtokenhistoryFields
+	// emailverificationtokenhistoryDescHistoryTime is the schema descriptor for history_time field.
+	emailverificationtokenhistoryDescHistoryTime := emailverificationtokenhistoryFields[0].Descriptor()
+	// emailverificationtokenhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	emailverificationtokenhistory.DefaultHistoryTime = emailverificationtokenhistoryDescHistoryTime.Default.(func() time.Time)
+	// emailverificationtokenhistoryDescCreatedAt is the schema descriptor for created_at field.
+	emailverificationtokenhistoryDescCreatedAt := emailverificationtokenhistoryMixinFields0[0].Descriptor()
+	// emailverificationtokenhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	emailverificationtokenhistory.DefaultCreatedAt = emailverificationtokenhistoryDescCreatedAt.Default.(func() time.Time)
+	// emailverificationtokenhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	emailverificationtokenhistoryDescUpdatedAt := emailverificationtokenhistoryMixinFields0[1].Descriptor()
+	// emailverificationtokenhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	emailverificationtokenhistory.DefaultUpdatedAt = emailverificationtokenhistoryDescUpdatedAt.Default.(func() time.Time)
+	// emailverificationtokenhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	emailverificationtokenhistory.UpdateDefaultUpdatedAt = emailverificationtokenhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// emailverificationtokenhistoryDescToken is the schema descriptor for token field.
+	emailverificationtokenhistoryDescToken := emailverificationtokenhistoryFields[4].Descriptor()
+	// emailverificationtokenhistory.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	emailverificationtokenhistory.TokenValidator = emailverificationtokenhistoryDescToken.Validators[0].(func(string) error)
+	// emailverificationtokenhistoryDescEmail is the schema descriptor for email field.
+	emailverificationtokenhistoryDescEmail := emailverificationtokenhistoryFields[6].Descriptor()
+	// emailverificationtokenhistory.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	emailverificationtokenhistory.EmailValidator = func() func(string) error {
+		validators := emailverificationtokenhistoryDescEmail.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(email string) error {
+			for _, fn := range fns {
+				if err := fn(email); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// emailverificationtokenhistoryDescSecret is the schema descriptor for secret field.
+	emailverificationtokenhistoryDescSecret := emailverificationtokenhistoryFields[7].Descriptor()
+	// emailverificationtokenhistory.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	emailverificationtokenhistory.SecretValidator = emailverificationtokenhistoryDescSecret.Validators[0].(func([]byte) error)
 	entitlementMixin := schema.Entitlement{}.Mixin()
 	entitlementMixinHooks0 := entitlementMixin[0].Hooks()
 	entitlementMixinHooks2 := entitlementMixin[2].Hooks()
@@ -120,6 +179,33 @@ func init() {
 	entitlementDescID := entitlementMixinFields1[0].Descriptor()
 	// entitlement.DefaultID holds the default value on creation for the id field.
 	entitlement.DefaultID = entitlementDescID.Default.(func() string)
+	entitlementhistoryMixin := schema.EntitlementHistory{}.Mixin()
+	entitlementhistoryMixinFields0 := entitlementhistoryMixin[0].Fields()
+	_ = entitlementhistoryMixinFields0
+	entitlementhistoryFields := schema.EntitlementHistory{}.Fields()
+	_ = entitlementhistoryFields
+	// entitlementhistoryDescHistoryTime is the schema descriptor for history_time field.
+	entitlementhistoryDescHistoryTime := entitlementhistoryFields[0].Descriptor()
+	// entitlementhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	entitlementhistory.DefaultHistoryTime = entitlementhistoryDescHistoryTime.Default.(func() time.Time)
+	// entitlementhistoryDescCreatedAt is the schema descriptor for created_at field.
+	entitlementhistoryDescCreatedAt := entitlementhistoryMixinFields0[0].Descriptor()
+	// entitlementhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	entitlementhistory.DefaultCreatedAt = entitlementhistoryDescCreatedAt.Default.(func() time.Time)
+	// entitlementhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	entitlementhistoryDescUpdatedAt := entitlementhistoryMixinFields0[1].Descriptor()
+	// entitlementhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	entitlementhistory.DefaultUpdatedAt = entitlementhistoryDescUpdatedAt.Default.(func() time.Time)
+	// entitlementhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	entitlementhistory.UpdateDefaultUpdatedAt = entitlementhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// entitlementhistoryDescExpires is the schema descriptor for expires field.
+	entitlementhistoryDescExpires := entitlementhistoryFields[7].Descriptor()
+	// entitlementhistory.DefaultExpires holds the default value on creation for the expires field.
+	entitlementhistory.DefaultExpires = entitlementhistoryDescExpires.Default.(bool)
+	// entitlementhistoryDescCancelled is the schema descriptor for cancelled field.
+	entitlementhistoryDescCancelled := entitlementhistoryFields[9].Descriptor()
+	// entitlementhistory.DefaultCancelled holds the default value on creation for the cancelled field.
+	entitlementhistory.DefaultCancelled = entitlementhistoryDescCancelled.Default.(bool)
 	groupMixin := schema.Group{}.Mixin()
 	group.Policy = privacy.NewPolicies(schema.Group{})
 	group.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -175,6 +261,35 @@ func init() {
 	groupDescID := groupMixinFields2[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
 	group.DefaultID = groupDescID.Default.(func() string)
+	grouphistoryMixin := schema.GroupHistory{}.Mixin()
+	grouphistoryMixinFields0 := grouphistoryMixin[0].Fields()
+	_ = grouphistoryMixinFields0
+	grouphistoryFields := schema.GroupHistory{}.Fields()
+	_ = grouphistoryFields
+	// grouphistoryDescHistoryTime is the schema descriptor for history_time field.
+	grouphistoryDescHistoryTime := grouphistoryFields[0].Descriptor()
+	// grouphistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	grouphistory.DefaultHistoryTime = grouphistoryDescHistoryTime.Default.(func() time.Time)
+	// grouphistoryDescCreatedAt is the schema descriptor for created_at field.
+	grouphistoryDescCreatedAt := grouphistoryMixinFields0[0].Descriptor()
+	// grouphistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	grouphistory.DefaultCreatedAt = grouphistoryDescCreatedAt.Default.(func() time.Time)
+	// grouphistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	grouphistoryDescUpdatedAt := grouphistoryMixinFields0[1].Descriptor()
+	// grouphistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	grouphistory.DefaultUpdatedAt = grouphistoryDescUpdatedAt.Default.(func() time.Time)
+	// grouphistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	grouphistory.UpdateDefaultUpdatedAt = grouphistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// grouphistoryDescName is the schema descriptor for name field.
+	grouphistoryDescName := grouphistoryFields[4].Descriptor()
+	// grouphistory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	grouphistory.NameValidator = grouphistoryDescName.Validators[0].(func(string) error)
+	// grouphistoryDescDisplayName is the schema descriptor for display_name field.
+	grouphistoryDescDisplayName := grouphistoryFields[8].Descriptor()
+	// grouphistory.DefaultDisplayName holds the default value on creation for the display_name field.
+	grouphistory.DefaultDisplayName = grouphistoryDescDisplayName.Default.(string)
+	// grouphistory.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	grouphistory.DisplayNameValidator = grouphistoryDescDisplayName.Validators[0].(func(string) error)
 	groupsettingMixin := schema.GroupSetting{}.Mixin()
 	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
 	groupsettingMixinHooks2 := groupsettingMixin[2].Hooks()
@@ -214,6 +329,37 @@ func init() {
 	groupsettingDescID := groupsettingMixinFields1[0].Descriptor()
 	// groupsetting.DefaultID holds the default value on creation for the id field.
 	groupsetting.DefaultID = groupsettingDescID.Default.(func() string)
+	groupsettinghistoryMixin := schema.GroupSettingHistory{}.Mixin()
+	groupsettinghistoryMixinFields0 := groupsettinghistoryMixin[0].Fields()
+	_ = groupsettinghistoryMixinFields0
+	groupsettinghistoryFields := schema.GroupSettingHistory{}.Fields()
+	_ = groupsettinghistoryFields
+	// groupsettinghistoryDescHistoryTime is the schema descriptor for history_time field.
+	groupsettinghistoryDescHistoryTime := groupsettinghistoryFields[0].Descriptor()
+	// groupsettinghistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	groupsettinghistory.DefaultHistoryTime = groupsettinghistoryDescHistoryTime.Default.(func() time.Time)
+	// groupsettinghistoryDescCreatedAt is the schema descriptor for created_at field.
+	groupsettinghistoryDescCreatedAt := groupsettinghistoryMixinFields0[0].Descriptor()
+	// groupsettinghistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupsettinghistory.DefaultCreatedAt = groupsettinghistoryDescCreatedAt.Default.(func() time.Time)
+	// groupsettinghistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	groupsettinghistoryDescUpdatedAt := groupsettinghistoryMixinFields0[1].Descriptor()
+	// groupsettinghistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	groupsettinghistory.DefaultUpdatedAt = groupsettinghistoryDescUpdatedAt.Default.(func() time.Time)
+	// groupsettinghistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	groupsettinghistory.UpdateDefaultUpdatedAt = groupsettinghistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupsettinghistoryDescTags is the schema descriptor for tags field.
+	groupsettinghistoryDescTags := groupsettinghistoryFields[6].Descriptor()
+	// groupsettinghistory.DefaultTags holds the default value on creation for the tags field.
+	groupsettinghistory.DefaultTags = groupsettinghistoryDescTags.Default.([]string)
+	// groupsettinghistoryDescSyncToSlack is the schema descriptor for sync_to_slack field.
+	groupsettinghistoryDescSyncToSlack := groupsettinghistoryFields[7].Descriptor()
+	// groupsettinghistory.DefaultSyncToSlack holds the default value on creation for the sync_to_slack field.
+	groupsettinghistory.DefaultSyncToSlack = groupsettinghistoryDescSyncToSlack.Default.(bool)
+	// groupsettinghistoryDescSyncToGithub is the schema descriptor for sync_to_github field.
+	groupsettinghistoryDescSyncToGithub := groupsettinghistoryFields[8].Descriptor()
+	// groupsettinghistory.DefaultSyncToGithub holds the default value on creation for the sync_to_github field.
+	groupsettinghistory.DefaultSyncToGithub = groupsettinghistoryDescSyncToGithub.Default.(bool)
 	integrationMixin := schema.Integration{}.Mixin()
 	integrationMixinHooks0 := integrationMixin[0].Hooks()
 	integrationMixinHooks2 := integrationMixin[2].Hooks()
@@ -245,6 +391,29 @@ func init() {
 	integrationDescID := integrationMixinFields1[0].Descriptor()
 	// integration.DefaultID holds the default value on creation for the id field.
 	integration.DefaultID = integrationDescID.Default.(func() string)
+	integrationhistoryMixin := schema.IntegrationHistory{}.Mixin()
+	integrationhistoryMixinFields0 := integrationhistoryMixin[0].Fields()
+	_ = integrationhistoryMixinFields0
+	integrationhistoryFields := schema.IntegrationHistory{}.Fields()
+	_ = integrationhistoryFields
+	// integrationhistoryDescHistoryTime is the schema descriptor for history_time field.
+	integrationhistoryDescHistoryTime := integrationhistoryFields[0].Descriptor()
+	// integrationhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	integrationhistory.DefaultHistoryTime = integrationhistoryDescHistoryTime.Default.(func() time.Time)
+	// integrationhistoryDescCreatedAt is the schema descriptor for created_at field.
+	integrationhistoryDescCreatedAt := integrationhistoryMixinFields0[0].Descriptor()
+	// integrationhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	integrationhistory.DefaultCreatedAt = integrationhistoryDescCreatedAt.Default.(func() time.Time)
+	// integrationhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	integrationhistoryDescUpdatedAt := integrationhistoryMixinFields0[1].Descriptor()
+	// integrationhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	integrationhistory.DefaultUpdatedAt = integrationhistoryDescUpdatedAt.Default.(func() time.Time)
+	// integrationhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	integrationhistory.UpdateDefaultUpdatedAt = integrationhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// integrationhistoryDescName is the schema descriptor for name field.
+	integrationhistoryDescName := integrationhistoryFields[4].Descriptor()
+	// integrationhistory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	integrationhistory.NameValidator = integrationhistoryDescName.Validators[0].(func(string) error)
 	oauthproviderMixin := schema.OauthProvider{}.Mixin()
 	oauthproviderMixinHooks0 := oauthproviderMixin[0].Hooks()
 	oauthproviderMixinHooks2 := oauthproviderMixin[2].Hooks()
@@ -272,6 +441,25 @@ func init() {
 	oauthproviderDescID := oauthproviderMixinFields1[0].Descriptor()
 	// oauthprovider.DefaultID holds the default value on creation for the id field.
 	oauthprovider.DefaultID = oauthproviderDescID.Default.(func() string)
+	oauthproviderhistoryMixin := schema.OauthProviderHistory{}.Mixin()
+	oauthproviderhistoryMixinFields0 := oauthproviderhistoryMixin[0].Fields()
+	_ = oauthproviderhistoryMixinFields0
+	oauthproviderhistoryFields := schema.OauthProviderHistory{}.Fields()
+	_ = oauthproviderhistoryFields
+	// oauthproviderhistoryDescHistoryTime is the schema descriptor for history_time field.
+	oauthproviderhistoryDescHistoryTime := oauthproviderhistoryFields[0].Descriptor()
+	// oauthproviderhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	oauthproviderhistory.DefaultHistoryTime = oauthproviderhistoryDescHistoryTime.Default.(func() time.Time)
+	// oauthproviderhistoryDescCreatedAt is the schema descriptor for created_at field.
+	oauthproviderhistoryDescCreatedAt := oauthproviderhistoryMixinFields0[0].Descriptor()
+	// oauthproviderhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauthproviderhistory.DefaultCreatedAt = oauthproviderhistoryDescCreatedAt.Default.(func() time.Time)
+	// oauthproviderhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	oauthproviderhistoryDescUpdatedAt := oauthproviderhistoryMixinFields0[1].Descriptor()
+	// oauthproviderhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauthproviderhistory.DefaultUpdatedAt = oauthproviderhistoryDescUpdatedAt.Default.(func() time.Time)
+	// oauthproviderhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauthproviderhistory.UpdateDefaultUpdatedAt = oauthproviderhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
 	ohauthtootokenMixin := schema.OhAuthTooToken{}.Mixin()
 	ohauthtootokenMixinFields0 := ohauthtootokenMixin[0].Fields()
 	_ = ohauthtootokenMixinFields0
@@ -309,6 +497,40 @@ func init() {
 	ohauthtootokenDescID := ohauthtootokenMixinFields0[0].Descriptor()
 	// ohauthtootoken.DefaultID holds the default value on creation for the id field.
 	ohauthtootoken.DefaultID = ohauthtootokenDescID.Default.(func() string)
+	ohauthtootokenhistoryFields := schema.OhAuthTooTokenHistory{}.Fields()
+	_ = ohauthtootokenhistoryFields
+	// ohauthtootokenhistoryDescHistoryTime is the schema descriptor for history_time field.
+	ohauthtootokenhistoryDescHistoryTime := ohauthtootokenhistoryFields[0].Descriptor()
+	// ohauthtootokenhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	ohauthtootokenhistory.DefaultHistoryTime = ohauthtootokenhistoryDescHistoryTime.Default.(func() time.Time)
+	// ohauthtootokenhistoryDescClientID is the schema descriptor for client_id field.
+	ohauthtootokenhistoryDescClientID := ohauthtootokenhistoryFields[4].Descriptor()
+	// ohauthtootokenhistory.ClientIDValidator is a validator for the "client_id" field. It is called by the builders before save.
+	ohauthtootokenhistory.ClientIDValidator = ohauthtootokenhistoryDescClientID.Validators[0].(func(string) error)
+	// ohauthtootokenhistoryDescNonce is the schema descriptor for nonce field.
+	ohauthtootokenhistoryDescNonce := ohauthtootokenhistoryFields[6].Descriptor()
+	// ohauthtootokenhistory.NonceValidator is a validator for the "nonce" field. It is called by the builders before save.
+	ohauthtootokenhistory.NonceValidator = ohauthtootokenhistoryDescNonce.Validators[0].(func(string) error)
+	// ohauthtootokenhistoryDescClaimsUserID is the schema descriptor for claims_user_id field.
+	ohauthtootokenhistoryDescClaimsUserID := ohauthtootokenhistoryFields[7].Descriptor()
+	// ohauthtootokenhistory.ClaimsUserIDValidator is a validator for the "claims_user_id" field. It is called by the builders before save.
+	ohauthtootokenhistory.ClaimsUserIDValidator = ohauthtootokenhistoryDescClaimsUserID.Validators[0].(func(string) error)
+	// ohauthtootokenhistoryDescClaimsUsername is the schema descriptor for claims_username field.
+	ohauthtootokenhistoryDescClaimsUsername := ohauthtootokenhistoryFields[8].Descriptor()
+	// ohauthtootokenhistory.ClaimsUsernameValidator is a validator for the "claims_username" field. It is called by the builders before save.
+	ohauthtootokenhistory.ClaimsUsernameValidator = ohauthtootokenhistoryDescClaimsUsername.Validators[0].(func(string) error)
+	// ohauthtootokenhistoryDescClaimsEmail is the schema descriptor for claims_email field.
+	ohauthtootokenhistoryDescClaimsEmail := ohauthtootokenhistoryFields[9].Descriptor()
+	// ohauthtootokenhistory.ClaimsEmailValidator is a validator for the "claims_email" field. It is called by the builders before save.
+	ohauthtootokenhistory.ClaimsEmailValidator = ohauthtootokenhistoryDescClaimsEmail.Validators[0].(func(string) error)
+	// ohauthtootokenhistoryDescConnectorID is the schema descriptor for connector_id field.
+	ohauthtootokenhistoryDescConnectorID := ohauthtootokenhistoryFields[13].Descriptor()
+	// ohauthtootokenhistory.ConnectorIDValidator is a validator for the "connector_id" field. It is called by the builders before save.
+	ohauthtootokenhistory.ConnectorIDValidator = ohauthtootokenhistoryDescConnectorID.Validators[0].(func(string) error)
+	// ohauthtootokenhistoryDescLastUsed is the schema descriptor for last_used field.
+	ohauthtootokenhistoryDescLastUsed := ohauthtootokenhistoryFields[15].Descriptor()
+	// ohauthtootokenhistory.DefaultLastUsed holds the default value on creation for the last_used field.
+	ohauthtootokenhistory.DefaultLastUsed = ohauthtootokenhistoryDescLastUsed.Default.(func() time.Time)
 	organizationMixin := schema.Organization{}.Mixin()
 	organization.Policy = privacy.NewPolicies(schema.Organization{})
 	organization.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -382,6 +604,53 @@ func init() {
 	organizationDescID := organizationMixinFields1[0].Descriptor()
 	// organization.DefaultID holds the default value on creation for the id field.
 	organization.DefaultID = organizationDescID.Default.(func() string)
+	organizationhistoryMixin := schema.OrganizationHistory{}.Mixin()
+	organizationhistoryMixinFields0 := organizationhistoryMixin[0].Fields()
+	_ = organizationhistoryMixinFields0
+	organizationhistoryFields := schema.OrganizationHistory{}.Fields()
+	_ = organizationhistoryFields
+	// organizationhistoryDescHistoryTime is the schema descriptor for history_time field.
+	organizationhistoryDescHistoryTime := organizationhistoryFields[0].Descriptor()
+	// organizationhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	organizationhistory.DefaultHistoryTime = organizationhistoryDescHistoryTime.Default.(func() time.Time)
+	// organizationhistoryDescCreatedAt is the schema descriptor for created_at field.
+	organizationhistoryDescCreatedAt := organizationhistoryMixinFields0[0].Descriptor()
+	// organizationhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organizationhistory.DefaultCreatedAt = organizationhistoryDescCreatedAt.Default.(func() time.Time)
+	// organizationhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	organizationhistoryDescUpdatedAt := organizationhistoryMixinFields0[1].Descriptor()
+	// organizationhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	organizationhistory.DefaultUpdatedAt = organizationhistoryDescUpdatedAt.Default.(func() time.Time)
+	// organizationhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	organizationhistory.UpdateDefaultUpdatedAt = organizationhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organizationhistoryDescName is the schema descriptor for name field.
+	organizationhistoryDescName := organizationhistoryFields[4].Descriptor()
+	// organizationhistory.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	organizationhistory.NameValidator = func() func(string) error {
+		validators := organizationhistoryDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// organizationhistoryDescDisplayName is the schema descriptor for display_name field.
+	organizationhistoryDescDisplayName := organizationhistoryFields[5].Descriptor()
+	// organizationhistory.DefaultDisplayName holds the default value on creation for the display_name field.
+	organizationhistory.DefaultDisplayName = organizationhistoryDescDisplayName.Default.(string)
+	// organizationhistory.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	organizationhistory.DisplayNameValidator = organizationhistoryDescDisplayName.Validators[0].(func(string) error)
+	// organizationhistoryDescPersonalOrg is the schema descriptor for personal_org field.
+	organizationhistoryDescPersonalOrg := organizationhistoryFields[8].Descriptor()
+	// organizationhistory.DefaultPersonalOrg holds the default value on creation for the personal_org field.
+	organizationhistory.DefaultPersonalOrg = organizationhistoryDescPersonalOrg.Default.(bool)
 	organizationsettingMixin := schema.OrganizationSetting{}.Mixin()
 	organizationsettingMixinHooks0 := organizationsettingMixin[0].Hooks()
 	organizationsettingMixinHooks2 := organizationsettingMixin[2].Hooks()
@@ -413,6 +682,29 @@ func init() {
 	organizationsettingDescID := organizationsettingMixinFields1[0].Descriptor()
 	// organizationsetting.DefaultID holds the default value on creation for the id field.
 	organizationsetting.DefaultID = organizationsettingDescID.Default.(func() string)
+	organizationsettinghistoryMixin := schema.OrganizationSettingHistory{}.Mixin()
+	organizationsettinghistoryMixinFields0 := organizationsettinghistoryMixin[0].Fields()
+	_ = organizationsettinghistoryMixinFields0
+	organizationsettinghistoryFields := schema.OrganizationSettingHistory{}.Fields()
+	_ = organizationsettinghistoryFields
+	// organizationsettinghistoryDescHistoryTime is the schema descriptor for history_time field.
+	organizationsettinghistoryDescHistoryTime := organizationsettinghistoryFields[0].Descriptor()
+	// organizationsettinghistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	organizationsettinghistory.DefaultHistoryTime = organizationsettinghistoryDescHistoryTime.Default.(func() time.Time)
+	// organizationsettinghistoryDescCreatedAt is the schema descriptor for created_at field.
+	organizationsettinghistoryDescCreatedAt := organizationsettinghistoryMixinFields0[0].Descriptor()
+	// organizationsettinghistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	organizationsettinghistory.DefaultCreatedAt = organizationsettinghistoryDescCreatedAt.Default.(func() time.Time)
+	// organizationsettinghistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	organizationsettinghistoryDescUpdatedAt := organizationsettinghistoryMixinFields0[1].Descriptor()
+	// organizationsettinghistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	organizationsettinghistory.DefaultUpdatedAt = organizationsettinghistoryDescUpdatedAt.Default.(func() time.Time)
+	// organizationsettinghistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	organizationsettinghistory.UpdateDefaultUpdatedAt = organizationsettinghistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// organizationsettinghistoryDescTags is the schema descriptor for tags field.
+	organizationsettinghistoryDescTags := organizationsettinghistoryFields[13].Descriptor()
+	// organizationsettinghistory.DefaultTags holds the default value on creation for the tags field.
+	organizationsettinghistory.DefaultTags = organizationsettinghistoryDescTags.Default.([]string)
 	passwordresettokenMixin := schema.PasswordResetToken{}.Mixin()
 	passwordresettokenMixinHooks0 := passwordresettokenMixin[0].Hooks()
 	passwordresettokenMixinHooks2 := passwordresettokenMixin[2].Hooks()
@@ -468,6 +760,51 @@ func init() {
 	passwordresettokenDescID := passwordresettokenMixinFields1[0].Descriptor()
 	// passwordresettoken.DefaultID holds the default value on creation for the id field.
 	passwordresettoken.DefaultID = passwordresettokenDescID.Default.(func() string)
+	passwordresettokenhistoryMixin := schema.PasswordResetTokenHistory{}.Mixin()
+	passwordresettokenhistoryMixinFields0 := passwordresettokenhistoryMixin[0].Fields()
+	_ = passwordresettokenhistoryMixinFields0
+	passwordresettokenhistoryFields := schema.PasswordResetTokenHistory{}.Fields()
+	_ = passwordresettokenhistoryFields
+	// passwordresettokenhistoryDescHistoryTime is the schema descriptor for history_time field.
+	passwordresettokenhistoryDescHistoryTime := passwordresettokenhistoryFields[0].Descriptor()
+	// passwordresettokenhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	passwordresettokenhistory.DefaultHistoryTime = passwordresettokenhistoryDescHistoryTime.Default.(func() time.Time)
+	// passwordresettokenhistoryDescCreatedAt is the schema descriptor for created_at field.
+	passwordresettokenhistoryDescCreatedAt := passwordresettokenhistoryMixinFields0[0].Descriptor()
+	// passwordresettokenhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	passwordresettokenhistory.DefaultCreatedAt = passwordresettokenhistoryDescCreatedAt.Default.(func() time.Time)
+	// passwordresettokenhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	passwordresettokenhistoryDescUpdatedAt := passwordresettokenhistoryMixinFields0[1].Descriptor()
+	// passwordresettokenhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	passwordresettokenhistory.DefaultUpdatedAt = passwordresettokenhistoryDescUpdatedAt.Default.(func() time.Time)
+	// passwordresettokenhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	passwordresettokenhistory.UpdateDefaultUpdatedAt = passwordresettokenhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// passwordresettokenhistoryDescToken is the schema descriptor for token field.
+	passwordresettokenhistoryDescToken := passwordresettokenhistoryFields[4].Descriptor()
+	// passwordresettokenhistory.TokenValidator is a validator for the "token" field. It is called by the builders before save.
+	passwordresettokenhistory.TokenValidator = passwordresettokenhistoryDescToken.Validators[0].(func(string) error)
+	// passwordresettokenhistoryDescEmail is the schema descriptor for email field.
+	passwordresettokenhistoryDescEmail := passwordresettokenhistoryFields[6].Descriptor()
+	// passwordresettokenhistory.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	passwordresettokenhistory.EmailValidator = func() func(string) error {
+		validators := passwordresettokenhistoryDescEmail.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(email string) error {
+			for _, fn := range fns {
+				if err := fn(email); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// passwordresettokenhistoryDescSecret is the schema descriptor for secret field.
+	passwordresettokenhistoryDescSecret := passwordresettokenhistoryFields[7].Descriptor()
+	// passwordresettokenhistory.SecretValidator is a validator for the "secret" field. It is called by the builders before save.
+	passwordresettokenhistory.SecretValidator = passwordresettokenhistoryDescSecret.Validators[0].(func([]byte) error)
 	personalaccesstokenMixin := schema.PersonalAccessToken{}.Mixin()
 	personalaccesstokenMixinHooks0 := personalaccesstokenMixin[0].Hooks()
 	personalaccesstokenMixinHooks1 := personalaccesstokenMixin[1].Hooks()
@@ -509,6 +846,37 @@ func init() {
 	personalaccesstokenDescID := personalaccesstokenMixinFields2[0].Descriptor()
 	// personalaccesstoken.DefaultID holds the default value on creation for the id field.
 	personalaccesstoken.DefaultID = personalaccesstokenDescID.Default.(func() string)
+	personalaccesstokenhistoryMixin := schema.PersonalAccessTokenHistory{}.Mixin()
+	personalaccesstokenhistoryMixinFields0 := personalaccesstokenhistoryMixin[0].Fields()
+	_ = personalaccesstokenhistoryMixinFields0
+	personalaccesstokenhistoryFields := schema.PersonalAccessTokenHistory{}.Fields()
+	_ = personalaccesstokenhistoryFields
+	// personalaccesstokenhistoryDescHistoryTime is the schema descriptor for history_time field.
+	personalaccesstokenhistoryDescHistoryTime := personalaccesstokenhistoryFields[0].Descriptor()
+	// personalaccesstokenhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	personalaccesstokenhistory.DefaultHistoryTime = personalaccesstokenhistoryDescHistoryTime.Default.(func() time.Time)
+	// personalaccesstokenhistoryDescCreatedAt is the schema descriptor for created_at field.
+	personalaccesstokenhistoryDescCreatedAt := personalaccesstokenhistoryMixinFields0[0].Descriptor()
+	// personalaccesstokenhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	personalaccesstokenhistory.DefaultCreatedAt = personalaccesstokenhistoryDescCreatedAt.Default.(func() time.Time)
+	// personalaccesstokenhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	personalaccesstokenhistoryDescUpdatedAt := personalaccesstokenhistoryMixinFields0[1].Descriptor()
+	// personalaccesstokenhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	personalaccesstokenhistory.DefaultUpdatedAt = personalaccesstokenhistoryDescUpdatedAt.Default.(func() time.Time)
+	// personalaccesstokenhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	personalaccesstokenhistory.UpdateDefaultUpdatedAt = personalaccesstokenhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// personalaccesstokenhistoryDescToken is the schema descriptor for token field.
+	personalaccesstokenhistoryDescToken := personalaccesstokenhistoryFields[5].Descriptor()
+	// personalaccesstokenhistory.DefaultToken holds the default value on creation for the token field.
+	personalaccesstokenhistory.DefaultToken = personalaccesstokenhistoryDescToken.Default.(func() string)
+	// personalaccesstokenhistoryDescDescription is the schema descriptor for description field.
+	personalaccesstokenhistoryDescDescription := personalaccesstokenhistoryFields[8].Descriptor()
+	// personalaccesstokenhistory.DefaultDescription holds the default value on creation for the description field.
+	personalaccesstokenhistory.DefaultDescription = personalaccesstokenhistoryDescDescription.Default.(string)
+	// personalaccesstokenhistoryDescLastUsedAt is the schema descriptor for last_used_at field.
+	personalaccesstokenhistoryDescLastUsedAt := personalaccesstokenhistoryFields[9].Descriptor()
+	// personalaccesstokenhistory.UpdateDefaultLastUsedAt holds the default value on update for the last_used_at field.
+	personalaccesstokenhistory.UpdateDefaultLastUsedAt = personalaccesstokenhistoryDescLastUsedAt.UpdateDefault.(func() time.Time)
 	sessionMixin := schema.Session{}.Mixin()
 	sessionMixinHooks0 := sessionMixin[0].Hooks()
 	sessionHooks := schema.Session{}.Hooks()
@@ -538,6 +906,29 @@ func init() {
 	sessionDescID := sessionMixinFields1[0].Descriptor()
 	// session.DefaultID holds the default value on creation for the id field.
 	session.DefaultID = sessionDescID.Default.(func() string)
+	sessionhistoryMixin := schema.SessionHistory{}.Mixin()
+	sessionhistoryMixinFields0 := sessionhistoryMixin[0].Fields()
+	_ = sessionhistoryMixinFields0
+	sessionhistoryFields := schema.SessionHistory{}.Fields()
+	_ = sessionhistoryFields
+	// sessionhistoryDescHistoryTime is the schema descriptor for history_time field.
+	sessionhistoryDescHistoryTime := sessionhistoryFields[0].Descriptor()
+	// sessionhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	sessionhistory.DefaultHistoryTime = sessionhistoryDescHistoryTime.Default.(func() time.Time)
+	// sessionhistoryDescCreatedAt is the schema descriptor for created_at field.
+	sessionhistoryDescCreatedAt := sessionhistoryMixinFields0[0].Descriptor()
+	// sessionhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	sessionhistory.DefaultCreatedAt = sessionhistoryDescCreatedAt.Default.(func() time.Time)
+	// sessionhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	sessionhistoryDescUpdatedAt := sessionhistoryMixinFields0[1].Descriptor()
+	// sessionhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	sessionhistory.DefaultUpdatedAt = sessionhistoryDescUpdatedAt.Default.(func() time.Time)
+	// sessionhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	sessionhistory.UpdateDefaultUpdatedAt = sessionhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// sessionhistoryDescIssuedAt is the schema descriptor for issued_at field.
+	sessionhistoryDescIssuedAt := sessionhistoryFields[5].Descriptor()
+	// sessionhistory.UpdateDefaultIssuedAt holds the default value on update for the issued_at field.
+	sessionhistory.UpdateDefaultIssuedAt = sessionhistoryDescIssuedAt.UpdateDefault.(func() time.Time)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -674,6 +1065,120 @@ func init() {
 	userDescID := userMixinFields2[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
+	userhistoryMixin := schema.UserHistory{}.Mixin()
+	userhistoryMixinFields0 := userhistoryMixin[0].Fields()
+	_ = userhistoryMixinFields0
+	userhistoryFields := schema.UserHistory{}.Fields()
+	_ = userhistoryFields
+	// userhistoryDescHistoryTime is the schema descriptor for history_time field.
+	userhistoryDescHistoryTime := userhistoryFields[0].Descriptor()
+	// userhistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	userhistory.DefaultHistoryTime = userhistoryDescHistoryTime.Default.(func() time.Time)
+	// userhistoryDescCreatedAt is the schema descriptor for created_at field.
+	userhistoryDescCreatedAt := userhistoryMixinFields0[0].Descriptor()
+	// userhistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	userhistory.DefaultCreatedAt = userhistoryDescCreatedAt.Default.(func() time.Time)
+	// userhistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	userhistoryDescUpdatedAt := userhistoryMixinFields0[1].Descriptor()
+	// userhistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	userhistory.DefaultUpdatedAt = userhistoryDescUpdatedAt.Default.(func() time.Time)
+	// userhistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	userhistory.UpdateDefaultUpdatedAt = userhistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userhistoryDescEmail is the schema descriptor for email field.
+	userhistoryDescEmail := userhistoryFields[4].Descriptor()
+	// userhistory.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	userhistory.EmailValidator = userhistoryDescEmail.Validators[0].(func(string) error)
+	// userhistoryDescFirstName is the schema descriptor for first_name field.
+	userhistoryDescFirstName := userhistoryFields[5].Descriptor()
+	// userhistory.FirstNameValidator is a validator for the "first_name" field. It is called by the builders before save.
+	userhistory.FirstNameValidator = func() func(string) error {
+		validators := userhistoryDescFirstName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(first_name string) error {
+			for _, fn := range fns {
+				if err := fn(first_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// userhistoryDescLastName is the schema descriptor for last_name field.
+	userhistoryDescLastName := userhistoryFields[6].Descriptor()
+	// userhistory.LastNameValidator is a validator for the "last_name" field. It is called by the builders before save.
+	userhistory.LastNameValidator = func() func(string) error {
+		validators := userhistoryDescLastName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(last_name string) error {
+			for _, fn := range fns {
+				if err := fn(last_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// userhistoryDescDisplayName is the schema descriptor for display_name field.
+	userhistoryDescDisplayName := userhistoryFields[7].Descriptor()
+	// userhistory.DefaultDisplayName holds the default value on creation for the display_name field.
+	userhistory.DefaultDisplayName = userhistoryDescDisplayName.Default.(string)
+	// userhistory.DisplayNameValidator is a validator for the "display_name" field. It is called by the builders before save.
+	userhistory.DisplayNameValidator = func() func(string) error {
+		validators := userhistoryDescDisplayName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+			validators[2].(func(string) error),
+		}
+		return func(display_name string) error {
+			for _, fn := range fns {
+				if err := fn(display_name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// userhistoryDescAvatarRemoteURL is the schema descriptor for avatar_remote_url field.
+	userhistoryDescAvatarRemoteURL := userhistoryFields[8].Descriptor()
+	// userhistory.AvatarRemoteURLValidator is a validator for the "avatar_remote_url" field. It is called by the builders before save.
+	userhistory.AvatarRemoteURLValidator = func() func(string) error {
+		validators := userhistoryDescAvatarRemoteURL.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(avatar_remote_url string) error {
+			for _, fn := range fns {
+				if err := fn(avatar_remote_url); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// userhistoryDescAvatarLocalFile is the schema descriptor for avatar_local_file field.
+	userhistoryDescAvatarLocalFile := userhistoryFields[9].Descriptor()
+	// userhistory.AvatarLocalFileValidator is a validator for the "avatar_local_file" field. It is called by the builders before save.
+	userhistory.AvatarLocalFileValidator = userhistoryDescAvatarLocalFile.Validators[0].(func(string) error)
+	// userhistoryDescAvatarUpdatedAt is the schema descriptor for avatar_updated_at field.
+	userhistoryDescAvatarUpdatedAt := userhistoryFields[10].Descriptor()
+	// userhistory.UpdateDefaultAvatarUpdatedAt holds the default value on update for the avatar_updated_at field.
+	userhistory.UpdateDefaultAvatarUpdatedAt = userhistoryDescAvatarUpdatedAt.UpdateDefault.(func() time.Time)
+	// userhistoryDescLastSeen is the schema descriptor for last_seen field.
+	userhistoryDescLastSeen := userhistoryFields[11].Descriptor()
+	// userhistory.UpdateDefaultLastSeen holds the default value on update for the last_seen field.
+	userhistory.UpdateDefaultLastSeen = userhistoryDescLastSeen.UpdateDefault.(func() time.Time)
+	// userhistoryDescOauth is the schema descriptor for oauth field.
+	userhistoryDescOauth := userhistoryFields[14].Descriptor()
+	// userhistory.DefaultOauth holds the default value on creation for the oauth field.
+	userhistory.DefaultOauth = userhistoryDescOauth.Default.(bool)
 	usersettingMixin := schema.UserSetting{}.Mixin()
 	usersettingMixinHooks0 := usersettingMixin[0].Hooks()
 	usersettingMixinHooks2 := usersettingMixin[2].Hooks()
@@ -717,6 +1222,41 @@ func init() {
 	usersettingDescID := usersettingMixinFields1[0].Descriptor()
 	// usersetting.DefaultID holds the default value on creation for the id field.
 	usersetting.DefaultID = usersettingDescID.Default.(func() string)
+	usersettinghistoryMixin := schema.UserSettingHistory{}.Mixin()
+	usersettinghistoryMixinFields0 := usersettinghistoryMixin[0].Fields()
+	_ = usersettinghistoryMixinFields0
+	usersettinghistoryFields := schema.UserSettingHistory{}.Fields()
+	_ = usersettinghistoryFields
+	// usersettinghistoryDescHistoryTime is the schema descriptor for history_time field.
+	usersettinghistoryDescHistoryTime := usersettinghistoryFields[0].Descriptor()
+	// usersettinghistory.DefaultHistoryTime holds the default value on creation for the history_time field.
+	usersettinghistory.DefaultHistoryTime = usersettinghistoryDescHistoryTime.Default.(func() time.Time)
+	// usersettinghistoryDescCreatedAt is the schema descriptor for created_at field.
+	usersettinghistoryDescCreatedAt := usersettinghistoryMixinFields0[0].Descriptor()
+	// usersettinghistory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	usersettinghistory.DefaultCreatedAt = usersettinghistoryDescCreatedAt.Default.(func() time.Time)
+	// usersettinghistoryDescUpdatedAt is the schema descriptor for updated_at field.
+	usersettinghistoryDescUpdatedAt := usersettinghistoryMixinFields0[1].Descriptor()
+	// usersettinghistory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	usersettinghistory.DefaultUpdatedAt = usersettinghistoryDescUpdatedAt.Default.(func() time.Time)
+	// usersettinghistory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	usersettinghistory.UpdateDefaultUpdatedAt = usersettinghistoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// usersettinghistoryDescLocked is the schema descriptor for locked field.
+	usersettinghistoryDescLocked := usersettinghistoryFields[4].Descriptor()
+	// usersettinghistory.DefaultLocked holds the default value on creation for the locked field.
+	usersettinghistory.DefaultLocked = usersettinghistoryDescLocked.Default.(bool)
+	// usersettinghistoryDescPermissions is the schema descriptor for permissions field.
+	usersettinghistoryDescPermissions := usersettinghistoryFields[10].Descriptor()
+	// usersettinghistory.DefaultPermissions holds the default value on creation for the permissions field.
+	usersettinghistory.DefaultPermissions = usersettinghistoryDescPermissions.Default.([]string)
+	// usersettinghistoryDescEmailConfirmed is the schema descriptor for email_confirmed field.
+	usersettinghistoryDescEmailConfirmed := usersettinghistoryFields[11].Descriptor()
+	// usersettinghistory.DefaultEmailConfirmed holds the default value on creation for the email_confirmed field.
+	usersettinghistory.DefaultEmailConfirmed = usersettinghistoryDescEmailConfirmed.Default.(bool)
+	// usersettinghistoryDescTags is the schema descriptor for tags field.
+	usersettinghistoryDescTags := usersettinghistoryFields[12].Descriptor()
+	// usersettinghistory.DefaultTags holds the default value on creation for the tags field.
+	usersettinghistory.DefaultTags = usersettinghistoryDescTags.Default.([]string)
 }
 
 const (

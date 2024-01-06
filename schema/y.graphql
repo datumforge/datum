@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up y by ID
+    """
+     y(
+        """
+        ID of the y
+        """
+        id: ID!
+    ):  y!
+}
+
+extend type Mutation{
+    """
+    Create a new y
+    """
+    createy(
+        """
+        values of the y
+        """
+        input: CreateyInput!
+    ): yCreatePayload!
+    """
+    Update an existing y
+    """
+    updatey(
+        """
+        ID of the y 
+        """
+        id: ID!
+        """
+        New values for the y
+        """
+        input: UpdateyInput!
+    ): yUpdatePayload!
+    """
+    Delete an existing y
+    """
+    deletey(
+        """
+        ID of the y
+        """
+        id: ID!
+    ): yDeletePayload!
+}
+
+"""
+Return response for createy mutation
+"""
+type yCreatePayload {
+    """
+    Created y
+    """
+    y: y!
+}
+
+"""
+Return response for updatey mutation
+"""
+type yUpdatePayload {
+    """
+    Updated y
+    """
+    y: y!
+}
+
+"""
+Return response for deletey mutation
+"""
+type yDeletePayload {
+    """
+    Deleted y ID
+    """
+    deletedID: ID!
+}

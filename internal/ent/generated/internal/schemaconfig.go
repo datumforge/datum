@@ -7,22 +7,36 @@ import "context"
 // SchemaConfig represents alternative schema names for all tables
 // that can be passed at runtime.
 type SchemaConfig struct {
-	EmailVerificationToken string // EmailVerificationToken table.
-	Entitlement            string // Entitlement table.
-	Group                  string // Group table.
-	GroupUsers             string // Group-users->User table.
-	GroupSetting           string // GroupSetting table.
-	Integration            string // Integration table.
-	OauthProvider          string // OauthProvider table.
-	OhAuthTooToken         string // OhAuthTooToken table.
-	Organization           string // Organization table.
-	OrganizationSetting    string // OrganizationSetting table.
-	PasswordResetToken     string // PasswordResetToken table.
-	PersonalAccessToken    string // PersonalAccessToken table.
-	Session                string // Session table.
-	User                   string // User table.
-	UserOrganizations      string // User-organizations->Organization table.
-	UserSetting            string // UserSetting table.
+	EmailVerificationToken        string // EmailVerificationToken table.
+	EmailVerificationTokenHistory string // EmailVerificationTokenHistory table.
+	Entitlement                   string // Entitlement table.
+	EntitlementHistory            string // EntitlementHistory table.
+	Group                         string // Group table.
+	GroupUsers                    string // Group-users->User table.
+	GroupHistory                  string // GroupHistory table.
+	GroupSetting                  string // GroupSetting table.
+	GroupSettingHistory           string // GroupSettingHistory table.
+	Integration                   string // Integration table.
+	IntegrationHistory            string // IntegrationHistory table.
+	OauthProvider                 string // OauthProvider table.
+	OauthProviderHistory          string // OauthProviderHistory table.
+	OhAuthTooToken                string // OhAuthTooToken table.
+	OhAuthTooTokenHistory         string // OhAuthTooTokenHistory table.
+	Organization                  string // Organization table.
+	OrganizationHistory           string // OrganizationHistory table.
+	OrganizationSetting           string // OrganizationSetting table.
+	OrganizationSettingHistory    string // OrganizationSettingHistory table.
+	PasswordResetToken            string // PasswordResetToken table.
+	PasswordResetTokenHistory     string // PasswordResetTokenHistory table.
+	PersonalAccessToken           string // PersonalAccessToken table.
+	PersonalAccessTokenHistory    string // PersonalAccessTokenHistory table.
+	Session                       string // Session table.
+	SessionHistory                string // SessionHistory table.
+	User                          string // User table.
+	UserOrganizations             string // User-organizations->Organization table.
+	UserHistory                   string // UserHistory table.
+	UserSetting                   string // UserSetting table.
+	UserSettingHistory            string // UserSettingHistory table.
 }
 
 type schemaCtxKey struct{}

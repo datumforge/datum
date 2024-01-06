@@ -31,11 +31,6 @@ var (
 )
 
 func main() {
-	check, _ := strconv.ParseBool(os.Getenv("SCHEMAGEN"))
-	if check {
-		generateSchemaFuncs()
-	}
-
 	xExt, err := entx.NewExtension(
 		entx.WithJSONScalar(),
 	)
@@ -132,6 +127,11 @@ func main() {
 			oas,
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
+	}
+
+	check, _ := strconv.ParseBool(os.Getenv("SCHEMAGEN"))
+	if check {
+		generateSchemaFuncs()
 	}
 }
 

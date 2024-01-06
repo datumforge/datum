@@ -28,7 +28,7 @@ tasks:
   ent:
     desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
     cmds:
-      - go generate ./...
+      - SCHEMAGEN=true go generate ./...
   install:
     desc: installs tools and packages needed to develop against the datum repo
     cmds:
@@ -41,10 +41,6 @@ tasks:
       - "brew install openfga/tap/fga"
       - "go install go.uber.org/mock/mockgen@latest"
       - defer: { task: go:tidy }
-  graph:
-    desc: runs scripts/gen_graphql.sh to stub out files in the schema/ directory
-    cmds:
-        - SCHEMAGEN=true go generate ./...
   gqlgen:
     desc: runs gqlgen and gqlgenc commands using gen_generate.go and entc
     cmds:
@@ -56,7 +52,6 @@ tasks:
     desc: a combination of the ent, graph, and gqlgen tasks which are required to fully generate the necessary graph, server, resolvers, client, etc. 
     cmds:
       - task: ent
-      - task: graph
       - task: gqlgen
   atlas:
     desc: runs the atlas create and lint commands

@@ -6684,9 +6684,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -7911,9 +7908,6 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
-          },
-          "password": {
-            "type": "string"
           },
           "sub": {
             "type": "string"
@@ -10146,9 +10140,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -10473,9 +10464,6 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
-          },
-          "password": {
-            "type": "string"
           },
           "sub": {
             "type": "string"
@@ -10831,9 +10819,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -11154,9 +11139,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -11342,9 +11324,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -11416,9 +11395,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -11489,9 +11465,6 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
-          },
-          "password": {
-            "type": "string"
           },
           "sub": {
             "type": "string"
@@ -11995,9 +11968,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "password": {
-            "type": "string"
-          },
           "sub": {
             "type": "string"
           },
@@ -12068,9 +12038,6 @@
           "last_seen": {
             "type": "string",
             "format": "date-time"
-          },
-          "password": {
-            "type": "string"
           },
           "sub": {
             "type": "string"

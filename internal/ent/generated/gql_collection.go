@@ -1718,11 +1718,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				selectedFields = append(selectedFields, user.FieldLastSeen)
 				fieldSeen[user.FieldLastSeen] = struct{}{}
 			}
-		case "password":
-			if _, ok := fieldSeen[user.FieldPassword]; !ok {
-				selectedFields = append(selectedFields, user.FieldPassword)
-				fieldSeen[user.FieldPassword] = struct{}{}
-			}
 		case "sub":
 			if _, ok := fieldSeen[user.FieldSub]; !ok {
 				selectedFields = append(selectedFields, user.FieldSub)

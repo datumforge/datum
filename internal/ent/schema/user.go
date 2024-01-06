@@ -103,6 +103,7 @@ func (User) Fields() []ent.Field {
 		field.String("password").
 			Comment("user password hash").
 			Nillable().
+			Sensitive().
 			Optional(),
 		field.String("sub").
 			Comment("the Subject of the user JWT").

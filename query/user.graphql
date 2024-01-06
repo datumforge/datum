@@ -116,7 +116,6 @@ mutation CreateUser($input: CreateUserInput!) {
       displayName
       avatarRemoteURL
       avatarLocalFile
-      password
       sub
       oauth
       organizations {
@@ -153,7 +152,6 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       displayName
       avatarRemoteURL
       avatarLocalFile
-      password
       sub
       oauth
       groups {

@@ -47,7 +47,7 @@ type User struct {
 	// the time the user was last seen
 	LastSeen *time.Time `json:"last_seen,omitempty"`
 	// user password hash
-	Password *string `json:"password,omitempty"`
+	Password *string `json:"-"`
 	// the Subject of the user JWT
 	Sub string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
@@ -415,10 +415,7 @@ func (u *User) String() string {
 		builder.WriteString(v.Format(time.ANSIC))
 	}
 	builder.WriteString(", ")
-	if v := u.Password; v != nil {
-		builder.WriteString("password=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("sub=")
 	builder.WriteString(u.Sub)

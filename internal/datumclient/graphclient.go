@@ -3374,7 +3374,6 @@ type CreateUser_CreateUser_User struct {
 	DisplayName     string                                      "json:\"displayName\" graphql:\"displayName\""
 	AvatarRemoteURL *string                                     "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile *string                                     "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Password        *string                                     "json:\"password,omitempty\" graphql:\"password\""
 	Sub             *string                                     "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth           bool                                        "json:\"oauth\" graphql:\"oauth\""
 	Organizations   []*CreateUser_CreateUser_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
@@ -3423,12 +3422,6 @@ func (t *CreateUser_CreateUser_User) GetAvatarLocalFile() *string {
 		t = &CreateUser_CreateUser_User{}
 	}
 	return t.AvatarLocalFile
-}
-func (t *CreateUser_CreateUser_User) GetPassword() *string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User{}
-	}
-	return t.Password
 }
 func (t *CreateUser_CreateUser_User) GetSub() *string {
 	if t == nil {
@@ -3601,7 +3594,6 @@ type UpdateUser_UpdateUser_User struct {
 	DisplayName          string                                             "json:\"displayName\" graphql:\"displayName\""
 	AvatarRemoteURL      *string                                            "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
 	AvatarLocalFile      *string                                            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Password             *string                                            "json:\"password,omitempty\" graphql:\"password\""
 	Sub                  *string                                            "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth                bool                                               "json:\"oauth\" graphql:\"oauth\""
 	Groups               []*UpdateUser_UpdateUser_User_Groups               "json:\"groups,omitempty\" graphql:\"groups\""
@@ -3651,12 +3643,6 @@ func (t *UpdateUser_UpdateUser_User) GetAvatarLocalFile() *string {
 		t = &UpdateUser_UpdateUser_User{}
 	}
 	return t.AvatarLocalFile
-}
-func (t *UpdateUser_UpdateUser_User) GetPassword() *string {
-	if t == nil {
-		t = &UpdateUser_UpdateUser_User{}
-	}
-	return t.Password
 }
 func (t *UpdateUser_UpdateUser_User) GetSub() *string {
 	if t == nil {
@@ -5017,7 +5003,6 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			displayName
 			avatarRemoteURL
 			avatarLocalFile
-			password
 			sub
 			oauth
 			organizations {
@@ -5072,7 +5057,6 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			displayName
 			avatarRemoteURL
 			avatarLocalFile
-			password
 			sub
 			oauth
 			groups {

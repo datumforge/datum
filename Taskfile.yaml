@@ -28,7 +28,7 @@ tasks:
   ent:
     desc: runs go generate against ent schema - see the entc.go file and generates the fga mock client
     cmds:
-      - SCHEMAGEN=true go generate ./...
+      - go generate ./...
   install:
     desc: installs tools and packages needed to develop against the datum repo
     cmds:

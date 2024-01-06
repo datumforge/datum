@@ -1,10 +1,10 @@
 extend type Query {
     """
-    Look up {{ .Name | ToLower }} by ID
+    Look up {{ .Name | ToLowerCamel }} by ID
     """
-     {{ .Name}}(
+     {{ .Name | ToLowerCamel }}(
         """
-        ID of the {{ .Name | ToLower }}
+        ID of the {{ .Name | ToLowerCamel }}
         """
         id: ID!
     ):  {{ .Name }}!
@@ -12,33 +12,33 @@ extend type Query {
 
 extend type Mutation{
     """
-    Create a new {{ .Name | ToLower }}
+    Create a new {{ .Name | ToLowerCamel }}
     """
     create{{ .Name }}(
         """
-        values of the {{ .Name | ToLower }}
+        values of the {{ .Name | ToLowerCamel}}
         """
         input: Create{{ .Name }}Input!
     ): {{ .Name }}CreatePayload!
     """
-    Update an existing {{ .Name | ToLower }}
+    Update an existing {{ .Name | ToLowerCamel }}
     """
     update{{ .Name }}(
         """
-        ID of the {{ .Name | ToLower }} 
+        ID of the {{ .Name | ToLowerCamel }}
         """
         id: ID!
         """
-        New values for the {{ .Name | ToLower }}
+        New values for the {{ .Name | ToLowerCamel }}
         """
         input: Update{{ .Name }}Input!
     ): {{ .Name }}UpdatePayload!
     """
-    Delete an existing {{ .Name | ToLower}}
+    Delete an existing {{ .Name | ToLowerCamel }}
     """
     delete{{ .Name }}(
         """
-        ID of the {{ .Name | ToLower }}
+        ID of the {{ .Name | ToLowerCamel }}
         """
         id: ID!
     ): {{ .Name }}DeletePayload!
@@ -49,9 +49,9 @@ Return response for create{{ .Name }} mutation
 """
 type {{ .Name }}CreatePayload {
     """
-    Created {{ .Name | ToLower }}
+    Created {{ .Name | ToLowerCamel }}
     """
-    {{ .Name }}: {{ .Name }}!
+    {{ .Name | ToLowerCamel }}: {{ .Name }}!
 }
 
 """
@@ -59,9 +59,9 @@ Return response for update{{ .Name }} mutation
 """
 type {{ .Name }}UpdatePayload {
     """
-    Updated {{ .Name | ToLower }}
+    Updated {{ .Name | ToLowerCamel }}
     """
-    {{ .Name }}: {{ .Name }}!
+    {{ .Name | ToLowerCamel }}: {{ .Name }}!
 }
 
 """
@@ -69,7 +69,7 @@ Return response for delete{{ .Name }} mutation
 """
 type {{ .Name }}DeletePayload {
     """
-    Deleted {{ .Name | ToLower }} ID
+    Deleted {{ .Name | ToLowerCamel }} ID
     """
     deletedID: ID!
 }

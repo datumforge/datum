@@ -4,7 +4,7 @@ extend type Query {
     """
      userSetting(
         """
-        ID of the UserSetting
+        ID of the userSetting
         """
         id: ID!
     ):  UserSetting!
@@ -51,7 +51,7 @@ type UserSettingCreatePayload {
     """
     Created userSetting
     """
-    UserSetting: UserSetting!
+    userSetting: UserSetting!
 }
 
 """
@@ -61,7 +61,7 @@ type UserSettingUpdatePayload {
     """
     Updated userSetting
     """
-    UserSetting: UserSetting!
+    userSetting: UserSetting!
 }
 
 """

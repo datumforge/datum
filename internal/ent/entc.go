@@ -8,8 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"regexp"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -18,6 +16,7 @@ import (
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
 	"github.com/ogen-go/ogen"
+	"github.com/stoewer/go-strcase"
 	"go.uber.org/zap"
 	"gocloud.dev/secrets"
 
@@ -96,7 +95,10 @@ func main() {
 	if err := entc.Generate("./internal/ent/schema", &gen.Config{
 		Target:    "./internal/ent/generated",
 		Templates: entgql.AllTemplates,
-		Package:   "github.com/datumforge/datum/internal/ent/generated",
+		Hooks: []gen.Hook{
+			GenSchema(),
+		},
+		Package: "github.com/datumforge/datum/internal/ent/generated",
 		Features: []gen.Feature{
 			gen.FeatureVersionedMigration,
 			gen.FeaturePrivacy,
@@ -128,44 +130,23 @@ func main() {
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}
-
-	check, _ := strconv.ParseBool(os.Getenv("SCHEMAGEN"))
-	if check {
-		generateSchemaFuncs()
-	}
 }
 
-func generateSchemaFuncs() {
-	r, err := regexp.Compile("type ([a-zA-Z].*) struct")
-	if err != nil {
-		log.Fatalf("Unable to compile regex: %v", err)
-	}
+// GenSchema generates graphql schemas when not specified to be skipped
+func GenSchema() gen.Hook {
+	return func(next gen.Generator) gen.Generator {
+		return gen.GenerateFunc(func(g *gen.Graph) error {
+			for _, node := range g.Nodes {
+				if sg, ok := node.Annotations[entx.SchemaGenAnnotationName]; ok {
+					val, _ := sg.(map[string]interface{})["Skip"]
 
-	skipFile, err := os.ReadFile("./scripts/files_to_skip.txt")
-	if err != nil {
-		log.Fatalf("Unable to read skip list: %v", err)
-	}
-
-	files, _ := os.ReadDir(entSchemaDir)
-	for _, f := range files {
-		skip, err := regexp.Match(f.Name(), skipFile)
-		if err != nil {
-			log.Fatalf("Unable to search file: %v", err)
-		}
-
-		if !skip {
-			if _, err := os.Stat(graphSchemaDir + strings.Split(f.Name(), ".")[0] + ".graphql"); os.IsNotExist(err) {
-				log.Printf("Generating schema %s\n", f.Name())
-
-				t, err := os.ReadFile(entSchemaDir + f.Name())
-				if err != nil {
-					log.Fatalf("Unable to read file: %v", err)
+					if val.(bool) {
+						continue
+					}
 				}
 
-				m := strings.Split(string(r.Find(t)), "")[1]
-
 				fm := template.FuncMap{
-					"ToLower": strings.ToLower,
+					"ToLowerCamel": strcase.LowerCamelCase,
 				}
 
 				tmpl, err := template.New("graph.tpl").Funcs(fm).ParseFiles("./scripts/templates/graph.tpl")
@@ -173,7 +154,7 @@ func generateSchemaFuncs() {
 					log.Fatalf("Unable to parse template: %v", err)
 				}
 
-				file, err := os.Create(graphSchemaDir + strings.ToLower(m) + ".graphql")
+				file, err := os.Create(graphSchemaDir + strings.ToLower(node.Name) + ".graphql")
 				if err != nil {
 					log.Fatalf("Unable to create file: %v", err)
 				}
@@ -181,16 +162,15 @@ func generateSchemaFuncs() {
 				s := struct {
 					Name string
 				}{
-					Name: m,
+					Name: node.Name,
 				}
 
 				err = tmpl.Execute(file, s)
 				if err != nil {
 					log.Fatalf("Unable to execute template: %v", err)
 				}
-			} else {
-				log.Printf("Schema exists %s\n", f.Name())
 			}
-		}
+			return next.Generate(g)
+		})
 	}
 }

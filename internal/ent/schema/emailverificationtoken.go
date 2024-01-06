@@ -13,6 +13,7 @@ import (
 
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
+	"github.com/datumforge/datum/internal/entx"
 )
 
 // EmailVerificationToken holds the schema definition for the EmailVerificationToken entity
@@ -76,6 +77,7 @@ func (EmailVerificationToken) Indexes() []ent.Index {
 func (EmailVerificationToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
+		entx.SchemaGenSkip(true),
 	}
 }
 

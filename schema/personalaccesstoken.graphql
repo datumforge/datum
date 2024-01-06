@@ -21,7 +21,7 @@ extend type Mutation{
         input: CreatePersonalAccessTokenInput!
     ): PersonalAccessTokenCreatePayload!
     """
-    Update an existing PersonalAccessToken
+    Update an existing personalAccessToken
     """
     updatePersonalAccessToken(
         """
@@ -34,7 +34,7 @@ extend type Mutation{
         input: UpdatePersonalAccessTokenInput!
     ): PersonalAccessTokenUpdatePayload!
     """
-    Delete an existing PersonalAccessToken
+    Delete an existing personalAccessToken
     """
     deletePersonalAccessToken(
         """
@@ -51,7 +51,7 @@ type PersonalAccessTokenCreatePayload {
     """
     Created personalAccessToken
     """
-    PersonalAccessToken: PersonalAccessToken!
+    personalAccessToken: PersonalAccessToken!
 }
 
 """
@@ -61,7 +61,7 @@ type PersonalAccessTokenUpdatePayload {
     """
     Updated personalAccessToken
     """
-    PersonalAccessToken: PersonalAccessToken!
+    personalAccessToken: PersonalAccessToken!
 }
 
 """

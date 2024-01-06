@@ -16,7 +16,7 @@ extend type Mutation{
     """
     createOauthProvider(
         """
-        values of the oauthprovider
+        values of the oauthProvider
         """
         input: CreateOauthProviderInput!
     ): OauthProviderCreatePayload!
@@ -34,7 +34,7 @@ extend type Mutation{
         input: UpdateOauthProviderInput!
     ): OauthProviderUpdatePayload!
     """
-    Delete an existing oauthprovider
+    Delete an existing oauthProvider
     """
     deleteOauthProvider(
         """
@@ -45,27 +45,27 @@ extend type Mutation{
 }
 
 """
-Return response for createOauthprovider mutation
+Return response for createOauthProvider mutation
 """
 type OauthProviderCreatePayload {
     """
     Created oauthProvider
     """
-    OauthProvider: OauthProvider!
+    oauthProvider: OauthProvider!
 }
 
 """
-Return response for updateOauthprovider mutation
+Return response for updateOauthProvider mutation
 """
 type OauthProviderUpdatePayload {
     """
     Updated oauthProvider
     """
-    OauthProvider: OauthProvider!
+    oauthProvider: OauthProvider!
 }
 
 """
-Return response for deleteOauthprovider mutation
+Return response for deleteOauthProvider mutation
 """
 type OauthProviderDeletePayload {
     """

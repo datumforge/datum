@@ -21,7 +21,7 @@ func ({{ . }}) Fields() []ent.Field {
 }
 
 // Mixins of the {{ . }}
-func ({{ . }}) Mixins() []ent.Mixin {
+func ({{ . }}) Mixin() []ent.Mixin {
     return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},

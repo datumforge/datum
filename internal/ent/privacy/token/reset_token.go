@@ -15,8 +15,8 @@ func (ResetToken) GetContextKey() interface{} {
 	return resetTokenKey{}
 }
 
-// NewResetTokenWithToken creates a new PrivacyToken of type SignUpToken with
-// email set
+// NewResetTokenWithToken creates a new PrivacyToken of type ResetToken with
+// token set
 func NewResetTokenWithToken(token string) ResetToken {
 	return ResetToken{
 		token: token,

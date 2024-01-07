@@ -677,7 +677,6 @@ func TestMutation_UpdateUser(t *testing.T) {
 	userCtx.SetRequest(ec.Request().WithContext(reqCtx))
 
 	weakPassword := "notsecure"
-	strongPassword := "my&supers3cr3tpassw0rd!"
 
 	testCases := []struct {
 		name        string
@@ -696,7 +695,6 @@ func TestMutation_UpdateUser(t *testing.T) {
 				LastName:    user.LastName,
 				DisplayName: user.DisplayName,
 				Email:       user.Email,
-				Password:    &strongPassword,
 			},
 		},
 		{

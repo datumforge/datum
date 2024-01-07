@@ -18,6 +18,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
 	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/entx"
+	"github.com/flume/enthistory"
 )
 
 // EmailVerificationToken holds the schema definition for the EmailVerificationToken entity
@@ -80,6 +81,10 @@ func (EmailVerificationToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
+		enthistory.Annotations{
+			IsHistory: false,
+			Exclude:   true,
+		},
 	}
 }
 

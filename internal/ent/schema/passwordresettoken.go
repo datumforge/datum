@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/entx"
+	"github.com/flume/enthistory"
 )
 
 // PasswordResetToken holds the schema definition for the PasswordResetToken entity
@@ -78,6 +79,10 @@ func (PasswordResetToken) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.Skip(entgql.SkipAll),
 		entx.SchemaGenSkip(true),
+		enthistory.Annotations{
+			IsHistory: false,
+			Exclude:   true,
+		},
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/hooks"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/keygen"
+	"github.com/flume/enthistory"
 )
 
 // PersonalAccessToken holds the schema definition for the PersonalAccessToken entity.
@@ -32,12 +33,12 @@ func (PersonalAccessToken) Fields() []ent.Field {
 				token := keygen.Secret()
 				return token
 			}),
-		field.JSON("abilities", []string{}).
-			Comment("what abilites the token should have").
-			Optional(),
+		// field.JSON("abilities", []string{}).
+		// 	Comment("what abilities the token should have").
+		// 	Optional(),
 		field.Time("expires_at").
-			Comment("when the token expires").
-			Nillable(),
+			Comment("when the token expires"),
+		// Nillable(),
 		field.String("description").
 			Comment("a description of the token's purpose").
 			Optional().
@@ -47,8 +48,8 @@ func (PersonalAccessToken) Fields() []ent.Field {
 			),
 		field.Time("last_used_at").
 			UpdateDefault(time.Now).
-			Optional().
-			Nillable(),
+			Optional(),
+		// Nillable(),
 	}
 }
 
@@ -85,6 +86,10 @@ func (PersonalAccessToken) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+		enthistory.Annotations{
+			IsHistory: false,
+			Exclude:   true,
+		},
 	}
 }
 

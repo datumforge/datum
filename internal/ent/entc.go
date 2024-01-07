@@ -15,6 +15,7 @@ import (
 	"entgo.io/contrib/entoas"
 	"entgo.io/ent/entc"
 	"entgo.io/ent/entc/gen"
+	"github.com/flume/enthistory"
 	"github.com/ogen-go/ogen"
 	"github.com/stoewer/go-strcase"
 	"go.uber.org/zap"
@@ -127,6 +128,13 @@ func main() {
 		entc.Extensions(
 			gqlExt,
 			oas,
+			enthistory.NewHistoryExtension(
+				//				enthistory.WithUpdatedBy("userId", enthistory.ValueTypeString),
+				// enthistory.WithAuditing(),
+				// enthistory.WithImmutableFields(),
+				// enthistory.WithHistoryTimeIndex(),
+				enthistory.WithSchemaPath("./internal/ent/schema"),
+			),
 		)); err != nil {
 		log.Fatalf("running ent codegen: %v", err)
 	}

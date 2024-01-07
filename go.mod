@@ -2,6 +2,8 @@ module github.com/datumforge/datum
 
 go 1.21.5
 
+replace github.com/flume/enthistory => /Users/sarahfunkhouser/go/src/github.com/golanglemonade/enthistory
+
 require (
 	ariga.io/entcache v0.1.0
 	entgo.io/contrib v0.4.5
@@ -15,6 +17,7 @@ require (
 	github.com/datumforge/echozap v0.0.0-20231205193458-b29cc54cd34c
 	github.com/docker/go-connections v0.5.0
 	github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
+	github.com/flume/enthistory v0.0.0-00010101000000-000000000000
 	github.com/golang-jwt/jwt/v5 v5.2.0
 	github.com/google/uuid v1.5.0
 	github.com/hashicorp/go-multierror v1.1.1

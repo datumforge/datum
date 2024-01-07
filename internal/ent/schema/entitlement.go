@@ -18,9 +18,9 @@ type Entitlement struct {
 // Fields of the Entitlement.
 func (Entitlement) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("tier").
-			Values("free", "pro", "enterprise").
-			Default("free"),
+		// field.Enum("tier").
+		// 	Values("free", "pro", "enterprise").
+		// 	Default("free"),
 		field.String("external_customer_id").
 			Comment("used to store references to external systems, e.g. Stripe").
 			Optional(),

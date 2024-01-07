@@ -95,18 +95,18 @@ func (User) Fields() []ent.Field {
 		field.String("avatar_local_file").
 			Comment("The user's local avatar file").
 			MaxLen(urlMaxLen).
-			Optional().
-			Nillable(),
+			Optional(),
+		// Nillable(),
 		field.Time("avatar_updated_at").
 			Comment("The time the user's (local) avatar was last updated").
 			UpdateDefault(time.Now).
-			Optional().
-			Nillable(),
+			Optional(),
+		// Nillable(),
 		field.Time("last_seen").
 			Comment("the time the user was last seen").
 			UpdateDefault(time.Now).
-			Optional().
-			Nillable(),
+			Optional(),
+		// Nillable(),
 		field.String("password").
 			Comment("user password hash").
 			Nillable().

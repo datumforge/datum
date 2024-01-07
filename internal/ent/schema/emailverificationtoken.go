@@ -110,6 +110,7 @@ func (EmailVerificationToken) Policy() ent.Policy {
 				privacy.MutationPolicy{
 					rule.AllowIfAdmin(),
 					rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
+					rule.AllowMutationAfterApplyingOwnerFilter(),
 					privacy.AlwaysDenyRule(),
 				},
 				ent.OpCreate,

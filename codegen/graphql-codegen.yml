@@ -1,0 +1,54 @@
+#hooks:
+#  afterOneFileWrite:
+#    - prettier --write
+config:
+  strict: true
+  useTypeImports: true
+  exposeDocument: true # For each generate query hook adds document field with a corresponding GraphQL query. Useful for queryClient.fetchQuery
+  exposeQueryKeys: true # For each generate query hook adds getKey(variables: QueryVariables) function. Useful for cache updates. If addInfiniteQuery is true, it will also add a getKey function to each infinite query
+  exposeMutationKeys: true # For each generate mutation hook adds getKey() function. Useful for call outside of functional component
+  exposeFetcher: true # For each generate query hook adds fetcher field with a corresponding GraphQL query using the fetcher. It is useful for queryClient.fetchQuery and queryClient.prefetchQuery
+  maybeValue: T | null
+  declarationKind: interface
+  avoidOptionals: true
+  preResolveTypes: true
+  onlyOperationTypes: true
+  flattenGeneratedTypes: true
+  namingConvention:
+    enumValues: keep
+#  noSchemaStitching: false
+  scalars:
+    DateTime: string
+    Date: string
+    Decimal: number
+    UUID: string
+    ID: string
+    JSON: any
+    Upload: File
+  schema: yup
+overwrite: true
+schema: ../schema.graphql
+documents: '../query/*.graphql'
+generates:
+  ./src/introspectionschema.json:
+    plugins:
+      - introspection
+    config:
+      minify: true
+  ./src/schema.ts:
+#    preset: near-operation-file
+#    presetConfig:
+#      baseTypesPath: 'types.ts'
+    plugins:
+      - typescript # This plugin generates the base TypeScript types, based on your GraphQL schema
+      - typescript-operations # This plugin generates TypeScript types based on your GraphQLSchema and your GraphQL operations and fragments. It generates types for your GraphQL documents: Query, Mutation, Subscription and Fragment
+      - typescript-resolvers # This plugin generates TypeScript signature for resolve functions of your GraphQL API. You can use this plugin to generate simple resolvers signature based on your GraphQL types, or you can change its behavior be providing custom model types (mappers)
+      - typescript-graphql-request
+      - typescript-react-query # This plugin generates React-Query Hooks with TypeScript typings
+      - typescript-urql # This plugin generates urql (https://github.com/FormidableLabs/urql) components and HOC with TypeScript typings
+      - typescript-react-apollo
+      - typed-document-node # These plugins generate a ready-to-use TypedDocumentNode (a combination of pre-compiled DocumentNode and the TypeScript signature it represents)
+#      - typescript-mock-data
+#      - typescript-validation-schema # A plugin for GraphQL Codegen to generate form validation schema (such as yup, zod) based on your GraphQL schema for use in a client application
+      - add:
+          content: '/* eslint-disable */'

@@ -187,7 +187,7 @@ func (User) Policy() ent.Policy {
 			),
 		},
 		Query: privacy.QueryPolicy{
-			// Privacy willl be always allow, but interceptors will filter the queries
+			// Privacy will be always allow, but interceptors will filter the queries
 			privacy.AlwaysAllowRule(),
 		},
 	}

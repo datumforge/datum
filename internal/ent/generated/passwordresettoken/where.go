@@ -97,6 +97,11 @@ func DeletedBy(v string) predicate.PasswordResetToken {
 	return predicate.PasswordResetToken(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
+func OwnerID(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldEQ(FieldOwnerID, v))
+}
+
 // Token applies equality check predicate on the "token" field. It's identical to TokenEQ.
 func Token(v string) predicate.PasswordResetToken {
 	return predicate.PasswordResetToken(sql.FieldEQ(FieldToken, v))
@@ -470,6 +475,71 @@ func DeletedByEqualFold(v string) predicate.PasswordResetToken {
 // DeletedByContainsFold applies the ContainsFold predicate on the "deleted_by" field.
 func DeletedByContainsFold(v string) predicate.PasswordResetToken {
 	return predicate.PasswordResetToken(sql.FieldContainsFold(FieldDeletedBy, v))
+}
+
+// OwnerIDEQ applies the EQ predicate on the "owner_id" field.
+func OwnerIDEQ(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// OwnerIDNEQ applies the NEQ predicate on the "owner_id" field.
+func OwnerIDNEQ(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldNEQ(FieldOwnerID, v))
+}
+
+// OwnerIDIn applies the In predicate on the "owner_id" field.
+func OwnerIDIn(vs ...string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDNotIn applies the NotIn predicate on the "owner_id" field.
+func OwnerIDNotIn(vs ...string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldNotIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDGT applies the GT predicate on the "owner_id" field.
+func OwnerIDGT(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldGT(FieldOwnerID, v))
+}
+
+// OwnerIDGTE applies the GTE predicate on the "owner_id" field.
+func OwnerIDGTE(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldGTE(FieldOwnerID, v))
+}
+
+// OwnerIDLT applies the LT predicate on the "owner_id" field.
+func OwnerIDLT(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldLT(FieldOwnerID, v))
+}
+
+// OwnerIDLTE applies the LTE predicate on the "owner_id" field.
+func OwnerIDLTE(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldLTE(FieldOwnerID, v))
+}
+
+// OwnerIDContains applies the Contains predicate on the "owner_id" field.
+func OwnerIDContains(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldContains(FieldOwnerID, v))
+}
+
+// OwnerIDHasPrefix applies the HasPrefix predicate on the "owner_id" field.
+func OwnerIDHasPrefix(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldHasPrefix(FieldOwnerID, v))
+}
+
+// OwnerIDHasSuffix applies the HasSuffix predicate on the "owner_id" field.
+func OwnerIDHasSuffix(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldHasSuffix(FieldOwnerID, v))
+}
+
+// OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
+func OwnerIDEqualFold(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldEqualFold(FieldOwnerID, v))
+}
+
+// OwnerIDContainsFold applies the ContainsFold predicate on the "owner_id" field.
+func OwnerIDContainsFold(v string) predicate.PasswordResetToken {
+	return predicate.PasswordResetToken(sql.FieldContainsFold(FieldOwnerID, v))
 }
 
 // TokenEQ applies the EQ predicate on the "token" field.

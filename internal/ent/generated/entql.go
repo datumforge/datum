@@ -271,6 +271,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			passwordresettoken.FieldUpdatedBy: {Type: field.TypeString, Column: passwordresettoken.FieldUpdatedBy},
 			passwordresettoken.FieldDeletedAt: {Type: field.TypeTime, Column: passwordresettoken.FieldDeletedAt},
 			passwordresettoken.FieldDeletedBy: {Type: field.TypeString, Column: passwordresettoken.FieldDeletedBy},
+			passwordresettoken.FieldOwnerID:   {Type: field.TypeString, Column: passwordresettoken.FieldOwnerID},
 			passwordresettoken.FieldToken:     {Type: field.TypeString, Column: passwordresettoken.FieldToken},
 			passwordresettoken.FieldTTL:       {Type: field.TypeTime, Column: passwordresettoken.FieldTTL},
 			passwordresettoken.FieldEmail:     {Type: field.TypeString, Column: passwordresettoken.FieldEmail},
@@ -294,6 +295,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			personalaccesstoken.FieldUpdatedBy:   {Type: field.TypeString, Column: personalaccesstoken.FieldUpdatedBy},
 			personalaccesstoken.FieldDeletedAt:   {Type: field.TypeTime, Column: personalaccesstoken.FieldDeletedAt},
 			personalaccesstoken.FieldDeletedBy:   {Type: field.TypeString, Column: personalaccesstoken.FieldDeletedBy},
+			personalaccesstoken.FieldOwnerID:     {Type: field.TypeString, Column: personalaccesstoken.FieldOwnerID},
 			personalaccesstoken.FieldName:        {Type: field.TypeString, Column: personalaccesstoken.FieldName},
 			personalaccesstoken.FieldToken:       {Type: field.TypeString, Column: personalaccesstoken.FieldToken},
 			personalaccesstoken.FieldAbilities:   {Type: field.TypeJSON, Column: personalaccesstoken.FieldAbilities},
@@ -695,12 +697,12 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"EmailVerificationToken",
 	)
 	graph.MustAddE(
-		"reset_tokens",
+		"password_reset_tokens",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ResetTokensTable,
-			Columns: []string{user.ResetTokensColumn},
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
 			Bidi:    false,
 		},
 		"User",
@@ -1940,6 +1942,11 @@ func (f *PasswordResetTokenFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(passwordresettoken.FieldDeletedBy))
 }
 
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *PasswordResetTokenFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(passwordresettoken.FieldOwnerID))
+}
+
 // WhereToken applies the entql string predicate on the token field.
 func (f *PasswordResetTokenFilter) WhereToken(p entql.StringP) {
 	f.Where(p.Field(passwordresettoken.FieldToken))
@@ -2042,6 +2049,11 @@ func (f *PersonalAccessTokenFilter) WhereDeletedAt(p entql.TimeP) {
 // WhereDeletedBy applies the entql string predicate on the deleted_by field.
 func (f *PersonalAccessTokenFilter) WhereDeletedBy(p entql.StringP) {
 	f.Where(p.Field(personalaccesstoken.FieldDeletedBy))
+}
+
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *PersonalAccessTokenFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(personalaccesstoken.FieldOwnerID))
 }
 
 // WhereName applies the entql string predicate on the name field.
@@ -2396,14 +2408,14 @@ func (f *UserFilter) WhereHasEmailVerificationTokensWith(preds ...predicate.Emai
 	})))
 }
 
-// WhereHasResetTokens applies a predicate to check if query has an edge reset_tokens.
-func (f *UserFilter) WhereHasResetTokens() {
-	f.Where(entql.HasEdge("reset_tokens"))
+// WhereHasPasswordResetTokens applies a predicate to check if query has an edge password_reset_tokens.
+func (f *UserFilter) WhereHasPasswordResetTokens() {
+	f.Where(entql.HasEdge("password_reset_tokens"))
 }
 
-// WhereHasResetTokensWith applies a predicate to check if query has an edge reset_tokens with a given conditions (other predicates).
-func (f *UserFilter) WhereHasResetTokensWith(preds ...predicate.PasswordResetToken) {
-	f.Where(entql.HasEdgeWith("reset_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
+// WhereHasPasswordResetTokensWith applies a predicate to check if query has an edge password_reset_tokens with a given conditions (other predicates).
+func (f *UserFilter) WhereHasPasswordResetTokensWith(preds ...predicate.PasswordResetToken) {
+	f.Where(entql.HasEdgeWith("password_reset_tokens", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

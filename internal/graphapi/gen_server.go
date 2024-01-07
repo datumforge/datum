@@ -3859,7 +3859,7 @@ input CreateUserInput {
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   emailVerificationTokenIDs: [ID!]
-  resetTokenIDs: [ID!]
+  passwordResetTokenIDs: [ID!]
 }
 """
 CreateUserSettingInput is used for create UserSetting object.
@@ -6424,9 +6424,9 @@ input UpdateUserInput {
   addEmailVerificationTokenIDs: [ID!]
   removeEmailVerificationTokenIDs: [ID!]
   clearEmailVerificationTokens: Boolean
-  addResetTokenIDs: [ID!]
-  removeResetTokenIDs: [ID!]
-  clearResetTokens: Boolean
+  addPasswordResetTokenIDs: [ID!]
+  removePasswordResetTokenIDs: [ID!]
+  clearPasswordResetTokens: Boolean
 }
 """
 UpdateUserSettingInput is used for update UserSetting object.
@@ -30778,7 +30778,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "resetTokenIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "organizationIDs", "sessionIDs", "groupIDs", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30932,13 +30932,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.EmailVerificationTokenIDs = data
-		case "resetTokenIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resetTokenIDs"))
+		case "passwordResetTokenIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("passwordResetTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ResetTokenIDs = data
+			it.PasswordResetTokenIDs = data
 		}
 	}
 
@@ -42172,7 +42172,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addResetTokenIDs", "removeResetTokenIDs", "clearResetTokens"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations", "addSessionIDs", "removeSessionIDs", "clearSessions", "addGroupIDs", "removeGroupIDs", "clearGroups", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42431,27 +42431,27 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearEmailVerificationTokens = data
-		case "addResetTokenIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addResetTokenIDs"))
+		case "addPasswordResetTokenIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addPasswordResetTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AddResetTokenIDs = data
-		case "removeResetTokenIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeResetTokenIDs"))
+			it.AddPasswordResetTokenIDs = data
+		case "removePasswordResetTokenIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removePasswordResetTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.RemoveResetTokenIDs = data
-		case "clearResetTokens":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearResetTokens"))
+			it.RemovePasswordResetTokenIDs = data
+		case "clearPasswordResetTokens":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPasswordResetTokens"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.ClearResetTokens = data
+			it.ClearPasswordResetTokens = data
 		}
 	}
 

@@ -31,6 +31,8 @@ type PersonalAccessToken struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the name associated with the token
 	Name string `json:"name,omitempty"`
 	// Token holds the value of the "token" field.
@@ -45,9 +47,8 @@ type PersonalAccessToken struct {
 	LastUsedAt *time.Time `json:"last_used_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PersonalAccessTokenQuery when eager-loading is set.
-	Edges                       PersonalAccessTokenEdges `json:"edges"`
-	user_personal_access_tokens *string
-	selectValues                sql.SelectValues
+	Edges        PersonalAccessTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // PersonalAccessTokenEdges holds the relations/edges for other nodes in the graph.
@@ -81,12 +82,10 @@ func (*PersonalAccessToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case personalaccesstoken.FieldAbilities:
 			values[i] = new([]byte)
-		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldDeletedBy, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
+		case personalaccesstoken.FieldID, personalaccesstoken.FieldCreatedBy, personalaccesstoken.FieldUpdatedBy, personalaccesstoken.FieldDeletedBy, personalaccesstoken.FieldOwnerID, personalaccesstoken.FieldName, personalaccesstoken.FieldToken, personalaccesstoken.FieldDescription:
 			values[i] = new(sql.NullString)
 		case personalaccesstoken.FieldCreatedAt, personalaccesstoken.FieldUpdatedAt, personalaccesstoken.FieldDeletedAt, personalaccesstoken.FieldExpiresAt, personalaccesstoken.FieldLastUsedAt:
 			values[i] = new(sql.NullTime)
-		case personalaccesstoken.ForeignKeys[0]: // user_personal_access_tokens
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -144,6 +143,12 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				pat.DeletedBy = value.String
 			}
+		case personalaccesstoken.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				pat.OwnerID = value.String
+			}
 		case personalaccesstoken.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -183,13 +188,6 @@ func (pat *PersonalAccessToken) assignValues(columns []string, values []any) err
 			} else if value.Valid {
 				pat.LastUsedAt = new(time.Time)
 				*pat.LastUsedAt = value.Time
-			}
-		case personalaccesstoken.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_personal_access_tokens", values[i])
-			} else if value.Valid {
-				pat.user_personal_access_tokens = new(string)
-				*pat.user_personal_access_tokens = value.String
 			}
 		default:
 			pat.selectValues.Set(columns[i], values[i])
@@ -249,6 +247,9 @@ func (pat *PersonalAccessToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(pat.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(pat.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(pat.Name)

@@ -25,7 +25,6 @@ type PersonalAccessTokenQuery struct {
 	inters     []Interceptor
 	predicates []predicate.PersonalAccessToken
 	withOwner  *UserQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*PersonalAccessToken) error
 	// intermediate query (i.e. traversal path).
@@ -376,18 +375,11 @@ func (patq *PersonalAccessTokenQuery) prepareQuery(ctx context.Context) error {
 func (patq *PersonalAccessTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PersonalAccessToken, error) {
 	var (
 		nodes       = []*PersonalAccessToken{}
-		withFKs     = patq.withFKs
 		_spec       = patq.querySpec()
 		loadedTypes = [1]bool{
 			patq.withOwner != nil,
 		}
 	)
-	if patq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, personalaccesstoken.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*PersonalAccessToken).scanValues(nil, columns)
 	}
@@ -429,10 +421,7 @@ func (patq *PersonalAccessTokenQuery) loadOwner(ctx context.Context, query *User
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*PersonalAccessToken)
 	for i := range nodes {
-		if nodes[i].user_personal_access_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].user_personal_access_tokens
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +438,7 @@ func (patq *PersonalAccessTokenQuery) loadOwner(ctx context.Context, query *User
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_personal_access_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +476,9 @@ func (patq *PersonalAccessTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != personalaccesstoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if patq.withOwner != nil {
+			_spec.Node.AddColumnOnce(personalaccesstoken.FieldOwnerID)
 		}
 	}
 	if ps := patq.predicates; len(ps) > 0 {

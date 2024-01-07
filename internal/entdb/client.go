@@ -2,14 +2,16 @@ package entdb
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
 	"ariga.io/entcache"
 	"entgo.io/ent/dialect"
 	entsql "entgo.io/ent/dialect/sql"
+	"go.opentelemetry.io/otel/attribute"
+
 	"github.com/pkg/errors"
+	"github.com/uptrace/opentelemetry-go-extra/otelsql"
 	"go.uber.org/zap"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
@@ -71,7 +73,11 @@ func (c *EntClientConfig) newEntDB(dataSource string) (*entsql.Driver, error) {
 	}
 
 	// setup db connection
-	db, err := sql.Open(dialect, dataSource)
+	db, err := otelsql.Open(dialect, dataSource,
+		otelsql.WithAttributes(attribute.String("db.system", dialect)),
+		// TODO: determine additional useful attributes
+		// TODO: make db name configurable
+		otelsql.WithDBName("datum"))
 	if err != nil {
 		return nil, fmt.Errorf("failed connecting to database: %w", err)
 	}

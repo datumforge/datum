@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	echo "github.com/datumforge/echox"
+	"github.com/ravilushqa/otelgqlgen"
 	"github.com/wundergraph/graphql-go-tools/pkg/playground"
 	"go.uber.org/zap"
 
@@ -75,6 +76,7 @@ func (r *Resolver) Handler(withPlayground bool, middleware ...echo.MiddlewareFun
 	// add transactional db client
 	WithTransactions(srv, r.client)
 
+	srv.Use(otelgqlgen.Middleware())
 	srv.Use(extension.Introspection{})
 
 	h := &Handler{

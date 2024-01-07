@@ -22,6 +22,7 @@ import (
 	"github.com/datumforge/datum/internal/graphapi"
 	"github.com/datumforge/datum/internal/httpserve/config"
 	"github.com/datumforge/datum/internal/httpserve/server"
+	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/tokens"
 	"github.com/datumforge/datum/internal/utils/marionette"
 	"github.com/datumforge/datum/internal/utils/ulids"
@@ -101,6 +102,20 @@ func WithSQLiteDB() ServerOption {
 		}
 
 		s.Config.DB = *dbConfig
+	})
+}
+
+func WithTracer() ServerOption {
+	return newApplyFunc(func(s *ServerOptions) {
+		// Tracer Config Setup
+		tracerConfig := &otelx.Config{}
+
+		// load defaults and env vars
+		if err := envconfig.Process("datum_tracing", tracerConfig); err != nil {
+			panic(err)
+		}
+
+		s.Config.Tracer = *tracerConfig
 	})
 }
 

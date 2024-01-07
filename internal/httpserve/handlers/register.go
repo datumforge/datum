@@ -59,11 +59,7 @@ func (h *Handler) RegisterHandler(ctx echo.Context) error {
 	}
 
 	// set viewer context
-	privacyToken := token.EmailSignUpToken{
-		Email: in.Email,
-	}
-
-	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), &privacyToken)
+	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), in.Email)
 
 	meowuser, err := h.createUser(ctxWithToken, input)
 	if err != nil {

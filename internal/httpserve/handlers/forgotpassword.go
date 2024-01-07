@@ -9,7 +9,6 @@ import (
 	echo "github.com/datumforge/echox"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/utils/marionette"
 )
@@ -31,14 +30,11 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))
 	}
 
-	// setup viewer context
-	ctxWithToken := token.NewContextWithForgotPasswordToken(ctx.Request().Context(), in.Email)
-
 	if err := validateForgotPasswordRequest(in); err != nil {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	entUser, err := h.getUserByEmail(ctxWithToken, in.Email)
+	entUser, err := h.getUserByEmail(ctx.Request().Context(), in.Email)
 	if err != nil {
 		if ent.IsNotFound(err) {
 			// return a 204 response even if user is not found to avoid
@@ -59,7 +55,7 @@ func (h *Handler) ForgotPassword(ctx echo.Context) error {
 		ID:        entUser.ID,
 	}
 
-	viewerCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(entUser.ID, true))
+	viewerCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(entUser.ID, true))
 
 	if _, err = h.storeAndSendPasswordResetToken(viewerCtx, user); err != nil {
 		return ctx.JSON(http.StatusInternalServerError, ErrorResponse(ErrProcessingRequest))

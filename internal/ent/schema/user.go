@@ -15,9 +15,7 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/intercept"
-	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 	"github.com/datumforge/datum/internal/ent/hooks"
@@ -168,10 +166,9 @@ func (User) Policy() ent.Policy {
 		Mutation: privacy.MutationPolicy{
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
-					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignUpToken{}),
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
 					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
-					rule.AllowIfOwnedByViewer(),
 					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 					privacy.AlwaysDenyRule(),
 				},
@@ -183,7 +180,6 @@ func (User) Policy() ent.Policy {
 				privacy.MutationPolicy{
 					rule.DenyIfNoViewer(),
 					rule.AllowIfSelf(),
-					rule.AllowIfOwnedByViewer(),
 					// rule.AllowIfAdmin(), // TODO: this currently is always skipped, setup admin policy to get users
 					privacy.AlwaysDenyRule(),
 				},
@@ -207,52 +203,17 @@ func (User) Hooks() []ent.Hook {
 func (d User) Interceptors() []ent.Interceptor {
 	return []ent.Interceptor{
 		intercept.TraverseUser(func(ctx context.Context, q *generated.UserQuery) error {
-			// skip filters on non-authorized user
-			err, allow := privacy.DecisionFromContext(ctx)
-			if err == nil && allow {
-				return nil
-			}
-
+			// Filter query based on viewer context
 			v := viewer.FromContext(ctx)
-			if v == nil {
-				t := token.EmailSignUpTokenFromContext(ctx)
-				if t != nil {
-					q.Where(user.Email(t.GetEmail()))
+			if v != nil {
+				// TODO: expand based on viewer settings to
+				// obtain users in orgs, groups, etc
+				// for now, this will just return self
+				viewerID, exists := v.GetID()
+				if exists {
+					q.Where(user.ID(viewerID))
 					return nil
 				}
-
-				vt := token.VerifyTokenFromContext(ctx)
-				if vt != nil {
-					q.Filter().WhereHasEmailVerificationTokensWith(emailverificationtoken.Token(vt.VerifyToken))
-					return nil
-				}
-
-				rt := token.PasswordResetTokenFromContext(ctx)
-				if rt != nil {
-					q.Filter().WhereHasResetTokensWith(passwordresettoken.Token(rt.ResetToken))
-					return nil
-				}
-
-				fp := token.ForgotPasswordTokenFromContext(ctx)
-				if fp != nil {
-					q.Where(user.Email(fp.Email))
-					return nil
-				}
-
-				ref := token.RefreshTokenFromContext(ctx)
-				if ref != nil {
-					q.Where(user.Sub(ref.Subject))
-					return nil
-				}
-
-				// block request
-				return privacy.Denyf("anonymous viewer with no valid token")
-			}
-
-			viewerID, exists := v.GetID()
-			if exists {
-				q.Where(user.ID(viewerID))
-				return nil
 			}
 
 			return nil

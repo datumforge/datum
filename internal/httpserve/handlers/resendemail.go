@@ -42,11 +42,7 @@ func (h *Handler) ResendEmail(ctx echo.Context) error {
 	}
 
 	// set viewer context
-	privacyToken := token.EmailSignUpToken{
-		Email: in.Email,
-	}
-
-	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), &privacyToken)
+	ctxWithToken := token.NewContextWithSignUpToken(ctx.Request().Context(), in.Email)
 
 	entUser, err := h.getUserByEmail(ctxWithToken, in.Email)
 	if err != nil {

@@ -14,6 +14,7 @@ func DenyIfNoViewer() privacy.QueryMutationRule {
 		if v == nil {
 			return privacy.Denyf("viewer is missing")
 		}
+
 		return privacy.Skip
 	})
 }

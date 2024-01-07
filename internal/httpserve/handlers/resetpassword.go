@@ -14,7 +14,6 @@ import (
 	"github.com/oklog/ulid/v2"
 
 	"github.com/datumforge/datum/internal/ent/generated"
-	"github.com/datumforge/datum/internal/ent/privacy/token"
 	"github.com/datumforge/datum/internal/ent/privacy/viewer"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
@@ -64,11 +63,8 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, ErrorResponse(err))
 	}
 
-	// setup viewer context
-	ctxWithToken := token.NewContextWithPasswordResetToken(ctx.Request().Context(), rp.Token)
-
 	// lookup user from db based on provided token
-	entUser, err := h.getUserByResetToken(ctxWithToken, rp.Token)
+	entUser, err := h.getUserByResetToken(ctx.Request().Context(), rp.Token)
 	if err != nil {
 		h.Logger.Errorf("error retrieving user token", "error", err)
 
@@ -130,7 +126,7 @@ func (h *Handler) ResetPassword(ctx echo.Context) error {
 	}
 
 	// set context for remaining request based on logged in user
-	userCtx := viewer.NewContext(ctxWithToken, viewer.NewUserViewerFromID(user.ID, true))
+	userCtx := viewer.NewContext(ctx.Request().Context(), viewer.NewUserViewerFromID(user.ID, true))
 
 	if err := h.updateUserPassword(userCtx, entUser.ID, rp.Password); err != nil {
 		h.Logger.Errorw("error updating user password", "error", err)

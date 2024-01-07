@@ -26,7 +26,7 @@ func AllowMutationIfContextHasValidEmailSignUpToken(getEmail MutationEmailGetter
 				return privacy.Skipf("unable to obtain email from mutation")
 			}
 
-			if email != emailSignupToken.Email {
+			if email != emailSignupToken.GetEmail() {
 				return privacy.Skipf("email sign up token does not match mutation result")
 			}
 

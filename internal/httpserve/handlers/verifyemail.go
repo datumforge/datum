@@ -67,12 +67,7 @@ func (h *Handler) VerifyEmail(ctx echo.Context) error {
 		// Verify the token with the stored secret
 		if err = t.Verify(user.GetVerificationToken(), user.EmailVerificationSecret); err != nil {
 			if errors.Is(err, tokens.ErrTokenExpired) {
-				// set viewer context
-				privacyToken := token.EmailSignUpToken{
-					Email: user.Email,
-				}
-
-				viewerCtx := token.NewContextWithSignUpToken(viewerCtx, &privacyToken)
+				viewerCtx = token.NewContextWithSignUpToken(viewerCtx, user.Email)
 
 				meowtoken, err := h.storeAndSendEmailVerificationToken(viewerCtx, user)
 				if err != nil {

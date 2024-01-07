@@ -96,27 +96,11 @@ func (EmailVerificationToken) Policy() ent.Policy {
 		Query: privacy.QueryPolicy{
 			rule.AllowIfOwnedByViewer(),
 			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.LoginToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.LoginToken)
-					emailFilter := filter.(*generated.EmailVerificationTokenFilter)
-					emailFilter.WhereEmail(entql.StringEQ(actualToken.Email))
-				},
-			),
-			rule.AllowAfterApplyingPrivacyTokenFilter(
-				&token.ForgotPasswordToken{},
-				func(t token.PrivacyToken, filter privacy.Filter) {
-					actualToken := t.(*token.ForgotPasswordToken)
-					emailFilter := filter.(*generated.EmailVerificationTokenFilter)
-					emailFilter.WhereEmail(entql.StringEQ(actualToken.Email))
-				},
-			),
-			rule.AllowAfterApplyingPrivacyTokenFilter(
 				&token.VerifyToken{},
 				func(t token.PrivacyToken, filter privacy.Filter) {
 					actualToken := t.(*token.VerifyToken)
 					tokenFilter := filter.(*generated.EmailVerificationTokenFilter)
-					tokenFilter.WhereToken(entql.StringEQ(actualToken.VerifyToken))
+					tokenFilter.WhereToken(entql.StringEQ(actualToken.GetToken()))
 				},
 			),
 			privacy.AlwaysDenyRule(),
@@ -125,7 +109,7 @@ func (EmailVerificationToken) Policy() ent.Policy {
 			privacy.OnMutationOperation(
 				privacy.MutationPolicy{
 					rule.AllowIfAdmin(),
-					rule.AllowIfContextHasPrivacyTokenOfType(&token.EmailSignUpToken{}),
+					rule.AllowIfContextHasPrivacyTokenOfType(&token.SignUpToken{}),
 					privacy.AlwaysDenyRule(),
 				},
 				ent.OpCreate,

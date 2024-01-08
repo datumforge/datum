@@ -350,7 +350,7 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			assert.True(t, personalOrg.Organization.PersonalOrg)
 			// make sure there is only one user
 			require.Len(t, personalOrg.Organization.OrgMemberships, 1)
-			// make sure user was added as admin
+			// make sure user was added as owner
 			assert.Equal(t, personalOrg.Organization.OrgMemberships[0].Role.String(), "OWNER")
 
 			(&UserCleanup{UserID: resp.CreateUser.User.ID}).MustDelete(ctx)

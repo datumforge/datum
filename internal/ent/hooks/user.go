@@ -150,7 +150,7 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 	if _, err := dbClient.OrgMembership.Update().Where(
 		orgmembership.UserID(user.ID),
 		orgmembership.OrgID(org.ID),
-	).SetRole(enums.RoleAdmin).
+	).SetRole(enums.RoleOwner).
 		Save(ctx); err != nil {
 		user.Logger.Errorw("unable to add user as admin to organization", "error", err.Error())
 

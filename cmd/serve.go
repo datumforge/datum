@@ -6,6 +6,8 @@ import (
 	_ "github.com/lib/pq"           // postgres driver
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 
+	"github.com/datumforge/datum/internal/otelx"
+
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
@@ -22,7 +24,7 @@ import (
 
 var serveCmd = &cobra.Command{
 	Use:   "serve",
-	Short: "Start the example Graph API",
+	Short: "Start the Datum Graph API",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return serve(cmd.Context())
 	},
@@ -53,12 +55,18 @@ func serve(ctx context.Context) error {
 		serveropts.WithSQLiteDB(),
 		serveropts.WithAuth(),
 		serveropts.WithFGAAuthz(),
+		serveropts.WithTracer(),
 		serveropts.WithEmailManager(),
 		serveropts.WithTaskManager(),
 		serveropts.WithSessionManager(),
 	)
 
 	so := serveropts.NewServerOptions(serverOpts)
+
+	err = otelx.NewTracer(so.Config.Tracer, appName, logger)
+	if err != nil {
+		logger.Fatalw("failed to initialize tracer", "error", err)
+	}
 
 	// Create keys for development
 	if so.Config.Server.Dev {

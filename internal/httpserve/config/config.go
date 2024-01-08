@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/entdb"
 	"github.com/datumforge/datum/internal/fga"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
+	"github.com/datumforge/datum/internal/otelx"
 	"github.com/datumforge/datum/internal/tokens"
 )
 
@@ -52,6 +53,9 @@ type (
 
 		// Logger contains the logger used by echo functions
 		Logger *zap.SugaredLogger `yaml:"logger"`
+
+		// Tracer contains the tracing config used by datum
+		Tracer otelx.Config `yaml:"tracer"`
 	}
 
 	// Server settings

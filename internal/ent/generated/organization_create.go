@@ -16,6 +16,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/user"
 )
 
@@ -220,21 +221,6 @@ func (oc *OrganizationCreate) AddChildren(o ...*Organization) *OrganizationCreat
 	return oc.AddChildIDs(ids...)
 }
 
-// AddUserIDs adds the "users" edge to the User entity by IDs.
-func (oc *OrganizationCreate) AddUserIDs(ids ...string) *OrganizationCreate {
-	oc.mutation.AddUserIDs(ids...)
-	return oc
-}
-
-// AddUsers adds the "users" edges to the User entity.
-func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
-	ids := make([]string, len(u))
-	for i := range u {
-		ids[i] = u[i].ID
-	}
-	return oc.AddUserIDs(ids...)
-}
-
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
 func (oc *OrganizationCreate) AddGroupIDs(ids ...string) *OrganizationCreate {
 	oc.mutation.AddGroupIDs(ids...)
@@ -312,6 +298,36 @@ func (oc *OrganizationCreate) AddOauthprovider(o ...*OauthProvider) *Organizatio
 		ids[i] = o[i].ID
 	}
 	return oc.AddOauthproviderIDs(ids...)
+}
+
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (oc *OrganizationCreate) AddUserIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddUserIDs(ids...)
+	return oc
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return oc.AddUserIDs(ids...)
+}
+
+// AddOrgMembershipIDs adds the "org_memberships" edge to the OrgMembership entity by IDs.
+func (oc *OrganizationCreate) AddOrgMembershipIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddOrgMembershipIDs(ids...)
+	return oc
+}
+
+// AddOrgMemberships adds the "org_memberships" edges to the OrgMembership entity.
+func (oc *OrganizationCreate) AddOrgMemberships(o ...*OrgMembership) *OrganizationCreate {
+	ids := make([]string, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return oc.AddOrgMembershipIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -521,23 +537,6 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := oc.mutation.UsersIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   organization.UsersTable,
-			Columns: organization.UsersPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = oc.schemaConfig.UserOrganizations
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := oc.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -618,6 +617,47 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 			},
 		}
 		edge.Schema = oc.schemaConfig.OauthProvider
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   organization.UsersTable,
+			Columns: organization.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrgMembership
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &OrgMembershipCreate{config: oc.config, mutation: newOrgMembershipMutation(oc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := oc.mutation.OrgMembershipsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   organization.OrgMembershipsTable,
+			Columns: []string{organization.OrgMembershipsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(orgmembership.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = oc.schemaConfig.OrgMembership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

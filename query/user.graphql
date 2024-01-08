@@ -24,6 +24,15 @@ query GetUserByID($userId: ID!) {
       updatedBy
       silencedAt
     }
+    organizations{
+      id
+      name
+      personalOrg
+      orgMemberships{
+        id
+        role
+      }
+    }
     updatedAt
     updatedBy
     createdAt
@@ -61,10 +70,13 @@ query GetUserByIDWithOrgs($userId: ID!) {
     updatedBy
     createdAt
     createdBy
-    organizations{
+    orgMemberships{
       id
-      name
-      displayName
+      role
+      user{
+        firstName
+        lastName
+      }
     }
   }
 }
@@ -118,11 +130,13 @@ mutation CreateUser($input: CreateUserInput!) {
       avatarLocalFile
       sub
       oauth
-      organizations {
+      orgMemberships {
         id
+        orgID
       }
-      groups {
+      groupMemberships {
         id
+        groupID
       }
       setting {
         emailConfirmed
@@ -154,10 +168,10 @@ mutation UpdateUser($updateUserId: ID!, $input: UpdateUserInput!) {
       avatarLocalFile
       sub
       oauth
-      groups {
+      groupMemberships {
         id
       }
-      organizations {
+      orgMemberships {
         id
       }
       personalAccessTokens {

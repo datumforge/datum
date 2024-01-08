@@ -36,6 +36,24 @@ type GroupDeletePayload struct {
 	DeletedID string `json:"deletedID"`
 }
 
+// Return response for createGroupMembership mutation
+type GroupMembershipCreatePayload struct {
+	// Created groupMembership
+	GroupMembership *generated.GroupMembership `json:"groupMembership"`
+}
+
+// Return response for deleteGroupMembership mutation
+type GroupMembershipDeletePayload struct {
+	// Deleted groupMembership ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateGroupMembership mutation
+type GroupMembershipUpdatePayload struct {
+	// Updated groupMembership
+	GroupMembership *generated.GroupMembership `json:"groupMembership"`
+}
+
 // Return response for createGroupSetting mutation
 type GroupSettingCreatePayload struct {
 	// Created groupSetting
@@ -112,6 +130,24 @@ type OhAuthTooTokenDeletePayload struct {
 type OhAuthTooTokenUpdatePayload struct {
 	// Updated ohAuthTooToken
 	OhAuthTooToken *generated.OhAuthTooToken `json:"ohAuthTooToken"`
+}
+
+// Return response for createOrgMembership mutation
+type OrgMembershipCreatePayload struct {
+	// Created orgMembership
+	OrgMembership *generated.OrgMembership `json:"orgMembership"`
+}
+
+// Return response for deleteOrgMembership mutation
+type OrgMembershipDeletePayload struct {
+	// Deleted orgMembership ID
+	DeletedID string `json:"deletedID"`
+}
+
+// Return response for updateOrgMembership mutation
+type OrgMembershipUpdatePayload struct {
+	// Updated orgMembership
+	OrgMembership *generated.OrgMembership `json:"orgMembership"`
 }
 
 // Return response for createOrganization mutation

@@ -10,12 +10,14 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -35,6 +37,9 @@ func (n *Entitlement) IsNode() {}
 func (n *Group) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
+func (n *GroupMembership) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
 func (n *GroupSetting) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
@@ -45,6 +50,9 @@ func (n *OauthProvider) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *OhAuthTooToken) IsNode() {}
+
+// IsNode implements the Node interface check for GQLGen.
+func (n *OrgMembership) IsNode() {}
 
 // IsNode implements the Node interface check for GQLGen.
 func (n *Organization) IsNode() {}
@@ -146,6 +154,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			return nil, err
 		}
 		return n, nil
+	case groupmembership.Table:
+		query := c.GroupMembership.Query().
+			Where(groupmembership.ID(id))
+		query, err := query.CollectFields(ctx, "GroupMembership")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
 	case groupsetting.Table:
 		query := c.GroupSetting.Query().
 			Where(groupsetting.ID(id))
@@ -186,6 +206,18 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 		query := c.OhAuthTooToken.Query().
 			Where(ohauthtootoken.ID(id))
 		query, err := query.CollectFields(ctx, "OhAuthTooToken")
+		if err != nil {
+			return nil, err
+		}
+		n, err := query.Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+		return n, nil
+	case orgmembership.Table:
+		query := c.OrgMembership.Query().
+			Where(orgmembership.ID(id))
+		query, err := query.CollectFields(ctx, "OrgMembership")
 		if err != nil {
 			return nil, err
 		}
@@ -371,6 +403,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case groupmembership.Table:
+		query := c.GroupMembership.Query().
+			Where(groupmembership.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "GroupMembership")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case groupsetting.Table:
 		query := c.GroupSetting.Query().
 			Where(groupsetting.IDIn(ids...))
@@ -423,6 +471,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.OhAuthTooToken.Query().
 			Where(ohauthtootoken.IDIn(ids...))
 		query, err := query.CollectFields(ctx, "OhAuthTooToken")
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case orgmembership.Table:
+		query := c.OrgMembership.Query().
+			Where(orgmembership.IDIn(ids...))
+		query, err := query.CollectFields(ctx, "OrgMembership")
 		if err != nil {
 			return nil, err
 		}

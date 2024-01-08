@@ -14,11 +14,15 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	echo "github.com/datumforge/echox"
+	ofgaclient "github.com/openfga/go-sdk/client"
+	"go.uber.org/mock/gomock"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/entdb"
+	"github.com/datumforge/datum/internal/fga"
+	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/session"
 	"github.com/datumforge/datum/internal/httpserve/middleware/transaction"
@@ -65,8 +69,22 @@ func setupEcho(sm *scs.SessionManager) *echo.Echo {
 	return e
 }
 
+func setupEchoAuth(sm *scs.SessionManager, entClient *ent.Client) *echo.Echo {
+	// create echo context with middleware
+	e := echo.New()
+	transactionConfig := transaction.Client{
+		EntDBClient: entClient,
+		Logger:      zap.NewNop().Sugar(),
+	}
+
+	e.Use(transactionConfig.Middleware)
+	e.Use(session.LoadAndSave(sm))
+
+	return e
+}
+
 // handlerSetup to be used for required references in the handler tests
-func handlerSetup(t *testing.T) *handlers.Handler {
+func handlerSetup(t *testing.T, ent *ent.Client) *handlers.Handler {
 	tm, err := createTokenManager(15 * time.Minute) //nolint:gomnd
 	if err != nil {
 		t.Fatal("error creating token manager")
@@ -76,7 +94,7 @@ func handlerSetup(t *testing.T) *handlers.Handler {
 
 	h := &handlers.Handler{
 		TM:           tm,
-		DBClient:     EntClient,
+		DBClient:     ent,
 		Logger:       zaptest.NewLogger(t, zaptest.Level(zap.ErrorLevel)).Sugar(),
 		CookieDomain: "datum.net",
 		SM:           sm,
@@ -134,6 +152,41 @@ func setupDB() {
 	EntClient = c
 }
 
+func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *ent.Client {
+	fc, err := fga.NewTestFGAClient(t, mockCtrl, mc)
+	if err != nil {
+		t.Fatalf("enable to create test FGA client")
+	}
+
+	logger := zap.NewNop().Sugar()
+
+	if DBContainer == nil {
+		t.Fatalf("DBContainer is nil")
+	}
+
+	dbconf := entdb.Config{
+		Debug:           true,
+		DriverName:      DBContainer.Dialect,
+		PrimaryDBSource: DBContainer.URI,
+		CacheTTL:        -1 * time.Second, // do not cache results in tests
+	}
+
+	entConfig := entdb.NewDBConfig(dbconf, logger)
+
+	ctx := context.Background()
+
+	opts := []ent.Option{ent.Logger(*logger), ent.Authz(*fc)}
+
+	c, err := entConfig.NewMultiDriverDBClient(ctx, opts)
+	if err != nil {
+		errPanic("failed opening connection to database:", err)
+	}
+
+	errPanic("failed creating db schema", c.Schema.Create(ctx))
+
+	return c
+}
+
 func teardownDB() {
 	if EntClient != nil {
 		errPanic("teardown failed to close database connection", EntClient.Close())
@@ -161,4 +214,41 @@ func createTokenManager(refreshOverlap time.Duration) (*tokens.TokenManager, err
 	}
 
 	return tokens.NewWithKey(key, conf)
+}
+
+// mockWriteTuples creates mock responses based on the mock FGA client
+func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
+	mockExecute := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+
+	if errMsg == nil {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
+	} else {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
+	}
+
+	mockRequest := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+
+	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
+
+	mockBody := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
+
+	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
+
+	c.EXPECT().WriteTuples(gomock.Any()).Return(mockBody)
 }

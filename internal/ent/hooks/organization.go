@@ -84,6 +84,7 @@ func HookOrganizationAuthz() ent.Hook {
 	}
 }
 
+// TODO: this should move to org membership hooks instead of org hooks
 func organizationCreateHook(ctx context.Context, m *generated.OrganizationMutation) error {
 	// Add relationship tuples if authz is enabled
 	if m.Authz.Ofga != nil {

@@ -12,6 +12,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
@@ -114,11 +115,15 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 	personalOrg := true
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
+	// add user to the users of the personal organization
+	users := []string{user.ID}
+
 	return generated.CreateOrganizationInput{
 		Name:        name,
 		DisplayName: &displayName,
 		Description: &desc,
 		PersonalOrg: &personalOrg,
+		UserIDs:     users,
 	}
 }
 
@@ -141,14 +146,12 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 		return err
 	}
 
-	role := enums.RoleAdmin
-	orgMems := generated.CreateOrgMembershipInput{
-		UserID: user.ID,
-		OrgID:  org.ID,
-		Role:   &role,
-	}
-
-	if _, err := dbClient.OrgMembership.Create().SetInput(orgMems).Save(ctx); err != nil {
+	// Update role to admin
+	if _, err := dbClient.OrgMembership.Update().Where(
+		orgmembership.UserID(user.ID),
+		orgmembership.OrgID(org.ID),
+	).SetRole(enums.RoleAdmin).
+		Save(ctx); err != nil {
 		user.Logger.Errorw("unable to add user as admin to organization", "error", err.Error())
 
 		return err

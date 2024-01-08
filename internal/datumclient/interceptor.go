@@ -17,7 +17,11 @@ func WithAccessToken(accessToken string) clientv2.RequestInterceptor {
 		res interface{},
 		next clientv2.RequestInterceptorFunc,
 	) error {
-		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+		// setting authorization header if its not already set
+		h := req.Header.Get("Authorization")
+		if h == "" {
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", accessToken))
+		}
 
 		return next(ctx, req, gqlInfo, res)
 	}

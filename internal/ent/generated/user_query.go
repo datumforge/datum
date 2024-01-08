@@ -33,18 +33,18 @@ type UserQuery struct {
 	inters                           []Interceptor
 	predicates                       []predicate.User
 	withOrganizations                *OrganizationQuery
-	withSessions                     *SessionQuery
 	withGroups                       *GroupQuery
 	withPersonalAccessTokens         *PersonalAccessTokenQuery
 	withSetting                      *UserSettingQuery
+	withSessions                     *SessionQuery
 	withEmailVerificationTokens      *EmailVerificationTokenQuery
 	withPasswordResetTokens          *PasswordResetTokenQuery
 	modifiers                        []func(*sql.Selector)
 	loadTotal                        []func(context.Context, []*User) error
 	withNamedOrganizations           map[string]*OrganizationQuery
-	withNamedSessions                map[string]*SessionQuery
 	withNamedGroups                  map[string]*GroupQuery
 	withNamedPersonalAccessTokens    map[string]*PersonalAccessTokenQuery
+	withNamedSessions                map[string]*SessionQuery
 	withNamedEmailVerificationTokens map[string]*EmailVerificationTokenQuery
 	withNamedPasswordResetTokens     map[string]*PasswordResetTokenQuery
 	// intermediate query (i.e. traversal path).
@@ -102,31 +102,6 @@ func (uq *UserQuery) QueryOrganizations() *OrganizationQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.Organization
 		step.Edge.Schema = schemaConfig.UserOrganizations
-		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QuerySessions chains the current query on the "sessions" edge.
-func (uq *UserQuery) QuerySessions() *SessionQuery {
-	query := (&SessionClient{config: uq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := uq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := uq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, selector),
-			sqlgraph.To(session.Table, session.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
-		)
-		schemaConfig := uq.schemaConfig
-		step.To.Schema = schemaConfig.Session
-		step.Edge.Schema = schemaConfig.Session
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -202,6 +177,31 @@ func (uq *UserQuery) QuerySetting() *UserSettingQuery {
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.UserSetting
 		step.Edge.Schema = schemaConfig.UserSetting
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QuerySessions chains the current query on the "sessions" edge.
+func (uq *UserQuery) QuerySessions() *SessionQuery {
+	query := (&SessionClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(session.Table, session.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
+		)
+		schemaConfig := uq.schemaConfig
+		step.To.Schema = schemaConfig.Session
+		step.Edge.Schema = schemaConfig.Session
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
 	}
@@ -451,10 +451,10 @@ func (uq *UserQuery) Clone() *UserQuery {
 		inters:                      append([]Interceptor{}, uq.inters...),
 		predicates:                  append([]predicate.User{}, uq.predicates...),
 		withOrganizations:           uq.withOrganizations.Clone(),
-		withSessions:                uq.withSessions.Clone(),
 		withGroups:                  uq.withGroups.Clone(),
 		withPersonalAccessTokens:    uq.withPersonalAccessTokens.Clone(),
 		withSetting:                 uq.withSetting.Clone(),
+		withSessions:                uq.withSessions.Clone(),
 		withEmailVerificationTokens: uq.withEmailVerificationTokens.Clone(),
 		withPasswordResetTokens:     uq.withPasswordResetTokens.Clone(),
 		// clone intermediate query.
@@ -471,17 +471,6 @@ func (uq *UserQuery) WithOrganizations(opts ...func(*OrganizationQuery)) *UserQu
 		opt(query)
 	}
 	uq.withOrganizations = query
-	return uq
-}
-
-// WithSessions tells the query-builder to eager-load the nodes that are connected to
-// the "sessions" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithSessions(opts ...func(*SessionQuery)) *UserQuery {
-	query := (&SessionClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	uq.withSessions = query
 	return uq
 }
 
@@ -515,6 +504,17 @@ func (uq *UserQuery) WithSetting(opts ...func(*UserSettingQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withSetting = query
+	return uq
+}
+
+// WithSessions tells the query-builder to eager-load the nodes that are connected to
+// the "sessions" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithSessions(opts ...func(*SessionQuery)) *UserQuery {
+	query := (&SessionClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withSessions = query
 	return uq
 }
 
@@ -626,10 +626,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		_spec       = uq.querySpec()
 		loadedTypes = [7]bool{
 			uq.withOrganizations != nil,
-			uq.withSessions != nil,
 			uq.withGroups != nil,
 			uq.withPersonalAccessTokens != nil,
 			uq.withSetting != nil,
+			uq.withSessions != nil,
 			uq.withEmailVerificationTokens != nil,
 			uq.withPasswordResetTokens != nil,
 		}
@@ -664,13 +664,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withSessions; query != nil {
-		if err := uq.loadSessions(ctx, query, nodes,
-			func(n *User) { n.Edges.Sessions = []*Session{} },
-			func(n *User, e *Session) { n.Edges.Sessions = append(n.Edges.Sessions, e) }); err != nil {
-			return nil, err
-		}
-	}
 	if query := uq.withGroups; query != nil {
 		if err := uq.loadGroups(ctx, query, nodes,
 			func(n *User) { n.Edges.Groups = []*Group{} },
@@ -690,6 +683,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if query := uq.withSetting; query != nil {
 		if err := uq.loadSetting(ctx, query, nodes, nil,
 			func(n *User, e *UserSetting) { n.Edges.Setting = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withSessions; query != nil {
+		if err := uq.loadSessions(ctx, query, nodes,
+			func(n *User) { n.Edges.Sessions = []*Session{} },
+			func(n *User, e *Session) { n.Edges.Sessions = append(n.Edges.Sessions, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -718,13 +718,6 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	for name, query := range uq.withNamedSessions {
-		if err := uq.loadSessions(ctx, query, nodes,
-			func(n *User) { n.appendNamedSessions(name) },
-			func(n *User, e *Session) { n.appendNamedSessions(name, e) }); err != nil {
-			return nil, err
-		}
-	}
 	for name, query := range uq.withNamedGroups {
 		if err := uq.loadGroups(ctx, query, nodes,
 			func(n *User) { n.appendNamedGroups(name) },
@@ -736,6 +729,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadPersonalAccessTokens(ctx, query, nodes,
 			func(n *User) { n.appendNamedPersonalAccessTokens(name) },
 			func(n *User, e *PersonalAccessToken) { n.appendNamedPersonalAccessTokens(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedSessions {
+		if err := uq.loadSessions(ctx, query, nodes,
+			func(n *User) { n.appendNamedSessions(name) },
+			func(n *User, e *Session) { n.appendNamedSessions(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -820,36 +820,6 @@ func (uq *UserQuery) loadOrganizations(ctx context.Context, query *OrganizationQ
 		for kn := range nodes {
 			assign(kn, n)
 		}
-	}
-	return nil
-}
-func (uq *UserQuery) loadSessions(ctx context.Context, query *SessionQuery, nodes []*User, init func(*User), assign func(*User, *Session)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[string]*User)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(session.FieldUserID)
-	}
-	query.Where(predicate.Session(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.SessionsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.UserID
-		node, ok := nodeids[fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }
@@ -968,6 +938,36 @@ func (uq *UserQuery) loadSetting(ctx context.Context, query *UserSettingQuery, n
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_setting" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadSessions(ctx context.Context, query *SessionQuery, nodes []*User, init func(*User), assign func(*User, *Session)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(session.FieldOwnerID)
+	}
+	query.Where(predicate.Session(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.SessionsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -1137,20 +1137,6 @@ func (uq *UserQuery) WithNamedOrganizations(name string, opts ...func(*Organizat
 	return uq
 }
 
-// WithNamedSessions tells the query-builder to eager-load the nodes that are connected to the "sessions"
-// edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedSessions(name string, opts ...func(*SessionQuery)) *UserQuery {
-	query := (&SessionClient{config: uq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	if uq.withNamedSessions == nil {
-		uq.withNamedSessions = make(map[string]*SessionQuery)
-	}
-	uq.withNamedSessions[name] = query
-	return uq
-}
-
 // WithNamedGroups tells the query-builder to eager-load the nodes that are connected to the "groups"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
 func (uq *UserQuery) WithNamedGroups(name string, opts ...func(*GroupQuery)) *UserQuery {
@@ -1176,6 +1162,20 @@ func (uq *UserQuery) WithNamedPersonalAccessTokens(name string, opts ...func(*Pe
 		uq.withNamedPersonalAccessTokens = make(map[string]*PersonalAccessTokenQuery)
 	}
 	uq.withNamedPersonalAccessTokens[name] = query
+	return uq
+}
+
+// WithNamedSessions tells the query-builder to eager-load the nodes that are connected to the "sessions"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedSessions(name string, opts ...func(*SessionQuery)) *UserQuery {
+	query := (&SessionClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedSessions == nil {
+		uq.withNamedSessions = make(map[string]*SessionQuery)
+	}
+	uq.withNamedSessions[name] = query
 	return uq
 }
 

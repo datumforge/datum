@@ -13364,6 +13364,42 @@ func (m *SessionMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, session.FieldUpdatedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *SessionMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *SessionMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the Session entity.
+// If the Session object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SessionMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *SessionMutation) ResetOwnerID() {
+	m.owner = nil
+}
+
 // SetSessionToken sets the "session_token" field.
 func (m *SessionMutation) SetSessionToken(s string) {
 	m.session_token = &s
@@ -13508,64 +13544,15 @@ func (m *SessionMutation) ResetOrganizationID() {
 	m.organization_id = nil
 }
 
-// SetUserID sets the "user_id" field.
-func (m *SessionMutation) SetUserID(s string) {
-	m.owner = &s
-}
-
-// UserID returns the value of the "user_id" field in the mutation.
-func (m *SessionMutation) UserID() (r string, exists bool) {
-	v := m.owner
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUserID returns the old "user_id" field's value of the Session entity.
-// If the Session object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SessionMutation) OldUserID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUserID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
-	}
-	return oldValue.UserID, nil
-}
-
-// ResetUserID resets all changes to the "user_id" field.
-func (m *SessionMutation) ResetUserID() {
-	m.owner = nil
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by id.
-func (m *SessionMutation) SetOwnerID(id string) {
-	m.owner = &id
-}
-
 // ClearOwner clears the "owner" edge to the User entity.
 func (m *SessionMutation) ClearOwner() {
 	m.clearedowner = true
-	m.clearedFields[session.FieldUserID] = struct{}{}
+	m.clearedFields[session.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the User entity was cleared.
 func (m *SessionMutation) OwnerCleared() bool {
 	return m.clearedowner
-}
-
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *SessionMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
-	}
-	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -13631,6 +13618,9 @@ func (m *SessionMutation) Fields() []string {
 	if m.updated_by != nil {
 		fields = append(fields, session.FieldUpdatedBy)
 	}
+	if m.owner != nil {
+		fields = append(fields, session.FieldOwnerID)
+	}
 	if m.session_token != nil {
 		fields = append(fields, session.FieldSessionToken)
 	}
@@ -13642,9 +13632,6 @@ func (m *SessionMutation) Fields() []string {
 	}
 	if m.organization_id != nil {
 		fields = append(fields, session.FieldOrganizationID)
-	}
-	if m.owner != nil {
-		fields = append(fields, session.FieldUserID)
 	}
 	return fields
 }
@@ -13662,6 +13649,8 @@ func (m *SessionMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case session.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case session.FieldOwnerID:
+		return m.OwnerID()
 	case session.FieldSessionToken:
 		return m.SessionToken()
 	case session.FieldIssuedAt:
@@ -13670,8 +13659,6 @@ func (m *SessionMutation) Field(name string) (ent.Value, bool) {
 		return m.ExpiresAt()
 	case session.FieldOrganizationID:
 		return m.OrganizationID()
-	case session.FieldUserID:
-		return m.UserID()
 	}
 	return nil, false
 }
@@ -13689,6 +13676,8 @@ func (m *SessionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedBy(ctx)
 	case session.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case session.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case session.FieldSessionToken:
 		return m.OldSessionToken(ctx)
 	case session.FieldIssuedAt:
@@ -13697,8 +13686,6 @@ func (m *SessionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldExpiresAt(ctx)
 	case session.FieldOrganizationID:
 		return m.OldOrganizationID(ctx)
-	case session.FieldUserID:
-		return m.OldUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Session field %s", name)
 }
@@ -13736,6 +13723,13 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetUpdatedBy(v)
 		return nil
+	case session.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
+		return nil
 	case session.FieldSessionToken:
 		v, ok := value.(string)
 		if !ok {
@@ -13763,13 +13757,6 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrganizationID(v)
-		return nil
-	case session.FieldUserID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUserID(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Session field %s", name)
@@ -13847,6 +13834,9 @@ func (m *SessionMutation) ResetField(name string) error {
 	case session.FieldUpdatedBy:
 		m.ResetUpdatedBy()
 		return nil
+	case session.FieldOwnerID:
+		m.ResetOwnerID()
+		return nil
 	case session.FieldSessionToken:
 		m.ResetSessionToken()
 		return nil
@@ -13858,9 +13848,6 @@ func (m *SessionMutation) ResetField(name string) error {
 		return nil
 	case session.FieldOrganizationID:
 		m.ResetOrganizationID()
-		return nil
-	case session.FieldUserID:
-		m.ResetUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown Session field %s", name)
@@ -13967,9 +13954,6 @@ type UserMutation struct {
 	organizations                    map[string]struct{}
 	removedorganizations             map[string]struct{}
 	clearedorganizations             bool
-	sessions                         map[string]struct{}
-	removedsessions                  map[string]struct{}
-	clearedsessions                  bool
 	groups                           map[string]struct{}
 	removedgroups                    map[string]struct{}
 	clearedgroups                    bool
@@ -13978,6 +13962,9 @@ type UserMutation struct {
 	clearedpersonal_access_tokens    bool
 	setting                          *string
 	clearedsetting                   bool
+	sessions                         map[string]struct{}
+	removedsessions                  map[string]struct{}
+	clearedsessions                  bool
 	email_verification_tokens        map[string]struct{}
 	removedemail_verification_tokens map[string]struct{}
 	clearedemail_verification_tokens bool
@@ -14889,60 +14876,6 @@ func (m *UserMutation) ResetOrganizations() {
 	m.removedorganizations = nil
 }
 
-// AddSessionIDs adds the "sessions" edge to the Session entity by ids.
-func (m *UserMutation) AddSessionIDs(ids ...string) {
-	if m.sessions == nil {
-		m.sessions = make(map[string]struct{})
-	}
-	for i := range ids {
-		m.sessions[ids[i]] = struct{}{}
-	}
-}
-
-// ClearSessions clears the "sessions" edge to the Session entity.
-func (m *UserMutation) ClearSessions() {
-	m.clearedsessions = true
-}
-
-// SessionsCleared reports if the "sessions" edge to the Session entity was cleared.
-func (m *UserMutation) SessionsCleared() bool {
-	return m.clearedsessions
-}
-
-// RemoveSessionIDs removes the "sessions" edge to the Session entity by IDs.
-func (m *UserMutation) RemoveSessionIDs(ids ...string) {
-	if m.removedsessions == nil {
-		m.removedsessions = make(map[string]struct{})
-	}
-	for i := range ids {
-		delete(m.sessions, ids[i])
-		m.removedsessions[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedSessions returns the removed IDs of the "sessions" edge to the Session entity.
-func (m *UserMutation) RemovedSessionsIDs() (ids []string) {
-	for id := range m.removedsessions {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// SessionsIDs returns the "sessions" edge IDs in the mutation.
-func (m *UserMutation) SessionsIDs() (ids []string) {
-	for id := range m.sessions {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetSessions resets all changes to the "sessions" edge.
-func (m *UserMutation) ResetSessions() {
-	m.sessions = nil
-	m.clearedsessions = false
-	m.removedsessions = nil
-}
-
 // AddGroupIDs adds the "groups" edge to the Group entity by ids.
 func (m *UserMutation) AddGroupIDs(ids ...string) {
 	if m.groups == nil {
@@ -15088,6 +15021,60 @@ func (m *UserMutation) SettingIDs() (ids []string) {
 func (m *UserMutation) ResetSetting() {
 	m.setting = nil
 	m.clearedsetting = false
+}
+
+// AddSessionIDs adds the "sessions" edge to the Session entity by ids.
+func (m *UserMutation) AddSessionIDs(ids ...string) {
+	if m.sessions == nil {
+		m.sessions = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.sessions[ids[i]] = struct{}{}
+	}
+}
+
+// ClearSessions clears the "sessions" edge to the Session entity.
+func (m *UserMutation) ClearSessions() {
+	m.clearedsessions = true
+}
+
+// SessionsCleared reports if the "sessions" edge to the Session entity was cleared.
+func (m *UserMutation) SessionsCleared() bool {
+	return m.clearedsessions
+}
+
+// RemoveSessionIDs removes the "sessions" edge to the Session entity by IDs.
+func (m *UserMutation) RemoveSessionIDs(ids ...string) {
+	if m.removedsessions == nil {
+		m.removedsessions = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.sessions, ids[i])
+		m.removedsessions[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedSessions returns the removed IDs of the "sessions" edge to the Session entity.
+func (m *UserMutation) RemovedSessionsIDs() (ids []string) {
+	for id := range m.removedsessions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// SessionsIDs returns the "sessions" edge IDs in the mutation.
+func (m *UserMutation) SessionsIDs() (ids []string) {
+	for id := range m.sessions {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetSessions resets all changes to the "sessions" edge.
+func (m *UserMutation) ResetSessions() {
+	m.sessions = nil
+	m.clearedsessions = false
+	m.removedsessions = nil
 }
 
 // AddEmailVerificationTokenIDs adds the "email_verification_tokens" edge to the EmailVerificationToken entity by ids.
@@ -15670,9 +15657,6 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.organizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
-	if m.sessions != nil {
-		edges = append(edges, user.EdgeSessions)
-	}
 	if m.groups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -15681,6 +15665,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.setting != nil {
 		edges = append(edges, user.EdgeSetting)
+	}
+	if m.sessions != nil {
+		edges = append(edges, user.EdgeSessions)
 	}
 	if m.email_verification_tokens != nil {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
@@ -15701,12 +15688,6 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeSessions:
-		ids := make([]ent.Value, 0, len(m.sessions))
-		for id := range m.sessions {
-			ids = append(ids, id)
-		}
-		return ids
 	case user.EdgeGroups:
 		ids := make([]ent.Value, 0, len(m.groups))
 		for id := range m.groups {
@@ -15723,6 +15704,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.setting; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeSessions:
+		ids := make([]ent.Value, 0, len(m.sessions))
+		for id := range m.sessions {
+			ids = append(ids, id)
+		}
+		return ids
 	case user.EdgeEmailVerificationTokens:
 		ids := make([]ent.Value, 0, len(m.email_verification_tokens))
 		for id := range m.email_verification_tokens {
@@ -15745,14 +15732,14 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedorganizations != nil {
 		edges = append(edges, user.EdgeOrganizations)
 	}
-	if m.removedsessions != nil {
-		edges = append(edges, user.EdgeSessions)
-	}
 	if m.removedgroups != nil {
 		edges = append(edges, user.EdgeGroups)
 	}
 	if m.removedpersonal_access_tokens != nil {
 		edges = append(edges, user.EdgePersonalAccessTokens)
+	}
+	if m.removedsessions != nil {
+		edges = append(edges, user.EdgeSessions)
 	}
 	if m.removedemail_verification_tokens != nil {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
@@ -15773,12 +15760,6 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeSessions:
-		ids := make([]ent.Value, 0, len(m.removedsessions))
-		for id := range m.removedsessions {
-			ids = append(ids, id)
-		}
-		return ids
 	case user.EdgeGroups:
 		ids := make([]ent.Value, 0, len(m.removedgroups))
 		for id := range m.removedgroups {
@@ -15788,6 +15769,12 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	case user.EdgePersonalAccessTokens:
 		ids := make([]ent.Value, 0, len(m.removedpersonal_access_tokens))
 		for id := range m.removedpersonal_access_tokens {
+			ids = append(ids, id)
+		}
+		return ids
+	case user.EdgeSessions:
+		ids := make([]ent.Value, 0, len(m.removedsessions))
+		for id := range m.removedsessions {
 			ids = append(ids, id)
 		}
 		return ids
@@ -15813,9 +15800,6 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedorganizations {
 		edges = append(edges, user.EdgeOrganizations)
 	}
-	if m.clearedsessions {
-		edges = append(edges, user.EdgeSessions)
-	}
 	if m.clearedgroups {
 		edges = append(edges, user.EdgeGroups)
 	}
@@ -15824,6 +15808,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedsetting {
 		edges = append(edges, user.EdgeSetting)
+	}
+	if m.clearedsessions {
+		edges = append(edges, user.EdgeSessions)
 	}
 	if m.clearedemail_verification_tokens {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
@@ -15840,14 +15827,14 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeOrganizations:
 		return m.clearedorganizations
-	case user.EdgeSessions:
-		return m.clearedsessions
 	case user.EdgeGroups:
 		return m.clearedgroups
 	case user.EdgePersonalAccessTokens:
 		return m.clearedpersonal_access_tokens
 	case user.EdgeSetting:
 		return m.clearedsetting
+	case user.EdgeSessions:
+		return m.clearedsessions
 	case user.EdgeEmailVerificationTokens:
 		return m.clearedemail_verification_tokens
 	case user.EdgePasswordResetTokens:
@@ -15874,9 +15861,6 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeOrganizations:
 		m.ResetOrganizations()
 		return nil
-	case user.EdgeSessions:
-		m.ResetSessions()
-		return nil
 	case user.EdgeGroups:
 		m.ResetGroups()
 		return nil
@@ -15885,6 +15869,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeSetting:
 		m.ResetSetting()
+		return nil
+	case user.EdgeSessions:
+		m.ResetSessions()
 		return nil
 	case user.EdgeEmailVerificationTokens:
 		m.ResetEmailVerificationTokens()

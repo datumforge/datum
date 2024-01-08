@@ -421,7 +421,7 @@ func (sq *SessionQuery) loadOwner(ctx context.Context, query *UserQuery, nodes [
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Session)
 	for i := range nodes {
-		fk := nodes[i].UserID
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -438,7 +438,7 @@ func (sq *SessionQuery) loadOwner(ctx context.Context, query *UserQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -478,7 +478,7 @@ func (sq *SessionQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 		if sq.withOwner != nil {
-			_spec.Node.AddColumnOnce(session.FieldUserID)
+			_spec.Node.AddColumnOnce(session.FieldOwnerID)
 		}
 	}
 	if ps := sq.predicates; len(ps) > 0 {

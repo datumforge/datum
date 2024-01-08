@@ -6,7 +6,6 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -31,8 +30,6 @@ func (Session) Fields() []ent.Field {
 		field.Time("expires_at"),
 		field.String("organization_id").
 			Comment("organization ID of the organization the user is accessing"),
-		field.String("user_id").
-			Comment("the user the session is associated with"),
 	}
 }
 
@@ -46,14 +43,7 @@ func (Session) Indexes() []ent.Index {
 
 // Edges of the Session
 func (Session) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("owner", User.Type).
-			Ref("sessions").
-			Field("user_id").
-			Unique().
-			Required().
-			Comment("Sessions belong to users"),
-	}
+	return []ent.Edge{}
 }
 
 // Annotations of the Session
@@ -70,6 +60,9 @@ func (Session) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+		UserOwnedMixin{
+			Ref: "sessions",
+		},
 	}
 }
 

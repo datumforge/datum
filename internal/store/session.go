@@ -34,7 +34,7 @@ type AuthSessions interface {
 func (sess *AuthSession) StoreSession(ctx context.Context, sessionID string, userID *ent.User) error {
 	_, err := sess.client.Session.
 		Create().
-		SetUserID(userID.ID).
+		SetOwnerID(userID.ID).
 		SetID(sessionID).
 		SetExpiresAt(time.Now().Add(time.Hour * 24 * 1)).
 		Save(ctx)
@@ -67,10 +67,10 @@ func (sess *AuthSession) GetUserIDFromSession(ctx context.Context, sessionID str
 		Only(ctx)
 
 	if err != nil {
-		return session.UserID, fmt.Errorf("loginSessions.Query: %w", err)
+		return session.OwnerID, fmt.Errorf("loginSessions.Query: %w", err)
 	}
 
-	return session.UserID, nil
+	return session.OwnerID, nil
 }
 
 // GetExpiryFromSession is used to retrieve the expiration time of a session from the database

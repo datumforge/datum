@@ -6307,21 +6307,6 @@ type SessionWhereInput struct {
 	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
 	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
 
-	// "user_id" field predicates.
-	UserID             *string  `json:"userID,omitempty"`
-	UserIDNEQ          *string  `json:"userIDNEQ,omitempty"`
-	UserIDIn           []string `json:"userIDIn,omitempty"`
-	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
-	UserIDGT           *string  `json:"userIDGT,omitempty"`
-	UserIDGTE          *string  `json:"userIDGTE,omitempty"`
-	UserIDLT           *string  `json:"userIDLT,omitempty"`
-	UserIDLTE          *string  `json:"userIDLTE,omitempty"`
-	UserIDContains     *string  `json:"userIDContains,omitempty"`
-	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
-	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
-	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
-	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
-
 	// "owner" edge predicates.
 	HasOwner     *bool             `json:"hasOwner,omitempty"`
 	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
@@ -6692,45 +6677,6 @@ func (i *SessionWhereInput) P() (predicate.Session, error) {
 	if i.OrganizationIDContainsFold != nil {
 		predicates = append(predicates, session.OrganizationIDContainsFold(*i.OrganizationIDContainsFold))
 	}
-	if i.UserID != nil {
-		predicates = append(predicates, session.UserIDEQ(*i.UserID))
-	}
-	if i.UserIDNEQ != nil {
-		predicates = append(predicates, session.UserIDNEQ(*i.UserIDNEQ))
-	}
-	if len(i.UserIDIn) > 0 {
-		predicates = append(predicates, session.UserIDIn(i.UserIDIn...))
-	}
-	if len(i.UserIDNotIn) > 0 {
-		predicates = append(predicates, session.UserIDNotIn(i.UserIDNotIn...))
-	}
-	if i.UserIDGT != nil {
-		predicates = append(predicates, session.UserIDGT(*i.UserIDGT))
-	}
-	if i.UserIDGTE != nil {
-		predicates = append(predicates, session.UserIDGTE(*i.UserIDGTE))
-	}
-	if i.UserIDLT != nil {
-		predicates = append(predicates, session.UserIDLT(*i.UserIDLT))
-	}
-	if i.UserIDLTE != nil {
-		predicates = append(predicates, session.UserIDLTE(*i.UserIDLTE))
-	}
-	if i.UserIDContains != nil {
-		predicates = append(predicates, session.UserIDContains(*i.UserIDContains))
-	}
-	if i.UserIDHasPrefix != nil {
-		predicates = append(predicates, session.UserIDHasPrefix(*i.UserIDHasPrefix))
-	}
-	if i.UserIDHasSuffix != nil {
-		predicates = append(predicates, session.UserIDHasSuffix(*i.UserIDHasSuffix))
-	}
-	if i.UserIDEqualFold != nil {
-		predicates = append(predicates, session.UserIDEqualFold(*i.UserIDEqualFold))
-	}
-	if i.UserIDContainsFold != nil {
-		predicates = append(predicates, session.UserIDContainsFold(*i.UserIDContainsFold))
-	}
 
 	if i.HasOwner != nil {
 		p := session.HasOwner()
@@ -7022,10 +6968,6 @@ type UserWhereInput struct {
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
 
-	// "sessions" edge predicates.
-	HasSessions     *bool                `json:"hasSessions,omitempty"`
-	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
-
 	// "groups" edge predicates.
 	HasGroups     *bool              `json:"hasGroups,omitempty"`
 	HasGroupsWith []*GroupWhereInput `json:"hasGroupsWith,omitempty"`
@@ -7037,6 +6979,10 @@ type UserWhereInput struct {
 	// "setting" edge predicates.
 	HasSetting     *bool                    `json:"hasSetting,omitempty"`
 	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
+
+	// "sessions" edge predicates.
+	HasSessions     *bool                `json:"hasSessions,omitempty"`
+	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -7774,24 +7720,6 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		}
 		predicates = append(predicates, user.HasOrganizationsWith(with...))
 	}
-	if i.HasSessions != nil {
-		p := user.HasSessions()
-		if !*i.HasSessions {
-			p = user.Not(p)
-		}
-		predicates = append(predicates, p)
-	}
-	if len(i.HasSessionsWith) > 0 {
-		with := make([]predicate.Session, 0, len(i.HasSessionsWith))
-		for _, w := range i.HasSessionsWith {
-			p, err := w.P()
-			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasSessionsWith'", err)
-			}
-			with = append(with, p)
-		}
-		predicates = append(predicates, user.HasSessionsWith(with...))
-	}
 	if i.HasGroups != nil {
 		p := user.HasGroups()
 		if !*i.HasGroups {
@@ -7845,6 +7773,24 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, user.HasSettingWith(with...))
+	}
+	if i.HasSessions != nil {
+		p := user.HasSessions()
+		if !*i.HasSessions {
+			p = user.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasSessionsWith) > 0 {
+		with := make([]predicate.Session, 0, len(i.HasSessionsWith))
+		for _, w := range i.HasSessionsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasSessionsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, user.HasSessionsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

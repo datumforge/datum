@@ -2478,25 +2478,6 @@ func (c *UserClient) QueryOrganizations(u *User) *OrganizationQuery {
 	return query
 }
 
-// QuerySessions queries the sessions edge of a User.
-func (c *UserClient) QuerySessions(u *User) *SessionQuery {
-	query := (&SessionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(session.Table, session.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
-		)
-		schemaConfig := u.schemaConfig
-		step.To.Schema = schemaConfig.Session
-		step.Edge.Schema = schemaConfig.Session
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryGroups queries the groups edge of a User.
 func (c *UserClient) QueryGroups(u *User) *GroupQuery {
 	query := (&GroupClient{config: c.config}).Query()
@@ -2548,6 +2529,25 @@ func (c *UserClient) QuerySetting(u *User) *UserSettingQuery {
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.UserSetting
 		step.Edge.Schema = schemaConfig.UserSetting
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QuerySessions queries the sessions edge of a User.
+func (c *UserClient) QuerySessions(u *User) *SessionQuery {
+	query := (&SessionClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(session.Table, session.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
+		)
+		schemaConfig := u.schemaConfig
+		step.To.Schema = schemaConfig.Session
+		step.Edge.Schema = schemaConfig.Session
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil
 	}

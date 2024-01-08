@@ -1394,10 +1394,10 @@ type CreateUserInput struct {
 	Sub                       *string
 	Oauth                     *bool
 	OrganizationIDs           []string
-	SessionIDs                []string
 	GroupIDs                  []string
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
+	SessionIDs                []string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
 }
@@ -1446,9 +1446,6 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.OrganizationIDs; len(v) > 0 {
 		m.AddOrganizationIDs(v...)
 	}
-	if v := i.SessionIDs; len(v) > 0 {
-		m.AddSessionIDs(v...)
-	}
 	if v := i.GroupIDs; len(v) > 0 {
 		m.AddGroupIDs(v...)
 	}
@@ -1456,6 +1453,9 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
 	m.SetSettingID(i.SettingID)
+	if v := i.SessionIDs; len(v) > 0 {
+		m.AddSessionIDs(v...)
+	}
 	if v := i.EmailVerificationTokenIDs; len(v) > 0 {
 		m.AddEmailVerificationTokenIDs(v...)
 	}
@@ -1495,9 +1495,6 @@ type UpdateUserInput struct {
 	ClearOrganizations              bool
 	AddOrganizationIDs              []string
 	RemoveOrganizationIDs           []string
-	ClearSessions                   bool
-	AddSessionIDs                   []string
-	RemoveSessionIDs                []string
 	ClearGroups                     bool
 	AddGroupIDs                     []string
 	RemoveGroupIDs                  []string
@@ -1505,6 +1502,9 @@ type UpdateUserInput struct {
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
 	SettingID                       *string
+	ClearSessions                   bool
+	AddSessionIDs                   []string
+	RemoveSessionIDs                []string
 	ClearEmailVerificationTokens    bool
 	AddEmailVerificationTokenIDs    []string
 	RemoveEmailVerificationTokenIDs []string
@@ -1584,15 +1584,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.RemoveOrganizationIDs; len(v) > 0 {
 		m.RemoveOrganizationIDs(v...)
 	}
-	if i.ClearSessions {
-		m.ClearSessions()
-	}
-	if v := i.AddSessionIDs; len(v) > 0 {
-		m.AddSessionIDs(v...)
-	}
-	if v := i.RemoveSessionIDs; len(v) > 0 {
-		m.RemoveSessionIDs(v...)
-	}
 	if i.ClearGroups {
 		m.ClearGroups()
 	}
@@ -1613,6 +1604,15 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
+	}
+	if i.ClearSessions {
+		m.ClearSessions()
+	}
+	if v := i.AddSessionIDs; len(v) > 0 {
+		m.AddSessionIDs(v...)
+	}
+	if v := i.RemoveSessionIDs; len(v) > 0 {
+		m.RemoveSessionIDs(v...)
 	}
 	if i.ClearEmailVerificationTokens {
 		m.ClearEmailVerificationTokens()

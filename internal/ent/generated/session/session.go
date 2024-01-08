@@ -23,6 +23,8 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
+	// FieldOwnerID holds the string denoting the owner_id field in the database.
+	FieldOwnerID = "owner_id"
 	// FieldSessionToken holds the string denoting the session_token field in the database.
 	FieldSessionToken = "session_token"
 	// FieldIssuedAt holds the string denoting the issued_at field in the database.
@@ -31,8 +33,6 @@ const (
 	FieldExpiresAt = "expires_at"
 	// FieldOrganizationID holds the string denoting the organization_id field in the database.
 	FieldOrganizationID = "organization_id"
-	// FieldUserID holds the string denoting the user_id field in the database.
-	FieldUserID = "user_id"
 	// EdgeOwner holds the string denoting the owner edge name in mutations.
 	EdgeOwner = "owner"
 	// Table holds the table name of the session in the database.
@@ -43,7 +43,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "user" package.
 	OwnerInverseTable = "users"
 	// OwnerColumn is the table column denoting the owner relation/edge.
-	OwnerColumn = "user_id"
+	OwnerColumn = "owner_id"
 )
 
 // Columns holds all SQL columns for session fields.
@@ -53,11 +53,11 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
+	FieldOwnerID,
 	FieldSessionToken,
 	FieldIssuedAt,
 	FieldExpiresAt,
 	FieldOrganizationID,
-	FieldUserID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -117,6 +117,11 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
 }
 
+// ByOwnerID orders the results by the owner_id field.
+func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
+}
+
 // BySessionToken orders the results by the session_token field.
 func BySessionToken(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSessionToken, opts...).ToFunc()
@@ -135,11 +140,6 @@ func ByExpiresAt(opts ...sql.OrderTermOption) OrderOption {
 // ByOrganizationID orders the results by the organization_id field.
 func ByOrganizationID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrganizationID, opts...).ToFunc()
-}
-
-// ByUserID orders the results by the user_id field.
-func ByUserID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
 // ByOwnerField orders the results by owner field.

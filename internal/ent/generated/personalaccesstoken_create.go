@@ -105,6 +105,12 @@ func (patc *PersonalAccessTokenCreate) SetNillableDeletedBy(s *string) *Personal
 	return patc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (patc *PersonalAccessTokenCreate) SetOwnerID(s string) *PersonalAccessTokenCreate {
+	patc.mutation.SetOwnerID(s)
+	return patc
+}
+
 // SetName sets the "name" field.
 func (patc *PersonalAccessTokenCreate) SetName(s string) *PersonalAccessTokenCreate {
 	patc.mutation.SetName(s)
@@ -176,12 +182,6 @@ func (patc *PersonalAccessTokenCreate) SetNillableID(s *string) *PersonalAccessT
 	if s != nil {
 		patc.SetID(*s)
 	}
-	return patc
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (patc *PersonalAccessTokenCreate) SetOwnerID(id string) *PersonalAccessTokenCreate {
-	patc.mutation.SetOwnerID(id)
 	return patc
 }
 
@@ -269,6 +269,9 @@ func (patc *PersonalAccessTokenCreate) check() error {
 	}
 	if _, ok := patc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "PersonalAccessToken.updated_at"`)}
+	}
+	if _, ok := patc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "PersonalAccessToken.owner_id"`)}
 	}
 	if _, ok := patc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "PersonalAccessToken.name"`)}
@@ -381,7 +384,7 @@ func (patc *PersonalAccessTokenCreate) createSpec() (*PersonalAccessToken, *sqlg
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_personal_access_tokens = &nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

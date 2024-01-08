@@ -1351,12 +1351,12 @@ func HasEmailVerificationTokensWith(preds ...predicate.EmailVerificationToken) p
 	})
 }
 
-// HasResetTokens applies the HasEdge predicate on the "reset_tokens" edge.
-func HasResetTokens() predicate.User {
+// HasPasswordResetTokens applies the HasEdge predicate on the "password_reset_tokens" edge.
+func HasPasswordResetTokens() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ResetTokensTable, ResetTokensColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, PasswordResetTokensTable, PasswordResetTokensColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.PasswordResetToken
@@ -1365,10 +1365,10 @@ func HasResetTokens() predicate.User {
 	})
 }
 
-// HasResetTokensWith applies the HasEdge predicate on the "reset_tokens" edge with a given conditions (other predicates).
-func HasResetTokensWith(preds ...predicate.PasswordResetToken) predicate.User {
+// HasPasswordResetTokensWith applies the HasEdge predicate on the "password_reset_tokens" edge with a given conditions (other predicates).
+func HasPasswordResetTokensWith(preds ...predicate.PasswordResetToken) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newResetTokensStep()
+		step := newPasswordResetTokensStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.PasswordResetToken
 		step.Edge.Schema = schemaConfig.PasswordResetToken

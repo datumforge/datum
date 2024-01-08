@@ -30,6 +30,8 @@ type PasswordResetToken struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the reset token sent to the user via email which should only be provided to the /forgot-password endpoint + handler
 	Token string `json:"token,omitempty"`
 	// the ttl of the reset token which defaults to 15 minutes
@@ -40,9 +42,8 @@ type PasswordResetToken struct {
 	Secret *[]byte `json:"secret,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PasswordResetTokenQuery when eager-loading is set.
-	Edges             PasswordResetTokenEdges `json:"edges"`
-	user_reset_tokens *string
-	selectValues      sql.SelectValues
+	Edges        PasswordResetTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // PasswordResetTokenEdges holds the relations/edges for other nodes in the graph.
@@ -76,12 +77,10 @@ func (*PasswordResetToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case passwordresettoken.FieldSecret:
 			values[i] = new([]byte)
-		case passwordresettoken.FieldID, passwordresettoken.FieldCreatedBy, passwordresettoken.FieldUpdatedBy, passwordresettoken.FieldDeletedBy, passwordresettoken.FieldToken, passwordresettoken.FieldEmail:
+		case passwordresettoken.FieldID, passwordresettoken.FieldCreatedBy, passwordresettoken.FieldUpdatedBy, passwordresettoken.FieldDeletedBy, passwordresettoken.FieldOwnerID, passwordresettoken.FieldToken, passwordresettoken.FieldEmail:
 			values[i] = new(sql.NullString)
 		case passwordresettoken.FieldCreatedAt, passwordresettoken.FieldUpdatedAt, passwordresettoken.FieldDeletedAt, passwordresettoken.FieldTTL:
 			values[i] = new(sql.NullTime)
-		case passwordresettoken.ForeignKeys[0]: // user_reset_tokens
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -139,6 +138,12 @@ func (prt *PasswordResetToken) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				prt.DeletedBy = value.String
 			}
+		case passwordresettoken.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				prt.OwnerID = value.String
+			}
 		case passwordresettoken.FieldToken:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
@@ -163,13 +168,6 @@ func (prt *PasswordResetToken) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field secret", values[i])
 			} else if value != nil {
 				prt.Secret = value
-			}
-		case passwordresettoken.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field user_reset_tokens", values[i])
-			} else if value.Valid {
-				prt.user_reset_tokens = new(string)
-				*prt.user_reset_tokens = value.String
 			}
 		default:
 			prt.selectValues.Set(columns[i], values[i])
@@ -229,6 +227,9 @@ func (prt *PasswordResetToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(prt.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(prt.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("token=")
 	builder.WriteString(prt.Token)

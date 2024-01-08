@@ -61,8 +61,8 @@ const (
 	EdgeSetting = "setting"
 	// EdgeEmailVerificationTokens holds the string denoting the email_verification_tokens edge name in mutations.
 	EdgeEmailVerificationTokens = "email_verification_tokens"
-	// EdgeResetTokens holds the string denoting the reset_tokens edge name in mutations.
-	EdgeResetTokens = "reset_tokens"
+	// EdgePasswordResetTokens holds the string denoting the password_reset_tokens edge name in mutations.
+	EdgePasswordResetTokens = "password_reset_tokens"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrganizationsTable is the table that holds the organizations relation/edge. The primary key declared below.
@@ -88,7 +88,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "personalaccesstoken" package.
 	PersonalAccessTokensInverseTable = "personal_access_tokens"
 	// PersonalAccessTokensColumn is the table column denoting the personal_access_tokens relation/edge.
-	PersonalAccessTokensColumn = "user_personal_access_tokens"
+	PersonalAccessTokensColumn = "owner_id"
 	// SettingTable is the table that holds the setting relation/edge.
 	SettingTable = "user_settings"
 	// SettingInverseTable is the table name for the UserSetting entity.
@@ -103,13 +103,13 @@ const (
 	EmailVerificationTokensInverseTable = "email_verification_tokens"
 	// EmailVerificationTokensColumn is the table column denoting the email_verification_tokens relation/edge.
 	EmailVerificationTokensColumn = "owner_id"
-	// ResetTokensTable is the table that holds the reset_tokens relation/edge.
-	ResetTokensTable = "password_reset_tokens"
-	// ResetTokensInverseTable is the table name for the PasswordResetToken entity.
+	// PasswordResetTokensTable is the table that holds the password_reset_tokens relation/edge.
+	PasswordResetTokensTable = "password_reset_tokens"
+	// PasswordResetTokensInverseTable is the table name for the PasswordResetToken entity.
 	// It exists in this package in order to avoid circular dependency with the "passwordresettoken" package.
-	ResetTokensInverseTable = "password_reset_tokens"
-	// ResetTokensColumn is the table column denoting the reset_tokens relation/edge.
-	ResetTokensColumn = "user_reset_tokens"
+	PasswordResetTokensInverseTable = "password_reset_tokens"
+	// PasswordResetTokensColumn is the table column denoting the password_reset_tokens relation/edge.
+	PasswordResetTokensColumn = "owner_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -362,17 +362,17 @@ func ByEmailVerificationTokens(term sql.OrderTerm, terms ...sql.OrderTerm) Order
 	}
 }
 
-// ByResetTokensCount orders the results by reset_tokens count.
-func ByResetTokensCount(opts ...sql.OrderTermOption) OrderOption {
+// ByPasswordResetTokensCount orders the results by password_reset_tokens count.
+func ByPasswordResetTokensCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newResetTokensStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newPasswordResetTokensStep(), opts...)
 	}
 }
 
-// ByResetTokens orders the results by reset_tokens terms.
-func ByResetTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByPasswordResetTokens orders the results by password_reset_tokens terms.
+func ByPasswordResetTokens(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newResetTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newPasswordResetTokensStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newOrganizationsStep() *sqlgraph.Step {
@@ -417,10 +417,10 @@ func newEmailVerificationTokensStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, EmailVerificationTokensTable, EmailVerificationTokensColumn),
 	)
 }
-func newResetTokensStep() *sqlgraph.Step {
+func newPasswordResetTokensStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ResetTokensInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ResetTokensTable, ResetTokensColumn),
+		sqlgraph.To(PasswordResetTokensInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PasswordResetTokensTable, PasswordResetTokensColumn),
 	)
 }

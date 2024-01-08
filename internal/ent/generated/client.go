@@ -2573,15 +2573,15 @@ func (c *UserClient) QueryEmailVerificationTokens(u *User) *EmailVerificationTok
 	return query
 }
 
-// QueryResetTokens queries the reset_tokens edge of a User.
-func (c *UserClient) QueryResetTokens(u *User) *PasswordResetTokenQuery {
+// QueryPasswordResetTokens queries the password_reset_tokens edge of a User.
+func (c *UserClient) QueryPasswordResetTokens(u *User) *PasswordResetTokenQuery {
 	query := (&PasswordResetTokenClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := u.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(passwordresettoken.Table, passwordresettoken.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ResetTokensTable, user.ResetTokensColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PasswordResetTokensTable, user.PasswordResetTokensColumn),
 		)
 		schemaConfig := u.schemaConfig
 		step.To.Schema = schemaConfig.PasswordResetToken

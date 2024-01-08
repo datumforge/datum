@@ -38,7 +38,7 @@ type UserQuery struct {
 	withPersonalAccessTokens         *PersonalAccessTokenQuery
 	withSetting                      *UserSettingQuery
 	withEmailVerificationTokens      *EmailVerificationTokenQuery
-	withResetTokens                  *PasswordResetTokenQuery
+	withPasswordResetTokens          *PasswordResetTokenQuery
 	modifiers                        []func(*sql.Selector)
 	loadTotal                        []func(context.Context, []*User) error
 	withNamedOrganizations           map[string]*OrganizationQuery
@@ -46,7 +46,7 @@ type UserQuery struct {
 	withNamedGroups                  map[string]*GroupQuery
 	withNamedPersonalAccessTokens    map[string]*PersonalAccessTokenQuery
 	withNamedEmailVerificationTokens map[string]*EmailVerificationTokenQuery
-	withNamedResetTokens             map[string]*PasswordResetTokenQuery
+	withNamedPasswordResetTokens     map[string]*PasswordResetTokenQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -233,8 +233,8 @@ func (uq *UserQuery) QueryEmailVerificationTokens() *EmailVerificationTokenQuery
 	return query
 }
 
-// QueryResetTokens chains the current query on the "reset_tokens" edge.
-func (uq *UserQuery) QueryResetTokens() *PasswordResetTokenQuery {
+// QueryPasswordResetTokens chains the current query on the "password_reset_tokens" edge.
+func (uq *UserQuery) QueryPasswordResetTokens() *PasswordResetTokenQuery {
 	query := (&PasswordResetTokenClient{config: uq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := uq.prepareQuery(ctx); err != nil {
@@ -247,7 +247,7 @@ func (uq *UserQuery) QueryResetTokens() *PasswordResetTokenQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(passwordresettoken.Table, passwordresettoken.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.ResetTokensTable, user.ResetTokensColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.PasswordResetTokensTable, user.PasswordResetTokensColumn),
 		)
 		schemaConfig := uq.schemaConfig
 		step.To.Schema = schemaConfig.PasswordResetToken
@@ -456,7 +456,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withPersonalAccessTokens:    uq.withPersonalAccessTokens.Clone(),
 		withSetting:                 uq.withSetting.Clone(),
 		withEmailVerificationTokens: uq.withEmailVerificationTokens.Clone(),
-		withResetTokens:             uq.withResetTokens.Clone(),
+		withPasswordResetTokens:     uq.withPasswordResetTokens.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -529,14 +529,14 @@ func (uq *UserQuery) WithEmailVerificationTokens(opts ...func(*EmailVerification
 	return uq
 }
 
-// WithResetTokens tells the query-builder to eager-load the nodes that are connected to
-// the "reset_tokens" edge. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithResetTokens(opts ...func(*PasswordResetTokenQuery)) *UserQuery {
+// WithPasswordResetTokens tells the query-builder to eager-load the nodes that are connected to
+// the "password_reset_tokens" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithPasswordResetTokens(opts ...func(*PasswordResetTokenQuery)) *UserQuery {
 	query := (&PasswordResetTokenClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	uq.withResetTokens = query
+	uq.withPasswordResetTokens = query
 	return uq
 }
 
@@ -631,7 +631,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			uq.withPersonalAccessTokens != nil,
 			uq.withSetting != nil,
 			uq.withEmailVerificationTokens != nil,
-			uq.withResetTokens != nil,
+			uq.withPasswordResetTokens != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -702,10 +702,12 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	if query := uq.withResetTokens; query != nil {
-		if err := uq.loadResetTokens(ctx, query, nodes,
-			func(n *User) { n.Edges.ResetTokens = []*PasswordResetToken{} },
-			func(n *User, e *PasswordResetToken) { n.Edges.ResetTokens = append(n.Edges.ResetTokens, e) }); err != nil {
+	if query := uq.withPasswordResetTokens; query != nil {
+		if err := uq.loadPasswordResetTokens(ctx, query, nodes,
+			func(n *User) { n.Edges.PasswordResetTokens = []*PasswordResetToken{} },
+			func(n *User, e *PasswordResetToken) {
+				n.Edges.PasswordResetTokens = append(n.Edges.PasswordResetTokens, e)
+			}); err != nil {
 			return nil, err
 		}
 	}
@@ -744,10 +746,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
-	for name, query := range uq.withNamedResetTokens {
-		if err := uq.loadResetTokens(ctx, query, nodes,
-			func(n *User) { n.appendNamedResetTokens(name) },
-			func(n *User, e *PasswordResetToken) { n.appendNamedResetTokens(name, e) }); err != nil {
+	for name, query := range uq.withNamedPasswordResetTokens {
+		if err := uq.loadPasswordResetTokens(ctx, query, nodes,
+			func(n *User) { n.appendNamedPasswordResetTokens(name) },
+			func(n *User, e *PasswordResetToken) { n.appendNamedPasswordResetTokens(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -923,7 +925,9 @@ func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *Person
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(personalaccesstoken.FieldOwnerID)
+	}
 	query.Where(predicate.PersonalAccessToken(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(user.PersonalAccessTokensColumn), fks...))
 	}))
@@ -932,13 +936,10 @@ func (uq *UserQuery) loadPersonalAccessTokens(ctx context.Context, query *Person
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_personal_access_tokens
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_personal_access_tokens" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_personal_access_tokens" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -1002,7 +1003,7 @@ func (uq *UserQuery) loadEmailVerificationTokens(ctx context.Context, query *Ema
 	}
 	return nil
 }
-func (uq *UserQuery) loadResetTokens(ctx context.Context, query *PasswordResetTokenQuery, nodes []*User, init func(*User), assign func(*User, *PasswordResetToken)) error {
+func (uq *UserQuery) loadPasswordResetTokens(ctx context.Context, query *PasswordResetTokenQuery, nodes []*User, init func(*User), assign func(*User, *PasswordResetToken)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[string]*User)
 	for i := range nodes {
@@ -1012,22 +1013,21 @@ func (uq *UserQuery) loadResetTokens(ctx context.Context, query *PasswordResetTo
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(passwordresettoken.FieldOwnerID)
+	}
 	query.Where(predicate.PasswordResetToken(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(user.ResetTokensColumn), fks...))
+		s.Where(sql.InValues(s.C(user.PasswordResetTokensColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.user_reset_tokens
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "user_reset_tokens" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "user_reset_tokens" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}
@@ -1193,17 +1193,17 @@ func (uq *UserQuery) WithNamedEmailVerificationTokens(name string, opts ...func(
 	return uq
 }
 
-// WithNamedResetTokens tells the query-builder to eager-load the nodes that are connected to the "reset_tokens"
+// WithNamedPasswordResetTokens tells the query-builder to eager-load the nodes that are connected to the "password_reset_tokens"
 // edge with the given name. The optional arguments are used to configure the query builder of the edge.
-func (uq *UserQuery) WithNamedResetTokens(name string, opts ...func(*PasswordResetTokenQuery)) *UserQuery {
+func (uq *UserQuery) WithNamedPasswordResetTokens(name string, opts ...func(*PasswordResetTokenQuery)) *UserQuery {
 	query := (&PasswordResetTokenClient{config: uq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	if uq.withNamedResetTokens == nil {
-		uq.withNamedResetTokens = make(map[string]*PasswordResetTokenQuery)
+	if uq.withNamedPasswordResetTokens == nil {
+		uq.withNamedPasswordResetTokens = make(map[string]*PasswordResetTokenQuery)
 	}
-	uq.withNamedResetTokens[name] = query
+	uq.withNamedPasswordResetTokens[name] = query
 	return uq
 }
 

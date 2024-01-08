@@ -97,6 +97,11 @@ func DeletedBy(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldDeletedBy, v))
 }
 
+// OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
+func OwnerID(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldOwnerID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldName, v))
@@ -477,6 +482,71 @@ func DeletedByContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldDeletedBy, v))
 }
 
+// OwnerIDEQ applies the EQ predicate on the "owner_id" field.
+func OwnerIDEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// OwnerIDNEQ applies the NEQ predicate on the "owner_id" field.
+func OwnerIDNEQ(v string) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldOwnerID, v))
+}
+
+// OwnerIDIn applies the In predicate on the "owner_id" field.
+func OwnerIDIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDNotIn applies the NotIn predicate on the "owner_id" field.
+func OwnerIDNotIn(vs ...string) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDGT applies the GT predicate on the "owner_id" field.
+func OwnerIDGT(v string) predicate.Group {
+	return predicate.Group(sql.FieldGT(FieldOwnerID, v))
+}
+
+// OwnerIDGTE applies the GTE predicate on the "owner_id" field.
+func OwnerIDGTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldGTE(FieldOwnerID, v))
+}
+
+// OwnerIDLT applies the LT predicate on the "owner_id" field.
+func OwnerIDLT(v string) predicate.Group {
+	return predicate.Group(sql.FieldLT(FieldOwnerID, v))
+}
+
+// OwnerIDLTE applies the LTE predicate on the "owner_id" field.
+func OwnerIDLTE(v string) predicate.Group {
+	return predicate.Group(sql.FieldLTE(FieldOwnerID, v))
+}
+
+// OwnerIDContains applies the Contains predicate on the "owner_id" field.
+func OwnerIDContains(v string) predicate.Group {
+	return predicate.Group(sql.FieldContains(FieldOwnerID, v))
+}
+
+// OwnerIDHasPrefix applies the HasPrefix predicate on the "owner_id" field.
+func OwnerIDHasPrefix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasPrefix(FieldOwnerID, v))
+}
+
+// OwnerIDHasSuffix applies the HasSuffix predicate on the "owner_id" field.
+func OwnerIDHasSuffix(v string) predicate.Group {
+	return predicate.Group(sql.FieldHasSuffix(FieldOwnerID, v))
+}
+
+// OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
+func OwnerIDEqualFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldEqualFold(FieldOwnerID, v))
+}
+
+// OwnerIDContainsFold applies the ContainsFold predicate on the "owner_id" field.
+func OwnerIDContainsFold(v string) predicate.Group {
+	return predicate.Group(sql.FieldContainsFold(FieldOwnerID, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldName, v))
@@ -832,6 +902,35 @@ func DisplayNameContainsFold(v string) predicate.Group {
 	return predicate.Group(sql.FieldContainsFold(FieldDisplayName, v))
 }
 
+// HasOwner applies the HasEdge predicate on the "owner" edge.
+func HasOwner() predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+		)
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Group
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
+func HasOwnerWith(preds ...predicate.Organization) predicate.Group {
+	return predicate.Group(func(s *sql.Selector) {
+		step := newOwnerStep()
+		schemaConfig := internal.SchemaConfigFromContext(s.Context())
+		step.To.Schema = schemaConfig.Organization
+		step.Edge.Schema = schemaConfig.Group
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasSetting applies the HasEdge predicate on the "setting" edge.
 func HasSetting() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
@@ -866,11 +965,11 @@ func HasUsers() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, UsersTable, UsersPrimaryKey...),
+			sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.GroupUsers
+		step.Edge.Schema = schemaConfig.GroupMembership
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
@@ -881,7 +980,7 @@ func HasUsersWith(preds ...predicate.User) predicate.Group {
 		step := newUsersStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
 		step.To.Schema = schemaConfig.User
-		step.Edge.Schema = schemaConfig.GroupUsers
+		step.Edge.Schema = schemaConfig.GroupMembership
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)
@@ -890,27 +989,27 @@ func HasUsersWith(preds ...predicate.User) predicate.Group {
 	})
 }
 
-// HasOwner applies the HasEdge predicate on the "owner" edge.
-func HasOwner() predicate.Group {
+// HasGroupMemberships applies the HasEdge predicate on the "group_memberships" edge.
+func HasGroupMemberships() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, OwnerTable, OwnerColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, GroupMembershipsTable, GroupMembershipsColumn),
 		)
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Organization
-		step.Edge.Schema = schemaConfig.Group
+		step.To.Schema = schemaConfig.GroupMembership
+		step.Edge.Schema = schemaConfig.GroupMembership
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasOwnerWith applies the HasEdge predicate on the "owner" edge with a given conditions (other predicates).
-func HasOwnerWith(preds ...predicate.Organization) predicate.Group {
+// HasGroupMembershipsWith applies the HasEdge predicate on the "group_memberships" edge with a given conditions (other predicates).
+func HasGroupMembershipsWith(preds ...predicate.GroupMembership) predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
-		step := newOwnerStep()
+		step := newGroupMembershipsStep()
 		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Organization
-		step.Edge.Schema = schemaConfig.Group
+		step.To.Schema = schemaConfig.GroupMembership
+		step.Edge.Schema = schemaConfig.GroupMembership
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

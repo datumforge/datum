@@ -45,6 +45,18 @@ func (f GroupFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupMutation", m)
 }
 
+// The GroupMembershipFunc type is an adapter to allow the use of ordinary
+// function as GroupMembership mutator.
+type GroupMembershipFunc func(context.Context, *generated.GroupMembershipMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GroupMembershipFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.GroupMembershipMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.GroupMembershipMutation", m)
+}
+
 // The GroupSettingFunc type is an adapter to allow the use of ordinary
 // function as GroupSetting mutator.
 type GroupSettingFunc func(context.Context, *generated.GroupSettingMutation) (generated.Value, error)
@@ -91,6 +103,18 @@ func (f OhAuthTooTokenFunc) Mutate(ctx context.Context, m generated.Mutation) (g
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OhAuthTooTokenMutation", m)
+}
+
+// The OrgMembershipFunc type is an adapter to allow the use of ordinary
+// function as OrgMembership mutator.
+type OrgMembershipFunc func(context.Context, *generated.OrgMembershipMutation) (generated.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OrgMembershipFunc) Mutate(ctx context.Context, m generated.Mutation) (generated.Value, error) {
+	if mv, ok := m.(*generated.OrgMembershipMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *generated.OrgMembershipMutation", m)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary

@@ -30,6 +30,8 @@ const (
 	FieldDeletedAt = "deleted_at"
 	// FieldDeletedBy holds the string denoting the deleted_by field in the database.
 	FieldDeletedBy = "deleted_by"
+	// FieldOwnerID holds the string denoting the owner_id field in the database.
+	FieldOwnerID = "owner_id"
 	// FieldTier holds the string denoting the tier field in the database.
 	FieldTier = "tier"
 	// FieldExternalCustomerID holds the string denoting the external_customer_id field in the database.
@@ -52,7 +54,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "organization" package.
 	OwnerInverseTable = "organizations"
 	// OwnerColumn is the table column denoting the owner relation/edge.
-	OwnerColumn = "organization_entitlements"
+	OwnerColumn = "owner_id"
 )
 
 // Columns holds all SQL columns for entitlement fields.
@@ -64,6 +66,7 @@ var Columns = []string{
 	FieldUpdatedBy,
 	FieldDeletedAt,
 	FieldDeletedBy,
+	FieldOwnerID,
 	FieldTier,
 	FieldExternalCustomerID,
 	FieldExternalSubscriptionID,
@@ -72,21 +75,10 @@ var Columns = []string{
 	FieldCancelled,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "entitlements"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"organization_entitlements",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -178,6 +170,11 @@ func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedBy orders the results by the deleted_by field.
 func ByDeletedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedBy, opts...).ToFunc()
+}
+
+// ByOwnerID orders the results by the owner_id field.
+func ByOwnerID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOwnerID, opts...).ToFunc()
 }
 
 // ByTier orders the results by the tier field.

@@ -30,6 +30,8 @@ type Entitlement struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// Tier holds the value of the "tier" field.
 	Tier entitlement.Tier `json:"tier,omitempty"`
 	// used to store references to external systems, e.g. Stripe
@@ -44,9 +46,8 @@ type Entitlement struct {
 	Cancelled bool `json:"cancelled,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntitlementQuery when eager-loading is set.
-	Edges                     EntitlementEdges `json:"edges"`
-	organization_entitlements *string
-	selectValues              sql.SelectValues
+	Edges        EntitlementEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // EntitlementEdges holds the relations/edges for other nodes in the graph.
@@ -80,12 +81,10 @@ func (*Entitlement) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case entitlement.FieldExpires, entitlement.FieldCancelled:
 			values[i] = new(sql.NullBool)
-		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldDeletedBy, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID:
+		case entitlement.FieldID, entitlement.FieldCreatedBy, entitlement.FieldUpdatedBy, entitlement.FieldDeletedBy, entitlement.FieldOwnerID, entitlement.FieldTier, entitlement.FieldExternalCustomerID, entitlement.FieldExternalSubscriptionID:
 			values[i] = new(sql.NullString)
 		case entitlement.FieldCreatedAt, entitlement.FieldUpdatedAt, entitlement.FieldDeletedAt, entitlement.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
-		case entitlement.ForeignKeys[0]: // organization_entitlements
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -143,6 +142,12 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.DeletedBy = value.String
 			}
+		case entitlement.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				e.OwnerID = value.String
+			}
 		case entitlement.FieldTier:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field tier", values[i])
@@ -179,13 +184,6 @@ func (e *Entitlement) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field cancelled", values[i])
 			} else if value.Valid {
 				e.Cancelled = value.Bool
-			}
-		case entitlement.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_entitlements", values[i])
-			} else if value.Valid {
-				e.organization_entitlements = new(string)
-				*e.organization_entitlements = value.String
 			}
 		default:
 			e.selectValues.Set(columns[i], values[i])
@@ -245,6 +243,9 @@ func (e *Entitlement) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("deleted_by=")
 	builder.WriteString(e.DeletedBy)
+	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(e.OwnerID)
 	builder.WriteString(", ")
 	builder.WriteString("tier=")
 	builder.WriteString(fmt.Sprintf("%v", e.Tier))

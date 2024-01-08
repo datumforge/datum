@@ -41,8 +41,6 @@ const (
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
-	// EdgeUsers holds the string denoting the users edge name in mutations.
-	EdgeUsers = "users"
 	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeIntegrations holds the string denoting the integrations edge name in mutations.
@@ -53,6 +51,10 @@ const (
 	EdgeEntitlements = "entitlements"
 	// EdgeOauthprovider holds the string denoting the oauthprovider edge name in mutations.
 	EdgeOauthprovider = "oauthprovider"
+	// EdgeUsers holds the string denoting the users edge name in mutations.
+	EdgeUsers = "users"
+	// EdgeOrgMemberships holds the string denoting the org_memberships edge name in mutations.
+	EdgeOrgMemberships = "org_memberships"
 	// Table holds the table name of the organization in the database.
 	Table = "organizations"
 	// ParentTable is the table that holds the parent relation/edge.
@@ -63,18 +65,13 @@ const (
 	ChildrenTable = "organizations"
 	// ChildrenColumn is the table column denoting the children relation/edge.
 	ChildrenColumn = "parent_organization_id"
-	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
-	UsersTable = "user_organizations"
-	// UsersInverseTable is the table name for the User entity.
-	// It exists in this package in order to avoid circular dependency with the "user" package.
-	UsersInverseTable = "users"
 	// GroupsTable is the table that holds the groups relation/edge.
 	GroupsTable = "groups"
 	// GroupsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
 	// GroupsColumn is the table column denoting the groups relation/edge.
-	GroupsColumn = "organization_groups"
+	GroupsColumn = "owner_id"
 	// IntegrationsTable is the table that holds the integrations relation/edge.
 	IntegrationsTable = "integrations"
 	// IntegrationsInverseTable is the table name for the Integration entity.
@@ -95,7 +92,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "entitlement" package.
 	EntitlementsInverseTable = "entitlements"
 	// EntitlementsColumn is the table column denoting the entitlements relation/edge.
-	EntitlementsColumn = "organization_entitlements"
+	EntitlementsColumn = "owner_id"
 	// OauthproviderTable is the table that holds the oauthprovider relation/edge.
 	OauthproviderTable = "oauth_providers"
 	// OauthproviderInverseTable is the table name for the OauthProvider entity.
@@ -103,6 +100,18 @@ const (
 	OauthproviderInverseTable = "oauth_providers"
 	// OauthproviderColumn is the table column denoting the oauthprovider relation/edge.
 	OauthproviderColumn = "organization_oauthprovider"
+	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
+	UsersTable = "org_memberships"
+	// UsersInverseTable is the table name for the User entity.
+	// It exists in this package in order to avoid circular dependency with the "user" package.
+	UsersInverseTable = "users"
+	// OrgMembershipsTable is the table that holds the org_memberships relation/edge.
+	OrgMembershipsTable = "org_memberships"
+	// OrgMembershipsInverseTable is the table name for the OrgMembership entity.
+	// It exists in this package in order to avoid circular dependency with the "orgmembership" package.
+	OrgMembershipsInverseTable = "org_memberships"
+	// OrgMembershipsColumn is the table column denoting the org_memberships relation/edge.
+	OrgMembershipsColumn = "org_id"
 )
 
 // Columns holds all SQL columns for organization fields.
@@ -124,7 +133,7 @@ var Columns = []string{
 var (
 	// UsersPrimaryKey and UsersColumn2 are the table columns denoting the
 	// primary key for the users relation (M2M).
-	UsersPrimaryKey = []string{"user_id", "organization_id"}
+	UsersPrimaryKey = []string{"user_id", "org_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -248,20 +257,6 @@ func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByUsersCount orders the results by users count.
-func ByUsersCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newUsersStep(), opts...)
-	}
-}
-
-// ByUsers orders the results by users terms.
-func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByGroupsCount orders the results by groups count.
 func ByGroupsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -324,6 +319,34 @@ func ByOauthprovider(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOauthproviderStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByUsersCount orders the results by users count.
+func ByUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newUsersStep(), opts...)
+	}
+}
+
+// ByUsers orders the results by users terms.
+func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByOrgMembershipsCount orders the results by org_memberships count.
+func ByOrgMembershipsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOrgMembershipsStep(), opts...)
+	}
+}
+
+// ByOrgMemberships orders the results by org_memberships terms.
+func ByOrgMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOrgMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newParentStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -336,13 +359,6 @@ func newChildrenStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
-	)
-}
-func newUsersStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(UsersInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
 	)
 }
 func newGroupsStep() *sqlgraph.Step {
@@ -378,5 +394,19 @@ func newOauthproviderStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OauthproviderInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, OauthproviderTable, OauthproviderColumn),
+	)
+}
+func newUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(UsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, UsersTable, UsersPrimaryKey...),
+	)
+}
+func newOrgMembershipsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OrgMembershipsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, OrgMembershipsTable, OrgMembershipsColumn),
 	)
 }

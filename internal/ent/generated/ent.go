@@ -15,12 +15,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -89,10 +91,12 @@ func checkColumn(table, column string) error {
 			emailverificationtoken.Table: emailverificationtoken.ValidColumn,
 			entitlement.Table:            entitlement.ValidColumn,
 			group.Table:                  group.ValidColumn,
+			groupmembership.Table:        groupmembership.ValidColumn,
 			groupsetting.Table:           groupsetting.ValidColumn,
 			integration.Table:            integration.ValidColumn,
 			oauthprovider.Table:          oauthprovider.ValidColumn,
 			ohauthtootoken.Table:         ohauthtootoken.ValidColumn,
+			orgmembership.Table:          orgmembership.ValidColumn,
 			organization.Table:           organization.ValidColumn,
 			organizationsetting.Table:    organizationsetting.ValidColumn,
 			passwordresettoken.Table:     passwordresettoken.ValidColumn,

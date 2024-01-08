@@ -44,6 +44,11 @@ func (r *queryResolver) Groups(ctx context.Context, after *entgql.Cursor[string]
 	return r.client.Group.Query().Paginate(ctx, after, first, before, last, generated.WithGroupOrder(orderBy), generated.WithGroupFilter(where.Filter))
 }
 
+// GroupMemberships is the resolver for the groupMemberships field.
+func (r *queryResolver) GroupMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupMembershipWhereInput) (*generated.GroupMembershipConnection, error) {
+	panic(fmt.Errorf("not implemented: GroupMemberships - groupMemberships"))
+}
+
 // GroupSettings is the resolver for the groupSettings field.
 func (r *queryResolver) GroupSettings(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.GroupSettingWhereInput) (*generated.GroupSettingConnection, error) {
 	// if auth is disabled, policy decisions will be skipped
@@ -67,6 +72,11 @@ func (r *queryResolver) OauthProviders(ctx context.Context, after *entgql.Cursor
 // OhAuthTooTokens is the resolver for the ohAuthTooTokens field.
 func (r *queryResolver) OhAuthTooTokens(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OhAuthTooTokenWhereInput) (*generated.OhAuthTooTokenConnection, error) {
 	panic(fmt.Errorf("not implemented: OhAuthTooTokens - ohAuthTooTokens"))
+}
+
+// OrgMemberships is the resolver for the orgMemberships field.
+func (r *queryResolver) OrgMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) (*generated.OrgMembershipConnection, error) {
+	panic(fmt.Errorf("not implemented: OrgMemberships - orgMemberships"))
 }
 
 // Organizations is the resolver for the organizations field.

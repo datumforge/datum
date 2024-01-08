@@ -1,0 +1,75 @@
+extend type Query {
+    """
+    Look up orgMembership by ID
+    """
+     orgMembership(
+        """
+        ID of the orgMembership
+        """
+        id: ID!
+    ):  OrgMembership!
+}
+
+extend type Mutation{
+    """
+    Create a new orgMembership
+    """
+    createOrgMembership(
+        """
+        values of the orgMembership
+        """
+        input: CreateOrgMembershipInput!
+    ): OrgMembershipCreatePayload!
+    """
+    Update an existing orgMembership
+    """
+    updateOrgMembership(
+        """
+        ID of the orgMembership
+        """
+        id: ID!
+        """
+        New values for the orgMembership
+        """
+        input: UpdateOrgMembershipInput!
+    ): OrgMembershipUpdatePayload!
+    """
+    Delete an existing orgMembership
+    """
+    deleteOrgMembership(
+        """
+        ID of the orgMembership
+        """
+        id: ID!
+    ): OrgMembershipDeletePayload!
+}
+
+"""
+Return response for createOrgMembership mutation
+"""
+type OrgMembershipCreatePayload {
+    """
+    Created orgMembership
+    """
+    orgMembership: OrgMembership!
+}
+
+"""
+Return response for updateOrgMembership mutation
+"""
+type OrgMembershipUpdatePayload {
+    """
+    Updated orgMembership
+    """
+    orgMembership: OrgMembership!
+}
+
+"""
+Return response for deleteOrgMembership mutation
+"""
+type OrgMembershipDeletePayload {
+    """
+    Deleted orgMembership ID
+    """
+    deletedID: ID!
+}

@@ -97,15 +97,6 @@ type UserEdges struct {
 	namedOrgMemberships          map[string][]*OrgMembership
 }
 
-// OrganizationsOrErr returns the Organizations value or an error if the edge
-// was not loaded in eager-loading.
-func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
-	if e.loadedTypes[0] {
-		return e.Organizations, nil
-	}
-	return nil, &NotLoadedError{edge: "organizations"}
-}
-
 // SessionsOrErr returns the Sessions value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) SessionsOrErr() ([]*Session, error) {
@@ -158,7 +149,7 @@ func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, er
 // PasswordResetTokensOrErr returns the PasswordResetTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetToken, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[4] {
 		return e.PasswordResetTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "password_reset_tokens"}
@@ -171,6 +162,15 @@ func (e UserEdges) GroupsOrErr() ([]*Group, error) {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
+}
+
+// OrganizationsOrErr returns the Organizations value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OrganizationsOrErr() ([]*Organization, error) {
+	if e.loadedTypes[6] {
+		return e.Organizations, nil
+	}
+	return nil, &NotLoadedError{edge: "organizations"}
 }
 
 // GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge

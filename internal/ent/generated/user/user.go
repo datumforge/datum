@@ -61,7 +61,7 @@ const (
 	EdgeEmailVerificationTokens = "email_verification_tokens"
 	// EdgePasswordResetTokens holds the string denoting the password_reset_tokens edge name in mutations.
 	EdgePasswordResetTokens = "password_reset_tokens"
-	// EdgeResetTokens holds the string denoting the reset_tokens edge name in mutations.
+	// EdgeGroups holds the string denoting the groups edge name in mutations.
 	EdgeGroups = "groups"
 	// EdgeOrganizations holds the string denoting the organizations edge name in mutations.
 	EdgeOrganizations = "organizations"

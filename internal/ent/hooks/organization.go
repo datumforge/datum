@@ -54,6 +54,7 @@ func HookOrganization() ent.Hook {
 					}
 				}
 			}
+
 			return next.Mutate(ctx, mutation)
 		})
 	}, ent.OpCreate|ent.OpUpdateOne)

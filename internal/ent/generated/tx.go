@@ -18,6 +18,8 @@ type Tx struct {
 	Entitlement *EntitlementClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
+	// GroupMembership is the client for interacting with the GroupMembership builders.
+	GroupMembership *GroupMembershipClient
 	// GroupSetting is the client for interacting with the GroupSetting builders.
 	GroupSetting *GroupSettingClient
 	// Integration is the client for interacting with the Integration builders.
@@ -26,6 +28,8 @@ type Tx struct {
 	OauthProvider *OauthProviderClient
 	// OhAuthTooToken is the client for interacting with the OhAuthTooToken builders.
 	OhAuthTooToken *OhAuthTooTokenClient
+	// OrgMembership is the client for interacting with the OrgMembership builders.
+	OrgMembership *OrgMembershipClient
 	// Organization is the client for interacting with the Organization builders.
 	Organization *OrganizationClient
 	// OrganizationSetting is the client for interacting with the OrganizationSetting builders.
@@ -174,10 +178,12 @@ func (tx *Tx) init() {
 	tx.EmailVerificationToken = NewEmailVerificationTokenClient(tx.config)
 	tx.Entitlement = NewEntitlementClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
+	tx.GroupMembership = NewGroupMembershipClient(tx.config)
 	tx.GroupSetting = NewGroupSettingClient(tx.config)
 	tx.Integration = NewIntegrationClient(tx.config)
 	tx.OauthProvider = NewOauthProviderClient(tx.config)
 	tx.OhAuthTooToken = NewOhAuthTooTokenClient(tx.config)
+	tx.OrgMembership = NewOrgMembershipClient(tx.config)
 	tx.Organization = NewOrganizationClient(tx.config)
 	tx.OrganizationSetting = NewOrganizationSettingClient(tx.config)
 	tx.PasswordResetToken = NewPasswordResetTokenClient(tx.config)

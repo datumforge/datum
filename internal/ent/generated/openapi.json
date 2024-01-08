@@ -465,6 +465,9 @@
                   "deleted_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -497,9 +500,11 @@
                 "required": [
                   "created_at",
                   "updated_at",
+                  "owner_id",
                   "tier",
                   "expires",
-                  "cancelled"
+                  "cancelled",
+                  "owner"
                 ]
               }
             }
@@ -648,6 +653,9 @@
                   "deleted_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "tier": {
                     "type": "string",
                     "enum": [
@@ -734,6 +742,405 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Entitlement_OwnerRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/group-memberships": {
+      "get": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "List GroupMemberships",
+        "description": "List GroupMemberships.",
+        "operationId": "listGroupMembership",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result GroupMembership list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupMembershipList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "Create a new GroupMembership",
+        "description": "Creates a new GroupMembership and persists it to storage.",
+        "operationId": "createGroupMembership",
+        "requestBody": {
+          "description": "GroupMembership to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "OWNER",
+                      "ADMIN",
+                      "MEMBER"
+                    ],
+                    "default": "MEMBER"
+                  },
+                  "group_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "role",
+                  "group_id",
+                  "user_id",
+                  "group",
+                  "user"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "GroupMembership created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembershipCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/group-memberships/{id}": {
+      "get": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "Find a GroupMembership by ID",
+        "description": "Finds the GroupMembership with the requested ID and returns it.",
+        "operationId": "readGroupMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "GroupMembership with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembershipRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "Deletes a GroupMembership by ID",
+        "description": "Deletes the GroupMembership with the requested ID.",
+        "operationId": "deleteGroupMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "GroupMembership with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "Updates a GroupMembership",
+        "description": "Updates a GroupMembership and persists changes to storage.",
+        "operationId": "updateGroupMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "GroupMembership properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "OWNER",
+                      "ADMIN",
+                      "MEMBER"
+                    ],
+                    "default": "MEMBER"
+                  },
+                  "group_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "group": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "GroupMembership updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembershipUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/group-memberships/{id}/group": {
+      "get": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "Find the attached Group",
+        "description": "Find the attached Group of the GroupMembership with the given ID",
+        "operationId": "readGroupMembershipGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Group attached to GroupMembership with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembership_GroupRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/group-memberships/{id}/user": {
+      "get": {
+        "tags": [
+          "GroupMembership"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the GroupMembership with the given ID",
+        "operationId": "readGroupMembershipUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the GroupMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to GroupMembership with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupMembership_UserRead"
                 }
               }
             }
@@ -1237,6 +1644,9 @@
                   "deleted_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -1252,6 +1662,9 @@
                   "display_name": {
                     "type": "string"
                   },
+                  "owner": {
+                    "type": "string"
+                  },
                   "setting": {
                     "type": "string"
                   },
@@ -1261,17 +1674,21 @@
                       "type": "string"
                     }
                   },
-                  "owner": {
-                    "type": "string"
+                  "group_memberships": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
                   "created_at",
                   "updated_at",
+                  "owner_id",
                   "name",
                   "display_name",
-                  "setting",
-                  "owner"
+                  "owner",
+                  "setting"
                 ]
               }
             }
@@ -1420,6 +1837,9 @@
                   "deleted_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -1435,6 +1855,9 @@
                   "display_name": {
                     "type": "string"
                   },
+                  "owner": {
+                    "type": "string"
+                  },
                   "setting": {
                     "type": "string"
                   },
@@ -1444,8 +1867,11 @@
                       "type": "string"
                     }
                   },
-                  "owner": {
-                    "type": "string"
+                  "group_memberships": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1460,6 +1886,70 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GroupUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/groups/{id}/group-memberships": {
+      "get": {
+        "tags": [
+          "Group"
+        ],
+        "summary": "List attached GroupMemberships",
+        "description": "List attached GroupMemberships.",
+        "operationId": "listGroupGroupMemberships",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Group",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Groups list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Group_GroupMembershipsList"
+                  }
                 }
               }
             }
@@ -2749,6 +3239,405 @@
         }
       }
     },
+    "/org-memberships": {
+      "get": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "List OrgMemberships",
+        "description": "List OrgMemberships.",
+        "operationId": "listOrgMembership",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer",
+              "maximum": 255,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result OrgMembership list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrgMembershipList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "Create a new OrgMembership",
+        "description": "Creates a new OrgMembership and persists it to storage.",
+        "operationId": "createOrgMembership",
+        "requestBody": {
+          "description": "OrgMembership to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "created_by": {
+                    "type": "string"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "OWNER",
+                      "ADMIN",
+                      "MEMBER"
+                    ],
+                    "default": "MEMBER"
+                  },
+                  "org_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "org": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "created_at",
+                  "updated_at",
+                  "role",
+                  "org_id",
+                  "user_id",
+                  "org",
+                  "user"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrgMembership created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembershipCreate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/org-memberships/{id}": {
+      "get": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "Find a OrgMembership by ID",
+        "description": "Finds the OrgMembership with the requested ID and returns it.",
+        "operationId": "readOrgMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OrgMembership with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembershipRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "Deletes a OrgMembership by ID",
+        "description": "Deletes the OrgMembership with the requested ID.",
+        "operationId": "deleteOrgMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OrgMembership with requested ID was deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "Updates a OrgMembership",
+        "description": "Updates a OrgMembership and persists changes to storage.",
+        "operationId": "updateOrgMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "OrgMembership properties to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "updated_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updated_by": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "OWNER",
+                      "ADMIN",
+                      "MEMBER"
+                    ],
+                    "default": "MEMBER"
+                  },
+                  "org_id": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "org": {
+                    "type": "string"
+                  },
+                  "user": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OrgMembership updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembershipUpdate"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/org-memberships/{id}/org": {
+      "get": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "Find the attached Organization",
+        "description": "Find the attached Organization of the OrgMembership with the given ID",
+        "operationId": "readOrgMembershipOrg",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization attached to OrgMembership with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembership_OrgRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/org-memberships/{id}/user": {
+      "get": {
+        "tags": [
+          "OrgMembership"
+        ],
+        "summary": "Find the attached User",
+        "description": "Find the attached User of the OrgMembership with the given ID",
+        "operationId": "readOrgMembershipUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the OrgMembership",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User attached to OrgMembership with requested ID was found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgMembership_UserRead"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organization-settings": {
       "get": {
         "tags": [
@@ -3264,12 +4153,6 @@
                       "type": "string"
                     }
                   },
-                  "users": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "groups": {
                     "type": "array",
                     "items": {
@@ -3292,6 +4175,18 @@
                     }
                   },
                   "oauthprovider": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "org_memberships": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -3470,12 +4365,6 @@
                       "type": "string"
                     }
                   },
-                  "users": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "groups": {
                     "type": "array",
                     "items": {
@@ -3498,6 +4387,18 @@
                     }
                   },
                   "oauthprovider": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "org_memberships": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -3835,6 +4736,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization_OauthproviderList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/organizations/{id}/org-memberships": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached OrgMemberships",
+        "description": "List attached OrgMemberships.",
+        "operationId": "listOrganizationOrgMemberships",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_OrgMembershipsList"
                   }
                 }
               }
@@ -5663,13 +6628,7 @@
                   "oauth": {
                     "type": "boolean"
                   },
-                  "organizations": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "groups": {
+                  "sessions": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5697,6 +6656,30 @@
                     }
                   },
                   "password_reset_tokens": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "group_memberships": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "org_memberships": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5895,13 +6878,7 @@
                   "oauth": {
                     "type": "boolean"
                   },
-                  "organizations": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "groups": {
+                  "sessions": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5929,6 +6906,30 @@
                     }
                   },
                   "password_reset_tokens": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "groups": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "organizations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "group_memberships": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "org_memberships": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -6030,6 +7031,70 @@
         }
       }
     },
+    "/users/{id}/group-memberships": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached GroupMemberships",
+        "description": "List attached GroupMemberships.",
+        "operationId": "listUserGroupMemberships",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_GroupMembershipsList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/users/{id}/groups": {
       "get": {
         "tags": [
@@ -6074,6 +7139,70 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/User_GroupsList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
+    "/users/{id}/org-memberships": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached OrgMemberships",
+        "description": "List attached OrgMemberships.",
+        "operationId": "listUserOrgMemberships",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_OrgMembershipsList"
                   }
                 }
               }
@@ -6770,6 +7899,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6803,9 +7935,11 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "tier",
           "expires",
-          "cancelled"
+          "cancelled",
+          "owner"
         ]
       },
       "EntitlementCreate": {
@@ -6833,6 +7967,9 @@
             "format": "date-time"
           },
           "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
             "type": "string"
           },
           "tier": {
@@ -6865,6 +8002,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "tier",
           "expires",
           "cancelled"
@@ -6897,6 +8035,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6927,6 +8068,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "tier",
           "expires",
           "cancelled"
@@ -6959,6 +8101,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -6989,6 +8134,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "tier",
           "expires",
           "cancelled"
@@ -7021,6 +8167,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -7051,6 +8200,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "tier",
           "expires",
           "cancelled"
@@ -7135,6 +8285,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7150,6 +8303,9 @@
           "display_name": {
             "type": "string"
           },
+          "owner": {
+            "$ref": "#/components/schemas/Organization"
+          },
           "setting": {
             "$ref": "#/components/schemas/GroupSetting"
           },
@@ -7159,18 +8315,22 @@
               "$ref": "#/components/schemas/User"
             }
           },
-          "owner": {
-            "$ref": "#/components/schemas/Organization"
+          "group_memberships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupMembership"
+            }
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name",
-          "setting",
-          "owner"
+          "owner",
+          "setting"
         ]
       },
       "GroupCreate": {
@@ -7200,6 +8360,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7220,6 +8383,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name"
         ]
@@ -7251,6 +8415,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7271,8 +8438,368 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name"
+        ]
+      },
+      "GroupMembership": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "group": {
+            "$ref": "#/components/schemas/Group"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id",
+          "group",
+          "user"
+        ]
+      },
+      "GroupMembershipCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembershipUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
+        ]
+      },
+      "GroupMembership_GroupRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "gravatar_logo_url": {
+            "type": "string"
+          },
+          "logo_url": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "name",
+          "display_name"
+        ]
+      },
+      "GroupMembership_UserRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name",
+          "oauth"
         ]
       },
       "GroupRead": {
@@ -7302,6 +8829,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7322,6 +8852,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name"
         ]
@@ -7701,6 +9232,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7721,6 +9255,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name"
         ]
@@ -7752,6 +9287,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -7772,8 +9310,54 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name"
+        ]
+      },
+      "Group_GroupMembershipsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "group_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "group_id",
+          "user_id"
         ]
       },
       "Group_OwnerRead": {
@@ -9013,6 +10597,362 @@
           "last_used"
         ]
       },
+      "OrgMembership": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          },
+          "org": {
+            "$ref": "#/components/schemas/Organization"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id",
+          "org",
+          "user"
+        ]
+      },
+      "OrgMembershipCreate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembershipUpdate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
+      "OrgMembership_OrgRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parent_organization_id": {
+            "type": "string"
+          },
+          "personal_org": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "name",
+          "display_name",
+          "personal_org"
+        ]
+      },
+      "OrgMembership_UserRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "avatar_remote_url": {
+            "type": "string"
+          },
+          "avatar_local_file": {
+            "type": "string"
+          },
+          "avatar_updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sub": {
+            "type": "string"
+          },
+          "oauth": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "email",
+          "first_name",
+          "last_name",
+          "display_name",
+          "oauth"
+        ]
+      },
       "Organization": {
         "type": "object",
         "properties": {
@@ -9064,12 +11004,6 @@
               "$ref": "#/components/schemas/Organization"
             }
           },
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
-          },
           "groups": {
             "type": "array",
             "items": {
@@ -9095,6 +11029,18 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OauthProvider"
+            }
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "org_memberships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgMembership"
             }
           }
         },
@@ -9799,6 +11745,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "tier": {
             "type": "string",
             "enum": [
@@ -9829,6 +11778,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "tier",
           "expires",
           "cancelled"
@@ -9861,6 +11811,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -9881,6 +11834,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "display_name"
         ]
@@ -10004,6 +11958,51 @@
           "token_url",
           "auth_style",
           "info_url"
+        ]
+      },
+      "Organization_OrgMembershipsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
         ]
       },
       "Organization_ParentRead": {
@@ -11300,6 +13299,7 @@
           "oauth": {
             "type": "boolean"
           },
+<<<<<<< HEAD
           "organizations": {
             "type": "array",
             "items": {
@@ -11310,1355 +13310,1479 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Group"
-            }
-          },
-          "personal_access_tokens": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PersonalAccessToken"
-            }
-          },
-          "setting": {
-            "$ref": "#/components/schemas/UserSetting"
-          },
+=======
           "sessions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Session"
-            }
-          },
-          "email_verification_tokens": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/EmailVerificationToken"
-            }
-          },
-          "password_reset_tokens": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PasswordResetToken"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth",
-          "setting"
-        ]
-      },
-      "UserCreate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
-        ]
-      },
-      "UserList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
-        ]
-      },
-      "UserRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
-        ]
-      },
-      "UserSetting": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "locked": {
-            "type": "boolean"
-          },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "recovery_code": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DEACTIVATED",
-              "SUSPENDED"
-            ],
-            "default": "ACTIVE"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email_confirmed": {
-            "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "locked",
-          "status",
-          "role",
-          "permissions",
-          "email_confirmed",
-          "tags"
-        ]
-      },
-      "UserSettingCreate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "locked": {
-            "type": "boolean"
-          },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DEACTIVATED",
-              "SUSPENDED"
-            ],
-            "default": "ACTIVE"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email_confirmed": {
-            "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "locked",
-          "status",
-          "role",
-          "permissions",
-          "email_confirmed",
-          "tags"
-        ]
-      },
-      "UserSettingList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "locked": {
-            "type": "boolean"
-          },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DEACTIVATED",
-              "SUSPENDED"
-            ],
-            "default": "ACTIVE"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email_confirmed": {
-            "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "locked",
-          "status",
-          "role",
-          "permissions",
-          "email_confirmed",
-          "tags"
-        ]
-      },
-      "UserSettingRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "locked": {
-            "type": "boolean"
-          },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DEACTIVATED",
-              "SUSPENDED"
-            ],
-            "default": "ACTIVE"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email_confirmed": {
-            "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "locked",
-          "status",
-          "role",
-          "permissions",
-          "email_confirmed",
-          "tags"
-        ]
-      },
-      "UserSettingUpdate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "locked": {
-            "type": "boolean"
-          },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DEACTIVATED",
-              "SUSPENDED"
-            ],
-            "default": "ACTIVE"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email_confirmed": {
-            "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "locked",
-          "status",
-          "role",
-          "permissions",
-          "email_confirmed",
-          "tags"
-        ]
-      },
-      "UserSetting_UserRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
-        ]
-      },
-      "UserUpdate": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "first_name": {
-            "type": "string"
-          },
-          "last_name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "avatar_remote_url": {
-            "type": "string"
-          },
-          "avatar_local_file": {
-            "type": "string"
-          },
-          "avatar_updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "last_seen": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "sub": {
-            "type": "string"
-          },
-          "oauth": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "email",
-          "first_name",
-          "last_name",
-          "display_name",
-          "oauth"
-        ]
-      },
-      "User_EmailVerificationTokensList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "email": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "owner_id",
-          "token",
-          "email"
-        ]
-      },
-      "User_GroupsList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "gravatar_logo_url": {
-            "type": "string"
-          },
-          "logo_url": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name",
-          "display_name"
-        ]
-      },
-      "User_OrganizationsList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "display_name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "parent_organization_id": {
-            "type": "string"
-          },
-          "personal_org": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "name",
-          "display_name",
-          "personal_org"
-        ]
-      },
-      "User_PasswordResetTokensList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "email": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "owner_id",
-          "token",
-          "email"
-        ]
-      },
-      "User_PersonalAccessTokensList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "owner_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "abilities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "description": {
-            "type": "string"
-          },
-          "last_used_at": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "owner_id",
-          "name"
-        ]
-      },
-      "User_SessionsList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "owner_id": {
-            "type": "string"
-          },
-          "session_token": {
-            "type": "string"
-          },
-          "issued_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "expires_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "organization_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "owner_id",
-          "session_token",
-          "issued_at",
-          "expires_at",
-          "organization_id"
-        ]
-      },
-      "User_SettingRead": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "locked": {
-            "type": "boolean"
-          },
-          "silenced_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "suspended_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "INACTIVE",
-              "DEACTIVATED",
-              "SUSPENDED"
-            ],
-            "default": "ACTIVE"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "OWNER"
-            ],
-            "default": "USER"
-          },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "email_confirmed": {
-            "type": "boolean"
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "locked",
-          "status",
-          "role",
-          "permissions",
-          "email_confirmed",
-          "tags"
-        ]
-      }
-    },
-    "responses": {
-      "400": {
-        "description": "invalid input, data invalid",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "errors": {}
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Session"
+>>>>>>> b287693 (add roles, group and org memberships, org owned mixin)
+                }
               },
-              "required": [
-                "code",
-                "status"
-              ]
-            }
-          }
-        }
-      },
-      "403": {
-        "description": "insufficient permissions",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "errors": {}
+              "personal_access_tokens": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PersonalAccessToken"
+                }
               },
-              "required": [
-                "code",
-                "status"
-              ]
-            }
-          }
-        }
-      },
-      "404": {
-        "description": "resource not found",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "errors": {}
+              "setting": {
+                "$ref": "#/components/schemas/UserSetting"
               },
-              "required": [
-                "code",
-                "status"
-              ]
-            }
-          }
-        }
-      },
-      "409": {
-        "description": "conflicting resources",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "errors": {}
+              "sessions": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Session"
+                }
               },
-              "required": [
-                "code",
-                "status"
-              ]
-            }
-          }
-        }
-      },
-      "500": {
-        "description": "unexpected error",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "errors": {}
+              "email_verification_tokens": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EmailVerificationToken"
+                }
               },
-              "required": [
-                "code",
-                "status"
-              ]
+              "password_reset_tokens": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PasswordResetToken"
+                }
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Group"
+                }
+              },
+              "organizations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Organization"
+                }
+              },
+              "group_memberships": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GroupMembership"
+                }
+              },
+              "org_memberships": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OrgMembership"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "email",
+              "first_name",
+              "last_name",
+              "display_name",
+              "oauth",
+              "setting"
+            ]
+          },
+          "UserCreate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              },
+              "avatar_remote_url": {
+                "type": "string"
+              },
+              "avatar_local_file": {
+                "type": "string"
+              },
+              "avatar_updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last_seen": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "sub": {
+                "type": "string"
+              },
+              "oauth": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "email",
+              "first_name",
+              "last_name",
+              "display_name",
+              "oauth"
+            ]
+          },
+          "UserList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              },
+              "avatar_remote_url": {
+                "type": "string"
+              },
+              "avatar_local_file": {
+                "type": "string"
+              },
+              "avatar_updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last_seen": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "sub": {
+                "type": "string"
+              },
+              "oauth": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "email",
+              "first_name",
+              "last_name",
+              "display_name",
+              "oauth"
+            ]
+          },
+          "UserRead": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              },
+              "avatar_remote_url": {
+                "type": "string"
+              },
+              "avatar_local_file": {
+                "type": "string"
+              },
+              "avatar_updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last_seen": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "sub": {
+                "type": "string"
+              },
+              "oauth": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "email",
+              "first_name",
+              "last_name",
+              "display_name",
+              "oauth"
+            ]
+          },
+          "UserSetting": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "locked": {
+                "type": "boolean"
+              },
+              "silenced_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "suspended_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "recovery_code": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "DEACTIVATED",
+                  "SUSPENDED"
+                ],
+                "default": "ACTIVE"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "OWNER"
+                ],
+                "default": "USER"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "email_confirmed": {
+                "type": "boolean"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "user": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "locked",
+              "status",
+              "role",
+              "permissions",
+              "email_confirmed",
+              "tags"
+            ]
+          },
+          "UserSettingCreate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "locked": {
+                "type": "boolean"
+              },
+              "silenced_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "suspended_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "DEACTIVATED",
+                  "SUSPENDED"
+                ],
+                "default": "ACTIVE"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "OWNER"
+                ],
+                "default": "USER"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "email_confirmed": {
+                "type": "boolean"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "locked",
+              "status",
+              "role",
+              "permissions",
+              "email_confirmed",
+              "tags"
+            ]
+          },
+          "UserSettingList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "locked": {
+                "type": "boolean"
+              },
+              "silenced_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "suspended_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "DEACTIVATED",
+                  "SUSPENDED"
+                ],
+                "default": "ACTIVE"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "OWNER"
+                ],
+                "default": "USER"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "email_confirmed": {
+                "type": "boolean"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "locked",
+              "status",
+              "role",
+              "permissions",
+              "email_confirmed",
+              "tags"
+            ]
+          },
+          "UserSettingRead": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "locked": {
+                "type": "boolean"
+              },
+              "silenced_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "suspended_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "DEACTIVATED",
+                  "SUSPENDED"
+                ],
+                "default": "ACTIVE"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "OWNER"
+                ],
+                "default": "USER"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "email_confirmed": {
+                "type": "boolean"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "locked",
+              "status",
+              "role",
+              "permissions",
+              "email_confirmed",
+              "tags"
+            ]
+          },
+          "UserSettingUpdate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "locked": {
+                "type": "boolean"
+              },
+              "silenced_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "suspended_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "DEACTIVATED",
+                  "SUSPENDED"
+                ],
+                "default": "ACTIVE"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "OWNER"
+                ],
+                "default": "USER"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "email_confirmed": {
+                "type": "boolean"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "locked",
+              "status",
+              "role",
+              "permissions",
+              "email_confirmed",
+              "tags"
+            ]
+          },
+          "UserSetting_UserRead": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              },
+              "avatar_remote_url": {
+                "type": "string"
+              },
+              "avatar_local_file": {
+                "type": "string"
+              },
+              "avatar_updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last_seen": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "sub": {
+                "type": "string"
+              },
+              "oauth": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "email",
+              "first_name",
+              "last_name",
+              "display_name",
+              "oauth"
+            ]
+          },
+          "UserUpdate": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "first_name": {
+                "type": "string"
+              },
+              "last_name": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              },
+              "avatar_remote_url": {
+                "type": "string"
+              },
+              "avatar_local_file": {
+                "type": "string"
+              },
+              "avatar_updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "last_seen": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "sub": {
+                "type": "string"
+              },
+              "oauth": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "email",
+              "first_name",
+              "last_name",
+              "display_name",
+              "oauth"
+            ]
+          },
+          "User_EmailVerificationTokensList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "owner_id": {
+                "type": "string"
+              },
+              "token": {
+                "type": "string"
+              },
+              "ttl": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "email": {
+                "type": "string"
+              },
+              "secret": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "owner_id",
+              "token",
+              "email"
+            ]
+          },
+          "User_GroupMembershipsList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "OWNER",
+                  "ADMIN",
+                  "MEMBER"
+                ],
+                "default": "MEMBER"
+              },
+              "group_id": {
+                "type": "string"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "role",
+              "group_id",
+              "user_id"
+            ]
+          },
+          "User_GroupsList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "owner_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "gravatar_logo_url": {
+                "type": "string"
+              },
+              "logo_url": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "owner_id",
+              "name",
+              "display_name"
+            ]
+          },
+          "User_OrgMembershipsList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "OWNER",
+                  "ADMIN",
+                  "MEMBER"
+                ],
+                "default": "MEMBER"
+              },
+              "org_id": {
+                "type": "string"
+              },
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "role",
+              "org_id",
+              "user_id"
+            ]
+          },
+          "User_OrganizationsList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "display_name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "parent_organization_id": {
+                "type": "string"
+              },
+              "personal_org": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "name",
+              "display_name",
+              "personal_org"
+            ]
+          },
+          "User_PasswordResetTokensList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "owner_id": {
+                "type": "string"
+              },
+              "token": {
+                "type": "string"
+              },
+              "ttl": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "email": {
+                "type": "string"
+              },
+              "secret": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "owner_id",
+              "token",
+              "email"
+            ]
+          },
+          "User_PersonalAccessTokensList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "owner_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "abilities": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "description": {
+                "type": "string"
+              },
+              "last_used_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "owner_id",
+              "name"
+            ]
+          },
+          "User_SessionsList": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "owner_id": {
+                "type": "string"
+              },
+              "session_token": {
+                "type": "string"
+              },
+              "issued_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "expires_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "organization_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "owner_id",
+              "session_token",
+              "issued_at",
+              "expires_at",
+              "organization_id"
+            ]
+          },
+          "User_SettingRead": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "created_by": {
+                "type": "string"
+              },
+              "updated_by": {
+                "type": "string"
+              },
+              "deleted_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "deleted_by": {
+                "type": "string"
+              },
+              "locked": {
+                "type": "boolean"
+              },
+              "silenced_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "suspended_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "INACTIVE",
+                  "DEACTIVATED",
+                  "SUSPENDED"
+                ],
+                "default": "ACTIVE"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "OWNER"
+                ],
+                "default": "USER"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "email_confirmed": {
+                "type": "boolean"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "created_at",
+              "updated_at",
+              "locked",
+              "status",
+              "role",
+              "permissions",
+              "email_confirmed",
+              "tags"
+            ]
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "invalid input, data invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "errors": {}
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "insufficient permissions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "errors": {}
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "errors": {}
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "conflicting resources",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "errors": {}
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "errors": {}
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
             }
           }
         }
       }
     }
-  }
-}

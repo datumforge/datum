@@ -27,6 +27,9 @@ func (Group) Mixin() []ent.Mixin {
 		mixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		mixin.IDMixin{},
+		OrgOwnerMixin{
+			Ref: "groups",
+		},
 	}
 }
 
@@ -73,11 +76,9 @@ func (Group) Edges() []ent.Edge {
 		edge.To("setting", GroupSetting.Type).
 			Required().
 			Unique(),
-		edge.To("users", User.Type),
-		edge.From("owner", Organization.Type).
+		edge.From("users", User.Type).
 			Ref("groups").
-			Unique().
-			Required(),
+			Through("group_memberships", GroupMembership.Type),
 	}
 }
 

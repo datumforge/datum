@@ -31,6 +31,8 @@ type Group struct {
 	DeletedAt time.Time `json:"deleted_at,omitempty"`
 	// DeletedBy holds the value of the "deleted_by" field.
 	DeletedBy string `json:"deleted_by,omitempty"`
+	// OwnerID holds the value of the "owner_id" field.
+	OwnerID string `json:"owner_id,omitempty"`
 	// the name of the group - must be unique within the organization
 	Name string `json:"name,omitempty"`
 	// the groups description
@@ -43,32 +45,47 @@ type Group struct {
 	DisplayName string `json:"display_name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
-	Edges               GroupEdges `json:"edges"`
-	organization_groups *string
-	selectValues        sql.SelectValues
+	Edges        GroupEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // GroupEdges holds the relations/edges for other nodes in the graph.
 type GroupEdges struct {
+	// Owner holds the value of the owner edge.
+	Owner *Organization `json:"owner,omitempty"`
 	// Setting holds the value of the setting edge.
 	Setting *GroupSetting `json:"setting,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
-	// Owner holds the value of the owner edge.
-	Owner *Organization `json:"owner,omitempty"`
+	// GroupMemberships holds the value of the group_memberships edge.
+	GroupMemberships []*GroupMembership `json:"group_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
 
-	namedUsers map[string][]*User
+	namedUsers            map[string][]*User
+	namedGroupMemberships map[string][]*GroupMembership
+}
+
+// OwnerOrErr returns the Owner value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e GroupEdges) OwnerOrErr() (*Organization, error) {
+	if e.loadedTypes[0] {
+		if e.Owner == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: organization.Label}
+		}
+		return e.Owner, nil
+	}
+	return nil, &NotLoadedError{edge: "owner"}
 }
 
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e GroupEdges) SettingOrErr() (*GroupSetting, error) {
-	if e.loadedTypes[0] {
+	if e.loadedTypes[1] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: groupsetting.Label}
@@ -81,23 +98,19 @@ func (e GroupEdges) SettingOrErr() (*GroupSetting, error) {
 // UsersOrErr returns the Users value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		return e.Users, nil
 	}
 	return nil, &NotLoadedError{edge: "users"}
 }
 
-// OwnerOrErr returns the Owner value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e GroupEdges) OwnerOrErr() (*Organization, error) {
-	if e.loadedTypes[2] {
-		if e.Owner == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: organization.Label}
-		}
-		return e.Owner, nil
+// GroupMembershipsOrErr returns the GroupMemberships value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) GroupMembershipsOrErr() ([]*GroupMembership, error) {
+	if e.loadedTypes[3] {
+		return e.GroupMemberships, nil
 	}
-	return nil, &NotLoadedError{edge: "owner"}
+	return nil, &NotLoadedError{edge: "group_memberships"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -105,12 +118,10 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldDeletedBy, group.FieldName, group.FieldDescription, group.FieldGravatarLogoURL, group.FieldLogoURL, group.FieldDisplayName:
+		case group.FieldID, group.FieldCreatedBy, group.FieldUpdatedBy, group.FieldDeletedBy, group.FieldOwnerID, group.FieldName, group.FieldDescription, group.FieldGravatarLogoURL, group.FieldLogoURL, group.FieldDisplayName:
 			values[i] = new(sql.NullString)
 		case group.FieldCreatedAt, group.FieldUpdatedAt, group.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
-		case group.ForeignKeys[0]: // organization_groups
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -168,6 +179,12 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gr.DeletedBy = value.String
 			}
+		case group.FieldOwnerID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field owner_id", values[i])
+			} else if value.Valid {
+				gr.OwnerID = value.String
+			}
 		case group.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -198,13 +215,6 @@ func (gr *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				gr.DisplayName = value.String
 			}
-		case group.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field organization_groups", values[i])
-			} else if value.Valid {
-				gr.organization_groups = new(string)
-				*gr.organization_groups = value.String
-			}
 		default:
 			gr.selectValues.Set(columns[i], values[i])
 		}
@@ -218,6 +228,11 @@ func (gr *Group) Value(name string) (ent.Value, error) {
 	return gr.selectValues.Get(name)
 }
 
+// QueryOwner queries the "owner" edge of the Group entity.
+func (gr *Group) QueryOwner() *OrganizationQuery {
+	return NewGroupClient(gr.config).QueryOwner(gr)
+}
+
 // QuerySetting queries the "setting" edge of the Group entity.
 func (gr *Group) QuerySetting() *GroupSettingQuery {
 	return NewGroupClient(gr.config).QuerySetting(gr)
@@ -228,9 +243,9 @@ func (gr *Group) QueryUsers() *UserQuery {
 	return NewGroupClient(gr.config).QueryUsers(gr)
 }
 
-// QueryOwner queries the "owner" edge of the Group entity.
-func (gr *Group) QueryOwner() *OrganizationQuery {
-	return NewGroupClient(gr.config).QueryOwner(gr)
+// QueryGroupMemberships queries the "group_memberships" edge of the Group entity.
+func (gr *Group) QueryGroupMemberships() *GroupMembershipQuery {
+	return NewGroupClient(gr.config).QueryGroupMemberships(gr)
 }
 
 // Update returns a builder for updating this Group.
@@ -274,6 +289,9 @@ func (gr *Group) String() string {
 	builder.WriteString("deleted_by=")
 	builder.WriteString(gr.DeletedBy)
 	builder.WriteString(", ")
+	builder.WriteString("owner_id=")
+	builder.WriteString(gr.OwnerID)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(gr.Name)
 	builder.WriteString(", ")
@@ -313,6 +331,30 @@ func (gr *Group) appendNamedUsers(name string, edges ...*User) {
 		gr.Edges.namedUsers[name] = []*User{}
 	} else {
 		gr.Edges.namedUsers[name] = append(gr.Edges.namedUsers[name], edges...)
+	}
+}
+
+// NamedGroupMemberships returns the GroupMemberships named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (gr *Group) NamedGroupMemberships(name string) ([]*GroupMembership, error) {
+	if gr.Edges.namedGroupMemberships == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := gr.Edges.namedGroupMemberships[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (gr *Group) appendNamedGroupMemberships(name string, edges ...*GroupMembership) {
+	if gr.Edges.namedGroupMemberships == nil {
+		gr.Edges.namedGroupMemberships = make(map[string][]*GroupMembership)
+	}
+	if len(edges) == 0 {
+		gr.Edges.namedGroupMemberships[name] = []*GroupMembership{}
+	} else {
+		gr.Edges.namedGroupMemberships[name] = append(gr.Edges.namedGroupMemberships[name], edges...)
 	}
 }
 

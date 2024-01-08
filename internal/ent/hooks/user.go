@@ -9,6 +9,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
@@ -113,15 +114,11 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 	personalOrg := true
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
-	// add user to the users of the personal organization
-	users := []string{user.ID}
-
 	return generated.CreateOrganizationInput{
 		Name:        name,
 		DisplayName: &displayName,
 		Description: &desc,
 		PersonalOrg: &personalOrg,
-		UserIDs:     users,
 	}
 }
 
@@ -132,7 +129,7 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 
 	orgInput := getPersonalOrgInput(user)
 
-	_, err := dbClient.Organization.Create().SetInput(orgInput).Save(ctx)
+	org, err := dbClient.Organization.Create().SetInput(orgInput).Save(ctx)
 	if err != nil {
 		// retry on unique constraint
 		if generated.IsConstraintError(err) {
@@ -140,6 +137,21 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 		}
 
 		user.Logger.Errorw("unable to create personal org", "error", err.Error())
+
+		return err
+	}
+
+	role := enums.RoleAdmin
+	orgMems := generated.CreateOrgMembershipInput{
+		UserID: user.ID,
+		OrgID:  org.ID,
+		Role:   &role,
+	}
+
+	if _, err := dbClient.OrgMembership.Create().SetInput(orgMems).Save(ctx); err != nil {
+		user.Logger.Errorw("unable to add user as admin to organization", "error", err.Error())
+
+		return err
 	}
 
 	return err

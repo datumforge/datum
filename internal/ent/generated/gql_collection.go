@@ -12,12 +12,14 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -55,6 +57,10 @@ func (e *EntitlementQuery) collectField(ctx context.Context, opCtx *graphql.Oper
 				return err
 			}
 			e.withOwner = query
+			if _, ok := fieldSeen[entitlement.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, entitlement.FieldOwnerID)
+				fieldSeen[entitlement.FieldOwnerID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[entitlement.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, entitlement.FieldCreatedAt)
@@ -177,6 +183,20 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "owner":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: gr.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			gr.withOwner = query
+			if _, ok := fieldSeen[group.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, group.FieldOwnerID)
+				fieldSeen[group.FieldOwnerID] = struct{}{}
+			}
 		case "setting":
 			var (
 				alias = field.Alias
@@ -199,16 +219,18 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			gr.WithNamedUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
-		case "owner":
+		case "groupMemberships":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&OrganizationClient{config: gr.config}).Query()
+				query = (&GroupMembershipClient{config: gr.config}).Query()
 			)
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			gr.withOwner = query
+			gr.WithNamedGroupMemberships(alias, func(wq *GroupMembershipQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[group.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, group.FieldCreatedAt)
@@ -323,6 +345,131 @@ func newGroupPaginateArgs(rv map[string]any) *groupPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*GroupWhereInput); ok {
 		args.opts = append(args.opts, WithGroupFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (gm *GroupMembershipQuery) CollectFields(ctx context.Context, satisfies ...string) (*GroupMembershipQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return gm, nil
+	}
+	if err := gm.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return gm, nil
+}
+
+func (gm *GroupMembershipQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(groupmembership.Columns))
+		selectedFields = []string{groupmembership.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "group":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&GroupClient{config: gm.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			gm.withGroup = query
+			if _, ok := fieldSeen[groupmembership.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldGroupID)
+				fieldSeen[groupmembership.FieldGroupID] = struct{}{}
+			}
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: gm.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			gm.withUser = query
+			if _, ok := fieldSeen[groupmembership.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldUserID)
+				fieldSeen[groupmembership.FieldUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[groupmembership.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldCreatedAt)
+				fieldSeen[groupmembership.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[groupmembership.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldUpdatedAt)
+				fieldSeen[groupmembership.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[groupmembership.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldCreatedBy)
+				fieldSeen[groupmembership.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[groupmembership.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldUpdatedBy)
+				fieldSeen[groupmembership.FieldUpdatedBy] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[groupmembership.FieldRole]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldRole)
+				fieldSeen[groupmembership.FieldRole] = struct{}{}
+			}
+		case "groupID":
+			if _, ok := fieldSeen[groupmembership.FieldGroupID]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldGroupID)
+				fieldSeen[groupmembership.FieldGroupID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[groupmembership.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldUserID)
+				fieldSeen[groupmembership.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		gm.Select(selectedFields...)
+	}
+	return nil
+}
+
+type groupmembershipPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []GroupMembershipPaginateOption
+}
+
+func newGroupMembershipPaginateArgs(rv map[string]any) *groupmembershipPaginateArgs {
+	args := &groupmembershipPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*GroupMembershipWhereInput); ok {
+		args.opts = append(args.opts, WithGroupMembershipFilter(v.Filter))
 	}
 	return args
 }
@@ -868,6 +1015,131 @@ func newOhAuthTooTokenPaginateArgs(rv map[string]any) *ohauthtootokenPaginateArg
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (om *OrgMembershipQuery) CollectFields(ctx context.Context, satisfies ...string) (*OrgMembershipQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return om, nil
+	}
+	if err := om.collectField(ctx, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return om, nil
+}
+
+func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(orgmembership.Columns))
+		selectedFields = []string{orgmembership.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "org":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: om.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			om.withOrg = query
+			if _, ok := fieldSeen[orgmembership.FieldOrgID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldOrgID)
+				fieldSeen[orgmembership.FieldOrgID] = struct{}{}
+			}
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: om.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			om.withUser = query
+			if _, ok := fieldSeen[orgmembership.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldUserID)
+				fieldSeen[orgmembership.FieldUserID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[orgmembership.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldCreatedAt)
+				fieldSeen[orgmembership.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[orgmembership.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldUpdatedAt)
+				fieldSeen[orgmembership.FieldUpdatedAt] = struct{}{}
+			}
+		case "createdBy":
+			if _, ok := fieldSeen[orgmembership.FieldCreatedBy]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldCreatedBy)
+				fieldSeen[orgmembership.FieldCreatedBy] = struct{}{}
+			}
+		case "updatedBy":
+			if _, ok := fieldSeen[orgmembership.FieldUpdatedBy]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldUpdatedBy)
+				fieldSeen[orgmembership.FieldUpdatedBy] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[orgmembership.FieldRole]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldRole)
+				fieldSeen[orgmembership.FieldRole] = struct{}{}
+			}
+		case "orgID":
+			if _, ok := fieldSeen[orgmembership.FieldOrgID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldOrgID)
+				fieldSeen[orgmembership.FieldOrgID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[orgmembership.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldUserID)
+				fieldSeen[orgmembership.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		om.Select(selectedFields...)
+	}
+	return nil
+}
+
+type orgmembershipPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OrgMembershipPaginateOption
+}
+
+func newOrgMembershipPaginateArgs(rv map[string]any) *orgmembershipPaginateArgs {
+	args := &orgmembershipPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*OrgMembershipWhereInput); ok {
+		args.opts = append(args.opts, WithOrgMembershipFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (o *OrganizationQuery) CollectFields(ctx context.Context, satisfies ...string) (*OrganizationQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -986,18 +1258,6 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedChildren(alias, func(wq *OrganizationQuery) {
 				*wq = *query
 			})
-		case "users":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&UserClient{config: o.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			o.WithNamedUsers(alias, func(wq *UserQuery) {
-				*wq = *query
-			})
 		case "groups":
 			var (
 				alias = field.Alias
@@ -1054,6 +1314,30 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 				return err
 			}
 			o.WithNamedOauthprovider(alias, func(wq *OauthProviderQuery) {
+				*wq = *query
+			})
+		case "users":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
+		case "orgMemberships":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrgMembershipClient{config: o.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			o.WithNamedOrgMemberships(alias, func(wq *OrgMembershipQuery) {
 				*wq = *query
 			})
 		case "createdAt":
@@ -1589,28 +1873,16 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "organizations":
+		case "sessions":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&OrganizationClient{config: u.config}).Query()
+				query = (&SessionClient{config: u.config}).Query()
 			)
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			u.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
-				*wq = *query
-			})
-		case "groups":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&GroupClient{config: u.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			u.WithNamedGroups(alias, func(wq *GroupQuery) {
+			u.WithNamedSessions(alias, func(wq *SessionQuery) {
 				*wq = *query
 			})
 		case "personalAccessTokens":
@@ -1635,16 +1907,52 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.withSetting = query
-		case "sessions":
+		case "groups":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
-				query = (&SessionClient{config: u.config}).Query()
+				query = (&GroupClient{config: u.config}).Query()
 			)
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			u.WithNamedSessions(alias, func(wq *SessionQuery) {
+			u.WithNamedGroups(alias, func(wq *GroupQuery) {
+				*wq = *query
+			})
+		case "organizations":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrganizationClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedOrganizations(alias, func(wq *OrganizationQuery) {
+				*wq = *query
+			})
+		case "groupMemberships":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&GroupMembershipClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedGroupMemberships(alias, func(wq *GroupMembershipQuery) {
+				*wq = *query
+			})
+		case "orgMemberships":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&OrgMembershipClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedOrgMemberships(alias, func(wq *OrgMembershipQuery) {
 				*wq = *query
 			})
 		case "createdAt":

@@ -9,12 +9,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/session"
@@ -187,6 +189,29 @@ func init() {
 	groupDescID := groupMixinFields2[0].Descriptor()
 	// group.DefaultID holds the default value on creation for the id field.
 	group.DefaultID = groupDescID.Default.(func() string)
+	groupmembershipMixin := schema.GroupMembership{}.Mixin()
+	groupmembershipMixinHooks0 := groupmembershipMixin[0].Hooks()
+	groupmembership.Hooks[0] = groupmembershipMixinHooks0[0]
+	groupmembershipMixinFields0 := groupmembershipMixin[0].Fields()
+	_ = groupmembershipMixinFields0
+	groupmembershipMixinFields1 := groupmembershipMixin[1].Fields()
+	_ = groupmembershipMixinFields1
+	groupmembershipFields := schema.GroupMembership{}.Fields()
+	_ = groupmembershipFields
+	// groupmembershipDescCreatedAt is the schema descriptor for created_at field.
+	groupmembershipDescCreatedAt := groupmembershipMixinFields0[0].Descriptor()
+	// groupmembership.DefaultCreatedAt holds the default value on creation for the created_at field.
+	groupmembership.DefaultCreatedAt = groupmembershipDescCreatedAt.Default.(func() time.Time)
+	// groupmembershipDescUpdatedAt is the schema descriptor for updated_at field.
+	groupmembershipDescUpdatedAt := groupmembershipMixinFields0[1].Descriptor()
+	// groupmembership.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	groupmembership.DefaultUpdatedAt = groupmembershipDescUpdatedAt.Default.(func() time.Time)
+	// groupmembership.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	groupmembership.UpdateDefaultUpdatedAt = groupmembershipDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// groupmembershipDescID is the schema descriptor for id field.
+	groupmembershipDescID := groupmembershipMixinFields1[0].Descriptor()
+	// groupmembership.DefaultID holds the default value on creation for the id field.
+	groupmembership.DefaultID = groupmembershipDescID.Default.(func() string)
 	groupsettingMixin := schema.GroupSetting{}.Mixin()
 	groupsettingMixinHooks0 := groupsettingMixin[0].Hooks()
 	groupsettingMixinHooks2 := groupsettingMixin[2].Hooks()
@@ -321,6 +346,29 @@ func init() {
 	ohauthtootokenDescID := ohauthtootokenMixinFields0[0].Descriptor()
 	// ohauthtootoken.DefaultID holds the default value on creation for the id field.
 	ohauthtootoken.DefaultID = ohauthtootokenDescID.Default.(func() string)
+	orgmembershipMixin := schema.OrgMembership{}.Mixin()
+	orgmembershipMixinHooks0 := orgmembershipMixin[0].Hooks()
+	orgmembership.Hooks[0] = orgmembershipMixinHooks0[0]
+	orgmembershipMixinFields0 := orgmembershipMixin[0].Fields()
+	_ = orgmembershipMixinFields0
+	orgmembershipMixinFields1 := orgmembershipMixin[1].Fields()
+	_ = orgmembershipMixinFields1
+	orgmembershipFields := schema.OrgMembership{}.Fields()
+	_ = orgmembershipFields
+	// orgmembershipDescCreatedAt is the schema descriptor for created_at field.
+	orgmembershipDescCreatedAt := orgmembershipMixinFields0[0].Descriptor()
+	// orgmembership.DefaultCreatedAt holds the default value on creation for the created_at field.
+	orgmembership.DefaultCreatedAt = orgmembershipDescCreatedAt.Default.(func() time.Time)
+	// orgmembershipDescUpdatedAt is the schema descriptor for updated_at field.
+	orgmembershipDescUpdatedAt := orgmembershipMixinFields0[1].Descriptor()
+	// orgmembership.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	orgmembership.DefaultUpdatedAt = orgmembershipDescUpdatedAt.Default.(func() time.Time)
+	// orgmembership.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	orgmembership.UpdateDefaultUpdatedAt = orgmembershipDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// orgmembershipDescID is the schema descriptor for id field.
+	orgmembershipDescID := orgmembershipMixinFields1[0].Descriptor()
+	// orgmembership.DefaultID holds the default value on creation for the id field.
+	orgmembership.DefaultID = orgmembershipDescID.Default.(func() string)
 	organizationMixin := schema.Organization{}.Mixin()
 	organization.Policy = privacy.NewPolicies(schema.Organization{})
 	organization.Hooks[0] = func(next ent.Mutator) ent.Mutator {

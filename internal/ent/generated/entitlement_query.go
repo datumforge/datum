@@ -25,7 +25,6 @@ type EntitlementQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Entitlement
 	withOwner  *OrganizationQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*Entitlement) error
 	// intermediate query (i.e. traversal path).
@@ -376,18 +375,11 @@ func (eq *EntitlementQuery) prepareQuery(ctx context.Context) error {
 func (eq *EntitlementQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entitlement, error) {
 	var (
 		nodes       = []*Entitlement{}
-		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
 		loadedTypes = [1]bool{
 			eq.withOwner != nil,
 		}
 	)
-	if eq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, entitlement.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Entitlement).scanValues(nil, columns)
 	}
@@ -429,10 +421,7 @@ func (eq *EntitlementQuery) loadOwner(ctx context.Context, query *OrganizationQu
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Entitlement)
 	for i := range nodes {
-		if nodes[i].organization_entitlements == nil {
-			continue
-		}
-		fk := *nodes[i].organization_entitlements
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +438,7 @@ func (eq *EntitlementQuery) loadOwner(ctx context.Context, query *OrganizationQu
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "organization_entitlements" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +476,9 @@ func (eq *EntitlementQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != entitlement.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if eq.withOwner != nil {
+			_spec.Node.AddColumnOnce(entitlement.FieldOwnerID)
 		}
 	}
 	if ps := eq.predicates; len(ps) > 0 {

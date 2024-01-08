@@ -52,8 +52,6 @@ type OrganizationEdges struct {
 	Parent *Organization `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*Organization `json:"children,omitempty"`
-	// Users holds the value of the users edge.
-	Users []*User `json:"users,omitempty"`
 	// Groups holds the value of the groups edge.
 	Groups []*Group `json:"groups,omitempty"`
 	// Integrations holds the value of the integrations edge.
@@ -64,18 +62,23 @@ type OrganizationEdges struct {
 	Entitlements []*Entitlement `json:"entitlements,omitempty"`
 	// Oauthprovider holds the value of the oauthprovider edge.
 	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
+	// OrgMemberships holds the value of the org_memberships edge.
+	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [8]bool
+	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
-	totalCount [8]map[string]int
+	totalCount [9]map[string]int
 
-	namedChildren      map[string][]*Organization
-	namedUsers         map[string][]*User
-	namedGroups        map[string][]*Group
-	namedIntegrations  map[string][]*Integration
-	namedEntitlements  map[string][]*Entitlement
-	namedOauthprovider map[string][]*OauthProvider
+	namedChildren       map[string][]*Organization
+	namedGroups         map[string][]*Group
+	namedIntegrations   map[string][]*Integration
+	namedEntitlements   map[string][]*Entitlement
+	namedOauthprovider  map[string][]*OauthProvider
+	namedUsers          map[string][]*User
+	namedOrgMemberships map[string][]*OrgMembership
 }
 
 // ParentOrErr returns the Parent value or an error if the edge
@@ -100,19 +103,10 @@ func (e OrganizationEdges) ChildrenOrErr() ([]*Organization, error) {
 	return nil, &NotLoadedError{edge: "children"}
 }
 
-// UsersOrErr returns the Users value or an error if the edge
-// was not loaded in eager-loading.
-func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
-	if e.loadedTypes[2] {
-		return e.Users, nil
-	}
-	return nil, &NotLoadedError{edge: "users"}
-}
-
 // GroupsOrErr returns the Groups value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) GroupsOrErr() ([]*Group, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.Groups, nil
 	}
 	return nil, &NotLoadedError{edge: "groups"}
@@ -121,7 +115,7 @@ func (e OrganizationEdges) GroupsOrErr() ([]*Group, error) {
 // IntegrationsOrErr returns the Integrations value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.Integrations, nil
 	}
 	return nil, &NotLoadedError{edge: "integrations"}
@@ -130,7 +124,7 @@ func (e OrganizationEdges) IntegrationsOrErr() ([]*Integration, error) {
 // SettingOrErr returns the Setting value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e OrganizationEdges) SettingOrErr() (*OrganizationSetting, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		if e.Setting == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: organizationsetting.Label}
@@ -143,7 +137,7 @@ func (e OrganizationEdges) SettingOrErr() (*OrganizationSetting, error) {
 // EntitlementsOrErr returns the Entitlements value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) EntitlementsOrErr() ([]*Entitlement, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		return e.Entitlements, nil
 	}
 	return nil, &NotLoadedError{edge: "entitlements"}
@@ -152,10 +146,28 @@ func (e OrganizationEdges) EntitlementsOrErr() ([]*Entitlement, error) {
 // OauthproviderOrErr returns the Oauthprovider value or an error if the edge
 // was not loaded in eager-loading.
 func (e OrganizationEdges) OauthproviderOrErr() ([]*OauthProvider, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[6] {
 		return e.Oauthprovider, nil
 	}
 	return nil, &NotLoadedError{edge: "oauthprovider"}
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[7] {
+		return e.Users, nil
+	}
+	return nil, &NotLoadedError{edge: "users"}
+}
+
+// OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
+// was not loaded in eager-loading.
+func (e OrganizationEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
+	if e.loadedTypes[8] {
+		return e.OrgMemberships, nil
+	}
+	return nil, &NotLoadedError{edge: "org_memberships"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -279,11 +291,6 @@ func (o *Organization) QueryChildren() *OrganizationQuery {
 	return NewOrganizationClient(o.config).QueryChildren(o)
 }
 
-// QueryUsers queries the "users" edge of the Organization entity.
-func (o *Organization) QueryUsers() *UserQuery {
-	return NewOrganizationClient(o.config).QueryUsers(o)
-}
-
 // QueryGroups queries the "groups" edge of the Organization entity.
 func (o *Organization) QueryGroups() *GroupQuery {
 	return NewOrganizationClient(o.config).QueryGroups(o)
@@ -307,6 +314,16 @@ func (o *Organization) QueryEntitlements() *EntitlementQuery {
 // QueryOauthprovider queries the "oauthprovider" edge of the Organization entity.
 func (o *Organization) QueryOauthprovider() *OauthProviderQuery {
 	return NewOrganizationClient(o.config).QueryOauthprovider(o)
+}
+
+// QueryUsers queries the "users" edge of the Organization entity.
+func (o *Organization) QueryUsers() *UserQuery {
+	return NewOrganizationClient(o.config).QueryUsers(o)
+}
+
+// QueryOrgMemberships queries the "org_memberships" edge of the Organization entity.
+func (o *Organization) QueryOrgMemberships() *OrgMembershipQuery {
+	return NewOrganizationClient(o.config).QueryOrgMemberships(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -389,30 +406,6 @@ func (o *Organization) appendNamedChildren(name string, edges ...*Organization) 
 		o.Edges.namedChildren[name] = []*Organization{}
 	} else {
 		o.Edges.namedChildren[name] = append(o.Edges.namedChildren[name], edges...)
-	}
-}
-
-// NamedUsers returns the Users named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (o *Organization) NamedUsers(name string) ([]*User, error) {
-	if o.Edges.namedUsers == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := o.Edges.namedUsers[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (o *Organization) appendNamedUsers(name string, edges ...*User) {
-	if o.Edges.namedUsers == nil {
-		o.Edges.namedUsers = make(map[string][]*User)
-	}
-	if len(edges) == 0 {
-		o.Edges.namedUsers[name] = []*User{}
-	} else {
-		o.Edges.namedUsers[name] = append(o.Edges.namedUsers[name], edges...)
 	}
 }
 
@@ -509,6 +502,54 @@ func (o *Organization) appendNamedOauthprovider(name string, edges ...*OauthProv
 		o.Edges.namedOauthprovider[name] = []*OauthProvider{}
 	} else {
 		o.Edges.namedOauthprovider[name] = append(o.Edges.namedOauthprovider[name], edges...)
+	}
+}
+
+// NamedUsers returns the Users named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedUsers(name string) ([]*User, error) {
+	if o.Edges.namedUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedUsers(name string, edges ...*User) {
+	if o.Edges.namedUsers == nil {
+		o.Edges.namedUsers = make(map[string][]*User)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedUsers[name] = []*User{}
+	} else {
+		o.Edges.namedUsers[name] = append(o.Edges.namedUsers[name], edges...)
+	}
+}
+
+// NamedOrgMemberships returns the OrgMemberships named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (o *Organization) NamedOrgMemberships(name string) ([]*OrgMembership, error) {
+	if o.Edges.namedOrgMemberships == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := o.Edges.namedOrgMemberships[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (o *Organization) appendNamedOrgMemberships(name string, edges ...*OrgMembership) {
+	if o.Edges.namedOrgMemberships == nil {
+		o.Edges.namedOrgMemberships = make(map[string][]*OrgMembership)
+	}
+	if len(edges) == 0 {
+		o.Edges.namedOrgMemberships[name] = []*OrgMembership{}
+	} else {
+		o.Edges.namedOrgMemberships[name] = append(o.Edges.namedOrgMemberships[name], edges...)
 	}
 }
 

@@ -32,6 +32,11 @@ func GroupEdgeCleanup(ctx context.Context, id string) error {
 	return nil
 }
 
+func GroupMembershipEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
 func GroupSettingEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
@@ -48,6 +53,11 @@ func OauthProviderEdgeCleanup(ctx context.Context, id string) error {
 }
 
 func OhAuthTooTokenEdgeCleanup(ctx context.Context, id string) error {
+
+	return nil
+}
+
+func OrgMembershipEdgeCleanup(ctx context.Context, id string) error {
 
 	return nil
 }

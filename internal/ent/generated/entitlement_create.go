@@ -105,6 +105,12 @@ func (ec *EntitlementCreate) SetNillableDeletedBy(s *string) *EntitlementCreate 
 	return ec
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (ec *EntitlementCreate) SetOwnerID(s string) *EntitlementCreate {
+	ec.mutation.SetOwnerID(s)
+	return ec
+}
+
 // SetTier sets the "tier" field.
 func (ec *EntitlementCreate) SetTier(e entitlement.Tier) *EntitlementCreate {
 	ec.mutation.SetTier(e)
@@ -203,20 +209,6 @@ func (ec *EntitlementCreate) SetNillableID(s *string) *EntitlementCreate {
 	return ec
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (ec *EntitlementCreate) SetOwnerID(id string) *EntitlementCreate {
-	ec.mutation.SetOwnerID(id)
-	return ec
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (ec *EntitlementCreate) SetNillableOwnerID(id *string) *EntitlementCreate {
-	if id != nil {
-		ec = ec.SetOwnerID(*id)
-	}
-	return ec
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (ec *EntitlementCreate) SetOwner(o *Organization) *EntitlementCreate {
 	return ec.SetOwnerID(o.ID)
@@ -303,6 +295,9 @@ func (ec *EntitlementCreate) check() error {
 	if _, ok := ec.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Entitlement.updated_at"`)}
 	}
+	if _, ok := ec.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Entitlement.owner_id"`)}
+	}
 	if _, ok := ec.mutation.Tier(); !ok {
 		return &ValidationError{Name: "tier", err: errors.New(`generated: missing required field "Entitlement.tier"`)}
 	}
@@ -316,6 +311,9 @@ func (ec *EntitlementCreate) check() error {
 	}
 	if _, ok := ec.mutation.Cancelled(); !ok {
 		return &ValidationError{Name: "cancelled", err: errors.New(`generated: missing required field "Entitlement.cancelled"`)}
+	}
+	if _, ok := ec.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Entitlement.owner"`)}
 	}
 	return nil
 }
@@ -416,7 +414,7 @@ func (ec *EntitlementCreate) createSpec() (*Entitlement, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_entitlements = &nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

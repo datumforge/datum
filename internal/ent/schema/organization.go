@@ -78,9 +78,6 @@ func (Organization) Edges() []ent.Edge {
 			Field("parent_organization_id").
 			Immutable().
 			Unique(),
-		// an org can have and belong to many users
-		edge.From("users", User.Type).
-			Ref("organizations"),
 		edge.To("groups", Group.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("integrations", Integration.Type).
@@ -90,6 +87,9 @@ func (Organization) Edges() []ent.Edge {
 			Annotations(entx.CascadeAnnotationField("Organization")),
 		edge.To("entitlements", Entitlement.Type),
 		edge.To("oauthprovider", OauthProvider.Type),
+		edge.From("users", User.Type).
+			Ref("organizations").
+			Through("org_memberships", OrgMembership.Type),
 	}
 }
 

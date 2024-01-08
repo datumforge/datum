@@ -11272,6 +11272,42 @@ func (m *PasswordResetTokenMutation) ResetDeletedBy() {
 	delete(m.clearedFields, passwordresettoken.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *PasswordResetTokenMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *PasswordResetTokenMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the PasswordResetToken entity.
+// If the PasswordResetToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PasswordResetTokenMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *PasswordResetTokenMutation) ResetOwnerID() {
+	m.owner = nil
+}
+
 // SetToken sets the "token" field.
 func (m *PasswordResetTokenMutation) SetToken(s string) {
 	m.token = &s
@@ -11416,27 +11452,15 @@ func (m *PasswordResetTokenMutation) ResetSecret() {
 	m.secret = nil
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by id.
-func (m *PasswordResetTokenMutation) SetOwnerID(id string) {
-	m.owner = &id
-}
-
 // ClearOwner clears the "owner" edge to the User entity.
 func (m *PasswordResetTokenMutation) ClearOwner() {
 	m.clearedowner = true
+	m.clearedFields[passwordresettoken.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the User entity was cleared.
 func (m *PasswordResetTokenMutation) OwnerCleared() bool {
 	return m.clearedowner
-}
-
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *PasswordResetTokenMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
-	}
-	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -11489,7 +11513,7 @@ func (m *PasswordResetTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PasswordResetTokenMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, passwordresettoken.FieldCreatedAt)
 	}
@@ -11507,6 +11531,9 @@ func (m *PasswordResetTokenMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, passwordresettoken.FieldDeletedBy)
+	}
+	if m.owner != nil {
+		fields = append(fields, passwordresettoken.FieldOwnerID)
 	}
 	if m.token != nil {
 		fields = append(fields, passwordresettoken.FieldToken)
@@ -11540,6 +11567,8 @@ func (m *PasswordResetTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case passwordresettoken.FieldDeletedBy:
 		return m.DeletedBy()
+	case passwordresettoken.FieldOwnerID:
+		return m.OwnerID()
 	case passwordresettoken.FieldToken:
 		return m.Token()
 	case passwordresettoken.FieldTTL:
@@ -11569,6 +11598,8 @@ func (m *PasswordResetTokenMutation) OldField(ctx context.Context, name string) 
 		return m.OldDeletedAt(ctx)
 	case passwordresettoken.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case passwordresettoken.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case passwordresettoken.FieldToken:
 		return m.OldToken(ctx)
 	case passwordresettoken.FieldTTL:
@@ -11627,6 +11658,13 @@ func (m *PasswordResetTokenMutation) SetField(name string, value ent.Value) erro
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case passwordresettoken.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
 		return nil
 	case passwordresettoken.FieldToken:
 		v, ok := value.(string)
@@ -11749,6 +11787,9 @@ func (m *PasswordResetTokenMutation) ResetField(name string) error {
 		return nil
 	case passwordresettoken.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case passwordresettoken.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case passwordresettoken.FieldToken:
 		m.ResetToken()
@@ -12239,6 +12280,42 @@ func (m *PersonalAccessTokenMutation) ResetDeletedBy() {
 	delete(m.clearedFields, personalaccesstoken.FieldDeletedBy)
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (m *PersonalAccessTokenMutation) SetOwnerID(s string) {
+	m.owner = &s
+}
+
+// OwnerID returns the value of the "owner_id" field in the mutation.
+func (m *PersonalAccessTokenMutation) OwnerID() (r string, exists bool) {
+	v := m.owner
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOwnerID returns the old "owner_id" field's value of the PersonalAccessToken entity.
+// If the PersonalAccessToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PersonalAccessTokenMutation) OldOwnerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOwnerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOwnerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOwnerID: %w", err)
+	}
+	return oldValue.OwnerID, nil
+}
+
+// ResetOwnerID resets all changes to the "owner_id" field.
+func (m *PersonalAccessTokenMutation) ResetOwnerID() {
+	m.owner = nil
+}
+
 // SetName sets the "name" field.
 func (m *PersonalAccessTokenMutation) SetName(s string) {
 	m.name = &s
@@ -12510,27 +12587,15 @@ func (m *PersonalAccessTokenMutation) ResetLastUsedAt() {
 	delete(m.clearedFields, personalaccesstoken.FieldLastUsedAt)
 }
 
-// SetOwnerID sets the "owner" edge to the User entity by id.
-func (m *PersonalAccessTokenMutation) SetOwnerID(id string) {
-	m.owner = &id
-}
-
 // ClearOwner clears the "owner" edge to the User entity.
 func (m *PersonalAccessTokenMutation) ClearOwner() {
 	m.clearedowner = true
+	m.clearedFields[personalaccesstoken.FieldOwnerID] = struct{}{}
 }
 
 // OwnerCleared reports if the "owner" edge to the User entity was cleared.
 func (m *PersonalAccessTokenMutation) OwnerCleared() bool {
 	return m.clearedowner
-}
-
-// OwnerID returns the "owner" edge ID in the mutation.
-func (m *PersonalAccessTokenMutation) OwnerID() (id string, exists bool) {
-	if m.owner != nil {
-		return *m.owner, true
-	}
-	return
 }
 
 // OwnerIDs returns the "owner" edge IDs in the mutation.
@@ -12583,7 +12648,7 @@ func (m *PersonalAccessTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PersonalAccessTokenMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, personalaccesstoken.FieldCreatedAt)
 	}
@@ -12601,6 +12666,9 @@ func (m *PersonalAccessTokenMutation) Fields() []string {
 	}
 	if m.deleted_by != nil {
 		fields = append(fields, personalaccesstoken.FieldDeletedBy)
+	}
+	if m.owner != nil {
+		fields = append(fields, personalaccesstoken.FieldOwnerID)
 	}
 	if m.name != nil {
 		fields = append(fields, personalaccesstoken.FieldName)
@@ -12640,6 +12708,8 @@ func (m *PersonalAccessTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.DeletedAt()
 	case personalaccesstoken.FieldDeletedBy:
 		return m.DeletedBy()
+	case personalaccesstoken.FieldOwnerID:
+		return m.OwnerID()
 	case personalaccesstoken.FieldName:
 		return m.Name()
 	case personalaccesstoken.FieldToken:
@@ -12673,6 +12743,8 @@ func (m *PersonalAccessTokenMutation) OldField(ctx context.Context, name string)
 		return m.OldDeletedAt(ctx)
 	case personalaccesstoken.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case personalaccesstoken.FieldOwnerID:
+		return m.OldOwnerID(ctx)
 	case personalaccesstoken.FieldName:
 		return m.OldName(ctx)
 	case personalaccesstoken.FieldToken:
@@ -12735,6 +12807,13 @@ func (m *PersonalAccessTokenMutation) SetField(name string, value ent.Value) err
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDeletedBy(v)
+		return nil
+	case personalaccesstoken.FieldOwnerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOwnerID(v)
 		return nil
 	case personalaccesstoken.FieldName:
 		v, ok := value.(string)
@@ -12889,6 +12968,9 @@ func (m *PersonalAccessTokenMutation) ResetField(name string) error {
 		return nil
 	case personalaccesstoken.FieldDeletedBy:
 		m.ResetDeletedBy()
+		return nil
+	case personalaccesstoken.FieldOwnerID:
+		m.ResetOwnerID()
 		return nil
 	case personalaccesstoken.FieldName:
 		m.ResetName()
@@ -13899,9 +13981,9 @@ type UserMutation struct {
 	email_verification_tokens        map[string]struct{}
 	removedemail_verification_tokens map[string]struct{}
 	clearedemail_verification_tokens bool
-	reset_tokens                     map[string]struct{}
-	removedreset_tokens              map[string]struct{}
-	clearedreset_tokens              bool
+	password_reset_tokens            map[string]struct{}
+	removedpassword_reset_tokens     map[string]struct{}
+	clearedpassword_reset_tokens     bool
 	done                             bool
 	oldValue                         func(context.Context) (*User, error)
 	predicates                       []predicate.User
@@ -15062,58 +15144,58 @@ func (m *UserMutation) ResetEmailVerificationTokens() {
 	m.removedemail_verification_tokens = nil
 }
 
-// AddResetTokenIDs adds the "reset_tokens" edge to the PasswordResetToken entity by ids.
-func (m *UserMutation) AddResetTokenIDs(ids ...string) {
-	if m.reset_tokens == nil {
-		m.reset_tokens = make(map[string]struct{})
+// AddPasswordResetTokenIDs adds the "password_reset_tokens" edge to the PasswordResetToken entity by ids.
+func (m *UserMutation) AddPasswordResetTokenIDs(ids ...string) {
+	if m.password_reset_tokens == nil {
+		m.password_reset_tokens = make(map[string]struct{})
 	}
 	for i := range ids {
-		m.reset_tokens[ids[i]] = struct{}{}
+		m.password_reset_tokens[ids[i]] = struct{}{}
 	}
 }
 
-// ClearResetTokens clears the "reset_tokens" edge to the PasswordResetToken entity.
-func (m *UserMutation) ClearResetTokens() {
-	m.clearedreset_tokens = true
+// ClearPasswordResetTokens clears the "password_reset_tokens" edge to the PasswordResetToken entity.
+func (m *UserMutation) ClearPasswordResetTokens() {
+	m.clearedpassword_reset_tokens = true
 }
 
-// ResetTokensCleared reports if the "reset_tokens" edge to the PasswordResetToken entity was cleared.
-func (m *UserMutation) ResetTokensCleared() bool {
-	return m.clearedreset_tokens
+// PasswordResetTokensCleared reports if the "password_reset_tokens" edge to the PasswordResetToken entity was cleared.
+func (m *UserMutation) PasswordResetTokensCleared() bool {
+	return m.clearedpassword_reset_tokens
 }
 
-// RemoveResetTokenIDs removes the "reset_tokens" edge to the PasswordResetToken entity by IDs.
-func (m *UserMutation) RemoveResetTokenIDs(ids ...string) {
-	if m.removedreset_tokens == nil {
-		m.removedreset_tokens = make(map[string]struct{})
+// RemovePasswordResetTokenIDs removes the "password_reset_tokens" edge to the PasswordResetToken entity by IDs.
+func (m *UserMutation) RemovePasswordResetTokenIDs(ids ...string) {
+	if m.removedpassword_reset_tokens == nil {
+		m.removedpassword_reset_tokens = make(map[string]struct{})
 	}
 	for i := range ids {
-		delete(m.reset_tokens, ids[i])
-		m.removedreset_tokens[ids[i]] = struct{}{}
+		delete(m.password_reset_tokens, ids[i])
+		m.removedpassword_reset_tokens[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedResetTokens returns the removed IDs of the "reset_tokens" edge to the PasswordResetToken entity.
-func (m *UserMutation) RemovedResetTokensIDs() (ids []string) {
-	for id := range m.removedreset_tokens {
+// RemovedPasswordResetTokens returns the removed IDs of the "password_reset_tokens" edge to the PasswordResetToken entity.
+func (m *UserMutation) RemovedPasswordResetTokensIDs() (ids []string) {
+	for id := range m.removedpassword_reset_tokens {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetTokensIDs returns the "reset_tokens" edge IDs in the mutation.
-func (m *UserMutation) ResetTokensIDs() (ids []string) {
-	for id := range m.reset_tokens {
+// PasswordResetTokensIDs returns the "password_reset_tokens" edge IDs in the mutation.
+func (m *UserMutation) PasswordResetTokensIDs() (ids []string) {
+	for id := range m.password_reset_tokens {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetResetTokens resets all changes to the "reset_tokens" edge.
-func (m *UserMutation) ResetResetTokens() {
-	m.reset_tokens = nil
-	m.clearedreset_tokens = false
-	m.removedreset_tokens = nil
+// ResetPasswordResetTokens resets all changes to the "password_reset_tokens" edge.
+func (m *UserMutation) ResetPasswordResetTokens() {
+	m.password_reset_tokens = nil
+	m.clearedpassword_reset_tokens = false
+	m.removedpassword_reset_tokens = nil
 }
 
 // Where appends a list predicates to the UserMutation builder.
@@ -15603,8 +15685,8 @@ func (m *UserMutation) AddedEdges() []string {
 	if m.email_verification_tokens != nil {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
 	}
-	if m.reset_tokens != nil {
-		edges = append(edges, user.EdgeResetTokens)
+	if m.password_reset_tokens != nil {
+		edges = append(edges, user.EdgePasswordResetTokens)
 	}
 	return edges
 }
@@ -15647,9 +15729,9 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeResetTokens:
-		ids := make([]ent.Value, 0, len(m.reset_tokens))
-		for id := range m.reset_tokens {
+	case user.EdgePasswordResetTokens:
+		ids := make([]ent.Value, 0, len(m.password_reset_tokens))
+		for id := range m.password_reset_tokens {
 			ids = append(ids, id)
 		}
 		return ids
@@ -15675,8 +15757,8 @@ func (m *UserMutation) RemovedEdges() []string {
 	if m.removedemail_verification_tokens != nil {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
 	}
-	if m.removedreset_tokens != nil {
-		edges = append(edges, user.EdgeResetTokens)
+	if m.removedpassword_reset_tokens != nil {
+		edges = append(edges, user.EdgePasswordResetTokens)
 	}
 	return edges
 }
@@ -15715,9 +15797,9 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case user.EdgeResetTokens:
-		ids := make([]ent.Value, 0, len(m.removedreset_tokens))
-		for id := range m.removedreset_tokens {
+	case user.EdgePasswordResetTokens:
+		ids := make([]ent.Value, 0, len(m.removedpassword_reset_tokens))
+		for id := range m.removedpassword_reset_tokens {
 			ids = append(ids, id)
 		}
 		return ids
@@ -15746,8 +15828,8 @@ func (m *UserMutation) ClearedEdges() []string {
 	if m.clearedemail_verification_tokens {
 		edges = append(edges, user.EdgeEmailVerificationTokens)
 	}
-	if m.clearedreset_tokens {
-		edges = append(edges, user.EdgeResetTokens)
+	if m.clearedpassword_reset_tokens {
+		edges = append(edges, user.EdgePasswordResetTokens)
 	}
 	return edges
 }
@@ -15768,8 +15850,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedsetting
 	case user.EdgeEmailVerificationTokens:
 		return m.clearedemail_verification_tokens
-	case user.EdgeResetTokens:
-		return m.clearedreset_tokens
+	case user.EdgePasswordResetTokens:
+		return m.clearedpassword_reset_tokens
 	}
 	return false
 }
@@ -15807,8 +15889,8 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeEmailVerificationTokens:
 		m.ResetEmailVerificationTokens()
 		return nil
-	case user.EdgeResetTokens:
-		m.ResetResetTokens()
+	case user.EdgePasswordResetTokens:
+		m.ResetPasswordResetTokens()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

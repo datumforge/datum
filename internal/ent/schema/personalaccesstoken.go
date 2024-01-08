@@ -6,7 +6,6 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -54,12 +53,7 @@ func (PersonalAccessToken) Fields() []ent.Field {
 
 // Edges of the PersonalAccessToken
 func (PersonalAccessToken) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("owner", User.Type).
-			Ref("personal_access_tokens").
-			Required().
-			Unique(),
-	}
+	return []ent.Edge{}
 }
 
 // Indexes of the PersonalAccessToken
@@ -76,6 +70,9 @@ func (PersonalAccessToken) Mixin() []ent.Mixin {
 		mixin.AuditMixin{},
 		mixin.SoftDeleteMixin{},
 		mixin.IDMixin{},
+		UserOwnedMixin{
+			Ref: "personal_access_tokens",
+		},
 	}
 }
 

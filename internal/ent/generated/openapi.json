@@ -4101,6 +4101,9 @@
                   "deleted_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "token": {
                     "type": "string"
                   },
@@ -4122,6 +4125,7 @@
                 "required": [
                   "created_at",
                   "updated_at",
+                  "owner_id",
                   "token",
                   "ttl",
                   "email",
@@ -4273,6 +4277,9 @@
                     "format": "date-time"
                   },
                   "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
                     "type": "string"
                   },
                   "token": {
@@ -4461,6 +4468,9 @@
                   "deleted_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "name": {
                     "type": "string"
                   },
@@ -4491,6 +4501,7 @@
                 "required": [
                   "created_at",
                   "updated_at",
+                  "owner_id",
                   "name",
                   "token",
                   "expires_at",
@@ -4641,6 +4652,9 @@
                     "format": "date-time"
                   },
                   "deleted_by": {
+                    "type": "string"
+                  },
+                  "owner_id": {
                     "type": "string"
                   },
                   "name": {
@@ -5682,7 +5696,7 @@
                       "type": "string"
                     }
                   },
-                  "reset_tokens": {
+                  "password_reset_tokens": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -5914,7 +5928,7 @@
                       "type": "string"
                     }
                   },
-                  "reset_tokens": {
+                  "password_reset_tokens": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -6144,6 +6158,70 @@
         }
       }
     },
+    "/users/{id}/password-reset-tokens": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "List attached PasswordResetTokens",
+        "description": "List attached PasswordResetTokens.",
+        "operationId": "listUserPasswordResetTokens",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the User",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Users list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User_PasswordResetTokensList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/users/{id}/personal-access-tokens": {
       "get": {
         "tags": [
@@ -6188,70 +6266,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/User_PersonalAccessTokensList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/users/{id}/reset-tokens": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List attached ResetTokens",
-        "description": "List attached ResetTokens.",
-        "operationId": "listUserResetTokens",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the User",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Users list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User_ResetTokensList"
                   }
                 }
               }
@@ -10212,6 +10226,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "token": {
             "type": "string"
           },
@@ -10234,6 +10251,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "token",
           "email",
           "owner"
@@ -10266,6 +10284,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "token": {
             "type": "string"
           },
@@ -10285,6 +10306,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "token",
           "email"
         ]
@@ -10316,6 +10338,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "token": {
             "type": "string"
           },
@@ -10335,6 +10360,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "token",
           "email"
         ]
@@ -10366,6 +10392,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "token": {
             "type": "string"
           },
@@ -10385,6 +10414,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "token",
           "email"
         ]
@@ -10416,6 +10446,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "token": {
             "type": "string"
           },
@@ -10435,6 +10468,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "token",
           "email"
         ]
@@ -10537,6 +10571,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -10568,6 +10605,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name",
           "token",
           "owner"
@@ -10600,6 +10638,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -10625,6 +10666,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name"
         ]
       },
@@ -10655,6 +10697,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -10680,6 +10725,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name"
         ]
       },
@@ -10710,6 +10756,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -10735,6 +10784,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name"
         ]
       },
@@ -10765,6 +10815,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -10790,6 +10843,7 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name"
         ]
       },
@@ -11279,7 +11333,7 @@
               "$ref": "#/components/schemas/EmailVerificationToken"
             }
           },
-          "reset_tokens": {
+          "password_reset_tokens": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PasswordResetToken"
@@ -12241,6 +12295,60 @@
           "personal_org"
         ]
       },
+      "User_PasswordResetTokensList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "owner_id": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "ttl": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "email": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "owner_id",
+          "token",
+          "email"
+        ]
+      },
       "User_PersonalAccessTokensList": {
         "type": "object",
         "properties": {
@@ -12268,6 +12376,9 @@
           "deleted_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -12293,57 +12404,8 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "name"
-        ]
-      },
-      "User_ResetTokensList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "token": {
-            "type": "string"
-          },
-          "ttl": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "email": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string",
-            "format": "byte"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "token",
-          "email"
         ]
       },
       "User_SessionsList": {

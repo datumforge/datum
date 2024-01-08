@@ -97,6 +97,20 @@ func (prtu *PasswordResetTokenUpdate) ClearDeletedBy() *PasswordResetTokenUpdate
 	return prtu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (prtu *PasswordResetTokenUpdate) SetOwnerID(s string) *PasswordResetTokenUpdate {
+	prtu.mutation.SetOwnerID(s)
+	return prtu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (prtu *PasswordResetTokenUpdate) SetNillableOwnerID(s *string) *PasswordResetTokenUpdate {
+	if s != nil {
+		prtu.SetOwnerID(*s)
+	}
+	return prtu
+}
+
 // SetToken sets the "token" field.
 func (prtu *PasswordResetTokenUpdate) SetToken(s string) *PasswordResetTokenUpdate {
 	prtu.mutation.SetToken(s)
@@ -142,12 +156,6 @@ func (prtu *PasswordResetTokenUpdate) SetNillableEmail(s *string) *PasswordReset
 // SetSecret sets the "secret" field.
 func (prtu *PasswordResetTokenUpdate) SetSecret(b []byte) *PasswordResetTokenUpdate {
 	prtu.mutation.SetSecret(b)
-	return prtu
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (prtu *PasswordResetTokenUpdate) SetOwnerID(id string) *PasswordResetTokenUpdate {
-	prtu.mutation.SetOwnerID(id)
 	return prtu
 }
 
@@ -399,6 +407,20 @@ func (prtuo *PasswordResetTokenUpdateOne) ClearDeletedBy() *PasswordResetTokenUp
 	return prtuo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (prtuo *PasswordResetTokenUpdateOne) SetOwnerID(s string) *PasswordResetTokenUpdateOne {
+	prtuo.mutation.SetOwnerID(s)
+	return prtuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (prtuo *PasswordResetTokenUpdateOne) SetNillableOwnerID(s *string) *PasswordResetTokenUpdateOne {
+	if s != nil {
+		prtuo.SetOwnerID(*s)
+	}
+	return prtuo
+}
+
 // SetToken sets the "token" field.
 func (prtuo *PasswordResetTokenUpdateOne) SetToken(s string) *PasswordResetTokenUpdateOne {
 	prtuo.mutation.SetToken(s)
@@ -444,12 +466,6 @@ func (prtuo *PasswordResetTokenUpdateOne) SetNillableEmail(s *string) *PasswordR
 // SetSecret sets the "secret" field.
 func (prtuo *PasswordResetTokenUpdateOne) SetSecret(b []byte) *PasswordResetTokenUpdateOne {
 	prtuo.mutation.SetSecret(b)
-	return prtuo
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (prtuo *PasswordResetTokenUpdateOne) SetOwnerID(id string) *PasswordResetTokenUpdateOne {
-	prtuo.mutation.SetOwnerID(id)
 	return prtuo
 }
 

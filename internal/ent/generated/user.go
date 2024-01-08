@@ -72,8 +72,8 @@ type UserEdges struct {
 	Setting *UserSetting `json:"setting,omitempty"`
 	// EmailVerificationTokens holds the value of the email_verification_tokens edge.
 	EmailVerificationTokens []*EmailVerificationToken `json:"email_verification_tokens,omitempty"`
-	// ResetTokens holds the value of the reset_tokens edge.
-	ResetTokens []*PasswordResetToken `json:"reset_tokens,omitempty"`
+	// PasswordResetTokens holds the value of the password_reset_tokens edge.
+	PasswordResetTokens []*PasswordResetToken `json:"password_reset_tokens,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [7]bool
@@ -85,7 +85,7 @@ type UserEdges struct {
 	namedGroups                  map[string][]*Group
 	namedPersonalAccessTokens    map[string][]*PersonalAccessToken
 	namedEmailVerificationTokens map[string][]*EmailVerificationToken
-	namedResetTokens             map[string][]*PasswordResetToken
+	namedPasswordResetTokens     map[string][]*PasswordResetToken
 }
 
 // OrganizationsOrErr returns the Organizations value or an error if the edge
@@ -146,13 +146,13 @@ func (e UserEdges) EmailVerificationTokensOrErr() ([]*EmailVerificationToken, er
 	return nil, &NotLoadedError{edge: "email_verification_tokens"}
 }
 
-// ResetTokensOrErr returns the ResetTokens value or an error if the edge
+// PasswordResetTokensOrErr returns the PasswordResetTokens value or an error if the edge
 // was not loaded in eager-loading.
-func (e UserEdges) ResetTokensOrErr() ([]*PasswordResetToken, error) {
+func (e UserEdges) PasswordResetTokensOrErr() ([]*PasswordResetToken, error) {
 	if e.loadedTypes[6] {
-		return e.ResetTokens, nil
+		return e.PasswordResetTokens, nil
 	}
-	return nil, &NotLoadedError{edge: "reset_tokens"}
+	return nil, &NotLoadedError{edge: "password_reset_tokens"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -337,9 +337,9 @@ func (u *User) QueryEmailVerificationTokens() *EmailVerificationTokenQuery {
 	return NewUserClient(u.config).QueryEmailVerificationTokens(u)
 }
 
-// QueryResetTokens queries the "reset_tokens" edge of the User entity.
-func (u *User) QueryResetTokens() *PasswordResetTokenQuery {
-	return NewUserClient(u.config).QueryResetTokens(u)
+// QueryPasswordResetTokens queries the "password_reset_tokens" edge of the User entity.
+func (u *User) QueryPasswordResetTokens() *PasswordResetTokenQuery {
+	return NewUserClient(u.config).QueryPasswordResetTokens(u)
 }
 
 // Update returns a builder for updating this User.
@@ -546,27 +546,27 @@ func (u *User) appendNamedEmailVerificationTokens(name string, edges ...*EmailVe
 	}
 }
 
-// NamedResetTokens returns the ResetTokens named value or an error if the edge was not
+// NamedPasswordResetTokens returns the PasswordResetTokens named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (u *User) NamedResetTokens(name string) ([]*PasswordResetToken, error) {
-	if u.Edges.namedResetTokens == nil {
+func (u *User) NamedPasswordResetTokens(name string) ([]*PasswordResetToken, error) {
+	if u.Edges.namedPasswordResetTokens == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := u.Edges.namedResetTokens[name]
+	nodes, ok := u.Edges.namedPasswordResetTokens[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (u *User) appendNamedResetTokens(name string, edges ...*PasswordResetToken) {
-	if u.Edges.namedResetTokens == nil {
-		u.Edges.namedResetTokens = make(map[string][]*PasswordResetToken)
+func (u *User) appendNamedPasswordResetTokens(name string, edges ...*PasswordResetToken) {
+	if u.Edges.namedPasswordResetTokens == nil {
+		u.Edges.namedPasswordResetTokens = make(map[string][]*PasswordResetToken)
 	}
 	if len(edges) == 0 {
-		u.Edges.namedResetTokens[name] = []*PasswordResetToken{}
+		u.Edges.namedPasswordResetTokens[name] = []*PasswordResetToken{}
 	} else {
-		u.Edges.namedResetTokens[name] = append(u.Edges.namedResetTokens[name], edges...)
+		u.Edges.namedPasswordResetTokens[name] = append(u.Edges.namedPasswordResetTokens[name], edges...)
 	}
 }
 

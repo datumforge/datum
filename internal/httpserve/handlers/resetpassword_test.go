@@ -222,12 +222,12 @@ func createUserWithResetToken(ec context.Context, email string, ttl string) (*en
 		return nil, "", err
 	}
 
-	// set expiry if provided in test case
 	if ttl != "" {
 		user.PasswordResetExpires.String = ttl
 	}
 
-	exp, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
+	// set expiry if provided in test case
+	t, err := time.Parse(time.RFC3339Nano, user.PasswordResetExpires.String)
 	if err != nil {
 		return nil, "", err
 	}
@@ -238,6 +238,6 @@ func createUserWithResetToken(ec context.Context, email string, ttl string) (*en
 		SetToken(user.PasswordResetToken.String).
 		SetEmail(user.Email).
 		SetSecret(user.PasswordResetSecret).
-		SetTTL(exp).
-		SaveX(ec), user.ID, nil
+		SetTTL(t).
+		SaveX(ctx), u.ID, nil
 }

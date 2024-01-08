@@ -105,6 +105,12 @@ func (prtc *PasswordResetTokenCreate) SetNillableDeletedBy(s *string) *PasswordR
 	return prtc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (prtc *PasswordResetTokenCreate) SetOwnerID(s string) *PasswordResetTokenCreate {
+	prtc.mutation.SetOwnerID(s)
+	return prtc
+}
+
 // SetToken sets the "token" field.
 func (prtc *PasswordResetTokenCreate) SetToken(s string) *PasswordResetTokenCreate {
 	prtc.mutation.SetToken(s)
@@ -140,12 +146,6 @@ func (prtc *PasswordResetTokenCreate) SetNillableID(s *string) *PasswordResetTok
 	if s != nil {
 		prtc.SetID(*s)
 	}
-	return prtc
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (prtc *PasswordResetTokenCreate) SetOwnerID(id string) *PasswordResetTokenCreate {
-	prtc.mutation.SetOwnerID(id)
 	return prtc
 }
 
@@ -222,6 +222,9 @@ func (prtc *PasswordResetTokenCreate) check() error {
 	}
 	if _, ok := prtc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "PasswordResetToken.updated_at"`)}
+	}
+	if _, ok := prtc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "PasswordResetToken.owner_id"`)}
 	}
 	if _, ok := prtc.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`generated: missing required field "PasswordResetToken.token"`)}
@@ -344,7 +347,7 @@ func (prtc *PasswordResetTokenCreate) createSpec() (*PasswordResetToken, *sqlgra
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_reset_tokens = &nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

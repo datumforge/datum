@@ -1352,6 +1352,10 @@ func (pat *PersonalAccessTokenQuery) collectField(ctx context.Context, opCtx *gr
 				return err
 			}
 			pat.withOwner = query
+			if _, ok := fieldSeen[personalaccesstoken.FieldOwnerID]; !ok {
+				selectedFields = append(selectedFields, personalaccesstoken.FieldOwnerID)
+				fieldSeen[personalaccesstoken.FieldOwnerID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[personalaccesstoken.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, personalaccesstoken.FieldCreatedAt)

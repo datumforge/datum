@@ -4,6 +4,7 @@ package generated
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 
@@ -25,7 +26,6 @@ type PasswordResetTokenQuery struct {
 	inters     []Interceptor
 	predicates []predicate.PasswordResetToken
 	withOwner  *UserQuery
-	withFKs    bool
 	modifiers  []func(*sql.Selector)
 	loadTotal  []func(context.Context, []*PasswordResetToken) error
 	// intermediate query (i.e. traversal path).
@@ -370,24 +370,23 @@ func (prtq *PasswordResetTokenQuery) prepareQuery(ctx context.Context) error {
 		}
 		prtq.sql = prev
 	}
+	if passwordresettoken.Policy == nil {
+		return errors.New("generated: uninitialized passwordresettoken.Policy (forgotten import generated/runtime?)")
+	}
+	if err := passwordresettoken.Policy.EvalQuery(ctx, prtq); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (prtq *PasswordResetTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PasswordResetToken, error) {
 	var (
 		nodes       = []*PasswordResetToken{}
-		withFKs     = prtq.withFKs
 		_spec       = prtq.querySpec()
 		loadedTypes = [1]bool{
 			prtq.withOwner != nil,
 		}
 	)
-	if prtq.withOwner != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, passwordresettoken.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*PasswordResetToken).scanValues(nil, columns)
 	}
@@ -429,10 +428,7 @@ func (prtq *PasswordResetTokenQuery) loadOwner(ctx context.Context, query *UserQ
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*PasswordResetToken)
 	for i := range nodes {
-		if nodes[i].user_reset_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].user_reset_tokens
+		fk := nodes[i].OwnerID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -449,7 +445,7 @@ func (prtq *PasswordResetTokenQuery) loadOwner(ctx context.Context, query *UserQ
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_reset_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "owner_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -487,6 +483,9 @@ func (prtq *PasswordResetTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != passwordresettoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if prtq.withOwner != nil {
+			_spec.Node.AddColumnOnce(passwordresettoken.FieldOwnerID)
 		}
 	}
 	if ps := prtq.predicates; len(ps) > 0 {

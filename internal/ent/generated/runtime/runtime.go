@@ -426,12 +426,24 @@ func init() {
 	// organizationsetting.DefaultID holds the default value on creation for the id field.
 	organizationsetting.DefaultID = organizationsettingDescID.Default.(func() string)
 	passwordresettokenMixin := schema.PasswordResetToken{}.Mixin()
+	passwordresettoken.Policy = privacy.NewPolicies(schema.PasswordResetToken{})
+	passwordresettoken.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := passwordresettoken.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	passwordresettokenMixinHooks0 := passwordresettokenMixin[0].Hooks()
 	passwordresettokenMixinHooks2 := passwordresettokenMixin[2].Hooks()
 	passwordresettokenHooks := schema.PasswordResetToken{}.Hooks()
-	passwordresettoken.Hooks[0] = passwordresettokenMixinHooks0[0]
-	passwordresettoken.Hooks[1] = passwordresettokenMixinHooks2[0]
-	passwordresettoken.Hooks[2] = passwordresettokenHooks[0]
+
+	passwordresettoken.Hooks[1] = passwordresettokenMixinHooks0[0]
+
+	passwordresettoken.Hooks[2] = passwordresettokenMixinHooks2[0]
+
+	passwordresettoken.Hooks[3] = passwordresettokenHooks[0]
 	passwordresettokenMixinInters2 := passwordresettokenMixin[2].Interceptors()
 	passwordresettoken.Interceptors[0] = passwordresettokenMixinInters2[0]
 	passwordresettokenMixinFields0 := passwordresettokenMixin[0].Fields()

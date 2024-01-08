@@ -98,6 +98,20 @@ func (patu *PersonalAccessTokenUpdate) ClearDeletedBy() *PersonalAccessTokenUpda
 	return patu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (patu *PersonalAccessTokenUpdate) SetOwnerID(s string) *PersonalAccessTokenUpdate {
+	patu.mutation.SetOwnerID(s)
+	return patu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (patu *PersonalAccessTokenUpdate) SetNillableOwnerID(s *string) *PersonalAccessTokenUpdate {
+	if s != nil {
+		patu.SetOwnerID(*s)
+	}
+	return patu
+}
+
 // SetName sets the "name" field.
 func (patu *PersonalAccessTokenUpdate) SetName(s string) *PersonalAccessTokenUpdate {
 	patu.mutation.SetName(s)
@@ -173,12 +187,6 @@ func (patu *PersonalAccessTokenUpdate) SetLastUsedAt(t time.Time) *PersonalAcces
 // ClearLastUsedAt clears the value of the "last_used_at" field.
 func (patu *PersonalAccessTokenUpdate) ClearLastUsedAt() *PersonalAccessTokenUpdate {
 	patu.mutation.ClearLastUsedAt()
-	return patu
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (patu *PersonalAccessTokenUpdate) SetOwnerID(id string) *PersonalAccessTokenUpdate {
-	patu.mutation.SetOwnerID(id)
 	return patu
 }
 
@@ -439,6 +447,20 @@ func (patuo *PersonalAccessTokenUpdateOne) ClearDeletedBy() *PersonalAccessToken
 	return patuo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (patuo *PersonalAccessTokenUpdateOne) SetOwnerID(s string) *PersonalAccessTokenUpdateOne {
+	patuo.mutation.SetOwnerID(s)
+	return patuo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (patuo *PersonalAccessTokenUpdateOne) SetNillableOwnerID(s *string) *PersonalAccessTokenUpdateOne {
+	if s != nil {
+		patuo.SetOwnerID(*s)
+	}
+	return patuo
+}
+
 // SetName sets the "name" field.
 func (patuo *PersonalAccessTokenUpdateOne) SetName(s string) *PersonalAccessTokenUpdateOne {
 	patuo.mutation.SetName(s)
@@ -514,12 +536,6 @@ func (patuo *PersonalAccessTokenUpdateOne) SetLastUsedAt(t time.Time) *PersonalA
 // ClearLastUsedAt clears the value of the "last_used_at" field.
 func (patuo *PersonalAccessTokenUpdateOne) ClearLastUsedAt() *PersonalAccessTokenUpdateOne {
 	patuo.mutation.ClearLastUsedAt()
-	return patuo
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (patuo *PersonalAccessTokenUpdateOne) SetOwnerID(id string) *PersonalAccessTokenUpdateOne {
-	patuo.mutation.SetOwnerID(id)
 	return patuo
 }
 

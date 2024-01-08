@@ -109,7 +109,7 @@ func (h *Handler) getUserByResetToken(ctx context.Context, token string) (*ent.U
 		Where(
 			passwordresettoken.Token(token),
 		).
-		QueryOwner().WithSetting().WithResetTokens().Only(ctx)
+		QueryOwner().WithSetting().WithPasswordResetTokens().Only(ctx)
 	if err != nil {
 		h.Logger.Errorw("error obtaining user from reset token", "error", err)
 

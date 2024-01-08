@@ -321,7 +321,7 @@ var (
 		{Name: "ttl", Type: field.TypeTime},
 		{Name: "email", Type: field.TypeString},
 		{Name: "secret", Type: field.TypeBytes},
-		{Name: "user_reset_tokens", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// PasswordResetTokensTable holds the schema information for the "password_reset_tokens" table.
 	PasswordResetTokensTable = &schema.Table{
@@ -330,7 +330,7 @@ var (
 		PrimaryKey: []*schema.Column{PasswordResetTokensColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "password_reset_tokens_users_reset_tokens",
+				Symbol:     "password_reset_tokens_users_password_reset_tokens",
 				Columns:    []*schema.Column{PasswordResetTokensColumns[11]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
@@ -362,7 +362,7 @@ var (
 		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "description", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "last_used_at", Type: field.TypeTime, Nullable: true},
-		{Name: "user_personal_access_tokens", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// PersonalAccessTokensTable holds the schema information for the "personal_access_tokens" table.
 	PersonalAccessTokensTable = &schema.Table{

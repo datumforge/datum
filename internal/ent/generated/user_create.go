@@ -341,19 +341,19 @@ func (uc *UserCreate) AddEmailVerificationTokens(e ...*EmailVerificationToken) *
 	return uc.AddEmailVerificationTokenIDs(ids...)
 }
 
-// AddResetTokenIDs adds the "reset_tokens" edge to the PasswordResetToken entity by IDs.
-func (uc *UserCreate) AddResetTokenIDs(ids ...string) *UserCreate {
-	uc.mutation.AddResetTokenIDs(ids...)
+// AddPasswordResetTokenIDs adds the "password_reset_tokens" edge to the PasswordResetToken entity by IDs.
+func (uc *UserCreate) AddPasswordResetTokenIDs(ids ...string) *UserCreate {
+	uc.mutation.AddPasswordResetTokenIDs(ids...)
 	return uc
 }
 
-// AddResetTokens adds the "reset_tokens" edges to the PasswordResetToken entity.
-func (uc *UserCreate) AddResetTokens(p ...*PasswordResetToken) *UserCreate {
+// AddPasswordResetTokens adds the "password_reset_tokens" edges to the PasswordResetToken entity.
+func (uc *UserCreate) AddPasswordResetTokens(p ...*PasswordResetToken) *UserCreate {
 	ids := make([]string, len(p))
 	for i := range p {
 		ids[i] = p[i].ID
 	}
-	return uc.AddResetTokenIDs(ids...)
+	return uc.AddPasswordResetTokenIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -687,12 +687,12 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := uc.mutation.ResetTokensIDs(); len(nodes) > 0 {
+	if nodes := uc.mutation.PasswordResetTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   user.ResetTokensTable,
-			Columns: []string{user.ResetTokensColumn},
+			Table:   user.PasswordResetTokensTable,
+			Columns: []string{user.PasswordResetTokensColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(passwordresettoken.FieldID, field.TypeString),

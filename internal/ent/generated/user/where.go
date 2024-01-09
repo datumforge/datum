@@ -1177,35 +1177,6 @@ func OauthNEQ(v bool) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldOauth, v))
 }
 
-// HasSessions applies the HasEdge predicate on the "sessions" edge.
-func HasSessions() predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, SessionsTable, SessionsColumn),
-		)
-		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Session
-		step.Edge.Schema = schemaConfig.Session
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasSessionsWith applies the HasEdge predicate on the "sessions" edge with a given conditions (other predicates).
-func HasSessionsWith(preds ...predicate.Session) predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		step := newSessionsStep()
-		schemaConfig := internal.SchemaConfigFromContext(s.Context())
-		step.To.Schema = schemaConfig.Session
-		step.Edge.Schema = schemaConfig.Session
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasPersonalAccessTokens applies the HasEdge predicate on the "personal_access_tokens" edge.
 func HasPersonalAccessTokens() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

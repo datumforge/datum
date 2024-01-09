@@ -4374,7 +4374,6 @@ input CreateUserInput {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean
-  sessionIDs: [ID!]
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   sessionIDs: [ID!]
@@ -7194,9 +7193,6 @@ input UpdateUserInput {
   clearSub: Boolean
   """whether the user uses oauth for login or not"""
   oauth: Boolean
-  addSessionIDs: [ID!]
-  removeSessionIDs: [ID!]
-  clearSessions: Boolean
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
@@ -7272,9 +7268,9 @@ type User implements Node {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean!
-  sessions: [Session!]
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSetting!
+  sessions: [Session!]
   groups: [Group!]
   organizations: [Organization!]
   groupMemberships: [GroupMembership!]
@@ -7723,15 +7719,15 @@ input UserWhereInput {
   """oauth field predicates"""
   oauth: Boolean
   oauthNEQ: Boolean
-  """sessions edge predicates"""
-  hasSessions: Boolean
-  hasSessionsWith: [SessionWhereInput!]
   """personal_access_tokens edge predicates"""
   hasPersonalAccessTokens: Boolean
   hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [UserSettingWhereInput!]
+  """sessions edge predicates"""
+  hasSessions: Boolean
+  hasSessionsWith: [SessionWhereInput!]
   """groups edge predicates"""
   hasGroups: Boolean
   hasGroupsWith: [GroupWhereInput!]
@@ -12486,12 +12482,12 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -13453,12 +13449,12 @@ func (ec *executionContext) fieldContext_GroupMembership_user(ctx context.Contex
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -21243,12 +21239,12 @@ func (ec *executionContext) fieldContext_OrgMembership_user(ctx context.Context,
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -22746,12 +22742,12 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -25333,12 +25329,12 @@ func (ec *executionContext) fieldContext_PersonalAccessToken_owner(ctx context.C
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -27878,12 +27874,12 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -28591,12 +28587,12 @@ func (ec *executionContext) fieldContext_Session_owner(ctx context.Context, fiel
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -29761,71 +29757,6 @@ func (ec *executionContext) fieldContext_User_oauth(ctx context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_sessions(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_sessions(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Sessions(ctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*generated.Session)
-	fc.Result = res
-	return ec.marshalOSession2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSessionᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_sessions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Session_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Session_createdAt(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Session_updatedAt(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_Session_createdBy(ctx, field)
-			case "updatedBy":
-				return ec.fieldContext_Session_updatedBy(ctx, field)
-			case "sessionToken":
-				return ec.fieldContext_Session_sessionToken(ctx, field)
-			case "issuedAt":
-				return ec.fieldContext_Session_issuedAt(ctx, field)
-			case "expiresAt":
-				return ec.fieldContext_Session_expiresAt(ctx, field)
-			case "organizationID":
-				return ec.fieldContext_Session_organizationID(ctx, field)
-			case "userID":
-				return ec.fieldContext_Session_userID(ctx, field)
-			case "owner":
-				return ec.fieldContext_Session_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Session", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _User_personalAccessTokens(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_personalAccessTokens(ctx, field)
 	if err != nil {
@@ -29968,6 +29899,69 @@ func (ec *executionContext) fieldContext_User_setting(ctx context.Context, field
 				return ec.fieldContext_UserSetting_user(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserSetting", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sessions(ctx context.Context, field graphql.CollectedField, obj *generated.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sessions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sessions(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*generated.Session)
+	fc.Result = res
+	return ec.marshalOSession2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSessionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sessions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Session_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Session_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Session_updatedAt(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Session_createdBy(ctx, field)
+			case "updatedBy":
+				return ec.fieldContext_Session_updatedBy(ctx, field)
+			case "sessionToken":
+				return ec.fieldContext_Session_sessionToken(ctx, field)
+			case "issuedAt":
+				return ec.fieldContext_Session_issuedAt(ctx, field)
+			case "expiresAt":
+				return ec.fieldContext_Session_expiresAt(ctx, field)
+			case "organizationID":
+				return ec.fieldContext_Session_organizationID(ctx, field)
+			case "owner":
+				return ec.fieldContext_Session_owner(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Session", field.Name)
 		},
 	}
 	return fc, nil
@@ -30475,12 +30469,12 @@ func (ec *executionContext) fieldContext_UserCreatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -30610,12 +30604,12 @@ func (ec *executionContext) fieldContext_UserEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -31387,12 +31381,12 @@ func (ec *executionContext) fieldContext_UserSetting_user(ctx context.Context, f
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -31945,12 +31939,12 @@ func (ec *executionContext) fieldContext_UserUpdatePayload_user(ctx context.Cont
 				return ec.fieldContext_User_sub(ctx, field)
 			case "oauth":
 				return ec.fieldContext_User_oauth(ctx, field)
-			case "sessions":
-				return ec.fieldContext_User_sessions(ctx, field)
 			case "personalAccessTokens":
 				return ec.fieldContext_User_personalAccessTokens(ctx, field)
 			case "setting":
 				return ec.fieldContext_User_setting(ctx, field)
+			case "sessions":
+				return ec.fieldContext_User_sessions(ctx, field)
 			case "groups":
 				return ec.fieldContext_User_groups(ctx, field)
 			case "organizations":
@@ -34912,7 +34906,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "sessionIDs", "personalAccessTokenIDs", "settingID", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "avatarLocalFile", "avatarUpdatedAt", "lastSeen", "password", "sub", "oauth", "personalAccessTokenIDs", "settingID", "sessionIDs", "emailVerificationTokenIDs", "passwordResetTokenIDs", "groupIDs", "organizationIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35024,13 +35018,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Oauth = data
-		case "sessionIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sessionIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SessionIDs = data
 		case "personalAccessTokenIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalAccessTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -47289,7 +47276,7 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addSessionIDs", "removeSessionIDs", "clearSessions", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "email", "firstName", "lastName", "displayName", "avatarRemoteURL", "clearAvatarRemoteURL", "avatarLocalFile", "clearAvatarLocalFile", "avatarUpdatedAt", "clearAvatarUpdatedAt", "lastSeen", "clearLastSeen", "password", "clearPassword", "sub", "clearSub", "oauth", "addPersonalAccessTokenIDs", "removePersonalAccessTokenIDs", "clearPersonalAccessTokens", "settingID", "addSessionIDs", "removeSessionIDs", "clearSessions", "addEmailVerificationTokenIDs", "removeEmailVerificationTokenIDs", "clearEmailVerificationTokens", "addPasswordResetTokenIDs", "removePasswordResetTokenIDs", "clearPasswordResetTokens", "addGroupIDs", "removeGroupIDs", "clearGroups", "addOrganizationIDs", "removeOrganizationIDs", "clearOrganizations"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47436,27 +47423,6 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Oauth = data
-		case "addSessionIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addSessionIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AddSessionIDs = data
-		case "removeSessionIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeSessionIDs"))
-			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RemoveSessionIDs = data
-		case "clearSessions":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSessions"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ClearSessions = data
 		case "addPersonalAccessTokenIDs":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addPersonalAccessTokenIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
@@ -48640,7 +48606,7 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "hasSessions", "hasSessionsWith", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailEqualFold", "emailContainsFold", "firstName", "firstNameNEQ", "firstNameIn", "firstNameNotIn", "firstNameGT", "firstNameGTE", "firstNameLT", "firstNameLTE", "firstNameContains", "firstNameHasPrefix", "firstNameHasSuffix", "firstNameEqualFold", "firstNameContainsFold", "lastName", "lastNameNEQ", "lastNameIn", "lastNameNotIn", "lastNameGT", "lastNameGTE", "lastNameLT", "lastNameLTE", "lastNameContains", "lastNameHasPrefix", "lastNameHasSuffix", "lastNameEqualFold", "lastNameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "avatarRemoteURL", "avatarRemoteURLNEQ", "avatarRemoteURLIn", "avatarRemoteURLNotIn", "avatarRemoteURLGT", "avatarRemoteURLGTE", "avatarRemoteURLLT", "avatarRemoteURLLTE", "avatarRemoteURLContains", "avatarRemoteURLHasPrefix", "avatarRemoteURLHasSuffix", "avatarRemoteURLIsNil", "avatarRemoteURLNotNil", "avatarRemoteURLEqualFold", "avatarRemoteURLContainsFold", "avatarLocalFile", "avatarLocalFileNEQ", "avatarLocalFileIn", "avatarLocalFileNotIn", "avatarLocalFileGT", "avatarLocalFileGTE", "avatarLocalFileLT", "avatarLocalFileLTE", "avatarLocalFileContains", "avatarLocalFileHasPrefix", "avatarLocalFileHasSuffix", "avatarLocalFileIsNil", "avatarLocalFileNotNil", "avatarLocalFileEqualFold", "avatarLocalFileContainsFold", "avatarUpdatedAt", "avatarUpdatedAtNEQ", "avatarUpdatedAtIn", "avatarUpdatedAtNotIn", "avatarUpdatedAtGT", "avatarUpdatedAtGTE", "avatarUpdatedAtLT", "avatarUpdatedAtLTE", "avatarUpdatedAtIsNil", "avatarUpdatedAtNotNil", "lastSeen", "lastSeenNEQ", "lastSeenIn", "lastSeenNotIn", "lastSeenGT", "lastSeenGTE", "lastSeenLT", "lastSeenLTE", "lastSeenIsNil", "lastSeenNotNil", "sub", "subNEQ", "subIn", "subNotIn", "subGT", "subGTE", "subLT", "subLTE", "subContains", "subHasPrefix", "subHasSuffix", "subIsNil", "subNotNil", "subEqualFold", "subContainsFold", "oauth", "oauthNEQ", "hasPersonalAccessTokens", "hasPersonalAccessTokensWith", "hasSetting", "hasSettingWith", "hasSessions", "hasSessionsWith", "hasGroups", "hasGroupsWith", "hasOrganizations", "hasOrganizationsWith", "hasGroupMemberships", "hasGroupMembershipsWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -50068,17 +50034,11 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.OauthNEQ = data
-		case "hasSessions":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSessions"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.HasSessionsWith = data
 		case "hasPersonalAccessTokens":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPersonalAccessTokens"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
+				return it, err
 			}
 			it.HasPersonalAccessTokens = data
 		case "hasPersonalAccessTokensWith":
@@ -50102,6 +50062,20 @@ func (ec *executionContext) unmarshalInputUserWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasSettingWith = data
+		case "hasSessions":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSessions"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSessions = data
+		case "hasSessionsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasSessionsWith"))
+			data, err := ec.unmarshalOSessionWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐSessionWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasSessionsWith = data
 		case "hasGroups":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGroups"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -55641,39 +55615,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "sessions":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._User_sessions(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "personalAccessTokens":
 			field := field
 
@@ -55720,6 +55661,39 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "sessions":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_sessions(ctx, field, obj)
 				return res
 			}
 

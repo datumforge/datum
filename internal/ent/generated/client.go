@@ -2859,25 +2859,6 @@ func (c *UserClient) GetX(ctx context.Context, id string) *User {
 	return obj
 }
 
-// QuerySessions queries the sessions edge of a User.
-func (c *UserClient) QuerySessions(u *User) *SessionQuery {
-	query := (&SessionClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := u.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(user.Table, user.FieldID, id),
-			sqlgraph.To(session.Table, session.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, user.SessionsTable, user.SessionsColumn),
-		)
-		schemaConfig := u.schemaConfig
-		step.To.Schema = schemaConfig.Session
-		step.Edge.Schema = schemaConfig.Session
-		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryPersonalAccessTokens queries the personal_access_tokens edge of a User.
 func (c *UserClient) QueryPersonalAccessTokens(u *User) *PersonalAccessTokenQuery {
 	query := (&PersonalAccessTokenClient{config: c.config}).Query()

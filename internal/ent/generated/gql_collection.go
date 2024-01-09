@@ -1873,18 +1873,6 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
-		case "sessions":
-			var (
-				alias = field.Alias
-				path  = append(path, alias)
-				query = (&SessionClient{config: u.config}).Query()
-			)
-			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
-				return err
-			}
-			u.WithNamedSessions(alias, func(wq *SessionQuery) {
-				*wq = *query
-			})
 		case "personalAccessTokens":
 			var (
 				alias = field.Alias
@@ -1907,6 +1895,18 @@ func (u *UserQuery) collectField(ctx context.Context, opCtx *graphql.OperationCo
 				return err
 			}
 			u.withSetting = query
+		case "sessions":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&SessionClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
+				return err
+			}
+			u.WithNamedSessions(alias, func(wq *SessionQuery) {
+				*wq = *query
+			})
 		case "groups":
 			var (
 				alias = field.Alias

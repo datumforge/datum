@@ -8,10 +8,9 @@ import (
 type Role string
 
 const (
-	RoleOwner    Role = "OWNER"
-	RoleAdmin    Role = "ADMIN"
-	RoleMember   Role = "MEMBER"
-	RoleCustomer Role = "CUSTOMER"
+	RoleOwner  Role = "OWNER"
+	RoleAdmin  Role = "ADMIN"
+	RoleMember Role = "MEMBER"
 )
 
 // Values returns a slice of strings that represents all the possible values of the Role enum.

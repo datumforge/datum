@@ -49,8 +49,6 @@ const (
 	FieldSub = "sub"
 	// FieldOauth holds the string denoting the oauth field in the database.
 	FieldOauth = "oauth"
-	// EdgeSessions holds the string denoting the sessions edge name in mutations.
-	EdgeSessions = "sessions"
 	// EdgePersonalAccessTokens holds the string denoting the personal_access_tokens edge name in mutations.
 	EdgePersonalAccessTokens = "personal_access_tokens"
 	// EdgeSetting holds the string denoting the setting edge name in mutations.
@@ -71,13 +69,6 @@ const (
 	EdgeOrgMemberships = "org_memberships"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// SessionsTable is the table that holds the sessions relation/edge.
-	SessionsTable = "sessions"
-	// SessionsInverseTable is the table name for the Session entity.
-	// It exists in this package in order to avoid circular dependency with the "session" package.
-	SessionsInverseTable = "sessions"
-	// SessionsColumn is the table column denoting the sessions relation/edge.
-	SessionsColumn = "user_id"
 	// PersonalAccessTokensTable is the table that holds the personal_access_tokens relation/edge.
 	PersonalAccessTokensTable = "personal_access_tokens"
 	// PersonalAccessTokensInverseTable is the table name for the PersonalAccessToken entity.
@@ -312,20 +303,6 @@ func ByOauth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOauth, opts...).ToFunc()
 }
 
-// BySessionsCount orders the results by sessions count.
-func BySessionsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newSessionsStep(), opts...)
-	}
-}
-
-// BySessions orders the results by sessions terms.
-func BySessions(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newSessionsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByPersonalAccessTokensCount orders the results by personal_access_tokens count.
 func ByPersonalAccessTokensCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -443,13 +420,6 @@ func ByOrgMemberships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newOrgMembershipsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
-}
-func newSessionsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(SessionsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, SessionsTable, SessionsColumn),
-	)
 }
 func newPersonalAccessTokensStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(

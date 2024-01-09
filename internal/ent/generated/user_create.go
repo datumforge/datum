@@ -257,21 +257,6 @@ func (uc *UserCreate) SetNillableID(s *string) *UserCreate {
 	return uc
 }
 
-// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
-func (uc *UserCreate) AddSessionIDs(ids ...string) *UserCreate {
-	uc.mutation.AddSessionIDs(ids...)
-	return uc
-}
-
-// AddSessions adds the "sessions" edges to the Session entity.
-func (uc *UserCreate) AddSessions(s ...*Session) *UserCreate {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return uc.AddSessionIDs(ids...)
-}
-
 // AddPersonalAccessTokenIDs adds the "personal_access_tokens" edge to the PersonalAccessToken entity by IDs.
 func (uc *UserCreate) AddPersonalAccessTokenIDs(ids ...string) *UserCreate {
 	uc.mutation.AddPersonalAccessTokenIDs(ids...)
@@ -631,23 +616,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Oauth(); ok {
 		_spec.SetField(user.FieldOauth, field.TypeBool, value)
 		_node.Oauth = value
-	}
-	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uc.schemaConfig.Session
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := uc.mutation.PersonalAccessTokensIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

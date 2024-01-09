@@ -270,7 +270,6 @@ type CreateUserInput struct {
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth                     *bool    `json:"oauth,omitempty"`
-	SessionIDs                []string `json:"sessionIDs,omitempty"`
 	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
 	SettingID                 string   `json:"settingID"`
 	SessionIDs                []string `json:"sessionIDs,omitempty"`
@@ -3007,9 +3006,6 @@ type UpdateUserInput struct {
 	ClearSub *bool   `json:"clearSub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth                           *bool    `json:"oauth,omitempty"`
-	AddSessionIDs                   []string `json:"addSessionIDs,omitempty"`
-	RemoveSessionIDs                []string `json:"removeSessionIDs,omitempty"`
-	ClearSessions                   *bool    `json:"clearSessions,omitempty"`
 	AddPersonalAccessTokenIDs       []string `json:"addPersonalAccessTokenIDs,omitempty"`
 	RemovePersonalAccessTokenIDs    []string `json:"removePersonalAccessTokenIDs,omitempty"`
 	ClearPersonalAccessTokens       *bool    `json:"clearPersonalAccessTokens,omitempty"`
@@ -3085,9 +3081,9 @@ type User struct {
 	Sub *string `json:"sub,omitempty"`
 	// whether the user uses oauth for login or not
 	Oauth                bool                   `json:"oauth"`
-	Sessions             []*Session             `json:"sessions,omitempty"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	Setting              UserSetting            `json:"setting"`
+	Sessions             []*Session             `json:"sessions,omitempty"`
 	Groups               []*Group               `json:"groups,omitempty"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`
 	GroupMemberships     []*GroupMembership     `json:"groupMemberships,omitempty"`
@@ -3561,15 +3557,15 @@ type UserWhereInput struct {
 	// oauth field predicates
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNeq *bool `json:"oauthNEQ,omitempty"`
-	// sessions edge predicates
-	HasSessions     *bool                `json:"hasSessions,omitempty"`
-	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
 	// personal_access_tokens edge predicates
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
 	// setting edge predicates
 	HasSetting     *bool                    `json:"hasSetting,omitempty"`
 	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
+	// sessions edge predicates
+	HasSessions     *bool                `json:"hasSessions,omitempty"`
+	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
 	// groups edge predicates
 	HasGroups     *bool              `json:"hasGroups,omitempty"`
 	HasGroupsWith []*GroupWhereInput `json:"hasGroupsWith,omitempty"`

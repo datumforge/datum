@@ -741,18 +741,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"User",
 	)
 	graph.MustAddE(
-		"sessions",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-		},
-		"User",
-		"Session",
-	)
-	graph.MustAddE(
 		"personal_access_tokens",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -2718,20 +2706,6 @@ func (f *UserFilter) WhereSub(p entql.StringP) {
 // WhereOauth applies the entql bool predicate on the oauth field.
 func (f *UserFilter) WhereOauth(p entql.BoolP) {
 	f.Where(p.Field(user.FieldOauth))
-}
-
-// WhereHasSessions applies a predicate to check if query has an edge sessions.
-func (f *UserFilter) WhereHasSessions() {
-	f.Where(entql.HasEdge("sessions"))
-}
-
-// WhereHasSessionsWith applies a predicate to check if query has an edge sessions with a given conditions (other predicates).
-func (f *UserFilter) WhereHasSessionsWith(preds ...predicate.Session) {
-	f.Where(entql.HasEdgeWith("sessions", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }
 
 // WhereHasPersonalAccessTokens applies a predicate to check if query has an edge personal_access_tokens.

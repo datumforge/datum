@@ -7999,10 +7999,6 @@ type UserWhereInput struct {
 	Oauth    *bool `json:"oauth,omitempty"`
 	OauthNEQ *bool `json:"oauthNEQ,omitempty"`
 
-	// "sessions" edge predicates.
-	HasSessions     *bool                `json:"hasSessions,omitempty"`
-	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
-
 	// "personal_access_tokens" edge predicates.
 	HasPersonalAccessTokens     *bool                            `json:"hasPersonalAccessTokens,omitempty"`
 	HasPersonalAccessTokensWith []*PersonalAccessTokenWhereInput `json:"hasPersonalAccessTokensWith,omitempty"`
@@ -8010,6 +8006,10 @@ type UserWhereInput struct {
 	// "setting" edge predicates.
 	HasSetting     *bool                    `json:"hasSetting,omitempty"`
 	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
+
+	// "sessions" edge predicates.
+	HasSessions     *bool                `json:"hasSessions,omitempty"`
+	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
 
 	// "groups" edge predicates.
 	HasGroups     *bool              `json:"hasGroups,omitempty"`
@@ -8745,24 +8745,6 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 		predicates = append(predicates, user.OauthNEQ(*i.OauthNEQ))
 	}
 
-	if i.HasSessions != nil {
-		p := user.HasSessions()
-		if !*i.HasSessions {
-			p = user.Not(p)
-		}
-		predicates = append(predicates, p)
-	}
-	if len(i.HasSessionsWith) > 0 {
-		with := make([]predicate.Session, 0, len(i.HasSessionsWith))
-		for _, w := range i.HasSessionsWith {
-			p, err := w.P()
-			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasSessionsWith'", err)
-			}
-			with = append(with, p)
-		}
-		predicates = append(predicates, user.HasSessionsWith(with...))
-	}
 	if i.HasPersonalAccessTokens != nil {
 		p := user.HasPersonalAccessTokens()
 		if !*i.HasPersonalAccessTokens {
@@ -8798,6 +8780,24 @@ func (i *UserWhereInput) P() (predicate.User, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, user.HasSettingWith(with...))
+	}
+	if i.HasSessions != nil {
+		p := user.HasSessions()
+		if !*i.HasSessions {
+			p = user.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasSessionsWith) > 0 {
+		with := make([]predicate.Session, 0, len(i.HasSessionsWith))
+		for _, w := range i.HasSessionsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasSessionsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, user.HasSessionsWith(with...))
 	}
 	if i.HasGroups != nil {
 		p := user.HasGroups()

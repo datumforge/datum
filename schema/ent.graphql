@@ -270,7 +270,6 @@ input CreateUserInput {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean
-  sessionIDs: [ID!]
   personalAccessTokenIDs: [ID!]
   settingID: ID!
   sessionIDs: [ID!]
@@ -3090,9 +3089,6 @@ input UpdateUserInput {
   clearSub: Boolean
   """whether the user uses oauth for login or not"""
   oauth: Boolean
-  addSessionIDs: [ID!]
-  removeSessionIDs: [ID!]
-  clearSessions: Boolean
   addPersonalAccessTokenIDs: [ID!]
   removePersonalAccessTokenIDs: [ID!]
   clearPersonalAccessTokens: Boolean
@@ -3168,9 +3164,9 @@ type User implements Node {
   sub: String
   """whether the user uses oauth for login or not"""
   oauth: Boolean!
-  sessions: [Session!]
   personalAccessTokens: [PersonalAccessToken!]
   setting: UserSetting!
+  sessions: [Session!]
   groups: [Group!]
   organizations: [Organization!]
   groupMemberships: [GroupMembership!]
@@ -3619,15 +3615,15 @@ input UserWhereInput {
   """oauth field predicates"""
   oauth: Boolean
   oauthNEQ: Boolean
-  """sessions edge predicates"""
-  hasSessions: Boolean
-  hasSessionsWith: [SessionWhereInput!]
   """personal_access_tokens edge predicates"""
   hasPersonalAccessTokens: Boolean
   hasPersonalAccessTokensWith: [PersonalAccessTokenWhereInput!]
   """setting edge predicates"""
   hasSetting: Boolean
   hasSettingWith: [UserSettingWhereInput!]
+  """sessions edge predicates"""
+  hasSessions: Boolean
+  hasSessionsWith: [SessionWhereInput!]
   """groups edge predicates"""
   hasGroups: Boolean
   hasGroupsWith: [GroupWhereInput!]

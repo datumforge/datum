@@ -4,7 +4,6 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -42,9 +41,7 @@ func (Entitlement) Fields() []ent.Field {
 
 // Edges of the Entitlement
 func (Entitlement) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("owner", Organization.Type).Ref("entitlements").Unique(),
-	}
+	return []ent.Edge{}
 }
 
 // Annotations of the Entitlement
@@ -62,5 +59,8 @@ func (Entitlement) Mixin() []ent.Mixin {
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
 		mixin.SoftDeleteMixin{},
+		OrgOwnerMixin{
+			Ref: "entitlements",
+		},
 	}
 }

@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -12,9 +13,11 @@ import (
 	"github.com/rShetty/asyncwait"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
+	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/httpserve/handlers"
 	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/utils/emails"
@@ -22,7 +25,16 @@ import (
 )
 
 func TestRegisterHandler(t *testing.T) {
-	h := handlerSetup(t)
+	// setup mock controller
+	mockCtrl := gomock.NewController(t)
+
+	mc := mock_client.NewMockSdkClient(mockCtrl)
+
+	// setup entdb with authz
+	entClient := setupAuthEntDB(t, mockCtrl, mc)
+	defer entClient.Close()
+
+	h := handlerSetup(t, entClient)
 
 	testCases := []struct {
 		name               string
@@ -108,7 +120,12 @@ func TestRegisterHandler(t *testing.T) {
 			mock.ResetEmailMock()
 
 			// create echo context with middleware
-			e := setupEcho(h.SM)
+			e := setupEchoAuth(h.SM, entClient)
+
+			// setup mock authz writes
+			if tc.expectedErrMessage == "" {
+				mockWriteTuplesAny(mockCtrl, mc, context.Background(), nil)
+			}
 
 			e.POST("register", h.RegisterHandler)
 

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/user"
@@ -107,6 +108,12 @@ func (gc *GroupCreate) SetNillableDeletedBy(s *string) *GroupCreate {
 	return gc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (gc *GroupCreate) SetOwnerID(s string) *GroupCreate {
+	gc.mutation.SetOwnerID(s)
+	return gc
+}
+
 // SetName sets the "name" field.
 func (gc *GroupCreate) SetName(s string) *GroupCreate {
 	gc.mutation.SetName(s)
@@ -183,6 +190,11 @@ func (gc *GroupCreate) SetNillableID(s *string) *GroupCreate {
 	return gc
 }
 
+// SetOwner sets the "owner" edge to the Organization entity.
+func (gc *GroupCreate) SetOwner(o *Organization) *GroupCreate {
+	return gc.SetOwnerID(o.ID)
+}
+
 // SetSettingID sets the "setting" edge to the GroupSetting entity by ID.
 func (gc *GroupCreate) SetSettingID(id string) *GroupCreate {
 	gc.mutation.SetSettingID(id)
@@ -209,15 +221,19 @@ func (gc *GroupCreate) AddUsers(u ...*User) *GroupCreate {
 	return gc.AddUserIDs(ids...)
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (gc *GroupCreate) SetOwnerID(id string) *GroupCreate {
-	gc.mutation.SetOwnerID(id)
+// AddGroupMembershipIDs adds the "group_memberships" edge to the GroupMembership entity by IDs.
+func (gc *GroupCreate) AddGroupMembershipIDs(ids ...string) *GroupCreate {
+	gc.mutation.AddGroupMembershipIDs(ids...)
 	return gc
 }
 
-// SetOwner sets the "owner" edge to the Organization entity.
-func (gc *GroupCreate) SetOwner(o *Organization) *GroupCreate {
-	return gc.SetOwnerID(o.ID)
+// AddGroupMemberships adds the "group_memberships" edges to the GroupMembership entity.
+func (gc *GroupCreate) AddGroupMemberships(g ...*GroupMembership) *GroupCreate {
+	ids := make([]string, len(g))
+	for i := range g {
+		ids[i] = g[i].ID
+	}
+	return gc.AddGroupMembershipIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -293,6 +309,9 @@ func (gc *GroupCreate) check() error {
 	if _, ok := gc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Group.updated_at"`)}
 	}
+	if _, ok := gc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Group.owner_id"`)}
+	}
 	if _, ok := gc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`generated: missing required field "Group.name"`)}
 	}
@@ -309,11 +328,11 @@ func (gc *GroupCreate) check() error {
 			return &ValidationError{Name: "display_name", err: fmt.Errorf(`generated: validator failed for field "Group.display_name": %w`, err)}
 		}
 	}
-	if _, ok := gc.mutation.SettingID(); !ok {
-		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Group.setting"`)}
-	}
 	if _, ok := gc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Group.owner"`)}
+	}
+	if _, ok := gc.mutation.SettingID(); !ok {
+		return &ValidationError{Name: "setting", err: errors.New(`generated: missing required edge "Group.setting"`)}
 	}
 	return nil
 }
@@ -395,6 +414,24 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		_spec.SetField(group.FieldDisplayName, field.TypeString, value)
 		_node.DisplayName = value
 	}
+	if nodes := gc.mutation.OwnerIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   group.OwnerTable,
+			Columns: []string{group.OwnerColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = gc.schemaConfig.Group
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.OwnerID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := gc.mutation.SettingIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
@@ -415,7 +452,7 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 	if nodes := gc.mutation.UsersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   group.UsersTable,
 			Columns: group.UsersPrimaryKey,
 			Bidi:    false,
@@ -423,28 +460,34 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = gc.schemaConfig.GroupUsers
+		edge.Schema = gc.schemaConfig.GroupMembership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &GroupMembershipCreate{config: gc.config, mutation: newGroupMembershipMutation(gc.config, OpCreate)}
+		_ = createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := gc.mutation.OwnerIDs(); len(nodes) > 0 {
+	if nodes := gc.mutation.GroupMembershipsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   group.OwnerTable,
-			Columns: []string{group.OwnerColumn},
+			Table:   group.GroupMembershipsTable,
+			Columns: []string{group.GroupMembershipsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
+				IDSpec: sqlgraph.NewFieldSpec(groupmembership.FieldID, field.TypeString),
 			},
 		}
-		edge.Schema = gc.schemaConfig.Group
+		edge.Schema = gc.schemaConfig.GroupMembership
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.organization_groups = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

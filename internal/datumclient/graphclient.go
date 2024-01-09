@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -53,10 +54,12 @@ type Query struct {
 	Nodes                []generated.Noder             "json:\"nodes\" graphql:\"nodes\""
 	Entitlements         EntitlementConnection         "json:\"entitlements\" graphql:\"entitlements\""
 	Groups               GroupConnection               "json:\"groups\" graphql:\"groups\""
+	GroupMemberships     GroupMembershipConnection     "json:\"groupMemberships\" graphql:\"groupMemberships\""
 	GroupSettings        GroupSettingConnection        "json:\"groupSettings\" graphql:\"groupSettings\""
 	Integrations         IntegrationConnection         "json:\"integrations\" graphql:\"integrations\""
 	OauthProviders       OauthProviderConnection       "json:\"oauthProviders\" graphql:\"oauthProviders\""
 	OhAuthTooTokens      OhAuthTooTokenConnection      "json:\"ohAuthTooTokens\" graphql:\"ohAuthTooTokens\""
+	OrgMemberships       OrgMembershipConnection       "json:\"orgMemberships\" graphql:\"orgMemberships\""
 	Organizations        OrganizationConnection        "json:\"organizations\" graphql:\"organizations\""
 	OrganizationSettings OrganizationSettingConnection "json:\"organizationSettings\" graphql:\"organizationSettings\""
 	PersonalAccessTokens PersonalAccessTokenConnection "json:\"personalAccessTokens\" graphql:\"personalAccessTokens\""
@@ -65,12 +68,14 @@ type Query struct {
 	UserSettings         UserSettingConnection         "json:\"userSettings\" graphql:\"userSettings\""
 	Entitlement          Entitlement                   "json:\"entitlement\" graphql:\"entitlement\""
 	Group                Group                         "json:\"group\" graphql:\"group\""
+	GroupMembership      GroupMembership               "json:\"groupMembership\" graphql:\"groupMembership\""
 	GroupSetting         GroupSetting                  "json:\"groupSetting\" graphql:\"groupSetting\""
 	Integration          Integration                   "json:\"integration\" graphql:\"integration\""
 	OauthProvider        OauthProvider                 "json:\"oauthProvider\" graphql:\"oauthProvider\""
 	OhAuthTooToken       OhAuthTooToken                "json:\"ohAuthTooToken\" graphql:\"ohAuthTooToken\""
 	Organization         Organization                  "json:\"organization\" graphql:\"organization\""
 	OrganizationSetting  OrganizationSetting           "json:\"organizationSetting\" graphql:\"organizationSetting\""
+	OrgMembership        OrgMembership                 "json:\"orgMembership\" graphql:\"orgMembership\""
 	PersonalAccessToken  PersonalAccessToken           "json:\"personalAccessToken\" graphql:\"personalAccessToken\""
 	Session              Session                       "json:\"session\" graphql:\"session\""
 	User                 User                          "json:\"user\" graphql:\"user\""
@@ -83,6 +88,9 @@ type Mutation struct {
 	CreateGroup               GroupCreatePayload               "json:\"createGroup\" graphql:\"createGroup\""
 	UpdateGroup               GroupUpdatePayload               "json:\"updateGroup\" graphql:\"updateGroup\""
 	DeleteGroup               GroupDeletePayload               "json:\"deleteGroup\" graphql:\"deleteGroup\""
+	CreateGroupMembership     GroupMembershipCreatePayload     "json:\"createGroupMembership\" graphql:\"createGroupMembership\""
+	UpdateGroupMembership     GroupMembershipUpdatePayload     "json:\"updateGroupMembership\" graphql:\"updateGroupMembership\""
+	DeleteGroupMembership     GroupMembershipDeletePayload     "json:\"deleteGroupMembership\" graphql:\"deleteGroupMembership\""
 	CreateGroupSetting        GroupSettingCreatePayload        "json:\"createGroupSetting\" graphql:\"createGroupSetting\""
 	UpdateGroupSetting        GroupSettingUpdatePayload        "json:\"updateGroupSetting\" graphql:\"updateGroupSetting\""
 	DeleteGroupSetting        GroupSettingDeletePayload        "json:\"deleteGroupSetting\" graphql:\"deleteGroupSetting\""
@@ -101,6 +109,9 @@ type Mutation struct {
 	CreateOrganizationSetting OrganizationSettingCreatePayload "json:\"createOrganizationSetting\" graphql:\"createOrganizationSetting\""
 	UpdateOrganizationSetting OrganizationSettingUpdatePayload "json:\"updateOrganizationSetting\" graphql:\"updateOrganizationSetting\""
 	DeleteOrganizationSetting OrganizationSettingDeletePayload "json:\"deleteOrganizationSetting\" graphql:\"deleteOrganizationSetting\""
+	CreateOrgMembership       OrgMembershipCreatePayload       "json:\"createOrgMembership\" graphql:\"createOrgMembership\""
+	UpdateOrgMembership       OrgMembershipUpdatePayload       "json:\"updateOrgMembership\" graphql:\"updateOrgMembership\""
+	DeleteOrgMembership       OrgMembershipDeletePayload       "json:\"deleteOrgMembership\" graphql:\"deleteOrgMembership\""
 	CreatePersonalAccessToken PersonalAccessTokenCreatePayload "json:\"createPersonalAccessToken\" graphql:\"createPersonalAccessToken\""
 	UpdatePersonalAccessToken PersonalAccessTokenUpdatePayload "json:\"updatePersonalAccessToken\" graphql:\"updatePersonalAccessToken\""
 	DeletePersonalAccessToken PersonalAccessTokenDeletePayload "json:\"deletePersonalAccessToken\" graphql:\"deletePersonalAccessToken\""
@@ -1065,6 +1076,56 @@ func (t *GetOrganizationByID_Organization_Children) GetEdges() []*GetOrganizatio
 	return t.Edges
 }
 
+type GetOrganizationByID_Organization_OrgMemberships_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *GetOrganizationByID_Organization_OrgMemberships_User) GetID() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_OrgMemberships_User{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationByID_Organization_OrgMemberships_User) GetFirstName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_OrgMemberships_User{}
+	}
+	return t.FirstName
+}
+func (t *GetOrganizationByID_Organization_OrgMemberships_User) GetLastName() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_OrgMemberships_User{}
+	}
+	return t.LastName
+}
+
+type GetOrganizationByID_Organization_OrgMemberships struct {
+	ID   string                                               "json:\"id\" graphql:\"id\""
+	Role enums.Role                                           "json:\"role\" graphql:\"role\""
+	User GetOrganizationByID_Organization_OrgMemberships_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetOrganizationByID_Organization_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *GetOrganizationByID_Organization_OrgMemberships) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_OrgMemberships{}
+	}
+	return &t.Role
+}
+func (t *GetOrganizationByID_Organization_OrgMemberships) GetUser() *GetOrganizationByID_Organization_OrgMemberships_User {
+	if t == nil {
+		t = &GetOrganizationByID_Organization_OrgMemberships{}
+	}
+	return &t.User
+}
+
 type GetOrganizationByID_Organization_Setting struct {
 	ID             string    "json:\"id\" graphql:\"id\""
 	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
@@ -1175,18 +1236,19 @@ func (t *GetOrganizationByID_Organization_Setting) GetTags() []string {
 }
 
 type GetOrganizationByID_Organization struct {
-	ID          string                                    "json:\"id\" graphql:\"id\""
-	Name        string                                    "json:\"name\" graphql:\"name\""
-	DisplayName string                                    "json:\"displayName\" graphql:\"displayName\""
-	Description *string                                   "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                      "json:\"personalOrg\" graphql:\"personalOrg\""
-	Parent      *GetOrganizationByID_Organization_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
-	Children    GetOrganizationByID_Organization_Children "json:\"children\" graphql:\"children\""
-	Setting     *GetOrganizationByID_Organization_Setting "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt   time.Time                                 "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                                 "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID             string                                             "json:\"id\" graphql:\"id\""
+	Name           string                                             "json:\"name\" graphql:\"name\""
+	DisplayName    string                                             "json:\"displayName\" graphql:\"displayName\""
+	Description    *string                                            "json:\"description,omitempty\" graphql:\"description\""
+	PersonalOrg    bool                                               "json:\"personalOrg\" graphql:\"personalOrg\""
+	Parent         *GetOrganizationByID_Organization_Parent           "json:\"parent,omitempty\" graphql:\"parent\""
+	Children       GetOrganizationByID_Organization_Children          "json:\"children\" graphql:\"children\""
+	OrgMemberships []*GetOrganizationByID_Organization_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+	Setting        *GetOrganizationByID_Organization_Setting          "json:\"setting,omitempty\" graphql:\"setting\""
+	CreatedAt      time.Time                                          "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy      *string                                            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt      time.Time                                          "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy      *string                                            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetOrganizationByID_Organization) GetID() string {
@@ -1230,6 +1292,12 @@ func (t *GetOrganizationByID_Organization) GetChildren() *GetOrganizationByID_Or
 		t = &GetOrganizationByID_Organization{}
 	}
 	return &t.Children
+}
+func (t *GetOrganizationByID_Organization) GetOrgMemberships() []*GetOrganizationByID_Organization_OrgMemberships {
+	if t == nil {
+		t = &GetOrganizationByID_Organization{}
+	}
+	return t.OrgMemberships
 }
 func (t *GetOrganizationByID_Organization) GetSetting() *GetOrganizationByID_Organization_Setting {
 	if t == nil {
@@ -1332,6 +1400,56 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Children) GetEdges() []*Ge
 		t = &GetAllOrganizations_Organizations_Edges_Node_Children{}
 	}
 	return t.Edges
+}
+
+type GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User) GetID() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User{}
+	}
+	return t.ID
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User) GetFirstName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User{}
+	}
+	return t.FirstName
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User) GetLastName() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User{}
+	}
+	return t.LastName
+}
+
+type GetAllOrganizations_Organizations_Edges_Node_OrgMemberships struct {
+	ID   string                                                           "json:\"id\" graphql:\"id\""
+	Role enums.Role                                                       "json:\"role\" graphql:\"role\""
+	User GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships{}
+	}
+	return &t.Role
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships) GetUser() *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships{}
+	}
+	return &t.User
 }
 
 type GetAllOrganizations_Organizations_Edges_Node_Setting struct {
@@ -1444,16 +1562,17 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetTags() []strin
 }
 
 type GetAllOrganizations_Organizations_Edges_Node struct {
-	ID          string                                                "json:\"id\" graphql:\"id\""
-	Name        string                                                "json:\"name\" graphql:\"name\""
-	DisplayName string                                                "json:\"displayName\" graphql:\"displayName\""
-	Description *string                                               "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                                  "json:\"personalOrg\" graphql:\"personalOrg\""
-	Parent      *GetAllOrganizations_Organizations_Edges_Node_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
-	Children    GetAllOrganizations_Organizations_Edges_Node_Children "json:\"children\" graphql:\"children\""
-	Setting     *GetAllOrganizations_Organizations_Edges_Node_Setting "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt   time.Time                                             "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt   time.Time                                             "json:\"updatedAt\" graphql:\"updatedAt\""
+	ID             string                                                         "json:\"id\" graphql:\"id\""
+	Name           string                                                         "json:\"name\" graphql:\"name\""
+	DisplayName    string                                                         "json:\"displayName\" graphql:\"displayName\""
+	Description    *string                                                        "json:\"description,omitempty\" graphql:\"description\""
+	PersonalOrg    bool                                                           "json:\"personalOrg\" graphql:\"personalOrg\""
+	Parent         *GetAllOrganizations_Organizations_Edges_Node_Parent           "json:\"parent,omitempty\" graphql:\"parent\""
+	Children       GetAllOrganizations_Organizations_Edges_Node_Children          "json:\"children\" graphql:\"children\""
+	OrgMemberships []*GetAllOrganizations_Organizations_Edges_Node_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+	Setting        *GetAllOrganizations_Organizations_Edges_Node_Setting          "json:\"setting,omitempty\" graphql:\"setting\""
+	CreatedAt      time.Time                                                      "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt      time.Time                                                      "json:\"updatedAt\" graphql:\"updatedAt\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetID() string {
@@ -1497,6 +1616,12 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetChildren() *GetAllOrga
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
 	return &t.Children
+}
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetOrgMemberships() []*GetAllOrganizations_Organizations_Edges_Node_OrgMemberships {
+	if t == nil {
+		t = &GetAllOrganizations_Organizations_Edges_Node{}
+	}
+	return t.OrgMemberships
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetSetting() *GetAllOrganizations_Organizations_Edges_Node_Setting {
 	if t == nil {
@@ -1611,6 +1736,56 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Children) GetEdges() []*Org
 	return t.Edges
 }
 
+type OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User) GetID() string {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User{}
+	}
+	return t.ID
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User) GetFirstName() string {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User{}
+	}
+	return t.FirstName
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User) GetLastName() string {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User{}
+	}
+	return t.LastName
+}
+
+type OrganizationsWhere_Organizations_Edges_Node_OrgMemberships struct {
+	ID   string                                                          "json:\"id\" graphql:\"id\""
+	Role enums.Role                                                      "json:\"role\" graphql:\"role\""
+	User OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships) GetRole() *enums.Role {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships{}
+	}
+	return &t.Role
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships) GetUser() *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships{}
+	}
+	return &t.User
+}
+
 type OrganizationsWhere_Organizations_Edges_Node_Setting struct {
 	ID             string    "json:\"id\" graphql:\"id\""
 	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
@@ -1721,16 +1896,17 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetTags() []string
 }
 
 type OrganizationsWhere_Organizations_Edges_Node struct {
-	ID          string                                               "json:\"id\" graphql:\"id\""
-	Name        string                                               "json:\"name\" graphql:\"name\""
-	DisplayName string                                               "json:\"displayName\" graphql:\"displayName\""
-	Description *string                                              "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg bool                                                 "json:\"personalOrg\" graphql:\"personalOrg\""
-	Parent      *OrganizationsWhere_Organizations_Edges_Node_Parent  "json:\"parent,omitempty\" graphql:\"parent\""
-	Children    OrganizationsWhere_Organizations_Edges_Node_Children "json:\"children\" graphql:\"children\""
-	Setting     *OrganizationsWhere_Organizations_Edges_Node_Setting "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt   time.Time                                            "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt   time.Time                                            "json:\"updatedAt\" graphql:\"updatedAt\""
+	ID             string                                                        "json:\"id\" graphql:\"id\""
+	Name           string                                                        "json:\"name\" graphql:\"name\""
+	DisplayName    string                                                        "json:\"displayName\" graphql:\"displayName\""
+	Description    *string                                                       "json:\"description,omitempty\" graphql:\"description\""
+	PersonalOrg    bool                                                          "json:\"personalOrg\" graphql:\"personalOrg\""
+	Parent         *OrganizationsWhere_Organizations_Edges_Node_Parent           "json:\"parent,omitempty\" graphql:\"parent\""
+	Children       OrganizationsWhere_Organizations_Edges_Node_Children          "json:\"children\" graphql:\"children\""
+	OrgMemberships []*OrganizationsWhere_Organizations_Edges_Node_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+	Setting        *OrganizationsWhere_Organizations_Edges_Node_Setting          "json:\"setting,omitempty\" graphql:\"setting\""
+	CreatedAt      time.Time                                                     "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt      time.Time                                                     "json:\"updatedAt\" graphql:\"updatedAt\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetID() string {
@@ -1774,6 +1950,12 @@ func (t *OrganizationsWhere_Organizations_Edges_Node) GetChildren() *Organizatio
 		t = &OrganizationsWhere_Organizations_Edges_Node{}
 	}
 	return &t.Children
+}
+func (t *OrganizationsWhere_Organizations_Edges_Node) GetOrgMemberships() []*OrganizationsWhere_Organizations_Edges_Node_OrgMemberships {
+	if t == nil {
+		t = &OrganizationsWhere_Organizations_Edges_Node{}
+	}
+	return t.OrgMemberships
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetSetting() *OrganizationsWhere_Organizations_Edges_Node_Setting {
 	if t == nil {
@@ -2571,22 +2753,73 @@ func (t *GetUserByID_User_Setting) GetSilencedAt() *time.Time {
 	return t.SilencedAt
 }
 
+type GetUserByID_User_Organizations_OrgMemberships struct {
+	ID   string     "json:\"id\" graphql:\"id\""
+	Role enums.Role "json:\"role\" graphql:\"role\""
+}
+
+func (t *GetUserByID_User_Organizations_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &GetUserByID_User_Organizations_OrgMemberships{}
+	}
+	return t.ID
+}
+func (t *GetUserByID_User_Organizations_OrgMemberships) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetUserByID_User_Organizations_OrgMemberships{}
+	}
+	return &t.Role
+}
+
+type GetUserByID_User_Organizations struct {
+	ID             string                                           "json:\"id\" graphql:\"id\""
+	Name           string                                           "json:\"name\" graphql:\"name\""
+	PersonalOrg    bool                                             "json:\"personalOrg\" graphql:\"personalOrg\""
+	OrgMemberships []*GetUserByID_User_Organizations_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+}
+
+func (t *GetUserByID_User_Organizations) GetID() string {
+	if t == nil {
+		t = &GetUserByID_User_Organizations{}
+	}
+	return t.ID
+}
+func (t *GetUserByID_User_Organizations) GetName() string {
+	if t == nil {
+		t = &GetUserByID_User_Organizations{}
+	}
+	return t.Name
+}
+func (t *GetUserByID_User_Organizations) GetPersonalOrg() bool {
+	if t == nil {
+		t = &GetUserByID_User_Organizations{}
+	}
+	return t.PersonalOrg
+}
+func (t *GetUserByID_User_Organizations) GetOrgMemberships() []*GetUserByID_User_Organizations_OrgMemberships {
+	if t == nil {
+		t = &GetUserByID_User_Organizations{}
+	}
+	return t.OrgMemberships
+}
+
 type GetUserByID_User struct {
-	ID              string                   "json:\"id\" graphql:\"id\""
-	FirstName       string                   "json:\"firstName\" graphql:\"firstName\""
-	LastName        string                   "json:\"lastName\" graphql:\"lastName\""
-	DisplayName     string                   "json:\"displayName\" graphql:\"displayName\""
-	Email           string                   "json:\"email\" graphql:\"email\""
-	LastSeen        *time.Time               "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
-	Sub             *string                  "json:\"sub,omitempty\" graphql:\"sub\""
-	AvatarRemoteURL *string                  "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	AvatarLocalFile *string                  "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Oauth           bool                     "json:\"oauth\" graphql:\"oauth\""
-	Setting         GetUserByID_User_Setting "json:\"setting\" graphql:\"setting\""
-	UpdatedAt       time.Time                "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy       *string                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	CreatedAt       time.Time                "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy       *string                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	ID              string                            "json:\"id\" graphql:\"id\""
+	FirstName       string                            "json:\"firstName\" graphql:\"firstName\""
+	LastName        string                            "json:\"lastName\" graphql:\"lastName\""
+	DisplayName     string                            "json:\"displayName\" graphql:\"displayName\""
+	Email           string                            "json:\"email\" graphql:\"email\""
+	LastSeen        *time.Time                        "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
+	Sub             *string                           "json:\"sub,omitempty\" graphql:\"sub\""
+	AvatarRemoteURL *string                           "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile *string                           "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Oauth           bool                              "json:\"oauth\" graphql:\"oauth\""
+	Setting         GetUserByID_User_Setting          "json:\"setting\" graphql:\"setting\""
+	Organizations   []*GetUserByID_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+	UpdatedAt       time.Time                         "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy       *string                           "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt       time.Time                         "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy       *string                           "json:\"createdBy,omitempty\" graphql:\"createdBy\""
 }
 
 func (t *GetUserByID_User) GetID() string {
@@ -2654,6 +2887,12 @@ func (t *GetUserByID_User) GetSetting() *GetUserByID_User_Setting {
 		t = &GetUserByID_User{}
 	}
 	return &t.Setting
+}
+func (t *GetUserByID_User) GetOrganizations() []*GetUserByID_User_Organizations {
+	if t == nil {
+		t = &GetUserByID_User{}
+	}
+	return t.Organizations
 }
 func (t *GetUserByID_User) GetUpdatedAt() *time.Time {
 	if t == nil {
@@ -2768,48 +3007,66 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetSilencedAt() *time.Time {
 	return t.SilencedAt
 }
 
-type GetUserByIDWithOrgs_User_Organizations struct {
-	ID          string "json:\"id\" graphql:\"id\""
-	Name        string "json:\"name\" graphql:\"name\""
-	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+type GetUserByIDWithOrgs_User_OrgMemberships_User struct {
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
 }
 
-func (t *GetUserByIDWithOrgs_User_Organizations) GetID() string {
+func (t *GetUserByIDWithOrgs_User_OrgMemberships_User) GetFirstName() string {
 	if t == nil {
-		t = &GetUserByIDWithOrgs_User_Organizations{}
+		t = &GetUserByIDWithOrgs_User_OrgMemberships_User{}
+	}
+	return t.FirstName
+}
+func (t *GetUserByIDWithOrgs_User_OrgMemberships_User) GetLastName() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_OrgMemberships_User{}
+	}
+	return t.LastName
+}
+
+type GetUserByIDWithOrgs_User_OrgMemberships struct {
+	ID   string                                       "json:\"id\" graphql:\"id\""
+	Role enums.Role                                   "json:\"role\" graphql:\"role\""
+	User GetUserByIDWithOrgs_User_OrgMemberships_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetUserByIDWithOrgs_User_OrgMemberships) GetID() string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_OrgMemberships{}
 	}
 	return t.ID
 }
-func (t *GetUserByIDWithOrgs_User_Organizations) GetName() string {
+func (t *GetUserByIDWithOrgs_User_OrgMemberships) GetRole() *enums.Role {
 	if t == nil {
-		t = &GetUserByIDWithOrgs_User_Organizations{}
+		t = &GetUserByIDWithOrgs_User_OrgMemberships{}
 	}
-	return t.Name
+	return &t.Role
 }
-func (t *GetUserByIDWithOrgs_User_Organizations) GetDisplayName() string {
+func (t *GetUserByIDWithOrgs_User_OrgMemberships) GetUser() *GetUserByIDWithOrgs_User_OrgMemberships_User {
 	if t == nil {
-		t = &GetUserByIDWithOrgs_User_Organizations{}
+		t = &GetUserByIDWithOrgs_User_OrgMemberships{}
 	}
-	return t.DisplayName
+	return &t.User
 }
 
 type GetUserByIDWithOrgs_User struct {
-	ID              string                                    "json:\"id\" graphql:\"id\""
-	FirstName       string                                    "json:\"firstName\" graphql:\"firstName\""
-	LastName        string                                    "json:\"lastName\" graphql:\"lastName\""
-	DisplayName     string                                    "json:\"displayName\" graphql:\"displayName\""
-	Email           string                                    "json:\"email\" graphql:\"email\""
-	LastSeen        *time.Time                                "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
-	Sub             *string                                   "json:\"sub,omitempty\" graphql:\"sub\""
-	AvatarRemoteURL *string                                   "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	AvatarLocalFile *string                                   "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Oauth           bool                                      "json:\"oauth\" graphql:\"oauth\""
-	Setting         GetUserByIDWithOrgs_User_Setting          "json:\"setting\" graphql:\"setting\""
-	UpdatedAt       time.Time                                 "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy       *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
-	CreatedAt       time.Time                                 "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy       *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	Organizations   []*GetUserByIDWithOrgs_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
+	ID              string                                     "json:\"id\" graphql:\"id\""
+	FirstName       string                                     "json:\"firstName\" graphql:\"firstName\""
+	LastName        string                                     "json:\"lastName\" graphql:\"lastName\""
+	DisplayName     string                                     "json:\"displayName\" graphql:\"displayName\""
+	Email           string                                     "json:\"email\" graphql:\"email\""
+	LastSeen        *time.Time                                 "json:\"lastSeen,omitempty\" graphql:\"lastSeen\""
+	Sub             *string                                    "json:\"sub,omitempty\" graphql:\"sub\""
+	AvatarRemoteURL *string                                    "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile *string                                    "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Oauth           bool                                       "json:\"oauth\" graphql:\"oauth\""
+	Setting         GetUserByIDWithOrgs_User_Setting           "json:\"setting\" graphql:\"setting\""
+	UpdatedAt       time.Time                                  "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy       *string                                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	CreatedAt       time.Time                                  "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy       *string                                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	OrgMemberships  []*GetUserByIDWithOrgs_User_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 }
 
 func (t *GetUserByIDWithOrgs_User) GetID() string {
@@ -2902,11 +3159,11 @@ func (t *GetUserByIDWithOrgs_User) GetCreatedBy() *string {
 	}
 	return t.CreatedBy
 }
-func (t *GetUserByIDWithOrgs_User) GetOrganizations() []*GetUserByIDWithOrgs_User_Organizations {
+func (t *GetUserByIDWithOrgs_User) GetOrgMemberships() []*GetUserByIDWithOrgs_User_OrgMemberships {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User{}
 	}
-	return t.Organizations
+	return t.OrgMemberships
 }
 
 type GetAllUsers_Users_Edges_Node_Setting struct {
@@ -3128,26 +3385,40 @@ func (t *GetAllUsers_Users) GetEdges() []*GetAllUsers_Users_Edges {
 	return t.Edges
 }
 
-type CreateUser_CreateUser_User_Organizations struct {
-	ID string "json:\"id\" graphql:\"id\""
+type CreateUser_CreateUser_User_OrgMemberships struct {
+	ID    string "json:\"id\" graphql:\"id\""
+	OrgID string "json:\"orgID\" graphql:\"orgID\""
 }
 
-func (t *CreateUser_CreateUser_User_Organizations) GetID() string {
+func (t *CreateUser_CreateUser_User_OrgMemberships) GetID() string {
 	if t == nil {
-		t = &CreateUser_CreateUser_User_Organizations{}
+		t = &CreateUser_CreateUser_User_OrgMemberships{}
 	}
 	return t.ID
 }
-
-type CreateUser_CreateUser_User_Groups struct {
-	ID string "json:\"id\" graphql:\"id\""
+func (t *CreateUser_CreateUser_User_OrgMemberships) GetOrgID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_OrgMemberships{}
+	}
+	return t.OrgID
 }
 
-func (t *CreateUser_CreateUser_User_Groups) GetID() string {
+type CreateUser_CreateUser_User_GroupMemberships struct {
+	ID      string "json:\"id\" graphql:\"id\""
+	GroupID string "json:\"groupID\" graphql:\"groupID\""
+}
+
+func (t *CreateUser_CreateUser_User_GroupMemberships) GetID() string {
 	if t == nil {
-		t = &CreateUser_CreateUser_User_Groups{}
+		t = &CreateUser_CreateUser_User_GroupMemberships{}
 	}
 	return t.ID
+}
+func (t *CreateUser_CreateUser_User_GroupMemberships) GetGroupID() string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_GroupMemberships{}
+	}
+	return t.GroupID
 }
 
 type CreateUser_CreateUser_User_Setting struct {
@@ -3239,18 +3510,18 @@ func (t *CreateUser_CreateUser_User_Setting) GetSilencedAt() *time.Time {
 }
 
 type CreateUser_CreateUser_User struct {
-	ID              string                                      "json:\"id\" graphql:\"id\""
-	Email           string                                      "json:\"email\" graphql:\"email\""
-	FirstName       string                                      "json:\"firstName\" graphql:\"firstName\""
-	LastName        string                                      "json:\"lastName\" graphql:\"lastName\""
-	DisplayName     string                                      "json:\"displayName\" graphql:\"displayName\""
-	AvatarRemoteURL *string                                     "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
-	AvatarLocalFile *string                                     "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
-	Sub             *string                                     "json:\"sub,omitempty\" graphql:\"sub\""
-	Oauth           bool                                        "json:\"oauth\" graphql:\"oauth\""
-	Organizations   []*CreateUser_CreateUser_User_Organizations "json:\"organizations,omitempty\" graphql:\"organizations\""
-	Groups          []*CreateUser_CreateUser_User_Groups        "json:\"groups,omitempty\" graphql:\"groups\""
-	Setting         CreateUser_CreateUser_User_Setting          "json:\"setting\" graphql:\"setting\""
+	ID               string                                         "json:\"id\" graphql:\"id\""
+	Email            string                                         "json:\"email\" graphql:\"email\""
+	FirstName        string                                         "json:\"firstName\" graphql:\"firstName\""
+	LastName         string                                         "json:\"lastName\" graphql:\"lastName\""
+	DisplayName      string                                         "json:\"displayName\" graphql:\"displayName\""
+	AvatarRemoteURL  *string                                        "json:\"avatarRemoteURL,omitempty\" graphql:\"avatarRemoteURL\""
+	AvatarLocalFile  *string                                        "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
+	Sub              *string                                        "json:\"sub,omitempty\" graphql:\"sub\""
+	Oauth            bool                                           "json:\"oauth\" graphql:\"oauth\""
+	OrgMemberships   []*CreateUser_CreateUser_User_OrgMemberships   "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+	GroupMemberships []*CreateUser_CreateUser_User_GroupMemberships "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
+	Setting          CreateUser_CreateUser_User_Setting             "json:\"setting\" graphql:\"setting\""
 }
 
 func (t *CreateUser_CreateUser_User) GetID() string {
@@ -3307,17 +3578,17 @@ func (t *CreateUser_CreateUser_User) GetOauth() bool {
 	}
 	return t.Oauth
 }
-func (t *CreateUser_CreateUser_User) GetOrganizations() []*CreateUser_CreateUser_User_Organizations {
+func (t *CreateUser_CreateUser_User) GetOrgMemberships() []*CreateUser_CreateUser_User_OrgMemberships {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
-	return t.Organizations
+	return t.OrgMemberships
 }
-func (t *CreateUser_CreateUser_User) GetGroups() []*CreateUser_CreateUser_User_Groups {
+func (t *CreateUser_CreateUser_User) GetGroupMemberships() []*CreateUser_CreateUser_User_GroupMemberships {
 	if t == nil {
 		t = &CreateUser_CreateUser_User{}
 	}
-	return t.Groups
+	return t.GroupMemberships
 }
 func (t *CreateUser_CreateUser_User) GetSetting() *CreateUser_CreateUser_User_Setting {
 	if t == nil {
@@ -3337,24 +3608,24 @@ func (t *CreateUser_CreateUser) GetUser() *CreateUser_CreateUser_User {
 	return &t.User
 }
 
-type UpdateUser_UpdateUser_User_Groups struct {
+type UpdateUser_UpdateUser_User_GroupMemberships struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *UpdateUser_UpdateUser_User_Groups) GetID() string {
+func (t *UpdateUser_UpdateUser_User_GroupMemberships) GetID() string {
 	if t == nil {
-		t = &UpdateUser_UpdateUser_User_Groups{}
+		t = &UpdateUser_UpdateUser_User_GroupMemberships{}
 	}
 	return t.ID
 }
 
-type UpdateUser_UpdateUser_User_Organizations struct {
+type UpdateUser_UpdateUser_User_OrgMemberships struct {
 	ID string "json:\"id\" graphql:\"id\""
 }
 
-func (t *UpdateUser_UpdateUser_User_Organizations) GetID() string {
+func (t *UpdateUser_UpdateUser_User_OrgMemberships) GetID() string {
 	if t == nil {
-		t = &UpdateUser_UpdateUser_User_Organizations{}
+		t = &UpdateUser_UpdateUser_User_OrgMemberships{}
 	}
 	return t.ID
 }
@@ -3468,8 +3739,8 @@ type UpdateUser_UpdateUser_User struct {
 	AvatarLocalFile      *string                                            "json:\"avatarLocalFile,omitempty\" graphql:\"avatarLocalFile\""
 	Sub                  *string                                            "json:\"sub,omitempty\" graphql:\"sub\""
 	Oauth                bool                                               "json:\"oauth\" graphql:\"oauth\""
-	Groups               []*UpdateUser_UpdateUser_User_Groups               "json:\"groups,omitempty\" graphql:\"groups\""
-	Organizations        []*UpdateUser_UpdateUser_User_Organizations        "json:\"organizations,omitempty\" graphql:\"organizations\""
+	GroupMemberships     []*UpdateUser_UpdateUser_User_GroupMemberships     "json:\"groupMemberships,omitempty\" graphql:\"groupMemberships\""
+	OrgMemberships       []*UpdateUser_UpdateUser_User_OrgMemberships       "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
 	PersonalAccessTokens []*UpdateUser_UpdateUser_User_PersonalAccessTokens "json:\"personalAccessTokens,omitempty\" graphql:\"personalAccessTokens\""
 	Setting              UpdateUser_UpdateUser_User_Setting                 "json:\"setting\" graphql:\"setting\""
 }
@@ -3528,17 +3799,17 @@ func (t *UpdateUser_UpdateUser_User) GetOauth() bool {
 	}
 	return t.Oauth
 }
-func (t *UpdateUser_UpdateUser_User) GetGroups() []*UpdateUser_UpdateUser_User_Groups {
+func (t *UpdateUser_UpdateUser_User) GetGroupMemberships() []*UpdateUser_UpdateUser_User_GroupMemberships {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return t.Groups
+	return t.GroupMemberships
 }
-func (t *UpdateUser_UpdateUser_User) GetOrganizations() []*UpdateUser_UpdateUser_User_Organizations {
+func (t *UpdateUser_UpdateUser_User) GetOrgMemberships() []*UpdateUser_UpdateUser_User_OrgMemberships {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User{}
 	}
-	return t.Organizations
+	return t.OrgMemberships
 }
 func (t *UpdateUser_UpdateUser_User) GetPersonalAccessTokens() []*UpdateUser_UpdateUser_User_PersonalAccessTokens {
 	if t == nil {
@@ -4257,6 +4528,15 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 				}
 			}
 		}
+		orgMemberships {
+			id
+			role
+			user {
+				id
+				firstName
+				lastName
+			}
+		}
 		setting {
 			id
 			createdAt
@@ -4322,6 +4602,15 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 						}
 					}
 				}
+				orgMemberships {
+					id
+					role
+					user {
+						id
+						firstName
+						lastName
+					}
+				}
 				setting {
 					id
 					createdAt
@@ -4383,6 +4672,15 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 							displayName
 							description
 						}
+					}
+				}
+				orgMemberships {
+					id
+					role
+					user {
+						id
+						firstName
+						lastName
 					}
 				}
 				setting {
@@ -4711,6 +5009,15 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 			updatedBy
 			silencedAt
 		}
+		organizations {
+			id
+			name
+			personalOrg
+			orgMemberships {
+				id
+				role
+			}
+		}
 		updatedAt
 		updatedBy
 		createdAt
@@ -4766,10 +5073,13 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		updatedBy
 		createdAt
 		createdBy
-		organizations {
+		orgMemberships {
 			id
-			name
-			displayName
+			role
+			user {
+				firstName
+				lastName
+			}
 		}
 	}
 }
@@ -4857,11 +5167,13 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			avatarLocalFile
 			sub
 			oauth
-			organizations {
+			orgMemberships {
 				id
+				orgID
 			}
-			groups {
+			groupMemberships {
 				id
+				groupID
 			}
 			setting {
 				emailConfirmed
@@ -4911,10 +5223,10 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			avatarLocalFile
 			sub
 			oauth
-			groups {
+			groupMemberships {
 				id
 			}
-			organizations {
+			orgMemberships {
 				id
 			}
 			personalAccessTokens {

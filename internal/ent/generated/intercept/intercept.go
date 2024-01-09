@@ -11,12 +11,14 @@ import (
 	"github.com/datumforge/datum/internal/ent/generated/emailverificationtoken"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/group"
+	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/integration"
 	"github.com/datumforge/datum/internal/ent/generated/oauthprovider"
 	"github.com/datumforge/datum/internal/ent/generated/ohauthtootoken"
 	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/organizationsetting"
+	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/passwordresettoken"
 	"github.com/datumforge/datum/internal/ent/generated/personalaccesstoken"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
@@ -162,6 +164,33 @@ func (f TraverseGroup) Traverse(ctx context.Context, q generated.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *generated.GroupQuery", q)
 }
 
+// The GroupMembershipFunc type is an adapter to allow the use of ordinary function as a Querier.
+type GroupMembershipFunc func(context.Context, *generated.GroupMembershipQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f GroupMembershipFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.GroupMembershipQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.GroupMembershipQuery", q)
+}
+
+// The TraverseGroupMembership type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseGroupMembership func(context.Context, *generated.GroupMembershipQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseGroupMembership) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseGroupMembership) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.GroupMembershipQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.GroupMembershipQuery", q)
+}
+
 // The GroupSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
 type GroupSettingFunc func(context.Context, *generated.GroupSettingQuery) (generated.Value, error)
 
@@ -268,6 +297,33 @@ func (f TraverseOhAuthTooToken) Traverse(ctx context.Context, q generated.Query)
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *generated.OhAuthTooTokenQuery", q)
+}
+
+// The OrgMembershipFunc type is an adapter to allow the use of ordinary function as a Querier.
+type OrgMembershipFunc func(context.Context, *generated.OrgMembershipQuery) (generated.Value, error)
+
+// Query calls f(ctx, q).
+func (f OrgMembershipFunc) Query(ctx context.Context, q generated.Query) (generated.Value, error) {
+	if q, ok := q.(*generated.OrgMembershipQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *generated.OrgMembershipQuery", q)
+}
+
+// The TraverseOrgMembership type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseOrgMembership func(context.Context, *generated.OrgMembershipQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseOrgMembership) Intercept(next generated.Querier) generated.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseOrgMembership) Traverse(ctx context.Context, q generated.Query) error {
+	if q, ok := q.(*generated.OrgMembershipQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *generated.OrgMembershipQuery", q)
 }
 
 // The OrganizationFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -468,6 +524,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.EntitlementQuery, predicate.Entitlement, entitlement.OrderOption]{typ: generated.TypeEntitlement, tq: q}, nil
 	case *generated.GroupQuery:
 		return &query[*generated.GroupQuery, predicate.Group, group.OrderOption]{typ: generated.TypeGroup, tq: q}, nil
+	case *generated.GroupMembershipQuery:
+		return &query[*generated.GroupMembershipQuery, predicate.GroupMembership, groupmembership.OrderOption]{typ: generated.TypeGroupMembership, tq: q}, nil
 	case *generated.GroupSettingQuery:
 		return &query[*generated.GroupSettingQuery, predicate.GroupSetting, groupsetting.OrderOption]{typ: generated.TypeGroupSetting, tq: q}, nil
 	case *generated.IntegrationQuery:
@@ -476,6 +534,8 @@ func NewQuery(q generated.Query) (Query, error) {
 		return &query[*generated.OauthProviderQuery, predicate.OauthProvider, oauthprovider.OrderOption]{typ: generated.TypeOauthProvider, tq: q}, nil
 	case *generated.OhAuthTooTokenQuery:
 		return &query[*generated.OhAuthTooTokenQuery, predicate.OhAuthTooToken, ohauthtootoken.OrderOption]{typ: generated.TypeOhAuthTooToken, tq: q}, nil
+	case *generated.OrgMembershipQuery:
+		return &query[*generated.OrgMembershipQuery, predicate.OrgMembership, orgmembership.OrderOption]{typ: generated.TypeOrgMembership, tq: q}, nil
 	case *generated.OrganizationQuery:
 		return &query[*generated.OrganizationQuery, predicate.Organization, organization.OrderOption]{typ: generated.TypeOrganization, tq: q}, nil
 	case *generated.OrganizationSettingQuery:

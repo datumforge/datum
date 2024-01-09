@@ -19,6 +19,15 @@ query GetOrganizationByID($organizationId: ID!) {
         }
       }
     }
+    orgMemberships {
+      id
+      role
+      user {
+        id
+        firstName
+        lastName
+      }
+    }
     setting {
       id
       createdAt
@@ -66,6 +75,15 @@ query GetAllOrganizations {
             }
           }
         }
+        orgMemberships {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
         setting {
           id
           createdAt
@@ -111,6 +129,15 @@ query OrganizationsWhere($where: OrganizationWhereInput) {
               displayName
               description
             }
+          }
+        }
+        orgMemberships {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
           }
         }
         setting {

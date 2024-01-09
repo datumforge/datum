@@ -97,6 +97,20 @@ func (eu *EntitlementUpdate) ClearDeletedBy() *EntitlementUpdate {
 	return eu
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (eu *EntitlementUpdate) SetOwnerID(s string) *EntitlementUpdate {
+	eu.mutation.SetOwnerID(s)
+	return eu
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (eu *EntitlementUpdate) SetNillableOwnerID(s *string) *EntitlementUpdate {
+	if s != nil {
+		eu.SetOwnerID(*s)
+	}
+	return eu
+}
+
 // SetTier sets the "tier" field.
 func (eu *EntitlementUpdate) SetTier(e entitlement.Tier) *EntitlementUpdate {
 	eu.mutation.SetTier(e)
@@ -199,20 +213,6 @@ func (eu *EntitlementUpdate) SetNillableCancelled(b *bool) *EntitlementUpdate {
 	return eu
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (eu *EntitlementUpdate) SetOwnerID(id string) *EntitlementUpdate {
-	eu.mutation.SetOwnerID(id)
-	return eu
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (eu *EntitlementUpdate) SetNillableOwnerID(id *string) *EntitlementUpdate {
-	if id != nil {
-		eu = eu.SetOwnerID(*id)
-	}
-	return eu
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (eu *EntitlementUpdate) SetOwner(o *Organization) *EntitlementUpdate {
 	return eu.SetOwnerID(o.ID)
@@ -277,6 +277,9 @@ func (eu *EntitlementUpdate) check() error {
 		if err := entitlement.TierValidator(v); err != nil {
 			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
 		}
+	}
+	if _, ok := eu.mutation.OwnerID(); eu.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Entitlement.owner"`)
 	}
 	return nil
 }
@@ -463,6 +466,20 @@ func (euo *EntitlementUpdateOne) ClearDeletedBy() *EntitlementUpdateOne {
 	return euo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (euo *EntitlementUpdateOne) SetOwnerID(s string) *EntitlementUpdateOne {
+	euo.mutation.SetOwnerID(s)
+	return euo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (euo *EntitlementUpdateOne) SetNillableOwnerID(s *string) *EntitlementUpdateOne {
+	if s != nil {
+		euo.SetOwnerID(*s)
+	}
+	return euo
+}
+
 // SetTier sets the "tier" field.
 func (euo *EntitlementUpdateOne) SetTier(e entitlement.Tier) *EntitlementUpdateOne {
 	euo.mutation.SetTier(e)
@@ -565,20 +582,6 @@ func (euo *EntitlementUpdateOne) SetNillableCancelled(b *bool) *EntitlementUpdat
 	return euo
 }
 
-// SetOwnerID sets the "owner" edge to the Organization entity by ID.
-func (euo *EntitlementUpdateOne) SetOwnerID(id string) *EntitlementUpdateOne {
-	euo.mutation.SetOwnerID(id)
-	return euo
-}
-
-// SetNillableOwnerID sets the "owner" edge to the Organization entity by ID if the given value is not nil.
-func (euo *EntitlementUpdateOne) SetNillableOwnerID(id *string) *EntitlementUpdateOne {
-	if id != nil {
-		euo = euo.SetOwnerID(*id)
-	}
-	return euo
-}
-
 // SetOwner sets the "owner" edge to the Organization entity.
 func (euo *EntitlementUpdateOne) SetOwner(o *Organization) *EntitlementUpdateOne {
 	return euo.SetOwnerID(o.ID)
@@ -656,6 +659,9 @@ func (euo *EntitlementUpdateOne) check() error {
 		if err := entitlement.TierValidator(v); err != nil {
 			return &ValidationError{Name: "tier", err: fmt.Errorf(`generated: validator failed for field "Entitlement.tier": %w`, err)}
 		}
+	}
+	if _, ok := euo.mutation.OwnerID(); euo.mutation.OwnerCleared() && !ok {
+		return errors.New(`generated: clearing a required unique edge "Entitlement.owner"`)
 	}
 	return nil
 }

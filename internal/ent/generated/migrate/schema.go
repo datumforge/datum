@@ -63,7 +63,7 @@ var (
 		{Name: "expires", Type: field.TypeBool, Default: false},
 		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
 		{Name: "cancelled", Type: field.TypeBool, Default: false},
-		{Name: "organization_entitlements", Type: field.TypeString, Nullable: true},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// EntitlementsTable holds the schema information for the "entitlements" table.
 	EntitlementsTable = &schema.Table{
@@ -75,7 +75,7 @@ var (
 				Symbol:     "entitlements_organizations_entitlements",
 				Columns:    []*schema.Column{EntitlementsColumns[13]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -93,7 +93,7 @@ var (
 		{Name: "gravatar_logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
-		{Name: "organization_groups", Type: field.TypeString},
+		{Name: "owner_id", Type: field.TypeString},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -110,12 +110,50 @@ var (
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "group_name_organization_groups",
+				Name:    "group_name_owner_id",
 				Unique:  true,
 				Columns: []*schema.Column{GroupsColumns[7], GroupsColumns[12]},
 				Annotation: &entsql.IndexAnnotation{
 					Where: "deleted_at is NULL",
 				},
+			},
+		},
+	}
+	// GroupMembershipsColumns holds the columns for the "group_memberships" table.
+	GroupMembershipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"OWNER", "ADMIN", "MEMBER"}, Default: "MEMBER"},
+		{Name: "group_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// GroupMembershipsTable holds the schema information for the "group_memberships" table.
+	GroupMembershipsTable = &schema.Table{
+		Name:       "group_memberships",
+		Columns:    GroupMembershipsColumns,
+		PrimaryKey: []*schema.Column{GroupMembershipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "group_memberships_groups_group",
+				Columns:    []*schema.Column{GroupMembershipsColumns[6]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "group_memberships_users_user",
+				Columns:    []*schema.Column{GroupMembershipsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupmembership_user_id_group_id",
+				Unique:  true,
+				Columns: []*schema.Column{GroupMembershipsColumns[7], GroupMembershipsColumns[6]},
 			},
 		},
 	}
@@ -233,6 +271,44 @@ var (
 		Name:       "oh_auth_too_tokens",
 		Columns:    OhAuthTooTokensColumns,
 		PrimaryKey: []*schema.Column{OhAuthTooTokensColumns[0]},
+	}
+	// OrgMembershipsColumns holds the columns for the "org_memberships" table.
+	OrgMembershipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"OWNER", "ADMIN", "MEMBER"}, Default: "MEMBER"},
+		{Name: "org_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// OrgMembershipsTable holds the schema information for the "org_memberships" table.
+	OrgMembershipsTable = &schema.Table{
+		Name:       "org_memberships",
+		Columns:    OrgMembershipsColumns,
+		PrimaryKey: []*schema.Column{OrgMembershipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "org_memberships_organizations_org",
+				Columns:    []*schema.Column{OrgMembershipsColumns[6]},
+				RefColumns: []*schema.Column{OrganizationsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "org_memberships_users_user",
+				Columns:    []*schema.Column{OrgMembershipsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orgmembership_user_id_org_id",
+				Unique:  true,
+				Columns: []*schema.Column{OrgMembershipsColumns[7], OrgMembershipsColumns[6]},
+			},
+		},
 	}
 	// OrganizationsColumns holds the columns for the "organizations" table.
 	OrganizationsColumns = []*schema.Column{
@@ -487,65 +563,17 @@ var (
 			},
 		},
 	}
-	// GroupUsersColumns holds the columns for the "group_users" table.
-	GroupUsersColumns = []*schema.Column{
-		{Name: "group_id", Type: field.TypeString},
-		{Name: "user_id", Type: field.TypeString},
-	}
-	// GroupUsersTable holds the schema information for the "group_users" table.
-	GroupUsersTable = &schema.Table{
-		Name:       "group_users",
-		Columns:    GroupUsersColumns,
-		PrimaryKey: []*schema.Column{GroupUsersColumns[0], GroupUsersColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "group_users_group_id",
-				Columns:    []*schema.Column{GroupUsersColumns[0]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "group_users_user_id",
-				Columns:    []*schema.Column{GroupUsersColumns[1]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
-	// UserOrganizationsColumns holds the columns for the "user_organizations" table.
-	UserOrganizationsColumns = []*schema.Column{
-		{Name: "user_id", Type: field.TypeString},
-		{Name: "organization_id", Type: field.TypeString},
-	}
-	// UserOrganizationsTable holds the schema information for the "user_organizations" table.
-	UserOrganizationsTable = &schema.Table{
-		Name:       "user_organizations",
-		Columns:    UserOrganizationsColumns,
-		PrimaryKey: []*schema.Column{UserOrganizationsColumns[0], UserOrganizationsColumns[1]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "user_organizations_user_id",
-				Columns:    []*schema.Column{UserOrganizationsColumns[0]},
-				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "user_organizations_organization_id",
-				Columns:    []*schema.Column{UserOrganizationsColumns[1]},
-				RefColumns: []*schema.Column{OrganizationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		EmailVerificationTokensTable,
 		EntitlementsTable,
 		GroupsTable,
+		GroupMembershipsTable,
 		GroupSettingsTable,
 		IntegrationsTable,
 		OauthProvidersTable,
 		OhAuthTooTokensTable,
+		OrgMembershipsTable,
 		OrganizationsTable,
 		OrganizationSettingsTable,
 		PasswordResetTokensTable,
@@ -553,8 +581,6 @@ var (
 		SessionsTable,
 		UsersTable,
 		UserSettingsTable,
-		GroupUsersTable,
-		UserOrganizationsTable,
 	}
 )
 
@@ -562,17 +588,17 @@ func init() {
 	EmailVerificationTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitlementsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	GroupsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	GroupMembershipsTable.ForeignKeys[0].RefTable = GroupsTable
+	GroupMembershipsTable.ForeignKeys[1].RefTable = UsersTable
 	GroupSettingsTable.ForeignKeys[0].RefTable = GroupsTable
 	IntegrationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OauthProvidersTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrgMembershipsTable.ForeignKeys[0].RefTable = OrganizationsTable
+	OrgMembershipsTable.ForeignKeys[1].RefTable = UsersTable
 	OrganizationsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	OrganizationSettingsTable.ForeignKeys[0].RefTable = OrganizationsTable
 	PasswordResetTokensTable.ForeignKeys[0].RefTable = UsersTable
 	PersonalAccessTokensTable.ForeignKeys[0].RefTable = UsersTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	UserSettingsTable.ForeignKeys[0].RefTable = UsersTable
-	GroupUsersTable.ForeignKeys[0].RefTable = GroupsTable
-	GroupUsersTable.ForeignKeys[1].RefTable = UsersTable
-	UserOrganizationsTable.ForeignKeys[0].RefTable = UsersTable
-	UserOrganizationsTable.ForeignKeys[1].RefTable = OrganizationsTable
 }

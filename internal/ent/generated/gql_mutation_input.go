@@ -5,6 +5,7 @@ package generated
 import (
 	"time"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/entitlement"
 	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/usersetting"
@@ -22,7 +23,7 @@ type CreateEntitlementInput struct {
 	Expires                *bool
 	ExpiresAt              *time.Time
 	Cancelled              *bool
-	OwnerID                *string
+	OwnerID                string
 }
 
 // Mutate applies the CreateEntitlementInput on the EntitlementMutation builder.
@@ -57,9 +58,7 @@ func (i *CreateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
 	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
+	m.SetOwnerID(i.OwnerID)
 }
 
 // SetInput applies the change-set in the CreateEntitlementInput on the EntitlementCreate builder.
@@ -82,7 +81,6 @@ type UpdateEntitlementInput struct {
 	ClearExpiresAt              bool
 	ExpiresAt                   *time.Time
 	Cancelled                   *bool
-	ClearOwner                  bool
 	OwnerID                     *string
 }
 
@@ -124,9 +122,6 @@ func (i *UpdateEntitlementInput) Mutate(m *EntitlementMutation) {
 	if v := i.Cancelled; v != nil {
 		m.SetCancelled(*v)
 	}
-	if i.ClearOwner {
-		m.ClearOwner()
-	}
 	if v := i.OwnerID; v != nil {
 		m.SetOwnerID(*v)
 	}
@@ -155,9 +150,9 @@ type CreateGroupInput struct {
 	GravatarLogoURL *string
 	LogoURL         *string
 	DisplayName     *string
+	OwnerID         string
 	SettingID       string
 	UserIDs         []string
-	OwnerID         string
 }
 
 // Mutate applies the CreateGroupInput on the GroupMutation builder.
@@ -187,11 +182,11 @@ func (i *CreateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
+	m.SetOwnerID(i.OwnerID)
 	m.SetSettingID(i.SettingID)
 	if v := i.UserIDs; len(v) > 0 {
 		m.AddUserIDs(v...)
 	}
-	m.SetOwnerID(i.OwnerID)
 }
 
 // SetInput applies the change-set in the CreateGroupInput on the GroupCreate builder.
@@ -213,11 +208,11 @@ type UpdateGroupInput struct {
 	ClearLogoURL         bool
 	LogoURL              *string
 	DisplayName          *string
+	OwnerID              *string
 	SettingID            *string
 	ClearUsers           bool
 	AddUserIDs           []string
 	RemoveUserIDs        []string
-	OwnerID              *string
 }
 
 // Mutate applies the UpdateGroupInput on the GroupMutation builder.
@@ -255,6 +250,9 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.DisplayName; v != nil {
 		m.SetDisplayName(*v)
 	}
+	if v := i.OwnerID; v != nil {
+		m.SetOwnerID(*v)
+	}
 	if v := i.SettingID; v != nil {
 		m.SetSettingID(*v)
 	}
@@ -267,9 +265,6 @@ func (i *UpdateGroupInput) Mutate(m *GroupMutation) {
 	if v := i.RemoveUserIDs; len(v) > 0 {
 		m.RemoveUserIDs(v...)
 	}
-	if v := i.OwnerID; v != nil {
-		m.SetOwnerID(*v)
-	}
 }
 
 // SetInput applies the change-set in the UpdateGroupInput on the GroupUpdate builder.
@@ -280,6 +275,88 @@ func (c *GroupUpdate) SetInput(i UpdateGroupInput) *GroupUpdate {
 
 // SetInput applies the change-set in the UpdateGroupInput on the GroupUpdateOne builder.
 func (c *GroupUpdateOne) SetInput(i UpdateGroupInput) *GroupUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateGroupMembershipInput represents a mutation input for creating groupmemberships.
+type CreateGroupMembershipInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	CreatedBy *string
+	UpdatedBy *string
+	Role      *enums.Role
+	GroupID   string
+	UserID    string
+}
+
+// Mutate applies the CreateGroupMembershipInput on the GroupMembershipMutation builder.
+func (i *CreateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	m.SetGroupID(i.GroupID)
+	m.SetUserID(i.UserID)
+}
+
+// SetInput applies the change-set in the CreateGroupMembershipInput on the GroupMembershipCreate builder.
+func (c *GroupMembershipCreate) SetInput(i CreateGroupMembershipInput) *GroupMembershipCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateGroupMembershipInput represents a mutation input for updating groupmemberships.
+type UpdateGroupMembershipInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Role           *enums.Role
+	GroupID        *string
+	UserID         *string
+}
+
+// Mutate applies the UpdateGroupMembershipInput on the GroupMembershipMutation builder.
+func (i *UpdateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.GroupID; v != nil {
+		m.SetGroupID(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdate builder.
+func (c *GroupMembershipUpdate) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateGroupMembershipInput on the GroupMembershipUpdateOne builder.
+func (c *GroupMembershipUpdateOne) SetInput(i UpdateGroupMembershipInput) *GroupMembershipUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -774,6 +851,88 @@ func (c *OhAuthTooTokenUpdateOne) SetInput(i UpdateOhAuthTooTokenInput) *OhAuthT
 	return c
 }
 
+// CreateOrgMembershipInput represents a mutation input for creating orgmemberships.
+type CreateOrgMembershipInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	CreatedBy *string
+	UpdatedBy *string
+	Role      *enums.Role
+	OrgID     string
+	UserID    string
+}
+
+// Mutate applies the CreateOrgMembershipInput on the OrgMembershipMutation builder.
+func (i *CreateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.CreatedBy; v != nil {
+		m.SetCreatedBy(*v)
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	m.SetOrgID(i.OrgID)
+	m.SetUserID(i.UserID)
+}
+
+// SetInput applies the change-set in the CreateOrgMembershipInput on the OrgMembershipCreate builder.
+func (c *OrgMembershipCreate) SetInput(i CreateOrgMembershipInput) *OrgMembershipCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOrgMembershipInput represents a mutation input for updating orgmemberships.
+type UpdateOrgMembershipInput struct {
+	UpdatedAt      *time.Time
+	ClearUpdatedBy bool
+	UpdatedBy      *string
+	Role           *enums.Role
+	OrgID          *string
+	UserID         *string
+}
+
+// Mutate applies the UpdateOrgMembershipInput on the OrgMembershipMutation builder.
+func (i *UpdateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearUpdatedBy {
+		m.ClearUpdatedBy()
+	}
+	if v := i.UpdatedBy; v != nil {
+		m.SetUpdatedBy(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.OrgID; v != nil {
+		m.SetOrgID(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOrgMembershipInput on the OrgMembershipUpdate builder.
+func (c *OrgMembershipUpdate) SetInput(i UpdateOrgMembershipInput) *OrgMembershipUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOrgMembershipInput on the OrgMembershipUpdateOne builder.
+func (c *OrgMembershipUpdateOne) SetInput(i UpdateOrgMembershipInput) *OrgMembershipUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateOrganizationInput represents a mutation input for creating organizations.
 type CreateOrganizationInput struct {
 	CreatedAt        *time.Time
@@ -785,12 +944,12 @@ type CreateOrganizationInput struct {
 	Description      *string
 	PersonalOrg      *bool
 	ParentID         *string
-	UserIDs          []string
 	GroupIDs         []string
 	IntegrationIDs   []string
 	SettingID        *string
 	EntitlementIDs   []string
 	OauthproviderIDs []string
+	UserIDs          []string
 }
 
 // Mutate applies the CreateOrganizationInput on the OrganizationMutation builder.
@@ -820,9 +979,6 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	if v := i.ParentID; v != nil {
 		m.SetParentID(*v)
 	}
-	if v := i.UserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
 	if v := i.GroupIDs; len(v) > 0 {
 		m.AddGroupIDs(v...)
 	}
@@ -837,6 +993,9 @@ func (i *CreateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.OauthproviderIDs; len(v) > 0 {
 		m.AddOauthproviderIDs(v...)
+	}
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
 	}
 }
 
@@ -855,9 +1014,6 @@ type UpdateOrganizationInput struct {
 	DisplayName            *string
 	ClearDescription       bool
 	Description            *string
-	ClearUsers             bool
-	AddUserIDs             []string
-	RemoveUserIDs          []string
 	ClearGroups            bool
 	AddGroupIDs            []string
 	RemoveGroupIDs         []string
@@ -872,6 +1028,9 @@ type UpdateOrganizationInput struct {
 	ClearOauthprovider     bool
 	AddOauthproviderIDs    []string
 	RemoveOauthproviderIDs []string
+	ClearUsers             bool
+	AddUserIDs             []string
+	RemoveUserIDs          []string
 }
 
 // Mutate applies the UpdateOrganizationInput on the OrganizationMutation builder.
@@ -896,15 +1055,6 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.Description; v != nil {
 		m.SetDescription(*v)
-	}
-	if i.ClearUsers {
-		m.ClearUsers()
-	}
-	if v := i.AddUserIDs; len(v) > 0 {
-		m.AddUserIDs(v...)
-	}
-	if v := i.RemoveUserIDs; len(v) > 0 {
-		m.RemoveUserIDs(v...)
 	}
 	if i.ClearGroups {
 		m.ClearGroups()
@@ -947,6 +1097,15 @@ func (i *UpdateOrganizationInput) Mutate(m *OrganizationMutation) {
 	}
 	if v := i.RemoveOauthproviderIDs; len(v) > 0 {
 		m.RemoveOauthproviderIDs(v...)
+	}
+	if i.ClearUsers {
+		m.ClearUsers()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
 	}
 }
 
@@ -1393,13 +1552,13 @@ type CreateUserInput struct {
 	Password                  *string
 	Sub                       *string
 	Oauth                     *bool
-	OrganizationIDs           []string
-	GroupIDs                  []string
 	PersonalAccessTokenIDs    []string
 	SettingID                 string
 	SessionIDs                []string
 	EmailVerificationTokenIDs []string
 	PasswordResetTokenIDs     []string
+	GroupIDs                  []string
+	OrganizationIDs           []string
 }
 
 // Mutate applies the CreateUserInput on the UserMutation builder.
@@ -1443,12 +1602,6 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	if v := i.Oauth; v != nil {
 		m.SetOauth(*v)
 	}
-	if v := i.OrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
-	}
-	if v := i.GroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
-	}
 	if v := i.PersonalAccessTokenIDs; len(v) > 0 {
 		m.AddPersonalAccessTokenIDs(v...)
 	}
@@ -1461,6 +1614,12 @@ func (i *CreateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.PasswordResetTokenIDs; len(v) > 0 {
 		m.AddPasswordResetTokenIDs(v...)
+	}
+	if v := i.GroupIDs; len(v) > 0 {
+		m.AddGroupIDs(v...)
+	}
+	if v := i.OrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
 	}
 }
 
@@ -1492,12 +1651,6 @@ type UpdateUserInput struct {
 	ClearSub                        bool
 	Sub                             *string
 	Oauth                           *bool
-	ClearOrganizations              bool
-	AddOrganizationIDs              []string
-	RemoveOrganizationIDs           []string
-	ClearGroups                     bool
-	AddGroupIDs                     []string
-	RemoveGroupIDs                  []string
 	ClearPersonalAccessTokens       bool
 	AddPersonalAccessTokenIDs       []string
 	RemovePersonalAccessTokenIDs    []string
@@ -1511,6 +1664,12 @@ type UpdateUserInput struct {
 	ClearPasswordResetTokens        bool
 	AddPasswordResetTokenIDs        []string
 	RemovePasswordResetTokenIDs     []string
+	ClearGroups                     bool
+	AddGroupIDs                     []string
+	RemoveGroupIDs                  []string
+	ClearOrganizations              bool
+	AddOrganizationIDs              []string
+	RemoveOrganizationIDs           []string
 }
 
 // Mutate applies the UpdateUserInput on the UserMutation builder.
@@ -1575,24 +1734,6 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	if v := i.Oauth; v != nil {
 		m.SetOauth(*v)
 	}
-	if i.ClearOrganizations {
-		m.ClearOrganizations()
-	}
-	if v := i.AddOrganizationIDs; len(v) > 0 {
-		m.AddOrganizationIDs(v...)
-	}
-	if v := i.RemoveOrganizationIDs; len(v) > 0 {
-		m.RemoveOrganizationIDs(v...)
-	}
-	if i.ClearGroups {
-		m.ClearGroups()
-	}
-	if v := i.AddGroupIDs; len(v) > 0 {
-		m.AddGroupIDs(v...)
-	}
-	if v := i.RemoveGroupIDs; len(v) > 0 {
-		m.RemoveGroupIDs(v...)
-	}
 	if i.ClearPersonalAccessTokens {
 		m.ClearPersonalAccessTokens()
 	}
@@ -1631,6 +1772,24 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.RemovePasswordResetTokenIDs; len(v) > 0 {
 		m.RemovePasswordResetTokenIDs(v...)
+	}
+	if i.ClearGroups {
+		m.ClearGroups()
+	}
+	if v := i.AddGroupIDs; len(v) > 0 {
+		m.AddGroupIDs(v...)
+	}
+	if v := i.RemoveGroupIDs; len(v) > 0 {
+		m.RemoveGroupIDs(v...)
+	}
+	if i.ClearOrganizations {
+		m.ClearOrganizations()
+	}
+	if v := i.AddOrganizationIDs; len(v) > 0 {
+		m.AddOrganizationIDs(v...)
+	}
+	if v := i.RemoveOrganizationIDs; len(v) > 0 {
+		m.RemoveOrganizationIDs(v...)
 	}
 }
 

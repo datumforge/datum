@@ -23,7 +23,7 @@ import (
 )
 
 func TestForgotPasswordHandler(t *testing.T) {
-	h := handlerSetup(t)
+	h := handlerSetup(t, EntClient)
 
 	ec := echocontext.NewTestEchoContext().Request().Context()
 

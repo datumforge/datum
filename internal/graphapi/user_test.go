@@ -341,24 +341,17 @@ func TestMutation_CreateUserNoAuth(t *testing.T) {
 			// ensure a user setting was created
 			assert.NotNil(t, resp.CreateUser.User.Setting)
 
-			// ensure personal org is created
-			personalOrg := true
-			whereInput := &datumclient.OrganizationWhereInput{
-				PersonalOrg: &personalOrg,
-			}
+			orgs := resp.CreateUser.User.OrgMemberships
+			require.Len(t, orgs, 1)
 
-			// TODO: update to pull by user once https://github.com/datumforge/datum/issues/293 is complete
-			orgs, err := client.OrganizationsWhere(ctx, whereInput)
+			personalOrg, err := client.GetOrganizationByID(ctx, orgs[0].OrgID)
 			require.NoError(t, err)
 
-			orgCreated := false
-			for _, o := range orgs.Organizations.GetEdges() {
-				if *o.Node.Description == fmt.Sprintf("Personal Organization - %s %s", resp.CreateUser.User.FirstName, resp.CreateUser.User.LastName) {
-					orgCreated = true
-				}
-			}
-
-			assert.True(t, orgCreated, "personal org expected to be created")
+			assert.True(t, personalOrg.Organization.PersonalOrg)
+			// make sure there is only one user
+			require.Len(t, personalOrg.Organization.OrgMemberships, 1)
+			// make sure user was added as owner
+			assert.Equal(t, personalOrg.Organization.OrgMemberships[0].Role.String(), "OWNER")
 
 			(&UserCleanup{UserID: resp.CreateUser.User.ID}).MustDelete(ctx)
 		})
@@ -828,7 +821,7 @@ func TestMutation_DeleteUserNoAuth(t *testing.T) {
 			require.NotNil(t, resp)
 			require.NotNil(t, resp.DeleteUser.DeletedID)
 
-			// TODO: ensure personal org is also deleted when user is deleted
+			// TODO: make sure the personal org is deleted
 
 			// make sure the deletedID matches the ID we wanted to delete
 			assert.Equal(t, tc.userID, resp.DeleteUser.DeletedID)

@@ -133,9 +133,6 @@ func (User) Indexes() []ent.Index {
 // Edges of the User
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("organizations", Organization.Type),
-		edge.From("groups", Group.Type).
-			Ref("users"),
 		edge.To("personal_access_tokens", PersonalAccessToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("setting", UserSetting.Type).
@@ -148,6 +145,10 @@ func (User) Edges() []ent.Edge {
 			Annotations(entx.CascadeAnnotationField("Owner")),
 		edge.To("password_reset_tokens", PasswordResetToken.Type).
 			Annotations(entx.CascadeAnnotationField("Owner")),
+		edge.To("groups", Group.Type).
+			Through("group_memberships", GroupMembership.Type),
+		edge.To("organizations", Organization.Type).
+			Through("org_memberships", OrgMembership.Type),
 	}
 }
 

@@ -20,6 +20,10 @@ type Claims struct {
 	ParentOrgID string `json:"parentorg,omitempty"`
 	// Tier the token is valid for
 	Tier string `json:"tier,omitempty"`
+	// DisplayName of the user
+	DisplayName string `json:"displayName,omitempty"`
+	// AvatarURL of the user
+	AvatarURL string `json:"avatarURL,omitempty"`
 }
 
 // ParseUserID returns the ID of the user from the Subject of the claims

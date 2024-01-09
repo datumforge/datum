@@ -58,8 +58,10 @@ func createClaims(u *generated.User) *tokens.Claims {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Subject: u.ID,
 		},
-		UserID: u.ID,
-		Email:  u.Email,
+		UserID:      u.ID,
+		Email:       u.Email,
+		DisplayName: u.DisplayName,
+		AvatarURL:   *u.AvatarRemoteURL,
 	}
 }
 

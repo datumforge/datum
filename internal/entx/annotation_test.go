@@ -18,6 +18,22 @@ func TestCascadeAnnotation(t *testing.T) {
 	assert.Equal(t, ca.Field, f)
 }
 
+func TestCascadeThroughAnnotation(t *testing.T) {
+	f := gofakeit.Name()
+	s := gofakeit.Name()
+	schemas := []entx.ThroughCleanup{
+		{
+			Through: s,
+			Field:   f,
+		},
+	}
+	ca := entx.CascadeThroughAnnotationField(schemas)
+
+	assert.Equal(t, ca.Name(), entx.CascadeThroughAnnotationName)
+	assert.Equal(t, ca.Schemas[0].Field, f)
+	assert.Equal(t, ca.Schemas[0].Through, s)
+}
+
 func TestSchemaGenAnnotation(t *testing.T) {
 	s := gofakeit.Bool()
 	sa := entx.SchemaGenSkip(s)

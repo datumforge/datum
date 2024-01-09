@@ -245,10 +245,10 @@ input CreateUserInput {
 	"""whether the user uses oauth for login or not"""
 	oauth: Boolean
 	organizationIDs: [ID!]
-	sessionIDs: [ID!]
 	groupIDs: [ID!]
 	personalAccessTokenIDs: [ID!]
 	settingID: ID!
+	sessionIDs: [ID!]
 	emailVerificationTokenIDs: [ID!]
 	passwordResetTokenIDs: [ID!]
 }
@@ -2773,9 +2773,6 @@ type Session implements Node {
 	expiresAt: Time!
 	"""organization ID of the organization the user is accessing"""
 	organizationID: String!
-	"""the user the session is associated with"""
-	userID: ID!
-	"""Sessions belong to users"""
 	owner: User!
 }
 """A connection to a list of items."""
@@ -2924,20 +2921,6 @@ input SessionWhereInput {
 	organizationIDHasSuffix: String
 	organizationIDEqualFold: String
 	organizationIDContainsFold: String
-	"""user_id field predicates"""
-	userID: ID
-	userIDNEQ: ID
-	userIDIn: [ID!]
-	userIDNotIn: [ID!]
-	userIDGT: ID
-	userIDGTE: ID
-	userIDLT: ID
-	userIDLTE: ID
-	userIDContains: ID
-	userIDHasPrefix: ID
-	userIDHasSuffix: ID
-	userIDEqualFold: ID
-	userIDContainsFold: ID
 	"""owner edge predicates"""
 	hasOwner: Boolean
 	hasOwnerWith: [UserWhereInput!]
@@ -3230,9 +3213,6 @@ input UpdateUserInput {
 	addOrganizationIDs: [ID!]
 	removeOrganizationIDs: [ID!]
 	clearOrganizations: Boolean
-	addSessionIDs: [ID!]
-	removeSessionIDs: [ID!]
-	clearSessions: Boolean
 	addGroupIDs: [ID!]
 	removeGroupIDs: [ID!]
 	clearGroups: Boolean
@@ -3240,6 +3220,9 @@ input UpdateUserInput {
 	removePersonalAccessTokenIDs: [ID!]
 	clearPersonalAccessTokens: Boolean
 	settingID: ID
+	addSessionIDs: [ID!]
+	removeSessionIDs: [ID!]
+	clearSessions: Boolean
 	addEmailVerificationTokenIDs: [ID!]
 	removeEmailVerificationTokenIDs: [ID!]
 	clearEmailVerificationTokens: Boolean
@@ -3303,10 +3286,10 @@ type User implements Node {
 	"""whether the user uses oauth for login or not"""
 	oauth: Boolean!
 	organizations: [Organization!]
-	sessions: [Session!]
 	groups: [Group!]
 	personalAccessTokens: [PersonalAccessToken!]
 	setting: UserSetting!
+	sessions: [Session!]
 }
 """A connection to a list of items."""
 type UserConnection {
@@ -3784,9 +3767,6 @@ input UserWhereInput {
 	"""organizations edge predicates"""
 	hasOrganizations: Boolean
 	hasOrganizationsWith: [OrganizationWhereInput!]
-	"""sessions edge predicates"""
-	hasSessions: Boolean
-	hasSessionsWith: [SessionWhereInput!]
 	"""groups edge predicates"""
 	hasGroups: Boolean
 	hasGroupsWith: [GroupWhereInput!]
@@ -3796,4 +3776,7 @@ input UserWhereInput {
 	"""setting edge predicates"""
 	hasSetting: Boolean
 	hasSettingWith: [UserSettingWhereInput!]
+	"""sessions edge predicates"""
+	hasSessions: Boolean
+	hasSessionsWith: [SessionWhereInput!]
 }

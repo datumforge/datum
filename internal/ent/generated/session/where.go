@@ -87,6 +87,11 @@ func UpdatedBy(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
+// OwnerID applies equality check predicate on the "owner_id" field. It's identical to OwnerIDEQ.
+func OwnerID(v string) predicate.Session {
+	return predicate.Session(sql.FieldEQ(FieldOwnerID, v))
+}
+
 // SessionToken applies equality check predicate on the "session_token" field. It's identical to SessionTokenEQ.
 func SessionToken(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldSessionToken, v))
@@ -105,11 +110,6 @@ func ExpiresAt(v time.Time) predicate.Session {
 // OrganizationID applies equality check predicate on the "organization_id" field. It's identical to OrganizationIDEQ.
 func OrganizationID(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldOrganizationID, v))
-}
-
-// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v string) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldUserID, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -342,6 +342,71 @@ func UpdatedByContainsFold(v string) predicate.Session {
 	return predicate.Session(sql.FieldContainsFold(FieldUpdatedBy, v))
 }
 
+// OwnerIDEQ applies the EQ predicate on the "owner_id" field.
+func OwnerIDEQ(v string) predicate.Session {
+	return predicate.Session(sql.FieldEQ(FieldOwnerID, v))
+}
+
+// OwnerIDNEQ applies the NEQ predicate on the "owner_id" field.
+func OwnerIDNEQ(v string) predicate.Session {
+	return predicate.Session(sql.FieldNEQ(FieldOwnerID, v))
+}
+
+// OwnerIDIn applies the In predicate on the "owner_id" field.
+func OwnerIDIn(vs ...string) predicate.Session {
+	return predicate.Session(sql.FieldIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDNotIn applies the NotIn predicate on the "owner_id" field.
+func OwnerIDNotIn(vs ...string) predicate.Session {
+	return predicate.Session(sql.FieldNotIn(FieldOwnerID, vs...))
+}
+
+// OwnerIDGT applies the GT predicate on the "owner_id" field.
+func OwnerIDGT(v string) predicate.Session {
+	return predicate.Session(sql.FieldGT(FieldOwnerID, v))
+}
+
+// OwnerIDGTE applies the GTE predicate on the "owner_id" field.
+func OwnerIDGTE(v string) predicate.Session {
+	return predicate.Session(sql.FieldGTE(FieldOwnerID, v))
+}
+
+// OwnerIDLT applies the LT predicate on the "owner_id" field.
+func OwnerIDLT(v string) predicate.Session {
+	return predicate.Session(sql.FieldLT(FieldOwnerID, v))
+}
+
+// OwnerIDLTE applies the LTE predicate on the "owner_id" field.
+func OwnerIDLTE(v string) predicate.Session {
+	return predicate.Session(sql.FieldLTE(FieldOwnerID, v))
+}
+
+// OwnerIDContains applies the Contains predicate on the "owner_id" field.
+func OwnerIDContains(v string) predicate.Session {
+	return predicate.Session(sql.FieldContains(FieldOwnerID, v))
+}
+
+// OwnerIDHasPrefix applies the HasPrefix predicate on the "owner_id" field.
+func OwnerIDHasPrefix(v string) predicate.Session {
+	return predicate.Session(sql.FieldHasPrefix(FieldOwnerID, v))
+}
+
+// OwnerIDHasSuffix applies the HasSuffix predicate on the "owner_id" field.
+func OwnerIDHasSuffix(v string) predicate.Session {
+	return predicate.Session(sql.FieldHasSuffix(FieldOwnerID, v))
+}
+
+// OwnerIDEqualFold applies the EqualFold predicate on the "owner_id" field.
+func OwnerIDEqualFold(v string) predicate.Session {
+	return predicate.Session(sql.FieldEqualFold(FieldOwnerID, v))
+}
+
+// OwnerIDContainsFold applies the ContainsFold predicate on the "owner_id" field.
+func OwnerIDContainsFold(v string) predicate.Session {
+	return predicate.Session(sql.FieldContainsFold(FieldOwnerID, v))
+}
+
 // SessionTokenEQ applies the EQ predicate on the "session_token" field.
 func SessionTokenEQ(v string) predicate.Session {
 	return predicate.Session(sql.FieldEQ(FieldSessionToken, v))
@@ -550,71 +615,6 @@ func OrganizationIDEqualFold(v string) predicate.Session {
 // OrganizationIDContainsFold applies the ContainsFold predicate on the "organization_id" field.
 func OrganizationIDContainsFold(v string) predicate.Session {
 	return predicate.Session(sql.FieldContainsFold(FieldOrganizationID, v))
-}
-
-// UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v string) predicate.Session {
-	return predicate.Session(sql.FieldEQ(FieldUserID, v))
-}
-
-// UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v string) predicate.Session {
-	return predicate.Session(sql.FieldNEQ(FieldUserID, v))
-}
-
-// UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...string) predicate.Session {
-	return predicate.Session(sql.FieldIn(FieldUserID, vs...))
-}
-
-// UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...string) predicate.Session {
-	return predicate.Session(sql.FieldNotIn(FieldUserID, vs...))
-}
-
-// UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v string) predicate.Session {
-	return predicate.Session(sql.FieldGT(FieldUserID, v))
-}
-
-// UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v string) predicate.Session {
-	return predicate.Session(sql.FieldGTE(FieldUserID, v))
-}
-
-// UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v string) predicate.Session {
-	return predicate.Session(sql.FieldLT(FieldUserID, v))
-}
-
-// UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v string) predicate.Session {
-	return predicate.Session(sql.FieldLTE(FieldUserID, v))
-}
-
-// UserIDContains applies the Contains predicate on the "user_id" field.
-func UserIDContains(v string) predicate.Session {
-	return predicate.Session(sql.FieldContains(FieldUserID, v))
-}
-
-// UserIDHasPrefix applies the HasPrefix predicate on the "user_id" field.
-func UserIDHasPrefix(v string) predicate.Session {
-	return predicate.Session(sql.FieldHasPrefix(FieldUserID, v))
-}
-
-// UserIDHasSuffix applies the HasSuffix predicate on the "user_id" field.
-func UserIDHasSuffix(v string) predicate.Session {
-	return predicate.Session(sql.FieldHasSuffix(FieldUserID, v))
-}
-
-// UserIDEqualFold applies the EqualFold predicate on the "user_id" field.
-func UserIDEqualFold(v string) predicate.Session {
-	return predicate.Session(sql.FieldEqualFold(FieldUserID, v))
-}
-
-// UserIDContainsFold applies the ContainsFold predicate on the "user_id" field.
-func UserIDContainsFold(v string) predicate.Session {
-	return predicate.Session(sql.FieldContainsFold(FieldUserID, v))
 }
 
 // HasOwner applies the HasEdge predicate on the "owner" edge.

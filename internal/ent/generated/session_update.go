@@ -57,6 +57,20 @@ func (su *SessionUpdate) ClearUpdatedBy() *SessionUpdate {
 	return su
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (su *SessionUpdate) SetOwnerID(s string) *SessionUpdate {
+	su.mutation.SetOwnerID(s)
+	return su
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableOwnerID(s *string) *SessionUpdate {
+	if s != nil {
+		su.SetOwnerID(*s)
+	}
+	return su
+}
+
 // SetIssuedAt sets the "issued_at" field.
 func (su *SessionUpdate) SetIssuedAt(t time.Time) *SessionUpdate {
 	su.mutation.SetIssuedAt(t)
@@ -88,26 +102,6 @@ func (su *SessionUpdate) SetNillableOrganizationID(s *string) *SessionUpdate {
 	if s != nil {
 		su.SetOrganizationID(*s)
 	}
-	return su
-}
-
-// SetUserID sets the "user_id" field.
-func (su *SessionUpdate) SetUserID(s string) *SessionUpdate {
-	su.mutation.SetUserID(s)
-	return su
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableUserID(s *string) *SessionUpdate {
-	if s != nil {
-		su.SetUserID(*s)
-	}
-	return su
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (su *SessionUpdate) SetOwnerID(id string) *SessionUpdate {
-	su.mutation.SetOwnerID(id)
 	return su
 }
 
@@ -296,6 +290,20 @@ func (suo *SessionUpdateOne) ClearUpdatedBy() *SessionUpdateOne {
 	return suo
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (suo *SessionUpdateOne) SetOwnerID(s string) *SessionUpdateOne {
+	suo.mutation.SetOwnerID(s)
+	return suo
+}
+
+// SetNillableOwnerID sets the "owner_id" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableOwnerID(s *string) *SessionUpdateOne {
+	if s != nil {
+		suo.SetOwnerID(*s)
+	}
+	return suo
+}
+
 // SetIssuedAt sets the "issued_at" field.
 func (suo *SessionUpdateOne) SetIssuedAt(t time.Time) *SessionUpdateOne {
 	suo.mutation.SetIssuedAt(t)
@@ -327,26 +335,6 @@ func (suo *SessionUpdateOne) SetNillableOrganizationID(s *string) *SessionUpdate
 	if s != nil {
 		suo.SetOrganizationID(*s)
 	}
-	return suo
-}
-
-// SetUserID sets the "user_id" field.
-func (suo *SessionUpdateOne) SetUserID(s string) *SessionUpdateOne {
-	suo.mutation.SetUserID(s)
-	return suo
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableUserID(s *string) *SessionUpdateOne {
-	if s != nil {
-		suo.SetUserID(*s)
-	}
-	return suo
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (suo *SessionUpdateOne) SetOwnerID(id string) *SessionUpdateOne {
-	suo.mutation.SetOwnerID(id)
 	return suo
 }
 

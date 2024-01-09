@@ -246,10 +246,10 @@ type CreateUserInput struct {
 	// whether the user uses oauth for login or not
 	Oauth                     *bool    `json:"oauth,omitempty"`
 	OrganizationIDs           []string `json:"organizationIDs,omitempty"`
-	SessionIDs                []string `json:"sessionIDs,omitempty"`
 	GroupIDs                  []string `json:"groupIDs,omitempty"`
 	PersonalAccessTokenIDs    []string `json:"personalAccessTokenIDs,omitempty"`
 	SettingID                 string   `json:"settingID"`
+	SessionIDs                []string `json:"sessionIDs,omitempty"`
 	EmailVerificationTokenIDs []string `json:"emailVerificationTokenIDs,omitempty"`
 	PasswordResetTokenIDs     []string `json:"passwordResetTokenIDs,omitempty"`
 }
@@ -2272,10 +2272,7 @@ type Session struct {
 	ExpiresAt    time.Time `json:"expiresAt"`
 	// organization ID of the organization the user is accessing
 	OrganizationID string `json:"organizationID"`
-	// the user the session is associated with
-	UserID string `json:"userID"`
-	// Sessions belong to users
-	Owner User `json:"owner"`
+	Owner          User   `json:"owner"`
 }
 
 func (Session) IsNode() {}
@@ -2429,20 +2426,6 @@ type SessionWhereInput struct {
 	OrganizationIDHasSuffix    *string  `json:"organizationIDHasSuffix,omitempty"`
 	OrganizationIDEqualFold    *string  `json:"organizationIDEqualFold,omitempty"`
 	OrganizationIDContainsFold *string  `json:"organizationIDContainsFold,omitempty"`
-	// user_id field predicates
-	UserID             *string  `json:"userID,omitempty"`
-	UserIDNeq          *string  `json:"userIDNEQ,omitempty"`
-	UserIDIn           []string `json:"userIDIn,omitempty"`
-	UserIDNotIn        []string `json:"userIDNotIn,omitempty"`
-	UserIDGt           *string  `json:"userIDGT,omitempty"`
-	UserIDGte          *string  `json:"userIDGTE,omitempty"`
-	UserIDLt           *string  `json:"userIDLT,omitempty"`
-	UserIDLte          *string  `json:"userIDLTE,omitempty"`
-	UserIDContains     *string  `json:"userIDContains,omitempty"`
-	UserIDHasPrefix    *string  `json:"userIDHasPrefix,omitempty"`
-	UserIDHasSuffix    *string  `json:"userIDHasSuffix,omitempty"`
-	UserIDEqualFold    *string  `json:"userIDEqualFold,omitempty"`
-	UserIDContainsFold *string  `json:"userIDContainsFold,omitempty"`
 	// owner edge predicates
 	HasOwner     *bool             `json:"hasOwner,omitempty"`
 	HasOwnerWith []*UserWhereInput `json:"hasOwnerWith,omitempty"`
@@ -2722,9 +2705,6 @@ type UpdateUserInput struct {
 	AddOrganizationIDs              []string `json:"addOrganizationIDs,omitempty"`
 	RemoveOrganizationIDs           []string `json:"removeOrganizationIDs,omitempty"`
 	ClearOrganizations              *bool    `json:"clearOrganizations,omitempty"`
-	AddSessionIDs                   []string `json:"addSessionIDs,omitempty"`
-	RemoveSessionIDs                []string `json:"removeSessionIDs,omitempty"`
-	ClearSessions                   *bool    `json:"clearSessions,omitempty"`
 	AddGroupIDs                     []string `json:"addGroupIDs,omitempty"`
 	RemoveGroupIDs                  []string `json:"removeGroupIDs,omitempty"`
 	ClearGroups                     *bool    `json:"clearGroups,omitempty"`
@@ -2732,6 +2712,9 @@ type UpdateUserInput struct {
 	RemovePersonalAccessTokenIDs    []string `json:"removePersonalAccessTokenIDs,omitempty"`
 	ClearPersonalAccessTokens       *bool    `json:"clearPersonalAccessTokens,omitempty"`
 	SettingID                       *string  `json:"settingID,omitempty"`
+	AddSessionIDs                   []string `json:"addSessionIDs,omitempty"`
+	RemoveSessionIDs                []string `json:"removeSessionIDs,omitempty"`
+	ClearSessions                   *bool    `json:"clearSessions,omitempty"`
 	AddEmailVerificationTokenIDs    []string `json:"addEmailVerificationTokenIDs,omitempty"`
 	RemoveEmailVerificationTokenIDs []string `json:"removeEmailVerificationTokenIDs,omitempty"`
 	ClearEmailVerificationTokens    *bool    `json:"clearEmailVerificationTokens,omitempty"`
@@ -2795,10 +2778,10 @@ type User struct {
 	// whether the user uses oauth for login or not
 	Oauth                bool                   `json:"oauth"`
 	Organizations        []*Organization        `json:"organizations,omitempty"`
-	Sessions             []*Session             `json:"sessions,omitempty"`
 	Groups               []*Group               `json:"groups,omitempty"`
 	PersonalAccessTokens []*PersonalAccessToken `json:"personalAccessTokens,omitempty"`
 	Setting              UserSetting            `json:"setting"`
+	Sessions             []*Session             `json:"sessions,omitempty"`
 }
 
 func (User) IsNode() {}
@@ -3271,9 +3254,6 @@ type UserWhereInput struct {
 	// organizations edge predicates
 	HasOrganizations     *bool                     `json:"hasOrganizations,omitempty"`
 	HasOrganizationsWith []*OrganizationWhereInput `json:"hasOrganizationsWith,omitempty"`
-	// sessions edge predicates
-	HasSessions     *bool                `json:"hasSessions,omitempty"`
-	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
 	// groups edge predicates
 	HasGroups     *bool              `json:"hasGroups,omitempty"`
 	HasGroupsWith []*GroupWhereInput `json:"hasGroupsWith,omitempty"`
@@ -3283,6 +3263,9 @@ type UserWhereInput struct {
 	// setting edge predicates
 	HasSetting     *bool                    `json:"hasSetting,omitempty"`
 	HasSettingWith []*UserSettingWhereInput `json:"hasSettingWith,omitempty"`
+	// sessions edge predicates
+	HasSessions     *bool                `json:"hasSessions,omitempty"`
+	HasSessionsWith []*SessionWhereInput `json:"hasSessionsWith,omitempty"`
 }
 
 // Properties by which Group connections can be ordered.

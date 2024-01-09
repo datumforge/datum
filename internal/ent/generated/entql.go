@@ -319,11 +319,11 @@ var schemaGraph = func() *sqlgraph.Schema {
 			session.FieldUpdatedAt:      {Type: field.TypeTime, Column: session.FieldUpdatedAt},
 			session.FieldCreatedBy:      {Type: field.TypeString, Column: session.FieldCreatedBy},
 			session.FieldUpdatedBy:      {Type: field.TypeString, Column: session.FieldUpdatedBy},
+			session.FieldOwnerID:        {Type: field.TypeString, Column: session.FieldOwnerID},
 			session.FieldSessionToken:   {Type: field.TypeString, Column: session.FieldSessionToken},
 			session.FieldIssuedAt:       {Type: field.TypeTime, Column: session.FieldIssuedAt},
 			session.FieldExpiresAt:      {Type: field.TypeTime, Column: session.FieldExpiresAt},
 			session.FieldOrganizationID: {Type: field.TypeString, Column: session.FieldOrganizationID},
-			session.FieldUserID:         {Type: field.TypeString, Column: session.FieldUserID},
 		},
 	}
 	graph.Nodes[12] = &sqlgraph.Node{
@@ -637,18 +637,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 		"Organization",
 	)
 	graph.MustAddE(
-		"sessions",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-		},
-		"User",
-		"Session",
-	)
-	graph.MustAddE(
 		"groups",
 		&sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -683,6 +671,18 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		"User",
 		"UserSetting",
+	)
+	graph.MustAddE(
+		"sessions",
+		&sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+		},
+		"User",
+		"Session",
 	)
 	graph.MustAddE(
 		"email_verification_tokens",
@@ -2160,6 +2160,11 @@ func (f *SessionFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(session.FieldUpdatedBy))
 }
 
+// WhereOwnerID applies the entql string predicate on the owner_id field.
+func (f *SessionFilter) WhereOwnerID(p entql.StringP) {
+	f.Where(p.Field(session.FieldOwnerID))
+}
+
 // WhereSessionToken applies the entql string predicate on the session_token field.
 func (f *SessionFilter) WhereSessionToken(p entql.StringP) {
 	f.Where(p.Field(session.FieldSessionToken))
@@ -2178,11 +2183,6 @@ func (f *SessionFilter) WhereExpiresAt(p entql.TimeP) {
 // WhereOrganizationID applies the entql string predicate on the organization_id field.
 func (f *SessionFilter) WhereOrganizationID(p entql.StringP) {
 	f.Where(p.Field(session.FieldOrganizationID))
-}
-
-// WhereUserID applies the entql string predicate on the user_id field.
-func (f *SessionFilter) WhereUserID(p entql.StringP) {
-	f.Where(p.Field(session.FieldUserID))
 }
 
 // WhereHasOwner applies a predicate to check if query has an edge owner.
@@ -2338,20 +2338,6 @@ func (f *UserFilter) WhereHasOrganizationsWith(preds ...predicate.Organization) 
 	})))
 }
 
-// WhereHasSessions applies a predicate to check if query has an edge sessions.
-func (f *UserFilter) WhereHasSessions() {
-	f.Where(entql.HasEdge("sessions"))
-}
-
-// WhereHasSessionsWith applies a predicate to check if query has an edge sessions with a given conditions (other predicates).
-func (f *UserFilter) WhereHasSessionsWith(preds ...predicate.Session) {
-	f.Where(entql.HasEdgeWith("sessions", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
 // WhereHasGroups applies a predicate to check if query has an edge groups.
 func (f *UserFilter) WhereHasGroups() {
 	f.Where(entql.HasEdge("groups"))
@@ -2388,6 +2374,20 @@ func (f *UserFilter) WhereHasSetting() {
 // WhereHasSettingWith applies a predicate to check if query has an edge setting with a given conditions (other predicates).
 func (f *UserFilter) WhereHasSettingWith(preds ...predicate.UserSetting) {
 	f.Where(entql.HasEdgeWith("setting", sqlgraph.WrapFunc(func(s *sql.Selector) {
+		for _, p := range preds {
+			p(s)
+		}
+	})))
+}
+
+// WhereHasSessions applies a predicate to check if query has an edge sessions.
+func (f *UserFilter) WhereHasSessions() {
+	f.Where(entql.HasEdge("sessions"))
+}
+
+// WhereHasSessionsWith applies a predicate to check if query has an edge sessions with a given conditions (other predicates).
+func (f *UserFilter) WhereHasSessionsWith(preds ...predicate.Session) {
+	f.Where(entql.HasEdgeWith("sessions", sqlgraph.WrapFunc(func(s *sql.Selector) {
 		for _, p := range preds {
 			p(s)
 		}

@@ -4842,6 +4842,9 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "session_token": {
                     "type": "string"
                   },
@@ -4856,9 +4859,6 @@
                   "organization_id": {
                     "type": "string"
                   },
-                  "user_id": {
-                    "type": "string"
-                  },
                   "owner": {
                     "type": "string"
                   }
@@ -4866,11 +4866,11 @@
                 "required": [
                   "created_at",
                   "updated_at",
+                  "owner_id",
                   "session_token",
                   "issued_at",
                   "expires_at",
                   "organization_id",
-                  "user_id",
                   "owner"
                 ]
               }
@@ -5013,6 +5013,9 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "owner_id": {
+                    "type": "string"
+                  },
                   "issued_at": {
                     "type": "string",
                     "format": "date-time"
@@ -5022,9 +5025,6 @@
                     "format": "date-time"
                   },
                   "organization_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
                     "type": "string"
                   },
                   "owner": {
@@ -5669,12 +5669,6 @@
                       "type": "string"
                     }
                   },
-                  "sessions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "groups": {
                     "type": "array",
                     "items": {
@@ -5689,6 +5683,12 @@
                   },
                   "setting": {
                     "type": "string"
+                  },
+                  "sessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "email_verification_tokens": {
                     "type": "array",
@@ -5901,12 +5901,6 @@
                       "type": "string"
                     }
                   },
-                  "sessions": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
                   "groups": {
                     "type": "array",
                     "items": {
@@ -5921,6 +5915,12 @@
                   },
                   "setting": {
                     "type": "string"
+                  },
+                  "sessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "email_verification_tokens": {
                     "type": "array",
@@ -10938,6 +10938,9 @@
           "updated_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "session_token": {
             "type": "string"
           },
@@ -10952,9 +10955,6 @@
           "organization_id": {
             "type": "string"
           },
-          "user_id": {
-            "type": "string"
-          },
           "owner": {
             "$ref": "#/components/schemas/User"
           }
@@ -10963,11 +10963,11 @@
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "session_token",
           "issued_at",
           "expires_at",
           "organization_id",
-          "user_id",
           "owner"
         ]
       },
@@ -10991,6 +10991,9 @@
           "updated_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "session_token": {
             "type": "string"
           },
@@ -11004,20 +11007,17 @@
           },
           "organization_id": {
             "type": "string"
-          },
-          "user_id": {
-            "type": "string"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "session_token",
           "issued_at",
           "expires_at",
-          "organization_id",
-          "user_id"
+          "organization_id"
         ]
       },
       "SessionList": {
@@ -11040,6 +11040,9 @@
           "updated_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "session_token": {
             "type": "string"
           },
@@ -11053,20 +11056,17 @@
           },
           "organization_id": {
             "type": "string"
-          },
-          "user_id": {
-            "type": "string"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "session_token",
           "issued_at",
           "expires_at",
-          "organization_id",
-          "user_id"
+          "organization_id"
         ]
       },
       "SessionRead": {
@@ -11089,6 +11089,9 @@
           "updated_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "session_token": {
             "type": "string"
           },
@@ -11102,20 +11105,17 @@
           },
           "organization_id": {
             "type": "string"
-          },
-          "user_id": {
-            "type": "string"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "session_token",
           "issued_at",
           "expires_at",
-          "organization_id",
-          "user_id"
+          "organization_id"
         ]
       },
       "SessionUpdate": {
@@ -11138,6 +11138,9 @@
           "updated_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "session_token": {
             "type": "string"
           },
@@ -11151,20 +11154,17 @@
           },
           "organization_id": {
             "type": "string"
-          },
-          "user_id": {
-            "type": "string"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "session_token",
           "issued_at",
           "expires_at",
-          "organization_id",
-          "user_id"
+          "organization_id"
         ]
       },
       "Session_OwnerRead": {
@@ -11306,12 +11306,6 @@
               "$ref": "#/components/schemas/Organization"
             }
           },
-          "sessions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Session"
-            }
-          },
           "groups": {
             "type": "array",
             "items": {
@@ -11326,6 +11320,12 @@
           },
           "setting": {
             "$ref": "#/components/schemas/UserSetting"
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Session"
+            }
           },
           "email_verification_tokens": {
             "type": "array",
@@ -12428,6 +12428,9 @@
           "updated_by": {
             "type": "string"
           },
+          "owner_id": {
+            "type": "string"
+          },
           "session_token": {
             "type": "string"
           },
@@ -12441,20 +12444,17 @@
           },
           "organization_id": {
             "type": "string"
-          },
-          "user_id": {
-            "type": "string"
           }
         },
         "required": [
           "id",
           "created_at",
           "updated_at",
+          "owner_id",
           "session_token",
           "issued_at",
           "expires_at",
-          "organization_id",
-          "user_id"
+          "organization_id"
         ]
       },
       "User_SettingRead": {

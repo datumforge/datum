@@ -77,6 +77,12 @@ func (sc *SessionCreate) SetNillableUpdatedBy(s *string) *SessionCreate {
 	return sc
 }
 
+// SetOwnerID sets the "owner_id" field.
+func (sc *SessionCreate) SetOwnerID(s string) *SessionCreate {
+	sc.mutation.SetOwnerID(s)
+	return sc
+}
+
 // SetSessionToken sets the "session_token" field.
 func (sc *SessionCreate) SetSessionToken(s string) *SessionCreate {
 	sc.mutation.SetSessionToken(s)
@@ -101,12 +107,6 @@ func (sc *SessionCreate) SetOrganizationID(s string) *SessionCreate {
 	return sc
 }
 
-// SetUserID sets the "user_id" field.
-func (sc *SessionCreate) SetUserID(s string) *SessionCreate {
-	sc.mutation.SetUserID(s)
-	return sc
-}
-
 // SetID sets the "id" field.
 func (sc *SessionCreate) SetID(s string) *SessionCreate {
 	sc.mutation.SetID(s)
@@ -118,12 +118,6 @@ func (sc *SessionCreate) SetNillableID(s *string) *SessionCreate {
 	if s != nil {
 		sc.SetID(*s)
 	}
-	return sc
-}
-
-// SetOwnerID sets the "owner" edge to the User entity by ID.
-func (sc *SessionCreate) SetOwnerID(id string) *SessionCreate {
-	sc.mutation.SetOwnerID(id)
 	return sc
 }
 
@@ -201,6 +195,9 @@ func (sc *SessionCreate) check() error {
 	if _, ok := sc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`generated: missing required field "Session.updated_at"`)}
 	}
+	if _, ok := sc.mutation.OwnerID(); !ok {
+		return &ValidationError{Name: "owner_id", err: errors.New(`generated: missing required field "Session.owner_id"`)}
+	}
 	if _, ok := sc.mutation.SessionToken(); !ok {
 		return &ValidationError{Name: "session_token", err: errors.New(`generated: missing required field "Session.session_token"`)}
 	}
@@ -212,9 +209,6 @@ func (sc *SessionCreate) check() error {
 	}
 	if _, ok := sc.mutation.OrganizationID(); !ok {
 		return &ValidationError{Name: "organization_id", err: errors.New(`generated: missing required field "Session.organization_id"`)}
-	}
-	if _, ok := sc.mutation.UserID(); !ok {
-		return &ValidationError{Name: "user_id", err: errors.New(`generated: missing required field "Session.user_id"`)}
 	}
 	if _, ok := sc.mutation.OwnerID(); !ok {
 		return &ValidationError{Name: "owner", err: errors.New(`generated: missing required edge "Session.owner"`)}
@@ -302,7 +296,7 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.UserID = nodes[0]
+		_node.OwnerID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

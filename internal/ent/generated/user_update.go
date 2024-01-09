@@ -292,21 +292,6 @@ func (uu *UserUpdate) AddOrganizations(o ...*Organization) *UserUpdate {
 	return uu.AddOrganizationIDs(ids...)
 }
 
-// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
-func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
-	uu.mutation.AddSessionIDs(ids...)
-	return uu
-}
-
-// AddSessions adds the "sessions" edges to the Session entity.
-func (uu *UserUpdate) AddSessions(s ...*Session) *UserUpdate {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return uu.AddSessionIDs(ids...)
-}
-
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
 func (uu *UserUpdate) AddGroupIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddGroupIDs(ids...)
@@ -346,6 +331,21 @@ func (uu *UserUpdate) SetSettingID(id string) *UserUpdate {
 // SetSetting sets the "setting" edge to the UserSetting entity.
 func (uu *UserUpdate) SetSetting(u *UserSetting) *UserUpdate {
 	return uu.SetSettingID(u.ID)
+}
+
+// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
+func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddSessionIDs(ids...)
+	return uu
+}
+
+// AddSessions adds the "sessions" edges to the Session entity.
+func (uu *UserUpdate) AddSessions(s ...*Session) *UserUpdate {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uu.AddSessionIDs(ids...)
 }
 
 // AddEmailVerificationTokenIDs adds the "email_verification_tokens" edge to the EmailVerificationToken entity by IDs.
@@ -404,27 +404,6 @@ func (uu *UserUpdate) RemoveOrganizations(o ...*Organization) *UserUpdate {
 	return uu.RemoveOrganizationIDs(ids...)
 }
 
-// ClearSessions clears all "sessions" edges to the Session entity.
-func (uu *UserUpdate) ClearSessions() *UserUpdate {
-	uu.mutation.ClearSessions()
-	return uu
-}
-
-// RemoveSessionIDs removes the "sessions" edge to Session entities by IDs.
-func (uu *UserUpdate) RemoveSessionIDs(ids ...string) *UserUpdate {
-	uu.mutation.RemoveSessionIDs(ids...)
-	return uu
-}
-
-// RemoveSessions removes "sessions" edges to Session entities.
-func (uu *UserUpdate) RemoveSessions(s ...*Session) *UserUpdate {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return uu.RemoveSessionIDs(ids...)
-}
-
 // ClearGroups clears all "groups" edges to the Group entity.
 func (uu *UserUpdate) ClearGroups() *UserUpdate {
 	uu.mutation.ClearGroups()
@@ -471,6 +450,27 @@ func (uu *UserUpdate) RemovePersonalAccessTokens(p ...*PersonalAccessToken) *Use
 func (uu *UserUpdate) ClearSetting() *UserUpdate {
 	uu.mutation.ClearSetting()
 	return uu
+}
+
+// ClearSessions clears all "sessions" edges to the Session entity.
+func (uu *UserUpdate) ClearSessions() *UserUpdate {
+	uu.mutation.ClearSessions()
+	return uu
+}
+
+// RemoveSessionIDs removes the "sessions" edge to Session entities by IDs.
+func (uu *UserUpdate) RemoveSessionIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveSessionIDs(ids...)
+	return uu
+}
+
+// RemoveSessions removes "sessions" edges to Session entities.
+func (uu *UserUpdate) RemoveSessions(s ...*Session) *UserUpdate {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uu.RemoveSessionIDs(ids...)
 }
 
 // ClearEmailVerificationTokens clears all "email_verification_tokens" edges to the EmailVerificationToken entity.
@@ -744,54 +744,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uu.mutation.SessionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.Session
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !uu.mutation.SessionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.Session
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uu.mutation.SessionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uu.schemaConfig.Session
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if uu.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -914,6 +866,54 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			},
 		}
 		edge.Schema = uu.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.SessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.Session
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !uu.mutation.SessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.Session
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.SessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uu.schemaConfig.Session
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
@@ -1292,21 +1292,6 @@ func (uuo *UserUpdateOne) AddOrganizations(o ...*Organization) *UserUpdateOne {
 	return uuo.AddOrganizationIDs(ids...)
 }
 
-// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
-func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
-	uuo.mutation.AddSessionIDs(ids...)
-	return uuo
-}
-
-// AddSessions adds the "sessions" edges to the Session entity.
-func (uuo *UserUpdateOne) AddSessions(s ...*Session) *UserUpdateOne {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return uuo.AddSessionIDs(ids...)
-}
-
 // AddGroupIDs adds the "groups" edge to the Group entity by IDs.
 func (uuo *UserUpdateOne) AddGroupIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddGroupIDs(ids...)
@@ -1346,6 +1331,21 @@ func (uuo *UserUpdateOne) SetSettingID(id string) *UserUpdateOne {
 // SetSetting sets the "setting" edge to the UserSetting entity.
 func (uuo *UserUpdateOne) SetSetting(u *UserSetting) *UserUpdateOne {
 	return uuo.SetSettingID(u.ID)
+}
+
+// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
+func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddSessionIDs(ids...)
+	return uuo
+}
+
+// AddSessions adds the "sessions" edges to the Session entity.
+func (uuo *UserUpdateOne) AddSessions(s ...*Session) *UserUpdateOne {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uuo.AddSessionIDs(ids...)
 }
 
 // AddEmailVerificationTokenIDs adds the "email_verification_tokens" edge to the EmailVerificationToken entity by IDs.
@@ -1404,27 +1404,6 @@ func (uuo *UserUpdateOne) RemoveOrganizations(o ...*Organization) *UserUpdateOne
 	return uuo.RemoveOrganizationIDs(ids...)
 }
 
-// ClearSessions clears all "sessions" edges to the Session entity.
-func (uuo *UserUpdateOne) ClearSessions() *UserUpdateOne {
-	uuo.mutation.ClearSessions()
-	return uuo
-}
-
-// RemoveSessionIDs removes the "sessions" edge to Session entities by IDs.
-func (uuo *UserUpdateOne) RemoveSessionIDs(ids ...string) *UserUpdateOne {
-	uuo.mutation.RemoveSessionIDs(ids...)
-	return uuo
-}
-
-// RemoveSessions removes "sessions" edges to Session entities.
-func (uuo *UserUpdateOne) RemoveSessions(s ...*Session) *UserUpdateOne {
-	ids := make([]string, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return uuo.RemoveSessionIDs(ids...)
-}
-
 // ClearGroups clears all "groups" edges to the Group entity.
 func (uuo *UserUpdateOne) ClearGroups() *UserUpdateOne {
 	uuo.mutation.ClearGroups()
@@ -1471,6 +1450,27 @@ func (uuo *UserUpdateOne) RemovePersonalAccessTokens(p ...*PersonalAccessToken) 
 func (uuo *UserUpdateOne) ClearSetting() *UserUpdateOne {
 	uuo.mutation.ClearSetting()
 	return uuo
+}
+
+// ClearSessions clears all "sessions" edges to the Session entity.
+func (uuo *UserUpdateOne) ClearSessions() *UserUpdateOne {
+	uuo.mutation.ClearSessions()
+	return uuo
+}
+
+// RemoveSessionIDs removes the "sessions" edge to Session entities by IDs.
+func (uuo *UserUpdateOne) RemoveSessionIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveSessionIDs(ids...)
+	return uuo
+}
+
+// RemoveSessions removes "sessions" edges to Session entities.
+func (uuo *UserUpdateOne) RemoveSessions(s ...*Session) *UserUpdateOne {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uuo.RemoveSessionIDs(ids...)
 }
 
 // ClearEmailVerificationTokens clears all "email_verification_tokens" edges to the EmailVerificationToken entity.
@@ -1774,54 +1774,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if uuo.mutation.SessionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.Session
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !uuo.mutation.SessionsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.Session
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := uuo.mutation.SessionsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   user.SessionsTable,
-			Columns: []string{user.SessionsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = uuo.schemaConfig.Session
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if uuo.mutation.GroupsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
@@ -1944,6 +1896,54 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			},
 		}
 		edge.Schema = uuo.schemaConfig.UserSetting
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.SessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.Session
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedSessionsIDs(); len(nodes) > 0 && !uuo.mutation.SessionsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.Session
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.SessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		edge.Schema = uuo.schemaConfig.Session
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}

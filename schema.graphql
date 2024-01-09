@@ -575,6 +575,8 @@ type GroupMembership implements Node {
 	updatedAt: Time!
 	createdBy: String
 	updatedBy: String
+	deletedAt: Time
+	deletedBy: String
 	role: GroupMembershipRole!
 	groupID: ID!
 	userID: ID!
@@ -687,6 +689,33 @@ input GroupMembershipWhereInput {
 	updatedByNotNil: Boolean
 	updatedByEqualFold: String
 	updatedByContainsFold: String
+	"""deleted_at field predicates"""
+	deletedAt: Time
+	deletedAtNEQ: Time
+	deletedAtIn: [Time!]
+	deletedAtNotIn: [Time!]
+	deletedAtGT: Time
+	deletedAtGTE: Time
+	deletedAtLT: Time
+	deletedAtLTE: Time
+	deletedAtIsNil: Boolean
+	deletedAtNotNil: Boolean
+	"""deleted_by field predicates"""
+	deletedBy: String
+	deletedByNEQ: String
+	deletedByIn: [String!]
+	deletedByNotIn: [String!]
+	deletedByGT: String
+	deletedByGTE: String
+	deletedByLT: String
+	deletedByLTE: String
+	deletedByContains: String
+	deletedByHasPrefix: String
+	deletedByHasSuffix: String
+	deletedByIsNil: Boolean
+	deletedByNotNil: Boolean
+	deletedByEqualFold: String
+	deletedByContainsFold: String
 	"""role field predicates"""
 	role: GroupMembershipRole
 	roleNEQ: GroupMembershipRole
@@ -1960,6 +1989,8 @@ type OrgMembership implements Node {
 	updatedAt: Time!
 	createdBy: String
 	updatedBy: String
+	deletedAt: Time
+	deletedBy: String
 	role: OrgMembershipRole!
 	orgID: ID!
 	userID: ID!
@@ -2072,6 +2103,33 @@ input OrgMembershipWhereInput {
 	updatedByNotNil: Boolean
 	updatedByEqualFold: String
 	updatedByContainsFold: String
+	"""deleted_at field predicates"""
+	deletedAt: Time
+	deletedAtNEQ: Time
+	deletedAtIn: [Time!]
+	deletedAtNotIn: [Time!]
+	deletedAtGT: Time
+	deletedAtGTE: Time
+	deletedAtLT: Time
+	deletedAtLTE: Time
+	deletedAtIsNil: Boolean
+	deletedAtNotNil: Boolean
+	"""deleted_by field predicates"""
+	deletedBy: String
+	deletedByNEQ: String
+	deletedByIn: [String!]
+	deletedByNotIn: [String!]
+	deletedByGT: String
+	deletedByGTE: String
+	deletedByLT: String
+	deletedByLTE: String
+	deletedByContains: String
+	deletedByHasPrefix: String
+	deletedByHasSuffix: String
+	deletedByIsNil: Boolean
+	deletedByNotNil: Boolean
+	deletedByEqualFold: String
+	deletedByContainsFold: String
 	"""role field predicates"""
 	role: OrgMembershipRole
 	roleNEQ: OrgMembershipRole

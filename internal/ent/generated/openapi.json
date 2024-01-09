@@ -846,6 +846,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -1015,6 +1022,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "role": {
@@ -3324,6 +3338,13 @@
                   "updated_by": {
                     "type": "string"
                   },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
+                    "type": "string"
+                  },
                   "role": {
                     "type": "string",
                     "enum": [
@@ -3493,6 +3514,13 @@
                     "format": "date-time"
                   },
                   "updated_by": {
+                    "type": "string"
+                  },
+                  "deleted_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "deleted_by": {
                     "type": "string"
                   },
                   "role": {
@@ -8451,6 +8479,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -8504,6 +8539,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -8547,6 +8589,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {
@@ -8594,6 +8643,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -8637,6 +8693,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {
@@ -9321,6 +9384,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {
@@ -10605,6 +10675,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -10658,6 +10735,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -10701,6 +10785,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {
@@ -10748,6 +10839,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -10791,6 +10889,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {
@@ -11966,6 +12071,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {
@@ -14211,6 +14323,13 @@
           "updated_by": {
             "type": "string"
           },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -14309,6 +14428,13 @@
             "type": "string"
           },
           "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
             "type": "string"
           },
           "role": {

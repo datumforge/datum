@@ -24,6 +24,18 @@
                         }
                     {{ end }}
                {{- end }}
+               {{- if $annotation := $node.Annotations.DATUM_CASCADE_THROUGH }}
+               {{- range $schema := $annotation.Schemas }}
+                    {{- $field := $schema.Through }}
+                    {{/* use the client to delete records where the edge has a field and a through schema (provided by the annotation) containing the ID provided by the func */}}
+                    if exists, err := FromContext(ctx).{{ $field }}.Query().Where(({{ $field | lower }}.Has{{ $schema.Field }}With({{ $node.Name | lower }}.ID(id)))).Exist(ctx); err == nil && exists {
+                        if {{ $field | lower }}Count, err := FromContext(ctx).{{ $field }}.Delete().Where({{ $field | lower }}.Has{{ $schema.Field }}With({{ $node.Name | lower }}.ID(id))).Exec(ctx); err != nil {
+                            FromContext(ctx).Logger.Debugw("deleting {{ $field | lower }}", "count", {{ $field | lower }}Count, "err", err)
+                            return err
+                        }
+                    }
+                    {{ end }}
+                {{ end }}
                return nil 
             }
     {{ end }}

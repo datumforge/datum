@@ -14,6 +14,7 @@ import (
 	"github.com/datumforge/datum/internal/ent/interceptors"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/ent/privacy/rule"
+	"github.com/datumforge/datum/internal/entx"
 )
 
 // Group holds the schema definition for the Group entity
@@ -99,7 +100,15 @@ func (Group) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-	}
+		// Delete groups members when groups are deleted
+		entx.CascadeThroughAnnotationField(
+			[]entx.ThroughCleanup{
+				{
+					Field:   "Group",
+					Through: "GroupMembership",
+				},
+			},
+		)}
 }
 
 // Policy of the group

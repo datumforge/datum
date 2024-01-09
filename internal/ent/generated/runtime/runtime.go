@@ -191,7 +191,11 @@ func init() {
 	group.DefaultID = groupDescID.Default.(func() string)
 	groupmembershipMixin := schema.GroupMembership{}.Mixin()
 	groupmembershipMixinHooks0 := groupmembershipMixin[0].Hooks()
+	groupmembershipMixinHooks2 := groupmembershipMixin[2].Hooks()
 	groupmembership.Hooks[0] = groupmembershipMixinHooks0[0]
+	groupmembership.Hooks[1] = groupmembershipMixinHooks2[0]
+	groupmembershipMixinInters2 := groupmembershipMixin[2].Interceptors()
+	groupmembership.Interceptors[0] = groupmembershipMixinInters2[0]
 	groupmembershipMixinFields0 := groupmembershipMixin[0].Fields()
 	_ = groupmembershipMixinFields0
 	groupmembershipMixinFields1 := groupmembershipMixin[1].Fields()
@@ -348,7 +352,11 @@ func init() {
 	ohauthtootoken.DefaultID = ohauthtootokenDescID.Default.(func() string)
 	orgmembershipMixin := schema.OrgMembership{}.Mixin()
 	orgmembershipMixinHooks0 := orgmembershipMixin[0].Hooks()
+	orgmembershipMixinHooks2 := orgmembershipMixin[2].Hooks()
 	orgmembership.Hooks[0] = orgmembershipMixinHooks0[0]
+	orgmembership.Hooks[1] = orgmembershipMixinHooks2[0]
+	orgmembershipMixinInters2 := orgmembershipMixin[2].Interceptors()
+	orgmembership.Interceptors[0] = orgmembershipMixinInters2[0]
 	orgmembershipMixinFields0 := orgmembershipMixin[0].Fields()
 	_ = orgmembershipMixinFields0
 	orgmembershipMixinFields1 := orgmembershipMixin[1].Fields()

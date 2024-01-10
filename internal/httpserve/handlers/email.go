@@ -29,6 +29,8 @@ func (h *Handler) NewEmailManager() error {
 		return err
 	}
 
+	h.Logger.Debugw("new email manager created", "test", h.SendGridConfig.Testing)
+
 	return nil
 }
 

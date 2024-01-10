@@ -17,6 +17,8 @@ func registerForgotPasswordHandler(router *echo.Echo, h *handlers.Handler) (err 
 		Method: http.MethodPost,
 		Path:   "/forgot-password",
 		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
 			return h.ForgotPassword(c)
 		},
 	}.ForGroup(V1Version, restrictedEndpointsMW))

@@ -25,6 +25,8 @@ func registerLoginHandler(router *echo.Echo, h *handlers.Handler) (err error) {
 		Method: http.MethodPost,
 		Path:   "/login",
 		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
 			return h.LoginHandler(c)
 		},
 	}.ForGroup(V1Version, mw))

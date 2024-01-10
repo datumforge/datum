@@ -14,6 +14,8 @@ func registerLivenessHandler(router *echo.Echo) (err error) {
 		Method: http.MethodGet,
 		Path:   "/livez",
 		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
 			return c.JSON(http.StatusOK, echo.Map{
 				"status": "UP",
 			})
@@ -28,6 +30,8 @@ func registerReadinessHandler(router *echo.Echo, h *handlers.Handler) (err error
 		Method: http.MethodGet,
 		Path:   "/ready",
 		Handler: func(c echo.Context) error {
+			c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+
 			return h.ReadyChecks.ReadyHandler(c)
 		},
 	}.ForGroup(unversioned, mw))

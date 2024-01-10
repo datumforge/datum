@@ -126,6 +126,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"OWNER", "ADMIN", "MEMBER"}, Default: "MEMBER"},
 		{Name: "group_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
@@ -138,13 +140,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "group_memberships_groups_group",
-				Columns:    []*schema.Column{GroupMembershipsColumns[6]},
+				Columns:    []*schema.Column{GroupMembershipsColumns[8]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "group_memberships_users_user",
-				Columns:    []*schema.Column{GroupMembershipsColumns[7]},
+				Columns:    []*schema.Column{GroupMembershipsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -153,7 +155,7 @@ var (
 			{
 				Name:    "groupmembership_user_id_group_id",
 				Unique:  true,
-				Columns: []*schema.Column{GroupMembershipsColumns[7], GroupMembershipsColumns[6]},
+				Columns: []*schema.Column{GroupMembershipsColumns[9], GroupMembershipsColumns[8]},
 			},
 		},
 	}
@@ -279,6 +281,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"OWNER", "ADMIN", "MEMBER"}, Default: "MEMBER"},
 		{Name: "org_id", Type: field.TypeString},
 		{Name: "user_id", Type: field.TypeString},
@@ -291,13 +295,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "org_memberships_organizations_org",
-				Columns:    []*schema.Column{OrgMembershipsColumns[6]},
+				Columns:    []*schema.Column{OrgMembershipsColumns[8]},
 				RefColumns: []*schema.Column{OrganizationsColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "org_memberships_users_user",
-				Columns:    []*schema.Column{OrgMembershipsColumns[7]},
+				Columns:    []*schema.Column{OrgMembershipsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -306,7 +310,7 @@ var (
 			{
 				Name:    "orgmembership_user_id_org_id",
 				Unique:  true,
-				Columns: []*schema.Column{OrgMembershipsColumns[7], OrgMembershipsColumns[6]},
+				Columns: []*schema.Column{OrgMembershipsColumns[9], OrgMembershipsColumns[8]},
 			},
 		},
 	}

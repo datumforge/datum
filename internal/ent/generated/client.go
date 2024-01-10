@@ -1045,7 +1045,8 @@ func (c *GroupMembershipClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *GroupMembershipClient) Interceptors() []Interceptor {
-	return c.inters.GroupMembership
+	inters := c.inters.GroupMembership
+	return append(inters[:len(inters):len(inters)], groupmembership.Interceptors[:]...)
 }
 
 func (c *GroupMembershipClient) mutate(ctx context.Context, m *GroupMembershipMutation) (Value, error) {
@@ -1812,7 +1813,8 @@ func (c *OrgMembershipClient) Hooks() []Hook {
 
 // Interceptors returns the client interceptors.
 func (c *OrgMembershipClient) Interceptors() []Interceptor {
-	return c.inters.OrgMembership
+	inters := c.inters.OrgMembership
+	return append(inters[:len(inters):len(inters)], orgmembership.Interceptors[:]...)
 }
 
 func (c *OrgMembershipClient) mutate(ctx context.Context, m *OrgMembershipMutation) (Value, error) {

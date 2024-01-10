@@ -120,6 +120,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			groupmembership.FieldUpdatedAt: {Type: field.TypeTime, Column: groupmembership.FieldUpdatedAt},
 			groupmembership.FieldCreatedBy: {Type: field.TypeString, Column: groupmembership.FieldCreatedBy},
 			groupmembership.FieldUpdatedBy: {Type: field.TypeString, Column: groupmembership.FieldUpdatedBy},
+			groupmembership.FieldDeletedAt: {Type: field.TypeTime, Column: groupmembership.FieldDeletedAt},
+			groupmembership.FieldDeletedBy: {Type: field.TypeString, Column: groupmembership.FieldDeletedBy},
 			groupmembership.FieldRole:      {Type: field.TypeEnum, Column: groupmembership.FieldRole},
 			groupmembership.FieldGroupID:   {Type: field.TypeString, Column: groupmembership.FieldGroupID},
 			groupmembership.FieldUserID:    {Type: field.TypeString, Column: groupmembership.FieldUserID},
@@ -240,6 +242,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orgmembership.FieldUpdatedAt: {Type: field.TypeTime, Column: orgmembership.FieldUpdatedAt},
 			orgmembership.FieldCreatedBy: {Type: field.TypeString, Column: orgmembership.FieldCreatedBy},
 			orgmembership.FieldUpdatedBy: {Type: field.TypeString, Column: orgmembership.FieldUpdatedBy},
+			orgmembership.FieldDeletedAt: {Type: field.TypeTime, Column: orgmembership.FieldDeletedAt},
+			orgmembership.FieldDeletedBy: {Type: field.TypeString, Column: orgmembership.FieldDeletedBy},
 			orgmembership.FieldRole:      {Type: field.TypeEnum, Column: orgmembership.FieldRole},
 			orgmembership.FieldOrgID:     {Type: field.TypeString, Column: orgmembership.FieldOrgID},
 			orgmembership.FieldUserID:    {Type: field.TypeString, Column: orgmembership.FieldUserID},
@@ -1313,6 +1317,16 @@ func (f *GroupMembershipFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(groupmembership.FieldUpdatedBy))
 }
 
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *GroupMembershipFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(groupmembership.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *GroupMembershipFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(groupmembership.FieldDeletedBy))
+}
+
 // WhereRole applies the entql string predicate on the role field.
 func (f *GroupMembershipFilter) WhereRole(p entql.StringP) {
 	f.Where(p.Field(groupmembership.FieldRole))
@@ -1856,6 +1870,16 @@ func (f *OrgMembershipFilter) WhereCreatedBy(p entql.StringP) {
 // WhereUpdatedBy applies the entql string predicate on the updated_by field.
 func (f *OrgMembershipFilter) WhereUpdatedBy(p entql.StringP) {
 	f.Where(p.Field(orgmembership.FieldUpdatedBy))
+}
+
+// WhereDeletedAt applies the entql time.Time predicate on the deleted_at field.
+func (f *OrgMembershipFilter) WhereDeletedAt(p entql.TimeP) {
+	f.Where(p.Field(orgmembership.FieldDeletedAt))
+}
+
+// WhereDeletedBy applies the entql string predicate on the deleted_by field.
+func (f *OrgMembershipFilter) WhereDeletedBy(p entql.StringP) {
+	f.Where(p.Field(orgmembership.FieldDeletedBy))
 }
 
 // WhereRole applies the entql string predicate on the role field.

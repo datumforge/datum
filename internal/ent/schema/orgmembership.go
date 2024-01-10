@@ -55,5 +55,11 @@ func (OrgMembership) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AuditMixin{},
 		mixin.IDMixin{},
+		mixin.SoftDeleteMixin{},
 	}
+}
+
+// Hooks of the OrgMembership
+func (OrgMembership) Hooks() []ent.Hook {
+	return []ent.Hook{}
 }

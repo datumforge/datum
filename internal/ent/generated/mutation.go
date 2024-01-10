@@ -3586,6 +3586,8 @@ type GroupMembershipMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	deleted_at    *time.Time
+	deleted_by    *string
 	role          *enums.Role
 	clearedFields map[string]struct{}
 	group         *string
@@ -3871,6 +3873,104 @@ func (m *GroupMembershipMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, groupmembership.FieldUpdatedBy)
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (m *GroupMembershipMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *GroupMembershipMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the GroupMembership entity.
+// If the GroupMembership object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMembershipMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *GroupMembershipMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[groupmembership.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *GroupMembershipMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[groupmembership.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *GroupMembershipMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, groupmembership.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *GroupMembershipMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *GroupMembershipMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the GroupMembership entity.
+// If the GroupMembership object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMembershipMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *GroupMembershipMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[groupmembership.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *GroupMembershipMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[groupmembership.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *GroupMembershipMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, groupmembership.FieldDeletedBy)
+}
+
 // SetRole sets the "role" field.
 func (m *GroupMembershipMutation) SetRole(e enums.Role) {
 	m.role = &e
@@ -4067,7 +4167,7 @@ func (m *GroupMembershipMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMembershipMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, groupmembership.FieldCreatedAt)
 	}
@@ -4079,6 +4179,12 @@ func (m *GroupMembershipMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, groupmembership.FieldUpdatedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, groupmembership.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, groupmembership.FieldDeletedBy)
 	}
 	if m.role != nil {
 		fields = append(fields, groupmembership.FieldRole)
@@ -4105,6 +4211,10 @@ func (m *GroupMembershipMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case groupmembership.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case groupmembership.FieldDeletedAt:
+		return m.DeletedAt()
+	case groupmembership.FieldDeletedBy:
+		return m.DeletedBy()
 	case groupmembership.FieldRole:
 		return m.Role()
 	case groupmembership.FieldGroupID:
@@ -4128,6 +4238,10 @@ func (m *GroupMembershipMutation) OldField(ctx context.Context, name string) (en
 		return m.OldCreatedBy(ctx)
 	case groupmembership.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case groupmembership.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case groupmembership.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
 	case groupmembership.FieldRole:
 		return m.OldRole(ctx)
 	case groupmembership.FieldGroupID:
@@ -4170,6 +4284,20 @@ func (m *GroupMembershipMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case groupmembership.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case groupmembership.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
 		return nil
 	case groupmembership.FieldRole:
 		v, ok := value.(enums.Role)
@@ -4228,6 +4356,12 @@ func (m *GroupMembershipMutation) ClearedFields() []string {
 	if m.FieldCleared(groupmembership.FieldUpdatedBy) {
 		fields = append(fields, groupmembership.FieldUpdatedBy)
 	}
+	if m.FieldCleared(groupmembership.FieldDeletedAt) {
+		fields = append(fields, groupmembership.FieldDeletedAt)
+	}
+	if m.FieldCleared(groupmembership.FieldDeletedBy) {
+		fields = append(fields, groupmembership.FieldDeletedBy)
+	}
 	return fields
 }
 
@@ -4248,6 +4382,12 @@ func (m *GroupMembershipMutation) ClearField(name string) error {
 	case groupmembership.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
+	case groupmembership.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case groupmembership.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
 	}
 	return fmt.Errorf("unknown GroupMembership nullable field %s", name)
 }
@@ -4267,6 +4407,12 @@ func (m *GroupMembershipMutation) ResetField(name string) error {
 		return nil
 	case groupmembership.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case groupmembership.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case groupmembership.FieldDeletedBy:
+		m.ResetDeletedBy()
 		return nil
 	case groupmembership.FieldRole:
 		m.ResetRole()
@@ -8726,6 +8872,8 @@ type OrgMembershipMutation struct {
 	updated_at    *time.Time
 	created_by    *string
 	updated_by    *string
+	deleted_at    *time.Time
+	deleted_by    *string
 	role          *enums.Role
 	clearedFields map[string]struct{}
 	org           *string
@@ -9011,6 +9159,104 @@ func (m *OrgMembershipMutation) ResetUpdatedBy() {
 	delete(m.clearedFields, orgmembership.FieldUpdatedBy)
 }
 
+// SetDeletedAt sets the "deleted_at" field.
+func (m *OrgMembershipMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *OrgMembershipMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the OrgMembership entity.
+// If the OrgMembership object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrgMembershipMutation) OldDeletedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *OrgMembershipMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[orgmembership.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *OrgMembershipMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[orgmembership.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *OrgMembershipMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, orgmembership.FieldDeletedAt)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *OrgMembershipMutation) SetDeletedBy(s string) {
+	m.deleted_by = &s
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *OrgMembershipMutation) DeletedBy() (r string, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the OrgMembership entity.
+// If the OrgMembership object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrgMembershipMutation) OldDeletedBy(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *OrgMembershipMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.clearedFields[orgmembership.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *OrgMembershipMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[orgmembership.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *OrgMembershipMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	delete(m.clearedFields, orgmembership.FieldDeletedBy)
+}
+
 // SetRole sets the "role" field.
 func (m *OrgMembershipMutation) SetRole(e enums.Role) {
 	m.role = &e
@@ -9207,7 +9453,7 @@ func (m *OrgMembershipMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrgMembershipMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, orgmembership.FieldCreatedAt)
 	}
@@ -9219,6 +9465,12 @@ func (m *OrgMembershipMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, orgmembership.FieldUpdatedBy)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, orgmembership.FieldDeletedAt)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, orgmembership.FieldDeletedBy)
 	}
 	if m.role != nil {
 		fields = append(fields, orgmembership.FieldRole)
@@ -9245,6 +9497,10 @@ func (m *OrgMembershipMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case orgmembership.FieldUpdatedBy:
 		return m.UpdatedBy()
+	case orgmembership.FieldDeletedAt:
+		return m.DeletedAt()
+	case orgmembership.FieldDeletedBy:
+		return m.DeletedBy()
 	case orgmembership.FieldRole:
 		return m.Role()
 	case orgmembership.FieldOrgID:
@@ -9268,6 +9524,10 @@ func (m *OrgMembershipMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldCreatedBy(ctx)
 	case orgmembership.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
+	case orgmembership.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case orgmembership.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
 	case orgmembership.FieldRole:
 		return m.OldRole(ctx)
 	case orgmembership.FieldOrgID:
@@ -9310,6 +9570,20 @@ func (m *OrgMembershipMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
+		return nil
+	case orgmembership.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case orgmembership.FieldDeletedBy:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
 		return nil
 	case orgmembership.FieldRole:
 		v, ok := value.(enums.Role)
@@ -9368,6 +9642,12 @@ func (m *OrgMembershipMutation) ClearedFields() []string {
 	if m.FieldCleared(orgmembership.FieldUpdatedBy) {
 		fields = append(fields, orgmembership.FieldUpdatedBy)
 	}
+	if m.FieldCleared(orgmembership.FieldDeletedAt) {
+		fields = append(fields, orgmembership.FieldDeletedAt)
+	}
+	if m.FieldCleared(orgmembership.FieldDeletedBy) {
+		fields = append(fields, orgmembership.FieldDeletedBy)
+	}
 	return fields
 }
 
@@ -9388,6 +9668,12 @@ func (m *OrgMembershipMutation) ClearField(name string) error {
 	case orgmembership.FieldUpdatedBy:
 		m.ClearUpdatedBy()
 		return nil
+	case orgmembership.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case orgmembership.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
 	}
 	return fmt.Errorf("unknown OrgMembership nullable field %s", name)
 }
@@ -9407,6 +9693,12 @@ func (m *OrgMembershipMutation) ResetField(name string) error {
 		return nil
 	case orgmembership.FieldUpdatedBy:
 		m.ResetUpdatedBy()
+		return nil
+	case orgmembership.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case orgmembership.FieldDeletedBy:
+		m.ResetDeletedBy()
 		return nil
 	case orgmembership.FieldRole:
 		m.ResetRole()

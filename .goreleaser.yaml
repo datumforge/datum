@@ -1,8 +1,4 @@
 project_name: datum
-before:
-  hooks:
-    - go mod tidy
-    - go generate ./...
 builds:
   - env:
       - GO111MODULE=on

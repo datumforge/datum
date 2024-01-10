@@ -15,7 +15,9 @@ steps:
       - docker#v5.9.0:
           image: "ghcr.io/datumforge/base-ci-image:v1.0.2"
           command: ["task", "ci"]
-
+          environment: 
+            - "GOTOOLCHAIN=auto"
+            
 - group: ":test_tube: Tests"
   key: "tests"
   depends_on: "precheck"

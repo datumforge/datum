@@ -28,6 +28,10 @@ type GroupMembership struct {
 	CreatedBy string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy string `json:"updated_by,omitempty"`
+	// DeletedAt holds the value of the "deleted_at" field.
+	DeletedAt time.Time `json:"deleted_at,omitempty"`
+	// DeletedBy holds the value of the "deleted_by" field.
+	DeletedBy string `json:"deleted_by,omitempty"`
 	// Role holds the value of the "role" field.
 	Role enums.Role `json:"role,omitempty"`
 	// GroupID holds the value of the "group_id" field.
@@ -84,9 +88,9 @@ func (*GroupMembership) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case groupmembership.FieldID, groupmembership.FieldCreatedBy, groupmembership.FieldUpdatedBy, groupmembership.FieldRole, groupmembership.FieldGroupID, groupmembership.FieldUserID:
+		case groupmembership.FieldID, groupmembership.FieldCreatedBy, groupmembership.FieldUpdatedBy, groupmembership.FieldDeletedBy, groupmembership.FieldRole, groupmembership.FieldGroupID, groupmembership.FieldUserID:
 			values[i] = new(sql.NullString)
-		case groupmembership.FieldCreatedAt, groupmembership.FieldUpdatedAt:
+		case groupmembership.FieldCreatedAt, groupmembership.FieldUpdatedAt, groupmembership.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -132,6 +136,18 @@ func (gm *GroupMembership) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
 				gm.UpdatedBy = value.String
+			}
+		case groupmembership.FieldDeletedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_at", values[i])
+			} else if value.Valid {
+				gm.DeletedAt = value.Time
+			}
+		case groupmembership.FieldDeletedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
+			} else if value.Valid {
+				gm.DeletedBy = value.String
 			}
 		case groupmembership.FieldRole:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -208,6 +224,12 @@ func (gm *GroupMembership) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_by=")
 	builder.WriteString(gm.UpdatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("deleted_at=")
+	builder.WriteString(gm.DeletedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted_by=")
+	builder.WriteString(gm.DeletedBy)
 	builder.WriteString(", ")
 	builder.WriteString("role=")
 	builder.WriteString(fmt.Sprintf("%v", gm.Role))

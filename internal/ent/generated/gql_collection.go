@@ -418,6 +418,16 @@ func (gm *GroupMembershipQuery) collectField(ctx context.Context, opCtx *graphql
 				selectedFields = append(selectedFields, groupmembership.FieldUpdatedBy)
 				fieldSeen[groupmembership.FieldUpdatedBy] = struct{}{}
 			}
+		case "deletedAt":
+			if _, ok := fieldSeen[groupmembership.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldDeletedAt)
+				fieldSeen[groupmembership.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[groupmembership.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, groupmembership.FieldDeletedBy)
+				fieldSeen[groupmembership.FieldDeletedBy] = struct{}{}
+			}
 		case "role":
 			if _, ok := fieldSeen[groupmembership.FieldRole]; !ok {
 				selectedFields = append(selectedFields, groupmembership.FieldRole)
@@ -1082,6 +1092,16 @@ func (om *OrgMembershipQuery) collectField(ctx context.Context, opCtx *graphql.O
 			if _, ok := fieldSeen[orgmembership.FieldUpdatedBy]; !ok {
 				selectedFields = append(selectedFields, orgmembership.FieldUpdatedBy)
 				fieldSeen[orgmembership.FieldUpdatedBy] = struct{}{}
+			}
+		case "deletedAt":
+			if _, ok := fieldSeen[orgmembership.FieldDeletedAt]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldDeletedAt)
+				fieldSeen[orgmembership.FieldDeletedAt] = struct{}{}
+			}
+		case "deletedBy":
+			if _, ok := fieldSeen[orgmembership.FieldDeletedBy]; !ok {
+				selectedFields = append(selectedFields, orgmembership.FieldDeletedBy)
+				fieldSeen[orgmembership.FieldDeletedBy] = struct{}{}
 			}
 		case "role":
 			if _, ok := fieldSeen[orgmembership.FieldRole]; !ok {

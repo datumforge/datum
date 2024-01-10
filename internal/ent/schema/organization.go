@@ -107,7 +107,15 @@ func (Organization) Annotations() []schema.Annotation {
 		entgql.QueryField(),
 		entgql.RelayConnection(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
-	}
+		// Delete org members when orgs are deleted
+		entx.CascadeThroughAnnotationField(
+			[]entx.ThroughCleanup{
+				{
+					Field:   "Org",
+					Through: "OrgMembership",
+				},
+			},
+		)}
 }
 
 // Mixin of the Organization

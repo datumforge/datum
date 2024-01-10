@@ -15,7 +15,9 @@ steps:
       - docker#v5.9.0:
           image: "ghcr.io/datumforge/base-ci-image:v1.0.2"
           command: ["task", "ci"]
-
+          environment: 
+            - "GOTOOLCHAIN=auto"
+            
 - group: ":test_tube: Tests"
   key: "tests"
   depends_on: "precheck"
@@ -34,7 +36,7 @@ steps:
       TEST_DB_URL: "sqlite://file:ent?mode=memory&cache=shared&_fk=1"
     plugins:
       - docker#v5.9.0:
-          image: golang:1.21.5
+          image: golang:1.21.6
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
   - label: ":golang: go test - {{matrix}}"
@@ -46,7 +48,7 @@ steps:
       - "docker://postgres:15-alpine"
     plugins:
       - docker#v5.9.0:
-          image: golang:1.21.5
+          image: golang:1.21.6
           command: ["go", "test", "-coverprofile=coverage.out","./..."]
     artifact_paths: ["coverage.out"]
 
@@ -114,7 +116,7 @@ steps:
     artifact_paths: "bin/${APP_NAME}"
     plugins:
       - docker#v5.9.0:
-          image: "golang:1.21.5"
+          image: "golang:1.21.6"
           environment:
             - CGO_ENABLED=0
             - GOOS=linux
@@ -126,7 +128,7 @@ steps:
     artifact_paths: "bin/${APP_NAME}-cli"
     plugins:
       - docker#v5.9.0:
-          image: "golang:1.21.5"
+          image: "golang:1.21.6"
           environment:
             - GOOS=darwin
             - GOARCH=arm64

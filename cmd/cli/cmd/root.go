@@ -27,7 +27,7 @@ import (
 
 const (
 	appName         = "datum"
-	defaultRootHost = "http://localhost:17608/"
+	defaultRootHost = "https://api.datum.net/"
 	graphEndpoint   = "query"
 )
 

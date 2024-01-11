@@ -156,6 +156,9 @@ var (
 				Name:    "groupmembership_user_id_group_id",
 				Unique:  true,
 				Columns: []*schema.Column{GroupMembershipsColumns[9], GroupMembershipsColumns[8]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}
@@ -311,6 +314,9 @@ var (
 				Name:    "orgmembership_user_id_org_id",
 				Unique:  true,
 				Columns: []*schema.Column{OrgMembershipsColumns[9], OrgMembershipsColumns[8]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}
@@ -508,7 +514,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 		{Name: "deleted_by", Type: field.TypeString, Nullable: true},
-		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "email", Type: field.TypeString},
 		{Name: "first_name", Type: field.TypeString, Size: 64},
 		{Name: "last_name", Type: field.TypeString, Size: 64},
 		{Name: "display_name", Type: field.TypeString, Size: 64, Default: ""},
@@ -530,6 +536,14 @@ var (
 				Name:    "user_id",
 				Unique:  true,
 				Columns: []*schema.Column{UsersColumns[0]},
+			},
+			{
+				Name:    "user_email",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[7]},
+				Annotation: &entsql.IndexAnnotation{
+					Where: "deleted_at is NULL",
+				},
 			},
 		},
 	}

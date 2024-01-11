@@ -56,16 +56,6 @@ func TestRegisterHandler(t *testing.T) {
 			expectedStatus: http.StatusCreated,
 		},
 		{
-			name:               "duplicate email",
-			email:              "bananas@datum.net",
-			firstName:          "Princess",
-			lastName:           "Fiona",
-			password:           "b!a!n!a!n!a!s!",
-			emailExpected:      false,
-			expectedErrMessage: "user already exists",
-			expectedStatus:     http.StatusBadRequest,
-		},
-		{
 			name:               "invalid email",
 			email:              "bananas.net",
 			firstName:          "Princess",

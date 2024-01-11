@@ -12,10 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated/group"
 	"github.com/datumforge/datum/internal/ent/generated/groupmembership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -113,59 +111,9 @@ func (gmu *GroupMembershipUpdate) SetNillableRole(e *enums.Role) *GroupMembershi
 	return gmu
 }
 
-// SetGroupID sets the "group_id" field.
-func (gmu *GroupMembershipUpdate) SetGroupID(s string) *GroupMembershipUpdate {
-	gmu.mutation.SetGroupID(s)
-	return gmu
-}
-
-// SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (gmu *GroupMembershipUpdate) SetNillableGroupID(s *string) *GroupMembershipUpdate {
-	if s != nil {
-		gmu.SetGroupID(*s)
-	}
-	return gmu
-}
-
-// SetUserID sets the "user_id" field.
-func (gmu *GroupMembershipUpdate) SetUserID(s string) *GroupMembershipUpdate {
-	gmu.mutation.SetUserID(s)
-	return gmu
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (gmu *GroupMembershipUpdate) SetNillableUserID(s *string) *GroupMembershipUpdate {
-	if s != nil {
-		gmu.SetUserID(*s)
-	}
-	return gmu
-}
-
-// SetGroup sets the "group" edge to the Group entity.
-func (gmu *GroupMembershipUpdate) SetGroup(g *Group) *GroupMembershipUpdate {
-	return gmu.SetGroupID(g.ID)
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (gmu *GroupMembershipUpdate) SetUser(u *User) *GroupMembershipUpdate {
-	return gmu.SetUserID(u.ID)
-}
-
 // Mutation returns the GroupMembershipMutation object of the builder.
 func (gmu *GroupMembershipUpdate) Mutation() *GroupMembershipMutation {
 	return gmu.mutation
-}
-
-// ClearGroup clears the "group" edge to the Group entity.
-func (gmu *GroupMembershipUpdate) ClearGroup() *GroupMembershipUpdate {
-	gmu.mutation.ClearGroup()
-	return gmu
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (gmu *GroupMembershipUpdate) ClearUser() *GroupMembershipUpdate {
-	gmu.mutation.ClearUser()
-	return gmu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -264,68 +212,6 @@ func (gmu *GroupMembershipUpdate) sqlSave(ctx context.Context) (n int, err error
 	}
 	if value, ok := gmu.mutation.Role(); ok {
 		_spec.SetField(groupmembership.FieldRole, field.TypeEnum, value)
-	}
-	if gmu.mutation.GroupCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.GroupTable,
-			Columns: []string{groupmembership.GroupColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmu.schemaConfig.GroupMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gmu.mutation.GroupIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.GroupTable,
-			Columns: []string{groupmembership.GroupColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmu.schemaConfig.GroupMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if gmu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.UserTable,
-			Columns: []string{groupmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmu.schemaConfig.GroupMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gmu.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.UserTable,
-			Columns: []string{groupmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmu.schemaConfig.GroupMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = gmu.schemaConfig.GroupMembership
 	ctx = internal.NewSchemaConfigContext(ctx, gmu.schemaConfig)
@@ -429,59 +315,9 @@ func (gmuo *GroupMembershipUpdateOne) SetNillableRole(e *enums.Role) *GroupMembe
 	return gmuo
 }
 
-// SetGroupID sets the "group_id" field.
-func (gmuo *GroupMembershipUpdateOne) SetGroupID(s string) *GroupMembershipUpdateOne {
-	gmuo.mutation.SetGroupID(s)
-	return gmuo
-}
-
-// SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (gmuo *GroupMembershipUpdateOne) SetNillableGroupID(s *string) *GroupMembershipUpdateOne {
-	if s != nil {
-		gmuo.SetGroupID(*s)
-	}
-	return gmuo
-}
-
-// SetUserID sets the "user_id" field.
-func (gmuo *GroupMembershipUpdateOne) SetUserID(s string) *GroupMembershipUpdateOne {
-	gmuo.mutation.SetUserID(s)
-	return gmuo
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (gmuo *GroupMembershipUpdateOne) SetNillableUserID(s *string) *GroupMembershipUpdateOne {
-	if s != nil {
-		gmuo.SetUserID(*s)
-	}
-	return gmuo
-}
-
-// SetGroup sets the "group" edge to the Group entity.
-func (gmuo *GroupMembershipUpdateOne) SetGroup(g *Group) *GroupMembershipUpdateOne {
-	return gmuo.SetGroupID(g.ID)
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (gmuo *GroupMembershipUpdateOne) SetUser(u *User) *GroupMembershipUpdateOne {
-	return gmuo.SetUserID(u.ID)
-}
-
 // Mutation returns the GroupMembershipMutation object of the builder.
 func (gmuo *GroupMembershipUpdateOne) Mutation() *GroupMembershipMutation {
 	return gmuo.mutation
-}
-
-// ClearGroup clears the "group" edge to the Group entity.
-func (gmuo *GroupMembershipUpdateOne) ClearGroup() *GroupMembershipUpdateOne {
-	gmuo.mutation.ClearGroup()
-	return gmuo
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (gmuo *GroupMembershipUpdateOne) ClearUser() *GroupMembershipUpdateOne {
-	gmuo.mutation.ClearUser()
-	return gmuo
 }
 
 // Where appends a list predicates to the GroupMembershipUpdate builder.
@@ -610,68 +446,6 @@ func (gmuo *GroupMembershipUpdateOne) sqlSave(ctx context.Context) (_node *Group
 	}
 	if value, ok := gmuo.mutation.Role(); ok {
 		_spec.SetField(groupmembership.FieldRole, field.TypeEnum, value)
-	}
-	if gmuo.mutation.GroupCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.GroupTable,
-			Columns: []string{groupmembership.GroupColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmuo.schemaConfig.GroupMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gmuo.mutation.GroupIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.GroupTable,
-			Columns: []string{groupmembership.GroupColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmuo.schemaConfig.GroupMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if gmuo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.UserTable,
-			Columns: []string{groupmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmuo.schemaConfig.GroupMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gmuo.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   groupmembership.UserTable,
-			Columns: []string{groupmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = gmuo.schemaConfig.GroupMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = gmuo.schemaConfig.GroupMembership
 	ctx = internal.NewSchemaConfigContext(ctx, gmuo.schemaConfig)

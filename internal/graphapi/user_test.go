@@ -959,3 +959,51 @@ func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 
 	require.Equal(t, g.PersonalAccessToken.ID, token1.ID)
 }
+
+func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
+	client := graphTestClientNoAuth(t, EntClient)
+
+	ec := echocontext.NewTestEchoContext()
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	input := datumclient.CreateUserInput{
+		FirstName: "Abraxos",
+		LastName:  "Funk",
+		Email:     "abraxos@datum.net",
+	}
+
+	resp, err := client.CreateUser(reqCtx, input)
+	require.NoError(t, err)
+
+	// should fail on unique
+	_, err = client.CreateUser(reqCtx, input)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "UNIQUE")
+
+	// delete user
+	_, err = client.DeleteUser(reqCtx, resp.CreateUser.User.ID)
+	require.NoError(t, err)
+
+	o, err := client.GetUserByID(reqCtx, resp.CreateUser.User.ID)
+
+	require.Nil(t, o)
+	require.Error(t, err)
+	assert.ErrorContains(t, err, "not found")
+
+	// Ensure user is soft deleted
+	ctx := mixin.SkipSoftDelete(reqCtx)
+
+	o, err = client.GetUserByID(ctx, resp.CreateUser.User.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, o.User.ID, resp.CreateUser.User.ID)
+
+	// create the user again, this should work because we should ignore soft deleted
+	// records on unique email
+	resp, err = client.CreateUser(reqCtx, input)
+	require.NoError(t, err)
+	assert.Equal(t, input.Email, resp.CreateUser.User.Email)
+}

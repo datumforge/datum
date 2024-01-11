@@ -12,10 +12,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/datumforge/datum/internal/ent/enums"
-	"github.com/datumforge/datum/internal/ent/generated/organization"
 	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/predicate"
-	"github.com/datumforge/datum/internal/ent/generated/user"
 
 	"github.com/datumforge/datum/internal/ent/generated/internal"
 )
@@ -113,59 +111,9 @@ func (omu *OrgMembershipUpdate) SetNillableRole(e *enums.Role) *OrgMembershipUpd
 	return omu
 }
 
-// SetOrgID sets the "org_id" field.
-func (omu *OrgMembershipUpdate) SetOrgID(s string) *OrgMembershipUpdate {
-	omu.mutation.SetOrgID(s)
-	return omu
-}
-
-// SetNillableOrgID sets the "org_id" field if the given value is not nil.
-func (omu *OrgMembershipUpdate) SetNillableOrgID(s *string) *OrgMembershipUpdate {
-	if s != nil {
-		omu.SetOrgID(*s)
-	}
-	return omu
-}
-
-// SetUserID sets the "user_id" field.
-func (omu *OrgMembershipUpdate) SetUserID(s string) *OrgMembershipUpdate {
-	omu.mutation.SetUserID(s)
-	return omu
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (omu *OrgMembershipUpdate) SetNillableUserID(s *string) *OrgMembershipUpdate {
-	if s != nil {
-		omu.SetUserID(*s)
-	}
-	return omu
-}
-
-// SetOrg sets the "org" edge to the Organization entity.
-func (omu *OrgMembershipUpdate) SetOrg(o *Organization) *OrgMembershipUpdate {
-	return omu.SetOrgID(o.ID)
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (omu *OrgMembershipUpdate) SetUser(u *User) *OrgMembershipUpdate {
-	return omu.SetUserID(u.ID)
-}
-
 // Mutation returns the OrgMembershipMutation object of the builder.
 func (omu *OrgMembershipUpdate) Mutation() *OrgMembershipMutation {
 	return omu.mutation
-}
-
-// ClearOrg clears the "org" edge to the Organization entity.
-func (omu *OrgMembershipUpdate) ClearOrg() *OrgMembershipUpdate {
-	omu.mutation.ClearOrg()
-	return omu
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (omu *OrgMembershipUpdate) ClearUser() *OrgMembershipUpdate {
-	omu.mutation.ClearUser()
-	return omu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -264,68 +212,6 @@ func (omu *OrgMembershipUpdate) sqlSave(ctx context.Context) (n int, err error) 
 	}
 	if value, ok := omu.mutation.Role(); ok {
 		_spec.SetField(orgmembership.FieldRole, field.TypeEnum, value)
-	}
-	if omu.mutation.OrgCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.OrgTable,
-			Columns: []string{orgmembership.OrgColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omu.schemaConfig.OrgMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := omu.mutation.OrgIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.OrgTable,
-			Columns: []string{orgmembership.OrgColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omu.schemaConfig.OrgMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if omu.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.UserTable,
-			Columns: []string{orgmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omu.schemaConfig.OrgMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := omu.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.UserTable,
-			Columns: []string{orgmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omu.schemaConfig.OrgMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = omu.schemaConfig.OrgMembership
 	ctx = internal.NewSchemaConfigContext(ctx, omu.schemaConfig)
@@ -429,59 +315,9 @@ func (omuo *OrgMembershipUpdateOne) SetNillableRole(e *enums.Role) *OrgMembershi
 	return omuo
 }
 
-// SetOrgID sets the "org_id" field.
-func (omuo *OrgMembershipUpdateOne) SetOrgID(s string) *OrgMembershipUpdateOne {
-	omuo.mutation.SetOrgID(s)
-	return omuo
-}
-
-// SetNillableOrgID sets the "org_id" field if the given value is not nil.
-func (omuo *OrgMembershipUpdateOne) SetNillableOrgID(s *string) *OrgMembershipUpdateOne {
-	if s != nil {
-		omuo.SetOrgID(*s)
-	}
-	return omuo
-}
-
-// SetUserID sets the "user_id" field.
-func (omuo *OrgMembershipUpdateOne) SetUserID(s string) *OrgMembershipUpdateOne {
-	omuo.mutation.SetUserID(s)
-	return omuo
-}
-
-// SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (omuo *OrgMembershipUpdateOne) SetNillableUserID(s *string) *OrgMembershipUpdateOne {
-	if s != nil {
-		omuo.SetUserID(*s)
-	}
-	return omuo
-}
-
-// SetOrg sets the "org" edge to the Organization entity.
-func (omuo *OrgMembershipUpdateOne) SetOrg(o *Organization) *OrgMembershipUpdateOne {
-	return omuo.SetOrgID(o.ID)
-}
-
-// SetUser sets the "user" edge to the User entity.
-func (omuo *OrgMembershipUpdateOne) SetUser(u *User) *OrgMembershipUpdateOne {
-	return omuo.SetUserID(u.ID)
-}
-
 // Mutation returns the OrgMembershipMutation object of the builder.
 func (omuo *OrgMembershipUpdateOne) Mutation() *OrgMembershipMutation {
 	return omuo.mutation
-}
-
-// ClearOrg clears the "org" edge to the Organization entity.
-func (omuo *OrgMembershipUpdateOne) ClearOrg() *OrgMembershipUpdateOne {
-	omuo.mutation.ClearOrg()
-	return omuo
-}
-
-// ClearUser clears the "user" edge to the User entity.
-func (omuo *OrgMembershipUpdateOne) ClearUser() *OrgMembershipUpdateOne {
-	omuo.mutation.ClearUser()
-	return omuo
 }
 
 // Where appends a list predicates to the OrgMembershipUpdate builder.
@@ -610,68 +446,6 @@ func (omuo *OrgMembershipUpdateOne) sqlSave(ctx context.Context) (_node *OrgMemb
 	}
 	if value, ok := omuo.mutation.Role(); ok {
 		_spec.SetField(orgmembership.FieldRole, field.TypeEnum, value)
-	}
-	if omuo.mutation.OrgCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.OrgTable,
-			Columns: []string{orgmembership.OrgColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omuo.schemaConfig.OrgMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := omuo.mutation.OrgIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.OrgTable,
-			Columns: []string{orgmembership.OrgColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(organization.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omuo.schemaConfig.OrgMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if omuo.mutation.UserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.UserTable,
-			Columns: []string{orgmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omuo.schemaConfig.OrgMembership
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := omuo.mutation.UserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
-			Table:   orgmembership.UserTable,
-			Columns: []string{orgmembership.UserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
-			},
-		}
-		edge.Schema = omuo.schemaConfig.OrgMembership
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.Node.Schema = omuo.schemaConfig.OrgMembership
 	ctx = internal.NewSchemaConfigContext(ctx, omuo.schemaConfig)

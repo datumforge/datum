@@ -2828,8 +2828,6 @@ type UpdateGroupMembershipInput struct {
 	UpdatedBy      *string     `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool       `json:"clearUpdatedBy,omitempty"`
 	Role           *enums.Role `json:"role,omitempty"`
-	GroupID        *string     `json:"groupID,omitempty"`
-	UserID         *string     `json:"userID,omitempty"`
 }
 
 // UpdateGroupSettingInput is used for update GroupSetting object.
@@ -2926,8 +2924,6 @@ type UpdateOrgMembershipInput struct {
 	UpdatedBy      *string     `json:"updatedBy,omitempty"`
 	ClearUpdatedBy *bool       `json:"clearUpdatedBy,omitempty"`
 	Role           *enums.Role `json:"role,omitempty"`
-	OrgID          *string     `json:"orgID,omitempty"`
-	UserID         *string     `json:"userID,omitempty"`
 }
 
 // UpdateOrganizationInput is used for update Organization object.

@@ -1,4 +1,4 @@
-package datumorg
+package datumorgmembers
 
 import (
 	"context"
@@ -35,6 +35,9 @@ func orgMembers(ctx context.Context) error {
 
 	// filter options
 	oID := viper.GetString("orgmember.get.id")
+	if oID == "" {
+		return datum.NewRequiredFieldMissingError("organization id")
+	}
 
 	where := datumclient.OrgMembershipWhereInput{
 		OrgID: &oID,

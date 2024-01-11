@@ -14,7 +14,7 @@ import (
 
 var orgMembersDeleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete a user's role in a datum org",
+	Short: "Remove a user from a datum org",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return deleteOrgMember(cmd.Context())
 	},

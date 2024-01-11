@@ -1,4 +1,4 @@
-package datumorg
+package datumorgmembers
 
 import (
 	"github.com/spf13/cobra"

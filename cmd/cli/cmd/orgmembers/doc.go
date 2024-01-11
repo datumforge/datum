@@ -1,2 +1,2 @@
-// Package datumorg is our cobra/viper cli for organization endpoints
-package datumorg
+// Package datumorgmembers is our cobra/viper cli for org member endpoints
+package datumorgmembers

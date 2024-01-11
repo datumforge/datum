@@ -1,4 +1,4 @@
-package datumorg
+package datumorgmembers
 
 import (
 	"context"

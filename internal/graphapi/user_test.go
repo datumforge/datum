@@ -964,11 +964,7 @@ func TestMutation_UserCascadeDeleteNoAuth(t *testing.T) {
 func TestMutation_SoftDeleteUniqueIndex(t *testing.T) {
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	input := datumclient.CreateUserInput{
 		FirstName: "Abraxos",

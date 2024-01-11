@@ -15,6 +15,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 	_ "github.com/datumforge/datum/internal/ent/generated/runtime"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
@@ -156,9 +157,27 @@ func TestRegisterHandler(t *testing.T) {
 				assert.NotEmpty(t, out.Message)
 				assert.NotEmpty(t, out.ID)
 
-				// create user in the database with no auth
+				// setup context to get the data back
 				ec := echocontext.NewTestEchoContext().Request().Context()
 				ctx := privacy.DecisionContext(ec, privacy.Allow)
+
+				// get the user and make sure things were created as expected
+				user, err := EntClient.User.Get(ctx, out.ID)
+				require.NoError(t, err)
+
+				// make sure personal org was created
+				orgs, err := user.Organizations(ctx)
+				require.NoError(t, err)
+				require.Len(t, orgs, 1)
+				assert.True(t, orgs[0].PersonalOrg)
+
+				// make sure user is an owner of their personal org
+				orgMemberships, err := user.OrgMemberships(ctx)
+				require.NoError(t, err)
+				require.Len(t, orgs, 1)
+				assert.Equal(t, orgMemberships[0].Role, enums.RoleOwner)
+
+				// delete user
 				EntClient.User.DeleteOneID(out.ID).ExecX(ctx)
 			} else {
 				assert.Contains(t, out.Message, tc.expectedErrMessage)

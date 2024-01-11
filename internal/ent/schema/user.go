@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -50,7 +51,6 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		// NOTE: the created_at and updated_at fields are automatically created by the AuditMixin, you do not need to re-declare / add them in these fields
 		field.String("email").
-			Unique().
 			Validate(func(email string) error {
 				_, err := mail.ParseAddress(email)
 				return err
@@ -127,6 +127,8 @@ func (User) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("id").
 			Unique(), // enforce globally unique ids
+		index.Fields("email").
+			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 
-	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 

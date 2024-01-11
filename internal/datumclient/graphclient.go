@@ -29,6 +29,10 @@ type DatumClient interface {
 	UpdateOrganization(ctx context.Context, updateOrganizationID string, input UpdateOrganizationInput, interceptors ...clientv2.RequestInterceptor) (*UpdateOrganization, error)
 	DeleteOrganization(ctx context.Context, deleteOrganizationID string, interceptors ...clientv2.RequestInterceptor) (*DeleteOrganization, error)
 	GetOrganizationSetting(ctx context.Context, organizationSettingID string, interceptors ...clientv2.RequestInterceptor) (*GetOrganizationSetting, error)
+	GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error)
+	AddUserToOrgWithRole(ctx context.Context, input CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToOrgWithRole, error)
+	UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error)
+	RemoveUserFromOrg(ctx context.Context, deleteOrgMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromOrg, error)
 	CreatePersonalAccessToken(ctx context.Context, input CreatePersonalAccessTokenInput, interceptors ...clientv2.RequestInterceptor) (*CreatePersonalAccessToken, error)
 	GetPersonalAccessTokenByID(ctx context.Context, personalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*GetPersonalAccessTokenByID, error)
 	DeletePersonalAccessToken(ctx context.Context, deletePersonalAccessTokenID string, interceptors ...clientv2.RequestInterceptor) (*DeletePersonalAccessToken, error)
@@ -2445,6 +2449,203 @@ func (t *GetOrganizationSetting_OrganizationSetting) GetOrganization() *GetOrgan
 	return t.Organization
 }
 
+type GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User struct {
+	FirstName   string "json:\"firstName\" graphql:\"firstName\""
+	LastName    string "json:\"lastName\" graphql:\"lastName\""
+	ID          string "json:\"id\" graphql:\"id\""
+	DisplayName string "json:\"displayName\" graphql:\"displayName\""
+	Email       string "json:\"email\" graphql:\"email\""
+}
+
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetFirstName() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
+	}
+	return t.FirstName
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetLastName() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
+	}
+	return t.LastName
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetID() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
+	}
+	return t.ID
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetDisplayName() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
+	}
+	return t.DisplayName
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User) GetEmail() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User{}
+	}
+	return t.Email
+}
+
+type GetOrgMembersByOrgID_OrgMemberships_Edges_Node struct {
+	ID     string                                              "json:\"id\" graphql:\"id\""
+	OrgID  string                                              "json:\"orgID\" graphql:\"orgID\""
+	UserID string                                              "json:\"userID\" graphql:\"userID\""
+	Role   enums.Role                                          "json:\"role\" graphql:\"role\""
+	User   GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetID() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node{}
+	}
+	return t.ID
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetOrgID() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node{}
+	}
+	return t.OrgID
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetUserID() string {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node{}
+	}
+	return t.UserID
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node{}
+	}
+	return &t.Role
+}
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges_Node) GetUser() *GetOrgMembersByOrgID_OrgMemberships_Edges_Node_User {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges_Node{}
+	}
+	return &t.User
+}
+
+type GetOrgMembersByOrgID_OrgMemberships_Edges struct {
+	Node *GetOrgMembersByOrgID_OrgMemberships_Edges_Node "json:\"node,omitempty\" graphql:\"node\""
+}
+
+func (t *GetOrgMembersByOrgID_OrgMemberships_Edges) GetNode() *GetOrgMembersByOrgID_OrgMemberships_Edges_Node {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships_Edges{}
+	}
+	return t.Node
+}
+
+type GetOrgMembersByOrgID_OrgMemberships struct {
+	Edges []*GetOrgMembersByOrgID_OrgMemberships_Edges "json:\"edges,omitempty\" graphql:\"edges\""
+}
+
+func (t *GetOrgMembersByOrgID_OrgMemberships) GetEdges() []*GetOrgMembersByOrgID_OrgMemberships_Edges {
+	if t == nil {
+		t = &GetOrgMembersByOrgID_OrgMemberships{}
+	}
+	return t.Edges
+}
+
+type AddUserToOrgWithRole_CreateOrgMembership_OrgMembership struct {
+	ID     string     "json:\"id\" graphql:\"id\""
+	Role   enums.Role "json:\"role\" graphql:\"role\""
+	UserID string     "json:\"userID\" graphql:\"userID\""
+	OrgID  string     "json:\"orgID\" graphql:\"orgID\""
+}
+
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetID() string {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return t.ID
+}
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetRole() *enums.Role {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return &t.Role
+}
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetUserID() string {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return t.UserID
+}
+func (t *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership) GetOrgID() string {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership_OrgMembership{}
+	}
+	return t.OrgID
+}
+
+type AddUserToOrgWithRole_CreateOrgMembership struct {
+	OrgMembership AddUserToOrgWithRole_CreateOrgMembership_OrgMembership "json:\"orgMembership\" graphql:\"orgMembership\""
+}
+
+func (t *AddUserToOrgWithRole_CreateOrgMembership) GetOrgMembership() *AddUserToOrgWithRole_CreateOrgMembership_OrgMembership {
+	if t == nil {
+		t = &AddUserToOrgWithRole_CreateOrgMembership{}
+	}
+	return &t.OrgMembership
+}
+
+type UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership struct {
+	ID     string     "json:\"id\" graphql:\"id\""
+	Role   enums.Role "json:\"role\" graphql:\"role\""
+	UserID string     "json:\"userID\" graphql:\"userID\""
+	OrgID  string     "json:\"orgID\" graphql:\"orgID\""
+}
+
+func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetID() string {
+	if t == nil {
+		t = &UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership{}
+	}
+	return t.ID
+}
+func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetRole() *enums.Role {
+	if t == nil {
+		t = &UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership{}
+	}
+	return &t.Role
+}
+func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetUserID() string {
+	if t == nil {
+		t = &UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership{}
+	}
+	return t.UserID
+}
+func (t *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership) GetOrgID() string {
+	if t == nil {
+		t = &UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership{}
+	}
+	return t.OrgID
+}
+
+type UpdateUserRoleInOrg_UpdateOrgMembership struct {
+	OrgMembership UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership "json:\"orgMembership\" graphql:\"orgMembership\""
+}
+
+func (t *UpdateUserRoleInOrg_UpdateOrgMembership) GetOrgMembership() *UpdateUserRoleInOrg_UpdateOrgMembership_OrgMembership {
+	if t == nil {
+		t = &UpdateUserRoleInOrg_UpdateOrgMembership{}
+	}
+	return &t.OrgMembership
+}
+
+type RemoveUserFromOrg_DeleteOrgMembership struct {
+	DeletedID string "json:\"deletedID\" graphql:\"deletedID\""
+}
+
+func (t *RemoveUserFromOrg_DeleteOrgMembership) GetDeletedID() string {
+	if t == nil {
+		t = &RemoveUserFromOrg_DeleteOrgMembership{}
+	}
+	return t.DeletedID
+}
+
 type CreatePersonalAccessToken_CreatePersonalAccessToken_PersonalAccessToken_Owner struct {
 	ID          string "json:\"id\" graphql:\"id\""
 	DisplayName string "json:\"displayName\" graphql:\"displayName\""
@@ -4109,6 +4310,50 @@ func (t *GetOrganizationSetting) GetOrganizationSetting() *GetOrganizationSettin
 	return &t.OrganizationSetting
 }
 
+type GetOrgMembersByOrgID struct {
+	OrgMemberships GetOrgMembersByOrgID_OrgMemberships "json:\"orgMemberships\" graphql:\"orgMemberships\""
+}
+
+func (t *GetOrgMembersByOrgID) GetOrgMemberships() *GetOrgMembersByOrgID_OrgMemberships {
+	if t == nil {
+		t = &GetOrgMembersByOrgID{}
+	}
+	return &t.OrgMemberships
+}
+
+type AddUserToOrgWithRole struct {
+	CreateOrgMembership AddUserToOrgWithRole_CreateOrgMembership "json:\"createOrgMembership\" graphql:\"createOrgMembership\""
+}
+
+func (t *AddUserToOrgWithRole) GetCreateOrgMembership() *AddUserToOrgWithRole_CreateOrgMembership {
+	if t == nil {
+		t = &AddUserToOrgWithRole{}
+	}
+	return &t.CreateOrgMembership
+}
+
+type UpdateUserRoleInOrg struct {
+	UpdateOrgMembership UpdateUserRoleInOrg_UpdateOrgMembership "json:\"updateOrgMembership\" graphql:\"updateOrgMembership\""
+}
+
+func (t *UpdateUserRoleInOrg) GetUpdateOrgMembership() *UpdateUserRoleInOrg_UpdateOrgMembership {
+	if t == nil {
+		t = &UpdateUserRoleInOrg{}
+	}
+	return &t.UpdateOrgMembership
+}
+
+type RemoveUserFromOrg struct {
+	DeleteOrgMembership RemoveUserFromOrg_DeleteOrgMembership "json:\"deleteOrgMembership\" graphql:\"deleteOrgMembership\""
+}
+
+func (t *RemoveUserFromOrg) GetDeleteOrgMembership() *RemoveUserFromOrg_DeleteOrgMembership {
+	if t == nil {
+		t = &RemoveUserFromOrg{}
+	}
+	return &t.DeleteOrgMembership
+}
+
 type CreatePersonalAccessToken struct {
 	CreatePersonalAccessToken CreatePersonalAccessToken_CreatePersonalAccessToken "json:\"createPersonalAccessToken\" graphql:\"createPersonalAccessToken\""
 }
@@ -4883,6 +5128,127 @@ func (c *Client) GetOrganizationSetting(ctx context.Context, organizationSetting
 	return &res, nil
 }
 
+const GetOrgMembersByOrgIDDocument = `query GetOrgMembersByOrgID ($where: OrgMembershipWhereInput) {
+	orgMemberships(where: $where) {
+		edges {
+			node {
+				id
+				orgID
+				userID
+				role
+				user {
+					firstName
+					lastName
+					id
+					displayName
+					email
+				}
+			}
+		}
+	}
+}
+`
+
+func (c *Client) GetOrgMembersByOrgID(ctx context.Context, where *OrgMembershipWhereInput, interceptors ...clientv2.RequestInterceptor) (*GetOrgMembersByOrgID, error) {
+	vars := map[string]interface{}{
+		"where": where,
+	}
+
+	var res GetOrgMembersByOrgID
+	if err := c.Client.Post(ctx, "GetOrgMembersByOrgID", GetOrgMembersByOrgIDDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const AddUserToOrgWithRoleDocument = `mutation AddUserToOrgWithRole ($input: CreateOrgMembershipInput!) {
+	createOrgMembership(input: $input) {
+		orgMembership {
+			id
+			role
+			userID
+			orgID
+		}
+	}
+}
+`
+
+func (c *Client) AddUserToOrgWithRole(ctx context.Context, input CreateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*AddUserToOrgWithRole, error) {
+	vars := map[string]interface{}{
+		"input": input,
+	}
+
+	var res AddUserToOrgWithRole
+	if err := c.Client.Post(ctx, "AddUserToOrgWithRole", AddUserToOrgWithRoleDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const UpdateUserRoleInOrgDocument = `mutation UpdateUserRoleInOrg ($updateOrgMemberId: ID!, $input: UpdateOrgMembershipInput!) {
+	updateOrgMembership(id: $updateOrgMemberId, input: $input) {
+		orgMembership {
+			id
+			role
+			userID
+			orgID
+		}
+	}
+}
+`
+
+func (c *Client) UpdateUserRoleInOrg(ctx context.Context, updateOrgMemberID string, input UpdateOrgMembershipInput, interceptors ...clientv2.RequestInterceptor) (*UpdateUserRoleInOrg, error) {
+	vars := map[string]interface{}{
+		"updateOrgMemberId": updateOrgMemberID,
+		"input":             input,
+	}
+
+	var res UpdateUserRoleInOrg
+	if err := c.Client.Post(ctx, "UpdateUserRoleInOrg", UpdateUserRoleInOrgDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+const RemoveUserFromOrgDocument = `mutation RemoveUserFromOrg ($deleteOrgMembershipId: ID!) {
+	deleteOrgMembership(id: $deleteOrgMembershipId) {
+		deletedID
+	}
+}
+`
+
+func (c *Client) RemoveUserFromOrg(ctx context.Context, deleteOrgMembershipID string, interceptors ...clientv2.RequestInterceptor) (*RemoveUserFromOrg, error) {
+	vars := map[string]interface{}{
+		"deleteOrgMembershipId": deleteOrgMembershipID,
+	}
+
+	var res RemoveUserFromOrg
+	if err := c.Client.Post(ctx, "RemoveUserFromOrg", RemoveUserFromOrgDocument, &res, vars, interceptors...); err != nil {
+		if c.Client.ParseDataWhenErrors {
+			return &res, err
+		}
+
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 const CreatePersonalAccessTokenDocument = `mutation CreatePersonalAccessToken ($input: CreatePersonalAccessTokenInput!) {
 	createPersonalAccessToken(input: $input) {
 		personalAccessToken {
@@ -5346,6 +5712,10 @@ var DocumentOperationNames = map[string]string{
 	UpdateOrganizationDocument:         "UpdateOrganization",
 	DeleteOrganizationDocument:         "DeleteOrganization",
 	GetOrganizationSettingDocument:     "GetOrganizationSetting",
+	GetOrgMembersByOrgIDDocument:       "GetOrgMembersByOrgID",
+	AddUserToOrgWithRoleDocument:       "AddUserToOrgWithRole",
+	UpdateUserRoleInOrgDocument:        "UpdateUserRoleInOrg",
+	RemoveUserFromOrgDocument:          "RemoveUserFromOrg",
 	CreatePersonalAccessTokenDocument:  "CreatePersonalAccessToken",
 	GetPersonalAccessTokenByIDDocument: "GetPersonalAccessTokenByID",
 	DeletePersonalAccessTokenDocument:  "DeletePersonalAccessToken",

@@ -48,6 +48,7 @@ type ResolverRoot interface {
 	OauthProvider() OauthProviderResolver
 	Query() QueryResolver
 	CreateOauthProviderInput() CreateOauthProviderInputResolver
+	CreateOrganizationInput() CreateOrganizationInputResolver
 	OauthProviderWhereInput() OauthProviderWhereInputResolver
 	UpdateOauthProviderInput() UpdateOauthProviderInputResolver
 }
@@ -798,6 +799,10 @@ type QueryResolver interface {
 
 type CreateOauthProviderInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error
+}
+type CreateOrganizationInputResolver interface {
+	CreateOrgMembers(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
+	CreateOrgSettings(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrganizationSettingInput) error
 }
 type OauthProviderWhereInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error
@@ -8502,6 +8507,15 @@ type OrganizationSettingDeletePayload {
     Deleted organizationSetting ID
     """
     deletedID: ID!
+}`, BuiltIn: false},
+	{Name: "../../schema/orgextended.graphql", Input: `extend input CreateOrganizationInput {
+  createOrgMembers: [CreateOrgMembershipInput!]
+  createOrgSettings: [CreateOrganizationSettingInput]
+}
+
+extend input OrgMembershipWhereInput {
+  orgID: String
+  userID: String
 }`, BuiltIn: false},
 	{Name: "../../schema/orgmembership.graphql", Input: `extend type Query {
     """
@@ -34774,7 +34788,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs", "userIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs", "userIDs", "createOrgMembers", "createOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34886,6 +34900,24 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.UserIDs = data
+		case "createOrgMembers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createOrgMembers"))
+			data, err := ec.unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateOrganizationInput().CreateOrgMembers(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "createOrgSettings":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createOrgSettings"))
+			data, err := ec.unmarshalOCreateOrganizationSettingInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.CreateOrganizationInput().CreateOrgSettings(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -41867,7 +41899,7 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "role", "roleNEQ", "roleIn", "roleNotIn", "orgID", "userID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -42490,6 +42522,20 @@ func (ec *executionContext) unmarshalInputOrgMembershipWhereInput(ctx context.Co
 				return it, err
 			}
 			it.RoleNotIn = data
+		case "orgID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrgID = data
+		case "userID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
 		}
 	}
 
@@ -57413,6 +57459,11 @@ func (ec *executionContext) unmarshalNCreateOrgMembershipInput2githubᚗcomᚋda
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateOrgMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx context.Context, v interface{}) (*generated.CreateOrgMembershipInput, error) {
+	res, err := ec.unmarshalInputCreateOrgMembershipInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateOrganizationInput2githubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationInput(ctx context.Context, v interface{}) (generated.CreateOrganizationInput, error) {
 	res, err := ec.unmarshalInputCreateOrganizationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -59181,6 +59232,54 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx context.Context, v interface{}) ([]*generated.CreateOrgMembershipInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.CreateOrgMembershipInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCreateOrgMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOCreateOrganizationSettingInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx context.Context, v interface{}) ([]*generated.CreateOrganizationSettingInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*generated.CreateOrganizationSettingInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx context.Context, v interface{}) (*generated.CreateOrganizationSettingInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputCreateOrganizationSettingInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx context.Context, v interface{}) (*entgql.Cursor[string], error) {

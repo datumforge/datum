@@ -254,7 +254,7 @@ func Test_DeleteRelationshipTuple(t *testing.T) {
 
 			mockDeleteTuples(mockCtrl, c, context.Background(), tuples, tc.errRes)
 
-			_, err = fc.deleteRelationshipTuple(context.Background(), tuples)
+			_, err = fc.DeleteRelationshipTuple(context.Background(), tuples)
 
 			if tc.errRes != "" {
 				assert.Error(t, err)

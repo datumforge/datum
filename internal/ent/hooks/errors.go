@@ -13,4 +13,7 @@ var (
 
 	// ErrPersonalOrgsNoUser is returned when personal org has no user associated, so no permissions can be added
 	ErrPersonalOrgsNoUser = errors.New("personal organizations missing user association")
+
+	// ErrUnsupportedFGARole is returned when a role is assigned that is not supported in our fine grained authorization system
+	ErrUnsupportedFGARole = errors.New("unsupported role")
 )

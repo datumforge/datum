@@ -12,8 +12,8 @@ import (
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
-	"github.com/datumforge/datum/internal/ent/generated/orgmembership"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
+	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 	"github.com/datumforge/datum/internal/passwd"
 	"github.com/datumforge/datum/internal/utils/gravatar"
@@ -103,6 +103,46 @@ func HookUser() ent.Hook {
 	}, ent.OpCreate|ent.OpUpdateOne)
 }
 
+// HookDeleteUser runs on user deletions to clean up personal organizations
+func HookDeleteUser() ent.Hook {
+	return func(next ent.Mutator) ent.Mutator {
+		return hook.UserFunc(func(ctx context.Context, mutation *generated.UserMutation) (generated.Value, error) {
+			if mutation.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
+				userID, _ := mutation.ID()
+				// get the personal org id
+				user, err := mutation.Client().User.Get(ctx, userID)
+				if err != nil {
+					return nil, err
+				}
+
+				orgs, err := mutation.Client().User.QueryOrganizations(user).All(ctx)
+				if err != nil {
+					return nil, err
+				}
+
+				// run the mutation first
+				v, err := next.Mutate(ctx, mutation)
+				if err != nil {
+					return nil, err
+				}
+
+				// cleanup personal org
+				for _, o := range orgs {
+					if o.PersonalOrg {
+						if err := mutation.Client().Organization.DeleteOneID(o.ID).Exec(ctx); err != nil {
+							return nil, err
+						}
+					}
+				}
+
+				return v, err
+			}
+
+			return next.Mutate(ctx, mutation)
+		})
+	}
+}
+
 // getPersonalOrgInput generates the input for a new personal organization
 // personal orgs are assigned to all new users when registering with Datum
 func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput {
@@ -115,15 +155,11 @@ func getPersonalOrgInput(user *generated.User) generated.CreateOrganizationInput
 	personalOrg := true
 	desc := fmt.Sprintf("%s - %s %s", personalOrgPrefix, caser.String(user.FirstName), caser.String(user.LastName))
 
-	// add user to the users of the personal organization
-	users := []string{user.ID}
-
 	return generated.CreateOrganizationInput{
 		Name:        name,
 		DisplayName: &displayName,
 		Description: &desc,
 		PersonalOrg: &personalOrg,
-		UserIDs:     users,
 	}
 }
 
@@ -146,13 +182,18 @@ func createPersonalOrg(ctx context.Context, dbClient *generated.Client, user *ge
 		return err
 	}
 
-	// Update role to admin
-	if _, err := dbClient.OrgMembership.Update().Where(
-		orgmembership.UserID(user.ID),
-		orgmembership.OrgID(org.ID),
-	).SetRole(enums.RoleOwner).
+	// Create Role as owner for user in the personal org
+	role := enums.RoleOwner
+	input := generated.CreateOrgMembershipInput{
+		OrgID:  org.ID,
+		UserID: user.ID,
+		Role:   &role,
+	}
+
+	if _, err := dbClient.OrgMembership.Create().
+		SetInput(input).
 		Save(ctx); err != nil {
-		user.Logger.Errorw("unable to add user as admin to organization", "error", err.Error())
+		user.Logger.Errorw("unable to add user as owner to organization", "error", err.Error())
 
 		return err
 	}

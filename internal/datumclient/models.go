@@ -174,14 +174,16 @@ type CreateOrganizationInput struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg      *bool    `json:"personalOrg,omitempty"`
-	ParentID         *string  `json:"parentID,omitempty"`
-	GroupIDs         []string `json:"groupIDs,omitempty"`
-	IntegrationIDs   []string `json:"integrationIDs,omitempty"`
-	SettingID        *string  `json:"settingID,omitempty"`
-	EntitlementIDs   []string `json:"entitlementIDs,omitempty"`
-	OauthproviderIDs []string `json:"oauthproviderIDs,omitempty"`
-	UserIDs          []string `json:"userIDs,omitempty"`
+	PersonalOrg       *bool                             `json:"personalOrg,omitempty"`
+	ParentID          *string                           `json:"parentID,omitempty"`
+	GroupIDs          []string                          `json:"groupIDs,omitempty"`
+	IntegrationIDs    []string                          `json:"integrationIDs,omitempty"`
+	SettingID         *string                           `json:"settingID,omitempty"`
+	EntitlementIDs    []string                          `json:"entitlementIDs,omitempty"`
+	OauthproviderIDs  []string                          `json:"oauthproviderIDs,omitempty"`
+	UserIDs           []string                          `json:"userIDs,omitempty"`
+	CreateOrgMembers  []*CreateOrgMembershipInput       `json:"createOrgMembers,omitempty"`
+	CreateOrgSettings []*CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
 }
 
 // CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -1876,6 +1878,8 @@ type OrgMembershipWhereInput struct {
 	RoleNeq   *enums.Role  `json:"roleNEQ,omitempty"`
 	RoleIn    []enums.Role `json:"roleIn,omitempty"`
 	RoleNotIn []enums.Role `json:"roleNotIn,omitempty"`
+	OrgID     *string      `json:"orgID,omitempty"`
+	UserID    *string      `json:"userID,omitempty"`
 }
 
 type Organization struct {

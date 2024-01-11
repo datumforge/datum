@@ -1,7 +1,6 @@
 package graphapi_test
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -9,43 +8,28 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/mock/gomock"
 
 	"github.com/datumforge/datum/internal/datumclient"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/mixin"
-	mock_client "github.com/datumforge/datum/internal/fga/mocks"
-	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
-	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
-	"github.com/datumforge/datum/internal/utils/ulids"
+)
+
+const (
+	organization = "organization"
 )
 
 func TestQuery_Organization(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
-	listObjects := []string{fmt.Sprintf("organization:%s", org1.ID)}
+
+	listObjects := []string{fmt.Sprintf("%s:%s", organization, org1.ID)}
 
 	testCases := []struct {
 		name     string
@@ -54,7 +38,7 @@ func TestQuery_Organization(t *testing.T) {
 		errorMsg string
 	}{
 		{
-			name:     "happy path organization",
+			name:     "happy path, get organization",
 			queryID:  org1.ID,
 			expected: org1,
 		},
@@ -67,19 +51,19 @@ func TestQuery_Organization(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
-			mockListAny(mockCtrl, mc, reqCtx, listObjects)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
+			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
 			// second check won't happen if org does not exist
 			if tc.errorMsg == "" {
 				// we need to check list objects even on a get
 				// because a parent could be request and that access must always be
 				// checked before being returned
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
-			resp, err := client.GetOrganizationByID(reqCtx, tc.queryID)
+			resp, err := authClient.gc.GetOrganizationByID(reqCtx, tc.queryID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -103,11 +87,7 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{ParentOrgID: org1.ParentOrganizationID}).MustNew(reqCtx)
@@ -144,28 +124,13 @@ func TestQuery_OrganizationsNoAuth(t *testing.T) {
 }
 
 func TestQuery_OrganizationsAuth(t *testing.T) {
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org1 := (&OrganizationBuilder{}).MustNew(reqCtx)
 	org2 := (&OrganizationBuilder{}).MustNew(reqCtx)
@@ -174,13 +139,13 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 		// check tuple per org
 		listObjects := []string{fmt.Sprintf("organization:%s", org1.ID), fmt.Sprintf("organization:%s", org2.ID)}
 
-		mockListAny(mockCtrl, mc, reqCtx, listObjects)
-		mockListAny(mockCtrl, mc, reqCtx, listObjects)
-		mockListAny(mockCtrl, mc, reqCtx, listObjects)
-		mockListAny(mockCtrl, mc, reqCtx, listObjects)
-		mockListAny(mockCtrl, mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
-		resp, err := client.GetAllOrganizations(reqCtx)
+		resp, err := authClient.gc.GetAllOrganizations(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -205,9 +170,9 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 		}
 
 		// Check user with no relations, gets no orgs back
-		mockListAny(mockCtrl, mc, reqCtx, []string{})
+		mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, []string{})
 
-		resp, err = client.GetAllOrganizations(reqCtx)
+		resp, err = authClient.gc.GetAllOrganizations(reqCtx)
 
 		require.NoError(t, err)
 		require.NotNil(t, resp)
@@ -218,30 +183,13 @@ func TestQuery_OrganizationsAuth(t *testing.T) {
 }
 
 func TestMutation_CreateOrganization(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
 	parentPersonalOrg := (&OrganizationBuilder{PersonalOrg: true}).MustNew(reqCtx)
@@ -341,19 +289,19 @@ func TestMutation_CreateOrganization(t *testing.T) {
 				input.ParentID = &tc.parentOrgID
 
 				// There is a check to ensure user has write access to parent org
-				mockCheckAny(mockCtrl, mc, reqCtx, true)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
 				// There is a check to ensure the parent org is not a parent org
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
-				mockWriteTuplesAny(mockCtrl, mc, reqCtx, nil)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
-			resp, err := client.CreateOrganization(reqCtx, input)
+			resp, err := authClient.gc.CreateOrganization(reqCtx, input)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -397,11 +345,7 @@ func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
 	// Setup Test Graph Client Without Auth
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	parentOrg := (&OrganizationBuilder{}).MustNew(reqCtx)
 
@@ -478,30 +422,13 @@ func TestMutation_CreateOrganizationNoAuth(t *testing.T) {
 }
 
 func TestMutation_UpdateOrganization(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	nameUpdate := gofakeit.Name()
 	displayNameUpdate := gofakeit.LetterN(40)
@@ -566,14 +493,14 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 		t.Run("Update "+tc.name, func(t *testing.T) {
 			// mock checks of tuple
 			// get organization
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
 			// update organization
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
 			// check access
-			mockListAny(mockCtrl, mc, reqCtx, listObjects)
+			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
 			// update org
-			resp, err := client.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
+			resp, err := authClient.gc.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -597,30 +524,13 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 }
 
 func TestMutation_DeleteOrganization(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
 
@@ -654,22 +564,22 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run("Delete "+tc.name, func(t *testing.T) {
 			// mock read of tuple
-			mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.accessAllowed)
 
 			// if access is allowed, another call to `read` happens
 			if tc.accessAllowed {
-				mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
-				mockReadAny(mockCtrl, mc, reqCtx)
+				mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.accessAllowed)
 
 				// additional check happens when the resource is found
 				if tc.errorMsg == "" {
-					mockListAny(mockCtrl, mc, reqCtx, listObjects)
-					mockCheckAny(mockCtrl, mc, reqCtx, tc.accessAllowed)
+					mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+					mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.accessAllowed)
+					mocDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				}
 			}
 
 			// delete org
-			resp, err := client.DeleteOrganization(reqCtx, tc.orgID)
+			resp, err := authClient.gc.DeleteOrganization(reqCtx, tc.orgID)
 
 			if tc.errorMsg != "" {
 				require.Error(t, err)
@@ -687,25 +597,25 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 			assert.Equal(t, tc.orgID, resp.DeleteOrganization.DeletedID)
 
 			// make sure the org isn't returned
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
 			if tc.errorMsg == "" {
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
-				mockListAny(mockCtrl, mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
-			o, err := client.GetOrganizationByID(reqCtx, tc.orgID)
+			o, err := authClient.gc.GetOrganizationByID(reqCtx, tc.orgID)
 
 			require.Nil(t, o)
 			require.Error(t, err)
 			assert.ErrorContains(t, err, "not found")
 
 			// check that the soft delete occurred
-			mockCheckAny(mockCtrl, mc, reqCtx, true)
+			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, true)
 
 			ctx := mixin.SkipSoftDelete(reqCtx)
 
-			o, err = client.GetOrganizationByID(ctx, tc.orgID)
+			o, err = authClient.gc.GetOrganizationByID(ctx, tc.orgID)
 
 			require.Equal(t, o.Organization.ID, tc.orgID)
 			require.NoError(t, err)
@@ -716,11 +626,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 	client := graphTestClientNoAuth(t, EntClient)
 
-	ec := echocontext.NewTestEchoContext()
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	reqCtx := echoContext()
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
 
@@ -762,33 +668,13 @@ func TestMutation_OrganizationCascadeDelete(t *testing.T) {
 }
 
 func TestMutation_CreateOrganizationTransaction(t *testing.T) {
-	// Add Authz Client Mock
-	// setup mock controller
-	mockCtrl := gomock.NewController(t)
-
-	mc := mock_client.NewMockSdkClient(mockCtrl)
-
 	// setup entdb with authz
-	entClient := setupAuthEntDB(t, mockCtrl, mc)
-	defer entClient.Close()
+	authClient := setupAuthEntDB(t)
+	defer authClient.entDB.Close()
 
-	// Setup Test Graph Client
-	client := graphTestClient(t, entClient)
-
-	// Setup echo context
-	sub := ulids.New().String()
-
-	ec, err := auth.NewTestContextWithValidUser(sub)
-	if err != nil {
-		t.Fatal()
-	}
-
-	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
-
-	// add client to context for transactional client
-	reqCtx = ent.NewContext(reqCtx, entClient)
-
-	ec.SetRequest(ec.Request().WithContext(reqCtx))
+	// setup user context
+	reqCtx, err := userContext()
+	require.NoError(t, err)
 
 	t.Run("Create should not write if FGA transaction fails", func(t *testing.T) {
 		input := datumclient.CreateOrganizationInput{
@@ -796,9 +682,9 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 		}
 
 		fgaErr := errors.New("unable to create relationship") //nolint:goerr113
-		mockWriteTuplesAny(mockCtrl, mc, reqCtx, fgaErr)
+		mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, fgaErr)
 
-		resp, err := client.CreateOrganization(reqCtx, input)
+		resp, err := authClient.gc.CreateOrganization(reqCtx, input)
 
 		require.Error(t, err)
 		require.Empty(t, resp)
@@ -806,9 +692,7 @@ func TestMutation_CreateOrganizationTransaction(t *testing.T) {
 		// Make sure the org was not added to the database (check without auth)
 		clientNoAuth := graphTestClientNoAuth(t, EntClient)
 
-		ec := echocontext.NewTestEchoContext()
-
-		reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+		reqCtx := echoContext()
 
 		orgs, err := clientNoAuth.GetAllOrganizations(reqCtx)
 		require.NoError(t, err)

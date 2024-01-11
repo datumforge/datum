@@ -1,0 +1,47 @@
+query GetOrgMembersByOrgID($where: OrgMembershipWhereInput) {
+  orgMemberships(where: $where) {
+    edges {
+      node {
+        id
+        orgID
+        userID
+        role
+        user {
+          firstName
+          lastName
+          id
+          displayName
+          email
+        }
+      }
+    }
+  }
+}
+
+mutation AddUserToOrgWithRole($input: CreateOrgMembershipInput!) {
+  createOrgMembership(input: $input) {
+    orgMembership {
+      id
+      role
+      userID
+      orgID
+    }
+  }
+}
+
+mutation UpdateUserRoleInOrg($updateOrgMemberId: ID!, $input: UpdateOrgMembershipInput!) {
+  updateOrgMembership(id: $updateOrgMemberId, input: $input) {
+    orgMembership {
+      id
+      role
+      userID
+      orgID
+    }
+  }
+}
+
+mutation RemoveUserFromOrg($deleteOrgMembershipId: ID!) {
+  deleteOrgMembership(id: $deleteOrgMembershipId) {
+    deletedID
+  }
+}

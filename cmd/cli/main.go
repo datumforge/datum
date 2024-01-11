@@ -8,6 +8,7 @@ import (
 	_ "github.com/datumforge/datum/cmd/cli/cmd/group"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/login"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/org"
+	_ "github.com/datumforge/datum/cmd/cli/cmd/orgmembers"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/register"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/reset"
 	_ "github.com/datumforge/datum/cmd/cli/cmd/tokens"

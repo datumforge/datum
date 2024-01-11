@@ -26,12 +26,16 @@ import (
 	"github.com/datumforge/datum/internal/fga"
 	mock_client "github.com/datumforge/datum/internal/fga/mocks"
 	"github.com/datumforge/datum/internal/graphapi"
+	auth "github.com/datumforge/datum/internal/httpserve/middleware/auth"
+	"github.com/datumforge/datum/internal/httpserve/middleware/echocontext"
 	"github.com/datumforge/datum/internal/testutils"
 )
 
 var (
-	EntClient   *ent.Client
-	DBContainer *testutils.TC
+	EntClient     *ent.Client
+	EntClientAuth *ent.Client
+	DBContainer   *testutils.TC
+	testUser      *ent.User
 )
 
 const (
@@ -84,10 +88,26 @@ func setupDB() {
 	errPanic("failed creating db schema", c.Schema.Create(ctx))
 
 	EntClient = c
+
+	// create test user
+	testUser = (&UserBuilder{}).MustNew(context.Background())
 }
 
-func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.MockSdkClient) *ent.Client {
-	fc, err := fga.NewTestFGAClient(t, mockCtrl, mc)
+type authClient struct {
+	entDB    *ent.Client
+	gc       datumclient.DatumClient
+	mockCtrl *gomock.Controller
+	mc       *mock_client.MockSdkClient
+}
+
+func setupAuthEntDB(t *testing.T) *authClient {
+	ac := &authClient{}
+	// setup mock controller
+	ac.mockCtrl = gomock.NewController(t)
+
+	ac.mc = mock_client.NewMockSdkClient(ac.mockCtrl)
+
+	fc, err := fga.NewTestFGAClient(t, ac.mockCtrl, ac.mc)
 	if err != nil {
 		t.Fatalf("enable to create test FGA client")
 	}
@@ -116,9 +136,44 @@ func setupAuthEntDB(t *testing.T, mockCtrl *gomock.Controller, mc *mock_client.M
 		errPanic("failed opening connection to database:", err)
 	}
 
+	ac.entDB = c
+
 	errPanic("failed creating db schema", c.Schema.Create(ctx))
 
-	return c
+	// create test user
+	testUser = (&UserBuilder{}).MustNew(context.Background())
+
+	ac.gc = graphTestClient(t, ac.entDB)
+
+	return ac
+}
+
+// userContext creates a new user in the database and returns a context with
+// the user claims attached
+func userContext() (context.Context, error) {
+	// Use that user to create the organization
+	ec, err := auth.NewTestContextWithValidUser(testUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	return reqCtx, nil
+}
+
+// echoContext creates a generic context with a echo context to be
+// used for no-auth tests
+func echoContext() context.Context {
+	ec := echocontext.NewTestEchoContext()
+
+	reqCtx := context.WithValue(ec.Request().Context(), echocontext.EchoContextKey, ec)
+
+	ec.SetRequest(ec.Request().WithContext(reqCtx))
+
+	return reqCtx
 }
 
 func teardownDB() {
@@ -203,7 +258,7 @@ func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 	return w.Result(), nil
 }
 
-// mockWriteTuples creates mock responses based on the mock FGA client
+// mockWriteTuplesAny creates mock responses based on the mock FGA client
 func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
 	mockExecute := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
 
@@ -238,6 +293,43 @@ func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClien
 	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
 
 	c.EXPECT().WriteTuples(gomock.Any()).Return(mockBody)
+}
+
+// mocDeleteTuplesAny creates mock responses based on the mock FGA client
+func mocDeleteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
+	mockExecute := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
+
+	if errMsg == nil {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
+	} else {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
+	}
+
+	mockRequest := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
+
+	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
+
+	mockBody := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
+
+	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
+
+	c.EXPECT().DeleteTuples(gomock.Any()).Return(mockBody)
 }
 
 func mockCheckAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, allowed bool) {

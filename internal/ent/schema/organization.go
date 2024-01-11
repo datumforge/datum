@@ -152,7 +152,6 @@ func (Organization) Interceptors() []ent.Interceptor {
 // Hooks of the Organization
 func (Organization) Hooks() []ent.Hook {
 	return []ent.Hook{
-		hooks.HookOrganizationAuthz(),
 		hooks.HookOrganization(),
 	}
 }

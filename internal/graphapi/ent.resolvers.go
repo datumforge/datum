@@ -76,7 +76,12 @@ func (r *queryResolver) OhAuthTooTokens(ctx context.Context, after *entgql.Curso
 
 // OrgMemberships is the resolver for the orgMemberships field.
 func (r *queryResolver) OrgMemberships(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *generated.OrgMembershipWhereInput) (*generated.OrgMembershipConnection, error) {
-	panic(fmt.Errorf("not implemented: OrgMemberships - orgMemberships"))
+	// if auth is disabled, policy decisions will be skipped
+	if r.authDisabled {
+		ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	}
+
+	return r.client.OrgMembership.Query().Paginate(ctx, after, first, before, last, generated.WithOrgMembershipFilter(where.Filter))
 }
 
 // Organizations is the resolver for the organizations field.
@@ -187,6 +192,11 @@ func (r *Resolver) CreateOauthProviderInput() CreateOauthProviderInputResolver {
 	return &createOauthProviderInputResolver{r}
 }
 
+// CreateOrganizationInput returns CreateOrganizationInputResolver implementation.
+func (r *Resolver) CreateOrganizationInput() CreateOrganizationInputResolver {
+	return &createOrganizationInputResolver{r}
+}
+
 // OauthProviderWhereInput returns OauthProviderWhereInputResolver implementation.
 func (r *Resolver) OauthProviderWhereInput() OauthProviderWhereInputResolver {
 	return &oauthProviderWhereInputResolver{r}
@@ -200,5 +210,6 @@ func (r *Resolver) UpdateOauthProviderInput() UpdateOauthProviderInputResolver {
 type oauthProviderResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type createOauthProviderInputResolver struct{ *Resolver }
+type createOrganizationInputResolver struct{ *Resolver }
 type oauthProviderWhereInputResolver struct{ *Resolver }
 type updateOauthProviderInputResolver struct{ *Resolver }

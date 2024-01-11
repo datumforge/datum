@@ -178,6 +178,8 @@ input CreateOrganizationInput {
 	entitlementIDs: [ID!]
 	oauthproviderIDs: [ID!]
 	userIDs: [ID!]
+	createOrgMembers: [CreateOrgMembershipInput!]
+	createOrgSettings: [CreateOrganizationSettingInput]
 }
 """
 CreateOrganizationSettingInput is used for create OrganizationSetting object.
@@ -2135,6 +2137,8 @@ input OrgMembershipWhereInput {
 	roleNEQ: OrgMembershipRole
 	roleIn: [OrgMembershipRole!]
 	roleNotIn: [OrgMembershipRole!]
+	orgID: String
+	userID: String
 }
 type Organization implements Node {
 	id: ID!

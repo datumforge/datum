@@ -91,6 +91,36 @@ func ParseEntity(s string) (Entity, error) {
 	}, nil
 }
 
+// WriteTuples takes a ClientWriteRequest, which can contain up to 10 writes and deletes, and executes in a single transaction
+func (c *Client) WriteTuples(ctx context.Context, tuples ofgaclient.ClientWriteRequest) (*ofgaclient.ClientWriteResponse, error) {
+	opts := ofgaclient.ClientWriteOptions{AuthorizationModelId: openfga.PtrString(c.Config.AuthorizationModelId)}
+
+	resp, err := c.Ofga.Write(ctx).Body(tuples).Options(opts).Execute()
+	if err != nil {
+		c.Logger.Infow("error writing relationship tuples", "error", err.Error(), "user", resp.Writes)
+
+		return resp, err
+	}
+
+	for _, writes := range resp.Writes {
+		if writes.Error != nil {
+			c.Logger.Errorw("error creating relationship tuples", "user", writes.TupleKey.User, "relation", writes.TupleKey.Relation, "object", writes.TupleKey.Object)
+
+			return resp, newWritingTuplesError(writes.TupleKey.User, writes.TupleKey.Relation, writes.TupleKey.Object, "writing", err)
+		}
+	}
+
+	for _, deletes := range resp.Deletes {
+		if deletes.Error != nil {
+			c.Logger.Errorw("error deleting relationship tuples", "user", deletes.TupleKey.User, "relation", deletes.TupleKey.Relation, "object", deletes.TupleKey.Object)
+
+			return resp, newWritingTuplesError(deletes.TupleKey.User, deletes.TupleKey.Relation, deletes.TupleKey.Object, "writing", err)
+		}
+	}
+
+	return resp, nil
+}
+
 // CreateRelationshipTuple creates a relationship tuple in the openFGA store
 func (c *Client) CreateRelationshipTuple(ctx context.Context, tuples []ofgaclient.ClientTupleKey) (*ofgaclient.ClientWriteResponse, error) {
 	if len(tuples) == 0 {
@@ -117,8 +147,8 @@ func (c *Client) CreateRelationshipTuple(ctx context.Context, tuples []ofgaclien
 	return resp, nil
 }
 
-// deleteRelationshipTuple deletes a relationship tuple in the openFGA store
-func (c *Client) deleteRelationshipTuple(ctx context.Context, tuples []openfga.TupleKeyWithoutCondition) (*ofgaclient.ClientWriteResponse, error) {
+// DeleteRelationshipTuple deletes a relationship tuple in the openFGA store
+func (c *Client) DeleteRelationshipTuple(ctx context.Context, tuples []openfga.TupleKeyWithoutCondition) (*ofgaclient.ClientWriteResponse, error) {
 	if len(tuples) == 0 {
 		return nil, nil
 	}
@@ -179,7 +209,7 @@ func (c *Client) DeleteAllObjectRelations(ctx context.Context, object string) er
 	}
 
 	// Notes: Writes only allow 10 tuples per call, this will need to be fixed
-	_, err = c.deleteRelationshipTuple(ctx, tuplesToDelete)
+	_, err = c.DeleteRelationshipTuple(ctx, tuplesToDelete)
 
 	return err
 }

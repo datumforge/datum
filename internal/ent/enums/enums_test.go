@@ -3,8 +3,9 @@ package enums_test
 import (
 	"testing"
 
-	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/datumforge/datum/internal/ent/enums"
 )
 
 func TestEnum(t *testing.T) {

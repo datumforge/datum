@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Yamashou/gqlgenc/clientv2"
-	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 

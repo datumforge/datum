@@ -174,16 +174,16 @@ type CreateOrganizationInput struct {
 	// An optional description of the organization
 	Description *string `json:"description,omitempty"`
 	// orgs directly associated with a user
-	PersonalOrg       *bool                             `json:"personalOrg,omitempty"`
-	ParentID          *string                           `json:"parentID,omitempty"`
-	GroupIDs          []string                          `json:"groupIDs,omitempty"`
-	IntegrationIDs    []string                          `json:"integrationIDs,omitempty"`
-	SettingID         *string                           `json:"settingID,omitempty"`
-	EntitlementIDs    []string                          `json:"entitlementIDs,omitempty"`
-	OauthproviderIDs  []string                          `json:"oauthproviderIDs,omitempty"`
-	UserIDs           []string                          `json:"userIDs,omitempty"`
-	CreateOrgMembers  []*CreateOrgMembershipInput       `json:"createOrgMembers,omitempty"`
-	CreateOrgSettings []*CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
+	PersonalOrg       *bool                           `json:"personalOrg,omitempty"`
+	ParentID          *string                         `json:"parentID,omitempty"`
+	GroupIDs          []string                        `json:"groupIDs,omitempty"`
+	IntegrationIDs    []string                        `json:"integrationIDs,omitempty"`
+	SettingID         *string                         `json:"settingID,omitempty"`
+	EntitlementIDs    []string                        `json:"entitlementIDs,omitempty"`
+	OauthproviderIDs  []string                        `json:"oauthproviderIDs,omitempty"`
+	UserIDs           []string                        `json:"userIDs,omitempty"`
+	CreateOrgMembers  []*CreateOrgMembershipInput     `json:"createOrgMembers,omitempty"`
+	CreateOrgSettings *CreateOrganizationSettingInput `json:"createOrgSettings,omitempty"`
 }
 
 // CreateOrganizationSettingInput is used for create OrganizationSetting object.

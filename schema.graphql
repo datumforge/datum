@@ -179,7 +179,7 @@ input CreateOrganizationInput {
 	oauthproviderIDs: [ID!]
 	userIDs: [ID!]
 	createOrgMembers: [CreateOrgMembershipInput!]
-	createOrgSettings: [CreateOrganizationSettingInput]
+	createOrgSettings: CreateOrganizationSettingInput
 }
 """
 CreateOrganizationSettingInput is used for create OrganizationSetting object.

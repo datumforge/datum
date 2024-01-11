@@ -16,4 +16,7 @@ var (
 
 	// ErrUnsupportedFGARole is returned when a role is assigned that is not supported in our fine grained authorization system
 	ErrUnsupportedFGARole = errors.New("unsupported role")
+
+	// ErrMissingRole is returned when an update request is made that contains no role
+	ErrMissingRole = errors.New("missing role in update")
 )

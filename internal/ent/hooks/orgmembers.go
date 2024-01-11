@@ -55,7 +55,8 @@ func HookOrgMembersAuthz() ent.Hook {
 					err = orgMemberUpdateHook(ctx, m, ids)
 				}
 			default:
-				return nil, fmt.Errorf("unsupported operations")
+				// we should never get here
+				return nil, fmt.Errorf("unsupported operations") //nolint:goerr113
 			}
 
 			return retValue, err
@@ -193,7 +194,7 @@ func getUpdateOrgMemberTuples(ctx context.Context, m *generated.OrgMembershipMut
 
 	newRole, exists := m.Role()
 	if !exists {
-		return tuples, fmt.Errorf("no role provided")
+		return tuples, ErrMissingRole
 	}
 
 	// User the IDs of the org memberships and delete all related tuples

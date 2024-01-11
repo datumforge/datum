@@ -802,7 +802,7 @@ type CreateOauthProviderInputResolver interface {
 }
 type CreateOrganizationInputResolver interface {
 	CreateOrgMembers(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
-	CreateOrgSettings(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrganizationSettingInput) error
+	CreateOrgSettings(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateOrganizationSettingInput) error
 }
 type OauthProviderWhereInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.OauthProviderWhereInput, data *int) error
@@ -8510,7 +8510,7 @@ type OrganizationSettingDeletePayload {
 }`, BuiltIn: false},
 	{Name: "../../schema/orgextended.graphql", Input: `extend input CreateOrganizationInput {
   createOrgMembers: [CreateOrgMembershipInput!]
-  createOrgSettings: [CreateOrganizationSettingInput]
+  createOrgSettings: CreateOrganizationSettingInput
 }
 
 extend input OrgMembershipWhereInput {
@@ -34911,7 +34911,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 			}
 		case "createOrgSettings":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createOrgSettings"))
-			data, err := ec.unmarshalOCreateOrganizationSettingInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, v)
+			data, err := ec.unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -59247,26 +59247,6 @@ func (ec *executionContext) unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗco
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalNCreateOrgMembershipInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInput(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOCreateOrganizationSettingInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx context.Context, v interface{}) ([]*generated.CreateOrganizationSettingInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*generated.CreateOrganizationSettingInput, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}

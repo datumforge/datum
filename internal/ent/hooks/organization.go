@@ -55,8 +55,10 @@ func HookOrganization() ent.Hook {
 				return nil, err
 			}
 
-			if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
-				return v, err
+			if mutation.Op().Is(ent.OpCreate) {
+				if err := createOrgMemberOwner(ctx, orgCreated.ID, mutation); err != nil {
+					return v, err
+				}
 			}
 
 			return v, err

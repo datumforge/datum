@@ -157,7 +157,7 @@ func (r *queryResolver) OrgMembership(ctx context.Context, id string) (*generate
 		ctx = viewer.NewContext(ctx, v)
 	}
 
-	org, err := r.client.OrgMembership.Get(ctx, id)
+	org, err := withTransactionalMutation(ctx).OrgMembership.Get(ctx, id)
 	if err != nil {
 		r.logger.Errorw("failed to get members of organization", "error", err)
 

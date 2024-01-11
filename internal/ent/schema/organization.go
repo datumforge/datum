@@ -89,7 +89,7 @@ func (Organization) Edges() []ent.Edge {
 		edge.To("oauthprovider", OauthProvider.Type),
 		edge.From("users", User.Type).
 			Ref("organizations").
-			Through("org_memberships", OrgMembership.Type),
+			Through("members", OrgMembership.Type),
 	}
 }
 

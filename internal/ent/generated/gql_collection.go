@@ -219,7 +219,7 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			gr.WithNamedUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
-		case "groupMemberships":
+		case "members":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -228,7 +228,7 @@ func (gr *GroupQuery) collectField(ctx context.Context, opCtx *graphql.Operation
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			gr.WithNamedGroupMemberships(alias, func(wq *GroupMembershipQuery) {
+			gr.WithNamedMembers(alias, func(wq *GroupMembershipQuery) {
 				*wq = *query
 			})
 		case "createdAt":
@@ -1348,7 +1348,7 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			o.WithNamedUsers(alias, func(wq *UserQuery) {
 				*wq = *query
 			})
-		case "orgMemberships":
+		case "members":
 			var (
 				alias = field.Alias
 				path  = append(path, alias)
@@ -1357,7 +1357,7 @@ func (o *OrganizationQuery) collectField(ctx context.Context, opCtx *graphql.Ope
 			if err := query.collectField(ctx, opCtx, field, path, satisfies...); err != nil {
 				return err
 			}
-			o.WithNamedOrgMemberships(alias, func(wq *OrgMembershipQuery) {
+			o.WithNamedMembers(alias, func(wq *OrgMembershipQuery) {
 				*wq = *query
 			})
 		case "createdAt":

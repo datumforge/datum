@@ -28,7 +28,7 @@ query GetUserByID($userId: ID!) {
       id
       name
       personalOrg
-      orgMemberships{
+      members{
         id
         role
       }

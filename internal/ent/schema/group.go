@@ -79,7 +79,7 @@ func (Group) Edges() []ent.Edge {
 			Unique(),
 		edge.From("users", User.Type).
 			Ref("groups").
-			Through("group_memberships", GroupMembership.Type),
+			Through("members", GroupMembership.Type),
 	}
 }
 

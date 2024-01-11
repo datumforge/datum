@@ -315,19 +315,19 @@ func (oc *OrganizationCreate) AddUsers(u ...*User) *OrganizationCreate {
 	return oc.AddUserIDs(ids...)
 }
 
-// AddOrgMembershipIDs adds the "org_memberships" edge to the OrgMembership entity by IDs.
-func (oc *OrganizationCreate) AddOrgMembershipIDs(ids ...string) *OrganizationCreate {
-	oc.mutation.AddOrgMembershipIDs(ids...)
+// AddMemberIDs adds the "members" edge to the OrgMembership entity by IDs.
+func (oc *OrganizationCreate) AddMemberIDs(ids ...string) *OrganizationCreate {
+	oc.mutation.AddMemberIDs(ids...)
 	return oc
 }
 
-// AddOrgMemberships adds the "org_memberships" edges to the OrgMembership entity.
-func (oc *OrganizationCreate) AddOrgMemberships(o ...*OrgMembership) *OrganizationCreate {
+// AddMembers adds the "members" edges to the OrgMembership entity.
+func (oc *OrganizationCreate) AddMembers(o ...*OrgMembership) *OrganizationCreate {
 	ids := make([]string, len(o))
 	for i := range o {
 		ids[i] = o[i].ID
 	}
-	return oc.AddOrgMembershipIDs(ids...)
+	return oc.AddMemberIDs(ids...)
 }
 
 // Mutation returns the OrganizationMutation object of the builder.
@@ -646,12 +646,12 @@ func (oc *OrganizationCreate) createSpec() (*Organization, *sqlgraph.CreateSpec)
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := oc.mutation.OrgMembershipsIDs(); len(nodes) > 0 {
+	if nodes := oc.mutation.MembersIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: true,
-			Table:   organization.OrgMembershipsTable,
-			Columns: []string{organization.OrgMembershipsColumn},
+			Table:   organization.MembersTable,
+			Columns: []string{organization.MembersColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(orgmembership.FieldID, field.TypeString),

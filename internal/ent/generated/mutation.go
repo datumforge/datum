@@ -2236,34 +2236,34 @@ func (m *EntitlementMutation) ResetEdge(name string) error {
 // GroupMutation represents an operation that mutates the Group nodes in the graph.
 type GroupMutation struct {
 	config
-	op                       Op
-	typ                      string
-	id                       *string
-	created_at               *time.Time
-	updated_at               *time.Time
-	created_by               *string
-	updated_by               *string
-	deleted_at               *time.Time
-	deleted_by               *string
-	name                     *string
-	description              *string
-	gravatar_logo_url        *string
-	logo_url                 *string
-	display_name             *string
-	clearedFields            map[string]struct{}
-	owner                    *string
-	clearedowner             bool
-	setting                  *string
-	clearedsetting           bool
-	users                    map[string]struct{}
-	removedusers             map[string]struct{}
-	clearedusers             bool
-	group_memberships        map[string]struct{}
-	removedgroup_memberships map[string]struct{}
-	clearedgroup_memberships bool
-	done                     bool
-	oldValue                 func(context.Context) (*Group, error)
-	predicates               []predicate.Group
+	op                Op
+	typ               string
+	id                *string
+	created_at        *time.Time
+	updated_at        *time.Time
+	created_by        *string
+	updated_by        *string
+	deleted_at        *time.Time
+	deleted_by        *string
+	name              *string
+	description       *string
+	gravatar_logo_url *string
+	logo_url          *string
+	display_name      *string
+	clearedFields     map[string]struct{}
+	owner             *string
+	clearedowner      bool
+	setting           *string
+	clearedsetting    bool
+	users             map[string]struct{}
+	removedusers      map[string]struct{}
+	clearedusers      bool
+	members           map[string]struct{}
+	removedmembers    map[string]struct{}
+	clearedmembers    bool
+	done              bool
+	oldValue          func(context.Context) (*Group, error)
+	predicates        []predicate.Group
 }
 
 var _ ent.Mutation = (*GroupMutation)(nil)
@@ -3013,58 +3013,58 @@ func (m *GroupMutation) ResetUsers() {
 	m.removedusers = nil
 }
 
-// AddGroupMembershipIDs adds the "group_memberships" edge to the GroupMembership entity by ids.
-func (m *GroupMutation) AddGroupMembershipIDs(ids ...string) {
-	if m.group_memberships == nil {
-		m.group_memberships = make(map[string]struct{})
+// AddMemberIDs adds the "members" edge to the GroupMembership entity by ids.
+func (m *GroupMutation) AddMemberIDs(ids ...string) {
+	if m.members == nil {
+		m.members = make(map[string]struct{})
 	}
 	for i := range ids {
-		m.group_memberships[ids[i]] = struct{}{}
+		m.members[ids[i]] = struct{}{}
 	}
 }
 
-// ClearGroupMemberships clears the "group_memberships" edge to the GroupMembership entity.
-func (m *GroupMutation) ClearGroupMemberships() {
-	m.clearedgroup_memberships = true
+// ClearMembers clears the "members" edge to the GroupMembership entity.
+func (m *GroupMutation) ClearMembers() {
+	m.clearedmembers = true
 }
 
-// GroupMembershipsCleared reports if the "group_memberships" edge to the GroupMembership entity was cleared.
-func (m *GroupMutation) GroupMembershipsCleared() bool {
-	return m.clearedgroup_memberships
+// MembersCleared reports if the "members" edge to the GroupMembership entity was cleared.
+func (m *GroupMutation) MembersCleared() bool {
+	return m.clearedmembers
 }
 
-// RemoveGroupMembershipIDs removes the "group_memberships" edge to the GroupMembership entity by IDs.
-func (m *GroupMutation) RemoveGroupMembershipIDs(ids ...string) {
-	if m.removedgroup_memberships == nil {
-		m.removedgroup_memberships = make(map[string]struct{})
+// RemoveMemberIDs removes the "members" edge to the GroupMembership entity by IDs.
+func (m *GroupMutation) RemoveMemberIDs(ids ...string) {
+	if m.removedmembers == nil {
+		m.removedmembers = make(map[string]struct{})
 	}
 	for i := range ids {
-		delete(m.group_memberships, ids[i])
-		m.removedgroup_memberships[ids[i]] = struct{}{}
+		delete(m.members, ids[i])
+		m.removedmembers[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedGroupMemberships returns the removed IDs of the "group_memberships" edge to the GroupMembership entity.
-func (m *GroupMutation) RemovedGroupMembershipsIDs() (ids []string) {
-	for id := range m.removedgroup_memberships {
+// RemovedMembers returns the removed IDs of the "members" edge to the GroupMembership entity.
+func (m *GroupMutation) RemovedMembersIDs() (ids []string) {
+	for id := range m.removedmembers {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// GroupMembershipsIDs returns the "group_memberships" edge IDs in the mutation.
-func (m *GroupMutation) GroupMembershipsIDs() (ids []string) {
-	for id := range m.group_memberships {
+// MembersIDs returns the "members" edge IDs in the mutation.
+func (m *GroupMutation) MembersIDs() (ids []string) {
+	for id := range m.members {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetGroupMemberships resets all changes to the "group_memberships" edge.
-func (m *GroupMutation) ResetGroupMemberships() {
-	m.group_memberships = nil
-	m.clearedgroup_memberships = false
-	m.removedgroup_memberships = nil
+// ResetMembers resets all changes to the "members" edge.
+func (m *GroupMutation) ResetMembers() {
+	m.members = nil
+	m.clearedmembers = false
+	m.removedmembers = nil
 }
 
 // Where appends a list predicates to the GroupMutation builder.
@@ -3442,8 +3442,8 @@ func (m *GroupMutation) AddedEdges() []string {
 	if m.users != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
-	if m.group_memberships != nil {
-		edges = append(edges, group.EdgeGroupMemberships)
+	if m.members != nil {
+		edges = append(edges, group.EdgeMembers)
 	}
 	return edges
 }
@@ -3466,9 +3466,9 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeGroupMemberships:
-		ids := make([]ent.Value, 0, len(m.group_memberships))
-		for id := range m.group_memberships {
+	case group.EdgeMembers:
+		ids := make([]ent.Value, 0, len(m.members))
+		for id := range m.members {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3482,8 +3482,8 @@ func (m *GroupMutation) RemovedEdges() []string {
 	if m.removedusers != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
-	if m.removedgroup_memberships != nil {
-		edges = append(edges, group.EdgeGroupMemberships)
+	if m.removedmembers != nil {
+		edges = append(edges, group.EdgeMembers)
 	}
 	return edges
 }
@@ -3498,9 +3498,9 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeGroupMemberships:
-		ids := make([]ent.Value, 0, len(m.removedgroup_memberships))
-		for id := range m.removedgroup_memberships {
+	case group.EdgeMembers:
+		ids := make([]ent.Value, 0, len(m.removedmembers))
+		for id := range m.removedmembers {
 			ids = append(ids, id)
 		}
 		return ids
@@ -3520,8 +3520,8 @@ func (m *GroupMutation) ClearedEdges() []string {
 	if m.clearedusers {
 		edges = append(edges, group.EdgeUsers)
 	}
-	if m.clearedgroup_memberships {
-		edges = append(edges, group.EdgeGroupMemberships)
+	if m.clearedmembers {
+		edges = append(edges, group.EdgeMembers)
 	}
 	return edges
 }
@@ -3536,8 +3536,8 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.clearedsetting
 	case group.EdgeUsers:
 		return m.clearedusers
-	case group.EdgeGroupMemberships:
-		return m.clearedgroup_memberships
+	case group.EdgeMembers:
+		return m.clearedmembers
 	}
 	return false
 }
@@ -3569,8 +3569,8 @@ func (m *GroupMutation) ResetEdge(name string) error {
 	case group.EdgeUsers:
 		m.ResetUsers()
 		return nil
-	case group.EdgeGroupMemberships:
-		m.ResetGroupMemberships()
+	case group.EdgeMembers:
+		m.ResetMembers()
 		return nil
 	}
 	return fmt.Errorf("unknown Group edge %s", name)
@@ -9808,48 +9808,48 @@ func (m *OrgMembershipMutation) ResetEdge(name string) error {
 // OrganizationMutation represents an operation that mutates the Organization nodes in the graph.
 type OrganizationMutation struct {
 	config
-	op                     Op
-	typ                    string
-	id                     *string
-	created_at             *time.Time
-	updated_at             *time.Time
-	created_by             *string
-	updated_by             *string
-	deleted_at             *time.Time
-	deleted_by             *string
-	name                   *string
-	display_name           *string
-	description            *string
-	personal_org           *bool
-	clearedFields          map[string]struct{}
-	parent                 *string
-	clearedparent          bool
-	children               map[string]struct{}
-	removedchildren        map[string]struct{}
-	clearedchildren        bool
-	groups                 map[string]struct{}
-	removedgroups          map[string]struct{}
-	clearedgroups          bool
-	integrations           map[string]struct{}
-	removedintegrations    map[string]struct{}
-	clearedintegrations    bool
-	setting                *string
-	clearedsetting         bool
-	entitlements           map[string]struct{}
-	removedentitlements    map[string]struct{}
-	clearedentitlements    bool
-	oauthprovider          map[string]struct{}
-	removedoauthprovider   map[string]struct{}
-	clearedoauthprovider   bool
-	users                  map[string]struct{}
-	removedusers           map[string]struct{}
-	clearedusers           bool
-	org_memberships        map[string]struct{}
-	removedorg_memberships map[string]struct{}
-	clearedorg_memberships bool
-	done                   bool
-	oldValue               func(context.Context) (*Organization, error)
-	predicates             []predicate.Organization
+	op                   Op
+	typ                  string
+	id                   *string
+	created_at           *time.Time
+	updated_at           *time.Time
+	created_by           *string
+	updated_by           *string
+	deleted_at           *time.Time
+	deleted_by           *string
+	name                 *string
+	display_name         *string
+	description          *string
+	personal_org         *bool
+	clearedFields        map[string]struct{}
+	parent               *string
+	clearedparent        bool
+	children             map[string]struct{}
+	removedchildren      map[string]struct{}
+	clearedchildren      bool
+	groups               map[string]struct{}
+	removedgroups        map[string]struct{}
+	clearedgroups        bool
+	integrations         map[string]struct{}
+	removedintegrations  map[string]struct{}
+	clearedintegrations  bool
+	setting              *string
+	clearedsetting       bool
+	entitlements         map[string]struct{}
+	removedentitlements  map[string]struct{}
+	clearedentitlements  bool
+	oauthprovider        map[string]struct{}
+	removedoauthprovider map[string]struct{}
+	clearedoauthprovider bool
+	users                map[string]struct{}
+	removedusers         map[string]struct{}
+	clearedusers         bool
+	members              map[string]struct{}
+	removedmembers       map[string]struct{}
+	clearedmembers       bool
+	done                 bool
+	oldValue             func(context.Context) (*Organization, error)
+	predicates           []predicate.Organization
 }
 
 var _ ent.Mutation = (*OrganizationMutation)(nil)
@@ -10833,58 +10833,58 @@ func (m *OrganizationMutation) ResetUsers() {
 	m.removedusers = nil
 }
 
-// AddOrgMembershipIDs adds the "org_memberships" edge to the OrgMembership entity by ids.
-func (m *OrganizationMutation) AddOrgMembershipIDs(ids ...string) {
-	if m.org_memberships == nil {
-		m.org_memberships = make(map[string]struct{})
+// AddMemberIDs adds the "members" edge to the OrgMembership entity by ids.
+func (m *OrganizationMutation) AddMemberIDs(ids ...string) {
+	if m.members == nil {
+		m.members = make(map[string]struct{})
 	}
 	for i := range ids {
-		m.org_memberships[ids[i]] = struct{}{}
+		m.members[ids[i]] = struct{}{}
 	}
 }
 
-// ClearOrgMemberships clears the "org_memberships" edge to the OrgMembership entity.
-func (m *OrganizationMutation) ClearOrgMemberships() {
-	m.clearedorg_memberships = true
+// ClearMembers clears the "members" edge to the OrgMembership entity.
+func (m *OrganizationMutation) ClearMembers() {
+	m.clearedmembers = true
 }
 
-// OrgMembershipsCleared reports if the "org_memberships" edge to the OrgMembership entity was cleared.
-func (m *OrganizationMutation) OrgMembershipsCleared() bool {
-	return m.clearedorg_memberships
+// MembersCleared reports if the "members" edge to the OrgMembership entity was cleared.
+func (m *OrganizationMutation) MembersCleared() bool {
+	return m.clearedmembers
 }
 
-// RemoveOrgMembershipIDs removes the "org_memberships" edge to the OrgMembership entity by IDs.
-func (m *OrganizationMutation) RemoveOrgMembershipIDs(ids ...string) {
-	if m.removedorg_memberships == nil {
-		m.removedorg_memberships = make(map[string]struct{})
+// RemoveMemberIDs removes the "members" edge to the OrgMembership entity by IDs.
+func (m *OrganizationMutation) RemoveMemberIDs(ids ...string) {
+	if m.removedmembers == nil {
+		m.removedmembers = make(map[string]struct{})
 	}
 	for i := range ids {
-		delete(m.org_memberships, ids[i])
-		m.removedorg_memberships[ids[i]] = struct{}{}
+		delete(m.members, ids[i])
+		m.removedmembers[ids[i]] = struct{}{}
 	}
 }
 
-// RemovedOrgMemberships returns the removed IDs of the "org_memberships" edge to the OrgMembership entity.
-func (m *OrganizationMutation) RemovedOrgMembershipsIDs() (ids []string) {
-	for id := range m.removedorg_memberships {
+// RemovedMembers returns the removed IDs of the "members" edge to the OrgMembership entity.
+func (m *OrganizationMutation) RemovedMembersIDs() (ids []string) {
+	for id := range m.removedmembers {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// OrgMembershipsIDs returns the "org_memberships" edge IDs in the mutation.
-func (m *OrganizationMutation) OrgMembershipsIDs() (ids []string) {
-	for id := range m.org_memberships {
+// MembersIDs returns the "members" edge IDs in the mutation.
+func (m *OrganizationMutation) MembersIDs() (ids []string) {
+	for id := range m.members {
 		ids = append(ids, id)
 	}
 	return
 }
 
-// ResetOrgMemberships resets all changes to the "org_memberships" edge.
-func (m *OrganizationMutation) ResetOrgMemberships() {
-	m.org_memberships = nil
-	m.clearedorg_memberships = false
-	m.removedorg_memberships = nil
+// ResetMembers resets all changes to the "members" edge.
+func (m *OrganizationMutation) ResetMembers() {
+	m.members = nil
+	m.clearedmembers = false
+	m.removedmembers = nil
 }
 
 // Where appends a list predicates to the OrganizationMutation builder.
@@ -11254,8 +11254,8 @@ func (m *OrganizationMutation) AddedEdges() []string {
 	if m.users != nil {
 		edges = append(edges, organization.EdgeUsers)
 	}
-	if m.org_memberships != nil {
-		edges = append(edges, organization.EdgeOrgMemberships)
+	if m.members != nil {
+		edges = append(edges, organization.EdgeMembers)
 	}
 	return edges
 }
@@ -11308,9 +11308,9 @@ func (m *OrganizationMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case organization.EdgeOrgMemberships:
-		ids := make([]ent.Value, 0, len(m.org_memberships))
-		for id := range m.org_memberships {
+	case organization.EdgeMembers:
+		ids := make([]ent.Value, 0, len(m.members))
+		for id := range m.members {
 			ids = append(ids, id)
 		}
 		return ids
@@ -11339,8 +11339,8 @@ func (m *OrganizationMutation) RemovedEdges() []string {
 	if m.removedusers != nil {
 		edges = append(edges, organization.EdgeUsers)
 	}
-	if m.removedorg_memberships != nil {
-		edges = append(edges, organization.EdgeOrgMemberships)
+	if m.removedmembers != nil {
+		edges = append(edges, organization.EdgeMembers)
 	}
 	return edges
 }
@@ -11385,9 +11385,9 @@ func (m *OrganizationMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case organization.EdgeOrgMemberships:
-		ids := make([]ent.Value, 0, len(m.removedorg_memberships))
-		for id := range m.removedorg_memberships {
+	case organization.EdgeMembers:
+		ids := make([]ent.Value, 0, len(m.removedmembers))
+		for id := range m.removedmembers {
 			ids = append(ids, id)
 		}
 		return ids
@@ -11422,8 +11422,8 @@ func (m *OrganizationMutation) ClearedEdges() []string {
 	if m.clearedusers {
 		edges = append(edges, organization.EdgeUsers)
 	}
-	if m.clearedorg_memberships {
-		edges = append(edges, organization.EdgeOrgMemberships)
+	if m.clearedmembers {
+		edges = append(edges, organization.EdgeMembers)
 	}
 	return edges
 }
@@ -11448,8 +11448,8 @@ func (m *OrganizationMutation) EdgeCleared(name string) bool {
 		return m.clearedoauthprovider
 	case organization.EdgeUsers:
 		return m.clearedusers
-	case organization.EdgeOrgMemberships:
-		return m.clearedorg_memberships
+	case organization.EdgeMembers:
+		return m.clearedmembers
 	}
 	return false
 }
@@ -11496,8 +11496,8 @@ func (m *OrganizationMutation) ResetEdge(name string) error {
 	case organization.EdgeUsers:
 		m.ResetUsers()
 		return nil
-	case organization.EdgeOrgMemberships:
-		m.ResetOrgMemberships()
+	case organization.EdgeMembers:
+		m.ResetMembers()
 		return nil
 	}
 	return fmt.Errorf("unknown Organization edge %s", name)

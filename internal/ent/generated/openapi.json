@@ -1682,7 +1682,7 @@
                       "type": "string"
                     }
                   },
-                  "group_memberships": {
+                  "members": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -1875,7 +1875,7 @@
                       "type": "string"
                     }
                   },
-                  "group_memberships": {
+                  "members": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -1913,14 +1913,14 @@
         }
       }
     },
-    "/groups/{id}/group-memberships": {
+    "/groups/{id}/members": {
       "get": {
         "tags": [
           "Group"
         ],
-        "summary": "List attached GroupMemberships",
-        "description": "List attached GroupMemberships.",
-        "operationId": "listGroupGroupMemberships",
+        "summary": "List attached Members",
+        "description": "List attached Members.",
+        "operationId": "listGroupMembers",
         "parameters": [
           {
             "name": "id",
@@ -1956,7 +1956,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Group_GroupMembershipsList"
+                    "$ref": "#/components/schemas/Group_MembersList"
                   }
                 }
               }
@@ -4202,7 +4202,7 @@
                       "type": "string"
                     }
                   },
-                  "org_memberships": {
+                  "members": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -4414,7 +4414,7 @@
                       "type": "string"
                     }
                   },
-                  "org_memberships": {
+                  "members": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -4708,6 +4708,70 @@
         }
       }
     },
+    "/organizations/{id}/members": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "List attached Members",
+        "description": "List attached Members.",
+        "operationId": "listOrganizationMembers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the Organization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "what page to render",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "itemsPerPage",
+            "in": "query",
+            "description": "item count to render per page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "result Organizations list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Organization_MembersList"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          },
+          "404": {
+            "$ref": "#/components/responses/404"
+          },
+          "409": {
+            "$ref": "#/components/responses/409"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        }
+      }
+    },
     "/organizations/{id}/oauthprovider": {
       "get": {
         "tags": [
@@ -4752,70 +4816,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Organization_OauthproviderList"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "404": {
-            "$ref": "#/components/responses/404"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          },
-          "500": {
-            "$ref": "#/components/responses/500"
-          }
-        }
-      }
-    },
-    "/organizations/{id}/org-memberships": {
-      "get": {
-        "tags": [
-          "Organization"
-        ],
-        "summary": "List attached OrgMemberships",
-        "description": "List attached OrgMemberships.",
-        "operationId": "listOrganizationOrgMemberships",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of the Organization",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "what page to render",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "itemsPerPage",
-            "in": "query",
-            "description": "item count to render per page",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "result Organizations list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Organization_OrgMembershipsList"
                   }
                 }
               }
@@ -8319,7 +8319,7 @@
               "$ref": "#/components/schemas/User"
             }
           },
-          "group_memberships": {
+          "members": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GroupMembership"
@@ -9354,7 +9354,7 @@
           "display_name"
         ]
       },
-      "Group_GroupMembershipsList": {
+      "Group_MembersList": {
         "type": "object",
         "properties": {
           "id": {
@@ -11118,7 +11118,7 @@
               "$ref": "#/components/schemas/User"
             }
           },
-          "org_memberships": {
+          "members": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/OrgMembership"
@@ -11968,6 +11968,58 @@
           "secret_name"
         ]
       },
+      "Organization_MembersList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "updated_by": {
+            "type": "string"
+          },
+          "deleted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deleted_by": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "ADMIN",
+              "MEMBER"
+            ],
+            "default": "MEMBER"
+          },
+          "org_id": {
+            "type": "string"
+          },
+          "user_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "updated_at",
+          "role",
+          "org_id",
+          "user_id"
+        ]
+      },
       "Organization_OauthproviderList": {
         "type": "object",
         "properties": {
@@ -12039,58 +12091,6 @@
           "token_url",
           "auth_style",
           "info_url"
-        ]
-      },
-      "Organization_OrgMembershipsList": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "created_by": {
-            "type": "string"
-          },
-          "updated_by": {
-            "type": "string"
-          },
-          "deleted_at": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted_by": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "OWNER",
-              "ADMIN",
-              "MEMBER"
-            ],
-            "default": "MEMBER"
-          },
-          "org_id": {
-            "type": "string"
-          },
-          "user_id": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "updated_at",
-          "role",
-          "org_id",
-          "user_id"
         ]
       },
       "Organization_ParentRead": {

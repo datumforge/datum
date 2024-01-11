@@ -64,21 +64,21 @@ type OrganizationEdges struct {
 	Oauthprovider []*OauthProvider `json:"oauthprovider,omitempty"`
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
-	// OrgMemberships holds the value of the org_memberships edge.
-	OrgMemberships []*OrgMembership `json:"org_memberships,omitempty"`
+	// Members holds the value of the members edge.
+	Members []*OrgMembership `json:"members,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
 	totalCount [9]map[string]int
 
-	namedChildren       map[string][]*Organization
-	namedGroups         map[string][]*Group
-	namedIntegrations   map[string][]*Integration
-	namedEntitlements   map[string][]*Entitlement
-	namedOauthprovider  map[string][]*OauthProvider
-	namedUsers          map[string][]*User
-	namedOrgMemberships map[string][]*OrgMembership
+	namedChildren      map[string][]*Organization
+	namedGroups        map[string][]*Group
+	namedIntegrations  map[string][]*Integration
+	namedEntitlements  map[string][]*Entitlement
+	namedOauthprovider map[string][]*OauthProvider
+	namedUsers         map[string][]*User
+	namedMembers       map[string][]*OrgMembership
 }
 
 // ParentOrErr returns the Parent value or an error if the edge
@@ -161,13 +161,13 @@ func (e OrganizationEdges) UsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "users"}
 }
 
-// OrgMembershipsOrErr returns the OrgMemberships value or an error if the edge
+// MembersOrErr returns the Members value or an error if the edge
 // was not loaded in eager-loading.
-func (e OrganizationEdges) OrgMembershipsOrErr() ([]*OrgMembership, error) {
+func (e OrganizationEdges) MembersOrErr() ([]*OrgMembership, error) {
 	if e.loadedTypes[8] {
-		return e.OrgMemberships, nil
+		return e.Members, nil
 	}
-	return nil, &NotLoadedError{edge: "org_memberships"}
+	return nil, &NotLoadedError{edge: "members"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -321,9 +321,9 @@ func (o *Organization) QueryUsers() *UserQuery {
 	return NewOrganizationClient(o.config).QueryUsers(o)
 }
 
-// QueryOrgMemberships queries the "org_memberships" edge of the Organization entity.
-func (o *Organization) QueryOrgMemberships() *OrgMembershipQuery {
-	return NewOrganizationClient(o.config).QueryOrgMemberships(o)
+// QueryMembers queries the "members" edge of the Organization entity.
+func (o *Organization) QueryMembers() *OrgMembershipQuery {
+	return NewOrganizationClient(o.config).QueryMembers(o)
 }
 
 // Update returns a builder for updating this Organization.
@@ -529,27 +529,27 @@ func (o *Organization) appendNamedUsers(name string, edges ...*User) {
 	}
 }
 
-// NamedOrgMemberships returns the OrgMemberships named value or an error if the edge was not
+// NamedMembers returns the Members named value or an error if the edge was not
 // loaded in eager-loading with this name.
-func (o *Organization) NamedOrgMemberships(name string) ([]*OrgMembership, error) {
-	if o.Edges.namedOrgMemberships == nil {
+func (o *Organization) NamedMembers(name string) ([]*OrgMembership, error) {
+	if o.Edges.namedMembers == nil {
 		return nil, &NotLoadedError{edge: name}
 	}
-	nodes, ok := o.Edges.namedOrgMemberships[name]
+	nodes, ok := o.Edges.namedMembers[name]
 	if !ok {
 		return nil, &NotLoadedError{edge: name}
 	}
 	return nodes, nil
 }
 
-func (o *Organization) appendNamedOrgMemberships(name string, edges ...*OrgMembership) {
-	if o.Edges.namedOrgMemberships == nil {
-		o.Edges.namedOrgMemberships = make(map[string][]*OrgMembership)
+func (o *Organization) appendNamedMembers(name string, edges ...*OrgMembership) {
+	if o.Edges.namedMembers == nil {
+		o.Edges.namedMembers = make(map[string][]*OrgMembership)
 	}
 	if len(edges) == 0 {
-		o.Edges.namedOrgMemberships[name] = []*OrgMembership{}
+		o.Edges.namedMembers[name] = []*OrgMembership{}
 	} else {
-		o.Edges.namedOrgMemberships[name] = append(o.Edges.namedOrgMemberships[name], edges...)
+		o.Edges.namedMembers[name] = append(o.Edges.namedMembers[name], edges...)
 	}
 }
 

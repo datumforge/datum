@@ -543,7 +543,7 @@ type Group implements Node {
 	owner: Organization!
 	setting: GroupSetting!
 	users: [User!]
-	groupMemberships: [GroupMembership!]
+	members: [GroupMembership!]
 }
 """A connection to a list of items."""
 type GroupConnection {
@@ -1051,9 +1051,9 @@ input GroupWhereInput {
 	"""users edge predicates"""
 	hasUsers: Boolean
 	hasUsersWith: [UserWhereInput!]
-	"""group_memberships edge predicates"""
-	hasGroupMemberships: Boolean
-	hasGroupMembershipsWith: [GroupMembershipWhereInput!]
+	"""members edge predicates"""
+	hasMembers: Boolean
+	hasMembersWith: [GroupMembershipWhereInput!]
 }
 type Integration implements Node {
 	id: ID!
@@ -2182,7 +2182,7 @@ type Organization implements Node {
 	entitlements: [Entitlement!]
 	oauthprovider: [OauthProvider!]
 	users: [User!]
-	orgMemberships: [OrgMembership!]
+	members: [OrgMembership!]
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -2663,9 +2663,9 @@ input OrganizationWhereInput {
 	"""users edge predicates"""
 	hasUsers: Boolean
 	hasUsersWith: [UserWhereInput!]
-	"""org_memberships edge predicates"""
-	hasOrgMemberships: Boolean
-	hasOrgMembershipsWith: [OrgMembershipWhereInput!]
+	"""members edge predicates"""
+	hasMembers: Boolean
+	hasMembersWith: [OrgMembershipWhereInput!]
 }
 """
 Information about pagination in a connection.

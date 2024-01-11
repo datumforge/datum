@@ -1080,52 +1080,52 @@ func (t *GetOrganizationByID_Organization_Children) GetEdges() []*GetOrganizatio
 	return t.Edges
 }
 
-type GetOrganizationByID_Organization_OrgMemberships_User struct {
+type GetOrganizationByID_Organization_Members_User struct {
 	ID        string "json:\"id\" graphql:\"id\""
 	FirstName string "json:\"firstName\" graphql:\"firstName\""
 	LastName  string "json:\"lastName\" graphql:\"lastName\""
 }
 
-func (t *GetOrganizationByID_Organization_OrgMemberships_User) GetID() string {
+func (t *GetOrganizationByID_Organization_Members_User) GetID() string {
 	if t == nil {
-		t = &GetOrganizationByID_Organization_OrgMemberships_User{}
+		t = &GetOrganizationByID_Organization_Members_User{}
 	}
 	return t.ID
 }
-func (t *GetOrganizationByID_Organization_OrgMemberships_User) GetFirstName() string {
+func (t *GetOrganizationByID_Organization_Members_User) GetFirstName() string {
 	if t == nil {
-		t = &GetOrganizationByID_Organization_OrgMemberships_User{}
+		t = &GetOrganizationByID_Organization_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GetOrganizationByID_Organization_OrgMemberships_User) GetLastName() string {
+func (t *GetOrganizationByID_Organization_Members_User) GetLastName() string {
 	if t == nil {
-		t = &GetOrganizationByID_Organization_OrgMemberships_User{}
+		t = &GetOrganizationByID_Organization_Members_User{}
 	}
 	return t.LastName
 }
 
-type GetOrganizationByID_Organization_OrgMemberships struct {
-	ID   string                                               "json:\"id\" graphql:\"id\""
-	Role enums.Role                                           "json:\"role\" graphql:\"role\""
-	User GetOrganizationByID_Organization_OrgMemberships_User "json:\"user\" graphql:\"user\""
+type GetOrganizationByID_Organization_Members struct {
+	ID   string                                        "json:\"id\" graphql:\"id\""
+	Role enums.Role                                    "json:\"role\" graphql:\"role\""
+	User GetOrganizationByID_Organization_Members_User "json:\"user\" graphql:\"user\""
 }
 
-func (t *GetOrganizationByID_Organization_OrgMemberships) GetID() string {
+func (t *GetOrganizationByID_Organization_Members) GetID() string {
 	if t == nil {
-		t = &GetOrganizationByID_Organization_OrgMemberships{}
+		t = &GetOrganizationByID_Organization_Members{}
 	}
 	return t.ID
 }
-func (t *GetOrganizationByID_Organization_OrgMemberships) GetRole() *enums.Role {
+func (t *GetOrganizationByID_Organization_Members) GetRole() *enums.Role {
 	if t == nil {
-		t = &GetOrganizationByID_Organization_OrgMemberships{}
+		t = &GetOrganizationByID_Organization_Members{}
 	}
 	return &t.Role
 }
-func (t *GetOrganizationByID_Organization_OrgMemberships) GetUser() *GetOrganizationByID_Organization_OrgMemberships_User {
+func (t *GetOrganizationByID_Organization_Members) GetUser() *GetOrganizationByID_Organization_Members_User {
 	if t == nil {
-		t = &GetOrganizationByID_Organization_OrgMemberships{}
+		t = &GetOrganizationByID_Organization_Members{}
 	}
 	return &t.User
 }
@@ -1240,19 +1240,19 @@ func (t *GetOrganizationByID_Organization_Setting) GetTags() []string {
 }
 
 type GetOrganizationByID_Organization struct {
-	ID             string                                             "json:\"id\" graphql:\"id\""
-	Name           string                                             "json:\"name\" graphql:\"name\""
-	DisplayName    string                                             "json:\"displayName\" graphql:\"displayName\""
-	Description    *string                                            "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg    bool                                               "json:\"personalOrg\" graphql:\"personalOrg\""
-	Parent         *GetOrganizationByID_Organization_Parent           "json:\"parent,omitempty\" graphql:\"parent\""
-	Children       GetOrganizationByID_Organization_Children          "json:\"children\" graphql:\"children\""
-	OrgMemberships []*GetOrganizationByID_Organization_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
-	Setting        *GetOrganizationByID_Organization_Setting          "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt      time.Time                                          "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy      *string                                            "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt      time.Time                                          "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy      *string                                            "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                      "json:\"id\" graphql:\"id\""
+	Name        string                                      "json:\"name\" graphql:\"name\""
+	DisplayName string                                      "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                     "json:\"description,omitempty\" graphql:\"description\""
+	PersonalOrg bool                                        "json:\"personalOrg\" graphql:\"personalOrg\""
+	Parent      *GetOrganizationByID_Organization_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
+	Children    GetOrganizationByID_Organization_Children   "json:\"children\" graphql:\"children\""
+	Members     []*GetOrganizationByID_Organization_Members "json:\"members,omitempty\" graphql:\"members\""
+	Setting     *GetOrganizationByID_Organization_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	CreatedAt   time.Time                                   "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                     "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                   "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                     "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetOrganizationByID_Organization) GetID() string {
@@ -1297,11 +1297,11 @@ func (t *GetOrganizationByID_Organization) GetChildren() *GetOrganizationByID_Or
 	}
 	return &t.Children
 }
-func (t *GetOrganizationByID_Organization) GetOrgMemberships() []*GetOrganizationByID_Organization_OrgMemberships {
+func (t *GetOrganizationByID_Organization) GetMembers() []*GetOrganizationByID_Organization_Members {
 	if t == nil {
 		t = &GetOrganizationByID_Organization{}
 	}
-	return t.OrgMemberships
+	return t.Members
 }
 func (t *GetOrganizationByID_Organization) GetSetting() *GetOrganizationByID_Organization_Setting {
 	if t == nil {
@@ -1406,52 +1406,52 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Children) GetEdges() []*Ge
 	return t.Edges
 }
 
-type GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User struct {
+type GetAllOrganizations_Organizations_Edges_Node_Members_User struct {
 	ID        string "json:\"id\" graphql:\"id\""
 	FirstName string "json:\"firstName\" graphql:\"firstName\""
 	LastName  string "json:\"lastName\" graphql:\"lastName\""
 }
 
-func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User) GetID() string {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetID() string {
 	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User{}
+		t = &GetAllOrganizations_Organizations_Edges_Node_Members_User{}
 	}
 	return t.ID
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User) GetFirstName() string {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetFirstName() string {
 	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User{}
+		t = &GetAllOrganizations_Organizations_Edges_Node_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User) GetLastName() string {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members_User) GetLastName() string {
 	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User{}
+		t = &GetAllOrganizations_Organizations_Edges_Node_Members_User{}
 	}
 	return t.LastName
 }
 
-type GetAllOrganizations_Organizations_Edges_Node_OrgMemberships struct {
-	ID   string                                                           "json:\"id\" graphql:\"id\""
-	Role enums.Role                                                       "json:\"role\" graphql:\"role\""
-	User GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User "json:\"user\" graphql:\"user\""
+type GetAllOrganizations_Organizations_Edges_Node_Members struct {
+	ID   string                                                    "json:\"id\" graphql:\"id\""
+	Role enums.Role                                                "json:\"role\" graphql:\"role\""
+	User GetAllOrganizations_Organizations_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
 }
 
-func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships) GetID() string {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members) GetID() string {
 	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships{}
+		t = &GetAllOrganizations_Organizations_Edges_Node_Members{}
 	}
 	return t.ID
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships) GetRole() *enums.Role {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members) GetRole() *enums.Role {
 	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships{}
+		t = &GetAllOrganizations_Organizations_Edges_Node_Members{}
 	}
 	return &t.Role
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships) GetUser() *GetAllOrganizations_Organizations_Edges_Node_OrgMemberships_User {
+func (t *GetAllOrganizations_Organizations_Edges_Node_Members) GetUser() *GetAllOrganizations_Organizations_Edges_Node_Members_User {
 	if t == nil {
-		t = &GetAllOrganizations_Organizations_Edges_Node_OrgMemberships{}
+		t = &GetAllOrganizations_Organizations_Edges_Node_Members{}
 	}
 	return &t.User
 }
@@ -1566,17 +1566,17 @@ func (t *GetAllOrganizations_Organizations_Edges_Node_Setting) GetTags() []strin
 }
 
 type GetAllOrganizations_Organizations_Edges_Node struct {
-	ID             string                                                         "json:\"id\" graphql:\"id\""
-	Name           string                                                         "json:\"name\" graphql:\"name\""
-	DisplayName    string                                                         "json:\"displayName\" graphql:\"displayName\""
-	Description    *string                                                        "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg    bool                                                           "json:\"personalOrg\" graphql:\"personalOrg\""
-	Parent         *GetAllOrganizations_Organizations_Edges_Node_Parent           "json:\"parent,omitempty\" graphql:\"parent\""
-	Children       GetAllOrganizations_Organizations_Edges_Node_Children          "json:\"children\" graphql:\"children\""
-	OrgMemberships []*GetAllOrganizations_Organizations_Edges_Node_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
-	Setting        *GetAllOrganizations_Organizations_Edges_Node_Setting          "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt      time.Time                                                      "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time                                                      "json:\"updatedAt\" graphql:\"updatedAt\""
+	ID          string                                                  "json:\"id\" graphql:\"id\""
+	Name        string                                                  "json:\"name\" graphql:\"name\""
+	DisplayName string                                                  "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                                 "json:\"description,omitempty\" graphql:\"description\""
+	PersonalOrg bool                                                    "json:\"personalOrg\" graphql:\"personalOrg\""
+	Parent      *GetAllOrganizations_Organizations_Edges_Node_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
+	Children    GetAllOrganizations_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
+	Members     []*GetAllOrganizations_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+	Setting     *GetAllOrganizations_Organizations_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	CreatedAt   time.Time                                               "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt   time.Time                                               "json:\"updatedAt\" graphql:\"updatedAt\""
 }
 
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetID() string {
@@ -1621,11 +1621,11 @@ func (t *GetAllOrganizations_Organizations_Edges_Node) GetChildren() *GetAllOrga
 	}
 	return &t.Children
 }
-func (t *GetAllOrganizations_Organizations_Edges_Node) GetOrgMemberships() []*GetAllOrganizations_Organizations_Edges_Node_OrgMemberships {
+func (t *GetAllOrganizations_Organizations_Edges_Node) GetMembers() []*GetAllOrganizations_Organizations_Edges_Node_Members {
 	if t == nil {
 		t = &GetAllOrganizations_Organizations_Edges_Node{}
 	}
-	return t.OrgMemberships
+	return t.Members
 }
 func (t *GetAllOrganizations_Organizations_Edges_Node) GetSetting() *GetAllOrganizations_Organizations_Edges_Node_Setting {
 	if t == nil {
@@ -1740,52 +1740,52 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Children) GetEdges() []*Org
 	return t.Edges
 }
 
-type OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User struct {
+type OrganizationsWhere_Organizations_Edges_Node_Members_User struct {
 	ID        string "json:\"id\" graphql:\"id\""
 	FirstName string "json:\"firstName\" graphql:\"firstName\""
 	LastName  string "json:\"lastName\" graphql:\"lastName\""
 }
 
-func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User) GetID() string {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetID() string {
 	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User{}
+		t = &OrganizationsWhere_Organizations_Edges_Node_Members_User{}
 	}
 	return t.ID
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User) GetFirstName() string {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetFirstName() string {
 	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User{}
+		t = &OrganizationsWhere_Organizations_Edges_Node_Members_User{}
 	}
 	return t.FirstName
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User) GetLastName() string {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members_User) GetLastName() string {
 	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User{}
+		t = &OrganizationsWhere_Organizations_Edges_Node_Members_User{}
 	}
 	return t.LastName
 }
 
-type OrganizationsWhere_Organizations_Edges_Node_OrgMemberships struct {
-	ID   string                                                          "json:\"id\" graphql:\"id\""
-	Role enums.Role                                                      "json:\"role\" graphql:\"role\""
-	User OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User "json:\"user\" graphql:\"user\""
+type OrganizationsWhere_Organizations_Edges_Node_Members struct {
+	ID   string                                                   "json:\"id\" graphql:\"id\""
+	Role enums.Role                                               "json:\"role\" graphql:\"role\""
+	User OrganizationsWhere_Organizations_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
 }
 
-func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships) GetID() string {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members) GetID() string {
 	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships{}
+		t = &OrganizationsWhere_Organizations_Edges_Node_Members{}
 	}
 	return t.ID
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships) GetRole() *enums.Role {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members) GetRole() *enums.Role {
 	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships{}
+		t = &OrganizationsWhere_Organizations_Edges_Node_Members{}
 	}
 	return &t.Role
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships) GetUser() *OrganizationsWhere_Organizations_Edges_Node_OrgMemberships_User {
+func (t *OrganizationsWhere_Organizations_Edges_Node_Members) GetUser() *OrganizationsWhere_Organizations_Edges_Node_Members_User {
 	if t == nil {
-		t = &OrganizationsWhere_Organizations_Edges_Node_OrgMemberships{}
+		t = &OrganizationsWhere_Organizations_Edges_Node_Members{}
 	}
 	return &t.User
 }
@@ -1900,17 +1900,17 @@ func (t *OrganizationsWhere_Organizations_Edges_Node_Setting) GetTags() []string
 }
 
 type OrganizationsWhere_Organizations_Edges_Node struct {
-	ID             string                                                        "json:\"id\" graphql:\"id\""
-	Name           string                                                        "json:\"name\" graphql:\"name\""
-	DisplayName    string                                                        "json:\"displayName\" graphql:\"displayName\""
-	Description    *string                                                       "json:\"description,omitempty\" graphql:\"description\""
-	PersonalOrg    bool                                                          "json:\"personalOrg\" graphql:\"personalOrg\""
-	Parent         *OrganizationsWhere_Organizations_Edges_Node_Parent           "json:\"parent,omitempty\" graphql:\"parent\""
-	Children       OrganizationsWhere_Organizations_Edges_Node_Children          "json:\"children\" graphql:\"children\""
-	OrgMemberships []*OrganizationsWhere_Organizations_Edges_Node_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
-	Setting        *OrganizationsWhere_Organizations_Edges_Node_Setting          "json:\"setting,omitempty\" graphql:\"setting\""
-	CreatedAt      time.Time                                                     "json:\"createdAt\" graphql:\"createdAt\""
-	UpdatedAt      time.Time                                                     "json:\"updatedAt\" graphql:\"updatedAt\""
+	ID          string                                                 "json:\"id\" graphql:\"id\""
+	Name        string                                                 "json:\"name\" graphql:\"name\""
+	DisplayName string                                                 "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                                "json:\"description,omitempty\" graphql:\"description\""
+	PersonalOrg bool                                                   "json:\"personalOrg\" graphql:\"personalOrg\""
+	Parent      *OrganizationsWhere_Organizations_Edges_Node_Parent    "json:\"parent,omitempty\" graphql:\"parent\""
+	Children    OrganizationsWhere_Organizations_Edges_Node_Children   "json:\"children\" graphql:\"children\""
+	Members     []*OrganizationsWhere_Organizations_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+	Setting     *OrganizationsWhere_Organizations_Edges_Node_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
+	CreatedAt   time.Time                                              "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt   time.Time                                              "json:\"updatedAt\" graphql:\"updatedAt\""
 }
 
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetID() string {
@@ -1955,11 +1955,11 @@ func (t *OrganizationsWhere_Organizations_Edges_Node) GetChildren() *Organizatio
 	}
 	return &t.Children
 }
-func (t *OrganizationsWhere_Organizations_Edges_Node) GetOrgMemberships() []*OrganizationsWhere_Organizations_Edges_Node_OrgMemberships {
+func (t *OrganizationsWhere_Organizations_Edges_Node) GetMembers() []*OrganizationsWhere_Organizations_Edges_Node_Members {
 	if t == nil {
 		t = &OrganizationsWhere_Organizations_Edges_Node{}
 	}
-	return t.OrgMemberships
+	return t.Members
 }
 func (t *OrganizationsWhere_Organizations_Edges_Node) GetSetting() *OrganizationsWhere_Organizations_Edges_Node_Setting {
 	if t == nil {
@@ -2954,29 +2954,29 @@ func (t *GetUserByID_User_Setting) GetSilencedAt() *time.Time {
 	return t.SilencedAt
 }
 
-type GetUserByID_User_Organizations_OrgMemberships struct {
+type GetUserByID_User_Organizations_Members struct {
 	ID   string     "json:\"id\" graphql:\"id\""
 	Role enums.Role "json:\"role\" graphql:\"role\""
 }
 
-func (t *GetUserByID_User_Organizations_OrgMemberships) GetID() string {
+func (t *GetUserByID_User_Organizations_Members) GetID() string {
 	if t == nil {
-		t = &GetUserByID_User_Organizations_OrgMemberships{}
+		t = &GetUserByID_User_Organizations_Members{}
 	}
 	return t.ID
 }
-func (t *GetUserByID_User_Organizations_OrgMemberships) GetRole() *enums.Role {
+func (t *GetUserByID_User_Organizations_Members) GetRole() *enums.Role {
 	if t == nil {
-		t = &GetUserByID_User_Organizations_OrgMemberships{}
+		t = &GetUserByID_User_Organizations_Members{}
 	}
 	return &t.Role
 }
 
 type GetUserByID_User_Organizations struct {
-	ID             string                                           "json:\"id\" graphql:\"id\""
-	Name           string                                           "json:\"name\" graphql:\"name\""
-	PersonalOrg    bool                                             "json:\"personalOrg\" graphql:\"personalOrg\""
-	OrgMemberships []*GetUserByID_User_Organizations_OrgMemberships "json:\"orgMemberships,omitempty\" graphql:\"orgMemberships\""
+	ID          string                                    "json:\"id\" graphql:\"id\""
+	Name        string                                    "json:\"name\" graphql:\"name\""
+	PersonalOrg bool                                      "json:\"personalOrg\" graphql:\"personalOrg\""
+	Members     []*GetUserByID_User_Organizations_Members "json:\"members,omitempty\" graphql:\"members\""
 }
 
 func (t *GetUserByID_User_Organizations) GetID() string {
@@ -2997,11 +2997,11 @@ func (t *GetUserByID_User_Organizations) GetPersonalOrg() bool {
 	}
 	return t.PersonalOrg
 }
-func (t *GetUserByID_User_Organizations) GetOrgMemberships() []*GetUserByID_User_Organizations_OrgMemberships {
+func (t *GetUserByID_User_Organizations) GetMembers() []*GetUserByID_User_Organizations_Members {
 	if t == nil {
 		t = &GetUserByID_User_Organizations{}
 	}
-	return t.OrgMemberships
+	return t.Members
 }
 
 type GetUserByID_User struct {
@@ -4773,7 +4773,7 @@ const GetOrganizationByIDDocument = `query GetOrganizationByID ($organizationId:
 				}
 			}
 		}
-		orgMemberships {
+		members {
 			id
 			role
 			user {
@@ -4847,7 +4847,7 @@ const GetAllOrganizationsDocument = `query GetAllOrganizations {
 						}
 					}
 				}
-				orgMemberships {
+				members {
 					id
 					role
 					user {
@@ -4919,7 +4919,7 @@ const OrganizationsWhereDocument = `query OrganizationsWhere ($where: Organizati
 						}
 					}
 				}
-				orgMemberships {
+				members {
 					id
 					role
 					user {
@@ -5379,7 +5379,7 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 			id
 			name
 			personalOrg
-			orgMemberships {
+			members {
 				id
 				role
 			}

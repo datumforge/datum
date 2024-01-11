@@ -823,9 +823,9 @@ type GroupWhereInput struct {
 	HasUsers     *bool             `json:"hasUsers,omitempty"`
 	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
 
-	// "group_memberships" edge predicates.
-	HasGroupMemberships     *bool                        `json:"hasGroupMemberships,omitempty"`
-	HasGroupMembershipsWith []*GroupMembershipWhereInput `json:"hasGroupMembershipsWith,omitempty"`
+	// "members" edge predicates.
+	HasMembers     *bool                        `json:"hasMembers,omitempty"`
+	HasMembersWith []*GroupMembershipWhereInput `json:"hasMembersWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -1275,23 +1275,23 @@ func (i *GroupWhereInput) P() (predicate.Group, error) {
 		}
 		predicates = append(predicates, group.HasUsersWith(with...))
 	}
-	if i.HasGroupMemberships != nil {
-		p := group.HasGroupMemberships()
-		if !*i.HasGroupMemberships {
+	if i.HasMembers != nil {
+		p := group.HasMembers()
+		if !*i.HasMembers {
 			p = group.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasGroupMembershipsWith) > 0 {
-		with := make([]predicate.GroupMembership, 0, len(i.HasGroupMembershipsWith))
-		for _, w := range i.HasGroupMembershipsWith {
+	if len(i.HasMembersWith) > 0 {
+		with := make([]predicate.GroupMembership, 0, len(i.HasMembersWith))
+		for _, w := range i.HasMembersWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasGroupMembershipsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasMembersWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, group.HasGroupMembershipsWith(with...))
+		predicates = append(predicates, group.HasMembersWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -5265,9 +5265,9 @@ type OrganizationWhereInput struct {
 	HasUsers     *bool             `json:"hasUsers,omitempty"`
 	HasUsersWith []*UserWhereInput `json:"hasUsersWith,omitempty"`
 
-	// "org_memberships" edge predicates.
-	HasOrgMemberships     *bool                      `json:"hasOrgMemberships,omitempty"`
-	HasOrgMembershipsWith []*OrgMembershipWhereInput `json:"hasOrgMembershipsWith,omitempty"`
+	// "members" edge predicates.
+	HasMembers     *bool                      `json:"hasMembers,omitempty"`
+	HasMembersWith []*OrgMembershipWhereInput `json:"hasMembersWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -5819,23 +5819,23 @@ func (i *OrganizationWhereInput) P() (predicate.Organization, error) {
 		}
 		predicates = append(predicates, organization.HasUsersWith(with...))
 	}
-	if i.HasOrgMemberships != nil {
-		p := organization.HasOrgMemberships()
-		if !*i.HasOrgMemberships {
+	if i.HasMembers != nil {
+		p := organization.HasMembers()
+		if !*i.HasMembers {
 			p = organization.Not(p)
 		}
 		predicates = append(predicates, p)
 	}
-	if len(i.HasOrgMembershipsWith) > 0 {
-		with := make([]predicate.OrgMembership, 0, len(i.HasOrgMembershipsWith))
-		for _, w := range i.HasOrgMembershipsWith {
+	if len(i.HasMembersWith) > 0 {
+		with := make([]predicate.OrgMembership, 0, len(i.HasMembersWith))
+		for _, w := range i.HasMembersWith {
 			p, err := w.P()
 			if err != nil {
-				return nil, fmt.Errorf("%w: field 'HasOrgMembershipsWith'", err)
+				return nil, fmt.Errorf("%w: field 'HasMembersWith'", err)
 			}
 			with = append(with, p)
 		}
-		predicates = append(predicates, organization.HasOrgMembershipsWith(with...))
+		predicates = append(predicates, organization.HasMembersWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

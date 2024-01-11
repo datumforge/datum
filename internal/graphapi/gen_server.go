@@ -98,22 +98,22 @@ type ComplexityRoot struct {
 	}
 
 	Group struct {
-		CreatedAt        func(childComplexity int) int
-		CreatedBy        func(childComplexity int) int
-		DeletedAt        func(childComplexity int) int
-		DeletedBy        func(childComplexity int) int
-		Description      func(childComplexity int) int
-		DisplayName      func(childComplexity int) int
-		GravatarLogoURL  func(childComplexity int) int
-		GroupMemberships func(childComplexity int) int
-		ID               func(childComplexity int) int
-		LogoURL          func(childComplexity int) int
-		Name             func(childComplexity int) int
-		Owner            func(childComplexity int) int
-		Setting          func(childComplexity int) int
-		UpdatedAt        func(childComplexity int) int
-		UpdatedBy        func(childComplexity int) int
-		Users            func(childComplexity int) int
+		CreatedAt       func(childComplexity int) int
+		CreatedBy       func(childComplexity int) int
+		DeletedAt       func(childComplexity int) int
+		DeletedBy       func(childComplexity int) int
+		Description     func(childComplexity int) int
+		DisplayName     func(childComplexity int) int
+		GravatarLogoURL func(childComplexity int) int
+		ID              func(childComplexity int) int
+		LogoURL         func(childComplexity int) int
+		Members         func(childComplexity int) int
+		Name            func(childComplexity int) int
+		Owner           func(childComplexity int) int
+		Setting         func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		UpdatedBy       func(childComplexity int) int
+		Users           func(childComplexity int) int
 	}
 
 	GroupConnection struct {
@@ -420,26 +420,26 @@ type ComplexityRoot struct {
 	}
 
 	Organization struct {
-		Children       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
-		CreatedAt      func(childComplexity int) int
-		CreatedBy      func(childComplexity int) int
-		DeletedAt      func(childComplexity int) int
-		DeletedBy      func(childComplexity int) int
-		Description    func(childComplexity int) int
-		DisplayName    func(childComplexity int) int
-		Entitlements   func(childComplexity int) int
-		Groups         func(childComplexity int) int
-		ID             func(childComplexity int) int
-		Integrations   func(childComplexity int) int
-		Name           func(childComplexity int) int
-		Oauthprovider  func(childComplexity int) int
-		OrgMemberships func(childComplexity int) int
-		Parent         func(childComplexity int) int
-		PersonalOrg    func(childComplexity int) int
-		Setting        func(childComplexity int) int
-		UpdatedAt      func(childComplexity int) int
-		UpdatedBy      func(childComplexity int) int
-		Users          func(childComplexity int) int
+		Children      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *generated.OrganizationOrder, where *generated.OrganizationWhereInput) int
+		CreatedAt     func(childComplexity int) int
+		CreatedBy     func(childComplexity int) int
+		DeletedAt     func(childComplexity int) int
+		DeletedBy     func(childComplexity int) int
+		Description   func(childComplexity int) int
+		DisplayName   func(childComplexity int) int
+		Entitlements  func(childComplexity int) int
+		Groups        func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Integrations  func(childComplexity int) int
+		Members       func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Oauthprovider func(childComplexity int) int
+		Parent        func(childComplexity int) int
+		PersonalOrg   func(childComplexity int) int
+		Setting       func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		UpdatedBy     func(childComplexity int) int
+		Users         func(childComplexity int) int
 	}
 
 	OrganizationConnection struct {
@@ -1040,13 +1040,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.GravatarLogoURL(childComplexity), true
 
-	case "Group.groupMemberships":
-		if e.complexity.Group.GroupMemberships == nil {
-			break
-		}
-
-		return e.complexity.Group.GroupMemberships(childComplexity), true
-
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
 			break
@@ -1060,6 +1053,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.LogoURL(childComplexity), true
+
+	case "Group.members":
+		if e.complexity.Group.Members == nil {
+			break
+		}
+
+		return e.complexity.Group.Members(childComplexity), true
 
 	case "Group.name":
 		if e.complexity.Group.Name == nil {
@@ -2634,6 +2634,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Organization.Integrations(childComplexity), true
 
+	case "Organization.members":
+		if e.complexity.Organization.Members == nil {
+			break
+		}
+
+		return e.complexity.Organization.Members(childComplexity), true
+
 	case "Organization.name":
 		if e.complexity.Organization.Name == nil {
 			break
@@ -2647,13 +2654,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Organization.Oauthprovider(childComplexity), true
-
-	case "Organization.orgMemberships":
-		if e.complexity.Organization.OrgMemberships == nil {
-			break
-		}
-
-		return e.complexity.Organization.OrgMemberships(childComplexity), true
 
 	case "Organization.parent":
 		if e.complexity.Organization.Parent == nil {
@@ -4667,7 +4667,7 @@ type Group implements Node {
   owner: Organization!
   setting: GroupSetting!
   users: [User!]
-  groupMemberships: [GroupMembership!]
+  members: [GroupMembership!]
 }
 """A connection to a list of items."""
 type GroupConnection {
@@ -5130,9 +5130,9 @@ input GroupWhereInput {
   """users edge predicates"""
   hasUsers: Boolean
   hasUsersWith: [UserWhereInput!]
-  """group_memberships edge predicates"""
-  hasGroupMemberships: Boolean
-  hasGroupMembershipsWith: [GroupMembershipWhereInput!]
+  """members edge predicates"""
+  hasMembers: Boolean
+  hasMembersWith: [GroupMembershipWhereInput!]
 }
 type Integration implements Node {
   id: ID!
@@ -5945,7 +5945,7 @@ type Organization implements Node {
   entitlements: [Entitlement!]
   oauthprovider: [OauthProvider!]
   users: [User!]
-  orgMemberships: [OrgMembership!]
+  members: [OrgMembership!]
 }
 """A connection to a list of items."""
 type OrganizationConnection {
@@ -6396,9 +6396,9 @@ input OrganizationWhereInput {
   """users edge predicates"""
   hasUsers: Boolean
   hasUsersWith: [UserWhereInput!]
-  """org_memberships edge predicates"""
-  hasOrgMemberships: Boolean
-  hasOrgMembershipsWith: [OrgMembershipWhereInput!]
+  """members edge predicates"""
+  hasMembers: Boolean
+  hasMembersWith: [OrgMembershipWhereInput!]
 }
 """
 Information about pagination in a connection.
@@ -11386,8 +11386,8 @@ func (ec *executionContext) fieldContext_Entitlement_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -12431,8 +12431,8 @@ func (ec *executionContext) fieldContext_Group_owner(ctx context.Context, field 
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -12603,8 +12603,8 @@ func (ec *executionContext) fieldContext_Group_users(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Group_groupMemberships(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Group_groupMemberships(ctx, field)
+func (ec *executionContext) _Group_members(ctx context.Context, field graphql.CollectedField, obj *generated.Group) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Group_members(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12617,7 +12617,7 @@ func (ec *executionContext) _Group_groupMemberships(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GroupMemberships(ctx)
+		return obj.Members(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12631,7 +12631,7 @@ func (ec *executionContext) _Group_groupMemberships(ctx context.Context, field g
 	return ec.marshalOGroupMembership2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Group_groupMemberships(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Group_members(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Group",
 		Field:      field,
@@ -12884,8 +12884,8 @@ func (ec *executionContext) fieldContext_GroupCreatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -13003,8 +13003,8 @@ func (ec *executionContext) fieldContext_GroupEdge_node(ctx context.Context, fie
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -13553,8 +13553,8 @@ func (ec *executionContext) fieldContext_GroupMembership_group(ctx context.Conte
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -14678,8 +14678,8 @@ func (ec *executionContext) fieldContext_GroupSetting_group(ctx context.Context,
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -15202,8 +15202,8 @@ func (ec *executionContext) fieldContext_GroupUpdatePayload_group(ctx context.Co
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -15751,8 +15751,8 @@ func (ec *executionContext) fieldContext_Integration_owner(ctx context.Context, 
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -19444,8 +19444,8 @@ func (ec *executionContext) fieldContext_OauthProvider_owner(ctx context.Context
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -21437,8 +21437,8 @@ func (ec *executionContext) fieldContext_OrgMembership_org(ctx context.Context, 
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -22523,8 +22523,8 @@ func (ec *executionContext) fieldContext_Organization_parent(ctx context.Context
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -22661,8 +22661,8 @@ func (ec *executionContext) fieldContext_Organization_groups(ctx context.Context
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -23055,8 +23055,8 @@ func (ec *executionContext) fieldContext_Organization_users(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Organization_orgMemberships(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Organization_orgMemberships(ctx, field)
+func (ec *executionContext) _Organization_members(ctx context.Context, field graphql.CollectedField, obj *generated.Organization) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Organization_members(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -23069,7 +23069,7 @@ func (ec *executionContext) _Organization_orgMemberships(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OrgMemberships(ctx)
+		return obj.Members(ctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -23083,7 +23083,7 @@ func (ec *executionContext) _Organization_orgMemberships(ctx context.Context, fi
 	return ec.marshalOOrgMembership2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Organization_orgMemberships(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Organization_members(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Organization",
 		Field:      field,
@@ -23344,8 +23344,8 @@ func (ec *executionContext) fieldContext_OrganizationCreatePayload_organization(
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -23471,8 +23471,8 @@ func (ec *executionContext) fieldContext_OrganizationEdge_node(ctx context.Conte
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -24304,8 +24304,8 @@ func (ec *executionContext) fieldContext_OrganizationSetting_organization(ctx co
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -24866,8 +24866,8 @@ func (ec *executionContext) fieldContext_OrganizationUpdatePayload_organization(
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -27235,8 +27235,8 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -27751,8 +27751,8 @@ func (ec *executionContext) fieldContext_Query_organization(ctx context.Context,
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -30337,8 +30337,8 @@ func (ec *executionContext) fieldContext_User_groups(ctx context.Context, field 
 				return ec.fieldContext_Group_setting(ctx, field)
 			case "users":
 				return ec.fieldContext_Group_users(ctx, field)
-			case "groupMemberships":
-				return ec.fieldContext_Group_groupMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Group_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
 		},
@@ -30420,8 +30420,8 @@ func (ec *executionContext) fieldContext_User_organizations(ctx context.Context,
 				return ec.fieldContext_Organization_oauthprovider(ctx, field)
 			case "users":
 				return ec.fieldContext_Organization_users(ctx, field)
-			case "orgMemberships":
-				return ec.fieldContext_Organization_orgMemberships(ctx, field)
+			case "members":
+				return ec.fieldContext_Organization_members(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Organization", field.Name)
 		},
@@ -37866,7 +37866,7 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasOwner", "hasOwnerWith", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasGroupMemberships", "hasGroupMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameEqualFold", "nameContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "hasOwner", "hasOwnerWith", "hasSetting", "hasSettingWith", "hasUsers", "hasUsersWith", "hasMembers", "hasMembersWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -38685,20 +38685,20 @@ func (ec *executionContext) unmarshalInputGroupWhereInput(ctx context.Context, o
 				return it, err
 			}
 			it.HasUsersWith = data
-		case "hasGroupMemberships":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGroupMemberships"))
+		case "hasMembers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMembers"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasGroupMemberships = data
-		case "hasGroupMembershipsWith":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasGroupMembershipsWith"))
+			it.HasMembers = data
+		case "hasMembersWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMembersWith"))
 			data, err := ec.unmarshalOGroupMembershipWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐGroupMembershipWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasGroupMembershipsWith = data
+			it.HasMembersWith = data
 		}
 	}
 
@@ -44049,7 +44049,7 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasOrgMemberships", "hasOrgMembershipsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "createdBy", "createdByNEQ", "createdByIn", "createdByNotIn", "createdByGT", "createdByGTE", "createdByLT", "createdByLTE", "createdByContains", "createdByHasPrefix", "createdByHasSuffix", "createdByIsNil", "createdByNotNil", "createdByEqualFold", "createdByContainsFold", "updatedBy", "updatedByNEQ", "updatedByIn", "updatedByNotIn", "updatedByGT", "updatedByGTE", "updatedByLT", "updatedByLTE", "updatedByContains", "updatedByHasPrefix", "updatedByHasSuffix", "updatedByIsNil", "updatedByNotNil", "updatedByEqualFold", "updatedByContainsFold", "deletedAt", "deletedAtNEQ", "deletedAtIn", "deletedAtNotIn", "deletedAtGT", "deletedAtGTE", "deletedAtLT", "deletedAtLTE", "deletedAtIsNil", "deletedAtNotNil", "deletedBy", "deletedByNEQ", "deletedByIn", "deletedByNotIn", "deletedByGT", "deletedByGTE", "deletedByLT", "deletedByLTE", "deletedByContains", "deletedByHasPrefix", "deletedByHasSuffix", "deletedByIsNil", "deletedByNotNil", "deletedByEqualFold", "deletedByContainsFold", "displayName", "displayNameNEQ", "displayNameIn", "displayNameNotIn", "displayNameGT", "displayNameGTE", "displayNameLT", "displayNameLTE", "displayNameContains", "displayNameHasPrefix", "displayNameHasSuffix", "displayNameEqualFold", "displayNameContainsFold", "parentOrganizationID", "parentOrganizationIDNEQ", "parentOrganizationIDIn", "parentOrganizationIDNotIn", "parentOrganizationIDGT", "parentOrganizationIDGTE", "parentOrganizationIDLT", "parentOrganizationIDLTE", "parentOrganizationIDContains", "parentOrganizationIDHasPrefix", "parentOrganizationIDHasSuffix", "parentOrganizationIDIsNil", "parentOrganizationIDNotNil", "parentOrganizationIDEqualFold", "parentOrganizationIDContainsFold", "personalOrg", "personalOrgNEQ", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith", "hasGroups", "hasGroupsWith", "hasIntegrations", "hasIntegrationsWith", "hasSetting", "hasSettingWith", "hasEntitlements", "hasEntitlementsWith", "hasOauthprovider", "hasOauthproviderWith", "hasUsers", "hasUsersWith", "hasMembers", "hasMembersWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44966,20 +44966,20 @@ func (ec *executionContext) unmarshalInputOrganizationWhereInput(ctx context.Con
 				return it, err
 			}
 			it.HasUsersWith = data
-		case "hasOrgMemberships":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrgMemberships"))
+		case "hasMembers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMembers"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasOrgMemberships = data
-		case "hasOrgMembershipsWith":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasOrgMembershipsWith"))
+			it.HasMembers = data
+		case "hasMembersWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasMembersWith"))
 			data, err := ec.unmarshalOOrgMembershipWhereInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐOrgMembershipWhereInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HasOrgMembershipsWith = data
+			it.HasMembersWith = data
 		}
 	}
 
@@ -51364,7 +51364,7 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "groupMemberships":
+		case "members":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -51373,7 +51373,7 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Group_groupMemberships(ctx, field, obj)
+				res = ec._Group_members(ctx, field, obj)
 				return res
 			}
 
@@ -54265,7 +54265,7 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "orgMemberships":
+		case "members":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -54274,7 +54274,7 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Organization_orgMemberships(ctx, field, obj)
+				res = ec._Organization_members(ctx, field, obj)
 				return res
 			}
 

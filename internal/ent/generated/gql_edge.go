@@ -44,14 +44,14 @@ func (gr *Group) Users(ctx context.Context) (result []*User, err error) {
 	return result, err
 }
 
-func (gr *Group) GroupMemberships(ctx context.Context) (result []*GroupMembership, err error) {
+func (gr *Group) Members(ctx context.Context) (result []*GroupMembership, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = gr.NamedGroupMemberships(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = gr.NamedMembers(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = gr.Edges.GroupMembershipsOrErr()
+		result, err = gr.Edges.MembersOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = gr.QueryGroupMemberships().All(ctx)
+		result, err = gr.QueryMembers().All(ctx)
 	}
 	return result, err
 }
@@ -209,14 +209,14 @@ func (o *Organization) Users(ctx context.Context) (result []*User, err error) {
 	return result, err
 }
 
-func (o *Organization) OrgMemberships(ctx context.Context) (result []*OrgMembership, err error) {
+func (o *Organization) Members(ctx context.Context) (result []*OrgMembership, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
-		result, err = o.NamedOrgMemberships(graphql.GetFieldContext(ctx).Field.Alias)
+		result, err = o.NamedMembers(graphql.GetFieldContext(ctx).Field.Alias)
 	} else {
-		result, err = o.Edges.OrgMembershipsOrErr()
+		result, err = o.Edges.MembersOrErr()
 	}
 	if IsNotLoaded(err) {
-		result, err = o.QueryOrgMemberships().All(ctx)
+		result, err = o.QueryMembers().All(ctx)
 	}
 	return result, err
 }

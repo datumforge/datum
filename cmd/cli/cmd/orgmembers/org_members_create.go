@@ -51,10 +51,8 @@ func addOrgMember(ctx context.Context) error {
 		return datum.NewRequiredFieldMissingError("user id")
 	}
 
+	// role defaults to `member` so it is not required
 	role := viper.GetString("orgmember.create.role")
-	if role == "" {
-		return datum.NewRequiredFieldMissingError("role")
-	}
 
 	r, err := getRoleEnum(role)
 	if err != nil {

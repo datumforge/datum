@@ -258,6 +258,53 @@ func (l localRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 	return w.Result(), nil
 }
 
+// mockWriteAny creates mock responses based on the mock FGA client
+func mockWriteAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
+	mockExecute := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
+
+	if errMsg == nil {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.SUCCESS,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, nil)
+	} else {
+		expectedResponse := ofgaclient.ClientWriteResponse{
+			Writes: []ofgaclient.ClientWriteRequestWriteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+			Deletes: []ofgaclient.ClientWriteRequestDeleteResponse{
+				{
+					Status: ofgaclient.FAILURE,
+				},
+			},
+		}
+
+		mockExecute.EXPECT().Execute().Return(&expectedResponse, errMsg)
+	}
+
+	mockRequest := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
+
+	mockRequest.EXPECT().Options(gomock.Any()).Return(mockExecute)
+
+	mockBody := mock_client.NewMockSdkClientWriteRequestInterface(mockCtrl)
+
+	mockBody.EXPECT().Body(gomock.Any()).Return(mockRequest)
+
+	c.EXPECT().Write(gomock.Any()).Return(mockBody)
+}
+
 // mockWriteTuplesAny creates mock responses based on the mock FGA client
 func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
 	mockExecute := mock_client.NewMockSdkClientWriteTuplesRequestInterface(mockCtrl)
@@ -295,8 +342,8 @@ func mockWriteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClien
 	c.EXPECT().WriteTuples(gomock.Any()).Return(mockBody)
 }
 
-// mocDeleteTuplesAny creates mock responses based on the mock FGA client
-func mocDeleteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
+// mockDeleteTuplesAny creates mock responses based on the mock FGA client
+func mockDeleteTuplesAny(mockCtrl *gomock.Controller, c *mock_client.MockSdkClient, ctx context.Context, errMsg error) {
 	mockExecute := mock_client.NewMockSdkClientDeleteTuplesRequestInterface(mockCtrl)
 
 	if errMsg == nil {

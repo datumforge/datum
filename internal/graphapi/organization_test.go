@@ -574,7 +574,7 @@ func TestMutation_DeleteOrganization(t *testing.T) {
 				if tc.errorMsg == "" {
 					mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 					mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.accessAllowed)
-					mocDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+					mockDeleteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 				}
 			}
 

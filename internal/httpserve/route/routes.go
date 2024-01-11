@@ -26,12 +26,6 @@ var (
 		ExpiresIn:  15 * time.Minute, //nolint:gomnd
 	}
 	restrictedEndpointsMW = []echo.MiddlewareFunc{}
-	staticFiles           = middleware.StaticConfig{
-		Root:   "../static/",
-		Browse: false,
-		HTML5:  false,
-	}
-	staticFileEndpointsMW = []echo.MiddlewareFunc{}
 )
 
 type Route struct {
@@ -56,7 +50,6 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 	// Middleware for restricted endpoints
 	restrictedEndpointsMW = append(restrictedEndpointsMW, mw...)
 	restrictedEndpointsMW = append(restrictedEndpointsMW, ratelimit.RateLimiterWithConfig(restrictedRateLimit)) // add restricted ratelimit middleware
-	staticFileEndpointsMW = append(staticFileEndpointsMW, middleware.StaticWithConfig(staticFiles))
 
 	// register handlers
 	if err := registerLivenessHandler(router); err != nil {
@@ -107,7 +100,15 @@ func RegisterRoutes(router *echo.Echo, h *handlers.Handler) error {
 		return err
 	}
 
-	if err := registerStaticHandler(router, h); err != nil {
+	if err := registerSecurityTxtHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerRobotsHandler(router, h); err != nil {
+		return err
+	}
+
+	if err := registerOpenAPISpecHandler(router); err != nil {
 		return err
 	}
 

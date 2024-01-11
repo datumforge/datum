@@ -1040,12 +1040,6 @@
                     ],
                     "default": "MEMBER"
                   },
-                  "group_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
-                  },
                   "group": {
                     "type": "string"
                   },
@@ -3531,12 +3525,6 @@
                       "MEMBER"
                     ],
                     "default": "MEMBER"
-                  },
-                  "org_id": {
-                    "type": "string"
-                  },
-                  "user_id": {
-                    "type": "string"
                   },
                   "org": {
                     "type": "string"

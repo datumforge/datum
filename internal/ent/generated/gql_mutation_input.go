@@ -323,8 +323,6 @@ type UpdateGroupMembershipInput struct {
 	ClearUpdatedBy bool
 	UpdatedBy      *string
 	Role           *enums.Role
-	GroupID        *string
-	UserID         *string
 }
 
 // Mutate applies the UpdateGroupMembershipInput on the GroupMembershipMutation builder.
@@ -340,12 +338,6 @@ func (i *UpdateGroupMembershipInput) Mutate(m *GroupMembershipMutation) {
 	}
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
-	}
-	if v := i.GroupID; v != nil {
-		m.SetGroupID(*v)
-	}
-	if v := i.UserID; v != nil {
-		m.SetUserID(*v)
 	}
 }
 
@@ -895,8 +887,6 @@ type UpdateOrgMembershipInput struct {
 	ClearUpdatedBy bool
 	UpdatedBy      *string
 	Role           *enums.Role
-	OrgID          *string
-	UserID         *string
 }
 
 // Mutate applies the UpdateOrgMembershipInput on the OrgMembershipMutation builder.
@@ -912,12 +902,6 @@ func (i *UpdateOrgMembershipInput) Mutate(m *OrgMembershipMutation) {
 	}
 	if v := i.Role; v != nil {
 		m.SetRole(*v)
-	}
-	if v := i.OrgID; v != nil {
-		m.SetOrgID(*v)
-	}
-	if v := i.UserID; v != nil {
-		m.SetUserID(*v)
 	}
 }
 

@@ -2901,8 +2901,6 @@ input UpdateGroupMembershipInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   role: GroupMembershipRole
-  groupID: ID
-  userID: ID
 }
 """
 UpdateGroupSettingInput is used for update GroupSetting object.
@@ -3004,8 +3002,6 @@ input UpdateOrgMembershipInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   role: OrgMembershipRole
-  orgID: ID
-  userID: ID
 }
 """
 UpdateOrganizationInput is used for update Organization object.

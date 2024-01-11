@@ -3,9 +3,11 @@ package schema
 import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 
 	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/mixin"
@@ -22,8 +24,8 @@ func (OrgMembership) Fields() []ent.Field {
 		field.Enum("role").
 			GoType(enums.RoleMember).
 			Default(string(enums.RoleMember)),
-		field.String("org_id"),
-		field.String("user_id"),
+		field.String("org_id").Immutable(),
+		field.String("user_id").Immutable(),
 	}
 }
 
@@ -33,11 +35,13 @@ func (OrgMembership) Edges() []ent.Edge {
 		edge.To("org", Organization.Type).
 			Field("org_id").
 			Required().
-			Unique(),
+			Unique().
+			Immutable(),
 		edge.To("user", User.Type).
 			Field("user_id").
 			Required().
-			Unique(),
+			Unique().
+			Immutable(),
 	}
 }
 
@@ -47,6 +51,13 @@ func (OrgMembership) Annotations() []schema.Annotation {
 		entgql.RelayConnection(),
 		entgql.QueryField(),
 		entgql.Mutations(entgql.MutationCreate(), (entgql.MutationUpdate())),
+	}
+}
+
+func (OrgMembership) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("user_id", "org_id").
+			Unique().Annotations(entsql.IndexWhere("deleted_at is NULL")),
 	}
 }
 

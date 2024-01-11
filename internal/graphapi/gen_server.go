@@ -7037,8 +7037,6 @@ input UpdateGroupMembershipInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   role: GroupMembershipRole
-  groupID: ID
-  userID: ID
 }
 """
 UpdateGroupSettingInput is used for update GroupSetting object.
@@ -7140,8 +7138,6 @@ input UpdateOrgMembershipInput {
   updatedBy: String
   clearUpdatedBy: Boolean
   role: OrgMembershipRole
-  orgID: ID
-  userID: ID
 }
 """
 UpdateOrganizationInput is used for update Organization object.
@@ -46774,7 +46770,7 @@ func (ec *executionContext) unmarshalInputUpdateGroupMembershipInput(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "role", "groupID", "userID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46809,20 +46805,6 @@ func (ec *executionContext) unmarshalInputUpdateGroupMembershipInput(ctx context
 				return it, err
 			}
 			it.Role = data
-		case "groupID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.GroupID = data
-		case "userID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		}
 	}
 
@@ -47289,7 +47271,7 @@ func (ec *executionContext) unmarshalInputUpdateOrgMembershipInput(ctx context.C
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "role", "orgID", "userID"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47324,20 +47306,6 @@ func (ec *executionContext) unmarshalInputUpdateOrgMembershipInput(ctx context.C
 				return it, err
 			}
 			it.Role = data
-		case "orgID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.OrgID = data
-		case "userID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userID"))
-			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.UserID = data
 		}
 	}
 

@@ -53,7 +53,7 @@ tasks:
     cmds:
       - task: ent
       - task: gqlgen
-      - mv ./internal/ent/generated/openapi.json ./internal/httpserve/route
+      - cp ./internal/ent/generated/openapi.json ./internal/httpserve/route
   atlas:
     desc: runs the atlas create and lint commands
     aliases: [atlas]

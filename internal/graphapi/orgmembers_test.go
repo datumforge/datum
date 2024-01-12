@@ -186,28 +186,37 @@ func TestQuery_UpdateOrgMembers(t *testing.T) {
 	om := (&OrgMemberBuilder{}).MustNew(reqCtx)
 
 	testCases := []struct {
-		name   string
-		role   enums.Role
-		errMsg string
+		name       string
+		role       enums.Role
+		tupleWrite bool
+		errMsg     string
 	}{
 		{
-			name: "happy path, update to admin from member",
-			role: enums.RoleAdmin,
+			name:       "happy path, update to admin from member",
+			tupleWrite: true,
+			role:       enums.RoleAdmin,
 		},
 		{
-			name: "happy path, update to member from admin",
-			role: enums.RoleMember,
+			name:       "happy path, update to member from admin",
+			tupleWrite: true,
+			role:       enums.RoleMember,
 		},
 		{
-			name:   "invalid role",
-			role:   enums.Invalid,
-			errMsg: "not a valid OrgMembershipRole",
+			name:       "update to same role",
+			tupleWrite: false, // nothing should change
+			role:       enums.RoleMember,
+		},
+		{
+			name:       "invalid role",
+			role:       enums.Invalid,
+			tupleWrite: false,
+			errMsg:     "not a valid OrgMembershipRole",
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run("Get "+tc.name, func(t *testing.T) {
-			if tc.errMsg == "" {
+			if tc.tupleWrite {
 				mockWriteAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
 			}
 

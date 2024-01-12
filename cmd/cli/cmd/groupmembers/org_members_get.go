@@ -22,7 +22,7 @@ var groupMembersGetCmd = &cobra.Command{
 func init() {
 	groupMembersCmd.AddCommand(groupMembersGetCmd)
 
-	groupMembersGetCmd.Flags().StringP("group-id", "o", "", "group id to query")
+	groupMembersGetCmd.Flags().StringP("group-id", "g", "", "group id to query")
 	datum.ViperBindFlag("groupmember.get.id", groupMembersGetCmd.Flags().Lookup("group-id"))
 }
 

@@ -218,18 +218,69 @@ func (t *GetGroupByID_Group_Setting) GetTags() []string {
 	return t.Tags
 }
 
+type GetGroupByID_Group_Members_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *GetGroupByID_Group_Members_User) GetID() string {
+	if t == nil {
+		t = &GetGroupByID_Group_Members_User{}
+	}
+	return t.ID
+}
+func (t *GetGroupByID_Group_Members_User) GetFirstName() string {
+	if t == nil {
+		t = &GetGroupByID_Group_Members_User{}
+	}
+	return t.FirstName
+}
+func (t *GetGroupByID_Group_Members_User) GetLastName() string {
+	if t == nil {
+		t = &GetGroupByID_Group_Members_User{}
+	}
+	return t.LastName
+}
+
+type GetGroupByID_Group_Members struct {
+	ID   string                          "json:\"id\" graphql:\"id\""
+	Role enums.Role                      "json:\"role\" graphql:\"role\""
+	User GetGroupByID_Group_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetGroupByID_Group_Members) GetID() string {
+	if t == nil {
+		t = &GetGroupByID_Group_Members{}
+	}
+	return t.ID
+}
+func (t *GetGroupByID_Group_Members) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetGroupByID_Group_Members{}
+	}
+	return &t.Role
+}
+func (t *GetGroupByID_Group_Members) GetUser() *GetGroupByID_Group_Members_User {
+	if t == nil {
+		t = &GetGroupByID_Group_Members{}
+	}
+	return &t.User
+}
+
 type GetGroupByID_Group struct {
-	ID          string                     "json:\"id\" graphql:\"id\""
-	Name        string                     "json:\"name\" graphql:\"name\""
-	Description *string                    "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                     "json:\"displayName\" graphql:\"displayName\""
-	Owner       GetGroupByID_Group_Owner   "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                    "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Setting     GetGroupByID_Group_Setting "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                  "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                    "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                  "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                    "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                        "json:\"id\" graphql:\"id\""
+	Name        string                        "json:\"name\" graphql:\"name\""
+	Description *string                       "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                        "json:\"displayName\" graphql:\"displayName\""
+	Owner       GetGroupByID_Group_Owner      "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                       "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     GetGroupByID_Group_Setting    "json:\"setting\" graphql:\"setting\""
+	Members     []*GetGroupByID_Group_Members "json:\"members,omitempty\" graphql:\"members\""
+	CreatedAt   time.Time                     "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                       "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                     "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                       "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetGroupByID_Group) GetID() string {
@@ -273,6 +324,12 @@ func (t *GetGroupByID_Group) GetSetting() *GetGroupByID_Group_Setting {
 		t = &GetGroupByID_Group{}
 	}
 	return &t.Setting
+}
+func (t *GetGroupByID_Group) GetMembers() []*GetGroupByID_Group_Members {
+	if t == nil {
+		t = &GetGroupByID_Group{}
+	}
+	return t.Members
 }
 func (t *GetGroupByID_Group) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -384,18 +441,69 @@ func (t *GroupsWhere_Groups_Edges_Node_Setting) GetTags() []string {
 	return t.Tags
 }
 
+type GroupsWhere_Groups_Edges_Node_Members_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetID() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Members_User{}
+	}
+	return t.ID
+}
+func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetFirstName() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Members_User{}
+	}
+	return t.FirstName
+}
+func (t *GroupsWhere_Groups_Edges_Node_Members_User) GetLastName() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Members_User{}
+	}
+	return t.LastName
+}
+
+type GroupsWhere_Groups_Edges_Node_Members struct {
+	ID   string                                     "json:\"id\" graphql:\"id\""
+	Role enums.Role                                 "json:\"role\" graphql:\"role\""
+	User GroupsWhere_Groups_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GroupsWhere_Groups_Edges_Node_Members) GetID() string {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Members{}
+	}
+	return t.ID
+}
+func (t *GroupsWhere_Groups_Edges_Node_Members) GetRole() *enums.Role {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Members{}
+	}
+	return &t.Role
+}
+func (t *GroupsWhere_Groups_Edges_Node_Members) GetUser() *GroupsWhere_Groups_Edges_Node_Members_User {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node_Members{}
+	}
+	return &t.User
+}
+
 type GroupsWhere_Groups_Edges_Node struct {
-	ID          string                                "json:\"id\" graphql:\"id\""
-	Name        string                                "json:\"name\" graphql:\"name\""
-	Description *string                               "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                                "json:\"displayName\" graphql:\"displayName\""
-	Owner       GroupsWhere_Groups_Edges_Node_Owner   "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                               "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Setting     GroupsWhere_Groups_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                             "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                               "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                             "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                               "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                   "json:\"id\" graphql:\"id\""
+	Name        string                                   "json:\"name\" graphql:\"name\""
+	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
+	Owner       GroupsWhere_Groups_Edges_Node_Owner      "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     GroupsWhere_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
+	Members     []*GroupsWhere_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+	CreatedAt   time.Time                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GroupsWhere_Groups_Edges_Node) GetID() string {
@@ -439,6 +547,12 @@ func (t *GroupsWhere_Groups_Edges_Node) GetSetting() *GroupsWhere_Groups_Edges_N
 		t = &GroupsWhere_Groups_Edges_Node{}
 	}
 	return &t.Setting
+}
+func (t *GroupsWhere_Groups_Edges_Node) GetMembers() []*GroupsWhere_Groups_Edges_Node_Members {
+	if t == nil {
+		t = &GroupsWhere_Groups_Edges_Node{}
+	}
+	return t.Members
 }
 func (t *GroupsWhere_Groups_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -572,18 +686,69 @@ func (t *GetAllGroups_Groups_Edges_Node_Setting) GetTags() []string {
 	return t.Tags
 }
 
+type GetAllGroups_Groups_Edges_Node_Members_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetID() string {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Members_User{}
+	}
+	return t.ID
+}
+func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetFirstName() string {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Members_User{}
+	}
+	return t.FirstName
+}
+func (t *GetAllGroups_Groups_Edges_Node_Members_User) GetLastName() string {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Members_User{}
+	}
+	return t.LastName
+}
+
+type GetAllGroups_Groups_Edges_Node_Members struct {
+	ID   string                                      "json:\"id\" graphql:\"id\""
+	Role enums.Role                                  "json:\"role\" graphql:\"role\""
+	User GetAllGroups_Groups_Edges_Node_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *GetAllGroups_Groups_Edges_Node_Members) GetID() string {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Members{}
+	}
+	return t.ID
+}
+func (t *GetAllGroups_Groups_Edges_Node_Members) GetRole() *enums.Role {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Members{}
+	}
+	return &t.Role
+}
+func (t *GetAllGroups_Groups_Edges_Node_Members) GetUser() *GetAllGroups_Groups_Edges_Node_Members_User {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node_Members{}
+	}
+	return &t.User
+}
+
 type GetAllGroups_Groups_Edges_Node struct {
-	ID          string                                 "json:\"id\" graphql:\"id\""
-	Name        string                                 "json:\"name\" graphql:\"name\""
-	Description *string                                "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                                 "json:\"displayName\" graphql:\"displayName\""
-	Owner       GetAllGroups_Groups_Edges_Node_Owner   "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                                "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Setting     GetAllGroups_Groups_Edges_Node_Setting "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                              "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                                "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                              "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                                "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                    "json:\"id\" graphql:\"id\""
+	Name        string                                    "json:\"name\" graphql:\"name\""
+	Description *string                                   "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                    "json:\"displayName\" graphql:\"displayName\""
+	Owner       GetAllGroups_Groups_Edges_Node_Owner      "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                                   "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     GetAllGroups_Groups_Edges_Node_Setting    "json:\"setting\" graphql:\"setting\""
+	Members     []*GetAllGroups_Groups_Edges_Node_Members "json:\"members,omitempty\" graphql:\"members\""
+	CreatedAt   time.Time                                 "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                 "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *GetAllGroups_Groups_Edges_Node) GetID() string {
@@ -627,6 +792,12 @@ func (t *GetAllGroups_Groups_Edges_Node) GetSetting() *GetAllGroups_Groups_Edges
 		t = &GetAllGroups_Groups_Edges_Node{}
 	}
 	return &t.Setting
+}
+func (t *GetAllGroups_Groups_Edges_Node) GetMembers() []*GetAllGroups_Groups_Edges_Node_Members {
+	if t == nil {
+		t = &GetAllGroups_Groups_Edges_Node{}
+	}
+	return t.Members
 }
 func (t *GetAllGroups_Groups_Edges_Node) GetCreatedAt() *time.Time {
 	if t == nil {
@@ -760,18 +931,69 @@ func (t *CreateGroup_CreateGroup_Group_Setting) GetTags() []string {
 	return t.Tags
 }
 
+type CreateGroup_CreateGroup_Group_Members_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *CreateGroup_CreateGroup_Group_Members_User) GetID() string {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Members_User{}
+	}
+	return t.ID
+}
+func (t *CreateGroup_CreateGroup_Group_Members_User) GetFirstName() string {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Members_User{}
+	}
+	return t.FirstName
+}
+func (t *CreateGroup_CreateGroup_Group_Members_User) GetLastName() string {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Members_User{}
+	}
+	return t.LastName
+}
+
+type CreateGroup_CreateGroup_Group_Members struct {
+	ID   string                                     "json:\"id\" graphql:\"id\""
+	Role enums.Role                                 "json:\"role\" graphql:\"role\""
+	User CreateGroup_CreateGroup_Group_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *CreateGroup_CreateGroup_Group_Members) GetID() string {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Members{}
+	}
+	return t.ID
+}
+func (t *CreateGroup_CreateGroup_Group_Members) GetRole() *enums.Role {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Members{}
+	}
+	return &t.Role
+}
+func (t *CreateGroup_CreateGroup_Group_Members) GetUser() *CreateGroup_CreateGroup_Group_Members_User {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group_Members{}
+	}
+	return &t.User
+}
+
 type CreateGroup_CreateGroup_Group struct {
-	ID          string                                "json:\"id\" graphql:\"id\""
-	Name        string                                "json:\"name\" graphql:\"name\""
-	Description *string                               "json:\"description,omitempty\" graphql:\"description\""
-	DisplayName string                                "json:\"displayName\" graphql:\"displayName\""
-	Owner       CreateGroup_CreateGroup_Group_Owner   "json:\"owner\" graphql:\"owner\""
-	LogoURL     *string                               "json:\"logoURL,omitempty\" graphql:\"logoURL\""
-	Setting     CreateGroup_CreateGroup_Group_Setting "json:\"setting\" graphql:\"setting\""
-	CreatedAt   time.Time                             "json:\"createdAt\" graphql:\"createdAt\""
-	CreatedBy   *string                               "json:\"createdBy,omitempty\" graphql:\"createdBy\""
-	UpdatedAt   time.Time                             "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string                               "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                   "json:\"id\" graphql:\"id\""
+	Name        string                                   "json:\"name\" graphql:\"name\""
+	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
+	Owner       CreateGroup_CreateGroup_Group_Owner      "json:\"owner\" graphql:\"owner\""
+	LogoURL     *string                                  "json:\"logoURL,omitempty\" graphql:\"logoURL\""
+	Setting     CreateGroup_CreateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
+	Members     []*CreateGroup_CreateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
+	CreatedAt   time.Time                                "json:\"createdAt\" graphql:\"createdAt\""
+	CreatedBy   *string                                  "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *CreateGroup_CreateGroup_Group) GetID() string {
@@ -816,6 +1038,12 @@ func (t *CreateGroup_CreateGroup_Group) GetSetting() *CreateGroup_CreateGroup_Gr
 	}
 	return &t.Setting
 }
+func (t *CreateGroup_CreateGroup_Group) GetMembers() []*CreateGroup_CreateGroup_Group_Members {
+	if t == nil {
+		t = &CreateGroup_CreateGroup_Group{}
+	}
+	return t.Members
+}
 func (t *CreateGroup_CreateGroup_Group) GetCreatedAt() *time.Time {
 	if t == nil {
 		t = &CreateGroup_CreateGroup_Group{}
@@ -852,13 +1080,64 @@ func (t *CreateGroup_CreateGroup) GetGroup() *CreateGroup_CreateGroup_Group {
 	return &t.Group
 }
 
+type UpdateGroup_UpdateGroup_Group_Members_User struct {
+	ID        string "json:\"id\" graphql:\"id\""
+	FirstName string "json:\"firstName\" graphql:\"firstName\""
+	LastName  string "json:\"lastName\" graphql:\"lastName\""
+}
+
+func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetID() string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Members_User{}
+	}
+	return t.ID
+}
+func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetFirstName() string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Members_User{}
+	}
+	return t.FirstName
+}
+func (t *UpdateGroup_UpdateGroup_Group_Members_User) GetLastName() string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Members_User{}
+	}
+	return t.LastName
+}
+
+type UpdateGroup_UpdateGroup_Group_Members struct {
+	ID   string                                     "json:\"id\" graphql:\"id\""
+	Role enums.Role                                 "json:\"role\" graphql:\"role\""
+	User UpdateGroup_UpdateGroup_Group_Members_User "json:\"user\" graphql:\"user\""
+}
+
+func (t *UpdateGroup_UpdateGroup_Group_Members) GetID() string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Members{}
+	}
+	return t.ID
+}
+func (t *UpdateGroup_UpdateGroup_Group_Members) GetRole() *enums.Role {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Members{}
+	}
+	return &t.Role
+}
+func (t *UpdateGroup_UpdateGroup_Group_Members) GetUser() *UpdateGroup_UpdateGroup_Group_Members_User {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Members{}
+	}
+	return &t.User
+}
+
 type UpdateGroup_UpdateGroup_Group struct {
-	ID          string    "json:\"id\" graphql:\"id\""
-	Name        string    "json:\"name\" graphql:\"name\""
-	DisplayName string    "json:\"displayName\" graphql:\"displayName\""
-	Description *string   "json:\"description,omitempty\" graphql:\"description\""
-	UpdatedAt   time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
-	UpdatedBy   *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	ID          string                                   "json:\"id\" graphql:\"id\""
+	Name        string                                   "json:\"name\" graphql:\"name\""
+	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	Members     []*UpdateGroup_UpdateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
+	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
+	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
 }
 
 func (t *UpdateGroup_UpdateGroup_Group) GetID() string {
@@ -884,6 +1163,12 @@ func (t *UpdateGroup_UpdateGroup_Group) GetDescription() *string {
 		t = &UpdateGroup_UpdateGroup_Group{}
 	}
 	return t.Description
+}
+func (t *UpdateGroup_UpdateGroup_Group) GetMembers() []*UpdateGroup_UpdateGroup_Group_Members {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group{}
+	}
+	return t.Members
 }
 func (t *UpdateGroup_UpdateGroup_Group) GetUpdatedAt() *time.Time {
 	if t == nil {
@@ -4837,6 +5122,15 @@ const GetGroupByIDDocument = `query GetGroupByID ($groupId: ID!) {
 			syncToGithub
 			tags
 		}
+		members {
+			id
+			role
+			user {
+				id
+				firstName
+				lastName
+			}
+		}
 		createdAt
 		createdBy
 		updatedAt
@@ -4885,6 +5179,15 @@ const GroupsWhereDocument = `query GroupsWhere ($where: GroupWhereInput) {
 					syncToSlack
 					syncToGithub
 					tags
+				}
+				members {
+					id
+					role
+					user {
+						id
+						firstName
+						lastName
+					}
 				}
 				createdAt
 				createdBy
@@ -4937,6 +5240,15 @@ const GetAllGroupsDocument = `query GetAllGroups {
 					syncToGithub
 					tags
 				}
+				members {
+					id
+					role
+					user {
+						id
+						firstName
+						lastName
+					}
+				}
 				createdAt
 				createdBy
 				updatedAt
@@ -4985,6 +5297,15 @@ const CreateGroupDocument = `mutation CreateGroup ($input: CreateGroupInput!) {
 				syncToGithub
 				tags
 			}
+			members {
+				id
+				role
+				user {
+					id
+					firstName
+					lastName
+				}
+			}
 			createdAt
 			createdBy
 			updatedAt
@@ -5018,6 +5339,15 @@ const UpdateGroupDocument = `mutation UpdateGroup ($updateGroupId: ID!, $input: 
 			name
 			displayName
 			description
+			members {
+				id
+				role
+				user {
+					id
+					firstName
+					lastName
+				}
+			}
 			updatedAt
 			updatedBy
 		}

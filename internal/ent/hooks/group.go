@@ -6,12 +6,13 @@ import (
 	"strings"
 
 	"entgo.io/ent"
-	openfga "github.com/openfga/go-sdk"
 
+	"github.com/datumforge/datum/internal/ent/enums"
 	"github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/generated/hook"
 	"github.com/datumforge/datum/internal/ent/mixin"
 	"github.com/datumforge/datum/internal/fga"
+	"github.com/datumforge/datum/internal/httpserve/middleware/auth"
 )
 
 // HookGroup runs on group mutations to set default values that are not provided
@@ -58,7 +59,7 @@ func HookGroupAuthz() ent.Hook {
 			}
 
 			if m.Op().Is(ent.OpCreate) {
-				// create the relationship tuple for the admin
+				// create the group member admin and relationship tuple for parent org
 				err = groupCreateHook(ctx, m)
 			} else if m.Op().Is(ent.OpDelete|ent.OpDeleteOne) || mixin.CheckIsSoftDelete(ctx) {
 				// delete all relationship tuples on delete, or soft delete (Update Op)
@@ -78,18 +79,11 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 		org, orgexists := m.OwnerID()
 
 		if exists && orgexists {
-			m.Logger.Infow("creating admin relationship tuples", "relation", fga.AdminRelation, "object", object)
-
-			tupleGroup := []openfga.TupleKey{}
-
-			adminTuples, err := createTupleFromUserContext(ctx, &m.Authz, fga.AdminRelation, object)
-
+			// create the admin group member
+			err := createGroupMemberOwner(ctx, objID, m)
 			if err != nil {
 				return err
 			}
-
-			tupleGroup = append(tupleGroup, adminTuples...)
-
 			m.Logger.Infow("creating parent relationship tuples", "relation", fga.ParentRelation, "org", org, "object", object)
 
 			orgTuples, err := createOrgTuple(ctx, &m.Authz, org, fga.ParentRelation, object)
@@ -98,14 +92,39 @@ func groupCreateHook(ctx context.Context, m *generated.GroupMutation) error {
 				return err
 			}
 
-			tupleGroup = append(tupleGroup, orgTuples...)
-
-			if _, err := m.Authz.CreateRelationshipTuple(ctx, tupleGroup); err != nil {
+			if _, err := m.Authz.CreateRelationshipTuple(ctx, orgTuples); err != nil {
 				m.Logger.Errorw("failed to create relationship tuple", "error", err)
 
 				return ErrInternalServerError
 			}
 		}
+	}
+
+	return nil
+}
+
+func createGroupMemberOwner(ctx context.Context, gID string, m *generated.GroupMutation) error {
+	// get userID from context
+	// if this is nil that means we are running without authentication
+	// and no user will get added to the organization
+	userID, err := auth.GetUserIDFromContext(ctx)
+	if err != nil {
+		m.Logger.Infow("unable to get user id from echo context, not adding user to organization")
+
+		return nil
+	}
+
+	// Add User as admin of group
+	input := generated.CreateGroupMembershipInput{
+		UserID:  userID,
+		GroupID: gID,
+		Role:    &enums.RoleAdmin,
+	}
+
+	if _, err := m.Client().GroupMembership.Create().SetInput(input).Save(ctx); err != nil {
+		m.Logger.Errorw("error creating group membership for admin", "error", err)
+
+		return err
 	}
 
 	return nil

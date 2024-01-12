@@ -23,7 +23,7 @@ var groupMembersUpdateCmd = &cobra.Command{
 func init() {
 	groupMembersCmd.AddCommand(groupMembersUpdateCmd)
 
-	groupMembersUpdateCmd.Flags().StringP("group-id", "o", "", "group id")
+	groupMembersUpdateCmd.Flags().StringP("group-id", "g", "", "group id")
 	datum.ViperBindFlag("groupmember.update.groupid", groupMembersUpdateCmd.Flags().Lookup("group-id"))
 
 	groupMembersUpdateCmd.Flags().StringP("user-id", "u", "", "user id")

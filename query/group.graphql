@@ -20,6 +20,15 @@ query GetGroupByID($groupId: ID!) {
       syncToGithub
       tags
     }
+    members {
+      id
+      role
+      user {
+        id
+        firstName
+        lastName
+      }
+    }
     createdAt
     createdBy
     updatedAt
@@ -50,6 +59,15 @@ query GroupsWhere($where: GroupWhereInput) {
           syncToSlack
           syncToGithub
           tags
+        }
+        members {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
+          }
         }
         createdAt
         createdBy
@@ -84,6 +102,15 @@ query GetAllGroups {
           syncToGithub
           tags
         }
+        members {
+          id
+          role
+          user {
+            id
+            firstName
+            lastName
+          }
+        }
         createdAt
         createdBy
         updatedAt
@@ -116,6 +143,15 @@ mutation CreateGroup($input: CreateGroupInput!) {
         syncToGithub
         tags
       }
+      members {
+        id
+        role
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
       createdAt
       createdBy
       updatedAt
@@ -131,6 +167,15 @@ mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
       name
       displayName
       description
+      members {
+        id
+        role
+        user {
+          id
+          firstName
+          lastName
+        }
+      }
       updatedAt
       updatedBy
     }

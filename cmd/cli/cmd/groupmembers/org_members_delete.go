@@ -23,7 +23,7 @@ var groupMembersDeleteCmd = &cobra.Command{
 func init() {
 	groupMembersCmd.AddCommand(groupMembersDeleteCmd)
 
-	groupMembersDeleteCmd.Flags().StringP("group-id", "o", "", "group id")
+	groupMembersDeleteCmd.Flags().StringP("group-id", "g", "", "group id")
 	datum.ViperBindFlag("groupmember.delete.groupid", groupMembersDeleteCmd.Flags().Lookup("group-id"))
 
 	groupMembersDeleteCmd.Flags().StringP("user-id", "u", "", "user id")

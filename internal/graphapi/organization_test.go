@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
 	"github.com/datumforge/datum/internal/ent/mixin"
 )
@@ -200,6 +201,8 @@ func TestMutation_CreateOrganization(t *testing.T) {
 	orgToDelete := (&OrganizationBuilder{}).MustNew(reqCtx)
 	// delete said org
 	(&OrganizationCleanup{OrgID: orgToDelete.ID}).MustDelete(reqCtx)
+	// setup user for membership
+	testUser = (&UserBuilder{}).MustNew(reqCtx)
 
 	testCases := []struct {
 		name           string
@@ -207,6 +210,7 @@ func TestMutation_CreateOrganization(t *testing.T) {
 		displayName    string
 		orgDescription string
 		parentOrgID    string
+		settings       *datumclient.CreateOrganizationSettingInput
 		errorMsg       string
 	}{
 		{
@@ -215,6 +219,16 @@ func TestMutation_CreateOrganization(t *testing.T) {
 			displayName:    gofakeit.LetterN(50),
 			orgDescription: gofakeit.HipsterSentence(10),
 			parentOrgID:    "", // root org
+		},
+		{
+			name:           "happy path organization with settings",
+			orgName:        gofakeit.Name(),
+			displayName:    gofakeit.LetterN(50),
+			orgDescription: gofakeit.HipsterSentence(10),
+			settings: &datumclient.CreateOrganizationSettingInput{
+				Domains: []string{"meow.datum.net"},
+			},
+			parentOrgID: "", // root org
 		},
 		{
 			name:           "happy path organization with parent org",
@@ -294,6 +308,10 @@ func TestMutation_CreateOrganization(t *testing.T) {
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
+			if tc.settings != nil {
+				input.CreateOrgSettings = tc.settings
+			}
+
 			// When calls are expected to fail, we won't ever write tuples
 			if tc.errorMsg == "" {
 				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
@@ -331,6 +349,10 @@ func TestMutation_CreateOrganization(t *testing.T) {
 
 			// Ensure display name is not empty
 			assert.NotEmpty(t, resp.CreateOrganization.Organization.DisplayName)
+
+			if tc.settings != nil {
+				assert.Len(t, resp.CreateOrganization.Organization.Setting.Domains, 1)
+			}
 
 			// cleanup org
 			(&OrganizationCleanup{OrgID: resp.CreateOrganization.Organization.ID}).MustDelete(reqCtx)
@@ -436,6 +458,8 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 	nameUpdateLong := gofakeit.LetterN(200)
 
 	org := (&OrganizationBuilder{}).MustNew(reqCtx)
+	testUser1 := (&UserBuilder{}).MustNew(reqCtx)
+
 	listObjects := []string{fmt.Sprintf("organization:%s", org.ID)}
 
 	testCases := []struct {
@@ -454,6 +478,30 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 				Name:        nameUpdate,
 				DisplayName: org.DisplayName,
 				Description: &org.Description,
+			},
+		},
+		{
+			name: "add member as admin",
+			updateInput: datumclient.UpdateOrganizationInput{
+				Name: &nameUpdate,
+				AddOrgMembers: []*datumclient.CreateOrgMembershipInput{
+					{
+						UserID: testUser1.ID,
+						Role:   &enums.RoleAdmin,
+					},
+				},
+			},
+			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
+				ID:          org.ID,
+				Name:        nameUpdate,
+				DisplayName: org.DisplayName,
+				Description: &org.Description,
+				Members: []*datumclient.UpdateOrganization_UpdateOrganization_Organization_Members{
+					{
+						Role:   enums.RoleAdmin,
+						UserID: testUser1.ID,
+					},
+				},
 			},
 		},
 		{
@@ -481,6 +529,21 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			},
 		},
 		{
+			name: "update settings, happy path",
+			updateInput: datumclient.UpdateOrganizationInput{
+				Description: &descriptionUpdate,
+				UpdateOrgSettings: &datumclient.UpdateOrganizationSettingInput{
+					Domains: []string{"meow.datum.net", "woof.datum.net"},
+				},
+			},
+			expectedRes: datumclient.UpdateOrganization_UpdateOrganization_Organization{
+				ID:          org.ID,
+				Name:        nameUpdate,        // this would have been updated on the prior test
+				DisplayName: displayNameUpdate, // this would have been updated on the prior test
+				Description: &descriptionUpdate,
+			},
+		},
+		{
 			name: "update name, too long",
 			updateInput: datumclient.UpdateOrganizationInput{
 				Name: &nameUpdateLong,
@@ -499,6 +562,14 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 			// check access
 			mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 
+			if tc.updateInput.AddOrgMembers != nil {
+				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+			}
+
+			if tc.updateInput.UpdateOrgSettings != nil {
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+			}
+
 			// update org
 			resp, err := authClient.gc.UpdateOrganization(reqCtx, org.ID, tc.updateInput)
 
@@ -516,11 +587,26 @@ func TestMutation_UpdateOrganization(t *testing.T) {
 
 			// Make sure provided values match
 			updatedOrg := resp.GetUpdateOrganization().Organization
-			assert.Equal(t, tc.expectedRes, updatedOrg)
+			assert.Equal(t, tc.expectedRes.Name, updatedOrg.Name)
+			assert.Equal(t, tc.expectedRes.DisplayName, updatedOrg.DisplayName)
+			assert.Equal(t, tc.expectedRes.Description, updatedOrg.Description)
+
+			if tc.updateInput.AddOrgMembers != nil {
+				// Adding a member to an org will make it 2 users, there is an owner
+				// assigned to the org automatically
+				assert.Len(t, updatedOrg.Members, 2)
+				assert.Equal(t, tc.expectedRes.Members[0].Role, updatedOrg.Members[1].Role)
+				assert.Equal(t, tc.expectedRes.Members[0].UserID, updatedOrg.Members[1].UserID)
+			}
+
+			if tc.updateInput.UpdateOrgSettings != nil {
+				assert.Len(t, updatedOrg.GetSetting().Domains, 2)
+			}
 		})
 	}
 
 	(&OrganizationCleanup{OrgID: org.ID}).MustDelete(reqCtx)
+	(&UserCleanup{UserID: testUser1.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_DeleteOrganization(t *testing.T) {

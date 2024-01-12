@@ -51,6 +51,7 @@ type ResolverRoot interface {
 	CreateOrganizationInput() CreateOrganizationInputResolver
 	OauthProviderWhereInput() OauthProviderWhereInputResolver
 	UpdateOauthProviderInput() UpdateOauthProviderInputResolver
+	UpdateOrganizationInput() UpdateOrganizationInputResolver
 }
 
 type DirectiveRoot struct {
@@ -801,7 +802,6 @@ type CreateOauthProviderInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.CreateOauthProviderInput, data int) error
 }
 type CreateOrganizationInputResolver interface {
-	CreateOrgMembers(ctx context.Context, obj *generated.CreateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
 	CreateOrgSettings(ctx context.Context, obj *generated.CreateOrganizationInput, data *generated.CreateOrganizationSettingInput) error
 }
 type OauthProviderWhereInputResolver interface {
@@ -816,6 +816,10 @@ type OauthProviderWhereInputResolver interface {
 }
 type UpdateOauthProviderInputResolver interface {
 	AuthStyle(ctx context.Context, obj *generated.UpdateOauthProviderInput, data *int) error
+}
+type UpdateOrganizationInputResolver interface {
+	AddOrgMembers(ctx context.Context, obj *generated.UpdateOrganizationInput, data []*generated.CreateOrgMembershipInput) error
+	UpdateOrgSettings(ctx context.Context, obj *generated.UpdateOrganizationInput, data *generated.UpdateOrganizationSettingInput) error
 }
 
 type executableSchema struct {
@@ -8509,8 +8513,12 @@ type OrganizationSettingDeletePayload {
     deletedID: ID!
 }`, BuiltIn: false},
 	{Name: "../../schema/orgextended.graphql", Input: `extend input CreateOrganizationInput {
-  createOrgMembers: [CreateOrgMembershipInput!]
   createOrgSettings: CreateOrganizationSettingInput
+}
+
+extend input UpdateOrganizationInput {
+  addOrgMembers: [CreateOrgMembershipInput!]
+  updateOrgSettings: UpdateOrganizationSettingInput
 }
 
 extend input OrgMembershipWhereInput {
@@ -34788,7 +34796,7 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs", "userIDs", "createOrgMembers", "createOrgSettings"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "createdBy", "updatedBy", "name", "displayName", "description", "personalOrg", "parentID", "groupIDs", "integrationIDs", "settingID", "entitlementIDs", "oauthproviderIDs", "userIDs", "createOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34900,15 +34908,6 @@ func (ec *executionContext) unmarshalInputCreateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.UserIDs = data
-		case "createOrgMembers":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createOrgMembers"))
-			data, err := ec.unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.CreateOrganizationInput().CreateOrgMembers(ctx, &it, data); err != nil {
-				return it, err
-			}
 		case "createOrgSettings":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createOrgSettings"))
 			data, err := ec.unmarshalOCreateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrganizationSettingInput(ctx, v)
@@ -47365,7 +47364,7 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers"}
+	fieldsInOrder := [...]string{"updatedAt", "updatedBy", "clearUpdatedBy", "name", "displayName", "description", "clearDescription", "addGroupIDs", "removeGroupIDs", "clearGroups", "addIntegrationIDs", "removeIntegrationIDs", "clearIntegrations", "settingID", "clearSetting", "addEntitlementIDs", "removeEntitlementIDs", "clearEntitlements", "addOauthproviderIDs", "removeOauthproviderIDs", "clearOauthprovider", "addUserIDs", "removeUserIDs", "clearUsers", "addOrgMembers", "updateOrgSettings"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47540,6 +47539,24 @@ func (ec *executionContext) unmarshalInputUpdateOrganizationInput(ctx context.Co
 				return it, err
 			}
 			it.ClearUsers = data
+		case "addOrgMembers":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addOrgMembers"))
+			data, err := ec.unmarshalOCreateOrgMembershipInput2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐCreateOrgMembershipInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateOrganizationInput().AddOrgMembers(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "updateOrgSettings":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateOrgSettings"))
+			data, err := ec.unmarshalOUpdateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateOrganizationSettingInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.UpdateOrganizationInput().UpdateOrgSettings(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -61377,6 +61394,14 @@ func (ec *executionContext) marshalOTime2ᚖtimeᚐTime(ctx context.Context, sel
 	}
 	res := graphql.MarshalTime(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOUpdateOrganizationSettingInput2ᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUpdateOrganizationSettingInput(ctx context.Context, v interface{}) (*generated.UpdateOrganizationSettingInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputUpdateOrganizationSettingInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOUser2ᚕᚖgithubᚗcomᚋdatumforgeᚋdatumᚋinternalᚋentᚋgeneratedᚐUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*generated.User) graphql.Marshaler {

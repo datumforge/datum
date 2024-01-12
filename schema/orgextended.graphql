@@ -1,6 +1,10 @@
 extend input CreateOrganizationInput {
-  createOrgMembers: [CreateOrgMembershipInput!]
   createOrgSettings: CreateOrganizationSettingInput
+}
+
+extend input UpdateOrganizationInput {
+  addOrgMembers: [CreateOrgMembershipInput!]
+  updateOrgSettings: UpdateOrganizationSettingInput
 }
 
 extend input OrgMembershipWhereInput {

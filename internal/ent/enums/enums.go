@@ -8,7 +8,7 @@ import (
 
 type Role string
 
-const (
+var (
 	RoleOwner  Role = "OWNER"
 	RoleAdmin  Role = "ADMIN"
 	RoleMember Role = "MEMBER"

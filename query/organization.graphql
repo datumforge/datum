@@ -216,6 +216,28 @@ mutation UpdateOrganization($updateOrganizationId: ID!, $input: UpdateOrganizati
       name
       displayName
       description
+      members {
+        id
+        role
+        userID
+      }
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        domains
+        ssoCert
+        ssoEntrypoint
+        ssoIssuer
+        billingContact
+        billingEmail
+        billingPhone
+        billingAddress
+        taxIdentifier
+        tags
+      }
     }
   }
 }

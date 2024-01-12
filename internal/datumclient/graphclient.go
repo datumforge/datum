@@ -2268,11 +2268,147 @@ func (t *CreateOrganization_CreateOrganization) GetOrganization() *CreateOrganiz
 	return &t.Organization
 }
 
+type UpdateOrganization_UpdateOrganization_Organization_Members struct {
+	ID     string     "json:\"id\" graphql:\"id\""
+	Role   enums.Role "json:\"role\" graphql:\"role\""
+	UserID string     "json:\"userID\" graphql:\"userID\""
+}
+
+func (t *UpdateOrganization_UpdateOrganization_Organization_Members) GetID() string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Members{}
+	}
+	return t.ID
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Members) GetRole() *enums.Role {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Members{}
+	}
+	return &t.Role
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Members) GetUserID() string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Members{}
+	}
+	return t.UserID
+}
+
+type UpdateOrganization_UpdateOrganization_Organization_Setting struct {
+	ID             string    "json:\"id\" graphql:\"id\""
+	CreatedAt      time.Time "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt      time.Time "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy      *string   "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy      *string   "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Domains        []string  "json:\"domains,omitempty\" graphql:\"domains\""
+	SsoCert        *string   "json:\"ssoCert,omitempty\" graphql:\"ssoCert\""
+	SsoEntrypoint  *string   "json:\"ssoEntrypoint,omitempty\" graphql:\"ssoEntrypoint\""
+	SsoIssuer      *string   "json:\"ssoIssuer,omitempty\" graphql:\"ssoIssuer\""
+	BillingContact *string   "json:\"billingContact,omitempty\" graphql:\"billingContact\""
+	BillingEmail   *string   "json:\"billingEmail,omitempty\" graphql:\"billingEmail\""
+	BillingPhone   *string   "json:\"billingPhone,omitempty\" graphql:\"billingPhone\""
+	BillingAddress *string   "json:\"billingAddress,omitempty\" graphql:\"billingAddress\""
+	TaxIdentifier  *string   "json:\"taxIdentifier,omitempty\" graphql:\"taxIdentifier\""
+	Tags           []string  "json:\"tags,omitempty\" graphql:\"tags\""
+}
+
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetID() string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.ID
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetDomains() []string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.Domains
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetSsoCert() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.SsoCert
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetSsoEntrypoint() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.SsoEntrypoint
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetSsoIssuer() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.SsoIssuer
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetBillingContact() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.BillingContact
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetBillingEmail() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.BillingEmail
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetBillingPhone() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.BillingPhone
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetBillingAddress() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.BillingAddress
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetTaxIdentifier() *string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.TaxIdentifier
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization_Setting) GetTags() []string {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization_Setting{}
+	}
+	return t.Tags
+}
+
 type UpdateOrganization_UpdateOrganization_Organization struct {
-	ID          string  "json:\"id\" graphql:\"id\""
-	Name        string  "json:\"name\" graphql:\"name\""
-	DisplayName string  "json:\"displayName\" graphql:\"displayName\""
-	Description *string "json:\"description,omitempty\" graphql:\"description\""
+	ID          string                                                        "json:\"id\" graphql:\"id\""
+	Name        string                                                        "json:\"name\" graphql:\"name\""
+	DisplayName string                                                        "json:\"displayName\" graphql:\"displayName\""
+	Description *string                                                       "json:\"description,omitempty\" graphql:\"description\""
+	Members     []*UpdateOrganization_UpdateOrganization_Organization_Members "json:\"members,omitempty\" graphql:\"members\""
+	Setting     *UpdateOrganization_UpdateOrganization_Organization_Setting   "json:\"setting,omitempty\" graphql:\"setting\""
 }
 
 func (t *UpdateOrganization_UpdateOrganization_Organization) GetID() string {
@@ -2298,6 +2434,18 @@ func (t *UpdateOrganization_UpdateOrganization_Organization) GetDescription() *s
 		t = &UpdateOrganization_UpdateOrganization_Organization{}
 	}
 	return t.Description
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization) GetMembers() []*UpdateOrganization_UpdateOrganization_Organization_Members {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization{}
+	}
+	return t.Members
+}
+func (t *UpdateOrganization_UpdateOrganization_Organization) GetSetting() *UpdateOrganization_UpdateOrganization_Organization_Setting {
+	if t == nil {
+		t = &UpdateOrganization_UpdateOrganization_Organization{}
+	}
+	return t.Setting
 }
 
 type UpdateOrganization_UpdateOrganization struct {
@@ -5040,6 +5188,28 @@ const UpdateOrganizationDocument = `mutation UpdateOrganization ($updateOrganiza
 			name
 			displayName
 			description
+			members {
+				id
+				role
+				userID
+			}
+			setting {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				domains
+				ssoCert
+				ssoEntrypoint
+				ssoIssuer
+				billingContact
+				billingEmail
+				billingPhone
+				billingAddress
+				taxIdentifier
+				tags
+			}
 		}
 	}
 }

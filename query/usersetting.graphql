@@ -1,10 +1,9 @@
 query GetUserSettingByID($userSettingId: ID!) {
   userSetting(id: $userSettingId) {
     id
-    permissions
-    role
     silencedAt
     status
+    defaultOrg
     suspendedAt
     tags
     locked

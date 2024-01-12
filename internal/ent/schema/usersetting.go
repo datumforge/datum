@@ -51,14 +51,9 @@ func (UserSetting) Fields() []ent.Field {
 				"Suspended", "SUSPENDED",
 			).
 			Default("ACTIVE"),
-		field.Enum("role").
-			NamedValues(
-				"User", "USER",
-				"Admin", "ADMIN",
-				"Owner", "OWNER",
-			).
-			Default("USER"),
-		field.JSON("permissions", []string{}).Default([]string{}),
+		field.String("default_org").
+			Comment("organization to load on user login").
+			Optional(),
 		field.Bool("email_confirmed").Default(false),
 		field.JSON("tags", []string{}).
 			Comment("tags associated with the object").

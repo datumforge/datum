@@ -426,8 +426,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			usersetting.FieldSuspendedAt:    {Type: field.TypeTime, Column: usersetting.FieldSuspendedAt},
 			usersetting.FieldRecoveryCode:   {Type: field.TypeString, Column: usersetting.FieldRecoveryCode},
 			usersetting.FieldStatus:         {Type: field.TypeEnum, Column: usersetting.FieldStatus},
-			usersetting.FieldRole:           {Type: field.TypeEnum, Column: usersetting.FieldRole},
-			usersetting.FieldPermissions:    {Type: field.TypeJSON, Column: usersetting.FieldPermissions},
+			usersetting.FieldDefaultOrg:     {Type: field.TypeString, Column: usersetting.FieldDefaultOrg},
 			usersetting.FieldEmailConfirmed: {Type: field.TypeBool, Column: usersetting.FieldEmailConfirmed},
 			usersetting.FieldTags:           {Type: field.TypeJSON, Column: usersetting.FieldTags},
 		},
@@ -2953,14 +2952,9 @@ func (f *UserSettingFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(usersetting.FieldStatus))
 }
 
-// WhereRole applies the entql string predicate on the role field.
-func (f *UserSettingFilter) WhereRole(p entql.StringP) {
-	f.Where(p.Field(usersetting.FieldRole))
-}
-
-// WherePermissions applies the entql json.RawMessage predicate on the permissions field.
-func (f *UserSettingFilter) WherePermissions(p entql.BytesP) {
-	f.Where(p.Field(usersetting.FieldPermissions))
+// WhereDefaultOrg applies the entql string predicate on the default_org field.
+func (f *UserSettingFilter) WhereDefaultOrg(p entql.StringP) {
+	f.Where(p.Field(usersetting.FieldDefaultOrg))
 }
 
 // WhereEmailConfirmed applies the entql bool predicate on the email_confirmed field.

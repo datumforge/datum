@@ -117,6 +117,11 @@ func RecoveryCode(v string) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldRecoveryCode, v))
 }
 
+// DefaultOrg applies equality check predicate on the "default_org" field. It's identical to DefaultOrgEQ.
+func DefaultOrg(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEQ(FieldDefaultOrg, v))
+}
+
 // EmailConfirmed applies equality check predicate on the "email_confirmed" field. It's identical to EmailConfirmedEQ.
 func EmailConfirmed(v bool) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldEQ(FieldEmailConfirmed, v))
@@ -682,24 +687,79 @@ func StatusNotIn(vs ...Status) predicate.UserSetting {
 	return predicate.UserSetting(sql.FieldNotIn(FieldStatus, vs...))
 }
 
-// RoleEQ applies the EQ predicate on the "role" field.
-func RoleEQ(v Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldEQ(FieldRole, v))
+// DefaultOrgEQ applies the EQ predicate on the "default_org" field.
+func DefaultOrgEQ(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEQ(FieldDefaultOrg, v))
 }
 
-// RoleNEQ applies the NEQ predicate on the "role" field.
-func RoleNEQ(v Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNEQ(FieldRole, v))
+// DefaultOrgNEQ applies the NEQ predicate on the "default_org" field.
+func DefaultOrgNEQ(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNEQ(FieldDefaultOrg, v))
 }
 
-// RoleIn applies the In predicate on the "role" field.
-func RoleIn(vs ...Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldIn(FieldRole, vs...))
+// DefaultOrgIn applies the In predicate on the "default_org" field.
+func DefaultOrgIn(vs ...string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIn(FieldDefaultOrg, vs...))
 }
 
-// RoleNotIn applies the NotIn predicate on the "role" field.
-func RoleNotIn(vs ...Role) predicate.UserSetting {
-	return predicate.UserSetting(sql.FieldNotIn(FieldRole, vs...))
+// DefaultOrgNotIn applies the NotIn predicate on the "default_org" field.
+func DefaultOrgNotIn(vs ...string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotIn(FieldDefaultOrg, vs...))
+}
+
+// DefaultOrgGT applies the GT predicate on the "default_org" field.
+func DefaultOrgGT(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldGT(FieldDefaultOrg, v))
+}
+
+// DefaultOrgGTE applies the GTE predicate on the "default_org" field.
+func DefaultOrgGTE(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldGTE(FieldDefaultOrg, v))
+}
+
+// DefaultOrgLT applies the LT predicate on the "default_org" field.
+func DefaultOrgLT(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldLT(FieldDefaultOrg, v))
+}
+
+// DefaultOrgLTE applies the LTE predicate on the "default_org" field.
+func DefaultOrgLTE(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldLTE(FieldDefaultOrg, v))
+}
+
+// DefaultOrgContains applies the Contains predicate on the "default_org" field.
+func DefaultOrgContains(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldContains(FieldDefaultOrg, v))
+}
+
+// DefaultOrgHasPrefix applies the HasPrefix predicate on the "default_org" field.
+func DefaultOrgHasPrefix(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldHasPrefix(FieldDefaultOrg, v))
+}
+
+// DefaultOrgHasSuffix applies the HasSuffix predicate on the "default_org" field.
+func DefaultOrgHasSuffix(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldHasSuffix(FieldDefaultOrg, v))
+}
+
+// DefaultOrgIsNil applies the IsNil predicate on the "default_org" field.
+func DefaultOrgIsNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldIsNull(FieldDefaultOrg))
+}
+
+// DefaultOrgNotNil applies the NotNil predicate on the "default_org" field.
+func DefaultOrgNotNil() predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldNotNull(FieldDefaultOrg))
+}
+
+// DefaultOrgEqualFold applies the EqualFold predicate on the "default_org" field.
+func DefaultOrgEqualFold(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldEqualFold(FieldDefaultOrg, v))
+}
+
+// DefaultOrgContainsFold applies the ContainsFold predicate on the "default_org" field.
+func DefaultOrgContainsFold(v string) predicate.UserSetting {
+	return predicate.UserSetting(sql.FieldContainsFold(FieldDefaultOrg, v))
 }
 
 // EmailConfirmedEQ applies the EQ predicate on the "email_confirmed" field.

@@ -297,8 +297,8 @@ input CreateUserSettingInput {
 	"""local user password recovery code generated during account creation - does not exist for oauth'd users"""
 	recoveryCode: String
 	status: UserSettingStatus
-	role: UserSettingRole
-	permissions: [String!]
+	"""organization to load on user login"""
+	defaultOrg: String
 	emailConfirmed: Boolean
 	"""tags associated with the object"""
 	tags: [String!]
@@ -3692,9 +3692,9 @@ input UpdateUserSettingInput {
 	recoveryCode: String
 	clearRecoveryCode: Boolean
 	status: UserSettingStatus
-	role: UserSettingRole
-	permissions: [String!]
-	appendPermissions: [String!]
+	"""organization to load on user login"""
+	defaultOrg: String
+	clearDefaultOrg: Boolean
 	emailConfirmed: Boolean
 	"""tags associated with the object"""
 	tags: [String!]
@@ -3789,8 +3789,8 @@ type UserSetting implements Node {
 	"""The time the user was suspended"""
 	suspendedAt: Time
 	status: UserSettingStatus!
-	role: UserSettingRole!
-	permissions: [String!]!
+	"""organization to load on user login"""
+	defaultOrg: String
 	emailConfirmed: Boolean!
 	"""tags associated with the object"""
 	tags: [String!]!
@@ -3821,12 +3821,6 @@ type UserSettingEdge {
 	node: UserSetting
 	"""A cursor for use in pagination."""
 	cursor: Cursor!
-}
-"""UserSettingRole is enum for the field role"""
-enum UserSettingRole @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Role") {
-	USER
-	ADMIN
-	OWNER
 }
 """UserSettingStatus is enum for the field status"""
 enum UserSettingStatus @goModel(model: "github.com/datumforge/datum/internal/ent/generated/usersetting.Status") {
@@ -3966,11 +3960,22 @@ input UserSettingWhereInput {
 	statusNEQ: UserSettingStatus
 	statusIn: [UserSettingStatus!]
 	statusNotIn: [UserSettingStatus!]
-	"""role field predicates"""
-	role: UserSettingRole
-	roleNEQ: UserSettingRole
-	roleIn: [UserSettingRole!]
-	roleNotIn: [UserSettingRole!]
+	"""default_org field predicates"""
+	defaultOrg: String
+	defaultOrgNEQ: String
+	defaultOrgIn: [String!]
+	defaultOrgNotIn: [String!]
+	defaultOrgGT: String
+	defaultOrgGTE: String
+	defaultOrgLT: String
+	defaultOrgLTE: String
+	defaultOrgContains: String
+	defaultOrgHasPrefix: String
+	defaultOrgHasSuffix: String
+	defaultOrgIsNil: Boolean
+	defaultOrgNotNil: Boolean
+	defaultOrgEqualFold: String
+	defaultOrgContainsFold: String
 	"""email_confirmed field predicates"""
 	emailConfirmed: Boolean
 	emailConfirmedNEQ: Boolean

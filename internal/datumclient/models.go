@@ -294,11 +294,11 @@ type CreateUserSettingInput struct {
 	// The time the user was suspended
 	SuspendedAt *time.Time `json:"suspendedAt,omitempty"`
 	// local user password recovery code generated during account creation - does not exist for oauth'd users
-	RecoveryCode   *string             `json:"recoveryCode,omitempty"`
-	Status         *usersetting.Status `json:"status,omitempty"`
-	Role           *usersetting.Role   `json:"role,omitempty"`
-	Permissions    []string            `json:"permissions,omitempty"`
-	EmailConfirmed *bool               `json:"emailConfirmed,omitempty"`
+	RecoveryCode *string             `json:"recoveryCode,omitempty"`
+	Status       *usersetting.Status `json:"status,omitempty"`
+	// organization to load on user login
+	DefaultOrg     *string `json:"defaultOrg,omitempty"`
+	EmailConfirmed *bool   `json:"emailConfirmed,omitempty"`
 	// tags associated with the object
 	Tags   []string `json:"tags,omitempty"`
 	UserID *string  `json:"userID,omitempty"`
@@ -3104,10 +3104,10 @@ type UpdateUserSettingInput struct {
 	RecoveryCode      *string             `json:"recoveryCode,omitempty"`
 	ClearRecoveryCode *bool               `json:"clearRecoveryCode,omitempty"`
 	Status            *usersetting.Status `json:"status,omitempty"`
-	Role              *usersetting.Role   `json:"role,omitempty"`
-	Permissions       []string            `json:"permissions,omitempty"`
-	AppendPermissions []string            `json:"appendPermissions,omitempty"`
-	EmailConfirmed    *bool               `json:"emailConfirmed,omitempty"`
+	// organization to load on user login
+	DefaultOrg      *string `json:"defaultOrg,omitempty"`
+	ClearDefaultOrg *bool   `json:"clearDefaultOrg,omitempty"`
+	EmailConfirmed  *bool   `json:"emailConfirmed,omitempty"`
 	// tags associated with the object
 	Tags       []string `json:"tags,omitempty"`
 	AppendTags []string `json:"appendTags,omitempty"`
@@ -3202,11 +3202,11 @@ type UserSetting struct {
 	// The time notifications regarding the user were silenced
 	SilencedAt *time.Time `json:"silencedAt,omitempty"`
 	// The time the user was suspended
-	SuspendedAt    *time.Time         `json:"suspendedAt,omitempty"`
-	Status         usersetting.Status `json:"status"`
-	Role           usersetting.Role   `json:"role"`
-	Permissions    []string           `json:"permissions"`
-	EmailConfirmed bool               `json:"emailConfirmed"`
+	SuspendedAt *time.Time         `json:"suspendedAt,omitempty"`
+	Status      usersetting.Status `json:"status"`
+	// organization to load on user login
+	DefaultOrg     *string `json:"defaultOrg,omitempty"`
+	EmailConfirmed bool    `json:"emailConfirmed"`
 	// tags associated with the object
 	Tags []string `json:"tags"`
 	User *User    `json:"user,omitempty"`
@@ -3374,11 +3374,22 @@ type UserSettingWhereInput struct {
 	StatusNeq   *usersetting.Status  `json:"statusNEQ,omitempty"`
 	StatusIn    []usersetting.Status `json:"statusIn,omitempty"`
 	StatusNotIn []usersetting.Status `json:"statusNotIn,omitempty"`
-	// role field predicates
-	Role      *usersetting.Role  `json:"role,omitempty"`
-	RoleNeq   *usersetting.Role  `json:"roleNEQ,omitempty"`
-	RoleIn    []usersetting.Role `json:"roleIn,omitempty"`
-	RoleNotIn []usersetting.Role `json:"roleNotIn,omitempty"`
+	// default_org field predicates
+	DefaultOrg             *string  `json:"defaultOrg,omitempty"`
+	DefaultOrgNeq          *string  `json:"defaultOrgNEQ,omitempty"`
+	DefaultOrgIn           []string `json:"defaultOrgIn,omitempty"`
+	DefaultOrgNotIn        []string `json:"defaultOrgNotIn,omitempty"`
+	DefaultOrgGt           *string  `json:"defaultOrgGT,omitempty"`
+	DefaultOrgGte          *string  `json:"defaultOrgGTE,omitempty"`
+	DefaultOrgLt           *string  `json:"defaultOrgLT,omitempty"`
+	DefaultOrgLte          *string  `json:"defaultOrgLTE,omitempty"`
+	DefaultOrgContains     *string  `json:"defaultOrgContains,omitempty"`
+	DefaultOrgHasPrefix    *string  `json:"defaultOrgHasPrefix,omitempty"`
+	DefaultOrgHasSuffix    *string  `json:"defaultOrgHasSuffix,omitempty"`
+	DefaultOrgIsNil        *bool    `json:"defaultOrgIsNil,omitempty"`
+	DefaultOrgNotNil       *bool    `json:"defaultOrgNotNil,omitempty"`
+	DefaultOrgEqualFold    *string  `json:"defaultOrgEqualFold,omitempty"`
+	DefaultOrgContainsFold *string  `json:"defaultOrgContainsFold,omitempty"`
 	// email_confirmed field predicates
 	EmailConfirmed    *bool `json:"emailConfirmed,omitempty"`
 	EmailConfirmedNeq *bool `json:"emailConfirmedNEQ,omitempty"`

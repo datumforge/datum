@@ -3016,10 +3016,9 @@ func (t *DeletePersonalAccessToken_DeletePersonalAccessToken) GetDeletedID() str
 
 type GetUserByID_User_Setting struct {
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
-	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
 	Tags           []string           "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
@@ -3035,6 +3034,12 @@ func (t *GetUserByID_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
+func (t *GetUserByID_User_Setting) GetDefaultOrg() *string {
+	if t == nil {
+		t = &GetUserByID_User_Setting{}
+	}
+	return t.DefaultOrg
+}
 func (t *GetUserByID_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &GetUserByID_User_Setting{}
@@ -3046,18 +3051,6 @@ func (t *GetUserByID_User_Setting) GetStatus() *usersetting.Status {
 		t = &GetUserByID_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *GetUserByID_User_Setting) GetRole() *usersetting.Role {
-	if t == nil {
-		t = &GetUserByID_User_Setting{}
-	}
-	return &t.Role
-}
-func (t *GetUserByID_User_Setting) GetPermissions() []string {
-	if t == nil {
-		t = &GetUserByID_User_Setting{}
-	}
-	return t.Permissions
 }
 func (t *GetUserByID_User_Setting) GetTags() []string {
 	if t == nil {
@@ -3270,10 +3263,9 @@ func (t *GetUserByID_User) GetCreatedBy() *string {
 
 type GetUserByIDWithOrgs_User_Setting struct {
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
-	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
 	Tags           []string           "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
@@ -3289,6 +3281,12 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
+func (t *GetUserByIDWithOrgs_User_Setting) GetDefaultOrg() *string {
+	if t == nil {
+		t = &GetUserByIDWithOrgs_User_Setting{}
+	}
+	return t.DefaultOrg
+}
 func (t *GetUserByIDWithOrgs_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &GetUserByIDWithOrgs_User_Setting{}
@@ -3300,18 +3298,6 @@ func (t *GetUserByIDWithOrgs_User_Setting) GetStatus() *usersetting.Status {
 		t = &GetUserByIDWithOrgs_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *GetUserByIDWithOrgs_User_Setting) GetRole() *usersetting.Role {
-	if t == nil {
-		t = &GetUserByIDWithOrgs_User_Setting{}
-	}
-	return &t.Role
-}
-func (t *GetUserByIDWithOrgs_User_Setting) GetPermissions() []string {
-	if t == nil {
-		t = &GetUserByIDWithOrgs_User_Setting{}
-	}
-	return t.Permissions
 }
 func (t *GetUserByIDWithOrgs_User_Setting) GetTags() []string {
 	if t == nil {
@@ -3517,10 +3503,9 @@ func (t *GetUserByIDWithOrgs_User) GetOrgMemberships() []*GetUserByIDWithOrgs_Us
 
 type GetAllUsers_Users_Edges_Node_Setting struct {
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
-	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
 	Tags           []string           "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
@@ -3536,6 +3521,12 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
+func (t *GetAllUsers_Users_Edges_Node_Setting) GetDefaultOrg() *string {
+	if t == nil {
+		t = &GetAllUsers_Users_Edges_Node_Setting{}
+	}
+	return t.DefaultOrg
+}
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetLocked() bool {
 	if t == nil {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
@@ -3547,18 +3538,6 @@ func (t *GetAllUsers_Users_Edges_Node_Setting) GetStatus() *usersetting.Status {
 		t = &GetAllUsers_Users_Edges_Node_Setting{}
 	}
 	return &t.Status
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetRole() *usersetting.Role {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return &t.Role
-}
-func (t *GetAllUsers_Users_Edges_Node_Setting) GetPermissions() []string {
-	if t == nil {
-		t = &GetAllUsers_Users_Edges_Node_Setting{}
-	}
-	return t.Permissions
 }
 func (t *GetAllUsers_Users_Edges_Node_Setting) GetTags() []string {
 	if t == nil {
@@ -3772,10 +3751,9 @@ func (t *CreateUser_CreateUser_User_GroupMemberships) GetGroupID() string {
 
 type CreateUser_CreateUser_User_Setting struct {
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
-	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
 	Tags           []string           "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
@@ -3791,6 +3769,12 @@ func (t *CreateUser_CreateUser_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
+func (t *CreateUser_CreateUser_User_Setting) GetDefaultOrg() *string {
+	if t == nil {
+		t = &CreateUser_CreateUser_User_Setting{}
+	}
+	return t.DefaultOrg
+}
 func (t *CreateUser_CreateUser_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &CreateUser_CreateUser_User_Setting{}
@@ -3802,18 +3786,6 @@ func (t *CreateUser_CreateUser_User_Setting) GetStatus() *usersetting.Status {
 		t = &CreateUser_CreateUser_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *CreateUser_CreateUser_User_Setting) GetRole() *usersetting.Role {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return &t.Role
-}
-func (t *CreateUser_CreateUser_User_Setting) GetPermissions() []string {
-	if t == nil {
-		t = &CreateUser_CreateUser_User_Setting{}
-	}
-	return t.Permissions
 }
 func (t *CreateUser_CreateUser_User_Setting) GetTags() []string {
 	if t == nil {
@@ -3992,10 +3964,9 @@ func (t *UpdateUser_UpdateUser_User_PersonalAccessTokens) GetID() string {
 
 type UpdateUser_UpdateUser_User_Setting struct {
 	EmailConfirmed bool               "json:\"emailConfirmed\" graphql:\"emailConfirmed\""
+	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
-	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
-	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
 	Tags           []string           "json:\"tags\" graphql:\"tags\""
 	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	CreatedAt      time.Time          "json:\"createdAt\" graphql:\"createdAt\""
@@ -4011,6 +3982,12 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetEmailConfirmed() bool {
 	}
 	return t.EmailConfirmed
 }
+func (t *UpdateUser_UpdateUser_User_Setting) GetDefaultOrg() *string {
+	if t == nil {
+		t = &UpdateUser_UpdateUser_User_Setting{}
+	}
+	return t.DefaultOrg
+}
 func (t *UpdateUser_UpdateUser_User_Setting) GetLocked() bool {
 	if t == nil {
 		t = &UpdateUser_UpdateUser_User_Setting{}
@@ -4022,18 +3999,6 @@ func (t *UpdateUser_UpdateUser_User_Setting) GetStatus() *usersetting.Status {
 		t = &UpdateUser_UpdateUser_User_Setting{}
 	}
 	return &t.Status
-}
-func (t *UpdateUser_UpdateUser_User_Setting) GetRole() *usersetting.Role {
-	if t == nil {
-		t = &UpdateUser_UpdateUser_User_Setting{}
-	}
-	return &t.Role
-}
-func (t *UpdateUser_UpdateUser_User_Setting) GetPermissions() []string {
-	if t == nil {
-		t = &UpdateUser_UpdateUser_User_Setting{}
-	}
-	return t.Permissions
 }
 func (t *UpdateUser_UpdateUser_User_Setting) GetTags() []string {
 	if t == nil {
@@ -4197,10 +4162,9 @@ func (t *DeleteUser_DeleteUser) GetDeletedID() string {
 
 type GetUserSettingByID_UserSetting struct {
 	ID             string             "json:\"id\" graphql:\"id\""
-	Permissions    []string           "json:\"permissions\" graphql:\"permissions\""
-	Role           usersetting.Role   "json:\"role\" graphql:\"role\""
 	SilencedAt     *time.Time         "json:\"silencedAt,omitempty\" graphql:\"silencedAt\""
 	Status         usersetting.Status "json:\"status\" graphql:\"status\""
+	DefaultOrg     *string            "json:\"defaultOrg,omitempty\" graphql:\"defaultOrg\""
 	SuspendedAt    *time.Time         "json:\"suspendedAt,omitempty\" graphql:\"suspendedAt\""
 	Tags           []string           "json:\"tags\" graphql:\"tags\""
 	Locked         bool               "json:\"locked\" graphql:\"locked\""
@@ -4219,18 +4183,6 @@ func (t *GetUserSettingByID_UserSetting) GetID() string {
 	}
 	return t.ID
 }
-func (t *GetUserSettingByID_UserSetting) GetPermissions() []string {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return t.Permissions
-}
-func (t *GetUserSettingByID_UserSetting) GetRole() *usersetting.Role {
-	if t == nil {
-		t = &GetUserSettingByID_UserSetting{}
-	}
-	return &t.Role
-}
 func (t *GetUserSettingByID_UserSetting) GetSilencedAt() *time.Time {
 	if t == nil {
 		t = &GetUserSettingByID_UserSetting{}
@@ -4242,6 +4194,12 @@ func (t *GetUserSettingByID_UserSetting) GetStatus() *usersetting.Status {
 		t = &GetUserSettingByID_UserSetting{}
 	}
 	return &t.Status
+}
+func (t *GetUserSettingByID_UserSetting) GetDefaultOrg() *string {
+	if t == nil {
+		t = &GetUserSettingByID_UserSetting{}
+	}
+	return t.DefaultOrg
 }
 func (t *GetUserSettingByID_UserSetting) GetSuspendedAt() *time.Time {
 	if t == nil {
@@ -5533,10 +5491,9 @@ const GetUserByIDDocument = `query GetUserByID ($userId: ID!) {
 		oauth
 		setting {
 			emailConfirmed
+			defaultOrg
 			locked
 			status
-			role
-			permissions
 			tags
 			suspendedAt
 			createdAt
@@ -5593,10 +5550,9 @@ const GetUserByIDWithOrgsDocument = `query GetUserByIDWithOrgs ($userId: ID!) {
 		oauth
 		setting {
 			emailConfirmed
+			defaultOrg
 			locked
 			status
-			role
-			permissions
 			tags
 			suspendedAt
 			createdAt
@@ -5654,10 +5610,9 @@ const GetAllUsersDocument = `query GetAllUsers {
 				oauth
 				setting {
 					emailConfirmed
+					defaultOrg
 					locked
 					status
-					role
-					permissions
 					tags
 					suspendedAt
 					createdAt
@@ -5713,10 +5668,9 @@ const CreateUserDocument = `mutation CreateUser ($input: CreateUserInput!) {
 			}
 			setting {
 				emailConfirmed
+				defaultOrg
 				locked
 				status
-				role
-				permissions
 				tags
 				suspendedAt
 				createdAt
@@ -5770,10 +5724,9 @@ const UpdateUserDocument = `mutation UpdateUser ($updateUserId: ID!, $input: Upd
 			}
 			setting {
 				emailConfirmed
+				defaultOrg
 				locked
 				status
-				role
-				permissions
 				tags
 				suspendedAt
 				createdAt
@@ -5832,10 +5785,9 @@ func (c *Client) DeleteUser(ctx context.Context, deleteUserID string, intercepto
 const GetUserSettingByIDDocument = `query GetUserSettingByID ($userSettingId: ID!) {
 	userSetting(id: $userSettingId) {
 		id
-		permissions
-		role
 		silencedAt
 		status
+		defaultOrg
 		suspendedAt
 		tags
 		locked

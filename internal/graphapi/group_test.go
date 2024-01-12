@@ -9,7 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/datumforge/datum/internal/datumclient"
+	"github.com/datumforge/datum/internal/ent/enums"
 	ent "github.com/datumforge/datum/internal/ent/generated"
+	"github.com/datumforge/datum/internal/ent/generated/groupsetting"
 	"github.com/datumforge/datum/internal/ent/generated/privacy"
 )
 
@@ -401,12 +403,15 @@ func TestMutation_CreateGroup(t *testing.T) {
 
 	listObjects := []string{fmt.Sprintf("organization:%s", owner1.ID)}
 
+	inviteOnly := groupsetting.JoinPolicyInviteOnly
+
 	testCases := []struct {
 		name        string
 		groupName   string
 		description string
 		displayName string
 		owner       string
+		settings    *datumclient.CreateGroupSettingInput
 		allowed     bool
 		errorMsg    string
 	}{
@@ -417,6 +422,17 @@ func TestMutation_CreateGroup(t *testing.T) {
 			description: gofakeit.HipsterSentence(10),
 			owner:       owner1.ID,
 			allowed:     true,
+		},
+		{
+			name:        "happy path group with settings",
+			groupName:   gofakeit.Name(),
+			displayName: gofakeit.LetterN(50),
+			description: gofakeit.HipsterSentence(10),
+			owner:       owner1.ID,
+			settings: &datumclient.CreateGroupSettingInput{
+				JoinPolicy: &inviteOnly,
+			},
+			allowed: true,
 		},
 		{
 			name:        "no access to owner",
@@ -441,6 +457,10 @@ func TestMutation_CreateGroup(t *testing.T) {
 
 			if tc.displayName != "" {
 				input.DisplayName = &tc.displayName
+			}
+
+			if tc.settings != nil {
+				input.CreateGroupSettings = tc.settings
 			}
 
 			mockCheckAny(authClient.mockCtrl, authClient.mc, reqCtx, tc.allowed)
@@ -478,6 +498,10 @@ func TestMutation_CreateGroup(t *testing.T) {
 			} else {
 				// display name defaults to the name if not set
 				assert.Equal(t, tc.groupName, resp.CreateGroup.Group.DisplayName)
+			}
+
+			if tc.settings != nil {
+				assert.Equal(t, resp.CreateGroup.Group.Setting.JoinPolicy, inviteOnly)
 			}
 
 			// cleanup group
@@ -589,10 +613,16 @@ func TestMutation_UpdateGroup(t *testing.T) {
 	displayNameUpdate := gofakeit.LetterN(40)
 	descriptionUpdate := gofakeit.HipsterSentence(10)
 
-	org := (&OrganizationBuilder{}).MustNew(reqCtx)
-	group := (&GroupBuilder{Owner: org.ID}).MustNew(reqCtx)
+	// write tuples for org and group
+	mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+	group := (&GroupBuilder{}).MustNewWithRelations(reqCtx, authClient.entDB)
+
+	testUser1 := (&UserBuilder{}).MustNew(reqCtx)
 
 	listObjects := []string{fmt.Sprintf("group:%s", group.ID)}
+
+	openPolicy := groupsetting.JoinPolicyOpen
 
 	testCases := []struct {
 		name        string
@@ -614,6 +644,50 @@ func TestMutation_UpdateGroup(t *testing.T) {
 				Name:        nameUpdate,
 				DisplayName: displayNameUpdate,
 				Description: &descriptionUpdate,
+			},
+		},
+		{
+			name:    "add user as admin",
+			allowed: true,
+			updateInput: datumclient.UpdateGroupInput{
+				AddGroupMembers: []*datumclient.CreateGroupMembershipInput{
+					{
+						UserID: testUser1.ID,
+						Role:   &enums.RoleAdmin,
+					},
+				},
+			},
+			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
+				ID:          group.ID,
+				Name:        nameUpdate,
+				DisplayName: displayNameUpdate,
+				Description: &descriptionUpdate,
+				Members: []*datumclient.UpdateGroup_UpdateGroup_Group_Members{
+					{
+						Role: enums.RoleAdmin,
+						User: datumclient.UpdateGroup_UpdateGroup_Group_Members_User{
+							ID: testUser1.ID,
+						},
+					},
+				},
+			},
+		},
+		{
+			name:    "update settings, happy path",
+			allowed: true,
+			updateInput: datumclient.UpdateGroupInput{
+				UpdateGroupSettings: &datumclient.UpdateGroupSettingInput{
+					JoinPolicy: &openPolicy,
+				},
+			},
+			expectedRes: datumclient.UpdateGroup_UpdateGroup_Group{
+				ID:          group.ID,
+				Name:        nameUpdate,
+				DisplayName: displayNameUpdate,
+				Description: &descriptionUpdate,
+				Setting: datumclient.UpdateGroup_UpdateGroup_Group_Setting{
+					JoinPolicy: openPolicy,
+				},
 			},
 		},
 		{
@@ -640,6 +714,14 @@ func TestMutation_UpdateGroup(t *testing.T) {
 				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
 			}
 
+			if tc.updateInput.AddGroupMembers != nil {
+				mockWriteTuplesAny(authClient.mockCtrl, authClient.mc, reqCtx, nil)
+			}
+
+			if tc.updateInput.UpdateGroupSettings != nil {
+				mockListAny(authClient.mockCtrl, authClient.mc, reqCtx, listObjects)
+			}
+
 			// update group
 			resp, err := authClient.gc.UpdateGroup(reqCtx, group.ID, tc.updateInput)
 
@@ -660,11 +742,23 @@ func TestMutation_UpdateGroup(t *testing.T) {
 			assert.Equal(t, tc.expectedRes.Name, updatedGroup.Name)
 			assert.Equal(t, tc.expectedRes.DisplayName, updatedGroup.DisplayName)
 			assert.Equal(t, tc.expectedRes.Description, updatedGroup.Description)
+
+			if tc.updateInput.AddGroupMembers != nil {
+				// Adding a member to an group will make it 2 users, there is an admin
+				// assigned to the group automatically
+				assert.Len(t, updatedGroup.Members, 2)
+				assert.Equal(t, tc.expectedRes.Members[0].Role, updatedGroup.Members[1].Role)
+				assert.Equal(t, tc.expectedRes.Members[0].User.ID, updatedGroup.Members[1].User.ID)
+			}
+
+			if tc.updateInput.UpdateGroupSettings != nil {
+				assert.Equal(t, updatedGroup.GetSetting().JoinPolicy, openPolicy)
+			}
 		})
 	}
 
 	(&GroupCleanup{GroupID: group.ID}).MustDelete(reqCtx)
-	(&OrganizationCleanup{OrgID: org.ID}).MustDelete(reqCtx)
+	(&UserCleanup{UserID: testUser1.ID}).MustDelete(reqCtx)
 }
 
 func TestMutation_UpdateGroupNoAuth(t *testing.T) {

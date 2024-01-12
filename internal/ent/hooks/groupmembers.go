@@ -112,6 +112,12 @@ func groupMemberUpdateHook(ctx context.Context, m *generated.GroupMembershipMuta
 			return err
 		}
 
+		if len(tuples.Writes) == 0 && len(tuples.Deletes) == 0 {
+			m.Logger.Debugw("no relationships to create or delete")
+
+			return nil
+		}
+
 		if _, err := m.Authz.WriteTuples(ctx, tuples); err != nil {
 			m.Logger.Errorw("failed to update relationship tuple", "error", err)
 
@@ -193,6 +199,12 @@ func getUpdateGroupMemberTuples(ctx context.Context, m *generated.GroupMembershi
 	newRole, exists := m.Role()
 	if !exists {
 		return tuples, ErrMissingRole
+	}
+
+	if oldRole == newRole {
+		m.Logger.Debugw("nothing to update, roles are the same", "old_role", oldRole, "new_role", newRole)
+
+		return tuples, nil
 	}
 
 	// User the IDs of the group memberships and delete all related tuples

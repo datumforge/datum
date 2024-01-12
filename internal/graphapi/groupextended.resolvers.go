@@ -6,22 +6,94 @@ package graphapi
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/datumforge/datum/internal/ent/generated"
 )
 
 // CreateGroupSettings is the resolver for the createGroupSettings field.
 func (r *createGroupInputResolver) CreateGroupSettings(ctx context.Context, obj *generated.CreateGroupInput, data *generated.CreateGroupSettingInput) error {
-	panic(fmt.Errorf("not implemented: CreateGroupSettings - createGroupSettings"))
+	c := withTransactionalMutation(ctx)
+
+	groupSettings, err := c.GroupSetting.Create().SetInput(*data).Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	obj.SettingID = groupSettings.ID
+
+	return nil
 }
 
 // AddGroupMembers is the resolver for the addGroupMembers field.
 func (r *updateGroupInputResolver) AddGroupMembers(ctx context.Context, obj *generated.UpdateGroupInput, data []*generated.CreateGroupMembershipInput) error {
-	panic(fmt.Errorf("not implemented: AddGroupMembers - addGroupMembers"))
+	opCtx := graphql.GetOperationContext(ctx)
+	groupID, ok := opCtx.Variables["updateGroupId"]
+	if !ok {
+		r.logger.Errorw("unable to get group from context")
+
+		return ErrInternalServerError
+	}
+
+	// if r.authDisabled {
+	// 	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	// } else {
+	// 	// setup view context
+	// 	v := viewer.UserViewer{
+	// 		GroupID: groupID.(string),
+	// 	}
+
+	// 	ctx = viewer.NewContext(ctx, v)
+	// }
+
+	c := withTransactionalMutation(ctx)
+	builders := make([]*generated.GroupMembershipCreate, len(data))
+	for i := range data {
+		input := *data[i]
+		input.GroupID = groupID.(string)
+		builders[i] = c.GroupMembership.Create().SetInput(input)
+	}
+
+	_, err := c.GroupMembership.CreateBulk(builders...).Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // UpdateGroupSettings is the resolver for the updateGroupSettings field.
 func (r *updateGroupInputResolver) UpdateGroupSettings(ctx context.Context, obj *generated.UpdateGroupInput, data *generated.UpdateGroupSettingInput) error {
-	panic(fmt.Errorf("not implemented: UpdateGroupSettings - updateGroupSettings"))
+	opCtx := graphql.GetOperationContext(ctx)
+	groupID, ok := opCtx.Variables["updateGroupId"]
+	if !ok {
+		r.logger.Errorw("unable to get group from context")
+
+		return ErrInternalServerError
+	}
+
+	c := withTransactionalMutation(ctx)
+
+	// get setting ID to update
+	settingID := obj.SettingID
+	if settingID == nil {
+		group, err := c.Group.Get(ctx, groupID.(string))
+		if err != nil {
+			return err
+		}
+
+		setting, err := group.Setting(ctx)
+		if err != nil {
+			return err
+		}
+
+		settingID = &setting.ID
+	}
+
+	_, err := c.GroupSetting.UpdateOneID(*settingID).SetInput(*data).Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

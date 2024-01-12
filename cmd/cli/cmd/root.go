@@ -340,6 +340,7 @@ func StoreToken(token *oauth2.Token) error {
 	return nil
 }
 
+// GetRoleEnum returns the Role if valid, otherwise returns an error
 func GetRoleEnum(role string) (enums.Role, error) {
 	r := enums.Enum(role)
 

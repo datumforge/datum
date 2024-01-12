@@ -1080,6 +1080,80 @@ func (t *CreateGroup_CreateGroup) GetGroup() *CreateGroup_CreateGroup_Group {
 	return &t.Group
 }
 
+type UpdateGroup_UpdateGroup_Group_Setting struct {
+	ID           string                  "json:\"id\" graphql:\"id\""
+	CreatedAt    time.Time               "json:\"createdAt\" graphql:\"createdAt\""
+	UpdatedAt    time.Time               "json:\"updatedAt\" graphql:\"updatedAt\""
+	CreatedBy    *string                 "json:\"createdBy,omitempty\" graphql:\"createdBy\""
+	UpdatedBy    *string                 "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
+	Visibility   groupsetting.Visibility "json:\"visibility\" graphql:\"visibility\""
+	JoinPolicy   groupsetting.JoinPolicy "json:\"joinPolicy\" graphql:\"joinPolicy\""
+	SyncToSlack  bool                    "json:\"syncToSlack\" graphql:\"syncToSlack\""
+	SyncToGithub bool                    "json:\"syncToGithub\" graphql:\"syncToGithub\""
+	Tags         []string                "json:\"tags\" graphql:\"tags\""
+}
+
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetID() string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return t.ID
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetCreatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return &t.CreatedAt
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetUpdatedAt() *time.Time {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return &t.UpdatedAt
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetCreatedBy() *string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return t.CreatedBy
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetUpdatedBy() *string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return t.UpdatedBy
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetVisibility() *groupsetting.Visibility {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return &t.Visibility
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetJoinPolicy() *groupsetting.JoinPolicy {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return &t.JoinPolicy
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetSyncToSlack() bool {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return t.SyncToSlack
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetSyncToGithub() bool {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return t.SyncToGithub
+}
+func (t *UpdateGroup_UpdateGroup_Group_Setting) GetTags() []string {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group_Setting{}
+	}
+	return t.Tags
+}
+
 type UpdateGroup_UpdateGroup_Group_Members_User struct {
 	ID        string "json:\"id\" graphql:\"id\""
 	FirstName string "json:\"firstName\" graphql:\"firstName\""
@@ -1135,6 +1209,7 @@ type UpdateGroup_UpdateGroup_Group struct {
 	Name        string                                   "json:\"name\" graphql:\"name\""
 	DisplayName string                                   "json:\"displayName\" graphql:\"displayName\""
 	Description *string                                  "json:\"description,omitempty\" graphql:\"description\""
+	Setting     UpdateGroup_UpdateGroup_Group_Setting    "json:\"setting\" graphql:\"setting\""
 	Members     []*UpdateGroup_UpdateGroup_Group_Members "json:\"members,omitempty\" graphql:\"members\""
 	UpdatedAt   time.Time                                "json:\"updatedAt\" graphql:\"updatedAt\""
 	UpdatedBy   *string                                  "json:\"updatedBy,omitempty\" graphql:\"updatedBy\""
@@ -1163,6 +1238,12 @@ func (t *UpdateGroup_UpdateGroup_Group) GetDescription() *string {
 		t = &UpdateGroup_UpdateGroup_Group{}
 	}
 	return t.Description
+}
+func (t *UpdateGroup_UpdateGroup_Group) GetSetting() *UpdateGroup_UpdateGroup_Group_Setting {
+	if t == nil {
+		t = &UpdateGroup_UpdateGroup_Group{}
+	}
+	return &t.Setting
 }
 func (t *UpdateGroup_UpdateGroup_Group) GetMembers() []*UpdateGroup_UpdateGroup_Group_Members {
 	if t == nil {
@@ -5339,6 +5420,18 @@ const UpdateGroupDocument = `mutation UpdateGroup ($updateGroupId: ID!, $input: 
 			name
 			displayName
 			description
+			setting {
+				id
+				createdAt
+				updatedAt
+				createdBy
+				updatedBy
+				visibility
+				joinPolicy
+				syncToSlack
+				syncToGithub
+				tags
+			}
 			members {
 				id
 				role

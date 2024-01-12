@@ -167,6 +167,18 @@ mutation UpdateGroup($updateGroupId: ID!, $input: UpdateGroupInput!) {
       name
       displayName
       description
+      setting {
+        id
+        createdAt
+        updatedAt
+        createdBy
+        updatedBy
+        visibility
+        joinPolicy
+        syncToSlack
+        syncToGithub
+        tags
+      }
       members {
         id
         role
